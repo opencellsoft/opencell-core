@@ -60,7 +60,8 @@ import org.meveo.service.billing.impl.InvoiceService;
  * 
  * @author Edward P. Legaspi
  * @author anasseh
- * @lastModifiedVersion 4.8
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.1
  */
 @Stateless
 public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> {
@@ -162,12 +163,21 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     public List<RecordedInvoice> getRecordedInvoices(CustomerAccount customerAccount, MatchingStatusEnum o, boolean dunningExclusion) {
         List<RecordedInvoice> invoices = new ArrayList<RecordedInvoice>();
         try {
-            // FIXME Mbarek use NamedQuery
-            invoices = (List<RecordedInvoice>) getEntityManager()
-                .createQuery("from " + RecordedInvoice.class.getSimpleName()
-                        + " where customerAccount.id=:customerAccountId and matchingStatus=:matchingStatus and excludedFromDunning=:dunningExclusion order by dueDate")
-                .setParameter("customerAccountId", customerAccount.getId()).setParameter("matchingStatus", MatchingStatusEnum.O).setParameter("dunningExclusion", dunningExclusion)
-                .getResultList();
+
+            if (dunningExclusion) {
+                invoices = (List<RecordedInvoice>) getEntityManager()
+                        .createQuery("from " + RecordedInvoice.class.getSimpleName()
+                                + " where customerAccount.id=:customerAccountId and matchingStatus= " + MatchingStatusEnum.I + " order by dueDate")
+                        .setParameter("customerAccountId", customerAccount.getId())
+                        .getResultList();
+            } else {
+                invoices = (List<RecordedInvoice>) getEntityManager()
+                        .createQuery("from " + RecordedInvoice.class.getSimpleName()
+                                + " where customerAccount.id=:customerAccountId and matchingStatus=:matchingStatus order by dueDate")
+                        .setParameter("customerAccountId", customerAccount.getId()).setParameter("matchingStatus", o)
+                        .getResultList();
+            }
+
         } catch (Exception e) {
 
         }
