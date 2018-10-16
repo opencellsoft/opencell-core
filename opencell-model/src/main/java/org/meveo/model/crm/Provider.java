@@ -235,7 +235,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
 	@AttributeOverrides({ //
 			@AttributeOverride(name = "prefix", column = @Column(name = "rum_prefix")), //
 			@AttributeOverride(name = "sequenceSize", column = @Column(name = "rum_sequence_size")), //
-			@AttributeOverride(name = "currentSequenceNb", column = @Column(name = "rum_current_sequence_nb")), //
+			@AttributeOverride(name = "currentSequenceNb", column = @Column(name = "rum_current_sequence_nb"))
 	})
 	private GenericSequence rumSequence = new GenericSequence();
     
@@ -243,7 +243,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
 	@AttributeOverrides({ //
 			@AttributeOverride(name = "prefix", column = @Column(name = "cust_no_prefix")), //
 			@AttributeOverride(name = "sequenceSize", column = @Column(name = "cust_no_sequence_size")), //
-			@AttributeOverride(name = "currentSequenceNb", column = @Column(name = "cust_no_current_sequence_nb")), //
+			@AttributeOverride(name = "currentSequenceNb", column = @Column(name = "cust_no_current_sequence_nb"))
 	})
 	private GenericSequence customerNoSequence = new GenericSequence();
 

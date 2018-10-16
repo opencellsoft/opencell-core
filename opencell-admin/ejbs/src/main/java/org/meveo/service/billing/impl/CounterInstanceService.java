@@ -298,6 +298,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      */
     public BigDecimal deduceCounterValue(CounterInstance counterInstance, Date date, Date initDate, BigDecimal value) throws CounterValueInsufficientException, BusinessException {
 
+        counterInstance = retrieveIfNotManaged(counterInstance);        
+        
         CounterPeriod counterPeriod = getOrCreateCounterPeriod(counterInstance, date, initDate, null);
 
         if (counterPeriod == null || counterPeriod.getValue().compareTo(value) < 0) {

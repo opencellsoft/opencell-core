@@ -50,6 +50,18 @@ public class PaymentGatewayDto extends EnableBusinessDto {
 
     /** The card type. */
     private CreditCardTypeEnum cardType;
+    
+    /** The marchand id. */
+    private String marchandId;
+    
+    /** The secret key. */
+    private String secretKey;
+    
+    /** The api key. */
+    private String apiKey;
+    
+    /** The profile. */
+    private String profile;
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
@@ -79,6 +91,11 @@ public class PaymentGatewayDto extends EnableBusinessDto {
         this.countryCode = paymentGateway.getCountry() == null ? null : paymentGateway.getCountry().getCountryCode();
         this.tradingCurrencyCode = paymentGateway.getTradingCurrency() == null ? null : paymentGateway.getTradingCurrency().getCurrencyCode();
         this.type = paymentGateway.getType();
+        this.marchandId = paymentGateway.getMarchandId();
+        this.secretKey = "*******";
+        this.apiKey = paymentGateway.getApiKey();
+        this.profile = paymentGateway.getProfile();
+        
     }
 
     /**
@@ -242,12 +259,70 @@ public class PaymentGatewayDto extends EnableBusinessDto {
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
+    
+    
+
+    /**
+     * @return the marchandId
+     */
+    public String getMarchandId() {
+        return marchandId;
+    }
+
+    /**
+     * @param marchandId the marchandId to set
+     */
+    public void setMarchandId(String marchandId) {
+        this.marchandId = marchandId;
+    }
+
+    /**
+     * @return the secretKey
+     */
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    /**
+     * @param secretKey the secretKey to set
+     */
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    /**
+     * @return the apiKey
+     */
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    /**
+     * @param apiKey the apiKey to set
+     */
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    /**
+     * @return the profile
+     */
+    public String getProfile() {
+        return profile;
+    }
+
+    /**
+     * @param profile the profile to set
+     */
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
 
     @Override
     public String toString() {
         return "PaymentGatewayDto [id=" + id + ", code=" + code + ", description=" + description + ", updatedCode=" + updatedCode + ", type=" + type + ", paymentMethodType="
                 + paymentMethodType + ", scriptInstanceCode=" + scriptInstanceCode + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL
-                + ", countryCode=" + countryCode + ", tradingCurrencyCode=" + tradingCurrencyCode + ", cardType=" + cardType + "]";
+                + ", countryCode=" + countryCode + ", tradingCurrencyCode=" + tradingCurrencyCode + ", cardType=" + cardType + ", marchandId="+marchandId+"]";
     }
 
 }

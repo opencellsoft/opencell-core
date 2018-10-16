@@ -83,19 +83,21 @@ public class ContactApi extends AccountEntityApi {
 			missingParameters.add("email");
 			missingParameters.add("code");
 		}
+		else if(StringUtils.isBlank(postData.getEmail())) {
+			missingParameters.add("email");
+		}
 
 		handleMissingParameters();
 
 		Contact contact = new Contact();
 		populate(postData, contact);
 
-		if (StringUtils.isBlank(postData.getEmail()) && !StringUtils.isBlank(postData.getCode()))
+		if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {	
 			contact.setCode(postData.getEmail());
-		else if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode()))
-			contact.setEmail(postData.getCode());
-		else {
-			contact.setCode(postData.getEmail());
-			contact.setEmail(postData.getCode());
+			contact.setEmail(postData.getEmail());
+		} else {
+			contact.setCode(postData.getCode());
+			contact.setEmail(postData.getEmail());
 		}
 
 		contact.setCompany(postData.getCompany());
@@ -112,12 +114,20 @@ public class ContactApi extends AccountEntityApi {
 		contact.setAgreedToUA(postData.isAgreedToUA());
 		contact.setTags(postData.getTags()	);
 		
-		Customer customer = customerService.findByCompanyName(postData.getCompany());
-		if(customer != null) {
+		Customer customer = null;
+		if(contact.getCompany() == null || contact.getCompany().isEmpty()) {
+			customer = customerService.findByCompanyName("UNASSIGNED");
+			if(customer == null) customer = contactService.createUnassignedCustomer();
 			contact.setAddressBook(customer.getAddressbook());
 		}
 		else {
-			customer = contactService.createCustomerFromContact(contact);
+			customer = customerService.findByCompanyName(contact.getCompany());
+			if(customer != null) {
+				contact.setAddressBook(customer.getAddressbook());
+			}
+			else {
+				customer = contactService.createCustomerFromContact(contact);
+			}
 		}
 			
 		contactService.create(contact);
@@ -150,12 +160,8 @@ public class ContactApi extends AccountEntityApi {
 
 		updateAccount(contact, postData);
 
-		if (!StringUtils.isBlank(postData.getCompany())) {
-			contact.setCompany(postData.getCompany());
-		}
-
-		if (!StringUtils.isBlank(postData.getCompany())) {
-			contact.setCompany(postData.getCompany());
+		if (!StringUtils.isBlank(postData.getEmail())) {
+			contact.setEmail(postData.getEmail());
 		}
 
 		if (!StringUtils.isBlank(postData.getDescription())) {
@@ -206,16 +212,25 @@ public class ContactApi extends AccountEntityApi {
 			contact.setTags(postData.getTags());
 		}
 
-		if(contact.getCompany() != postData.getCompany()) {
+		if(contact.getCompany() != null && contact.getCompany().equals(postData.getCompany())) {
 			contact.setCompany(postData.getCompany());
-			Customer customer = customerService.findByCompanyName(postData.getCompany());
-			if(customer != null) {
+			Customer customer = null;
+			if(contact.getCompany() == null || contact.getCompany().isEmpty()) {
+				customer = customerService.findByCompanyName("UNASSIGNED");
+				if(customer == null) customer = contactService.createUnassignedCustomer();
 				contact.setAddressBook(customer.getAddressbook());
 			}
 			else {
-				customer = contactService.createCustomerFromContact(contact);
+				customer = customerService.findByCompanyName(contact.getCompany());
+				if(customer != null) {
+					contact.setAddressBook(customer.getAddressbook());
+				}
+				else {
+					customer = contactService.createCustomerFromContact(contact);
+				}
 			}
 		}
+		
 		
 		contact = contactService.update(contact);
 		return contact;
@@ -320,12 +335,12 @@ public class ContactApi extends AccountEntityApi {
 		return result;
 	}
 
-	public ContactsDto importLinkedInFromText(String context) throws IOException {
-		Set<Contact> failedToPersist = new HashSet<Contact>();
-		Set<Contact> contacts = null;
+	public ContactsDto importCSVText(String context) throws IOException {
+		List<Contact> failedToPersist = new ArrayList<Contact>();
+		List<Contact> contacts = null;
 		List<String> failedToPersistLog = new ArrayList<String>();
 
-		contacts = contactService.parseLinkedInFromText(context);
+		contacts = contactService.parseCSVText(context);
 		
 		for(Contact contact : contacts) {
 			if(StringUtils.isBlank(contact.getName().getFirstName())) {

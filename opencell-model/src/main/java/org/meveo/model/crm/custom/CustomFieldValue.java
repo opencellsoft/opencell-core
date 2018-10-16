@@ -66,6 +66,8 @@ public class CustomFieldValue implements Serializable {
     public static String RON_VALUE_SEPARATOR = "<";
 
     private static String SERIALIZATION_SEPARATOR = "|";
+    
+    public static String WILDCARD_MATCH_ALL = "*";
 
     /**
      * Period to which value applies to

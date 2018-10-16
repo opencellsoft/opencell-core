@@ -75,11 +75,11 @@ public interface ContactRs extends IBaseRs {
     public ContactsResponseDto listPost(PagingAndFiltering pagingAndFiltering);
     
     @POST
-    @Path("/importLinkedInFromText")
-    ContactsResponseDto importLinkedInFromText(String context);
+    @Path("/importCSVText")
+    ContactsResponseDto importCSVText(String context);
     
     @POST
-    @Path("/importLinkedInFile")
-    ActionStatus importLinkedInFile();
+    @Path("/importCSVFile")
+    ActionStatus importCSVFile();
        
  }

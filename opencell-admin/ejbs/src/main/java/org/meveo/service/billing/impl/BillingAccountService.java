@@ -78,7 +78,8 @@ import org.meveo.service.order.OrderService;
  * 
  * @author Said Ramli
  * @author Abdelmounaim Akadid
- * @lastModifiedVersion 5.1
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2.1
  */
 @Stateless
 public class BillingAccountService extends AccountService<BillingAccount> {
@@ -410,7 +411,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      *
      * @param entity entity
      * @param billingRun the billing run
-     * @return true, if successful
+     * @return Updated entity
      * @throws BusinessException the business exception
      */
     @JpaAmpNewTx
@@ -996,15 +997,16 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                     for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
                                         if (invoiceSubcategoryCountry.getTradingCountry() == billingAccount.getTradingCountry()) {
                                             taxPercent = invoiceSubcategoryCountry.getTax().getPercent();
+                                            if (!StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL()) && (invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null,  billingAccount, null) != null)) {
+                                                taxPercent = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null,  billingAccount, null).getPercent();
+                                            }
                                             break;
                                         }
                                     }
-
                                     BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
                                             : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
                                     BigDecimal unitAmountWithTax = appProvider.isEntreprise()
-                                            ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP))
-                                            : rtMinAmount;
+                                                    ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)) : rtMinAmount;
                                     BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                                     BigDecimal amountWithoutTax = unitAmountWithoutTax;
                                     BigDecimal amountWithTax = unitAmountWithTax;
@@ -1087,6 +1089,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                             for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
                                 if (invoiceSubcategoryCountry.getTradingCountry() == billingAccount.getTradingCountry()) {
                                     taxPercent = invoiceSubcategoryCountry.getTax().getPercent();
+                                    if (!StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL()) && (invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null,  billingAccount, null) != null)) {
+                                        taxPercent = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null,  billingAccount, null).getPercent();
+                                    }
                                     break;
                                 }
                             }
@@ -1163,7 +1168,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	            BigDecimal billingAccountAmountWithTax = entry.getValue().get("billingAccountAmountWithTax");
 	            InvoiceSubCategory invoiceSubCategory = entry.getKey();
 	
-	            if (!StringUtils.isBlank(billingAccount.getMinimumAmountEl()) && billingAccountAmountWithoutTax != null && billingAccountAmountWithoutTax != BigDecimal.ZERO) {
+            if (!StringUtils.isBlank(billingAccount.getMinimumAmountEl()) && billingAccountAmountWithoutTax != null
+                    && billingAccountAmountWithoutTax.compareTo(BigDecimal.ZERO) != 0) {
 	                BigDecimal billingAccountMinAmount = new BigDecimal(evaluateDoubleExpression(billingAccount.getMinimumAmountEl(), billingAccount));
 	                String billingAccountMinLabel = evaluateStringExpression(billingAccount.getMinimumLabelEl(), billingAccount);
 	
@@ -1192,6 +1198,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	                    for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
 	                        if (invoiceSubcategoryCountry.getTradingCountry() == billingAccount.getTradingCountry()) {
 	                            taxPercent = invoiceSubcategoryCountry.getTax().getPercent();
+                                if (!StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL()) && (invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null,  billingAccount, null) != null)) {
+                                    taxPercent = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null,  billingAccount, null).getPercent();
+                                }
 	                            break;
 	                        }
 	                    }

@@ -20,6 +20,7 @@ public class GenericSequenceValueResponseDto extends BaseResponse {
 
 	private GenericSequenceDto sequence;
 	private String value;
+	private String seller;
 
 	public String getValue() {
 		return value;
@@ -35,6 +36,14 @@ public class GenericSequenceValueResponseDto extends BaseResponse {
 
 	public void setSequence(GenericSequenceDto sequence) {
 		this.sequence = sequence;
+	}
+
+	public String getSeller() {
+		return seller;
+	}
+
+	public void setSeller(String seller) {
+		this.seller = seller;
 	}
 
 }

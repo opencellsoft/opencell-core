@@ -47,6 +47,7 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
@@ -93,6 +94,14 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     @ManyToOne()
     @JoinColumn(name = "tax_script_instance_id")
     private ScriptInstance taxScript;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "occ_template_id")
+    private OCCTemplate occTemplate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "occ_templ_negative_id")
+    private OCCTemplate occTemplateNegative;
 
     public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
         return invoiceSubcategoryCountries;
@@ -159,4 +168,33 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     public void setTaxScript(ScriptInstance taxScript) {
         this.taxScript = taxScript;
     }
+
+    /**
+     * @return the occTemplate
+     */
+    public OCCTemplate getOccTemplate() {
+        return occTemplate;
+    }
+
+    /**
+     * @param occTemplate the occTemplate to set
+     */
+    public void setOccTemplate(OCCTemplate occTemplate) {
+        this.occTemplate = occTemplate;
+    }
+
+    /**
+     * @return the occTemplateNegative
+     */
+    public OCCTemplate getOccTemplateNegative() {
+        return occTemplateNegative;
+    }
+
+    /**
+     * @param occTemplateNegative the occTemplateNegative to set
+     */
+    public void setOccTemplateNegative(OCCTemplate occTemplateNegative) {
+        this.occTemplateNegative = occTemplateNegative;
+    }
+    
 }
