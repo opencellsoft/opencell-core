@@ -46,6 +46,7 @@ import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
@@ -294,6 +295,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
         RoundingModeEnum roundingMode = appProvider.getRoundingMode();
 
+        Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
+        Date invoiceDate = invoice.getInvoiceDate();
+        
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
@@ -431,21 +435,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 // start aggregate T
                 if (!isExonerated) {
 
-                    List<Tax> taxes = new ArrayList<Tax>();
-                    List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = invoiceSubCategory.getInvoiceSubcategoryCountries();
+                    Tax tax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, billingAccount, invoiceDate, false);
 
-                    for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubcategoryCountries) {
-
-                        if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
-                                && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
-                            Tax tax = invoiceSubCategoryCountryService.isInvoiceSubCategoryTaxValid(invoicesubcatCountry, userAccount, billingAccount, invoice, new Date());
-                            if (tax != null) {
-                                taxes.add(tax);
-                            }
-                        }
-                    }
-
-                    for (Tax tax : taxes) {
                         TaxInvoiceAgregate invoiceAgregateTax = null;
                         Long taxId = tax.getId();
 
@@ -474,7 +465,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                         invoiceAgregateSubcat.addSubCategoryTax(tax);
                     }
-                }
                 // end aggregate T
 
                 // start aggregate R

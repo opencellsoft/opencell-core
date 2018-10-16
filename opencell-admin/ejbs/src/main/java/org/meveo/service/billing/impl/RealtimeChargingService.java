@@ -92,7 +92,7 @@ public class RealtimeChargingService {
 
         Seller seller = ba.getCustomerAccount().getCustomer().getSeller();
 
-        return getApplicationPrice(seller, ba, currency, tradingCountry, chargeTemplate, subscriptionDate, offerCode, quantity, param1, param2, param3, priceWithoutTax);
+        return getApplicationPrice(seller, ba, currency, tradingCountry, chargeTemplate, subscriptionDate, offerCode, quantity, param1, param2, param3, priceWithoutTax, false);
     }
 
     /**
@@ -114,7 +114,7 @@ public class RealtimeChargingService {
      * @throws BusinessException the business exception
      */
     public BigDecimal getApplicationPrice(Seller seller, BillingAccount ba, TradingCurrency currency, TradingCountry tradingCountry, OneShotChargeTemplate chargeTemplate,
-            Date subscriptionDate, String offerCode, BigDecimal inputQuantity, String param1, String param2, String param3, boolean priceWithoutTax) throws BusinessException {
+            Date subscriptionDate, String offerCode, BigDecimal inputQuantity, String param1, String param2, String param3, boolean priceWithoutTax, boolean ignoreNoTax) throws BusinessException {
 
         InvoiceSubCategory invoiceSubCategory = chargeTemplate.getInvoiceSubCategory();
 
@@ -122,24 +122,7 @@ public class RealtimeChargingService {
             throw new IncorrectChargeTemplateException("invoiceSubCategory is null for chargeTemplate code=" + chargeTemplate.getCode());
         }
 
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry,
-            subscriptionDate);
-        if (invoiceSubcategoryCountry == null) {
-            throw new IncorrectChargeTemplateException(
-                "no invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country=" + tradingCountry.getCountryCode());
-        }
-
-        Tax tax = null;
-
-        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
-            tax = invoiceSubcategoryCountry.getTax();
-        } else {
-            tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null, ba, null);
-        }
-
-        if (tax == null && ba != null) {
-            throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
-        }
+        Tax tax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, ba, subscriptionDate, ignoreNoTax);
 
         WalletOperation op = new WalletOperation();
 

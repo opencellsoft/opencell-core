@@ -359,11 +359,12 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode,
-            @WebParam(name = "country") String country);
+            @WebParam(name = "sellersCountry") String sellersCountry, @WebParam(name = "country") String country);
 
     @WebMethod
-    ActionStatus removeInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode, @WebParam(name = "country") String country);
-
+    ActionStatus removeInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode, @WebParam(name = "sellersCountry") String sellersCountry,
+            @WebParam(name = "country") String country);
+    
     @WebMethod
     ActionStatus createOrUpdateInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
 
