@@ -94,9 +94,9 @@ public class CustomerBean extends AccountBean<Customer> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-
-        entity.setSeller(sellerService.retrieveIfNotManaged(entity.getSeller()));
-
+        if(entity.getSeller() != null) {
+            entity.setSeller(sellerService.retrieveIfNotManaged(entity.getSeller()));
+        }
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {

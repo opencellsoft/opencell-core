@@ -20,6 +20,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.MandatStateEnum;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.shared.DateUtils;
@@ -40,8 +41,9 @@ import com.slimpay.hapiclient.http.auth.Oauth2BasicAuthentication;
 import com.slimpay.hapiclient.util.EntityConverter;
 
 /**
- * 
+ *
  * @author anasseh
+ * @author Mounir Bahije
  * @lastModifiedVersion 5.2
  *
  */
@@ -52,13 +54,15 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 
     /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
     private ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface("ParamBeanFactory");
+    
+    private PaymentGateway paymentGateway = null; 
 
     private String getApiUrl() {
         return paramBeanFactory.getInstance().getProperty("slimPay.apiURL", "changeIt");
     }
 
     private String getProfile() {
-        return paramBeanFactory.getInstance().getProperty("slimPay.profile", "changeIt");
+        return paymentGateway.getProfile();
     }
 
     private String getTokenEndPoint() {
@@ -66,11 +70,11 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     }
 
     private String getUserId() {
-        return paramBeanFactory.getInstance().getProperty("slimPay.userId", "changeIt");
+        return paymentGateway.getMarchandId();
     }
 
     private String getSecretKey() {
-        return paramBeanFactory.getInstance().getProperty("slimPay.secretKey", "changeIt");
+        return paymentGateway.getSecretKey();
     }
 
     private String getScope() {
@@ -99,6 +103,11 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 
     private HapiClient getClient() {
         return connect();
+    }
+
+    @Override
+    public Object getClientObject() {
+        return null;
     }
 
     @Override
@@ -375,7 +384,14 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
-        return null;
+        throw new UnsupportedOperationException();
+    }
+
+
+    @Override
+    public void setPaymentGateway(PaymentGateway paymentGateway) {
+        this.paymentGateway = paymentGateway;
+        
     }
 
 }

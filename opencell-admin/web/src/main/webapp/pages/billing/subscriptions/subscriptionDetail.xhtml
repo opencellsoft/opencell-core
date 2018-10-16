@@ -75,7 +75,7 @@
 			searchField2="name" column1Label="#{messages['userAccount.code']}"
 			column1="code" column2Label="#{messages['userAccount.name']}"
 			column2="name" selection="#{subscriptionBean.entity.userAccount}"
-			updateField=":subscriptionTab:subscriptionFormId:informationTab:userSelectId :subscriptionTab:subscriptionFormId:informationTab:userSelectId_text">
+			updateField=":subscriptionTab:subscriptionFormId:informationTab">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="offerPopup"
@@ -328,6 +328,7 @@
 								<hftl:column
 									label="#{messages['serviceInstance.endAgreementDate']}"
 									field="endAgreementDate" showSortLinks="false" isDate="true" />
+																
 								<p:column width="55">
 									<f:facet name="header">
 										<h:outputText value="Actions" />

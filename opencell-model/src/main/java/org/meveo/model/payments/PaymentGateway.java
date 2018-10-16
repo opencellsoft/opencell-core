@@ -32,7 +32,7 @@ import org.meveo.model.scripts.ScriptInstance;
  *
  * @author anasseh
  * @since Opencell 4.8
- * @lastModifiedVersion 5.0.1
+ * @lastModifiedVersion 5.2
  */
 
 @Entity
@@ -96,14 +96,36 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     @Column(name = "replay_cause")
     private PaymentReplayCauseEnum replayCause;
 
+    /** The errors to replay. */
     @Column(name = "errors_to_replay")
     private String errorsToReplay;
-
+    
+    /** The marchand id. */
+    @Column(name = "marchand_id")
+    private String marchandId;
+    
+    /** The secret key. */
+    @Column(name = "secret_key")
+    private String secretKey;
+    
+    /** The api key. */
+    @Column(name = "api_key")
+    private String apiKey;
+    
+    /** The profile. */
+    @Column(name = "profile")
+    private String profile;
+    
+    /**
+     * Instantiates a new payment gateway.
+     */
     public PaymentGateway() {
 
     }
 
     /**
+     * Gets the type.
+     *
      * @return the type
      */
     public PaymentGatewayTypeEnum getType() {
@@ -111,6 +133,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Sets the type.
+     *
      * @param type the type to set
      */
     public void setType(PaymentGatewayTypeEnum type) {
@@ -118,6 +142,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Gets the script instance.
+     *
      * @return the scriptInstance
      */
     public ScriptInstance getScriptInstance() {
@@ -125,6 +151,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Sets the script instance.
+     *
      * @param scriptInstance the scriptInstance to set
      */
     public void setScriptInstance(ScriptInstance scriptInstance) {
@@ -132,6 +160,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Gets the implementation class name.
+     *
      * @return the implementationClassName
      */
     public String getImplementationClassName() {
@@ -139,6 +169,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Sets the implementation class name.
+     *
      * @param implementationClassName the implementationClassName to set
      */
     public void setImplementationClassName(String implementationClassName) {
@@ -146,6 +178,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Gets the application EL.
+     *
      * @return the applicationEL
      */
     public String getApplicationEL() {
@@ -153,6 +187,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Sets the application EL.
+     *
      * @param applicationEL the applicationEL to set
      */
     public void setApplicationEL(String applicationEL) {
@@ -160,6 +196,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Gets the country.
+     *
      * @return the country
      */
     public Country getCountry() {
@@ -167,6 +205,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Sets the country.
+     *
      * @param country the country to set
      */
     public void setCountry(Country country) {
@@ -174,6 +214,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Gets the trading currency.
+     *
      * @return the tradingCurrency
      */
     public TradingCurrency getTradingCurrency() {
@@ -181,6 +223,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Sets the trading currency.
+     *
      * @param tradingCurrency the tradingCurrency to set
      */
     public void setTradingCurrency(TradingCurrency tradingCurrency) {
@@ -188,6 +232,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Gets the card type.
+     *
      * @return the cardType
      */
     public CreditCardTypeEnum getCardType() {
@@ -195,6 +241,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Sets the card type.
+     *
      * @param cardType the cardType to set
      */
     public void setCardType(CreditCardTypeEnum cardType) {
@@ -202,6 +250,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Gets the payment method type.
+     *
      * @return the paymentMethodType
      */
     public PaymentMethodEnum getPaymentMethodType() {
@@ -209,6 +259,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Sets the payment method type.
+     *
      * @param paymentMethodType the paymentMethodType to set
      */
     public void setPaymentMethodType(PaymentMethodEnum paymentMethodType) {
@@ -216,6 +268,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Gets the nb tries.
+     *
      * @return the nbTries
      */
     public Integer getNbTries() {
@@ -223,6 +277,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Sets the nb tries.
+     *
      * @param nbTries the nbTries to set
      */
     public void setNbTries(Integer nbTries) {
@@ -230,6 +286,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Gets the replay cause.
+     *
      * @return the replayCause
      */
     public PaymentReplayCauseEnum getReplayCause() {
@@ -237,6 +295,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Sets the replay cause.
+     *
      * @param replayCause the replayCause to set
      */
     public void setReplayCause(PaymentReplayCauseEnum replayCause) {
@@ -244,6 +304,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Gets the errors to replay.
+     *
      * @return the errorsToReplay
      */
     public String getErrorsToReplay() {
@@ -251,15 +313,95 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+     * Sets the errors to replay.
+     *
      * @param errorsToReplay the errorsToReplay to set
      */
     public void setErrorsToReplay(String errorsToReplay) {
         this.errorsToReplay = errorsToReplay;
     }
+    
+    
 
+    
+    /**
+     * Gets the marchand id.
+     *
+     * @return the marchandId
+     */
+    public String getMarchandId() {
+        return marchandId;
+    }
+
+    /**
+     * Sets the marchand id.
+     *
+     * @param marchandId the marchandId to set
+     */
+    public void setMarchandId(String marchandId) {
+        this.marchandId = marchandId;
+    }
+
+    /**
+     * Gets the secret key.
+     *
+     * @return the secretKey
+     */
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    /**
+     * Sets the secret key.
+     *
+     * @param secretKey the secretKey to set
+     */
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    /**
+     * Gets the api key.
+     *
+     * @return the apiKey
+     */
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    /**
+     * Sets the api key.
+     *
+     * @param apiKey the apiKey to set
+     */
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    /**
+     * Gets the profile.
+     *
+     * @return the profile
+     */
+    public String getProfile() {
+        return profile;
+    }
+
+    /**
+     * Sets the profile.
+     *
+     * @param profile the profile to set
+     */
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.model.BusinessEntity#toString()
+     */
     @Override
     public String toString() {
-        return "PaymentGateway [type=" + type + ", paymentMethodType=" + paymentMethodType + ", scriptInstance=" + (scriptInstance == null ? null : scriptInstance.getCode())
+        return "PaymentGateway [marchandId="+marchandId+", type=" + type + ", paymentMethodType=" + paymentMethodType + ", scriptInstance=" + (scriptInstance == null ? null : scriptInstance.getCode())
                 + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL + ", Country=" + (country == null ? null : country.getCountryCode())
                 + ", tradingCurrency=" + (tradingCurrency == null ? null : tradingCurrency.getCurrencyCode()) + ", cardType=" + cardType + "]";
     }

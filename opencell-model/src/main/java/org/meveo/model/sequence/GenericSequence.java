@@ -9,7 +9,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
- * Class use for storing sequence data. This sequence is use by RUM and to generate customer number.
+ * Class use for storing sequence data. This sequence is use by RUM and to
+ * generate customer number.
  * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
@@ -28,15 +29,16 @@ public class GenericSequence implements Serializable {
 	private String prefix = "";
 
 	/**
-	 * Size of the sequence. Maximum allowable for the sequence is 35. That means 35 -
-	 * prefix.length.
+	 * Size of the sequence. Maximum allowable for the sequence is 35. That means 35
+	 * - prefix.length.
 	 */
 	@Column(name = "sequence_size")
 	@Max(20L)
 	private Long sequenceSize = 20L;
 
 	/**
-	 * Current value of the sequence. This field is readonly and lock read. Updated only when a next sequence value is requested.
+	 * Current value of the sequence. This field is readonly and lock read. Updated
+	 * only when a next sequence value is requested.
 	 */
 	@Column(name = "current_sequence_nb")
 	@Size(max = 35)

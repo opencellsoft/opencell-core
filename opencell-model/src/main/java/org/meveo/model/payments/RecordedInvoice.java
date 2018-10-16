@@ -28,11 +28,14 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 
 @Entity
 @DiscriminatorValue(value = "I")
@@ -57,6 +60,10 @@ public class RecordedInvoice extends AccountOperation {
     
     @OneToMany(mappedBy = "recordedInvoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<RecordedInvoiceCatAgregate> recordedInvoiceCatAgregates = new ArrayList<RecordedInvoiceCatAgregate>();
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pay_schdl_inst_item_id")
+    private PaymentScheduleInstanceItem paymentScheduleInstanceItem;
 
     public Date getProductionDate() {
         return productionDate;
@@ -95,6 +102,22 @@ public class RecordedInvoice extends AccountOperation {
      */
     public void setRecordedInvoiceCatAgregates(List<RecordedInvoiceCatAgregate> recordedInvoiceCatAgregates) {
         this.recordedInvoiceCatAgregates = recordedInvoiceCatAgregates;
+    }
+    
+    
+
+    /**
+     * @return the paymentScheduleInstanceItem
+     */
+    public PaymentScheduleInstanceItem getPaymentScheduleInstanceItem() {
+        return paymentScheduleInstanceItem;
+    }
+
+    /**
+     * @param paymentScheduleInstanceItem the paymentScheduleInstanceItem to set
+     */
+    public void setPaymentScheduleInstanceItem(PaymentScheduleInstanceItem paymentScheduleInstanceItem) {
+        this.paymentScheduleInstanceItem = paymentScheduleInstanceItem;
     }
 
 }

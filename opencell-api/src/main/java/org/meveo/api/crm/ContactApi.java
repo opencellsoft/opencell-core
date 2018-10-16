@@ -92,9 +92,10 @@ public class ContactApi extends AccountEntityApi {
 		Contact contact = new Contact();
 		populate(postData, contact);
 
-		if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode()))
+		if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {	
 			contact.setCode(postData.getEmail());
-		else {
+			contact.setEmail(postData.getEmail());
+		} else {
 			contact.setCode(postData.getCode());
 			contact.setEmail(postData.getEmail());
 		}
@@ -211,7 +212,7 @@ public class ContactApi extends AccountEntityApi {
 			contact.setTags(postData.getTags());
 		}
 
-		if(contact.getCompany() != postData.getCompany()) {
+		if(contact.getCompany() != null && contact.getCompany().equals(postData.getCompany())) {
 			contact.setCompany(postData.getCompany());
 			Customer customer = null;
 			if(contact.getCompany() == null || contact.getCompany().isEmpty()) {

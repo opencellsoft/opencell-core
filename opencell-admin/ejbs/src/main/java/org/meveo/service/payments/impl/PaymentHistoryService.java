@@ -38,7 +38,9 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
         PaymentHistory paymentHistory = new PaymentHistory();
         paymentHistory.setCustomerAccountCode(customerAccount.getCode());
         paymentHistory.setCustomerAccountName(customerAccount.getName() == null ? null : customerAccount.getName().getFullName());
-        paymentHistory.setSellerCode(customerAccount.getCustomer().getSeller().getCode());
+        if(customerAccount.getCustomer().getSeller() != null) {
+            paymentHistory.setSellerCode(customerAccount.getCustomer().getSeller().getCode());
+        }
         paymentHistory.setCustomerCode(customerAccount.getCustomer().getCode());
         paymentHistory.setPayment(payment);
         paymentHistory.setRefund(refund);

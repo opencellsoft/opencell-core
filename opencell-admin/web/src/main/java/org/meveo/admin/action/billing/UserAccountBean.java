@@ -49,6 +49,7 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -73,7 +74,8 @@ import org.primefaces.model.LazyDataModel;
  * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
  * 
- * @lastModifiedVersion 5.0.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2
  */
 @Named
 @ViewScoped
@@ -232,7 +234,15 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public String terminateAccount() {
         log.debug("resiliateAccount userAccountId:" + entity.getId());
         try {
+            
+            Date terminationDate = entity.getTerminationDate();
+            SubscriptionTerminationReason terminationReason = entity.getTerminationReason();
+            
             entity = userAccountService.refreshOrRetrieve(entity);
+
+            entity.setTerminationDate(terminationDate);
+            entity.setTerminationReason(terminationReason);
+           
             entity = userAccountService.userAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
