@@ -87,12 +87,12 @@ public class SellerBean extends CustomFieldBean<Seller> {
     @Override
     public Seller initEntity() {
         super.initEntity();
-        // if (entity.getAddress() == null) {
-        // entity.setAddress(new Address());
-        // }
-        // if (entity.getContactInformation() == null) {
-        // entity.setContactInformation(new ContactInformation());
-        // }
+        if (entity.getAddress() == null) {
+            entity.setAddress(new Address());
+        }
+        if (entity.getContactInformation() == null) {
+            entity.setContactInformation(new ContactInformation());
+        }
         return entity;
     }
 

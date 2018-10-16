@@ -67,9 +67,9 @@ public interface InvoiceSubCategoryCountryRs extends IBaseRs {
      * @param country Buyer's country
      * @return action status
      */
-    @Path("/{invoiceSubCategoryCode}/{country}")
+    @Path("/{invoiceSubCategoryCode}/{sellersCountry}/{country}")
     @DELETE
-    ActionStatus remove(@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode, @QueryParam("sellersCountry") String sellersCountry,
+    ActionStatus remove(@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode, @PathParam("sellersCountry") String sellersCountry,
             @PathParam("country") String country);
 
     /**

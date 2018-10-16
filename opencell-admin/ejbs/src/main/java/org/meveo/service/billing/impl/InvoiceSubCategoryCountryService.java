@@ -43,6 +43,11 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
+/**
+ * Service for Invoice subcategory country entity management and applicable tax determination
+ * 
+ * @author Andrius Karpavicius
+ */
 @Stateless
 public class InvoiceSubCategoryCountryService extends PersistenceService<InvoiceSubcategoryCountry> {
 
@@ -76,6 +81,13 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         invoiceSubcategoryCountry.getInvoiceSubCategory().getInvoiceSubcategoryCountries().remove(invoiceSubcategoryCountry);
     }
 
+    /**
+     * Check that validity dates of Invoice subcategory country entity do not overlapp existing records
+     * 
+     * @param invoiceSubcategoryCountry Invoice subcategory country entity
+     * @return Updated validity dates and priority value in Invoice subcategory country entity
+     * @throws BusinessException General business exception
+     */
     public InvoiceSubcategoryCountry validateValidityDates(InvoiceSubcategoryCountry invoiceSubcategoryCountry) throws BusinessException {
         // validate date
         // Check that two dates are one after another
@@ -137,7 +149,8 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
      * Find InvoiceSubCategoryCountry with the highest priority (lowest number). Does not fetch join entities.
      * 
      * @param invoiceSubCategory invoice sub category
-     * @param tradingCountry trading country
+     * @param sellersCountry Seller's trading country
+     * @param buyersCountry Buyer's trading country
      * @param applicationDate application date
      * @return Invoice sub category country.
      */
@@ -157,6 +170,17 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         return null;
     }
 
+    /**
+     * Check if Invoice subcategory country entity is applicable with given criteria
+     * 
+     * @param isc Invoice subcategory country entity
+     * @param userAccount User account
+     * @param billingAccount Billing account
+     * @param invoice Invoice
+     * @param operationDate Operation date
+     * @return True if Invoice subcategory country entity is applicable with given criteria
+     * @throws BusinessException General business exception
+     */
     public Tax isInvoiceSubCategoryTaxValid(InvoiceSubcategoryCountry isc, UserAccount userAccount, BillingAccount billingAccount, Invoice invoice, Date operationDate)
             throws BusinessException {
         // check if invoiceSubCategory date is valid
@@ -245,7 +269,7 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         if (endValidityDate != null) {
             qb.addCriterionDate("endValidityDate", endValidityDate);
         }
-        qb.addOrderMultiCriterion("sellingCountry", false, "tradingCountry", false, "priority", false);
+        qb.addOrderMultiCriterion("ic.sellingCountry", false, "ic.tradingCountry", false, "ic.priority", false);
 
         try {
             return (List<InvoiceSubcategoryCountry>) qb.getQuery(getEntityManager()).getResultList();
