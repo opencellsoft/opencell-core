@@ -250,7 +250,7 @@ public class SepaFile implements DDRequestBuilderInterface {
             throw new BusinessException("Payment method not valid!");
         }
         BankCoordinates bankCoordinates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
-
+        
         if (bankCoordinates == null) {
             throw new BusinessException("Bank Coordinate is absent for Payment method "+((DDPaymentMethod) preferedPaymentMethod).getAlias());
         }
@@ -348,7 +348,7 @@ public class SepaFile implements DDRequestBuilderInterface {
                         addSctPaymentInformation(message, ddrequestItem, appProvider);
                     } else {
                         log.error("ddrequestItem with id = " + ddrequestItem.getId() + " has Errors :" + ddrequestItem.getErrorMsg() + ". The file " + fileName
-                                + "will not contain all payment informations.");
+                                + " will not contain all payment informations.");
                         opWithErrorsByFile++;
                     }
                     opToGenerateByFile++;
@@ -425,14 +425,14 @@ public class SepaFile implements DDRequestBuilderInterface {
             financialInstitutionIdentification.setOthr(othr);
         } else if (!isMatched(providerBC.getBic(), "[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")) {
             throw new BusinessException("BIC not valid!");
-        }
-
+        } 
+        
         financialInstitutionIdentification.setBIC(providerBC.getBic());
         paymentInformation.setChrgBr(org.meveo.admin.sepa.jaxb.pain001.ChargeBearerType1Code.SLEV);
 
         for(AccountOperation ao : ddrequestItem.getAccountOperations()) {
             addSctTransaction(ao, paymentInformation);
-    }
+        }
         //addSctTransaction(ddrequestItem, paymentInformation);
     }
 
