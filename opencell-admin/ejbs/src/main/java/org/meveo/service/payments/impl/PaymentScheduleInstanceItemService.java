@@ -161,6 +161,9 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             invoice.getInvoiceAgregates().add(subCategoryInvoiceAgregate);
 
             invoiceService.create(invoice);
+            invoiceService.assignInvoiceNumber(invoice);
+            invoice = invoiceService.update(invoice);
+            
             paymentScheduleInstanceItem.setInvoice(invoice);
         }
         recordedInvoicePS = createRecordedInvoicePS(amounts, customerAccount, invoiceType, preferredMethod.getPaymentType(), invoice, aoIdsToPay, paymentScheduleInstanceItem);
