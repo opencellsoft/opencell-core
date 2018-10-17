@@ -240,7 +240,7 @@ public class BankCoordinates implements Serializable, Cloneable {
     /**
 	 * 
 	 * @param iban
-	 * @return encrypted iban
+	 * @return encrypted iban if encryption key exist in config file else return iban
 	 * @throws Exception
 	 */
 	private String encryptIban(String iban) throws Exception {
@@ -255,7 +255,7 @@ public class BankCoordinates implements Serializable, Cloneable {
 	/**
 	 * 
 	 * @param iban
-	 * @return decrypted iban
+	 * @return decrypted iban if iban is already encypted
 	 * @throws Exception
 	 */
 	private String decryptIban(String iban) throws Exception {

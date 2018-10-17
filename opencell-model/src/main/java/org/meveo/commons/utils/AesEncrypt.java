@@ -19,6 +19,7 @@ import org.apache.commons.codec.binary.Base64;
 public class AesEncrypt {
 
 	private Cipher cipher;
+	private static String aesKey;
 
 	/**
 	 * 
@@ -43,11 +44,11 @@ public class AesEncrypt {
 
 	/**
 	 * 
-	 * @return String key from opencell-admin.properties
+	 * @return String encryption/decryption key from opencell-admin.properties
 	 * @throws Exception
 	 */
 	public String getFileKey() throws Exception {
-
+		if(aesKey == null) {
 		String _propertyFile = System.getProperty("jboss.server.config.dir") + File.separator
 				+ "opencell-admin.properties";
 		if (_propertyFile.startsWith("file:")) {
@@ -55,9 +56,10 @@ public class AesEncrypt {
 		}
 		Properties pr = new Properties();
 		pr.load(new FileInputStream(_propertyFile));
-		String key = getProperty("meveo.aes.key", pr);
+		aesKey = getProperty("opencell.aes.key", pr);
+		}
 
-		return key;
+		return aesKey;
 	}
 
 	/**
@@ -112,7 +114,7 @@ public class AesEncrypt {
 	 * 
 	 * @param iban
 	 * @param ae
-	 * @return encryptedIban
+	 * @return encryptedIban if encryption key exist in config file else return iban
 	 * @throws Exception
 	 * @throws NoSuchAlgorithmException
 	 * @throws NoSuchPaddingException
@@ -126,6 +128,9 @@ public class AesEncrypt {
 			IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
 		String encryptedIban;
 		String key = ae.getFileKey();
+		if(key == null) {
+			return iban;
+		}
 		SecretKey secretKey = ae.getKey(key);
 		encryptedIban = ae.encryptText(iban, secretKey);
 		return "AES" + encryptedIban;
@@ -135,7 +140,7 @@ public class AesEncrypt {
 	 * 
 	 * @param iban
 	 * @param ae
-	 * @return decryptedIban
+	 * @return decryptedIban if encryption key exist in config file else return iban
 	 * @throws Exception
 	 * @throws InvalidKeyException
 	 * @throws UnsupportedEncodingException
@@ -146,6 +151,9 @@ public class AesEncrypt {
 			UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
 		String decryptedIban;
 		String key = ae.getFileKey();
+		if(key == null) {
+			return iban;
+		}
 		SecretKey secretKey = ae.getKey(key);
 		decryptedIban = ae.decryptText(iban, secretKey);
 		return decryptedIban;

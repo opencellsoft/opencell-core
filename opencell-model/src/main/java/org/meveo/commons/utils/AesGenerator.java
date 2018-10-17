@@ -29,8 +29,9 @@ public class AesGenerator {
 
 		KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
 		keyGenerator.init(256);
-		// writeToFile("AESPair/aesKey", keyGenerator.generateKey().getEncoded());
 		String key = Base64.encodeBase64String(keyGenerator.generateKey().getEncoded());
+		writeToFile("AESP/aesKey", keyGenerator.generateKey().getEncoded());
+		
 
 	}
 
