@@ -128,7 +128,7 @@ public class AesEncrypt {
 			IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
 		String encryptedIban;
 		String key = ae.getFileKey();
-		if(key == null) {
+		if(key == null || key.isEmpty()) {
 			return iban;
 		}
 		SecretKey secretKey = ae.getKey(key);
@@ -151,7 +151,7 @@ public class AesEncrypt {
 			UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
 		String decryptedIban;
 		String key = ae.getFileKey();
-		if(key == null) {
+		if(key == null || key.isEmpty()) {
 			return iban;
 		}
 		SecretKey secretKey = ae.getKey(key);
