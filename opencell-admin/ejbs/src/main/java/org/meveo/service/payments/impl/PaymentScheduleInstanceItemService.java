@@ -15,20 +15,16 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.CategoryInvoiceAgregateDto;
-import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
-import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
-import org.meveo.api.dto.invoice.InvoiceDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
@@ -141,34 +137,30 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             throw new BusinessException("preferredMethod is null");
         }
         if (paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().isGenerateAdvancePaymentInvoice()) {
-            InvoiceDto invoiceDto = new InvoiceDto();
-            invoiceDto.setInvoiceType(invoiceType.getCode());
-            invoiceDto.setBillingAccountCode(
-                paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getUserAccount().getBillingAccount().getCode());
-            invoiceDto.setInvoiceDate(new Date());
-            invoiceDto.setDueDate(paymentScheduleInstanceItem.getDueDate());
-            invoiceDto.setInvoiceMode(InvoiceModeEnum.AGGREGATED);
+            invoice = new Invoice();
+            invoice.setInvoiceType(invoiceType);
+            invoice.setBillingAccount(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getUserAccount().getBillingAccount());
+            invoice.setInvoiceDate(new Date());
+            invoice.setDueDate(paymentScheduleInstanceItem.getDueDate());
 
-            SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
-            subCategoryInvoiceAgregateDto.setInvoiceSubCategoryCode(invoiceSubCat.getCode());
-            subCategoryInvoiceAgregateDto.setDescription(invoiceSubCat.getDescription());
-            subCategoryInvoiceAgregateDto.setAmountWithoutTax(amounts[0]);
+            SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate();
+            subCategoryInvoiceAgregate.setInvoiceSubCategory(invoiceSubCat);
+            subCategoryInvoiceAgregate.setDescription(invoiceSubCat.getDescription());
+            subCategoryInvoiceAgregate.setAmountWithoutTax(amounts[0]);
+            subCategoryInvoiceAgregate.setInvoice(invoice);
 
-            CategoryInvoiceAgregateDto categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
-            categoryInvoiceAgregateDto.setCategoryInvoiceCode(invoiceSubCat.getInvoiceCategory().getCode());
-            categoryInvoiceAgregateDto.setDescription(invoiceSubCat.getInvoiceCategory().getDescription());
-            categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
+            CategoryInvoiceAgregate categoryInvoiceAgregate = new CategoryInvoiceAgregate();
+            categoryInvoiceAgregate.setInvoiceCategory(invoiceSubCat.getInvoiceCategory());
+            categoryInvoiceAgregate.setDescription(invoiceSubCat.getInvoiceCategory().getDescription());
+            categoryInvoiceAgregate.addSubCategoryInvoiceAggregate(subCategoryInvoiceAgregate);
+            categoryInvoiceAgregate.setInvoice(invoice);
 
-            invoiceDto.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
+            subCategoryInvoiceAgregate.setCategoryInvoiceAgregate(categoryInvoiceAgregate);
 
-            CreateInvoiceResponseDto createInvoiceResponseDto = null;
-            try {
-                createInvoiceResponseDto = invoiceService.create(invoiceDto);
-            } catch (MeveoApiException e) {
-                throw new BusinessException(e.getMessage());
-            }
+            invoice.getInvoiceAgregates().add(categoryInvoiceAgregate);
+            invoice.getInvoiceAgregates().add(subCategoryInvoiceAgregate);
 
-            invoice = invoiceService.findById(createInvoiceResponseDto.getInvoiceId());
+            invoiceService.create(invoice);
             paymentScheduleInstanceItem.setInvoice(invoice);
         }
         recordedInvoicePS = createRecordedInvoicePS(amounts, customerAccount, invoiceType, preferredMethod.getPaymentType(), invoice, aoIdsToPay, paymentScheduleInstanceItem);
