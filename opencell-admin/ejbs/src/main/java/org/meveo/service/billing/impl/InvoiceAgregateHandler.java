@@ -4,6 +4,7 @@ import static org.meveo.commons.utils.NumberUtils.getRoundingMode;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -52,6 +53,9 @@ public class InvoiceAgregateHandler {
 
 	@Inject 
 	private InvoiceSubCategoryService invoiceSubCategoryService;	
+	
+	@Inject 
+    private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 	
 	@Inject 
     private BillingAccountService billingAccountService;    
@@ -326,25 +330,11 @@ public class InvoiceAgregateHandler {
 	 * @throws BusinessException business exception
 	 */
     private Tax getCurrentTax(InvoiceSubCategory invoiceSubCategory, UserAccount userAccount, BillingAccount billingAccount) throws BusinessException {
-        Tax currentTax = null;
         for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
-            if ((invoicesubcatCountry.getSellingCountry() == null
-                    || (billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry() != null && invoicesubcatCountry.getSellingCountry().getCountryCode()
-                        .equalsIgnoreCase(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry().getCountryCode())))
-                    && (invoicesubcatCountry.getTradingCountry() == null
-                            || invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()))
-                    && matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, null)) {
-
-                
-                if (!StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())) {
-                    currentTax = invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(), userAccount, billingAccount, null);
-                 }else {
-                     currentTax = invoicesubcatCountry.getTax();
-                 }                
-               
-                if (currentTax != null) {
-                    return currentTax;
-                }
+            if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
+                    && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, null)) {
+                Tax tax = invoiceSubCategoryCountryService.isInvoiceSubCategoryTaxValid(invoicesubcatCountry, userAccount, billingAccount, null, new Date());
+                return tax;
             }
         }
         return null;

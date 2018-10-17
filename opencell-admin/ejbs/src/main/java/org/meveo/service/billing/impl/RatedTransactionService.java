@@ -47,6 +47,7 @@ import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
@@ -301,6 +302,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
         RoundingModeEnum roundingMode = appProvider.getRoundingMode();
 
+        Seller seller = invoice.getSeller();
+        Date invoiceDate = invoice.getInvoiceDate();
+        
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
@@ -424,15 +428,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         
                     } else {
                         // else use this for loop
-                        for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
-                            if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
-                                    && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
-                                Tax tax = invoiceSubCategoryCountryService.isInvoiceSubCategoryTaxValid(invoicesubcatCountry, userAccount, billingAccount, invoice, new Date());
-                                if (tax != null) {
-                                    taxes.add(tax);
-                                }
-                            }
-                        }
+                        Tax tax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, billingAccount, invoiceDate, false);
+                        taxes.add(tax);
                     }                    
                 }
                 
@@ -521,7 +518,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         }
                     }
                 }
-                
                 // end aggregate T
 
                 // start aggregate R
@@ -1017,20 +1013,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             // BigDecimal discountAmountWithoutTax=amount.multiply(discountPlanItem.getPercent().divide(HUNDRED)).negate();
             List<Tax> taxes = new ArrayList<Tax>();
             for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCat.getInvoiceSubcategoryCountries()) {
-                if ((invoicesubcatCountry.getSellingCountry() == null
-                        || (billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry() != null && invoicesubcatCountry.getSellingCountry().getCountryCode()
-                            .equalsIgnoreCase(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry().getCountryCode())))
-                        && (invoicesubcatCountry.getTradingCountry() == null
-                                || invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(invoice.getBillingAccount().getTradingCountry().getCountryCode()))
+                if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
                         && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
-                    if (StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())) {
-                        taxes.add(invoicesubcatCountry.getTax());
-                    } else {
-                        taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(), userAccount, billingAccount, invoice));
+                    Tax tax = invoiceSubCategoryCountryService.isInvoiceSubCategoryTaxValid(invoicesubcatCountry, userAccount, billingAccount, invoice, new Date());
+                    if (tax != null) {
+                        taxes.add(tax);
                     }
                 }
             }
-
+            
             SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
             BigDecimal discountAmountTax = BigDecimal.ZERO;
             if (!isExonerated) {

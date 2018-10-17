@@ -4,6 +4,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.api.catalog.ServiceTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
@@ -17,7 +18,8 @@ import org.meveo.model.catalog.BusinessServiceModel;
 
 /**
  * @author Edward P. Legaspi(edward.legaspi@manaty.net)
- * @lastModifiedVersion 5.0
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2.1
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -25,6 +27,9 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
 
     @Inject
     private MeveoModuleApi moduleApi;
+
+    @Inject
+    private ServiceTemplateApi stApi;
 
     @Override
     public ActionStatus create(BusinessServiceModelDto postData) {
@@ -83,11 +88,16 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.createOrUpdate(postData);
+            if (postData != null) {
+                if (postData.getServiceTemplate() != null) {
+                    if (stApi.find(postData.getServiceTemplate().getCode()) != null ) {
+                        moduleApi.createOrUpdate(postData);
+                    }
+                }
+            }
         } catch (Exception e) {
             processException(e, result);
         }
-
         return result;
     }
 

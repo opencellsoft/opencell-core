@@ -389,11 +389,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String country) {
+    public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String sellersCountryCode, String buyersCountryCode) {
         GetInvoiceSubCategoryCountryResponse result = new GetInvoiceSubCategoryCountryResponse();
 
         try {
-            result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, country));
+            result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, sellersCountryCode, buyersCountryCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -402,11 +402,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public ActionStatus removeInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String country) {
+    public ActionStatus removeInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String sellersCountryCode, String buyersCountryCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, country);
+            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, sellersCountryCode, buyersCountryCode);
         } catch (Exception e) {
             processException(e, result);
         }

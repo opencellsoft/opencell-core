@@ -15,20 +15,17 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.CategoryInvoiceAgregateDto;
-import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
-import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
-import org.meveo.api.dto.invoice.InvoiceDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
@@ -131,7 +128,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
         InvoiceSubCategory invoiceSubCat = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getAdvancePaymentInvoiceSubCategory();
         BigDecimal amount = paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount();
-        BigDecimal amounts[] = getAmounts(invoiceSubCat, amount, billingAccount.getTradingCountry(), userAccount);
+        BigDecimal amounts[] = getAmounts(invoiceSubCat, amount, paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller(), userAccount);
         List<Long> aoIdsToPay = new ArrayList<Long>();
         Invoice invoice = null;
         RecordedInvoice recordedInvoicePS = null;
@@ -141,34 +138,33 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             throw new BusinessException("preferredMethod is null");
         }
         if (paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().isGenerateAdvancePaymentInvoice()) {
-            InvoiceDto invoiceDto = new InvoiceDto();
-            invoiceDto.setInvoiceType(invoiceType.getCode());
-            invoiceDto.setBillingAccountCode(
-                paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getUserAccount().getBillingAccount().getCode());
-            invoiceDto.setInvoiceDate(new Date());
-            invoiceDto.setDueDate(paymentScheduleInstanceItem.getDueDate());
-            invoiceDto.setInvoiceMode(InvoiceModeEnum.AGGREGATED);
+            invoice = new Invoice();
+            invoice.setInvoiceType(invoiceType);
+            invoice.setBillingAccount(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getUserAccount().getBillingAccount());
+            invoice.setInvoiceDate(new Date());
+            invoice.setDueDate(paymentScheduleInstanceItem.getDueDate());
 
-            SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
-            subCategoryInvoiceAgregateDto.setInvoiceSubCategoryCode(invoiceSubCat.getCode());
-            subCategoryInvoiceAgregateDto.setDescription(invoiceSubCat.getDescription());
-            subCategoryInvoiceAgregateDto.setAmountWithoutTax(amounts[0]);
+            SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate();
+            subCategoryInvoiceAgregate.setInvoiceSubCategory(invoiceSubCat);
+            subCategoryInvoiceAgregate.setDescription(invoiceSubCat.getDescription());
+            subCategoryInvoiceAgregate.setAmountWithoutTax(amounts[0]);
+            subCategoryInvoiceAgregate.setInvoice(invoice);
 
-            CategoryInvoiceAgregateDto categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
-            categoryInvoiceAgregateDto.setCategoryInvoiceCode(invoiceSubCat.getInvoiceCategory().getCode());
-            categoryInvoiceAgregateDto.setDescription(invoiceSubCat.getInvoiceCategory().getDescription());
-            categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
+            CategoryInvoiceAgregate categoryInvoiceAgregate = new CategoryInvoiceAgregate();
+            categoryInvoiceAgregate.setInvoiceCategory(invoiceSubCat.getInvoiceCategory());
+            categoryInvoiceAgregate.setDescription(invoiceSubCat.getInvoiceCategory().getDescription());
+            categoryInvoiceAgregate.addSubCategoryInvoiceAggregate(subCategoryInvoiceAgregate);
+            categoryInvoiceAgregate.setInvoice(invoice);
 
-            invoiceDto.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
+            subCategoryInvoiceAgregate.setCategoryInvoiceAgregate(categoryInvoiceAgregate);
 
-            CreateInvoiceResponseDto createInvoiceResponseDto = null;
-            try {
-                createInvoiceResponseDto = invoiceService.create(invoiceDto);
-            } catch (MeveoApiException e) {
-                throw new BusinessException(e.getMessage());
-            }
+            invoice.getInvoiceAgregates().add(categoryInvoiceAgregate);
+            invoice.getInvoiceAgregates().add(subCategoryInvoiceAgregate);
 
-            invoice = invoiceService.findById(createInvoiceResponseDto.getInvoiceId());
+            invoiceService.create(invoice);
+            invoiceService.assignInvoiceNumber(invoice);
+            invoice = invoiceService.update(invoice);
+            
             paymentScheduleInstanceItem.setInvoice(invoice);
         }
         recordedInvoicePS = createRecordedInvoicePS(amounts, customerAccount, invoiceType, preferredMethod.getPaymentType(), invoice, aoIdsToPay, paymentScheduleInstanceItem);
@@ -216,7 +212,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         UserAccount userAccount = paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getUserAccount();
         BillingAccount billingAccount = userAccount.getBillingAccount();
         InvoiceSubCategory invoiceSubCat = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getAdvancePaymentInvoiceSubCategory();
-        BigDecimal amounts[] = getAmounts(invoiceSubCat, paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount(), billingAccount.getTradingCountry(), userAccount);
+        BigDecimal amounts[] = getAmounts(invoiceSubCat, paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount(), paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller(), userAccount);
         String paymentlabel = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getPaymentLabel();
         OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat, paymentlabel);
 
@@ -300,31 +296,19 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      *
      * @param invoiceSubCategory the invoice sub category
      * @param amountWithTax the amount with tax
-     * @param tradingCountry the trading country
+     * @param seller Seller
      * @param userAccount the user account
      * @return the amounts
      * @throws BusinessException the business exception
      */
-    private BigDecimal[] getAmounts(InvoiceSubCategory invoiceSubCategory, BigDecimal amountWithTax, TradingCountry tradingCountry, UserAccount userAccount)
+    private BigDecimal[] getAmounts(InvoiceSubCategory invoiceSubCategory, BigDecimal amountWithTax, Seller seller, UserAccount userAccount)
             throws BusinessException {
         BigDecimal[] amounts = new BigDecimal[3];
         BigDecimal amountTax, amountWithoutTax;
         Integer rounding = appProvider.getRounding();
         RoundingModeEnum roundingMode = appProvider.getRoundingMode();
-        Tax tax = null;
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry, new Date());
-        if (invoiceSubcategoryCountry == null) {
-            throw new BusinessException(
-                "No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country=" + tradingCountry.getCountryCode());
-        }
-        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
-            tax = invoiceSubcategoryCountry.getTax();
-        } else {
-            tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), userAccount, userAccount.getBillingAccount(), null);
-        }
-        if (tax == null) {
-            throw new BusinessException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
-        }
+        Tax tax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, userAccount.getBillingAccount(), new Date(), false);
+                
         BigDecimal percentPlusOne = BigDecimal.ONE.add(tax.getPercent().divide(HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
         amountTax = amountWithTax.subtract(amountWithTax.divide(percentPlusOne, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
         if (rounding != null && rounding > 0) {
