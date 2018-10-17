@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-
     <changeSet id="#2428_20180105" author="EdwardPLegaspi">
         <addColumn tableName="adm_notif_webhooks">
             <column name="http_protocol" type="varchar(10)" />
@@ -1846,6 +1845,194 @@
         <sql>update ${db.schema.adapted}billing_wallet set reject_level=0 where reject_level is null</sql>
     </changeSet>
     
+
+    <changeSet id="#3511_20180803 - paymennt schedule" author="anasseh">
+        <createTable tableName="ar_payment_schedule_tmpl">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_schedule_tmpl_pkey" />
+            </column>
+            <column name="version" type="int4" />
+           <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />            
+            <column name="calendar_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="service_template_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="adv_pay_inv_type_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>     
+            <column name="adv_pay_sub_cat_id" type="bigint" >
+                <constraints nullable="false" />
+            </column> 
+           <column name="is_generate_adv_pay_inv" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>    
+           <column name="is_do_payment" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>             
+                   
+            <column name="amount" type="numeric(23, 12)" />
+            <column name="due_date_days" type="int" >
+                <constraints nullable="false" />
+            </column>   
+            <column name="apply_agreement" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="payment_label" type="varchar(2000)" >
+                <constraints nullable="false" />
+            </column> 
+			<column name="uuid" type="varchar(60)"/>
+            <column name="cf_values" type="${type.json}"/>    
+                                             
+        </createTable>
+        <createSequence sequenceName="ar_payment_schedule_tmpl_seq" />
+        <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="ar_payment_schedule_tmpl" constraintName="fk_ps_calendar" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="ar_payment_schedule_tmpl" constraintName="fk_ps_service_template" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />  
+                                 
+        <addForeignKeyConstraint baseColumnNames="adv_pay_inv_type_id" baseTableName="ar_payment_schedule_tmpl" constraintName="fk_ps_invoice_type" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />  
+                                 
+        <addForeignKeyConstraint baseColumnNames="adv_pay_sub_cat_id" baseTableName="ar_payment_schedule_tmpl" constraintName="fk_ps_usage_charge" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />  
+                                                                                                   
+     <createTable tableName="ar_payment_schedule_inst">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_schedule_inst_pkey" />
+            </column>
+            <column name="version" type="int4" />
+           <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />  
+            <column name="start_date" type="datetime" />
+             <column name="end_date" type="datetime" />
+            <column name="status" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="status_date" type="datetime">
+                <constraints nullable="false" />
+            </column> 
+             <column name="amount" type="numeric(23, 12)" />   
+             <column name="calendar_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>        
+            <column name="payment_schedule_tmpl_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="service_instance_id" type="bigint" >
+                <constraints nullable="false" />
+            </column> 
+            <column name="due_date_days" type="int" >
+                <constraints nullable="false" />
+            </column>
+                
+        </createTable>
+        <createSequence sequenceName="ar_payment_schedule_inst_seq" />
+        <addForeignKeyConstraint baseColumnNames="payment_schedule_tmpl_id" baseTableName="ar_payment_schedule_inst" constraintName="fk_payment_schedule_tmpl_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_schedule_tmpl" />
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="ar_payment_schedule_inst" constraintName="fk_service_instance_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+                                                  
+        <createTable tableName="ar_payment_schedule_inst_item">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_pay_schdl_inst_item_pkey" />
+            </column>
+            <column name="version" type="int4" />
+           <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />                   
+            <column name="payment_schedule_inst_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>            
+            <column name="due_date" type="datetime">
+                <constraints nullable="false" />
+            </column>  
+            <column name="request_pay_date" type="datetime">
+                <constraints nullable="false" />
+            </column>  
+            <column name="ao_ps_id" type="bigint" />
+            <column name="invoice_id" type="bigint" /> 
+            <column name="is_last" type="${type.boolean}" />   
+                                    
+        </createTable>  
+        <createSequence sequenceName="ar_payment_schedule_inst_item_seq" />
+        <addForeignKeyConstraint baseColumnNames="payment_schedule_inst_id" baseTableName="ar_payment_schedule_inst_item" constraintName="fk_ps_item_ps_innst" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_schedule_inst" />
+        <addForeignKeyConstraint baseColumnNames="ao_ps_id" baseTableName="ar_payment_schedule_inst_item" constraintName="fk_ao_ps_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />      
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="ar_payment_schedule_inst_item" constraintName="fk_invoice_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />        
+                            
+        <addColumn tableName="ar_account_operation">
+            <column name="pay_schdl_inst_item_id" type="bigint" />
+        </addColumn>  
+         <addForeignKeyConstraint baseColumnNames="pay_schdl_inst_item_id" baseTableName="ar_account_operation" constraintName="fk_pay_schdl_inst_item_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_schedule_inst_item" />
+                  
+         <addColumn tableName="billing_service_instance">
+            <column name="amount_ps" type="numeric(23, 12)" />
+        </addColumn>            
+        <addColumn tableName="billing_service_instance">
+            <column name="calendar_ps_id" type="bigint" />
+        </addColumn>   
+        <addColumn tableName="billing_service_instance">
+            <column name="due_date_days_ps" type="int" />
+        </addColumn>                            
+         <addForeignKeyConstraint baseColumnNames="calendar_ps_id" baseTableName="billing_service_instance" constraintName="fk_calendar_srv_inst" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />         
+     </changeSet>
+     
+     <changeSet id="#3511_20180803_mysql - paymennt schedule" author="anasseh" dbms="mysql">
+       <createTable tableName="ar_payment_schedule_tmpl_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_pay_schdl_tmpl_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}ar_payment_schedule_tmpl_seq values(1)</sql>   
+       <createTable tableName="ar_payment_schedule_inst_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_schedule_inst_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}ar_payment_schedule_inst_seq values(1)</sql>
+       <createTable tableName="ar_payment_schedule_inst_item_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_schedule_inst_item_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}ar_payment_schedule_inst_item_seq values(1)</sql>                                              
+    </changeSet>
+
     <changeSet id="#3631_20181008" author="EdwardLegaspi">
     	<createTable tableName="crm_customer_sequence">
     		<column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -1875,6 +2062,50 @@
         <addForeignKeyConstraint constraintName="fk_crm_customer_sequence_seller" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="crm_customer_sequence" referencedColumnNames="id"/>
     </changeSet>
     
+    <changeSet id="#3671_20181003" author="anasseh">
+        <addColumn tableName="ar_payment_gateway">
+            <column name="marchand_id" type="varchar(256)" />
+        </addColumn>     
+        <addColumn tableName="ar_payment_gateway">
+            <column name="secret_key" type="varchar(256)" />
+        </addColumn>   
+        <addColumn tableName="ar_payment_gateway">
+            <column name="api_key" type="varchar(256)" />
+        </addColumn>   
+        <addColumn tableName="ar_payment_gateway">
+            <column name="profile" type="varchar(256)" />
+        </addColumn>            
+     </changeSet>
+     
+     <changeSet id="#3631_20181008" author="EdwardLegaspi">
+    	<createTable tableName="crm_customer_sequence">
+    		<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_crm_customer_sequence" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+    		<column name="prefix" type="varchar(255)" />
+            <column name="sequence_size" type="bigint" />
+			<column name="current_sequence_nb" type="bigint" />
+			<column name="seller_id" type="bigint" />
+    	</createTable>
+    	
+        <createSequence sequenceName="crm_customer_sequence_seq" />
+        <addForeignKeyConstraint constraintName="fk_crm_customer_sequence_seller" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="crm_customer_sequence" referencedColumnNames="id"/>
+    </changeSet>                       
+
     <changeSet id="#3464_20180522" author="AndriusKarpavicius">
         <addColumn tableName="crm_provider">
             <column name="cf_values_accum" type="${type.json}"></column>

@@ -143,6 +143,7 @@ public class InvoiceApi extends BaseApi {
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO) throws MeveoApiException, BusinessException, Exception {
         log.debug("InvoiceDto:" + JsonUtils.toJson(invoiceDTO, true));
         validateInvoiceDto(invoiceDTO);
+
         Auditable auditable = new Auditable(currentUser);
         Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
 
@@ -383,17 +384,6 @@ public class InvoiceApi extends BaseApi {
             netToPay = invoice.getAmountWithTax().add(round(balance, invoiceRounding, invoiceRoundingMode));
         }
         invoice.setNetToPay(netToPay);
-
-        try {
-            populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, true);
-
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
 
         if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
             invoiceService.assignInvoiceNumber(invoice);

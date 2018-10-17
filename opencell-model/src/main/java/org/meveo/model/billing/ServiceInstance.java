@@ -61,6 +61,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.order.OrderHistory;
 import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.shared.DateUtils;
 
 /**
@@ -184,6 +185,19 @@ public class ServiceInstance extends BusinessCFEntity {
     @Embedded
     private SubscriptionRenewal serviceRenewal = new SubscriptionRenewal();
 
+    @Column(name = "amount_ps")
+   private BigDecimal amountPS; 
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendar_ps_id")
+   private Calendar calendarPS; 
+   
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
+    private List<PaymentScheduleInstance> psInstances;
+    
+    @Column(name = "due_date_days_ps")
+    private Integer dueDateDaysPS;
+    
     /**
      * A date till which subscription is subscribed. After this date it will either be extended or terminated
      */
@@ -590,6 +604,7 @@ public class ServiceInstance extends BusinessCFEntity {
     }
 
     /**
+
      * @return the autoEndOfEngagement
      */
     public Boolean getAutoEndOfEngagement() {
@@ -602,4 +617,60 @@ public class ServiceInstance extends BusinessCFEntity {
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
+     /**
+     * @return the amountPS
+     */
+    public BigDecimal getAmountPS() {
+        return amountPS;
+    }
+
+    /**
+     * @param amountPS the amountPS to set
+     */
+    public void setAmountPS(BigDecimal amountPS) {
+        this.amountPS = amountPS;
+    }
+
+    /**
+     * @return the calendarPS
+     */
+    public Calendar getCalendarPS() {
+        return calendarPS;
+    }
+
+    /**
+     * @param calendarPS the calendarPS to set
+     */
+    public void setCalendarPS(Calendar calendarPS) {
+        this.calendarPS = calendarPS;
+    }
+
+    /**
+     * @return the psInstances
+     */
+    public List<PaymentScheduleInstance> getPsInstances() {
+        return psInstances;
+    }
+
+    /**
+     * @param psInstances the psInstances to set
+     */
+    public void setPsInstances(List<PaymentScheduleInstance> psInstances) {
+        this.psInstances = psInstances;
+    }
+
+    /**
+     * @return the dueDateDaysPS
+     */
+    public Integer getDueDateDaysPS() {
+        return dueDateDaysPS;
+    }
+
+    /**
+     * @param dueDateDaysPS the dueDateDaysPS to set
+     */
+    public void setDueDateDaysPS(Integer dueDateDaysPS) {
+        this.dueDateDaysPS = dueDateDaysPS;
+    }
+
 }

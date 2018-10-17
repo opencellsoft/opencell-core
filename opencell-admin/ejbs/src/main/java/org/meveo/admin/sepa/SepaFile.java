@@ -53,6 +53,7 @@ import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestItem;
@@ -245,11 +246,14 @@ public class SepaFile implements DDRequestBuilderInterface {
     private void addTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation4 paymentInformation) throws Exception {
         CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
         PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
-        BankCoordinates bankCoordiates = null;
         if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
             throw new BusinessException("Payment method not valid!");
         }
-        bankCoordiates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
+        BankCoordinates bankCoordinates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
+
+        if (bankCoordinates == null) {
+            throw new BusinessException("Bank Coordinate is absent for Payment method "+((DDPaymentMethod) preferedPaymentMethod).getAlias());
+        }
 
         DirectDebitTransactionInformation9 directDebitTransactionInformation = new DirectDebitTransactionInformation9();
         paymentInformation.getDrctDbtTxInf().add(directDebitTransactionInformation);
@@ -271,7 +275,7 @@ public class SepaFile implements DDRequestBuilderInterface {
         BranchAndFinancialInstitutionIdentification4 debtorAgent = new BranchAndFinancialInstitutionIdentification4();
         directDebitTransactionInformation.setDbtrAgt(debtorAgent);
         FinancialInstitutionIdentification7 financialInstitutionIdentification = new FinancialInstitutionIdentification7();
-        financialInstitutionIdentification.setBIC(bankCoordiates.getBic());
+        financialInstitutionIdentification.setBIC(bankCoordinates.getBic());
         debtorAgent.setFinInstnId(financialInstitutionIdentification);
 
         PartyIdentification32 debtor = new PartyIdentification32();
@@ -281,7 +285,7 @@ public class SepaFile implements DDRequestBuilderInterface {
         CashAccount16 debtorAccount = new CashAccount16();
         directDebitTransactionInformation.setDbtrAcct(debtorAccount);
         AccountIdentification4Choice identification = new AccountIdentification4Choice();
-        identification.setIBAN(bankCoordiates.getIban());
+        identification.setIBAN(bankCoordinates.getIban());
         debtorAccount.setId(identification);
 
     }
@@ -321,9 +325,9 @@ public class SepaFile implements DDRequestBuilderInterface {
             operationsByFile = (long) ddrequestItems.size();
         }
         int filesToGenerate = ddrequestItems.size() == 0 ? 0 : (int) Math.ceil(ddrequestItems.size() / (double) operationsByFile);
-        int opToGenerate = 0;
+        int opToGenerateByFile;
         int generatedOps = 0;
-        int opWithErrors = 0;
+        int opWithErrorsByFile;
         BigDecimal totalAmount;
         List<String> generatedFilesNames = new ArrayList<>();
         String fileName;
@@ -335,8 +339,9 @@ public class SepaFile implements DDRequestBuilderInterface {
                 document.setCstmrCdtTrfInitn(message);
                 addSctHeader(message, ddRequestLot, appProvider, fileNumber);
                 totalAmount = BigDecimal.ZERO;
-                opToGenerate = 0;
-                while (generatedOps < ddrequestItems.size() && opToGenerate < operationsByFile) {
+                opToGenerateByFile = 0;
+                opWithErrorsByFile = 0;
+                while (generatedOps < ddrequestItems.size() && opToGenerateByFile < operationsByFile) {
                     ddrequestItem = ddrequestItems.get(generatedOps);
                     totalAmount = totalAmount.add(ddrequestItem.getAmount());
                     if (!ddrequestItem.hasError()) {
@@ -344,14 +349,14 @@ public class SepaFile implements DDRequestBuilderInterface {
                     } else {
                         log.error("ddrequestItem with id = " + ddrequestItem.getId() + " has Errors :" + ddrequestItem.getErrorMsg() + ". The file " + fileName
                                 + "will not contain all payment informations.");
-                        opWithErrors++;
+                        opWithErrorsByFile++;
                     }
-                    opToGenerate++;
+                    opToGenerateByFile++;
                     generatedOps++;
                 }
-                if (opToGenerate > opWithErrors) { // The file is generated only if it contains at least one operation without errors
+                if (opToGenerateByFile > opWithErrorsByFile) { // The file is generated only if it contains at least one operation without errors
                     message.getGrpHdr().setCtrlSum(totalAmount.setScale(2, RoundingMode.HALF_UP));
-                    message.getGrpHdr().setNbOfTxs(String.valueOf(opToGenerate));
+                    message.getGrpHdr().setNbOfTxs(String.valueOf(opToGenerateByFile));
                     // the Pain001 jaxb classes are generated from the xsd located at: https://www.iso20022.org/documents/messages/1_0_version/pain/schemas/pain.001.001.03.zip
                     String schemaLocation = paramBean.getProperty("sepa.schemaLocation.pain001", "https://github.com/digitick/php-sepa-xml/blob/master/tests/pain.001.001.03.xsd");
 
@@ -418,15 +423,17 @@ public class SepaFile implements DDRequestBuilderInterface {
             org.meveo.admin.sepa.jaxb.pain001.GenericFinancialIdentification1 othr = new org.meveo.admin.sepa.jaxb.pain001.GenericFinancialIdentification1();
             othr.setId("NOTPROVIDED");
             financialInstitutionIdentification.setOthr(othr);
-        } else if (isMatched(providerBC.getBic(), "[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")) {
-            financialInstitutionIdentification.setBIC(providerBC.getBic());
-        } else {
+        } else if (!isMatched(providerBC.getBic(), "[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")) {
             throw new BusinessException("BIC not valid!");
         }
 
+        financialInstitutionIdentification.setBIC(providerBC.getBic());
         paymentInformation.setChrgBr(org.meveo.admin.sepa.jaxb.pain001.ChargeBearerType1Code.SLEV);
 
-        addSctTransaction(ddrequestItem, paymentInformation);
+        for(AccountOperation ao : ddrequestItem.getAccountOperations()) {
+            addSctTransaction(ao, paymentInformation);
+    }
+        //addSctTransaction(ddrequestItem, paymentInformation);
     }
 
     private void addSctHeader(CustomerCreditTransferInitiationV03 message, DDRequestLOT ddRequestLot, Provider appProvider, int fileNumber) throws Exception {
@@ -440,44 +447,49 @@ public class SepaFile implements DDRequestBuilderInterface {
         initgPty.setId(idProperty);
         OrganisationIdentification4 orgId = new OrganisationIdentification4();
         idProperty.setOrgId(orgId);
-        if (appProvider.getBankCoordinates() != null) {
-            orgId.setBICOrBEI(appProvider.getBankCoordinates().getBic());
-        }
+        orgId.setBICOrBEI("GSZGFRPP");
         groupHeader.setInitgPty(initgPty);
 
     }
 
-    private void addSctTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation3 paymentInformation) throws Exception {
-        CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
+    private void addSctTransaction(AccountOperation ao, PaymentInstructionInformation3 paymentInformation) throws Exception {
+        CustomerAccount ca = ao.getCustomerAccount();
         PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
-        BankCoordinates bankCoordiates = null;
         if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
             throw new BusinessException("Payment method not valid!");
         }
-        bankCoordiates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
+        BankCoordinates bankCoordinates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();        
+        if (bankCoordinates == null) {
+            throw new BusinessException("Bank Coordinate is absent for Payment method "+((DDPaymentMethod) preferedPaymentMethod).getAlias());
+        }
 
         CreditTransferTransactionInformation10 cdtTrfTxInf = new CreditTransferTransactionInformation10();
         paymentInformation.getCdtTrfTxInf().add(cdtTrfTxInf);
         org.meveo.admin.sepa.jaxb.pain001.PaymentIdentification1 paymentIdentification = new org.meveo.admin.sepa.jaxb.pain001.PaymentIdentification1();
         cdtTrfTxInf.setPmtId(paymentIdentification);
-        paymentIdentification.setInstrId(String.valueOf(dDRequestItem.getId()));
-        paymentIdentification.setEndToEndId(String.valueOf(dDRequestItem.getId()));
+        paymentIdentification.setInstrId(String.valueOf(ao.getDdRequestItem().getDdRequestLOT().getId()));
+        if (StringUtils.isBlank(ao.getOrderNumber())) {
+            throw new BusinessException("order number is Empty for account operation :" + ao.getId());
+        }
+        paymentIdentification.setEndToEndId(ao.getOrderNumber());
 
         AmountType3Choice amt = new AmountType3Choice();
         cdtTrfTxInf.setAmt(amt);
         org.meveo.admin.sepa.jaxb.pain001.ActiveOrHistoricCurrencyAndAmount instdAmt = new org.meveo.admin.sepa.jaxb.pain001.ActiveOrHistoricCurrencyAndAmount();
-        if (dDRequestItem.getAmount() == null || dDRequestItem.getAmount().compareTo(BigDecimal.ZERO) < 0) {
-            throw new BusinessException("Amount is not valid :" + dDRequestItem.getAmount());
+        if (ao.getAmount() == null || ao.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessException("Amount is invalid :" + ao.getAmount());
         }
-        instdAmt.setValue(dDRequestItem.getAmount().setScale(2, RoundingMode.HALF_UP));
+        instdAmt.setValue(ao.getAmount().setScale(2, RoundingMode.HALF_UP));
         instdAmt.setCcy("EUR");
         amt.setInstdAmt(instdAmt);
 
         org.meveo.admin.sepa.jaxb.pain001.BranchAndFinancialInstitutionIdentification4 cdtrAgent = new org.meveo.admin.sepa.jaxb.pain001.BranchAndFinancialInstitutionIdentification4();
         cdtTrfTxInf.setCdtrAgt(cdtrAgent);
         org.meveo.admin.sepa.jaxb.pain001.FinancialInstitutionIdentification7 finInstnId = new org.meveo.admin.sepa.jaxb.pain001.FinancialInstitutionIdentification7();
-
-        finInstnId.setBIC(bankCoordiates.getBic());
+        if (!isMatched(bankCoordinates.getBic(), "[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")) {
+            throw new BusinessException("BIC not valid : "+bankCoordinates.getBic());
+        }
+        finInstnId.setBIC(bankCoordinates.getBic());
         cdtrAgent.setFinInstnId(finInstnId);
         org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32 cdtr = new org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32();
         cdtTrfTxInf.setCdtr(cdtr);
@@ -486,28 +498,28 @@ public class SepaFile implements DDRequestBuilderInterface {
         org.meveo.admin.sepa.jaxb.pain001.CashAccount16 cdtrAccount = new org.meveo.admin.sepa.jaxb.pain001.CashAccount16();
         cdtTrfTxInf.setCdtrAcct(cdtrAccount);
         org.meveo.admin.sepa.jaxb.pain001.AccountIdentification4Choice identification = new org.meveo.admin.sepa.jaxb.pain001.AccountIdentification4Choice();
-        if (!isMatched(bankCoordiates.getIban(), "[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}")) {
+        if (!isMatched(bankCoordinates.getIban(), "[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}")) {
             throw new BusinessException("IBAN of the creditor account is not valid!");
         }
-        identification.setIBAN(bankCoordiates.getIban());
+        identification.setIBAN(bankCoordinates.getIban());
         cdtrAccount.setId(identification);
 
         RemittanceInformation5 rmtInf = new RemittanceInformation5();
         cdtTrfTxInf.setRmtInf(rmtInf);
-        rmtInf.getUstrd().add("Remboursement " + dDRequestItem.getReference());
+        rmtInf.getUstrd().add("Remboursement " + ao.getReference());
     }
 
     /**
      * @param field the field to validate : character sequence to be matched
-     * @param pattern The expression to be compiled for regEx pattern
+     * @param sPattern The expression to be compiled for regEx pattern
      * @return true if, and only if, the field matches the matcher s pattern
      */
-    private boolean isMatched(String field, String pattern) {
-        if (field == null || pattern == null) {
+    private boolean isMatched(String field, String sPattern) {
+        if (field == null || sPattern == null) {
             return false;
         }
-        Pattern ibanPattern = Pattern.compile(pattern);
-        Matcher matcher = ibanPattern.matcher(field);
+        Pattern pattern = Pattern.compile(sPattern);
+        Matcher matcher = pattern.matcher(field);
         return matcher.matches();
     }
 }

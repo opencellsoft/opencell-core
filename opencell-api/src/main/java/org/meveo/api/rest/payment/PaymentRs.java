@@ -14,7 +14,26 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.PaymentActionStatus;
-import org.meveo.api.dto.payment.*;
+
+import org.meveo.api.dto.payment.CardPaymentMethodDto;
+import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
+import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
+import org.meveo.api.dto.payment.DDRequestBuilderDto;
+import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
+import org.meveo.api.dto.payment.PaymentDto;
+import org.meveo.api.dto.payment.PaymentGatewayDto;
+import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
+import org.meveo.api.dto.payment.PaymentHistoriesDto;
+import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.payment.PaymentMethodTokenDto;
+import org.meveo.api.dto.payment.PaymentMethodTokensDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplatesDto;
+
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -28,6 +47,7 @@ import org.meveo.api.rest.IBaseRs;
  * @lastModifiedVersion 5.1
  */
 
+@SuppressWarnings("deprecation")
 @Path("/payment")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -335,6 +355,7 @@ public interface PaymentRs extends IBaseRs {
     @Path("/history/list")
     PaymentHistoriesDto listPaymentHistoryPost(PagingAndFiltering pagingAndFiltering);
     
+
     /************************************************************************************************/
     /****                             DDRequest Builder                                          ****/
     /************************************************************************************************/
@@ -452,15 +473,151 @@ public interface PaymentRs extends IBaseRs {
     @Path("/paymentGateway/getHostedCheckoutUrl")
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(@QueryParam("ca") String customerAccountCode,
                                                                  @QueryParam("returnUrl") String returnUrl,
-                                                                 @DefaultValue("en_GB") @QueryParam("locale") String locale,
+                                                                 @DefaultValue("fr_FR") @QueryParam("locale") String locale,
                                                                  @DefaultValue("100") @QueryParam("amount") String amount,
                                                                  @DefaultValue("EUR") @QueryParam("currencyCode") String currencyCode,
                                                                  @DefaultValue("FINAL_AUTHORIZATION") @QueryParam("authorizationMode") String authorizationMode,
-                                                                 @DefaultValue("US") @QueryParam("countryCode") String countryCode,
+                                                                 @DefaultValue("fr") @QueryParam("countryCode") String countryCode,
                                                                  @DefaultValue("false") @QueryParam("skipAuthentication") Boolean skipAuthentication,
                                                                  @DefaultValue("INGENICO_GC") @QueryParam("gatewayPaymentName") String gatewayPaymentName,
                                                                  @DefaultValue("101") @QueryParam("variant") String variant
     );
 
+    
+    /************************************************************************************************/
+    /****                           Payment Schedules                                            ****/
+    /************************************************************************************************/
+    
+    /**
+     * Create or update payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateDto payment Schedule Template Dto 
+     * @return Request processing status
+     */
+    @POST
+    @Path("/paymentScheduleTemplate/createOrUpdate")
+    public ActionStatus createOrUpdatePaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto);
+    /**
+     * Create  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateDto payment Schedule Template Dto 
+     * @return Request processing status
+     */
+    @POST
+    @Path("/paymentScheduleTemplate")
+    public ActionStatus createPaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto);
+    
+    /**
+     * Create  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateDto payment Schedule Template Dto 
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/paymentScheduleTemplate")
+    public ActionStatus updatePaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto);
 
+
+    /**
+     * remove  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateCode payment Schedule Template Code  to remove
+     * @return Request processing status
+     */
+    @DELETE
+    @Path("/paymentScheduleTemplate")
+    public ActionStatus removePaymentScheduleTemplate(@QueryParam("paymentScheduleTemplateCode") String paymentScheduleTemplateCode);
+    
+    /**
+     * find  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateCode payment Schedule Template Code  to find
+     * @return Request processing status
+     */
+    @GET
+    @Path("/paymentScheduleTemplate")
+    public PaymentScheduleTemplateResponseDto findPaymentScheduleTemplate(@QueryParam("paymentScheduleTemplateCode")  String paymentScheduleTemplateCode);
+      
+    /**
+     * List  PaymentScheduleTemplate matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria.
+     * @return An paymentScheduleTemplate dto list
+     */
+    @POST
+    @Path("/paymentScheduleTemplate/list")
+    public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * List  PaymentScheduleTemplate matching a given criteria
+     * 
+     * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
+     * @param fields Data retrieval options/fieldnames separated by a comma. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return An paymentScheduleTemplate dto list
+     */
+    @GET
+    @Path("/paymentScheduleTemplate/list")
+    public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+            @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    
+    /**
+     * Update  payment Schedules instance.
+     * 
+     * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/paymentScheduleInstance")
+    public ActionStatus updatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
+    
+    /**
+     * List  PaymentScheduleInstance matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria.
+     * @return An PaymentScheduleInstance dto list
+     */
+    @POST
+    @Path("/paymentScheduleInstance/list")
+    public PaymentScheduleInstancesDto listPaymentScheduleInstance(PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * List  paymentScheduleInstance matching a given criteria
+     * 
+     * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
+     * @param fields Data retrieval options/fieldnames separated by a comma. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return An paymentScheduleInstance dto list
+     */
+    @GET
+    @Path("/paymentScheduleInstance/list")
+    public PaymentScheduleInstancesDto listPaymentScheduleInstance(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+            @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * Terminate  payment Schedules instance.
+     * 
+     * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/paymentScheduleInstance/terminate")
+    public ActionStatus terminatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
+    
+    /**
+     * Cancel  payment Schedules instance.
+     * 
+     * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/paymentScheduleInstance/cancel")
+    public ActionStatus cancelPaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
 }

@@ -97,7 +97,7 @@ public class CustomerBean extends AccountBean<Customer> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-
+        if(entity.getSeller() != null) {
         Map<String,Object> params = new HashMap<>();
         params.put("id", 4L);
         
@@ -106,7 +106,7 @@ public class CustomerBean extends AccountBean<Customer> {
         
         
         entity.setSeller(sellerService.retrieveIfNotManaged(entity.getSeller()));
-
+        }
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {

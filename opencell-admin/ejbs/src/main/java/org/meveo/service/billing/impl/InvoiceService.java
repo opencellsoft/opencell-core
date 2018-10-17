@@ -108,6 +108,8 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.InvoiceCategoryService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
@@ -208,10 +210,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private UserAccountService userAccountService;
 
     @Inject
-    private BillingRunService billingRunService;
+    private InvoiceCategoryService invoiceCategoryService;
 
     @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
+    private InvoiceSubCategoryService invoiceSubCategoryService;
+    
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private PaymentMethodService paymentMethodService;
@@ -358,7 +363,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         InvoiceType invoiceType = invoiceTypeService.findById(invoice.getInvoiceType().getId());
 
         Seller seller = invoice.getSeller();
-        if (seller == null) {
+        if(seller == null && cust.getSeller() != null) {
             seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
         }
 

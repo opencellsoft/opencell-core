@@ -56,6 +56,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.shared.DateUtils;
 
 /**
  * Account Transaction.
@@ -262,6 +263,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+       
     }
 
     public BigDecimal getMatchingAmount() {

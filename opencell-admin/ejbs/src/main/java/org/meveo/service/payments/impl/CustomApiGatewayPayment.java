@@ -14,6 +14,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.MandatStateEnum;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.script.payment.PaymentScript;
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 /**
  * 
  *  @author anasseh
+ *  @author Mounir Bahije
  *  @lastModifiedVersion 5.2
  */
 
@@ -31,15 +33,22 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 
     protected Logger log = LoggerFactory.getLogger(CustomApiGatewayPayment.class);
     private PaymentScriptInterface paymentScriptInterface;
+    private PaymentGateway paymentGateway;
 
     public CustomApiGatewayPayment(PaymentScriptInterface paymentScriptInterface) {
-        this.paymentScriptInterface = paymentScriptInterface;
+        this.paymentScriptInterface = paymentScriptInterface;      
+    }
+
+    @Override
+    public Object getClientObject() {
+        return null;
     }
 
     @Override
     public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
             CreditCardTypeEnum cardType) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<>();
+        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
         scriptContext.put(PaymentScript.CONTEXT_CA, customerAccount);
         scriptContext.put(PaymentScript.CONTEXT_ALIAS, alias);
         scriptContext.put(PaymentScript.CONTEXT_CARD_NUMBER, cardNumber);
@@ -56,6 +65,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
     @Override
     public PaymentResponseDto doPaymentToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
         scriptContext.put(PaymentScript.CONTEXT_TOKEN, paymentToken);
         scriptContext.put(PaymentScript.CONTEXT_AMOUNT_CTS, ctsAmount);
         scriptContext.put(PaymentScript.CONTEXT_ADDITIONAL_INFOS, additionalParams);
@@ -76,17 +86,45 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
     @Override
     public PaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
-        return null;
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
+        scriptContext.put(PaymentScript.CONTEXT_CA, customerAccount);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_NUMBER, cardNumber);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_OWNER, ownerName);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_EXPIRATION, expirayDate);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_TYPE, cardType);
+        scriptContext.put(PaymentScript.CONTEXT_COUNTRY_CODE, countryCode);
+        scriptContext.put(PaymentScript.CONTEXT_ADDITIONAL_INFOS, additionalParams);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_CVV, cvv);
+
+        paymentScriptInterface.doPaymentCard(scriptContext);
+
+        PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+        doPaymentResponseDto.setPaymentID((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_ID));
+        doPaymentResponseDto.setTransactionId((String) scriptContext.get(PaymentScript.RESULT_TRANSACTION_ID));
+        doPaymentResponseDto.setPaymentStatus((PaymentStatusEnum) scriptContext.get(PaymentScript.RESULT_PAYMENT_STATUS));
+        doPaymentResponseDto.setErrorMessage((String) scriptContext.get(PaymentScript.RESULT_ERROR_MSG));
+        doPaymentResponseDto.setCodeClientSide((String) scriptContext.get(PaymentScript.RESULT_CODE_CLIENT_SIDE));
+        doPaymentResponseDto.setBankRefenrence((String) scriptContext.get(PaymentScript.RESULT_BANK_REFERENCE));
+        doPaymentResponseDto.setPaymentBrand((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_BRAND));
+        doPaymentResponseDto.setTokenId((String) scriptContext.get(PaymentScript.RESULT_TOKEN_ID));
+        return doPaymentResponseDto;
     }
 
     @Override
     public void cancelPayment(String paymentID) throws BusinessException {
 
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
+        scriptContext.put(PaymentScript.PAYMENT_ID, paymentID);       
+
+        paymentScriptInterface.cancelPayment(scriptContext);
     }
 
     @Override
     public PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
         scriptContext.put(PaymentScript.CONTEXT_TOKEN, paymentToken);
         scriptContext.put(PaymentScript.CONTEXT_AMOUNT_CTS, ctsAmount);
         scriptContext.put(PaymentScript.CONTEXT_ADDITIONAL_INFOS, additionalParams);
@@ -113,6 +151,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
     public PaymentResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
         scriptContext.put(PaymentScript.CONTEXT_CA, customerAccount);
         scriptContext.put(PaymentScript.CONTEXT_CARD_NUMBER, cardNumber);
         scriptContext.put(PaymentScript.CONTEXT_CARD_OWNER, ownerName);
@@ -139,6 +178,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
     @Override
     public PaymentResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
         scriptContext.put(PaymentScript.CONTEXT_TOKEN, paymentToken);
         scriptContext.put(PaymentScript.CONTEXT_AMOUNT_CTS, ctsAmount);
         scriptContext.put(PaymentScript.CONTEXT_ADDITIONAL_INFOS, additionalParams);
@@ -159,6 +199,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
     @Override
     public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
         scriptContext.put(PaymentScript.CONTEXT_MANDAT_REF, mandatReference);
         scriptContext.put(PaymentScript.CONTEXT_MANDAT_ID, mandateId);
 
@@ -182,6 +223,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
     @Override
     public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
         scriptContext.put(PaymentScript.CONTEXT_TOKEN, paymentToken);
         scriptContext.put(PaymentScript.CONTEXT_AMOUNT_CTS, ctsAmount);
         scriptContext.put(PaymentScript.CONTEXT_ADDITIONAL_INFOS, additionalParams);
@@ -203,6 +245,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
     @Override
     public PaymentResponseDto checkPayment(String paymentID, PaymentMethodEnum paymentMethodType) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
         scriptContext.put(PaymentScript.CONTEXT_PAYMENT_ID, paymentID); 
         scriptContext.put(PaymentScript.CONTEXT_PAYMENT_METHOD_TYPE, paymentMethodType);
 
@@ -222,6 +265,11 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
     @Override
     public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
         return null;
+    }
+
+    @Override
+    public void setPaymentGateway(PaymentGateway paymentGateway) {
+        this.paymentGateway = paymentGateway;
     }
 
 }

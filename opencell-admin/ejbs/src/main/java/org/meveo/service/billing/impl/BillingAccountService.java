@@ -59,7 +59,8 @@ import org.meveo.service.order.OrderService;
  * 
  * @author Said Ramli
  * @author Abdelmounaim Akadid
- * @lastModifiedVersion 5.1
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2.1
  */
 @Stateless
 public class BillingAccountService extends AccountService<BillingAccount> {
