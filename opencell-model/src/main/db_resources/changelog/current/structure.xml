@@ -2076,9 +2076,9 @@
             <column name="profile" type="varchar(256)" />
         </addColumn>            
      </changeSet>
-     
+
      <changeSet id="#3631_20181008" author="EdwardLegaspi">
-    	<createTable tableName="crm_customer_sequence">
+        <createTable tableName="crm_customer_sequence">
     		<column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_crm_customer_sequence" />
             </column>
@@ -2104,6 +2104,10 @@
     	
         <createSequence sequenceName="crm_customer_sequence_seq" />
         <addForeignKeyConstraint constraintName="fk_crm_customer_sequence_seller" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="crm_customer_sequence" referencedColumnNames="id"/>
-    </changeSet>                       
+    </changeSet>
+
+<changeSet id="#3692_20181015" author="HatimOudad">
+     <modifyDataType columnName="iban" newDataType="varchar(80)" tableName="ar_payment_token "/>
+    </changeSet>
 
 </databaseChangeLog>
