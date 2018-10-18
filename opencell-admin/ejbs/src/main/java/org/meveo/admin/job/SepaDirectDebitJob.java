@@ -27,6 +27,8 @@ public class SepaDirectDebitJob extends Job {
     /** The sepa direct debit job bean. */
     @Inject
     private SepaDirectDebitJobBean sepaDirectDebitJobBean;
+    
+    private static final String APPLIES_TO_NAME = "JOB_SepaDirectDebitJob";
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -44,13 +46,27 @@ public class SepaDirectDebitJob extends Job {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();        
         CustomFieldTemplate payentGatewayCF = new CustomFieldTemplate();
         payentGatewayCF.setCode("SepaJob_ddRequestBuilder");
-        payentGatewayCF.setAppliesTo("JOB_SepaDirectDebitJob");
+        payentGatewayCF.setAppliesTo(APPLIES_TO_NAME);
         payentGatewayCF.setActive(true);
         payentGatewayCF.setDescription("DDRequest builder");
         payentGatewayCF.setFieldType(CustomFieldTypeEnum.ENTITY);
         payentGatewayCF.setEntityClazz(DDRequestBuilder.class.getName());
         payentGatewayCF.setValueRequired(true);
         result.put("SepaJob_ddRequestBuilder", payentGatewayCF);
+        
+        // CF to set a custom script filtering AOs to pay
+        CustomFieldTemplate aoFilterScript = new CustomFieldTemplate();
+        final String cfAoFilterScriptCode = "SepaJob_aoFilterScript";
+        aoFilterScript.setCode(cfAoFilterScriptCode);
+        aoFilterScript.setAppliesTo(APPLIES_TO_NAME);
+        aoFilterScript.setActive(true);
+        aoFilterScript.setDescription(resourceMessages.getString("paymentJob.aoFilterScript"));
+        aoFilterScript.setFieldType(CustomFieldTypeEnum.ENTITY);
+        aoFilterScript.setEntityClazz("org.meveo.model.scripts.ScriptInstance");
+        aoFilterScript.setValueRequired(false);
+        aoFilterScript.setDefaultValue("");
+        result.put(cfAoFilterScriptCode, aoFilterScript);
+
        
         return result;
     }
