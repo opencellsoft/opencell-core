@@ -19,7 +19,6 @@ import org.apache.commons.codec.binary.Base64;
 public class AesEncrypt {
 
 	private Cipher cipher;
-	private static String aesKey;
 
 	/**
 	 * 
@@ -48,7 +47,7 @@ public class AesEncrypt {
 	 * @throws Exception
 	 */
 	public String getFileKey() throws Exception {
-		if(aesKey == null) {
+		String aesKey;
 		String _propertyFile = System.getProperty("jboss.server.config.dir") + File.separator
 				+ "opencell-admin.properties";
 		if (_propertyFile.startsWith("file:")) {
@@ -57,7 +56,7 @@ public class AesEncrypt {
 		Properties pr = new Properties();
 		pr.load(new FileInputStream(_propertyFile));
 		aesKey = getProperty("opencell.aes.key", pr);
-		}
+		
 
 		return aesKey;
 	}
