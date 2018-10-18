@@ -116,8 +116,59 @@
                 <p:resetInput target="addNewFields" />
                 <p:resetInput target="#{periodDetailsGuiId}" />
             </p:commandButton>
+            
+            <c:if test="${not empty cft.id and edit and !disabled}">
+            	<p:commandButton value="#{messages['customFieldTemplate.import']}" partialSubmit="true" process="@this addNewFields" icon="fa fa-arrow-up"
+	                update="#{idPrefix}periodTable_omitFromSubmit #{periodDetailsGuiId}" 
+	                oncomplete="if (args &amp;&amp; !args.validationFailed) PF('importDialog_#{idPrefix}_#{cft.id}').show()"
+	                action="#{customFieldDataEntryBean.addNewValuePeriod(cfValueHolder, cft)}"
+	                actionListener="#{cfValueHolder.setSelectedValuePeriodId(':'.concat(clientGuiId.concat(':'.concat(idPrefix.concat('periodTable_omitFromSubmit')))))}"
+	                rendered="#{edit and !disabled and cft.storageType != CustomFieldStorageTypeEnum.SINGLE}">
+	                <p:resetInput target="addNewFields" />
+	                <p:resetInput target="#{periodDetailsGuiId}" />
+            	</p:commandButton>
+           	</c:if>
 
         </f:facet>
     </p:dataTable>
+    
+    <c:if test="${not empty cft.id and edit and !disabled}">
+		<p:dialog modal="true" widgetVar="importDialog_#{idPrefix}_#{cft.id}"
+			header="#{messages['customFieldTemplate.importFile.values']}"
+			draggable="false" closable="true" resizable="false" width="600px">
+			<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+				<h:panelGroup layout="block"
+					styleClass="formFieldGroup #{'clearLeft'}" style="width:120%;">
+					<p:outputLabel for="import_file_#{idPrefix}_#{cft.id}"
+						style="width:20%;"
+						value="#{messages['customFieldTemplate.importFile']}" />
+					<h:panelGroup layout="block" styleClass="#{'formFieldItem'}"
+						style="width:80%;">
+						<p:fileUpload id="import_file_#{idPrefix}_#{cft.id}"
+							widgetVar="fileUploadWidget_#{idPrefix}_#{cft.id}"
+							fileUploadListener="#{customFieldDataEntryBean.handleFileUpload}"
+							allowTypes="/(\.|\/)(csv)$/" auto="false"
+							update="@this #{idPrefix}periodTable_omitFromSubmit"
+							label="#{messages['customFieldTemplate.importFile.selectFile']}"
+							uploadLabel="#{messages['export.importFile.upload']}"
+							fileLimit="1"
+							fileLimitMessage="#{messages['customFieldTemplate.importFile.fileLimitMessage']}"
+							multiple="false"
+							oncomplete="PF('fileUploadWidget_#{idPrefix}_#{cft.id}').reset(); PF('importDialog_#{idPrefix}_#{cft.id}').hide()">
+							<f:attribute name="cfv" value="#{cfValueHolder.selectedValuePeriod}" />
+							<f:attribute name="cft" value="#{cft}" />
+						</p:fileUpload>
+					</h:panelGroup>
+				</h:panelGroup>
+			</p:panelGrid>
+		</p:dialog>
+	</c:if>
+	
+	<script>
+	 	PrimeFaces.widget.FileUpload.prototype.reset = function() {   
+	        this.clearMessages();
+	        return this.init(this.cfg);
+	    }
+	</script>
 </ui:composition>
 </html>
