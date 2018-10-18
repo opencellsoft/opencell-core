@@ -144,22 +144,30 @@ public class ContactApi extends AccountEntityApi {
 			missingParameters.add("lastName");
 		}
 
-		String code = postData.getCode();
-		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(code)) {
+		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("email");
 			missingParameters.add("code");
 		}
 
 		handleMissingParameters();
-
-		Contact contact = contactService.findByCode(postData.getCode());
+		
+		String code = null;
+		if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
+			code = postData.getEmail();
+		}
+		else {
+			code = postData.getCode();
+		}
+		
+		Contact contact = contactService.findByCode(code);
 
 		if (contact == null) {
 			throw new EntityDoesNotExistsException(Contact.class, code, "code");
 		}
 
 		updateAccount(contact, postData);
-
+		contact.setCode(code);
+		
 		if (!StringUtils.isBlank(postData.getEmail())) {
 			contact.setEmail(postData.getEmail());
 		}
@@ -245,15 +253,22 @@ public class ContactApi extends AccountEntityApi {
 			missingParameters.add("lastName");
 		}
 
-		String code = postData.getCode();
-		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(code)) {
+		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("email");
 			missingParameters.add("code");
 		}
 
 		handleMissingParameters();
 
-		Contact contact = contactService.findByCode(postData.getCode());
+		String code = null;
+		if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
+			code = postData.getEmail();
+		}
+		else {
+			code = postData.getCode();
+		}
+		
+		Contact contact = contactService.findByCode(code);
 
 		if (contact == null) {
 			return create(postData);
