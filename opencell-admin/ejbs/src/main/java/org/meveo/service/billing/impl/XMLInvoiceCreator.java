@@ -403,14 +403,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String registrationNo = customer.getRegistrationNo();
         String jobTitle = customer.getJobTitle();
         CustomerBrand customerBrand = customer.getCustomerBrand();
-        Seller seller = customer.getSeller();
+        Seller customerSeller = customer.getSeller();
         CustomerCategory customerCategory = customer.getCustomerCategory();
         Element customerTag = doc.createElement("customer");
         customerTag.setAttribute("id", customer.getId() + "");
         customerTag.setAttribute("code", customerCode + "");
         customerTag.setAttribute("externalRef1", externalRef1 != null ? externalRef1 : "");
         customerTag.setAttribute("externalRef2", externalRef2 != null ? externalRef2 : "");
-        customerTag.setAttribute("sellerCode", seller.getCode() != null ? seller.getCode() : "");
+        if(customerSeller != null) {
+            customerTag.setAttribute("sellerCode", customerSeller.getCode() != null ? customerSeller.getCode() : "");
+        }
         customerTag.setAttribute("brand", customerBrand != null ? customerBrand.getCode() : "");
         customerTag.setAttribute("category", customerCategory != null ? customerCategory.getCode() : "");
         customerTag.setAttribute("vatNo", vatNo != null ? vatNo : "");
@@ -430,13 +432,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         customerTag.appendChild(toContactTag(doc, customer.getContactInformation()));
         header.appendChild(customerTag);
 
-        Element sellerTag = doc.createElement("seller");
-        sellerTag.setAttribute("code", seller.getCode() != null ? seller.getCode() : "");
-        sellerTag.setAttribute("description", seller.getDescription() != null ? seller.getDescription() : "");
-        addCustomFields(seller, doc, sellerTag);
-        addAdress(seller, doc, sellerTag, billingAccountLanguage);
-        sellerTag.appendChild(toContactTag(doc, seller.getContactInformation()));
-        header.appendChild(sellerTag);
+        Seller seller = invoice.getSeller();
+        if(seller != null) {
+            Element sellerTag = doc.createElement("seller");
+            sellerTag.setAttribute("code", seller.getCode() != null ? seller.getCode() : "");
+            sellerTag.setAttribute("description", seller.getDescription() != null ? seller.getDescription() : "");
+            addCustomFields(seller, doc, sellerTag);
+            addAdress(seller, doc, sellerTag, billingAccountLanguage);
+            sellerTag.appendChild(toContactTag(doc, seller.getContactInformation()));
+            header.appendChild(sellerTag);
+        }
 
         // log.debug("creating ca");
         // CustomerAccount customerAccount = customerAccount;

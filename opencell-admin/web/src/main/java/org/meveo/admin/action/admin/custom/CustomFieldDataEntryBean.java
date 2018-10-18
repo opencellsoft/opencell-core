@@ -67,7 +67,8 @@ import org.slf4j.LoggerFactory;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Said Ramli
- * @lastModifiedVersion 5.1.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2
  */
 @Named
 @ViewScoped
@@ -879,14 +880,18 @@ public class CustomFieldDataEntryBean implements Serializable {
 			Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
 
             // Display a message accordingly on what is set in result
-            if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
+			if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
                 messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
+                log.info("A key message to show after entity custom action execution (RESULT_GUI_MESSAGE_KEY) is : {}", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY));
 
             } else if (result.containsKey(Script.RESULT_GUI_MESSAGE)) {
-                messages.info((String) result.get(Script.RESULT_GUI_MESSAGE));
+                String message = (String) result.get(Script.RESULT_GUI_MESSAGE);
+                messages.info(message);
+                log.info("A message to show after entity custom action execution (RESULT_GUI_MESSAGE) is : {}", message);
 
             } else {
                 messages.info(new BundleKey("messages", "scriptInstance.actionExecutionSuccessfull"), action.getLabel());
+                log.info("A message to show after entity custom action execution is : scriptInstance.actionExecutionSuccessfull");
             }
 
             if (result.containsKey(Script.RESULT_GUI_OUTCOME)) {
@@ -924,7 +929,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
                 messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
 
-            } else if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
+            } else if (result.containsKey(Script.RESULT_GUI_MESSAGE)) {
                 messages.info((String) result.get(Script.RESULT_GUI_MESSAGE));
 
             } else {

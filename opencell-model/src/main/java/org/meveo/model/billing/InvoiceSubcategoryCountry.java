@@ -52,7 +52,7 @@ import org.meveo.model.shared.DateUtils;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_inv_sub_cat_country_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "InvoiceSubcategoryCountry.findByInvoiceSubCategoryAndCountry", query = "select i from InvoiceSubcategoryCountry i where i.invoiceSubCategory=:invoiceSubCategory and i.tradingCountry=:tradingCountry and ((i.startValidityDate<=:applicationDate AND :applicationDate<=i.endValidityDate) OR (i.startValidityDate IS NULL AND i.endValidityDate IS NULL) OR (i.startValidityDate IS NULL AND :applicationDate<=i.endValidityDate) OR (i.endValidityDate IS NULL AND i.startValidityDate<=:applicationDate)) ORDER BY priority DESC") })
+    @NamedQuery(name = "InvoiceSubcategoryCountry.findByInvoiceSubCategoryAndCountry", query = "select i from InvoiceSubcategoryCountry i where i.invoiceSubCategory=:invoiceSubCategory and (i.sellingCountry=:sellingCountry or i.sellingCountry is null) and (i.tradingCountry=:tradingCountry or i.tradingCountry is null) and ((i.startValidityDate is null or i.startValidityDate<=:applicationDate) AND (:applicationDate<i.endValidityDate or i.endValidityDate is null)) ORDER BY sellingCountry asc, tradingCountry asc, priority DESC") })
 public class InvoiceSubcategoryCountry extends AuditableEntity {
     private static final long serialVersionUID = 1L;
 
