@@ -58,13 +58,14 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax),sum(amountTax),sum(amountWithTax) from "
 				+ SubCategoryInvoiceAgregate.class.getSimpleName());
 		qb.addBooleanCriterion("discountAggregate", true);
+		qb.addCriterionEntity("invoice", invoice);
+		
 		try {
-			Object[] result = (Object[]) qb.getQuery(getEntityManager()).getSingleResult();
-			return result;
+			return (Object[]) qb.getQuery(getEntityManager()).getSingleResult();
+			
 		} catch (NoResultException e) {
-			return null;
+			return new Object[] {};
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")

@@ -47,8 +47,8 @@ import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -114,6 +114,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     
     @Inject
     private TaxScriptService taxScriptService;
+    
+    @Inject
+    private InvoiceAgregateService invoiceAgregateService;
 
     /** constants. */
     private final BigDecimal HUNDRED = new BigDecimal("100");
@@ -682,22 +685,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BigDecimal discountAmountTax = BigDecimal.ZERO;
         BigDecimal discountAmountWithTax = BigDecimal.ZERO;
 
-        Object[] object = new BigDecimal[] { BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO };
-        if (!isVirtual) {
-            // invoiceAgregateService.findTotalAmountsForDiscountAggregates(invoice);
-            discountAmountWithoutTax = (BigDecimal) object[0];
-            discountAmountTax = (BigDecimal) object[1];
-            discountAmountWithTax = (BigDecimal) object[2];
-
-        } else {
+//        if (!isVirtual) {
+//        	Object[] object = invoiceAgregateService.findTotalAmountsForDiscountAggregates(invoice);
+//            discountAmountWithoutTax = (BigDecimal) object[0];
+//            discountAmountTax = (BigDecimal) object[1];
+//            discountAmountWithTax = (BigDecimal) object[2];
+//
+//        } else {
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
                 if (invoiceAgregate instanceof SubCategoryInvoiceAgregate && invoiceAgregate.isDiscountAggregate()) {
-                    discountAmountWithoutTax.add(invoiceAgregate.getAmountWithoutTax());
-                    discountAmountTax.add(invoiceAgregate.getAmountTax());
-                    discountAmountWithTax.add(invoiceAgregate.getAmountWithTax());
+                	discountAmountWithoutTax = discountAmountWithoutTax.add(invoiceAgregate.getAmountWithoutTax());
+                	discountAmountTax = discountAmountTax.add(invoiceAgregate.getAmountTax());
+                	discountAmountWithTax = discountAmountWithTax.add(invoiceAgregate.getAmountWithTax());
                 }
             }
-        }
+//        }
 
         log.info("discountAmountWithoutTax= {},discountAmountTax={},discountAmountWithTax={}", discountAmountWithoutTax, discountAmountTax, discountAmountWithTax);
 
@@ -1010,7 +1012,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 log.debug("for discountPlan " + discountPlanItem.getCode() + " percentEL ->" + discountPercent + " on amount=" + amount);
             }
             BigDecimal discountAmountWithoutTax = amount.multiply(discountPercent.divide(HUNDRED)).negate();
-            // BigDecimal discountAmountWithoutTax=amount.multiply(discountPlanItem.getPercent().divide(HUNDRED)).negate();
             List<Tax> taxes = new ArrayList<Tax>();
             for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCat.getInvoiceSubcategoryCountries()) {
                 if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
@@ -1029,7 +1030,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     BigDecimal amountTax = discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));
                     discountAmountTax = discountAmountTax.add(amountTax);
                     invoiceAgregateSubcat.addSubCategoryTax(tax);
-                    TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId());
+                    TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId().toString());
                     if (taxInvoiceAgregate != null) {
                         taxInvoiceAgregate.addAmountTax(amountTax);
                         taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
@@ -1040,10 +1041,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             BigDecimal discountAmountWithTax = discountAmountWithoutTax.add(discountAmountTax);
 
             invoiceAgregateSubcat.updateAudit(currentUser);
-            invoiceAgregateSubcat.setInvoice(invoice);
-            if (!isVirtual) {
-                invoiceAgregateSubcat.setBillingRun(billingAccount.getBillingRun());
-            }
+            invoiceAgregateSubcat.setInvoice(invoice);           
             invoiceAgregateSubcat.setWallet(userAccount.getWallet());
             invoiceAgregateSubcat.setAccountingCode(invoiceSubCat.getAccountingCode());
             fillAgregates(invoiceAgregateSubcat, userAccount);
@@ -1054,9 +1052,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             invoiceAgregateSubcat.setDiscountAggregate(true);
             invoiceAgregateSubcat.setDiscountPercent(discountPercent);
-            // invoiceAgregateSubcat.setDiscountPercent(discountPlanItem.getPercent());
             invoiceAgregateSubcat.setDiscountPlanCode(discountPlanItem.getDiscountPlan().getCode());
             invoiceAgregateSubcat.setDiscountPlanItemCode(discountPlanItem.getCode());
+            if (!isVirtual) {
+                invoiceAgregateSubcat.setBillingRun(billingAccount.getBillingRun());
+            }
         }
     }
 
