@@ -65,33 +65,45 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class PaymentService extends PersistenceService<Payment> {
 
+    /** The payment method service. */
     @Inject
     private PaymentMethodService paymentMethodService;
 
+    /** The o CC template service. */
     @Inject
     private OCCTemplateService oCCTemplateService;
 
+    /** The matching code service. */
     @Inject
     private MatchingCodeService matchingCodeService;
 
+    /** The gateway payment factory. */
     @Inject
     private GatewayPaymentFactory gatewayPaymentFactory;
 
+    /** The customer account service. */
     @Inject
     private CustomerAccountService customerAccountService;
 
+    /** The payment gateway service. */
     @Inject
     private PaymentGatewayService paymentGatewayService;
 
+    /** The payment history service. */
     @Inject
     private PaymentHistoryService paymentHistoryService;
 
+    /** The account operation service. */
     @Inject
     private AccountOperationService accountOperationService;
 
+    /** The refund service. */
     @Inject
     private RefundService refundService;
 
+    /* (non-Javadoc)
+     * @see org.meveo.service.base.PersistenceService#create(org.meveo.model.IEntity)
+     */
     @MeveoAudit
     @Override
     public void create(Payment entity) throws BusinessException {
@@ -230,19 +242,19 @@ public class PaymentService extends PersistenceService<Payment> {
     }
 
     /**
-     * Do payment or refund by token or card
-     * 
+     * Do payment or refund by token or card.
+     *
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
+     * @param aoIdsToPay list of account operation's id to refund
+     * @param createAO if true payment account operation will be created.
+     * @param matchingAO if true matching account operation will be created.
+     * @param paymentGateway the set this payment gateway will be used.
      * @param cardNumber card's number
      * @param ownerName card's owner name
      * @param cvv cvv number
      * @param expiryDate expiry date
      * @param cardType card type
-     * @param aoIdsToPay list of account operation's id to refund
-     * @param createAO if true payment account operation will be created.
-     * @param matchingAO if true matching account operation will be created.
-     * @param paymentGateway the set this payment gateway will be used.
      * @param isPayment if true is a payment else is a refund.
      * @param paymentMethodType payment method to use, CARD or DIRECTDEIBT.
      * @return instance of PaymentResponseDto
@@ -434,8 +446,8 @@ public class PaymentService extends PersistenceService<Payment> {
     }
 
     /**
-     * Create a card as CardPaymentMethod from initial payment
-     * 
+     * Create a card as CardPaymentMethod from initial payment.
+     *
      * @param tokenId tokenId returned from the initial payment
      * @param customerAccount customer Account
      * @param cardNumber card Number
