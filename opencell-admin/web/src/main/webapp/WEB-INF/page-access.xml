@@ -61,6 +61,7 @@
 	</page>
 	
 	<page view-id=".+\/tradingCountries\/tradingCountry.*">
+		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint>currentUser.hasRole('superAdminManagement')</constraint>
 	</page>
     
