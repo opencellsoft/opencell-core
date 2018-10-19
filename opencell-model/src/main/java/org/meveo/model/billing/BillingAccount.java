@@ -22,8 +22,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,6 +35,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
@@ -118,6 +122,10 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
+    /**
+     * Is this use?
+     */
+    @Deprecated
     @Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discountRate;
 
@@ -175,6 +183,10 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "billing_discount_plan", joinColumns = @JoinColumn(name = "billing_account_id"), inverseJoinColumns = @JoinColumn(name = "discount_plan_id"))
+    private Set<DiscountPlan> discountPlans = new HashSet<>();
     
     @Transient
     private List<RatedTransaction> minRatedTransactions;
@@ -465,6 +477,14 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 
 	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
 		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+	}
+
+	public Set<DiscountPlan> getDiscountPlans() {
+		return discountPlans;
+	}
+
+	public void setDiscountPlans(Set<DiscountPlan> discountPlans) {
+		this.discountPlans = discountPlans;
 	}
 
 }

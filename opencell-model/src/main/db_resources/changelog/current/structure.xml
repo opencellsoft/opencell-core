@@ -2108,6 +2108,38 @@
 <changeSet id="#3692_20181015" author="HatimOudad">
      <modifyDataType columnName="iban" newDataType="varchar(80)" tableName="ar_payment_token "/>
     </changeSet>
+    
+    <changeSet id="#3705_20181019 - Create discount plan bridge table" author="EdwardPLegaspi" dbms="postgresql">
+    	<addColumn tableName="cat_discount_plan_item">
+    		<column name="discount_plan_item_type" type="varchar(25)"></column>
+    	</addColumn>
+    	
+    	<update tableName="cat_discount_plan_item">
+    		<column name="discount_plan_item_type" value="PERCENTAGE"></column>
+    	</update>
+    	
+    	<createTable tableName="billing_discount_plan">
+    		<column name="billing_account_id" type="bigint"></column>
+    		<column name="discount_plan_id" type="bigint"></column>
+    	</createTable>
+    	
+    	<addForeignKeyConstraint constraintName="fk_billing_discount_plan_ba" referencedTableName="billing_billing_account" baseColumnNames="billing_account_id" baseTableName="billing_discount_plan" referencedColumnNames="id"/>
+    	<addForeignKeyConstraint constraintName="fk_billing_discount_plan_dp" referencedTableName="cat_discount_plan" baseColumnNames="discount_plan_id" baseTableName="billing_discount_plan" referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#3705_20181019 - Migrate discount plan from ba to new table" author="EdwardPLegaspi" dbms="postgresql">
+    	<sql>INSERT INTO billing_discount_plan (billing_account_id, discount_plan_id) SELECT id, discount_plan_id FROM billing_billing_account;</sql>
+    </changeSet>
+    
+    <changeSet id="#3705_20181019 - Migrate discount plan from ba to new table" author="EdwardPLegaspi" dbms="mysql">
+		<sql>INSERT INTO ${db.schema.adapted}billing_discount_plan (billing_account_id, discount_plan_id) SELECT id, discount_plan_id FROM ${db.schema.adapted}billing_billing_account;</sql>
+    </changeSet>
+    
+    <changeSet id="#3705_20181019 - Set the discount plan to null" author="EdwardPLegaspi">
+    	<update tableName="billing_billing_account">
+    		<column name="discount_plan_id"></column>
+    	</update>
+    </changeSet>
 
     <changeSet id="#3668_20181610" author="SaidRamli">
         <addColumn tableName="ar_ddrequest_lot_op">
