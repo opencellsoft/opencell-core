@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -76,6 +78,10 @@ public class DiscountPlanItem extends EnableEntity {
     @Column(name = "discount_percent_el", length = 2000)
     @Size(max = 2000)
     private String discountPercentEl;
+    
+	@Enumerated(EnumType.STRING)
+	@Column(name = "discount_plan_item_type", length = 25)
+	private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
 
     public DiscountPlan getDiscountPlan() {
         return discountPlan;
@@ -170,5 +176,13 @@ public class DiscountPlanItem extends EnableEntity {
     public void setDiscountPercentEl(String discountPercentEl) {
         this.discountPercentEl = discountPercentEl;
     }
+
+	public DiscountPlanItemTypeEnum getDiscountPlanItemType() {
+		return discountPlanItemType;
+	}
+
+	public void setDiscountPlanItemType(DiscountPlanItemTypeEnum discountPlanItemType) {
+		this.discountPlanItemType = discountPlanItemType;
+	}
 
 }

@@ -545,7 +545,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @param billingAccount Billing account
      * @return Computed invoice amount by charge.
      */
-    public List<Object[]> computeChargeInvoiceAmount(ChargeInstance chargeInstance, Date firstTransactionDate, Date lastTransactionDate, BillingAccount billingAccount) {
+    @SuppressWarnings("unchecked")
+	public List<Object[]> computeChargeInvoiceAmount(ChargeInstance chargeInstance, Date firstTransactionDate, Date lastTransactionDate, BillingAccount billingAccount) {
         Query q = getEntityManager().createNamedQuery("RatedTransaction.sumByCharge").setParameter("chargeInstance", chargeInstance)
             .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("billingAccount", billingAccount);
         return (List<Object[]>) q.getResultList();
