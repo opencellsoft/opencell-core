@@ -109,6 +109,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -219,6 +220,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
+    
+    @Inject
+    protected SellerService sellerService;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -568,6 +572,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if(seller == null) {
                     seller = rt.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
                 }
+                // refresh seller
+                seller = sellerService.findById(seller.getId());
+                
                 if(mapSellerRT.get(seller) == null) {
                     mapSellerRT.put(seller, new ArrayList<RatedTransaction>());
                 }
