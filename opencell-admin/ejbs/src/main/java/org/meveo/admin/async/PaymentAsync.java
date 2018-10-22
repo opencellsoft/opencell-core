@@ -3,11 +3,16 @@
  */
 package org.meveo.admin.async;
 
+import static org.meveo.service.script.payment.AccountOperationFilterScript.LIST_AO_TO_PAY;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -16,9 +21,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.job.UnitPaymentJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -26,12 +33,14 @@ import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.script.payment.AccountOperationFilterScript;
 
 /**
  * The Class PaymentAsync.
  *
  * @author anasseh
- * @lastModifiedVersion 5.1
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
  */
 
 @Stateless
@@ -68,12 +77,14 @@ public class PaymentAsync {
      * @param paymentPerAOorCA make payment for each AO or all AO for each CA
      * @param fromDueDate the from due date
      * @param toDueDate the to due date
+     * @param aoFilterScript custom script to use in order to filter AOs to pay or refund
      * @return future result
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> caIds, JobExecutionResultImpl result, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
-            OperationCategoryEnum operationCategory, PaymentMethodEnum paymentMethodType, MeveoUser lastCurrentUser, String paymentPerAOorCA, Date fromDueDate, Date toDueDate) {
+            OperationCategoryEnum operationCategory, PaymentMethodEnum paymentMethodType, MeveoUser lastCurrentUser, String paymentPerAOorCA, Date fromDueDate, Date toDueDate,
+            AccountOperationFilterScript aoFilterScript) { // TODO : nbr of method arguments is disturbing , refactor it by using a dedicated bean/dto
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         BigDecimal oneHundred = new BigDecimal("100");
@@ -84,9 +95,11 @@ public class PaymentAsync {
            
             List<AccountOperation> listAoToPayOrRefund = null;
             if (operationCategory == OperationCategoryEnum.CREDIT) {
-                listAoToPayOrRefund = accountOperationService.getAOsToPay(paymentMethodType, fromDueDate,toDueDate, caID);
+                List<AccountOperation> listAoToPay = accountOperationService.getAOsToPay(paymentMethodType, fromDueDate,toDueDate, caID);
+                listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToPay, paymentMethodType, OperationCategoryEnum.DEBIT);
             } else {
-                listAoToPayOrRefund = accountOperationService.getAOsToRefund(paymentMethodType, fromDueDate,toDueDate, caID);
+                List<AccountOperation> listAoToRefund = accountOperationService.getAOsToRefund(paymentMethodType, fromDueDate,toDueDate, caID);
+                listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToRefund, paymentMethodType, OperationCategoryEnum.CREDIT);
             }
             if ("CA".equals(paymentPerAOorCA)) {
                 List<Long> aoIds = new ArrayList<Long>();
@@ -109,8 +122,24 @@ public class PaymentAsync {
                     }
                 }
             }
-
         }
         return new AsyncResult<String>("OK");
+    }
+
+    private List<AccountOperation> filterAoToPayOrRefund(AccountOperationFilterScript aoFilterScript, List<AccountOperation> listAoToPay, PaymentMethodEnum paymentMethodType, OperationCategoryEnum aoCategory) {
+        if (aoFilterScript != null) {
+            Map<String, Object> methodContext = new HashMap<>();
+            methodContext.put(LIST_AO_TO_PAY, listAoToPay);
+            List<AccountOperation> filteredAOs = aoFilterScript.filterAoToPay(methodContext);
+            if (CollectionUtils.isNotEmpty(filteredAOs)) {
+                return filteredAOs.stream().filter( (ao) ->
+                        ( ao.getPaymentMethod() == paymentMethodType && 
+                          ao.getTransactionCategory() == aoCategory  && 
+                         (ao.getMatchingStatus() == MatchingStatusEnum.O || ao.getMatchingStatus() == MatchingStatusEnum.P)
+                         ))
+                    .collect(Collectors.toList());
+            }
+        }
+        return listAoToPay;
     }
 }

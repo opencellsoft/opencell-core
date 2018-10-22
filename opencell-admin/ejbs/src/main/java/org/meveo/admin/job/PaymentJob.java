@@ -21,11 +21,14 @@ import org.meveo.service.job.Job;
  * The Class PaymentJob, create payment or payout for all opened account operations.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.1
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class PaymentJob extends Job {
 
+    private static final String APPLIES_TO_NAME = "JOB_PaymentJob";
+    
     /** The payment job bean. */
     @Inject
     private PaymentJobBean paymentJobBean;
@@ -47,7 +50,7 @@ public class PaymentJob extends Job {
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("nbRuns");
-        nbRuns.setAppliesTo("JOB_PaymentJob");
+        nbRuns.setAppliesTo(APPLIES_TO_NAME);
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -57,7 +60,7 @@ public class PaymentJob extends Job {
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
         waitingMillis.setCode("waitingMillis");
-        waitingMillis.setAppliesTo("JOB_PaymentJob");
+        waitingMillis.setAppliesTo(APPLIES_TO_NAME);
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
@@ -71,7 +74,7 @@ public class PaymentJob extends Job {
 
         CustomFieldTemplate createAO = new CustomFieldTemplate();
         createAO.setCode("PaymentJob_createAO");
-        createAO.setAppliesTo("JOB_PaymentJob");
+        createAO.setAppliesTo(APPLIES_TO_NAME);
         createAO.setActive(true);
         createAO.setDefaultValue("YES");
         createAO.setDescription("Create AO");
@@ -82,7 +85,7 @@ public class PaymentJob extends Job {
 
         CustomFieldTemplate matchingAO = new CustomFieldTemplate();
         matchingAO.setCode("PaymentJob_matchingAO");
-        matchingAO.setAppliesTo("JOB_PaymentJob");
+        matchingAO.setAppliesTo(APPLIES_TO_NAME);
         matchingAO.setActive(true);
         matchingAO.setDefaultValue("YES");
         matchingAO.setDescription("Matching AO");
@@ -97,7 +100,7 @@ public class PaymentJob extends Job {
 
         CustomFieldTemplate creditOrDebit = new CustomFieldTemplate();
         creditOrDebit.setCode("PaymentJob_creditOrDebit");
-        creditOrDebit.setAppliesTo("JOB_PaymentJob");
+        creditOrDebit.setAppliesTo(APPLIES_TO_NAME);
         creditOrDebit.setActive(true);
         creditOrDebit.setDefaultValue("Credit");
         creditOrDebit.setDescription(resourceMessages.getString("jobExecution.paymentOrRefund"));
@@ -108,7 +111,7 @@ public class PaymentJob extends Job {
 
         CustomFieldTemplate payentGatewayCF = new CustomFieldTemplate();
         payentGatewayCF.setCode("PaymentJob_paymentGateway");
-        payentGatewayCF.setAppliesTo("JOB_PaymentJob");
+        payentGatewayCF.setAppliesTo(APPLIES_TO_NAME);
         payentGatewayCF.setActive(true);
         payentGatewayCF.setDescription("Payent gateway");
         payentGatewayCF.setFieldType(CustomFieldTypeEnum.ENTITY);
@@ -122,7 +125,7 @@ public class PaymentJob extends Job {
 
         CustomFieldTemplate cardOrDD = new CustomFieldTemplate();
         cardOrDD.setCode("PaymentJob_cardOrDD");
-        cardOrDD.setAppliesTo("JOB_PaymentJob");
+        cardOrDD.setAppliesTo(APPLIES_TO_NAME);
         cardOrDD.setActive(true);
         cardOrDD.setDefaultValue("CARD");
         cardOrDD.setDescription(resourceMessages.getString("jobExecution.cardOrDD"));
@@ -137,7 +140,7 @@ public class PaymentJob extends Job {
 
         CustomFieldTemplate AOorCA = new CustomFieldTemplate();
         AOorCA.setCode("PaymentJob_AOorCA");
-        AOorCA.setAppliesTo("JOB_PaymentJob");
+        AOorCA.setAppliesTo(APPLIES_TO_NAME);
         AOorCA.setActive(true);
         AOorCA.setDefaultValue("CA");
         AOorCA.setDescription(resourceMessages.getString("jobExecution.AOorCA"));
@@ -148,7 +151,7 @@ public class PaymentJob extends Job {
 
         CustomFieldTemplate fromDueDate = new CustomFieldTemplate();
         fromDueDate.setCode("PaymentJob_fromDueDate");
-        fromDueDate.setAppliesTo("JOB_PaymentJob");
+        fromDueDate.setAppliesTo(APPLIES_TO_NAME);
         fromDueDate.setActive(true);
         fromDueDate.setDescription(resourceMessages.getString("ddrequestLotOp.fromDueDate"));
         fromDueDate.setFieldType(CustomFieldTypeEnum.DATE);
@@ -158,13 +161,39 @@ public class PaymentJob extends Job {
         
         CustomFieldTemplate toDueDate = new CustomFieldTemplate();
         toDueDate.setCode("PaymentJob_toDueDate");
-        toDueDate.setAppliesTo("JOB_PaymentJob");
+        toDueDate.setAppliesTo(APPLIES_TO_NAME);
         toDueDate.setActive(true);
         toDueDate.setDescription(resourceMessages.getString("ddrequestLotOp.toDueDate"));
         toDueDate.setFieldType(CustomFieldTypeEnum.DATE);
         toDueDate.setValueRequired(false);
         toDueDate.setDefaultValue("");
         result.put("PaymentJob_toDueDate", toDueDate);
+        
+        // CF to set a custom script filtering AOs to pay
+        CustomFieldTemplate aoFilterScript = new CustomFieldTemplate();
+        final String cfAoFilterScriptCode = "PaymentJob_aoFilterScript";
+        aoFilterScript.setCode(cfAoFilterScriptCode);
+        aoFilterScript.setAppliesTo(APPLIES_TO_NAME);
+        aoFilterScript.setActive(true);
+        aoFilterScript.setDescription(resourceMessages.getString("paymentJob.aoFilterScript"));
+        aoFilterScript.setFieldType(CustomFieldTypeEnum.ENTITY);
+        aoFilterScript.setEntityClazz("org.meveo.model.scripts.ScriptInstance");
+        aoFilterScript.setValueRequired(false);
+        aoFilterScript.setDefaultValue("");
+        result.put(cfAoFilterScriptCode, aoFilterScript);
+        
+        // CF to set a custom script computing Due date range 
+        CustomFieldTemplate dueDateRangeScript = new CustomFieldTemplate();
+        final String cfDueDateRangeScriptCode = "PaymentJob_dueDateRangeScript";
+        dueDateRangeScript.setCode(cfDueDateRangeScriptCode);
+        dueDateRangeScript.setAppliesTo(APPLIES_TO_NAME);
+        dueDateRangeScript.setActive(true);
+        dueDateRangeScript.setDescription(resourceMessages.getString("paymentJob.dueDateRangeScript"));
+        dueDateRangeScript.setFieldType(CustomFieldTypeEnum.ENTITY);
+        dueDateRangeScript.setEntityClazz("org.meveo.model.scripts.ScriptInstance");
+        dueDateRangeScript.setValueRequired(false);
+        dueDateRangeScript.setDefaultValue("");
+        result.put(cfAoFilterScriptCode, dueDateRangeScript);
 
         return result;
     }

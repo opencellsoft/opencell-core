@@ -581,7 +581,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @return the account Operation that was paid
      * @throws BusinessException Business Exception
      */
-    private AccountOperation getAccountOperationThatWasPaid(AccountOperation paymentOrRefund) throws BusinessException {
+    public AccountOperation getAccountOperationThatWasPaid(AccountOperation paymentOrRefund) throws BusinessException {
         List<MatchingAmount> matchingAmounts = paymentOrRefund.getMatchingAmounts();
         log.trace("matchingAmounts:" + matchingAmounts);
         for (MatchingAmount ma : paymentOrRefund.getMatchingAmounts().get(0).getMatchingCode().getMatchingAmounts()) {
