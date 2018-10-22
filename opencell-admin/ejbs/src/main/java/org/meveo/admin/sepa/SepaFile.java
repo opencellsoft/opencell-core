@@ -60,7 +60,7 @@ import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.payments.impl.DDRequestBuilderInterface;
+import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
 import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,11 +68,12 @@ import org.slf4j.LoggerFactory;
 /**
  * @author anasseh
  * @author Wassim Drira
+ * @author Said Ramli
  * @lastModifiedVersion 5.2
  *
  */
 @DDRequestBuilderClass
-public class SepaFile implements DDRequestBuilderInterface {
+public class SepaFile extends AbstractDDRequestBuilder {
     Logger log = LoggerFactory.getLogger(SepaFile.class);
 
     @Override

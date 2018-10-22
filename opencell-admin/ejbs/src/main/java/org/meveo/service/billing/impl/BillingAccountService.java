@@ -424,11 +424,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         } 
         
         if(entity instanceof Subscription) {
-        	entity = findByCode(((Subscription) entity).getCode());
+        	entity = subscriptionService.findByCode(((Subscription) entity).getCode());
         } 
         
         if(entity instanceof Order) {
-        	entity = findByCode(((Order) entity).getCode());
+        	entity = orderService.findByCode(((Order) entity).getCode());
         } 
         
         entity = calculateInvoicing(entity, null, billingRun.getLastTransactionDate());

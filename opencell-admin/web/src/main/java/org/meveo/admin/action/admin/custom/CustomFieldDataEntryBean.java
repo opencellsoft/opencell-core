@@ -1,5 +1,8 @@
 package org.meveo.admin.action.admin.custom;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,8 +61,16 @@ import org.meveo.service.script.CustomScriptService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.EntityCustomizationUtils;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 /**
  * Provides support for custom field value data entry
@@ -67,7 +78,8 @@ import org.slf4j.LoggerFactory;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Said Ramli
- * @lastModifiedVersion 5.1.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2
  */
 @Named
 @ViewScoped
@@ -118,7 +130,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @Inject
     protected Messages messages;
-
+    
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -879,14 +891,18 @@ public class CustomFieldDataEntryBean implements Serializable {
 			Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
 
             // Display a message accordingly on what is set in result
-            if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
+			if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
                 messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
+                log.info("A key message to show after entity custom action execution (RESULT_GUI_MESSAGE_KEY) is : {}", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY));
 
             } else if (result.containsKey(Script.RESULT_GUI_MESSAGE)) {
-                messages.info((String) result.get(Script.RESULT_GUI_MESSAGE));
+                String message = (String) result.get(Script.RESULT_GUI_MESSAGE);
+                messages.info(message);
+                log.info("A message to show after entity custom action execution (RESULT_GUI_MESSAGE) is : {}", message);
 
             } else {
                 messages.info(new BundleKey("messages", "scriptInstance.actionExecutionSuccessfull"), action.getLabel());
+                log.info("A message to show after entity custom action execution is : scriptInstance.actionExecutionSuccessfull");
             }
 
             if (result.containsKey(Script.RESULT_GUI_OUTCOME)) {
@@ -924,7 +940,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
                 messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
 
-            } else if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
+            } else if (result.containsKey(Script.RESULT_GUI_MESSAGE)) {
                 messages.info((String) result.get(Script.RESULT_GUI_MESSAGE));
 
             } else {
@@ -1604,13 +1620,407 @@ public class CustomFieldDataEntryBean implements Serializable {
         return componentId;
     }
     
-	public boolean hasVisibleTabs(List<GroupedCustomField> children, ICustomFieldEntity entity,
-			CustomFieldValueHolder cfValueHolder) {
-		for (GroupedCustomField cfTab : children) {
-			if (cfTab.hasVisibleCustomFields(entity, cfValueHolder)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public boolean hasVisibleTabs(List<GroupedCustomField> children, ICustomFieldEntity entity,
+            CustomFieldValueHolder cfValueHolder) {
+        for (GroupedCustomField cfTab : children) {
+            if (cfTab.hasVisibleCustomFields(entity, cfValueHolder)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get key of ron type.
+     * 
+     * @param key custom field key
+     * @return the custom field key or null in the error case 
+     */
+    private Object getRonKey(Object key) {
+        Object ronkey = key;
+        if (ronkey != null) {
+            String[] ron = ((String) ronkey).split(CustomFieldValue.RON_VALUE_SEPARATOR);
+            if (ron[0] == null && ron[1] == null) {
+                messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return null;
+
+            } else if (ron[0] != null && ron[1] != null) {
+                try {
+                    if (Double.valueOf(ron[0]).compareTo(Double.valueOf(ron[1])) >= 0) {
+                        messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
+                        FacesContext.getCurrentInstance().validationFailed();
+                        return null;
+                    }
+
+                } catch (NumberFormatException e) {
+                    messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
+                    FacesContext.getCurrentInstance().validationFailed();
+                    return null;
+                }
+            }
+        } else {
+            messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyNotSpecified"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return null;
+        }
+        return ronkey;
+    }
+
+    /**
+     * Get the key of custom field
+     * 
+     * @param cft the custom field
+     * @param csvLine the csv line
+     * @return the custom field key or null in the error case
+     */
+    private String getMapKey(CustomFieldTemplate cft, Map<String, Object> csvLine) {
+        String key = null;
+        if (cft.getMapKeyType() == CustomFieldMapKeyEnum.STRING) {
+            key = (String) csvLine.get(CustomFieldValue.MAP_KEY);
+        }
+        if (cft.getMapKeyType() == CustomFieldMapKeyEnum.RON) {
+            key = (String) getRonKey(csvLine.get(CustomFieldValue.MAP_KEY));
+            if (key == null) {
+                return null;
+            }
+        }
+        if (key == null) {
+            messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyNotSpecified"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return null;
+        }
+        return key;
+    }
+
+    /**
+     * Get the value of custom field
+     * 
+     * @param cft the custom field
+     * @param csvLine the csv line
+     * @return the custom field value or null in the error case
+     */
+    private Object getMapValue(CustomFieldTemplate cft, Map<String, Object> csvLine) {
+        Object value = (String) csvLine.get(CustomFieldValue.MAP_VALUE);
+        if (value == null) {
+            messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return null;
+        }
+        return value;
+    }
+
+    /**
+     * Validate keys and map values
+     * 
+     * @param cft the custom field
+     * @param mapValuesForGUI the map values for GUI
+     * @param key the map key
+     * @param value the map value
+     * @return true is the map is valid or false in the error case.
+     */
+    private boolean validateMapKeysValues(CustomFieldTemplate cft, List<Map<String, Object>> mapValuesForGUI, String key, Object value) {
+
+        for (Map<String, Object> mapItem : mapValuesForGUI) {
+            if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP && mapItem.get(CustomFieldValue.MAP_KEY).equals(key)) {
+                messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyExists"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return false;
+            } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST && mapItem.get(CustomFieldValue.MAP_VALUE).equals(value)) {
+                messages.error(new BundleKey("messages", "customFieldTemplate.listValueExists"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Add csv line to map GUI
+     * 
+     * @param cft the custom field
+     * @param mapValuesForGUI the map values for GUI
+     * @param csvLine the csv line
+     * @return true is the map is valid or false in the error case.
+     */
+    private boolean addMapValuesItem(CustomFieldTemplate cft, List<Map<String, Object>> mapValuesForGUI, Map<String, Object> csvLine) {
+        Map<String, Object> mapValuesItem = new HashMap<String, Object>();
+
+        String key = null;
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+            // get the key
+            key = getMapKey(cft, csvLine);
+            if (key == null) {
+                return false;
+            }
+            mapValuesItem.put(CustomFieldValue.MAP_KEY, key);
+        }
+
+        // get the value
+        Object value = getMapValue(cft, csvLine);
+        if (value == null) {
+            return false;
+        }
+        mapValuesItem.put(CustomFieldValue.MAP_VALUE, value);
+
+        // Validate that key or value is not duplicate
+        if (!validateMapKeysValues(cft, mapValuesForGUI, key, value)) {
+            return false;
+        }
+
+        mapValuesForGUI.add(mapValuesItem);
+        return true;
+    }
+
+    /**
+     * Get the matrix key
+     * 
+     * @param cft the custom field
+     * @param column the custom field column
+     * @param csvLine csv line
+     * @return the matrix key if the matrix is valid or null in the error case.
+     */
+    private Object getMatrixKey(CustomFieldTemplate cft, CustomFieldMatrixColumn column, Map<String, Object> csvLine) {
+        Object key = null;
+        try {
+            if (column.getKeyType() == CustomFieldMapKeyEnum.STRING) {
+                key = (String) csvLine.get(column.getCode());
+            } else if (column.getKeyType() == CustomFieldMapKeyEnum.LONG) {
+                key = Long.valueOf((String) csvLine.get(column.getCode()));
+            } else if (column.getKeyType() == CustomFieldMapKeyEnum.DOUBLE) {
+                key = Double.valueOf((String) csvLine.get(column.getCode()));
+            } else if (column.getKeyType() == CustomFieldMapKeyEnum.RON) {
+                key = (String) getRonKey(csvLine.get(column.getCode()));
+                if (key == null) {
+                    return null;
+                }
+            }
+            if (key == null) {
+                messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyNotSpecified"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return null;
+            }
+        } catch (ClassCastException | NumberFormatException e) {
+            messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyValueIsInvalid"), e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
+            key = null;
+        }
+        return key;
+    }
+
+    /**
+     * Validate the keys and values matrix.
+     * 
+     * @param cft the custom field
+     * @param matrixValuesForGUI the matrix values for GUI
+     * @param matrixKeysValuesItem the matrix keys and values
+     * @return true is the matrix is valid or false in the error case.
+     */
+    private boolean validateMatrixKeysValues(CustomFieldTemplate cft, List<Map<String, Object>> matrixValuesForGUI, Map<String, Object> matrixKeysValuesItem) {
+
+        for (Map<String, Object> mapItem : matrixValuesForGUI) {
+            boolean allMatch = true;
+            for (CustomFieldMatrixColumn column : cft.getMatrixColumns()) {
+                if (mapItem.get(column.getCode()) == null && matrixKeysValuesItem.get(column.getCode()) == null) {
+
+                } else if (mapItem.get(column.getCode()) != null && !mapItem.get(column.getCode()).equals(matrixKeysValuesItem.get(column.getCode()))) {
+                    allMatch = false;
+                    break;
+                } else if (matrixKeysValuesItem.get(column.getCode()) != null && !matrixKeysValuesItem.get(column.getCode()).equals(mapItem.get(column.getCode()))) {
+                    allMatch = false;
+                    break;
+                }
+            }
+
+            if (allMatch) {
+                messages.error(new BundleKey("messages", "customFieldTemplate.matrixKeyExists"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Get the keys matrix
+     * 
+     * @param cft the custom field
+     * @param csvLine the csv line.
+     * @return the keys matrix is the matrix is valid or null in the error case.
+     */
+    private Map<String, Object> getMatrixKeysItem(CustomFieldTemplate cft, Map<String, Object> csvLine) {
+        Map<String, Object> matrixKeysItem = new HashMap<String, Object>();
+        for (CustomFieldMatrixColumn column : cft.getMatrixKeyColumns()) {
+
+            // get the key
+            Object key = getMatrixKey(cft, column, csvLine);
+            if (key == null) {
+                return null;
+            }
+            matrixKeysItem.put(column.getCode(), key);
+        }
+
+        if (matrixKeysItem.isEmpty()) {
+            messages.error(new BundleKey("messages", "customFieldTemplate.matrixKeyNotSpecified"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return null;
+        }
+        return matrixKeysItem;
+    }
+
+    /**
+     * Get the values matrix
+     * 
+     * @param cft the custom field
+     * @param csvLine the csv line.
+     * @return the values matrix is the matrix is valid or null in the error case.
+     */
+    private Map<String, Object> getMatrixValuesItem(CustomFieldTemplate cft, Map<String, Object> csvLine) {
+        Map<String, Object> matrixValuesItem = new HashMap<String, Object>();
+        if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+            for (CustomFieldMatrixColumn column : cft.getMatrixValueColumns()) {
+                // get the key
+                Object key = getMatrixKey(cft, column, csvLine);
+                if (key == null) {
+                    return null;
+                }
+                matrixValuesItem.put(column.getCode(), key);
+            }
+
+            if (matrixValuesItem.isEmpty()) {
+                messages.error(new BundleKey("messages", "customFieldTemplate.valuesNotSpecified"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return null;
+            }
+            // Single value column
+        } else {
+            // get the value
+            Object value = getMapValue(cft, csvLine);
+            if (value == null) {
+                return null;
+            }
+            matrixValuesItem.put(CustomFieldValue.MAP_VALUE, value);
+        }
+        return matrixValuesItem;
+    }
+
+    /**
+     * Get the values matrix
+     *  
+     * @param cft the custom field
+     * @param matrixValuesForGUI the matrix values for GUI
+     * @param csvLine the csv line
+     * @return the values matrix is the matrix is valid or false in the error case.
+     */
+    private boolean addMatrixValuesItem(CustomFieldTemplate cft, List<Map<String, Object>> matrixValuesForGUI, Map<String, Object> csvLine) {
+        Map<String, Object> matrixKeysValuesItem = new HashMap<String, Object>();
+
+        // Process keys
+        Map<String, Object> matrixKeysItem = getMatrixKeysItem(cft, csvLine);
+        if (matrixKeysItem == null) {
+            return false;
+        }
+        matrixKeysValuesItem.putAll(matrixKeysItem);
+
+        // Process values
+        Map<String, Object> matrixValuesItem = getMatrixValuesItem(cft, csvLine);
+        if (matrixValuesItem == null) {
+            return false;
+        }
+        matrixKeysValuesItem.putAll(matrixValuesItem);
+
+        // Validate that key or value is not duplicate
+        if (!validateMatrixKeysValues(cft, matrixValuesForGUI, matrixKeysValuesItem)) {
+            return false;
+        }
+
+        matrixValuesForGUI.add(matrixKeysValuesItem);
+        return true;
+    }
+
+    /**
+     * Get the file reader
+     * 
+     * @param cft the custom field
+     * @return the file reader
+     */
+    private ObjectReader getReader(CustomFieldTemplate cft) {
+        CsvSchema.Builder builder = CsvSchema.builder();
+
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
+            builder.addColumn(CustomFieldValue.MAP_VALUE).build();
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+            builder.addColumn(CustomFieldValue.MAP_KEY).addColumn(CustomFieldValue.MAP_VALUE).build();
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+            for (CustomFieldMatrixColumn column : cft.getMatrixColumns()) {
+                builder.addColumn(column.getCode());
+            }
+            if (cft.getFieldType() != CustomFieldTypeEnum.MULTI_VALUE) {
+                builder.addColumn(CustomFieldValue.MAP_VALUE);
+            }
+        }
+
+        CsvSchema schema = builder.build();
+        CsvMapper mapper = new CsvMapper();
+        return mapper.readerFor(Map.class).with(schema);
+    }
+
+    /**
+     * Handle a file upload and import the file
+     * 
+     * @param event File upload event
+     */
+    public void handleFileUpload(FileUploadEvent event) {
+        UploadedFile file = event.getFile();
+
+        if (file != null) {
+
+            CustomFieldValue cfv = (CustomFieldValue) event.getComponent().getAttributes().get("cfv");
+            CustomFieldTemplate cft = (CustomFieldTemplate) event.getComponent().getAttributes().get("cft");
+
+            int importedLines = 0;
+            List<Map<String, Object>> mapValuesForGUI = new ArrayList<Map<String, Object>>();
+            List<Map<String, Object>> matrixValuesForGUI = new ArrayList<Map<String, Object>>();
+
+            // read from file
+            ObjectReader oReader = getReader(cft);
+            try (Reader reader = new InputStreamReader(file.getInputstream())) {
+                MappingIterator<Map<String, Object>> mappingIterator = oReader.readValues(reader);
+                while (mappingIterator.hasNext()) {
+
+                    Map<String, Object> csvLine = mappingIterator.next();
+
+                    if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST || cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+                        if (!addMapValuesItem(cft, mapValuesForGUI, csvLine)) {
+                            messages.error(new BundleKey("messages", "customFieldTemplate.importFile.fail"), importedLines+1);
+                            return;
+                        }
+                    } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+                        if (!addMatrixValuesItem(cft, matrixValuesForGUI, csvLine)) {
+                            messages.error(new BundleKey("messages", "customFieldTemplate.importFile.fail"), importedLines+1);
+                            return;
+                        }
+                    }
+                    importedLines++;
+                }
+                if (!mapValuesForGUI.isEmpty()) {
+                    cfv.setMapValuesForGUI(mapValuesForGUI);
+                }
+                if (!matrixValuesForGUI.isEmpty()) {
+                    cfv.setMatrixValuesForGUI(matrixValuesForGUI);
+                }
+            } catch (RuntimeJsonMappingException e1) {
+                messages.error(new BundleKey("messages", "message.upload.fail.invalidFormat"), e1.getMessage());
+                return;
+            } catch (IOException e) {
+                messages.error(new BundleKey("messages", "message.upload.fail"), e.getMessage());
+                return;
+            }
+            messages.info(new BundleKey("messages", "customFieldTemplate.importFile.importedLines"), importedLines);
+        } else {
+            messages.warn(new BundleKey("messages", "customFieldTemplate.importFile.fileRequired"));
+        }
+
+    }
+
 }

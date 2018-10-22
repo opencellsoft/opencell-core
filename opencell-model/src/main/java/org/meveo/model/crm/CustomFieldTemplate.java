@@ -2,14 +2,13 @@ package org.meveo.model.crm;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Comparator;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -56,7 +55,8 @@ import org.meveo.model.shared.DateUtils;
 
 /**
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2
 
  **/
 @Entity
@@ -840,6 +840,12 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
             if (dataType == CustomFieldMapKeyEnum.STRING) {
                 valBuilder.append((String) columnValue);
             } else if (dataType == CustomFieldMapKeyEnum.LONG || dataType == CustomFieldMapKeyEnum.DOUBLE) {
+                // Case of String value
+                if (dataType == CustomFieldMapKeyEnum.LONG) {
+                    columnValue = Long.valueOf(columnValue.toString());
+                } else if (dataType == CustomFieldMapKeyEnum.DOUBLE) {
+                    columnValue = Double.valueOf(columnValue.toString());
+                }
                 DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
                 df.setMaximumFractionDigits(340);
                 valBuilder.append(df.format(columnValue));

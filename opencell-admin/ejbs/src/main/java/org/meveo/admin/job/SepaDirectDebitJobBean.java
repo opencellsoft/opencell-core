@@ -1,6 +1,12 @@
 package org.meveo.admin.job;
 
+import static org.meveo.service.script.payment.AccountOperationFilterScript.LIST_AO_TO_PAY;
+
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -8,6 +14,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.StringUtils;
@@ -17,17 +25,27 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.DDRequestBuilderFactory;
 import org.meveo.service.payments.impl.DDRequestBuilderInterface;
 import org.meveo.service.payments.impl.DDRequestBuilderService;
 import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.meveo.service.payments.impl.DDRequestLotOpService;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
+import org.meveo.service.script.payment.AccountOperationFilterScript;
+import org.meveo.service.script.payment.DateRangeScript;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -35,6 +53,8 @@ import org.slf4j.Logger;
  * The Class SepaDirectDebitJobBean.
  *
  * @author anasseh
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class SepaDirectDebitJobBean extends BaseJobBean {
@@ -67,6 +87,9 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
     @Inject
     @ApplicationProvider
     private Provider appProvider;
+    
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     /**
      * Execute.
@@ -80,6 +103,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running for parameter={}", jobInstance.getParametres());
         try {
+            
 
             DDRequestBuilder ddRequestBuilder = null;
             String ddRequestBuilderCode = null;
@@ -111,15 +135,22 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                     break;
                 }
                 try {
+                    DateRangeScript dateRangeScript = this.getDueDateRangeScript(ddrequestLotOp);
+                    if (dateRangeScript != null) { // computing custom due date range : 
+                        this.updateOperationDateRange(ddrequestLotOp, dateRangeScript);
+                    }
                     if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
-                        DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(), ddRequestBuilder,
-                            ddrequestLotOp.getFilter());
+                        List<AccountOperation> listAoToPay = this.filterAoToPay( ddRequestBuilderInterface.findListAoToPay(ddrequestLotOp), jobInstance);
+                        DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(listAoToPay, ddRequestBuilder);
                         dDRequestLOTService.createPaymentsForDDRequestLot(ddRequestLOT);
                     } else if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
                         ddRequestBuilderInterface.generateDDRequestLotFile(ddrequestLotOp.getDdrequestLOT(), appProvider);
                     }
                     ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);
                     result.registerSucces();
+                    if (BooleanUtils.isTrue(ddrequestLotOp.getRecurrent())) {
+                        this.createNewDdrequestLotOp(ddrequestLotOp);
+                    }
 
                 } catch (Exception e) {
                     log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
@@ -133,5 +164,111 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
             log.error("Failed to sepa direct debit", e);
         }
     }
+    
+    private void updateOperationDateRange(DDRequestLotOp ddrequestLotOp, DateRangeScript dateRangeScript) {
+        try {
+            DateRange dueDateRange = dateRangeScript.computeDateRange(new HashMap<>()); // no addtional params are needed right now for computeDateRange, may be in the future.
+            // Due date from : 
+            Date fromDueDate = dueDateRange.getFrom();
+            if (fromDueDate == null) {
+                fromDueDate = new Date(1);
+            }
+            ddrequestLotOp.setFromDueDate(fromDueDate);
+            
+            // Due date to :
+            Date toDueDate = dueDateRange.getTo();
+            if (toDueDate == null) {
+                toDueDate = DateUtils.addYearsToDate(fromDueDate, 1000);
+            }
+            ddrequestLotOp.setToDueDate(toDueDate);
+        } catch (Exception e) {
+            log.error("Error on updateOperationDateRange {} ",e.getMessage(), e);
+        }
+    }
+
+    private DateRangeScript getDueDateRangeScript(DDRequestLotOp ddrequestLotOp) {
+        try {
+            ScriptInstance scriptInstance = ddrequestLotOp.getScriptInstance();
+            if (scriptInstance != null) {
+                final  String scriptCode = scriptInstance.getCode();
+                if (scriptCode != null) {
+                    log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
+                    ScriptInterface si = scriptInstanceService.getScriptInstance(scriptCode);
+                    if (si != null && si instanceof DateRangeScript) {
+                        return (DateRangeScript) si;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error(" Error on getDueDateRangeScript : [{}]" , e.getMessage());
+        }
+        return null;
+    }
+    
+    /**
+     * Creates a new DDRequestLotOp instance, using the initial one's informations.
+     * <br>Hence a recurrent job could treat the expected invoices permanently.
+     *
+     * @param ddrequestLotOp the ddrequest lot op
+     */
+    private void createNewDdrequestLotOp(DDRequestLotOp ddrequestLotOp) {
+        try {
+            DDRequestLotOp newDDRequestLotOp = new DDRequestLotOp();
+            newDDRequestLotOp.setRecurrent(true);
+            newDDRequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
+            
+            newDDRequestLotOp.setScriptInstance(ddrequestLotOp.getScriptInstance());
+            newDDRequestLotOp.setDdRequestBuilder(ddrequestLotOp.getDdRequestBuilder());
+            newDDRequestLotOp.setFilter(ddrequestLotOp.getFilter());
+            newDDRequestLotOp.setDdrequestOp(ddrequestLotOp.getDdrequestOp());
+            
+            this.dDRequestLotOpService.create(newDDRequestLotOp);
+        } catch (Exception e) {
+            log.error(" error on createNewDdrequestLotOp {} ", e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Filter ao to pay, based on a given script, which is set through a job CF
+     *
+     * @param listAoToPay the list ao to pay
+     * @param jobInstance the job instance
+     * @return the list
+     */
+    private List<AccountOperation> filterAoToPay(List<AccountOperation> listAoToPay, JobInstance jobInstance) {
+        AccountOperationFilterScript aoFilterScript = this.getAOScriptInstance(jobInstance);
+        if (aoFilterScript != null) {
+            Map<String, Object> methodContext = new HashMap<>();
+            methodContext.put(LIST_AO_TO_PAY, listAoToPay);
+            listAoToPay = aoFilterScript.filterAoToPay(methodContext);
+        }
+        if (CollectionUtils.isNotEmpty(listAoToPay)) {
+            return listAoToPay.stream().filter( (ao) ->
+                    ( ao.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT && 
+                      ao.getTransactionCategory() == OperationCategoryEnum.DEBIT  && 
+                     (ao.getMatchingStatus() == MatchingStatusEnum.O || ao.getMatchingStatus() == MatchingStatusEnum.P)
+                     ))
+                .collect(Collectors.toList());
+        }
+        return listAoToPay;
+    }
+    
+    private AccountOperationFilterScript getAOScriptInstance(JobInstance jobInstance) {
+        try {
+            final  String aoFilterScriptCode =  ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_aoFilterScript")).getCode();
+           
+            if (aoFilterScriptCode != null) {
+                log.debug(" looking for ScriptInstance with code :  [{}] ", aoFilterScriptCode);
+                ScriptInterface si = scriptInstanceService.getScriptInstance(aoFilterScriptCode);
+                if (si != null && si instanceof AccountOperationFilterScript) {
+                    return (AccountOperationFilterScript) si;
+                }
+            }
+        } catch (Exception e) {
+            log.error(" Error on newAoFilterScriptInstance : [{}]" , e.getMessage());
+        }
+        return null;
+    }
+
 
 }

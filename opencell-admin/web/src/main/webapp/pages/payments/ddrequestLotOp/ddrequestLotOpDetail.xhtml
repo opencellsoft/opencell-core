@@ -23,6 +23,18 @@
 			</p:breadCrumb>
 		</h:form>
 		
+		
+		<hftl:entityPopup id="scriptPopup"
+			header="#{messages['scriptInstance.popup.header']}"
+			backingBean="#{scriptInstanceBean}"
+			selection="#{ddRequestLotOpBean.entity.scriptInstance}"
+			searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" eventBackingBean="#{pricePlanMatrixBean}"
+			updateField=":FormId:scriptSelectId :FormId:scriptSelectId_text">
+		</hftl:entityPopup>
+		
 		<hftl:entityPopup id="dDRequestBuilderPopup" header="#{messages['dDRequestBuilder.title']}" backingBean="#{dDRequestBuilderBean}"
             searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
             selection="#{ddRequestLotOpBean.entity.ddRequestBuilder}" column2Label="#{messages['BusinessEntity.description']}" column2="description"
@@ -42,6 +54,13 @@
 			<hftl:formField label="#{messages['filter.title']}"  field="filter" id="filterSelectId" valueLabelField="code" popup="true" popupId="filterPopup" /> 
 			<hftl:formField label="#{messages['ddrequestLotOp.status']}" field="status"  isMessage="true" rendered="#{not empty ddRequestLotOpBean.entity.id}" edit="false"/>
 			<hftl:formField label="#{messages['ddrequestLotOp.errorCause']}" field="errorCause" rendered="#{not empty ddRequestLotOpBean.entity.id}" edit="false"/>
+
+			<hftl:formField id="scriptSelectId"
+				label="#{messages['ddrequestLotOp.dueDateRangeScript']}"
+				field="scriptInstance" valueLabelField="code" required="false"
+				popup="true" popupId="scriptPopup" showResetButton="true" />
+
+			<hftl:formField label="#{messages['ddrequestLotOp.recurrent']}" field="recurrent" edit="true"/>
 			 
 		</hftl:formPanel>
 	</ui:define>  

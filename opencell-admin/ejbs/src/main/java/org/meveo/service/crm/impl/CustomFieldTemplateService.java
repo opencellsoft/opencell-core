@@ -1,9 +1,14 @@
 package org.meveo.service.crm.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,30 +18,43 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2
  * 
  */
 @Stateless
@@ -47,7 +65,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @Inject
     private ElasticClient elasticClient;
-
+    
     static boolean useCFTCache = true;
 
     @PostConstruct
@@ -445,4 +463,122 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
         return cftCopy;
     }
+    
+    
+    /**
+     * Get the file reader
+     * 
+     * @param cft the custom field
+     * @return the file reader
+     */
+    private ObjectReader getReader(CustomFieldTemplate cft) {
+        CsvSchema.Builder builder = CsvSchema.builder();
+
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
+            builder.addColumn(CustomFieldValue.MAP_VALUE).build();
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+            builder.addColumn(CustomFieldValue.MAP_KEY).addColumn(CustomFieldValue.MAP_VALUE).build();
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+            for (CustomFieldMatrixColumn column : cft.getMatrixColumns()) {
+                builder.addColumn(column.getCode());
+            }
+            if (cft.getFieldType() != CustomFieldTypeEnum.MULTI_VALUE) {
+                builder.addColumn(CustomFieldValue.MAP_VALUE);
+            }
+        }
+
+        CsvSchema schema = builder.build();
+        CsvMapper mapper = new CsvMapper();
+        return mapper.readerFor(Map.class).with(schema);
+    }
+
+    /**
+     * Serialize map, list and entity reference values that were adapted for csv file data entry.
+     * 
+     * @param cft the custom field template
+     * @param cfDto the custom field Dto.
+     *
+     * @return the custom field Dto values
+     */
+    public Object serializeFromFile(CustomFieldTemplate cft, CustomFieldDto cfDto) {
+
+        Object values = null;
+        if (cfDto != null && !StringUtils.isBlank(cfDto.getFileValue())) {
+            byte[] bytes = Base64.decodeBase64(cfDto.getFileValue());
+            
+            // read from file
+            ObjectReader oReader = getReader(cft);
+            try (Reader reader = new InputStreamReader(new ByteArrayInputStream(bytes))) {
+                MappingIterator<Map<String, Object>> mappingIterator = oReader.readValues(reader);
+                Map<String, Object> mapValue = new LinkedHashMap<String, Object>();
+                List<Object> listValue = new ArrayList<Object>();
+                List<String> keyColumns = cft.getMatrixKeyColumnCodes();
+                while (mappingIterator.hasNext()) {
+        
+                    Map<String, Object> csvLine = mappingIterator.next();
+                    Object value = null;
+        
+                    // Populate customFieldValue.listValue
+                    if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
+                        if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                            listValue.add(new EntityReferenceWrapper((BusinessEntity) csvLine.get(CustomFieldValue.MAP_VALUE)));
+        
+                        } else {
+                            listValue.add(csvLine.get(CustomFieldValue.MAP_VALUE));
+                        }
+        
+                        // Populate customFieldValue.mapValue from csv line
+                    } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+                        if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                            mapValue.put((String) csvLine.get(CustomFieldValue.MAP_KEY), new EntityReferenceWrapper((BusinessEntity) csvLine.get(CustomFieldValue.MAP_VALUE)));
+        
+                        } else {
+                            mapValue.put((String) csvLine.get(CustomFieldValue.MAP_KEY), csvLine.get(CustomFieldValue.MAP_VALUE));
+                        }
+                        // Populate customFieldValue.mapValue from csv line
+                    } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+        
+                        // Multi-value values need to be concatenated and stored as string
+                        if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+        
+                            value = cft.serializeMultiValue(csvLine);
+                            if (value == null) {
+                                continue;
+                            }
+        
+                        } else {
+                            value = csvLine.get(CustomFieldValue.MAP_VALUE);
+                            if (StringUtils.isBlank(value)) {
+                                continue;
+                            }
+        
+                            if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                                value = new EntityReferenceWrapper((BusinessEntity) value);
+                            }
+                        }
+        
+                        StringBuilder keyBuilder = new StringBuilder();
+                        for (String column : keyColumns) {
+                            keyBuilder.append(keyBuilder.length() == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
+                            keyBuilder.append(csvLine.get(column));
+                        }
+                        mapValue.put(keyBuilder.toString(), value);
+                    }
+                }
+                if (!listValue.isEmpty()) {
+                    values = listValue;
+                }
+                if (!mapValue.isEmpty()) {
+                    values = mapValue;
+                }
+            
+            } catch (RuntimeJsonMappingException e) {
+                log.error("invalid format", e.getMessage());
+            } catch (IOException e) {
+                log.error("read fail", e.getMessage());
+            }
+        }
+        return values;
+    }
+    
 }

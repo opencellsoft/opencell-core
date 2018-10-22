@@ -25,7 +25,6 @@ import org.meveo.model.payments.PaymentScheduleStatusEnum;
 import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.CalendarService;
 
 /**
@@ -44,10 +43,6 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
     /** The payment schedule template service. */
     @Inject
     private PaymentScheduleTemplateService paymentScheduleTemplateService;
-
-    /** The subscription service. */
-    @Inject
-    private SubscriptionService subscriptionService;
 
     /** The calendar service. */
     @Inject
@@ -175,8 +170,11 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
     private PaymentScheduleInstance instanciate(PaymentScheduleTemplate paymentScheduleTemplate, ServiceInstance serviceInstance, BigDecimal amount, Calendar calendar,
             Date startDate, Date endDate, int dueDateDelay) throws BusinessException {
 
+        if(endDate == null) {
+            throw new BusinessException("Can't instanciate PaymentSchedule when EndAgreementDate is null on subscription and serviceInstance");
+        }
         paymentScheduleTemplate = paymentScheduleTemplateService.refreshOrRetrieve(paymentScheduleTemplate);
-        Subscription subscription = subscriptionService.refreshOrRetrieve(serviceInstance.getSubscription());
+        Subscription subscription = serviceInstance.getSubscription();
         calendar = calendarService.refreshOrRetrieve(calendar);
         PaymentScheduleInstance paymentScheduleInstance = new PaymentScheduleInstance();
         paymentScheduleInstance.setAmount(amount);

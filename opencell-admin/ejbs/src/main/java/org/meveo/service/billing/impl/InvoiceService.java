@@ -34,13 +34,10 @@ import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -76,22 +73,13 @@ import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.util.PdfWaterMark;
 import org.meveo.admin.util.ResourceBundle;
-import org.meveo.api.dto.CategoryInvoiceAgregateDto;
-import org.meveo.api.dto.RatedTransactionDto;
-import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
-import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
-import org.meveo.api.dto.invoice.InvoiceDto;
-import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.Auditable;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
@@ -101,10 +89,7 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.InvoiceSequence;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.RatedTransaction;
@@ -2171,300 +2156,5 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public void nullifyInvoiceFileNames(BillingRun billingRun) {
         getEntityManager().createNamedQuery("Invoice.nullifyInvoiceFileNames").setParameter("billingRun", billingRun).executeUpdate();
-    }
-      
-    /**
-     * Create an invoice based on the DTO object data and current user
-     * 
-     * @param invoiceDTO invoice DTO
-     * 
-     * @return CreateInvoiceResponseDto
-     * @throws MeveoApiException Meveo Api exception
-     * @throws BusinessException Business exception
-     */
-    public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO) throws MeveoApiException, BusinessException {
-       
-        Auditable auditable = new Auditable(currentUser);
-        Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
-
-        BillingAccount billingAccount = billingAccountService.findByCode(invoiceDTO.getBillingAccountCode());
-        if (billingAccount == null) {
-            throw new EntityDoesNotExistsException(BillingAccount.class, invoiceDTO.getBillingAccountCode());
-        }
-        InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceDTO.getInvoiceType());
-        if (invoiceType == null) {
-            throw new EntityDoesNotExistsException(InvoiceType.class, invoiceDTO.getInvoiceType());
-        }
-
-        BigDecimal invoiceAmountWithoutTax = BigDecimal.ZERO;
-        BigDecimal invoiceAmountTax = BigDecimal.ZERO;
-        BigDecimal invoiceAmountWithTax = BigDecimal.ZERO;
-        Invoice invoice = new Invoice();
-        invoice.setBillingAccount(billingAccount);
-        invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
-        invoice.setInvoiceDate(invoiceDTO.getInvoiceDate());
-        invoice.setDueDate(invoiceDTO.getDueDate());
-
-        PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
-        if (preferedPaymentMethod != null) {
-            invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
-        }
-
-        invoice.setInvoiceType(invoiceType);
-        create(invoice);
-        if (invoiceDTO.getListInvoiceIdToLink() != null) {
-            for (Long invoiceId : invoiceDTO.getListInvoiceIdToLink()) {
-                Invoice invoiceTmp = findById(invoiceId);
-                if (invoiceTmp == null) {
-                    throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
-                }
-                if (!invoiceType.getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
-                    throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
-                }
-                invoice.getLinkedInvoices().add(invoiceTmp);
-                invoiceTmp.getLinkedInvoices().add(invoice);
-                update(invoiceTmp);
-            }
-        }
-        invoice = update(invoice);
-        List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
-        if (userAccounts == null || userAccounts.isEmpty()) {
-            throw new BusinessApiException("BillingAccount " + invoiceDTO.getBillingAccountCode() + " has no userAccount");
-        }
-        // TODO : userAccount on dto ?
-        UserAccount userAccount = userAccounts.get(0);
-        for (CategoryInvoiceAgregateDto catInvAgrDto : invoiceDTO.getCategoryInvoiceAgregates()) {
-            BigDecimal catAmountWithoutTax = BigDecimal.ZERO;
-            BigDecimal catAmountTax = BigDecimal.ZERO;
-            BigDecimal catAmountWithTax = BigDecimal.ZERO;
-            CategoryInvoiceAgregate invoiceAgregateCat = new CategoryInvoiceAgregate();
-            invoiceAgregateCat.setAuditable(auditable);
-            invoiceAgregateCat.setInvoice(invoice);
-            invoiceAgregateCat.setBillingRun(null);
-            invoiceAgregateCat.setDescription(catInvAgrDto.getDescription());
-            invoiceAgregateCat.setItemNumber(catInvAgrDto.getListSubCategoryInvoiceAgregateDto().size());
-            invoiceAgregateCat.setUserAccount(userAccount);
-            invoiceAgregateCat.setBillingAccount(billingAccount);
-            invoiceAgregateCat.setInvoiceCategory(invoiceCategoryService.findByCode(catInvAgrDto.getCategoryInvoiceCode()));
-            invoiceAgregateCat.setUserAccount(userAccount);
-            invoiceAgregateService.create(invoiceAgregateCat);
-
-            for (SubCategoryInvoiceAgregateDto subCatInvAgrDTO : catInvAgrDto.getListSubCategoryInvoiceAgregateDto()) {
-                BigDecimal subCatAmountWithoutTax = BigDecimal.ZERO;
-                BigDecimal subCatAmountTax = BigDecimal.ZERO;
-                BigDecimal subCatAmountWithTax = BigDecimal.ZERO;
-                Tax currentTax = null;
-                List<Tax> taxes = new ArrayList<Tax>();
-                InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(subCatInvAgrDTO.getInvoiceSubCategoryCode());
-                for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
-                    if ((invoicesubcatCountry.getSellingCountry() == null
-                            || (billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry() != null && invoicesubcatCountry.getSellingCountry()
-                                .getCountryCode().equalsIgnoreCase(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry().getCountryCode())))
-                            && (invoicesubcatCountry.getTradingCountry() == null
-                                    || invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()))
-                            && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
-                        if (!taxes.contains(invoicesubcatCountry.getTax())) {
-                            if (StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())) {
-                                taxes.add(invoicesubcatCountry.getTax());
-                            } else {
-                                taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(), userAccount, billingAccount, invoice));
-                            }
-                        }
-                        if (currentTax == null) {
-                            if (StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())) {
-                                currentTax = invoicesubcatCountry.getTax();
-                            } else {
-                                currentTax = invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(), userAccount, billingAccount, invoice);
-                            }
-                        }
-                    }
-                }
-                if (currentTax == null) {
-                    throw new BusinessApiException("Cant find tax for InvoiceSubCategory:" + subCatInvAgrDTO.getInvoiceSubCategoryCode());
-                }
-
-                boolean isDetailledInvoiceMode = InvoiceModeEnum.DETAILLED.name().equals(invoiceDTO.getInvoiceMode().name());
-
-                for (RatedTransactionDto ratedTransactionDto : subCatInvAgrDTO.getRatedTransactions()) {
-
-                    BigDecimal amountWithoutTax = ratedTransactionDto.getUnitAmountWithoutTax().multiply(ratedTransactionDto.getQuantity());
-                    BigDecimal amountWithTax = getAmountWithTax(currentTax, amountWithoutTax);
-                    BigDecimal amountTax = getAmountTax(amountWithTax, amountWithoutTax);
-
-                    RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(),
-                        ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax,
-                        amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null, null, null, null,
-                        ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
-                        ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), null);
-
-                    meveoRatedTransaction.setInvoice(invoice);
-                    meveoRatedTransaction.setWallet(userAccount.getWallet());
-                    // #3355 : setting params 1,2,3
-                    if (isDetailledInvoiceMode) {
-                        meveoRatedTransaction.setParameter1(ratedTransactionDto.getParameter1());
-                        meveoRatedTransaction.setParameter2(ratedTransactionDto.getParameter2());
-                        meveoRatedTransaction.setParameter3(ratedTransactionDto.getParameter3());
-                    }
-
-                    ratedTransactionService.create(meveoRatedTransaction);
-
-                    subCatAmountWithoutTax = subCatAmountWithoutTax.add(amountWithoutTax);
-                    subCatAmountTax = subCatAmountTax.add(amountTax);
-                    subCatAmountWithTax = subCatAmountWithTax.add(amountWithTax);
-                }
-                if (invoiceDTO.getInvoiceType().equals(invoiceTypeService.getCommercialCode())) {
-                    List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory);
-                    for (RatedTransaction ratedTransaction : openedRT) {
-                        subCatAmountWithoutTax = subCatAmountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
-                        subCatAmountTax = subCatAmountTax.add(ratedTransaction.getAmountTax());
-                        subCatAmountWithTax = subCatAmountWithTax.add(ratedTransaction.getAmountWithTax());
-                        ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
-                        ratedTransaction.setInvoice(invoice);
-                        ratedTransactionService.update(ratedTransaction);
-                    }
-                }
-
-                SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
-                invoiceAgregateSubcat.setCategoryInvoiceAgregate(invoiceAgregateCat);
-                invoiceAgregateSubcat.setInvoiceSubCategory(invoiceSubCategory);
-                invoiceAgregateSubcat.setInvoice(invoice);
-                invoiceAgregateSubcat.setDescription(subCatInvAgrDTO.getDescription());
-                invoiceAgregateSubcat.setBillingRun(null);
-                invoiceAgregateSubcat.setWallet(userAccount.getWallet());
-                invoiceAgregateSubcat.setUserAccount(userAccount);
-                invoiceAgregateSubcat.setAccountingCode(invoiceSubCategory.getAccountingCode());
-                invoiceAgregateSubcat.setAuditable(auditable);
-                invoiceAgregateSubcat.setQuantity(BigDecimal.ONE);
-                invoiceAgregateSubcat.setTaxPercent(currentTax.getPercent());
-                invoiceAgregateSubcat.setSubCategoryTaxes(new HashSet<Tax>(Arrays.asList(currentTax)));
-
-                if (isDetailledInvoiceMode) {
-                    invoiceAgregateSubcat.setItemNumber(subCatInvAgrDTO.getRatedTransactions().size());
-                    invoiceAgregateSubcat.setAmountWithoutTax(subCatAmountWithoutTax);
-                    invoiceAgregateSubcat.setAmountTax(subCatAmountTax);
-                    invoiceAgregateSubcat.setAmountWithTax(subCatAmountWithTax);
-                } else {
-                    // we add subCatAmountWithoutTax, in the case if there any opened RT to includ
-                    invoiceAgregateSubcat.setAmountWithoutTax(subCatAmountWithoutTax.add(subCatInvAgrDTO.getAmountWithoutTax()));
-                    invoiceAgregateSubcat.setAmountWithTax(subCatAmountWithTax.add(getAmountWithTax(currentTax, subCatInvAgrDTO.getAmountWithoutTax())));
-                    invoiceAgregateSubcat.setAmountTax(getAmountTax(invoiceAgregateSubcat.getAmountWithTax(), invoiceAgregateSubcat.getAmountWithoutTax()));
-                }
-
-                invoiceAgregateService.create(invoiceAgregateSubcat);
-                for (Tax tax : taxes) {
-                    TaxInvoiceAgregate invoiceAgregateTax = null;
-                    Long taxId = tax.getId();
-
-                    if (taxInvoiceAgregateMap.containsKey(taxId)) {
-                        invoiceAgregateTax = taxInvoiceAgregateMap.get(taxId);
-                    } else {
-                        invoiceAgregateTax = new TaxInvoiceAgregate();
-                        invoiceAgregateTax.setInvoice(invoice);
-                        invoiceAgregateTax.setBillingRun(null);
-                        invoiceAgregateTax.setTax(tax);
-                        invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
-                        invoiceAgregateTax.setTaxPercent(tax.getPercent());
-                        invoiceAgregateTax.setUserAccount(userAccount);
-                        invoiceAgregateTax.setAmountWithoutTax(BigDecimal.ZERO);
-                        invoiceAgregateTax.setAmountWithTax(BigDecimal.ZERO);
-                        invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
-                        invoiceAgregateTax.setBillingAccount(billingAccount);
-                        invoiceAgregateTax.setUserAccount(userAccount);
-                        invoiceAgregateTax.setAuditable(auditable);
-                    }
-                    invoiceAgregateTax.setAmountWithoutTax(invoiceAgregateTax.getAmountWithoutTax().add(invoiceAgregateSubcat.getAmountWithoutTax()));
-                    invoiceAgregateTax.setAmountTax(invoiceAgregateTax.getAmountTax().add(invoiceAgregateSubcat.getAmountTax()));
-                    invoiceAgregateTax.setAmountWithTax(invoiceAgregateTax.getAmountWithTax().add(invoiceAgregateSubcat.getAmountWithTax()));
-
-                    taxInvoiceAgregateMap.put(taxId, invoiceAgregateTax);
-                }
-                catAmountWithoutTax = catAmountWithoutTax.add(invoiceAgregateSubcat.getAmountWithoutTax());
-                catAmountTax = catAmountTax.add(invoiceAgregateSubcat.getAmountTax());
-                catAmountWithTax = catAmountWithTax.add(invoiceAgregateSubcat.getAmountWithTax());
-            }
-
-            invoiceAgregateCat.setAmountWithoutTax(catAmountWithoutTax);
-            invoiceAgregateCat.setAmountTax(catAmountTax);
-            invoiceAgregateCat.setAmountWithTax(catAmountWithTax);
-
-            invoiceAmountWithoutTax = invoiceAmountWithoutTax.add(invoiceAgregateCat.getAmountWithoutTax());
-            invoiceAmountTax = invoiceAmountTax.add(invoiceAgregateCat.getAmountTax());
-            invoiceAmountWithTax = invoiceAmountWithTax.add(invoiceAgregateCat.getAmountWithTax());
-        }
-
-        for (Entry<Long, TaxInvoiceAgregate> entry : taxInvoiceAgregateMap.entrySet()) {
-            invoiceAgregateService.create(entry.getValue());
-        }
-        
-        int invoiceRounding = appProvider.getInvoiceRounding() == null ? 2 : appProvider.getInvoiceRounding();
-        RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
-        
-        invoice.setAmountWithoutTax( round(invoiceAmountWithoutTax, invoiceRounding, invoiceRoundingMode) );
-        invoice.setAmountTax( round(invoiceAmountTax, invoiceRounding, invoiceRoundingMode) );
-        invoice.setAmountWithTax( round(invoiceAmountWithTax, invoiceRounding, invoiceRoundingMode) );
-
-        BigDecimal netToPay = invoice.getAmountWithTax();
-        if (!appProvider.isEntreprise() && invoiceDTO.isIncludeBalance()) {
-            BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount().getCustomerAccount().getCode(), invoice.getDueDate());
-
-            if (balance == null) {
-                throw new BusinessException("account balance calculation failed");
-            }
-            netToPay = invoice.getAmountWithTax().add( round(balance, invoiceRounding, invoiceRoundingMode) );
-        }
-        invoice.setNetToPay(netToPay);
-      
-        invoice = update(invoice);
-        CreateInvoiceResponseDto response = new CreateInvoiceResponseDto();
-        response.setInvoiceId(invoice.getId());
-        response.setAmountWithoutTax(invoice.getAmountWithoutTax());
-        response.setAmountTax(invoice.getAmountTax());
-        response.setAmountWithTax(invoice.getAmountWithTax());
-        response.setDueDate(invoice.getDueDate());
-        response.setInvoiceDate(invoice.getInvoiceDate());
-        response.setNetToPay(invoice.getNetToPay());
-
-        // pdf and xml are added to response if requested
-        if (invoiceDTO.isAutoValidation()) {
-            assignInvoiceNumber(invoice);
-            response.setInvoiceNumber(invoice.getInvoiceNumber());
-            if (invoiceDTO.isReturnXml() || invoiceDTO.isReturnPdf()) {
-                produceInvoiceXml(invoice);
-                String invoiceXml = getInvoiceXml(invoice);
-                response.setXmlInvoice(invoiceXml);
-                response.setXmlFilename(invoice.getXmlFilename());
-            }
-
-            if (invoiceDTO.isReturnPdf()) {
-                invoice = produceInvoicePdf(invoice);
-                byte[] invoicePdf = getInvoicePdf(invoice);
-                response.setPdfInvoice(invoicePdf);
-                response.setPdfFilename(invoice.getPdfFilename());
-            }
-        }
-
-
-        return response;
-    }
-    /**
-     * 
-     * @param tax taxe
-     * @param amountWithoutTax amount with tax
-     * @return amount with tax.
-     */
-    private BigDecimal getAmountWithTax(Tax tax, BigDecimal amountWithoutTax) {
-        Integer rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
-        BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), rounding, getRoundingMode(appProvider.getRoundingMode())));
-        return ttc;
-    }
-
-    /**
-     * 
-     * @param amountWithTax amount with tax
-     * @param amountWithoutTax amount without tax
-     * @return tax amount.
-     */
-    private BigDecimal getAmountTax(BigDecimal amountWithTax, BigDecimal amountWithoutTax) {
-        return amountWithTax.subtract(amountWithoutTax);
-    }
+    }      
 }

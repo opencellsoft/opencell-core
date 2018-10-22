@@ -19,6 +19,12 @@ import org.meveo.service.base.BusinessService;
 public class PaymentScheduleTemplateService extends BusinessService<PaymentScheduleTemplate> {
 
   
+    /**
+     * Find by service template.
+     *
+     * @param serviceTemplate the service template
+     * @return the payment schedule template
+     */
     public PaymentScheduleTemplate findByServiceTemplate(ServiceTemplate serviceTemplate) {
         try { 
             QueryBuilder qb = new QueryBuilder(PaymentScheduleTemplate.class, "ps");
