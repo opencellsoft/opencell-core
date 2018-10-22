@@ -1,14 +1,19 @@
 package org.meveo.service.payments.impl;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.DDRequestLotOp;
 
 /**
  * @author anasseh
+ * @author Said Ramli
  * @lastModifiedVersion 5.2
  *
  */
@@ -55,6 +60,16 @@ public interface DDRequestBuilderInterface {
      * @throws BusinessException the BusinessException.
      */
     public DDRejectFileInfos processDDRejectedFile(File file) throws BusinessException;
+    
+    
+    /**
+     * Find list of Account operations to pay.
+     *
+     * @param ddrequestLotOp the ddrequest lot op
+     * @return the list
+     * @throws BusinessException the business exception
+     */
+    public List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException;
 
     /**
      * Generate the SCT Request file for a given DDRequestLot.

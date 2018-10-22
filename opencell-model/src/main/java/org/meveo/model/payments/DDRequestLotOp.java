@@ -34,9 +34,16 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.scripts.ScriptInstance;
 
+/**
+ * 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
+ */
 @Entity
 @Table(name = "ar_ddrequest_lot_op")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -76,6 +83,14 @@ public class DDRequestLotOp extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "filter_id")
     private Filter filter;    
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "script_instance_id")
+    private ScriptInstance scriptInstance;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "recurrent")
+    private Boolean recurrent;
 
     /**
      * @return the fromDueDate
@@ -181,6 +196,34 @@ public class DDRequestLotOp extends AuditableEntity {
      */
     public void setFilter(Filter filter) {
         this.filter = filter;
+    }
+
+    /**
+     * @return the scriptInstance
+     */
+    public ScriptInstance getScriptInstance() {
+        return scriptInstance;
+    }
+
+    /**
+     * @return the recurrent
+     */
+    public Boolean getRecurrent() {
+        return recurrent;
+    }
+
+    /**
+     * @param scriptInstance the scriptInstance to set
+     */
+    public void setScriptInstance(ScriptInstance scriptInstance) {
+        this.scriptInstance = scriptInstance;
+    }
+
+    /**
+     * @param recurrent the recurrent to set
+     */
+    public void setRecurrent(Boolean recurrent) {
+        this.recurrent = recurrent;
     }
 
    

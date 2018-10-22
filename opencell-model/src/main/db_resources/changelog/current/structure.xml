@@ -1845,7 +1845,6 @@
         <sql>update ${db.schema.adapted}billing_wallet set reject_level=0 where reject_level is null</sql>
     </changeSet>
     
-
     <changeSet id="#3511_20180803 - paymennt schedule" author="anasseh">
         <createTable tableName="ar_payment_schedule_tmpl">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -2110,4 +2109,10 @@
      <modifyDataType columnName="iban" newDataType="varchar(80)" tableName="ar_payment_token "/>
     </changeSet>
 
+    <changeSet id="#3668_20181610" author="SaidRamli">
+        <addColumn tableName="ar_ddrequest_lot_op">
+            <column name="script_instance_id" type="bigint" /> 
+            <column name="recurrent" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -17,6 +17,8 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
  *
  * @author Tyshan Shi(tyshan@manaty.net)
  * @since Jul 11, 2016 7:15:09 PM
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
  */
 @XmlRootElement(name = "DDRequestLotOp")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -47,6 +49,12 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     
     /** The dd request builder code. */
     private String ddRequestBuilderCode;
+    
+    /** The due date rage script code : to get the custom script computing the AOs due date range. */
+    private String dueDateRageScriptCode;
+    
+    /** The recurrent flag : to decide if a new dd request lot operation will be created at end , or not. */
+    private Boolean recurrent;
 
     /**
      * Instantiates a new DD request lot op dto.
@@ -195,6 +203,34 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
      */
     public void setDdRequestBuilderCode(String ddRequestBuilderCode) {
         this.ddRequestBuilderCode = ddRequestBuilderCode;
+    }
+
+    /**
+     * @return the dueDateRageScriptCode
+     */
+    public String getDueDateRageScriptCode() {
+        return dueDateRageScriptCode;
+    }
+
+    /**
+     * @return the recurrent
+     */
+    public Boolean getRecurrent() {
+        return recurrent;
+    }
+
+    /**
+     * @param dueDateRageScriptCode the dueDateRageScriptCode to set
+     */
+    public void setDueDateRageScriptCode(String dueDateRageScriptCode) {
+        this.dueDateRageScriptCode = dueDateRageScriptCode;
+    }
+
+    /**
+     * @param recurrent the recurrent to set
+     */
+    public void setRecurrent(Boolean recurrent) {
+        this.recurrent = recurrent;
     }
 
 }
