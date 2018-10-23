@@ -184,7 +184,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Size(max = 2000)
     private String minimumLabelEl;
     
-    @ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_discount_plan", joinColumns = @JoinColumn(name = "billing_account_id"), inverseJoinColumns = @JoinColumn(name = "discount_plan_id"))
     private Set<DiscountPlan> discountPlans = new HashSet<>();
     
