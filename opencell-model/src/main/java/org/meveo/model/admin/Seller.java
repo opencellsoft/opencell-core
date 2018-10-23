@@ -53,6 +53,8 @@ import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 
 /**
+ * Seller
+ * 
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.2
@@ -69,38 +71,62 @@ public class Seller extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Currency (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
     private TradingCurrency tradingCurrency;
 
+    /**
+     * Country (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country_id")
     private TradingCountry tradingCountry;
 
+    /**
+     * Language (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
 
+    /**
+     * Address
+     */
     @Embedded
     private Address address;
 
+    /**
+     * Contact information
+     */
     @Embedded
     private ContactInformation contactInformation;
 
     /**
-     * Parent seller in seller hierarchy
+     * Parent seller in seller hierarchy (identifier)
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_seller_id")
     private Seller seller;
 
+    /**
+     * Invoice numbering sequence
+     */
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvoiceTypeSellerSequence> invoiceTypeSequence = new ArrayList<>();
 
+    /**
+     * Business account model (identifier) that created this Seller
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bam_id")
     private BusinessAccountModel businessAccountModel;
-    
+
+    /**
+     * Customer invoice numbering sequences
+     */
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CustomerSequence> customerSequences = new ArrayList<>();
 
@@ -247,11 +273,11 @@ public class Seller extends BusinessCFEntity {
         return getSeller().findSellerForInvoiceNumberingSequence(cfName, date, invoiceType);
     }
 
-	public List<CustomerSequence> getCustomerSequences() {
-		return customerSequences;
-	}
+    public List<CustomerSequence> getCustomerSequences() {
+        return customerSequences;
+    }
 
-	public void setCustomerSequences(List<CustomerSequence> customerSequences) {
-		this.customerSequences = customerSequences;
-	}
+    public void setCustomerSequences(List<CustomerSequence> customerSequences) {
+        this.customerSequences = customerSequences;
+    }
 }

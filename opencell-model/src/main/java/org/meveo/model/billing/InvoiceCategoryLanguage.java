@@ -32,8 +32,9 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
- * InvoiceCategoryLanguage entity.
+ * InvoiceCategoryLanguage entity. Deprecated in 5.3 for not use
  */
+@Deprecated
 @Entity
 @ExportIdentifier({ "invoiceCategory.code", "tradingLanguage.language.languageCode" })
 @Table(name = "billing_invoice_cat_lang")

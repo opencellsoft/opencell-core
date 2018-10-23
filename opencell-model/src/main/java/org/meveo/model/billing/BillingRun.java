@@ -54,86 +54,163 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
+/**
+ * Billing run
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "BILLING_RUN")
 @Table(name = "billing_billing_run")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_billing_run_seq") })
-@NamedQueries({ @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') order by br.id asc") })
+@NamedQueries({
+        @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') order by br.id asc") })
 public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Billing run processing start date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "process_date")
     private Date processDate;
 
+    /**
+     * Execution status
+     */
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
     private BillingRunStatusEnum status;
 
+    /**
+     * Last status change date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
     private Date statusDate;
 
+    /**
+     * Billing cycle (identifier)
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "billing_cycle_id")
     private BillingCycle billingCycle;
 
+    /**
+     * Number of matched Billing accounts
+     */
     @Column(name = "nb_billing_account")
     private Integer billingAccountNumber;
 
+    /**
+     * Number of billable Billing accounts
+     */
     @Column(name = "nb_billable_billing_account")
     private Integer billableBillingAcountNumber;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "nb_producible_invoice")
     private Integer producibleInvoiceNumber;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "producible_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal producibleAmountWithoutTax;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "producible_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal producibleAmountTax;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "nb_invoice")
     private Integer InvoiceNumber;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "producible_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal producibleAmountWithTax;
 
+    /**
+     * Billed amount without tax
+     */
     @Column(name = "pr_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal prAmountWithoutTax;
 
+    /**
+     * Billed amount with tax
+     */
     @Column(name = "pr_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal prAmountWithTax;
 
+    /**
+     * Billed tax amount
+     */
     @Column(name = "pr_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal prAmountTax;
 
+    /**
+     * Invoices produced by a Billing run
+     */
     @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Invoice> invoices = new ArrayList<Invoice>();
 
+    /**
+     * Billing run lists
+     */
     @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<BillingRunList> billingRunLists = new HashSet<BillingRunList>();
 
+    /**
+     * Billed billing accounts
+     */
     @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
     private List<BillingAccount> billableBillingAccounts = new ArrayList<BillingAccount>();
 
+    /**
+     * Rated transactions included in this billing run
+     */
     @OneToMany(mappedBy = "billingRun", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Set<RatedTransaction> ratedTransactions = new HashSet<RatedTransaction>();
 
+    /**
+     * Billing run processing type
+     */
     @Enumerated(value = EnumType.STRING)
     @Column(name = "process_type")
     private BillingProcessTypesEnum processType;
 
+    /**
+     * Include Rated transactions between the dates - from date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date")
     private Date startDate;
 
+    /**
+     * Include Rated transactions between the dates - to date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_date")
     private Date endDate;
 
+    /**
+     * Invoice date
+     */
     @Column(name = "invoice_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date invoiceDate;
@@ -145,42 +222,75 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastTransactionDate;
 
+    /**
+     * Rejection reason
+     */
     @Column(name = "rejection_reason", length = 255)
     @Size(max = 255)
     private String rejectionReason;
 
+    /**
+     * Currency (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pr_currency_id")
     private Currency currency;
 
+    /**
+     * Country (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pr_country_id")
     private Country country;
 
+    /**
+     * Language (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pr_language_id")
     private Language language;
 
+    /**
+     * Selected billing accounts (identifiers)
+     */
     @Column(name = "selected_billing_accounts", columnDefinition = "TEXT")
     private String selectedBillingAccounts;
 
+    /**
+     * Pre-invoicing reports
+     */
     @Transient
     PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
 
+    /**
+     * Post-invoicing reports
+     */
     @Transient
     PostInvoicingReportsDTO postInvoicingReports = new PostInvoicingReportsDTO();
 
+    /**
+     * Rejected billing accounts
+     */
     @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
     private List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
 
+    /**
+     * Custom field values in JSON format
+     */
     @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
+    /**
+     * Accumulated custom field values in JSON format
+     */
     @Type(type = "cfjson")
     @Column(name = "cf_values_accum", columnDefinition = "text")
     private CustomFieldValues cfAccumulatedValues;
 
+    /**
+     * Unique identifier - UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull

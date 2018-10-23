@@ -38,7 +38,7 @@ public class EnableEntity extends AuditableEntity implements IEnable {
     @Type(type = "numeric_boolean")
     @Column(name = "disabled", nullable = false)
     @NotNull
-    private boolean disabled;
+    protected boolean disabled;
 
     public boolean isDisabled() {
         return disabled;

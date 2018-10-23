@@ -34,91 +34,93 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 
 /**
- * DiscountplanInstanciation entity.
+ * DiscountplanInstanciation entity. Deprecated in 5.3 for not use
  */
+@Deprecated
 @Entity
 @Table(name = "billing_discplan_inst")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_disc_inst_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_disc_inst_seq"), })
 public class DiscountplanInstanciation extends EnableEntity {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_account_id")
-	private BillingAccount billingAccount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_account_id")
+    private BillingAccount billingAccount;
 
-	@Column(name = "usage_type")
-	private EventTypeEnum usageType;
+    @Column(name = "usage_type")
+    private EventTypeEnum usageType;
 
-	@Column(name = "charge_code", length = 255)
-	@Size(max = 255)
-	private String chargeCode;
+    @Column(name = "charge_code", length = 255)
+    @Size(max = 255)
+    private String chargeCode;
 
-	@Column(name = "start_subscription_date")
-	private Date startSubscriptionDate;
+    @Column(name = "start_subscription_date")
+    private Date startSubscriptionDate;
 
-	@Column(name = "end_subscription_date")
-	private Date endSubscriptionDate;
+    @Column(name = "end_subscription_date")
+    private Date endSubscriptionDate;
 
-	@Column(name = "nb_period")
-	private Integer nbPeriod;
+    @Column(name = "nb_period")
+    private Integer nbPeriod;
 
-	@Column(name = "pourcent")
-	private BigDecimal pourcent;
+    @Column(name = "pourcent")
+    private BigDecimal pourcent;
 
-	public BillingAccount getBillingAccount() {
-		return billingAccount;
-	}
+    public BillingAccount getBillingAccount() {
+        return billingAccount;
+    }
 
-	public void setBillingAccountId(BillingAccount billingAccount) {
-		this.billingAccount = billingAccount;
-	}
+    public void setBillingAccountId(BillingAccount billingAccount) {
+        this.billingAccount = billingAccount;
+    }
 
-	public EventTypeEnum getUsageType() {
-		return usageType;
-	}
+    public EventTypeEnum getUsageType() {
+        return usageType;
+    }
 
-	public void setUsageType(EventTypeEnum usageType) {
-		this.usageType = usageType;
-	}
+    public void setUsageType(EventTypeEnum usageType) {
+        this.usageType = usageType;
+    }
 
-	public String getChargeCode() {
-		return chargeCode;
-	}
+    public String getChargeCode() {
+        return chargeCode;
+    }
 
-	public void setChargeCode(String chargeCode) {
-		this.chargeCode = chargeCode;
-	}
+    public void setChargeCode(String chargeCode) {
+        this.chargeCode = chargeCode;
+    }
 
-	public Date getStartSubscriptionDate() {
-		return startSubscriptionDate;
-	}
+    public Date getStartSubscriptionDate() {
+        return startSubscriptionDate;
+    }
 
-	public void setStartSubscriptionDate(Date startSubscriptionDate) {
-		this.startSubscriptionDate = startSubscriptionDate;
-	}
+    public void setStartSubscriptionDate(Date startSubscriptionDate) {
+        this.startSubscriptionDate = startSubscriptionDate;
+    }
 
-	public Date getEndSubscriptionDate() {
-		return endSubscriptionDate;
-	}
+    public Date getEndSubscriptionDate() {
+        return endSubscriptionDate;
+    }
 
-	public void setEndSubscriptionDate(Date endSubscriptionDate) {
-		this.endSubscriptionDate = endSubscriptionDate;
-	}
+    public void setEndSubscriptionDate(Date endSubscriptionDate) {
+        this.endSubscriptionDate = endSubscriptionDate;
+    }
 
-	public Integer getNbPeriod() {
-		return nbPeriod;
-	}
+    public Integer getNbPeriod() {
+        return nbPeriod;
+    }
 
-	public void setNbPeriod(Integer nbPeriod) {
-		this.nbPeriod = nbPeriod;
-	}
+    public void setNbPeriod(Integer nbPeriod) {
+        this.nbPeriod = nbPeriod;
+    }
 
-	public BigDecimal getPourcent() {
-		return pourcent;
-	}
+    public BigDecimal getPourcent() {
+        return pourcent;
+    }
 
-	public void setPourcent(BigDecimal pourcent) {
-		this.pourcent = pourcent;
-	}
+    public void setPourcent(BigDecimal pourcent) {
+        this.pourcent = pourcent;
+    }
 
 }

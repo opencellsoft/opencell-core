@@ -32,49 +32,60 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
- * DiscountLanguage entity.
+ * DiscountLanguage entity. Deprecated in 5.3 for not use
  */
+@Deprecated
 @Entity
-@ExportIdentifier({ "discount.discountCode", "tradingLanguage.language.languageCode"})
+@ExportIdentifier({ "discount.discountCode", "tradingLanguage.language.languageCode" })
 @Table(name = "billing_discount_language")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_discount_language_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_discount_language_seq"), })
 public class DiscountLanguage extends EnableEntity {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "discount_id")
-	private Discount discount;
+    /**
+     * Discount (identifier)
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_id")
+    private Discount discount;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_language_id")
-	private TradingLanguage tradingLanguage;
+    /**
+     * Language (identifier)
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_language_id")
+    private TradingLanguage tradingLanguage;
 
-	@Column(name = "description", length = 255)
-	@Size(max = 255)
-	private String description;
+    /**
+     * Description
+     */
+    @Column(name = "description", length = 255)
+    @Size(max = 255)
+    private String description;
 
-	public Discount getDiscount() {
-		return discount;
-	}
+    public Discount getDiscount() {
+        return discount;
+    }
 
-	public void setDiscount(Discount discount) {
-		this.discount = discount;
-	}
+    public void setDiscount(Discount discount) {
+        this.discount = discount;
+    }
 
-	public TradingLanguage getTradingLanguage() {
-		return tradingLanguage;
-	}
+    public TradingLanguage getTradingLanguage() {
+        return tradingLanguage;
+    }
 
-	public void setTradingLanguage(TradingLanguage tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
-	}
+    public void setTradingLanguage(TradingLanguage tradingLanguage) {
+        this.tradingLanguage = tradingLanguage;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 }

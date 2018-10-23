@@ -35,6 +35,11 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.shared.DateUtils;
 
+/**
+ * Instantiated counter
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "billing_counter")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -42,18 +47,30 @@ import org.meveo.model.shared.DateUtils;
 public class CounterInstance extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;
 
+    /**
+     * Counter template (identifier) that counter was instantiated from
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counter_template_id")
     private CounterTemplate counterTemplate;
 
+    /**
+     * User account that counter is tracked on
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
+    /**
+     * Billing account that counter is tracked on
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id")
     private BillingAccount billingAccount;
 
+    /**
+     * Counter periods
+     */
     @OneToMany(mappedBy = "counterInstance", fetch = FetchType.LAZY)
     private List<CounterPeriod> counterPeriods = new ArrayList<CounterPeriod>();
 

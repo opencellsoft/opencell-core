@@ -39,8 +39,11 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "code", nullable = false, length = 255)
     // TODO : Create sql script to ad index. @Index(name = "CODE_IDX")
+    /**
+     * Code
+     */
+    @Column(name = "code", nullable = false, length = 255)
     @Size(max = 255, min = 1)
     @NotNull
     protected String code;
@@ -51,13 +54,19 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     @Transient
     protected String previousCode;
 
+    /**
+     * Description
+     */
     @Column(name = "description", nullable = true, length = 255)
     @Size(max = 255)
     protected String description;
 
+    /**
+     * If True, append Identifier to the code value
+     */
     @Transient
     protected boolean appendGeneratedCode = false;
-    
+
     public String getCode() {
         return code;
     }
@@ -148,10 +157,10 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
         }
 
         BusinessEntity other = (BusinessEntity) obj;
-        
-		if (id != null && other.getId() != null && getClass().equals(other.getClass()) && id.equals(other.getId())) {
-			return true;
-		}
+
+        if (id != null && other.getId() != null && getClass().equals(other.getClass()) && id.equals(other.getId())) {
+            return true;
+        }
 
         if (code == null) {
             if (other.getCode() != null) {
@@ -185,19 +194,19 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     public boolean isCodeChanged() {
         return !StringUtils.equals(code, previousCode);
     }
-    
+
     @Override
     public String getReferenceCode() {
-    	return code;
+        return code;
     }
-    
+
     @Override
     public void setReferenceCode(Object value) {
-    	setCode(value.toString());
+        setCode(value.toString());
     }
 
     @Override
     public String getReferenceDescription() {
-		return description;
-	}
+        return description;
+    }
 }

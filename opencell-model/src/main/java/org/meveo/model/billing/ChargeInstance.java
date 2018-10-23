@@ -61,6 +61,11 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Instantiated/subscribed charge
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ObservableEntity
 @Table(name = "billing_charge_instance")
@@ -78,91 +83,160 @@ public class ChargeInstance extends BusinessEntity {
      */
     public static String NO_ORDER_NUMBER = "none";
 
+    /**
+     * Status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     protected InstanceStatusEnum status = InstanceStatusEnum.ACTIVE;
 
+    /**
+     * Last status change date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
     protected Date statusDate;
 
+    /**
+     * Termination timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "termination_date")
     protected Date terminationDate;
 
+    /**
+     * Charge template (identifier) that charge was instantiated from
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "charge_template_id")
     protected ChargeTemplate chargeTemplate;
 
+    /**
+     * Invoicing calendar (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
     protected Calendar invoicingCalendar;
 
+    /**
+     * Charge instantiation date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "charge_date")
     protected Date chargeDate;
 
+    /**
+     * Overridden amount without tax
+     */
     @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal amountWithoutTax;
 
+    /**
+     * Overridden amount with tax
+     */
     @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal amountWithTax;
 
+    /**
+     * Rating matching criteria 1
+     */
     @Column(name = "criteria_1", length = 255)
     @Size(max = 255)
     protected String criteria1;
 
+    /**
+     * Rating matching criteria 2
+     */
     @Column(name = "criteria_2", length = 255)
     @Size(max = 255)
     protected String criteria2;
 
+    /**
+     * Rating matching criteria 3
+     */
     @Column(name = "criteria_3", length = 255)
     @Size(max = 255)
     protected String criteria3;
 
+    /**
+     * Wallet operations associated with a charge
+     */
     @OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     protected List<WalletOperation> walletOperations = new ArrayList<>();
 
+    /**
+     * Associated Seller
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = true)
     protected Seller seller;
 
+    /**
+     * Associated User account
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id")
     protected UserAccount userAccount;
 
-    /// Might be null, for productCharges for instance
+    /**
+     * Associated subscription. Might be null, for productCharges for instance
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     protected Subscription subscription;
 
+    /**
+     * Description. Deprecated in 5.3 for not used.
+     */
+    @Deprecated
     @Column(name = "pr_description", length = 255)
     @Size(max = 255)
     protected String prDescription;
 
+    /**
+     * Currency (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency")
     protected TradingCurrency currency;
 
+    /**
+     * Country (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country")
     protected TradingCountry country;
 
+    /**
+     * Wallet instances
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_chrginst_wallet", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "wallet_instance_id"))
     @OrderColumn(name = "INDX")
     protected List<WalletInstance> walletInstances = new ArrayList<>();
 
+    /**
+     * Prepaid wallet instances
+     */
     @Transient
     private List<WalletInstance> prepaidWalletInstances;
 
+    /**
+     * Wallet operations srted by date
+     */
     @Transient
     protected List<WalletOperation> sortedWalletOperations;
 
+    /**
+     * Is this a prepaid charge. True if any of the wallet instances is of prepaid type.
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "is_prepaid")
     protected Boolean prepaid = Boolean.FALSE;
 
+    /**
+     * Order number that instantiated the charge
+     */
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     protected String orderNumber;

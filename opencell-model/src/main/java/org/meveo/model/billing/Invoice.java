@@ -64,6 +64,8 @@ import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.DateUtils;
 
 /**
+ * Invoice
+ * 
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @lastModifiedVersion 5.2
@@ -87,116 +89,213 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Billing account that invoice was issued to (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id")
     private BillingAccount billingAccount;
 
+    /**
+     * Billing run that produced the invoice (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run_id")
     private BillingRun billingRun;
 
+    /**
+     * Recorded invoice (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recorded_invoice_id")
     private RecordedInvoice recordedInvoice;
 
+    /**
+     * Invoice aggregates
+     */
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
+    /**
+     * Invoice number
+     */
     @Column(name = "invoice_number", length = 50)
     @Size(max = 50)
     private String invoiceNumber;
 
+    /**
+     * Temporary invoice number
+     */
     @Column(name = "temporary_invoice_number", length = 60, unique = true)
     @Size(max = 60)
     private String temporaryInvoiceNumber;
 
+    /**
+     * Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "product_date")
     private Date productDate;
 
+    /**
+     * Invoice issue date
+     */
     @Column(name = "invoice_date")
     private Date invoiceDate;
 
+    /**
+     * Payment due date
+     */
     @Column(name = "due_date")
     private Date dueDate;
 
+    /**
+     * Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amount;
 
+    /**
+     * Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "discount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discount;
 
+    /**
+     * Invoiced amount without tax
+     */
     @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithoutTax;
 
+    /**
+     * Invoiced tax amount
+     */
     @Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountTax;
 
+    /**
+     * Invoiced amount with tax
+     */
     @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithTax;
 
+    /**
+     * Total amount to pay - amountWith/withoutTax + balanceDue
+     */
     @Column(name = "net_to_pay", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal netToPay;
 
+    /**
+     * Expected payment method (identifier)
+     */
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum paymentMethodType;
 
+    /**
+     * IBAN number. Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "iban", length = 255)
     @Size(max = 255)
     private String iban;
 
+    /**
+     * Alias
+     */
     @Column(name = "alias", length = 255)
     @Size(max = 255)
     private String alias;
 
+    /**
+     * Amount currency
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
     private TradingCurrency tradingCurrency;
 
+    /**
+     * Country that invoice was applied to (for tax purpose)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country_id")
     private TradingCountry tradingCountry;
 
+    /**
+     * Language invoice is in
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
 
+    /**
+     * Rated transactions that were included in invoice
+     */
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions = new ArrayList<>();
 
+    /**
+     * Comment
+     */
     @Column(name = "comment", length = 1200)
     @Size(max = 1200)
     private String comment;
 
+    /**
+     * Is this a detailed invoice
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "detailed_invoice")
     private boolean isDetailedInvoice = true;
 
+    /**
+     * Adjusted invoice (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice adjustedInvoice;
 
+    /**
+     * Invoice type (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_type_id")
     private InvoiceType invoiceType;
 
+    /**
+     * Unique identifier - UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
+    /**
+     * Custom field values in JSON format
+     */
     @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
+    /**
+     * Accumulated custom field values in JSON format
+     */
     @Type(type = "cfjson")
     @Column(name = "cf_values_accum", columnDefinition = "text")
     private CustomFieldValues cfAccumulatedValues;
 
+    /**
+     * Linked invoices
+     */
     @ManyToMany
     @JoinTable(name = "billing_linked_invoices", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns = { @JoinColumn(name = "linked_invoice_id") })
     private Set<Invoice> linkedInvoices = new HashSet<>();
 
+    /**
+     * Orders that produced rated transactions that were included in the invoice
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
     private List<Order> orders = new ArrayList<>();
@@ -236,13 +335,22 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @Size(max = 255)
     private String pdfFilename;
 
+    /**
+     * Payment method (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
+    /**
+     * Balance due
+     */
     @Column(name = "due_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal dueBalance;
 
+    /**
+     * Seller that invoice was issued to (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;

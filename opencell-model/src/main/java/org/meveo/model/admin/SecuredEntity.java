@@ -11,7 +11,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 
 /**
- * Entity that accessible entities for a user.
+ * Entity accessibility rules
  */
 @Embeddable
 public class SecuredEntity implements Serializable {
@@ -31,11 +31,17 @@ public class SecuredEntity implements Serializable {
         this.setEntityClass(securedEntity.getEntityClass());
     }
 
+    /**
+     * Accessible entity code
+     */
     @Column(name = "code", nullable = false, length = 255)
     @Size(max = 255, min = 1)
     @NotNull
     private String code;
 
+    /**
+     * Accessible entity type/class
+     */
     @Column(name = "entity_class", length = 255)
     @Size(max = 255)
     private String entityClass;

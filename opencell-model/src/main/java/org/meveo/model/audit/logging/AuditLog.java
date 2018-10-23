@@ -13,81 +13,101 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 /**
+ * Audit log
+ * 
  * @author Edward P. Legaspi
  **/
 @Entity
 @Table(name = "audit_log")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-		@Parameter(name = "sequence_name", value = "audit_log_seq"), })
+        @Parameter(name = "sequence_name", value = "audit_log_seq"), })
 public class AuditLog extends BaseEntity {
 
-	private static final long serialVersionUID = -8920671560100707762L;
+    private static final long serialVersionUID = -8920671560100707762L;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created")
-	private Date created;
+    /**
+     * Action timestamp
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created")
+    private Date created;
 
-	@Column(name = "actor", length = 200)
-	private String actor;
+    /**
+     * User that performed the action
+     */
+    @Column(name = "actor", length = 200)
+    private String actor;
 
-	@Column(name = "origin", length = 200)
-	private String origin;
+    /**
+     * Source of action
+     */
+    @Column(name = "origin", length = 200)
+    private String origin;
 
-	@Column(name = "action")
-	private String action;
+    /**
+     * Action performed
+     */
+    @Column(name = "action")
+    private String action;
 
-	@Column(name = "entity")
-	private String entity;
+    /**
+     * Entity that action was performed on
+     */
+    @Column(name = "entity")
+    private String entity;
 
-	@Column(name = "parameters", length = 2000, columnDefinition="TEXT")
-	private String parameters;
+    /**
+     * Action parameters
+     */
+    @Column(name = "parameters", length = 2000, columnDefinition = "TEXT")
+    private String parameters;
 
-	public Date getCreated() {
-		return created;
-	}
+    public Date getCreated() {
+        return created;
+    }
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+    public void setCreated(Date created) {
+        this.created = created;
+    }
 
-	public String getActor() {
-		return actor;
-	}
+    public String getActor() {
+        return actor;
+    }
 
-	public void setActor(String actor) {
-		this.actor = actor;
-	}
+    public void setActor(String actor) {
+        this.actor = actor;
+    }
 
-	public String getOrigin() {
-		return origin;
-	}
+    public String getOrigin() {
+        return origin;
+    }
 
-	public void setOrigin(String origin) {
-		this.origin = origin;
-	}
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
 
-	public String getAction() {
-		return action;
-	}
+    public String getAction() {
+        return action;
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-	public String getParameters() {
-		return parameters;
-	}
+    public String getParameters() {
+        return parameters;
+    }
 
-	public void setParameters(String parameters) {
-		this.parameters = parameters;
-	}
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
+    }
 
-	public String getEntity() {
-		return entity;
-	}
+    public String getEntity() {
+        return entity;
+    }
 
-	public void setEntity(String entity) {
-		this.entity = entity;
-	}
+    public void setEntity(String entity) {
+        this.entity = entity;
+    }
 
 }

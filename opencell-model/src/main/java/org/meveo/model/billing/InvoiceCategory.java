@@ -45,9 +45,9 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.payments.OCCTemplate;
 
-
 /**
- * InvoiceCategory Entity
+ * Invoice category
+ * 
  * @author anasseh
  * @lastModifiedVersion 5.1
  */
@@ -67,21 +67,36 @@ public class InvoiceCategory extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * A list of Invoice subcategories that make up this invoice category
+     */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "invoiceCategory", fetch = FetchType.LAZY)
     private List<InvoiceSubCategory> invoiceSubCategories;
 
+    /**
+     * Sorting index
+     */
     @Column(name = "sort_index")
     private Integer sortIndex;
 
+    /**
+     * Translated descriptions in JSON format
+     */
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
-    
+
+    /**
+     * Account operation template (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "occ_template_id")
     private OCCTemplate occTemplate;
 
+    /**
+     * An opposite account operation template (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "occ_templ_negative_id")
     private OCCTemplate occTemplateNegative;
@@ -150,6 +165,5 @@ public class InvoiceCategory extends BusinessCFEntity {
     public void setOccTemplateNegative(OCCTemplate occTemplateNegative) {
         this.occTemplateNegative = occTemplateNegative;
     }
-    
-    
+
 }

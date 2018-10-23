@@ -28,79 +28,96 @@ import javax.persistence.TemporalType;
 
 import org.meveo.security.MeveoUser;
 
+/**
+ * Tracks record/entity create/update information
+ * 
+ * @author Andrius Karpavicius
+ */
 @Embeddable
 public class Auditable implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created", nullable = false, updatable = false)
-	private Date created;
+    /**
+     * Creation timestamp
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created", nullable = false, updatable = false)
+    private Date created;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "updated")
-	private Date updated;
+    /**
+     * Last update timestamp
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated")
+    private Date updated;
 
-	@Column(name = "creator", updatable = false, length = 100)
-	private String creator;
+    /**
+     * Username of a user that created the record/entity
+     */
+    @Column(name = "creator", updatable = false, length = 100)
+    private String creator;
 
-	@Column(name = "updater", length = 100)
-	private String updater;
+    /**
+     * Username of a user that last updated the record/entity
+     */
+    @Column(name = "updater", length = 100)
+    private String updater;
 
-	public Auditable() {
-	}
+    public Auditable() {
+    }
 
-	public Auditable(MeveoUser creator) {
-		super();
-		this.creator = creator.getUserName();
-		this.created = new Date();
-	}
+    public Auditable(MeveoUser creator) {
+        super();
+        this.creator = creator.getUserName();
+        this.created = new Date();
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public Date getCreated() {
+        return created;
+    }
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+    public void setCreated(Date created) {
+        this.created = created;
+    }
 
-	public Date getUpdated() {
-		return updated;
-	}
+    public Date getUpdated() {
+        return updated;
+    }
 
-	public void setUpdated(Date updated) {
-		this.updated = updated;
-	}
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
 
-	public String getCreator() {
-		return creator;
-	}
+    public String getCreator() {
+        return creator;
+    }
 
-	public void setCreator(String creator) {
-		this.creator = creator;
-	}
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
 
-	public String getUpdater() {
-		return updater;
-	}
+    public String getUpdater() {
+        return updater;
+    }
 
-	public void setUpdater(String updater) {
-		this.updater = updater;
-	}
+    public void setUpdater(String updater) {
+        this.updater = updater;
+    }
 
-	public Date getLastModified() {
-		return (updated != null) ? updated : created;
-	}
+    public Date getLastModified() {
+        return (updated != null) ? updated : created;
+    }
 
-	public String getLastUser() {
-		return (updater != null) ? updater : creator;
-	}
+    public String getLastUser() {
+        return (updater != null) ? updater : creator;
+    }
 
     public void updateWith(MeveoUser currentUser) {
         this.updated = new Date();
         this.updater = currentUser.getUserName();
 
-        // Make sure that creator and created fields are set in case entity was imported or entered by some other means               
+        // Make sure that creator and created fields are set in case entity was imported or entered by some other means
         if (this.creator == null) {
             this.creator = currentUser.getUserName();
         }

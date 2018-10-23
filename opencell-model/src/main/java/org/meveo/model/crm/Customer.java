@@ -42,6 +42,8 @@ import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 
 /**
+ * Customer
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
  */
@@ -56,15 +58,23 @@ public class Customer extends AccountEntity {
 
     private static final long serialVersionUID = 1L;
 
-
-    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    /**
+     * Address book (identifier)
+     */
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_book_id")
     private AddressBook addressbook;
-    
+
+    /**
+     * Customer category (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_category_id")
     private CustomerCategory customerCategory;
 
+    /**
+     * Customer brand (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_brand_id")
     private CustomerBrand customerBrand;
@@ -72,32 +82,36 @@ public class Customer extends AccountEntity {
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CustomerAccount> customerAccounts = new ArrayList<>();
 
+    /**
+     * Seller (identifier). Deprecated in 5.2. Now seller is set in subscription.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     @Deprecated
     private Seller seller;
 
-    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    /**
+     * Additional details (identifier)
+     */
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "additional_details_id")
     private AdditionalDetails additionalDetails;
-    
-    
-    
+
     public AddressBook getAddressbook() {
-		return addressbook;
-	}
+        return addressbook;
+    }
 
-	public void setAddressbook(AddressBook addressbook) {
-		this.addressbook = addressbook;
-	}
+    public void setAddressbook(AddressBook addressbook) {
+        this.addressbook = addressbook;
+    }
 
-	public AdditionalDetails getAdditionalDetails() {
-		return additionalDetails;
-	}
+    public AdditionalDetails getAdditionalDetails() {
+        return additionalDetails;
+    }
 
-	public void setAdditionalDetails(AdditionalDetails additionalDetails) {
-		this.additionalDetails = additionalDetails;
-	}
+    public void setAdditionalDetails(AdditionalDetails additionalDetails) {
+        this.additionalDetails = additionalDetails;
+    }
 
     public Customer() {
         accountType = ACCOUNT_TYPE;
@@ -152,15 +166,15 @@ public class Customer extends AccountEntity {
         return Seller.class;
     }
 
-	@Override
-	public void anonymize(String code) {
-		super.anonymize(code);
-		getContactInformation().anonymize(code);
-		if (getCustomerAccounts() != null) {
-			for (CustomerAccount ca : getCustomerAccounts()) {
-				ca.anonymize(code);
-	}
-	}
-	}
+    @Override
+    public void anonymize(String code) {
+        super.anonymize(code);
+        getContactInformation().anonymize(code);
+        if (getCustomerAccounts() != null) {
+            for (CustomerAccount ca : getCustomerAccounts()) {
+                ca.anonymize(code);
+            }
+        }
+    }
 
-	}
+}

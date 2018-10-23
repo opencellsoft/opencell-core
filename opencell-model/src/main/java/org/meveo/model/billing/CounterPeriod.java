@@ -35,6 +35,11 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.CounterTypeEnum;
 
+/**
+ * Counter values for a given period
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ObservableEntity
 @Table(name = "billing_counter_period", uniqueConstraints = @UniqueConstraint(columnNames = { "counter_instance_id", "period_start_date" }))
@@ -48,34 +53,58 @@ import org.meveo.model.catalog.CounterTypeEnum;
 public class CounterPeriod extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;
 
+    /**
+     * Counter instance (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counter_instance_id")
     private CounterInstance counterInstance;
 
+    /**
+     * Counter type
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "counter_type")
     private CounterTypeEnum counterType;
 
+    /**
+     * Period start date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "period_start_date")
     private Date periodStartDate;
 
+    /**
+     * Period end date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "period_end_date")
     private Date periodEndDate;
 
+    /**
+     * Initial counter value
+     */
     @Column(name = "level_num", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal level;
 
+    /**
+     * Current counter value
+     */
     @Column(name = "value", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal value;
 
+    /**
+     * Notification levels, upon reaching which, a notification will be fired
+     */
     @Column(name = "notification_levels", length = 100)
     @Size(max = 100)
     private String notificationLevels;
 
+    /**
+     * Notification levels mapped by a value. Used for entry in GUI.
+     */
     @Transient
     private Map<String, BigDecimal> notificationLevelsAsMap;
 

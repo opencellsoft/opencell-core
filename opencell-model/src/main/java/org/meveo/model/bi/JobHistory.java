@@ -32,6 +32,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
+/**
+ * Job execution history
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "bi_job_history")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -42,19 +47,34 @@ public class JobHistory extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /*
+     * History type
+     */
     @Column(name = "history_type", insertable = false, updatable = false, length = 31)
     @Size(max = 31)
     private String type;
 
+    /**
+     * Execution timestamp
+     */
     @Column(name = "execution_date")
     private Date executionDate;
 
+    /**
+     * Number of lines read
+     */
     @Column(name = "lines_read")
     private Integer linesRead;
 
+    /**
+     * Number of lines inserted
+     */
     @Column(name = "lines_inserted")
     private Integer linesInserted;
 
+    /**
+     * Number of lines rejected
+     */
     @Column(name = "lines_rejected")
     private Integer linesRejected;
 

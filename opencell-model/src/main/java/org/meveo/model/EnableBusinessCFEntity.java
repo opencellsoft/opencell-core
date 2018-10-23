@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Type;
 
 /**
- * Tracks if entity is active or inactive. Extends Business entity
+ * Tracks if business type entity containing custom fields is active or inactive. Extends BusinessCF entity
  */
 @MappedSuperclass
 public class EnableBusinessCFEntity extends BusinessCFEntity implements IEnable {
@@ -38,7 +38,7 @@ public class EnableBusinessCFEntity extends BusinessCFEntity implements IEnable 
     @Type(type = "numeric_boolean")
     @Column(name = "disabled", nullable = false)
     @NotNull
-    private boolean disabled;
+    protected boolean disabled;
 
     public boolean isDisabled() {
         return disabled;

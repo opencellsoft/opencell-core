@@ -29,7 +29,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
- * Represents a business entity that has custom field
+ * Represents a business entity that has custom fields
  * 
  * @author Andrius Karpavicius
  */
@@ -38,18 +38,27 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
 
     private static final long serialVersionUID = -6054446440106807337L;
 
+    /**
+     * Unique identifier UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
-    private String uuid = UUID.randomUUID().toString();
+    protected String uuid = UUID.randomUUID().toString();
 
+    /**
+     * Custom field values in JSON format
+     */
     @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
-    private CustomFieldValues cfValues;
+    protected CustomFieldValues cfValues;
 
+    /**
+     * Accumulated custom field values in JSON format
+     */
     @Type(type = "cfjson")
     @Column(name = "cf_values_accum", columnDefinition = "text")
-    private CustomFieldValues cfAccumulatedValues;
+    protected CustomFieldValues cfAccumulatedValues;
 
     @Override
     public String getUuid() {

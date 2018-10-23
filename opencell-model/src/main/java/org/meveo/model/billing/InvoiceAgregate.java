@@ -36,6 +36,8 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 
 /**
+ * Invoice aggregate
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
@@ -49,49 +51,90 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Billing account that invoice was issued to (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id")
     protected BillingAccount billingAccount;
 
+    /**
+     * Invoice that Invoice aggregate is part of (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     protected Invoice invoice;
 
+    /**
+     * Billing run that produced the invoice (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run_id")
     protected BillingRun billingRun;
 
+    /**
+     * Number of Rated transactions that fall in this aggregate
+     */
     @Column(name = "item_number")
     protected Integer itemNumber;
 
+    /**
+     * Description
+     */
     @Column(name = "description", length = 255)
     @Size(max = 255)
     protected String description;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amount;
 
+    /**
+     * Aggregate amount without tax
+     */
     @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal amountWithoutTax = BigDecimal.ZERO;
 
+    /**
+     * Aggregate tax amount
+     */
     @Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal amountTax = BigDecimal.ZERO;
 
+    /**
+     * Aggregate amount with tax
+     */
     @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal amountWithTax = BigDecimal.ZERO;
 
+    /**
+     * Currency that invoice is in (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
     protected TradingCurrency tradingCurrency;
 
+    /**
+     * Country that invoice is for (for tax calculation) (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country_id")
     protected TradingCountry tradingCountry;
 
+    /**
+     * Invoice language (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
     protected TradingLanguage tradingLanguage;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "pr_description", length = 255)
     @Size(max = 255)
     protected String prDescription;

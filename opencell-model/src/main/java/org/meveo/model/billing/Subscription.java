@@ -65,6 +65,7 @@ import org.meveo.model.shared.DateUtils;
 
 /**
  * Subscription
+ * 
  * @author Said Ramli
  * @lastModifiedVersion 5.1
  */
@@ -84,22 +85,37 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Offer subscribed to (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_id")
     private OfferTemplate offer;
 
+    /**
+     * Subscription status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private SubscriptionStatusEnum status = SubscriptionStatusEnum.CREATED;
 
+    /**
+     * Last status change timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
     private Date statusDate = new Date();
 
+    /**
+     * Timestamp when subscribed
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
     private Date subscriptionDate = new Date();
 
+    /**
+     * Subscription termination date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "termination_date")
     private Date terminationDate;
@@ -111,42 +127,70 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @Column(name = "subscribed_till_date")
     private Date subscribedTillDate;
 
+    /**
+     * Services subscribed to
+     */
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<ServiceInstance> serviceInstances = new ArrayList<>();
 
+    /**
+     * Products subscribed to
+     */
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<ProductInstance> productInstances = new ArrayList<>();
 
+    /**
+     * Child access points
+     */
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<Access> accessPoints = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EDR> edrs = new ArrayList<>();
 
+    /**
+     * Parent User account (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id", nullable = false)
     @NotNull
     private UserAccount userAccount;
 
+    /**
+     * End agreement date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_agrement_date")
     private Date endAgreementDate;
 
+    /**
+     * Subscription termination reason
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_termin_reason_id")
     private SubscriptionTerminationReason subscriptionTerminationReason;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Type(type = "numeric_boolean")
     @Column(name = "default_level")
     private Boolean defaultLevel = true;
 
+    /**
+     * If true, end of agreement date will be extended automatically till subscribedTillDate field
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
+    /**
+     * Subscription renewal configuration
+     */
     @Embedded
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
 
@@ -199,30 +243,51 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @Size(max = 2000)
     private String minimumLabelElSpark;
 
+    /**
+     * Optional billing cycle for invoicing by subscription (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle")
     private BillingCycle billingCycle;
 
+    /**
+     * Last billing run that invoiced this subscription (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
 
+    /**
+     * Seller that offered products/services to subscribe to
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
+    /**
+     * Extra Rated transactions to reach minimum invoice amount per subscription
+     */
     @Transient
     private List<RatedTransaction> minRatedTransactions;
-    
+
+    /**
+     * Total invoicing amount without tax
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountWithoutTax;
-    
+    private BigDecimal totalInvoicingAmountWithoutTax;
+
+    /**
+     * Total invoicing amount with tax
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountWithTax;
-    
+    private BigDecimal totalInvoicingAmountWithTax;
+
+    /**
+     * Total invoicing tax amount
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountTax;
-    
+    private BigDecimal totalInvoicingAmountTax;
+
     public Date getEndAgreementDate() {
         return endAgreementDate;
     }
@@ -495,7 +560,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     public void autoUpdateEndOfEngagementDate() {
         if (BooleanUtils.isTrue(this.autoEndOfEngagement)) {
             this.setEndAgreementDate(this.subscribedTillDate);
-        } 
+        }
     }
 
     /**
@@ -528,7 +593,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         } else {
             setNotifyOfRenewalDate(null);
         }
-		this.autoUpdateEndOfEngagementDate();
+        this.autoUpdateEndOfEngagementDate();
     }
 
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
@@ -546,38 +611,38 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         this.billingRun = billingRun;
     }
 
-	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
-		minRatedTransactions = ratedTransactions;
-	}
+    public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        minRatedTransactions = ratedTransactions;
+    }
 
-	public List<RatedTransaction> getMinRatedTransactions() {
-		return minRatedTransactions;
-	}
+    public List<RatedTransaction> getMinRatedTransactions() {
+        return minRatedTransactions;
+    }
 
-	public BigDecimal getTotalInvoicingAmountWithoutTax() {
-		return totalInvoicingAmountWithoutTax;
-	}
+    public BigDecimal getTotalInvoicingAmountWithoutTax() {
+        return totalInvoicingAmountWithoutTax;
+    }
 
-	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
-		this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
-	}
+    public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+        this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
+    }
 
-	public BigDecimal getTotalInvoicingAmountWithTax() {
-		return totalInvoicingAmountWithTax;
-	}
+    public BigDecimal getTotalInvoicingAmountWithTax() {
+        return totalInvoicingAmountWithTax;
+    }
 
-	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
-		this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
-	}
+    public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+        this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
+    }
 
-	public BigDecimal getTotalInvoicingAmountTax() {
-		return totalInvoicingAmountTax;
-	}
+    public BigDecimal getTotalInvoicingAmountTax() {
+        return totalInvoicingAmountTax;
+    }
 
-	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
-		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
-	}
-	
+    public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+        this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+    }
+
     public Seller getSeller() {
         return seller;
     }

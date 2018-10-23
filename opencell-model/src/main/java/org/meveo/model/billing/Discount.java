@@ -31,48 +31,59 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
- * Discount entity.
+ * Discount. Deprecated in 5.3 for not use
  */
+@Deprecated
 @Entity
-@ExportIdentifier({ "discountCode"})
+@ExportIdentifier({ "discountCode" })
 @Table(name = "billing_discount")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_discount_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_discount_seq"), })
 public class Discount extends EnableEntity {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "discount_code", length = 20)
-	@Size(max = 20)
-	private String discountCode;
+    /**
+     * Discount code
+     */
+    @Column(name = "discount_code", length = 20)
+    @Size(max = 20)
+    private String discountCode;
 
-	@Column(name = "pr_description", length = 255)
-	@Size(max = 255)
-	private String prDescription;
+    /**
+     * Description
+     */
+    @Column(name = "pr_description", length = 255)
+    @Size(max = 255)
+    private String prDescription;
 
-	@Column(name = "pourcent")
-	private BigDecimal pourcent;
+    /**
+     * Discount percent
+     */
+    @Column(name = "pourcent")
+    private BigDecimal pourcent;
 
-	public String getDiscountCode() {
-		return discountCode;
-	}
+    public String getDiscountCode() {
+        return discountCode;
+    }
 
-	public void setDiscountCode(String discountCode) {
-		this.discountCode = discountCode;
-	}
+    public void setDiscountCode(String discountCode) {
+        this.discountCode = discountCode;
+    }
 
-	public String getPrDescription() {
-		return prDescription;
-	}
+    public String getPrDescription() {
+        return prDescription;
+    }
 
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
+    public void setPrDescription(String prDescription) {
+        this.prDescription = prDescription;
+    }
 
-	public BigDecimal getPourcent() {
-		return pourcent;
-	}
+    public BigDecimal getPourcent() {
+        return pourcent;
+    }
 
-	public void setPourcent(BigDecimal pourcent) {
-		this.pourcent = pourcent;
-	}
+    public void setPourcent(BigDecimal pourcent) {
+        this.pourcent = pourcent;
+    }
 
 }

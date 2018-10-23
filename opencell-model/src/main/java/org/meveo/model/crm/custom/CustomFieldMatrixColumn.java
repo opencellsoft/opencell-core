@@ -34,11 +34,11 @@ public class CustomFieldMatrixColumn implements Serializable {
         USE_VALUE;
     }
 
+    // @Column(name = "columnUse", nullable = false)
+    // @Enumerated(EnumType.ORDINAL)
     /**
      * Is column to be used as key or as value field
      */
-    // @Column(name = "columnUse", nullable = false)
-    // @Enumerated(EnumType.ORDINAL)
     @NotNull
     private CustomFieldColumnUseEnum columnUse;
 
@@ -47,27 +47,27 @@ public class CustomFieldMatrixColumn implements Serializable {
      */
     private int position;
 
+    // @Column(name = "code", nullable = false, length = 20)
     /**
      * Column code
      */
-    // @Column(name = "code", nullable = false, length = 20)
     @Size(max = 20)
     @NotNull
     private String code;
 
+    // @Column(name = "label", nullable = false, length = 50)
     /**
      * Label
      */
-    // @Column(name = "label", nullable = false, length = 50)
     @Size(max = 50)
     @NotNull
     private String label;
 
+    // @Column(name = "key_type", nullable = false, length = 10)
+    // @Enumerated(EnumType.ORDINAL)
     /**
      * Data entry type
      */
-    // @Column(name = "key_type", nullable = false, length = 10)
-    // @Enumerated(EnumType.ORDINAL)
     @NotNull
     private CustomFieldMapKeyEnum keyType;
 

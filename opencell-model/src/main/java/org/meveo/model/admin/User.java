@@ -72,7 +72,7 @@ import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
 
 /**
- * Entity that represents system user.
+ * Application user
  */
 @Entity
 @ObservableEntity
@@ -91,52 +91,88 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * User name
+     */
     @Embedded
     private Name name;
 
+    /**
+     * Login name
+     */
     @Column(name = "username", length = 50, unique = true)
     @Size(max = 50)
     private String userName;
 
-    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    /**
+     * Address book (identifier) - list of contacts
+     */
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "crm_address_book_id")
     private AddressBook addressbook;
-    
+
+    /**
+     * Email
+     */
     @Column(name = "email", length = 100)
     @Size(max = 100)
     private String email;
 
+    /**
+     * Roles held by the user
+     */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "adm_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<Role>();
 
+    /**
+     * User group (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hierarchy_level_id")
     private UserHierarchyLevel userLevel;
 
+    /**
+     * Accessible entities
+     */
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "adm_secured_entity", joinColumns = { @JoinColumn(name = "user_id") })
     @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
             @AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)) })
     private List<SecuredEntity> securedEntities = new ArrayList<>();
 
+    /**
+     * Unique identifier - UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
+    /**
+     * Custom field values in JSON format
+     */
     @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
+    /**
+     * Accumulated custom field values in JSON format
+     */
     @Type(type = "cfjson")
     @Column(name = "cf_values_accum", columnDefinition = "text")
     private CustomFieldValues cfAccumulatedValues;
 
+    /**
+     * Accessible entities for data entry in GUI
+     */
     @Transient
     private Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap;
 
+    /**
+     * Last login timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_login_date")
     private Date lastLoginDate;
@@ -145,12 +181,12 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     }
 
     public AddressBook getAddressbook() {
-		return addressbook;
-	}
+        return addressbook;
+    }
 
-	public void setAddressbook(AddressBook addressbook) {
-		this.addressbook = addressbook;
-	}
+    public void setAddressbook(AddressBook addressbook) {
+        this.addressbook = addressbook;
+    }
 
     public Set<Role> getRoles() {
         return roles;
@@ -345,18 +381,18 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     }
 
     @Override
-	public String getReferenceCode() {
-		return getUserName();
-	}
-    
-    @Override
-	public void setReferenceCode(Object value) {
-		setUserName(value.toString());
-	}
+    public String getReferenceCode() {
+        return getUserName();
+    }
 
-	@Override
-	public String getReferenceDescription() {
-		return getNameOrUsername();
-	}
+    @Override
+    public void setReferenceCode(Object value) {
+        setUserName(value.toString());
+    }
+
+    @Override
+    public String getReferenceDescription() {
+        return getNameOrUsername();
+    }
 
 }

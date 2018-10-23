@@ -5,16 +5,30 @@ import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+/**
+ * Invoice number sequence
+ * 
+ * @author Andrius Karpavicius
+ */
 @Embeddable
 public class Sequence {
 
+    /**
+     * Invoice number prefix expression
+     */
     @Column(name = "prefix_el", length = 2000)
     @Size(max = 2000)
     private String prefixEL = "";
 
+    /**
+     * Sequence number lenth
+     */
     @Column(name = "sequence_size")
     private Integer sequenceSize = 9;
 
+    /**
+     * Next to be assigned invoice number
+     */
     @Column(name = "current_invoice_nb")
     private Long currentInvoiceNb = 0L;
 

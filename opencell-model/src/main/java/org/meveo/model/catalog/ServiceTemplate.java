@@ -80,34 +80,59 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Mapping between service and recurring charges
+     */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<>();
 
+    /**
+     * Mapping between service and subscription charges
+     */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<>();
 
+    /**
+     * Mapping between service and termination charges
+     */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<>();
 
+    /**
+     * Mapping between service and usage charges
+     */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
     private Calendar invoicingCalendar;
 
+    /**
+     * Business service model (identifier) that created this service
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_service_model_id")
     private BusinessServiceModel businessServiceModel;
 
+    /**
+     * Long description
+     */
     @Size(max = 2000)
     @Column(name = "long_description", columnDefinition = "TEXT")
     private String longDescription;
 
+    /**
+     * Path to an image
+     */
     @ImageType
     @Column(name = "image_path", length = 100)
     @Size(max = 100)
@@ -141,12 +166,21 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Size(max = 2000)
     private String minimumLabelElSpark;
 
+    /**
+     * Service renewal configuration
+     */
     @Embedded
     private SubscriptionRenewal serviceRenewal = new SubscriptionRenewal();
 
+    /**
+     * Selected from a list in GUI
+     */
     @Transient
     private boolean selected;
 
+    /**
+     * If true, end of agreement date will be extended automatically till subscribedTillDate field
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
@@ -157,6 +191,9 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Transient
     private boolean instantiatedFromBSM;
 
+    /**
+     * Description to override
+     */
     @Transient
     private String descriptionOverride;
 

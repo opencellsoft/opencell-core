@@ -23,34 +23,42 @@ import javax.persistence.MappedSuperclass;
 
 import org.meveo.security.MeveoUser;
 
+/**
+ * Base class for entities that track creation/modification of the record
+ * 
+ * @author Andrius Karpavicius
+ */
 @MappedSuperclass
 public abstract class AuditableEntity extends BaseEntity implements IAuditable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Embedded
-	private Auditable auditable;
+    /**
+     * Create/update timestamp information
+     */
+    @Embedded
+    protected Auditable auditable;
 
-	public AuditableEntity() {
-	}
+    public AuditableEntity() {
+    }
 
-	public AuditableEntity(Auditable auditable) {
-		this.auditable = auditable;
-	}
+    public AuditableEntity(Auditable auditable) {
+        this.auditable = auditable;
+    }
 
-	public Auditable getAuditable() {
-		return auditable;
-	}
+    public Auditable getAuditable() {
+        return auditable;
+    }
 
-	public void setAuditable(Auditable auditable) {
-		this.auditable = auditable;
-	}
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
+    }
 
-	public void updateAudit(MeveoUser u) {
-		if (auditable == null) {
-			auditable = new Auditable(u);
-		} else {
-			auditable.updateWith(u);
-		}
-	}
+    public void updateAudit(MeveoUser u) {
+        if (auditable == null) {
+            auditable = new Auditable(u);
+        } else {
+            auditable.updateWith(u);
+        }
+    }
 }

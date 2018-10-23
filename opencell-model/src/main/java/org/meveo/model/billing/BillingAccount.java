@@ -55,6 +55,8 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 
 /**
+ * Billing account
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
  */
@@ -71,99 +73,171 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Account status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 10)
     private AccountStatusEnum status;
 
+    /**
+     * Last status change timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
     private Date statusDate = new Date();
 
+    /**
+     * Use electronic billing?
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "electronic_billing")
     private Boolean electronicBilling = false;
 
+    /**
+     * Next invoice date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "next_invoice_date")
     private Date nextInvoiceDate;
 
+    /**
+     * Account creation date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
     private Date subscriptionDate;
 
+    /**
+     * Account termination date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "termination_date")
     private Date terminationDate;
 
+    /**
+     * Customer account (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_account_id")
     private CustomerAccount customerAccount;
 
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * User accounts
+     */
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<UserAccount> usersAccounts = new ArrayList<>();
 
+    /**
+     * Invoices
+     */
     @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Invoice> invoices = new ArrayList<>();
 
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * Billing runs
+     */
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<BillingRunList> billingRunLists = new ArrayList<>();
 
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * Invoice aggregates
+     */
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
+    /**
+     * Discount rate
+     */
     @Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discountRate;
 
+    /**
+     * Billing cycle (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle")
     private BillingCycle billingCycle;
 
+    /**
+     * Country (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country_id")
     private TradingCountry tradingCountry;
 
+    /**
+     * Language (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
 
+    /**
+     * Last billing run (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
 
+    /**
+     * Total amount without tax in the last billing run
+     */
     @Column(name = "br_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal brAmountWithoutTax;
 
+    /**
+     * Total amount with tax in the last billing run
+     */
     @Column(name = "br_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal brAmountWithTax;
 
+    /**
+     * Invoice prefix
+     */
     @Column(name = "invoice_prefix", length = 255)
     @Size(max = 255)
     private String invoicePrefix;
 
+    /**
+     * Subscription termination rules
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
 
+    /**
+     * A list of rated transactions
+     */
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions;
 
+    /**
+     * Applicable discount plan (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_id")
     private DiscountPlan discountPlan;
 
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
-    @MapKey(name = "code")
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     // key is the counter template code
+    /**
+     * Counter instances
+     */
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
     Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
 
+    /**
+     * Invoicing threshold - do not invoice for a lesser amount
+     */
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;
 
@@ -195,15 +269,27 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Size(max = 2000)
     private String minimumLabelElSpark;
 
+    /**
+     * A list of rated transactions
+     */
     @Transient
     private List<RatedTransaction> minRatedTransactions;
 
+    /**
+     * Total invoicing amount without tax
+     */
     @Transient
     private BigDecimal totalInvoicingAmountWithoutTax;
 
+    /**
+     * Total invoicing amount with tax
+     */
     @Transient
     private BigDecimal totalInvoicingAmountWithTax;
 
+    /**
+     * Total invoicing tax amount
+     */
     @Transient
     private BigDecimal totalInvoicingAmountTax;
 

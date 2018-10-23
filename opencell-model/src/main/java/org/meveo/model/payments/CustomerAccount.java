@@ -55,7 +55,8 @@ import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.shared.ContactInformation;
 
 /**
- * Customer Account entity.
+ * Customer Account
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
  */
@@ -65,68 +66,107 @@ import org.meveo.model.shared.ContactInformation;
 @DiscriminatorValue(value = "ACCT_CA")
 @Table(name = "ar_customer_account")
 @NamedQueries({
-    @NamedQuery(name = "CustomerAccount.listCAIdsForPayment", query = "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and " + 
-            "                   ao.matchingStatus ='O' and ca.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and ao.customerAccount.id = ca.id and pm.paymentType =:paymentMethodIN  and " + 
-            "                   ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  group by ca.id having sum(ao.unMatchingAmount) <> 0"),       
-    @NamedQuery(name = "CustomerAccount.listCAIdsForRefund", query = "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='CREDIT' and " + 
-            "                   ao.type not in ('P','AP') and ao.matchingStatus ='O' and ca.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and ao.customerAccount.id = ca.id and " + 
-            "                   pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN group by ca.id having sum(ao.unMatchingAmount) <> 0")})
+        @NamedQuery(name = "CustomerAccount.listCAIdsForPayment", query = "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and "
+                + "                   ao.matchingStatus ='O' and ca.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and ao.customerAccount.id = ca.id and pm.paymentType =:paymentMethodIN  and "
+                + "                   ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  group by ca.id having sum(ao.unMatchingAmount) <> 0"),
+        @NamedQuery(name = "CustomerAccount.listCAIdsForRefund", query = "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='CREDIT' and "
+                + "                   ao.type not in ('P','AP') and ao.matchingStatus ='O' and ca.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and ao.customerAccount.id = ca.id and "
+                + "                   pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN group by ca.id having sum(ao.unMatchingAmount) <> 0") })
 public class CustomerAccount extends AccountEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
     private static final long serialVersionUID = 1L;
 
-	@OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "crm_address_book_id")
-	private AddressBook addressbook;
-	
+    /**
+     * Address book (identifier)
+     */
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "crm_address_book_id")
+    private AddressBook addressbook;
+
+    /**
+     * Currency of account (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
     private TradingCurrency tradingCurrency;
 
+    /**
+     * Account status
+     */
     @Column(name = "status", length = 10)
     @Enumerated(EnumType.STRING)
     private CustomerAccountStatusEnum status = CustomerAccountStatusEnum.ACTIVE;
 
+    /**
+     * Credit category
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "credit_category_id")
     private CreditCategory creditCategory;
 
-    @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * Child billing accounts
+     */
+    @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<BillingAccount> billingAccounts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * Account operations associated with a Customer account
+     */
+    @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AccountOperation> accountOperations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * Dunning actions associated with a Customer account
+     */
+    @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ActionDunning> actionDunnings = new ArrayList<>();
 
+    /**
+     * Last status change timestamp
+     */
     @Column(name = "date_status")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateStatus = new Date();
 
+    /**
+     * Last dunning level timestamp
+     */
     @Column(name = "date_dunning_level")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateDunningLevel;
 
-	@Embedded
-	private ContactInformation contactInformation;
+    /**
+     * Contact information
+     */
+    @Embedded
+    private ContactInformation contactInformation;
 
+    /**
+     * Parent customer (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    /**
+     * Dunning level
+     */
     @Column(name = "dunning_level")
     @Enumerated(EnumType.STRING)
     private DunningLevelEnum dunningLevel = DunningLevelEnum.R0;
 
+    /**
+     * Password
+     */
     @Column(name = "password", length = 10)
     @Size(max = 10)
     private String password = "";
@@ -149,13 +189,13 @@ public class CustomerAccount extends AccountEntity {
         accountType = ACCOUNT_TYPE;
     }
 
-	public AddressBook getAddressbook() {
-		return addressbook;
-	}
+    public AddressBook getAddressbook() {
+        return addressbook;
+    }
 
-	public void setAddressbook(AddressBook addressbook) {
-		this.addressbook = addressbook;
-	}
+    public void setAddressbook(AddressBook addressbook) {
+        this.addressbook = addressbook;
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
@@ -219,13 +259,13 @@ public class CustomerAccount extends AccountEntity {
         this.accountOperations = accountOperations;
     }
 
-	public ContactInformation getContactInformation() {
-		return contactInformation;
-	}
+    public ContactInformation getContactInformation() {
+        return contactInformation;
+    }
 
-	public void setContactInformation(ContactInformation contactInformation) {
-		this.contactInformation = contactInformation;
-	}
+    public void setContactInformation(ContactInformation contactInformation) {
+        this.contactInformation = contactInformation;
+    }
 
     public void setDunningLevel(DunningLevelEnum dunningLevel) {
         this.dunningLevel = dunningLevel;
@@ -526,15 +566,15 @@ public class CustomerAccount extends AccountEntity {
         }
         return true;
     }
-    
+
     @Override
-	public void anonymize(String code) {
-		super.anonymize(code);
-		getContactInformation().anonymize(code);
-		if (getBillingAccounts() != null) {
-			for (BillingAccount ba : getBillingAccounts()) {
-				ba.anonymize(code);
-			}
-		}
-	}
+    public void anonymize(String code) {
+        super.anonymize(code);
+        getContactInformation().anonymize(code);
+        if (getBillingAccounts() != null) {
+            for (BillingAccount ba : getBillingAccounts()) {
+                ba.anonymize(code);
+            }
+        }
+    }
 }

@@ -65,6 +65,8 @@ import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.shared.DateUtils;
 
 /**
+ * Service subscribed to
+ * 
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.0.1
@@ -83,58 +85,104 @@ public class ServiceInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Subscription that service is subscribed under
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
+    /**
+     * Service template/definition (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_template_id")
     private ServiceTemplate serviceTemplate;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
     private Calendar invoicingCalendar;
 
+    /**
+     * Status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private InstanceStatusEnum status;
 
+    /**
+     * Last status change timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
     private Date statusDate;
 
+    /**
+     * Subscription timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
     private Date subscriptionDate;
 
+    /**
+     * Termination timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "termination_date")
     private Date terminationDate;
 
+    /**
+     * End agreement timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_agrement_date")
     private Date endAgreementDate;
 
+    /**
+     * If true, end of agreement date will be extended automatically till subscribedTillDate field
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
+    /**
+     * Associated recurring charges
+     */
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<>();
 
+    /**
+     * Associated subscription charges
+     */
     @OneToMany(mappedBy = "subscriptionServiceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OneShotChargeInstance> subscriptionChargeInstances = new ArrayList<>();
 
+    /**
+     * Associated termination charges
+     */
     @OneToMany(mappedBy = "terminationServiceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OneShotChargeInstance> terminationChargeInstances = new ArrayList<>();
 
+    /**
+     * Associated usage charges
+     */
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<UsageChargeInstance> usageChargeInstances = new ArrayList<>();
 
+    /**
+     * Termination reason
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_termin_reason_id")
     private SubscriptionTerminationReason subscriptionTerminationReason;
 
+    /**
+     * Quantity subscribed
+     */
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal quantity = BigDecimal.ONE;
 
@@ -144,10 +192,17 @@ public class ServiceInstance extends BusinessCFEntity {
     @Transient
     private BigDecimal previousQuantity;
 
+    /**
+     * Order number if service was subscribed as part of an order
+     */
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
 
+    /**
+     * Create Wallet operations and Rated transactions upon service subscription only to this date. Later RT jobs needs to be run to create the remaining Wallet operations and
+     * Rated transactions.
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "rate_until_date")
     private Date rateUntilDate;
@@ -182,22 +237,25 @@ public class ServiceInstance extends BusinessCFEntity {
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderHistory> orderHistories;
 
+    /**
+     * Service renewal configuration
+     */
     @Embedded
     private SubscriptionRenewal serviceRenewal = new SubscriptionRenewal();
 
     @Column(name = "amount_ps")
-   private BigDecimal amountPS; 
-    
+    private BigDecimal amountPS;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendar_ps_id")
-   private Calendar calendarPS; 
-   
+    private Calendar calendarPS;
+
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
     private List<PaymentScheduleInstance> psInstances;
-    
+
     @Column(name = "due_date_days_ps")
     private Integer dueDateDaysPS;
-    
+
     /**
      * A date till which subscription is subscribed. After this date it will either be extended or terminated
      */
@@ -232,6 +290,9 @@ public class ServiceInstance extends BusinessCFEntity {
     @Transient
     private Long orderItemId;
 
+    /**
+     * Order item action
+     */
     @Transient
     private OrderItemActionEnum orderItemAction;
 
@@ -291,8 +352,8 @@ public class ServiceInstance extends BusinessCFEntity {
     public void setServiceTemplate(ServiceTemplate serviceTemplate) {
         this.serviceTemplate = serviceTemplate;
         if (serviceTemplate != null) {
-           this.autoEndOfEngagement =  serviceTemplate.getAutoEndOfEngagement();
-    }
+            this.autoEndOfEngagement = serviceTemplate.getAutoEndOfEngagement();
+        }
     }
 
     public Calendar getInvoicingCalendar() {
@@ -551,17 +612,17 @@ public class ServiceInstance extends BusinessCFEntity {
 
         return false;
     }
-    
+
     /**
      * Auto update end of engagement date.
      */
     public void autoUpdateEndOfEngagementDate() {
         if (BooleanUtils.isTrue(this.autoEndOfEngagement)) {
             this.setEndAgreementDate(this.subscribedTillDate);
-        } 
+        }
     }
-	
-	/**
+
+    /**
      * Update subscribedTillDate field in service while it was not renewed yet. Also calculate Notify of renewal date
      */
     public void updateSubscribedTillAndRenewalNotifyDates() {
@@ -592,7 +653,7 @@ public class ServiceInstance extends BusinessCFEntity {
         } else {
             setNotifyOfRenewalDate(null);
         }
-		this.autoUpdateEndOfEngagementDate();
+        this.autoUpdateEndOfEngagementDate();
     }
 
     public SubscriptionRenewal getServiceRenewal() {
@@ -604,7 +665,7 @@ public class ServiceInstance extends BusinessCFEntity {
     }
 
     /**
-
+     * 
      * @return the autoEndOfEngagement
      */
     public Boolean getAutoEndOfEngagement() {
@@ -617,7 +678,8 @@ public class ServiceInstance extends BusinessCFEntity {
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
-     /**
+
+    /**
      * @return the amountPS
      */
     public BigDecimal getAmountPS() {

@@ -45,7 +45,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
- * Billing cycle.
+ * Billing cycle
  */
 @Entity
 @Cacheable
@@ -58,26 +58,42 @@ public class BillingCycle extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Invoice template name
+     */
     @Column(name = "billing_template_name")
     @Size(max = 50)
     private String billingTemplateName;
 
+    /**
+     * Expression to calculate Invoice template name
+     */
     @Column(name = "billing_template_name_el", length = 2000)
     @Size(max = 2000)
     private String billingTemplateNameEL;
 
+    /**
+     * Invoicing calendar (identifier
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendar")
     private Calendar calendar;
 
+    /**
+     * Transaction date delay
+     */
     @Column(name = "transaction_date_delay")
     private Integer transactionDateDelay;
 
-    // used to compute the invoice date from date of billing run
+    /**
+     * Used to compute the invoice date from date of billing run
+     */
     @Column(name = "invoice_date_production_delay")
     private Integer invoiceDateProductionDelay;
 
-    // used for immediate invoicing by oneshot charge
+    /**
+     * Used for immediate invoicing by oneshot charge
+     */
     @Column(name = "invoice_date_delay")
     private Integer invoiceDateDelay;
 
@@ -87,12 +103,21 @@ public class BillingCycle extends BusinessCFEntity {
     @Column(name = "due_date_delay")
     private Integer dueDateDelay;
 
+    /**
+     * Billing accounts
+     */
     @OneToMany(mappedBy = "billingCycle", fetch = FetchType.LAZY)
     private List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
 
+    /**
+     * Invoice amount threshold - will disregard invoices below this amount
+     */
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;
 
+    /**
+     * Invoice type (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_type_id")
     private InvoiceType invoiceType;
@@ -125,10 +150,16 @@ public class BillingCycle extends BusinessCFEntity {
     @Size(max = 2000)
     private String invoiceTypeElSpark;
 
+    /**
+     * Entity type to bill
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "billing_cycle_type")
     private BillingEntityTypeEnum type;
 
+    /**
+     * Script to run (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;

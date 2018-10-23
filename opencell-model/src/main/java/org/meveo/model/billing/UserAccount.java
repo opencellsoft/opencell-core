@@ -49,6 +49,8 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 
 /**
+ * User account
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
  */
@@ -64,50 +66,79 @@ public class UserAccount extends AccountEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Account status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 10)
     private AccountStatusEnum status = AccountStatusEnum.ACTIVE;
 
+    /**
+     * Last account status change timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
     private Date statusDate = new Date();
 
+    /**
+     * Billing account creation date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
     private Date subscriptionDate = new Date();
 
+    /**
+     * Account termination date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "termination_date")
     private Date terminationDate;
 
+    /**
+     * Parent Billing account (identifier)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id")
     private BillingAccount billingAccount;
 
-    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * Account's subscriptions
+     */
+    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Subscription> subscriptions = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * Primary waller (identifier)
+     */
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
 
-    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
-    @MapKey(name = "code")
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * Prepaid wallets
+     */
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
     private Map<String, WalletInstance> prepaidWallets = new HashMap<>();
 
-    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
-    @MapKey(name = "code")
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    // key is the counter template code
+    /**
+     * Counters instantiated on the User account with Counter template code as a key
+     */
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
     private Map<String, CounterInstance> counters = new HashMap<>();
 
+    /**
+     * Account termination reason
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
