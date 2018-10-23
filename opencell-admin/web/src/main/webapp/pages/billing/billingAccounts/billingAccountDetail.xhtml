@@ -144,10 +144,10 @@
 													<hftl:formField id="billingCycleSelectId" required="true" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
                             							popupId="billingCyclePopup" />	
 														
-													<hftl:formField
-														label="#{messages['discountPlan.title']}"
-														listBean="#{discountPlanBean}" field="discountPlan"
-														valueLabelField="code" required="false" />
+<!-- 													<hftl:formField -->
+<!-- 														label="#{messages['discountPlan.title']}" -->
+<!-- 														listBean="#{discountPlanBean}" field="discountPlan" -->
+<!-- 														valueLabelField="code" required="false" /> -->
 														
 												<hftl:formField
 														label="#{messages['billingAccount.invoicingThreshold']}"
@@ -255,6 +255,7 @@
                                  	<hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
 									<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
                                  	       
+                               	    <hftl:formField label="#{messages['menu.discountPlans']}" field="discountPlans" listType="pickUpList" valueLabelField="code" required="false" dualListModel="#{billingAccountBean.discountPlanDM}" />
 							     </p:fieldset>		
 							     
                                  <p:fieldset legend="#{messages['commons.status']}" styleClass="clearLeft" >
