@@ -8,6 +8,8 @@ import java.util.Enumeration;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.HttpConstraint;
+import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -22,8 +24,12 @@ import org.slf4j.Logger;
 
 /**
  * To call this servlet the url must be in this format: /inbound/&lt;provider.code&gt;
+ * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3.1
  */
 @WebServlet("/inbound/*")
+@ServletSecurity(@HttpConstraint(rolesAllowed = "apiAccess"))
 public class InboundServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1551787937225264581L;
