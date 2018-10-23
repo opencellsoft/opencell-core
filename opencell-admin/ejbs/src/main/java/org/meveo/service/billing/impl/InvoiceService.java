@@ -566,6 +566,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             
             Map<Seller, List<RatedTransaction>> mapSellerRT = new HashMap<Seller, List<RatedTransaction>>();
             for(RatedTransaction rt: ratedTransactions) {
+                rt.setBillingRun(billingRun);
                 Seller seller = null;
                 if(rt.getSeller() != null) {
                    seller = rt.getSeller();
@@ -635,6 +636,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         
         if(minAmountTransactions != null) {
             for (RatedTransaction minRatedTransaction : minAmountTransactions) {
+                BillingAccount ba = billingAccountService.findById(minRatedTransaction.getBillingAccount().getId());
+                minRatedTransaction.setBillingAccount(ba);
                 ratedTransactionService.create(minRatedTransaction);
             }
         }
@@ -752,7 +755,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     
                     this.create(invoice);
                     
-                    ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, ratedTransactionSelection, firstTransactionDate, lastTransactionDate, false, false);
+                    ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, ratedTransactionSelection, firstTransactionDate, lastTransactionDate, false, false, billingRun);
                     log.debug("appended aggregates");
     
                     for (RatedTransaction ratedTransaction : invoice.getRatedTransactions()) {
@@ -844,7 +847,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
 
-        ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, null, ratedTransactions, null, null, false, true);
+        ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, null, ratedTransactions, null, null, false, true, null);
 
         for (RatedTransaction ratedTransaction : ratedTransactions) {
             ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
@@ -1795,7 +1798,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         
         ratedTransactionService.createRatedTransaction(entity, invoiceDate);
 
-        entity = billingAccountService.calculateInvoicing(entity, firstTransactionDate, lastTransactionDate);
+        entity = billingAccountService.calculateInvoicing(entity, firstTransactionDate, lastTransactionDate, null);
         List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(), isDraft);
         
 //        if (!isDraft) {
