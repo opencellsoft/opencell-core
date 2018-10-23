@@ -803,8 +803,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         offerTag.setAttribute("id", id);
         offerTag.setAttribute("code", offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
         String offerTemplateDescription = offerTemplate.getDescription() != null ? offerTemplate.getDescription() : "";
-        if (!StringUtils.isBlank(offerTemplate.getDescriptionI18nNullSafe().get(tradingLanguage))) {
-            offerTemplateDescription = offerTemplate.getDescriptionI18nNullSafe().get(tradingLanguage);
+		if (offerTemplate.getDescriptionI18n() != null
+				&& offerTemplate.getDescriptionI18n().get(tradingLanguage) != null) {
+            offerTemplateDescription = offerTemplate.getDescriptionI18n().get(tradingLanguage);
         }
         offerTag.setAttribute("description",offerTemplateDescription);
         addCustomFields(offerTemplate, doc, offerTag);
@@ -890,9 +891,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         pricePlanTag = doc.createElement("priceplan");
         String code = pricePlan.getCode();
         String description = pricePlan.getDescription();
-        if (!StringUtils.isBlank(pricePlan.getDescriptionI18nNullSafe().get(languageCode))){
-            description = pricePlan.getDescriptionI18nNullSafe().get(languageCode);
-        }
+		if (pricePlan.getDescriptionI18n() != null && pricePlan.getDescriptionI18n().get(languageCode) != null) {
+			description = pricePlan.getDescriptionI18n().get(languageCode);
+		}
         pricePlanTag.setAttribute("code", code != null ? code : "");
         pricePlanTag.setAttribute("description", description != null ? description : "");
         addCustomFields(pricePlan, doc, pricePlanTag);
@@ -1305,9 +1306,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     subCategory = subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory());
 
                     String subCategoryLabel = ratedTransaction.getInvoiceSubCategory().getDescription();
-                    if (!StringUtils.isBlank(ratedTransaction.getInvoiceSubCategory().getDescriptionI18nNullSafe().get(languageCode))) {
-                        subCategoryLabel = ratedTransaction.getInvoiceSubCategory().getDescriptionI18nNullSafe().get(languageCode);
-                    }
+					if (ratedTransaction.getInvoiceSubCategory().getDescriptionI18n() != null && ratedTransaction
+							.getInvoiceSubCategory().getDescriptionI18n().get(languageCode) != null) {
+						subCategoryLabel = ratedTransaction.getInvoiceSubCategory().getDescriptionI18n()
+								.get(languageCode);
+					}
 
                     subCategory.setAttribute("label", subCategoryLabel);
                     subCategory.setAttribute("code", ratedTransaction.getInvoiceSubCategory().getCode());
@@ -1356,9 +1359,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 String invoiceCategoryLabel = "";
                 if (invoiceCategory != null) {
                     invoiceCategoryLabel = invoiceCategory.getDescription();
-                    if (!StringUtils.isBlank(invoiceCategory.getDescriptionI18nNullSafe().get(languageCode))) {
-                        invoiceCategoryLabel = invoiceCategory.getDescriptionI18nNullSafe().get(languageCode);
-                    }
+					if (invoiceCategory.getDescriptionI18n() != null
+							&& invoiceCategory.getDescriptionI18n().get(languageCode) != null) {
+						invoiceCategoryLabel = invoiceCategory.getDescriptionI18n().get(languageCode);
+					}
                 }
         		category.setAttribute("label", invoiceCategoryLabel);
                 category.setAttribute("code", invoiceCategory.getCode());
@@ -1467,10 +1471,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 String invoiceCategoryLabel = categoryInvoiceAgregate.getDescription();
                 Element category = doc.createElement("category");
     
-                if ( (invoiceCategory != null) &&
-                        (!StringUtils.isBlank(invoiceCategory.getDescriptionI18nNullSafe().get(languageCode))) ) {
-                    invoiceCategoryLabel = invoiceCategory.getDescriptionI18nNullSafe().get(languageCode);
-                }
+				if (invoiceCategory != null && invoiceCategory.getDescriptionI18n() != null
+						&& invoiceCategory.getDescriptionI18n().get(languageCode) != null) {
+					invoiceCategoryLabel = invoiceCategory.getDescriptionI18n().get(languageCode);
+				}
 
                 category.setAttribute("label", (invoiceCategoryLabel != null) ? invoiceCategoryLabel : "");
                 category.setAttribute("code", invoiceCategory != null && invoiceCategory.getCode() != null ? invoiceCategory.getCode() : "");
@@ -1523,11 +1527,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     
                         String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
     
-                        if ( (invoiceSubCat != null) &&
-                                (!(StringUtils.isBlank(invoiceSubCat.getDescriptionI18nNullSafe().get(languageCode))))) {
-                            // get label description by language code
-                            invoiceSubCategoryLabel = invoiceSubCat.getDescriptionI18nNullSafe().get(languageCode);
-                        }
+						if (invoiceSubCat != null && invoiceSubCat.getDescriptionI18n() != null
+								&& invoiceSubCat.getDescriptionI18n().get(languageCode) != null) {
+							// get label description by language code
+							invoiceSubCategoryLabel = invoiceSubCat.getDescriptionI18n().get(languageCode);
+						}
     
                         Element subCategory = doc.createElement("subCategory");
                         subCategories.appendChild(subCategory);
@@ -1638,9 +1642,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                 String descTranslated = descriptionMap.get(translationKey);
                                 if (descTranslated == null) {
                                     descTranslated = ratedTransaction.getPriceplan().getDescription();
-                                    if (!StringUtils.isBlank(ratedTransaction.getPriceplan().getDescriptionI18nNullSafe().get(languageCode))) {
-                                        descTranslated = ratedTransaction.getPriceplan().getDescriptionI18nNullSafe().get(languageCode);
-                                    }
+									if (ratedTransaction.getPriceplan().getDescriptionI18n() != null && ratedTransaction
+											.getPriceplan().getDescriptionI18n().get(languageCode) != null) {
+										descTranslated = ratedTransaction.getPriceplan().getDescriptionI18n()
+												.get(languageCode);
+									}
                                     descriptionMap.put(translationKey, descTranslated);
                                 }
     
@@ -1844,9 +1850,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 String descTranslated = descriptionMap.get(translationKey);
                 if (descTranslated == null) {
                     descTranslated = taxInvoiceAgregate.getTax().getDescriptionOrCode();
-                    if (!StringUtils.isBlank(taxInvoiceAgregate.getTax().getDescriptionI18nNullSafe().get(languageCode))) {
-                        descTranslated = taxInvoiceAgregate.getTax().getDescriptionI18nNullSafe().get(languageCode);
-                    }
+					if (taxInvoiceAgregate.getTax().getDescriptionI18n() != null
+							&& taxInvoiceAgregate.getTax().getDescriptionI18n().get(languageCode) != null) {
+						descTranslated = taxInvoiceAgregate.getTax().getDescriptionI18n().get(languageCode);
+					}
                     descriptionMap.put(translationKey, descTranslated);
                 }
 
@@ -1920,11 +1927,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 headerCat.addAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
             } else {
                 headerCat = new XMLInvoiceHeaderCategoryDTO();
-                if (StringUtils.isBlank(invoiceCategory.getDescriptionI18nNullSafe().get(billingAccountLanguage))) {
-                    headerCat.setDescription(invoiceCategory.getDescription());
-                } else {
-                    headerCat.setDescription(invoiceCategory.getDescriptionI18nNullSafe().get(billingAccountLanguage));
-                }
+				if (invoiceCategory.getDescriptionI18n() == null
+						|| invoiceCategory.getDescriptionI18n().get(billingAccountLanguage) == null) {
+					headerCat.setDescription(invoiceCategory.getDescription());
+				} else {
+					headerCat.setDescription(invoiceCategory.getDescriptionI18n().get(billingAccountLanguage));
+				}
 
                 headerCat.setCode(invoiceCategory.getCode());
                 headerCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
@@ -1998,13 +2006,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                     && tradingLanguage.getLanguageCode() != null) {
                                 String languageCode = tradingLanguage.getLanguageCode();
                                 
-                                if (invoiceSubCat != null) {
-                                    Map<String, String> descriptionI18nNullSafe = invoiceSubCat.getDescriptionI18nNullSafe();
-                                    if (!(StringUtils.isBlank(descriptionI18nNullSafe.get(languageCode)))) {
-                                        // get label description by language code
-                                        invoiceSubCategoryLabel = descriptionI18nNullSafe.get(languageCode);
-                                    }
-                                }
+								if (invoiceSubCat != null && invoiceSubCat.getDescriptionI18n() != null
+										&& invoiceSubCat.getDescriptionI18n().get(languageCode) != null) {
+									// get label description by language code
+									invoiceSubCategoryLabel = invoiceSubCat.getDescriptionI18n().get(languageCode);
+								}
                             }
                         }
                     }
