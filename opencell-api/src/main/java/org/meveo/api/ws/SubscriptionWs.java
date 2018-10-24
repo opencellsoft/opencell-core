@@ -13,6 +13,7 @@ import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
@@ -62,7 +63,7 @@ public interface SubscriptionWs extends IBaseWs {
      * @return the raw result holding the Subscription EndAgreementDate in its response.
      */
     @WebMethod
-    RawResponseDto<String> activateForCustomer(@WebParam(name = "subscription") SubscriptionForCustomerRequestDto postData);
+    SubscriptionForCustomerResponseDto activateForCustomer(@WebParam(name = "subscription") SubscriptionForCustomerRequestDto postData);
     
     /**
      * Cancels the renewal term of an active subscription.

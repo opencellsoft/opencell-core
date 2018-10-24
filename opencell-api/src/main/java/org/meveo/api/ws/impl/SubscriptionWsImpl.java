@@ -15,6 +15,7 @@ import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
@@ -332,8 +333,8 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
 	}
 
     @Override
-    public RawResponseDto<String> activateForCustomer(SubscriptionForCustomerRequestDto postData) {
-        RawResponseDto<String> result = new RawResponseDto<>();
+    public SubscriptionForCustomerResponseDto activateForCustomer(SubscriptionForCustomerRequestDto postData) {
+        SubscriptionForCustomerResponseDto result = new SubscriptionForCustomerResponseDto();
         try {
             result = subscriptionApi.activateForCustomer(postData);
         } catch (Exception e) {

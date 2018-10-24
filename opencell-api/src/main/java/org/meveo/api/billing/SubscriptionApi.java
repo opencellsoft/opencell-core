@@ -34,6 +34,7 @@ import org.meveo.api.dto.billing.ServiceToInstantiateDto;
 import org.meveo.api.dto.billing.ServiceToUpdateDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
@@ -1850,9 +1851,9 @@ public class SubscriptionApi extends BaseApi {
 		subscriptionService.cancelSubscriptionRenewal(subscription);
 	}
 
-    public RawResponseDto<String> activateForCustomer(SubscriptionForCustomerRequestDto postData) throws MeveoApiException, BusinessException {
+    public SubscriptionForCustomerResponseDto activateForCustomer(SubscriptionForCustomerRequestDto postData) throws MeveoApiException, BusinessException {
         
-        RawResponseDto<String> result = new RawResponseDto<>();
+        SubscriptionForCustomerResponseDto result = new SubscriptionForCustomerResponseDto();
         
         String subscriptionCode = postData.getSubscriptionCode();
         if (StringUtils.isBlank(subscriptionCode)) {
@@ -1880,7 +1881,7 @@ public class SubscriptionApi extends BaseApi {
         }
         
         this.subscriptionService.activateInstantiatedService(subscription);
-        result.setResponse(DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), DateUtils.DATE_PATTERN));
+        result.setSubscriptionEndDate(DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), DateUtils.DATE_PATTERN));
         
         return result;
     }
