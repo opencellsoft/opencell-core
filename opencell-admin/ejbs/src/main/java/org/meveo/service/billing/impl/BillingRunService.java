@@ -478,12 +478,18 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void cleanBillingRun(BillingRun billingRun) throws BusinessException {
+        
+        Query queryminTrans = getEntityManager().createQuery("delete from " + RatedTransaction.class.getName()
+            + " where billingRun=:billingRun and wallet is null");
+        queryminTrans.setParameter("billingRun", billingRun);
+        queryminTrans.executeUpdate();
+
         Query queryTrans = getEntityManager().createQuery("update " + RatedTransaction.class.getName()
                 + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where billingRun=:billingRun");
         queryTrans.setParameter("billingRun", billingRun);
         queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
         queryTrans.executeUpdate();
-
+        
         Query queryAgregate = getEntityManager().createQuery("SELECT id from " + InvoiceAgregate.class.getName() + " where billingRun=:billingRun");
         queryAgregate.setParameter("billingRun", billingRun);
 

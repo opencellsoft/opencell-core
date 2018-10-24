@@ -271,7 +271,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public void appendInvoiceAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, Date firstTransactionDate,
             Date lastTransactionDate) throws BusinessException {
-        appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, null, firstTransactionDate, lastTransactionDate, false, false);
+        appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, null, firstTransactionDate, lastTransactionDate, false, false, null);
     }
 
     /**
@@ -291,7 +291,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void appendInvoiceAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, List<RatedTransaction> ratedTransactions,
-            Date firstTransactionDate, Date lastTransactionDate, boolean isInvoiceAdjustment, boolean isVirtual) throws BusinessException {
+            Date firstTransactionDate, Date lastTransactionDate, boolean isInvoiceAdjustment, boolean isVirtual, BillingRun billingRun) throws BusinessException {
 
         boolean entreprise = appProvider.isEntreprise();
         int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
@@ -438,6 +438,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
                 invoiceAgregateSubcat.updateAudit(currentUser);
                 invoiceAgregateSubcat.setInvoiceSubCategory(invoiceSubCategory);
+                invoiceAgregateSubcat.setBillingRun(billingRun);
                 invoiceAgregateSubcat.setInvoice(invoice);
 
                 String translationSCKey = "SC_" + invoiceSubCategory.getCode() + "_" + languageCode;
@@ -451,10 +452,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 }
 
                 invoiceAgregateSubcat.setDescription(invSubCatDescTranslated);
-
-                if (!isVirtual) {
-                    invoiceAgregateSubcat.setBillingRun(billingAccount.getBillingRun());
-                }
                 invoiceAgregateSubcat.setWallet(wallet);
                 invoiceAgregateSubcat.setAccountingCode(invoiceSubCategory.getAccountingCode());
                 fillAgregates(invoiceAgregateSubcat, userAccount);
@@ -491,10 +488,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         } else {
                             invoiceAgregateTax = new TaxInvoiceAgregate();
                             invoiceAgregateTax.updateAudit(currentUser);
+                            invoiceAgregateTax.setBillingRun(billingRun);
                             invoiceAgregateTax.setInvoice(invoice);
-                            if (!isVirtual) {
-                                invoiceAgregateTax.setBillingRun(billingAccount.getBillingRun());
-                            }
                             if (!taxExternal) {
                                 invoiceAgregateTax.setTax(tax);
                             }
@@ -531,10 +526,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                     invoiceAgregateCat = new CategoryInvoiceAgregate();
                     invoiceAgregateCat.updateAudit(currentUser);
+                    invoiceAgregateCat.setBillingRun(billingRun);
                     invoiceAgregateCat.setInvoice(invoice);
-                    if (!isVirtual) {
-                        invoiceAgregateCat.setBillingRun(billingAccount.getBillingRun());
-                    }
 
                     String translationCKey = "C_" + invoiceSubCategory.getInvoiceCategory().getCode() + "_" + languageCode;
                     String invCatDescTranslated = descriptionMap.get(translationCKey);
@@ -939,14 +932,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         // Apply discount to a particular invoice subcategory
                         if (discountPlanItem.getInvoiceSubCategory() != null) {
                             appendDiscountAggregate(userAccount, isExonerated, userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(), discountPlanItem,
-                                taxInvoiceAgregateMap, isVirtual);
+                                taxInvoiceAgregateMap, isVirtual, null);
 
                             // Apply discount to all subcategories of a particular invoice category
                         } else if (discountPlanItem.getInvoiceCategory() != null) {
                             InvoiceCategory invoiceCat = discountPlanItem.getInvoiceCategory();
                             for (InvoiceSubCategory invoiceSubCat : invoiceCat.getInvoiceSubCategories()) {
                                 appendDiscountAggregate(userAccount, isExonerated, userAccount.getWallet(), invoice, invoiceSubCat, discountPlanItem, taxInvoiceAgregateMap,
-                                    isVirtual);
+                                    isVirtual, null);
                             }
 
                             // Apply discount to all subcategories in the invoice
@@ -962,7 +955,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                             }
                             for (InvoiceSubCategory invoiceSubCategory : allSubcategories) {
                                 appendDiscountAggregate(userAccount, isExonerated, userAccount.getWallet(), invoice, invoiceSubCategory, discountPlanItem, taxInvoiceAgregateMap,
-                                    isVirtual);
+                                    isVirtual, null);
                             }
                         }
                     }
@@ -986,7 +979,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @throws BusinessException business exception
      */
     private void appendDiscountAggregate(UserAccount userAccount, boolean isExonerated, WalletInstance wallet, Invoice invoice, InvoiceSubCategory invoiceSubCat,
-            DiscountPlanItem discountPlanItem, Map<String, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isVirtual) throws BusinessException {
+            DiscountPlanItem discountPlanItem, Map<String, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isVirtual, BillingRun billingRun) throws BusinessException {
 
         BillingAccount billingAccount = userAccount.getBillingAccount();
         BigDecimal amount = BigDecimal.ZERO;
@@ -1040,10 +1033,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             BigDecimal discountAmountWithTax = discountAmountWithoutTax.add(discountAmountTax);
 
             invoiceAgregateSubcat.updateAudit(currentUser);
+            invoiceAgregateSubcat.setBillingRun(billingRun);
             invoiceAgregateSubcat.setInvoice(invoice);
-            if (!isVirtual) {
-                invoiceAgregateSubcat.setBillingRun(billingAccount.getBillingRun());
-            }
             invoiceAgregateSubcat.setWallet(userAccount.getWallet());
             invoiceAgregateSubcat.setAccountingCode(invoiceSubCat.getAccountingCode());
             fillAgregates(invoiceAgregateSubcat, userAccount);
