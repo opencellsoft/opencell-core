@@ -12,10 +12,13 @@ import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.RawResponseDto;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
@@ -52,6 +55,15 @@ public interface SubscriptionWs extends IBaseWs {
 
     @WebMethod
     ActionStatus activateSubscription(@WebParam(name = "subscriptionCode") String subscriptionCode);
+    
+    /**
+     * Activate a given Subscription for a customer.
+     *
+     * @param postData the post data
+     * @return the raw result holding the Subscription EndAgreementDate in its response.
+     */
+    @WebMethod
+    SubscriptionForCustomerResponseDto activateForCustomer(@WebParam(name = "subscription") SubscriptionForCustomerRequestDto postData);
     
     /**
      * Cancels the renewal term of an active subscription.
