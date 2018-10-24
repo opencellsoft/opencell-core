@@ -33,6 +33,7 @@ import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.ServiceToInstantiateDto;
 import org.meveo.api.dto.billing.ServiceToUpdateDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
@@ -42,6 +43,7 @@ import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.RawResponseDto;
 import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -75,6 +77,7 @@ import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.Order;
@@ -98,6 +101,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
 
 /**
@@ -172,6 +176,9 @@ public class SubscriptionApi extends BaseApi {
     
     @Inject
     private SellerService sellerService;
+    
+    @Inject
+    private CustomerService customerService;
 
     @Inject
     private  CalendarService calendarService;
@@ -1842,4 +1849,55 @@ public class SubscriptionApi extends BaseApi {
 		
 		subscriptionService.cancelSubscriptionRenewal(subscription);
 	}
+
+    public RawResponseDto<String> activateForCustomer(SubscriptionForCustomerRequestDto postData) throws MeveoApiException, BusinessException {
+        
+        RawResponseDto<String> result = new RawResponseDto<>();
+        
+        String subscriptionCode = postData.getSubscriptionCode();
+        if (StringUtils.isBlank(subscriptionCode)) {
+            this.missingParameters.add("subscriptionCode");
+        }
+        String customerCode = postData.getSubscriptionClientId();
+        if (StringUtils.isBlank(customerCode)) {
+            this.missingParameters.add("subscriptionClientId");
+        }
+        this.handleMissingParameters();
+
+        // Checking if Subscription exist : 
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+        }
+        // Checking if Customer exist : 
+        Customer customer = this.customerService.findByCode(customerCode);
+        if (customer == null) {
+            throw new EntityDoesNotExistsException(Customer.class, customerCode);
+        }
+        // cheking if the Subscription belongs to the given customer : 
+        if (!this.subscriptionBelondsToCustomer(customerCode, subscription)) {
+            throw new InvalidParameterException(String.format("Subscription [%s] doesn't belongs to Customer [%s] ", subscriptionCode, customerCode));
+        }
+        
+        this.subscriptionService.activateInstantiatedService(subscription);
+        result.setResponse(DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), DateUtils.DATE_PATTERN));
+        
+        return result;
+    }
+
+    /**
+     *
+     * @param customerCode the customer code
+     * @param subscription the subscription
+     * @return true, if the  subscription belongs to the given customer, false otherwise
+     */
+    private boolean subscriptionBelondsToCustomer(String customerCode, Subscription subscription) {
+        try {
+            // we stipulate that this chain of getters is NPE free. otherwise false is returned
+            return customerCode.equals( subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getCode() );
+        } catch (Exception e) {
+            log.error("Error on subscriptionBelondsToCustomer [{}] ", e.getMessage(), e);
+            return false;
+        }
+    }
 }
