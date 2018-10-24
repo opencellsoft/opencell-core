@@ -2115,4 +2115,34 @@
             <column name="recurrent" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#3680 - Extend FtpAdapterJob to support file export and SFTP" author="mboukayoua">
+        <update tableName="meveo_job_instance">
+            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_localDirectory')" />
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_removeOriginalFile')" />
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_ftpInputDirectory', 'FtpAdapterJob_remoteDirectory')" />
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="cf_values" valueComputed="replace(cf_values, '}]}', '}],&quot;FtpAdapterJob_operation&quot;:[{&quot;string&quot;:&quot;IMPORT&quot;}]}')" />
+        </update>
+        <renameColumn tableName="ftp_imported_file" oldColumnName="import_date" newColumnName="transfer_date" />
+        <addColumn tableName="ftp_imported_file">
+            <column name="operation" type="varchar(100)" value="IMPORT" defaultValue="IMPORT" />
+        </addColumn>
+        <renameTable oldTableName="ftp_imported_file" newTableName="ftp_transferred_file" />
+        <sql><![CDATA[
+            ALTER INDEX ftp_imported_file_pkey RENAME TO ftp_transferred_file_pkey;
+            ALTER SEQUENCE ftp_imported_file_seq RENAME TO ftp_transferred_file_seq;
+        ]]>
+        </sql>
+        <delete tableName="crm_custom_field_tmpl">
+            <where>applies_to='JOB_FtpAdapterJob' AND
+                code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory')
+            </where>
+        </delete>
+    </changeSet>
 </databaseChangeLog>
