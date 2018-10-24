@@ -122,9 +122,8 @@ public class DDRequestBuilderApi extends BaseCrudApi<DDRequestBuilder, DDRequest
             handleMissingParameters();
             return null;
         }
-
-        if (StringUtils.isBlank(ddRequestBuilderDto.getCode())) {
-            code = ddRequestBuilderDto.getCode();
+        code = ddRequestBuilderDto.getCode();
+        if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
         handleMissingParameters();

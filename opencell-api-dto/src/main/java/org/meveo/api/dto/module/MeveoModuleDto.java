@@ -44,6 +44,7 @@ import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.dto.notification.JobTriggerDto;
 import org.meveo.api.dto.notification.ScriptNotificationDto;
 import org.meveo.api.dto.notification.WebHookDto;
+import org.meveo.api.dto.payment.DDRequestBuilderDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.WorkflowDto;
 import org.meveo.model.IEntity;
@@ -93,7 +94,8 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
             @XmlElement(name = "entityCustomAction", type = EntityCustomActionDto.class), @XmlElement(name = "workflow", type = WorkflowDto.class),
             @XmlElement(name = "offerTemplate", type = OfferTemplateDto.class), @XmlElement(name = "productTemplate", type = ProductTemplateDto.class),
             @XmlElement(name = "bundleTemplate", type = BundleTemplateDto.class), @XmlElement(name = "serviceTemplate", type = ServiceTemplateDto.class),
-            @XmlElement(name = "offerTemplateCategory", type = OfferTemplateCategoryDto.class), @XmlElement(name = "paymentGateway", type = PaymentGatewayDto.class), })
+            @XmlElement(name = "offerTemplateCategory", type = OfferTemplateCategoryDto.class), @XmlElement(name = "paymentGateway", type = PaymentGatewayDto.class),
+            @XmlElement(name = "ddRequestBuilder", type = DDRequestBuilderDto.class),})
     private List<BaseEntityDto> moduleItems;
 
     /**
