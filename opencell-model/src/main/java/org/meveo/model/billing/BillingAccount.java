@@ -486,5 +486,13 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 	public void setDiscountPlans(Set<DiscountPlan> discountPlans) {
 		this.discountPlans = discountPlans;
 	}
+	
+	public void addDiscountPlanNullSafe(DiscountPlan e) {
+		if (discountPlans == null) {
+			discountPlans = new HashSet<>();
+		}
+
+		discountPlans.add(e);
+	}
 
 }

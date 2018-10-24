@@ -193,6 +193,14 @@ public class BillingAccountApi extends AccountEntityApi {
         } else {
             billingAccount.setDiscountPlan(null);
         }
+        
+		if (postData.getDiscountPlans() != null && !postData.getDiscountPlans().isEmpty()) {
+			for (String discountPlanCode : postData.getDiscountPlans()) {
+				DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode);
+				billingAccount.addDiscountPlanNullSafe(discountPlan);
+			}
+		}
+        
         if (postData.getElectronicBilling() == null) {
             billingAccount.setElectronicBilling(false);
         } else {
@@ -348,6 +356,13 @@ public class BillingAccountApi extends AccountEntityApi {
         } else if (postData.getDiscountPlan() != null) {
             billingAccount.setDiscountPlan(null);
         }
+        
+		if (postData.getDiscountPlans() != null && !postData.getDiscountPlans().isEmpty()) {
+			for (String discountPlanCode : postData.getDiscountPlans()) {
+				DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode);
+				billingAccount.addDiscountPlanNullSafe(discountPlan);
+			}
+		}
 
         if (businessAccountModel != null) {
             billingAccount.setBusinessAccountModel(businessAccountModel);

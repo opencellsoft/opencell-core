@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -113,6 +114,9 @@ public class BillingAccountDto extends AccountDto {
      * Use for GET / LIST only.
      */
     private UserAccountsDto userAccounts = new UserAccountsDto();
+    
+    /** List of discount plans */
+    private List<String> discountPlans;
 
     /**
      * Instantiates a new billing account dto.
@@ -175,6 +179,11 @@ public class BillingAccountDto extends AccountDto {
 		}
 
 		// End compatibility with pre-4.6 versions
+		
+		if(e.getDiscountPlans() != null) {
+			discountPlans = new ArrayList<>();
+			discountPlans = e.getDiscountPlans().stream().map(p -> p.getCode()).collect(Collectors.toList());
+		}
 	}
 
     /**
@@ -557,5 +566,13 @@ public class BillingAccountDto extends AccountDto {
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
+
+	public List<String> getDiscountPlans() {
+		return discountPlans;
+	}
+
+	public void setDiscountPlans(List<String> discountPlans) {
+		this.discountPlans = discountPlans;
+	}
 
 }
