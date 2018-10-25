@@ -155,7 +155,7 @@ public class Customer extends AccountEntity {
 	@Override
 	public void anonymize(String code) {
 		super.anonymize(code);
-		getContactInformation().anonymize(code);
+		getContactInformationNullSafe().anonymize(code);
 		if (getCustomerAccounts() != null) {
 			for (CustomerAccount ca : getCustomerAccounts()) {
 				ca.anonymize(code);

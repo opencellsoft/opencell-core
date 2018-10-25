@@ -28,7 +28,6 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
@@ -42,6 +41,7 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
+import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -114,6 +114,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         }
         if (entity.getName() == null) {
             entity.setName(new Name());
+        }
+        if (entity.getContactInformation() == null) {
+            entity.setContactInformation(new ContactInformation());
         }
 
         return entity;
@@ -321,7 +324,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             entity.setCode(customerAccount.getCode());
             entity.setDescription(customerAccount.getDescription());
             if (customerAccount.getContactInformation() != null) {
-                entity.getContactInformation().setEmail(customerAccount.getContactInformation().getEmail());
+                entity.getContactInformationNullSafe().setEmail(customerAccount.getContactInformation().getEmail());
             }
             entity.setAddress(customerAccount.getAddress());
             entity.setExternalRef1(customerAccount.getExternalRef1());
