@@ -6,9 +6,9 @@
         <groupId>com.opencellsoft</groupId>
         <artifactId>opencell</artifactId>
         <relativePath>../pom.xml</relativePath>
-		<version>5.2</version>
-	</parent>
-    <artifactId>opencell-api</artifactId>
+		<version>5.2.0</version>
+    </parent>
+	<artifactId>opencell-api</artifactId>
     <name>Opencell API</name>
 
     <dependencies>
