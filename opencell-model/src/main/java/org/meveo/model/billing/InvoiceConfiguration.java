@@ -110,7 +110,7 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     private Boolean displayOrders = false;
 
     /**
-     * Provider that invoice configuration is associated with
+     * Provider/tenant that invoice configuration is associated with
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id")

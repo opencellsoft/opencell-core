@@ -39,11 +39,15 @@ public @interface CustomFieldEntity {
 
     /**
      * Parent custom field entity (field names) in case custom field values should be inherited from a parent entity
+     * 
+     * @return Array of entity field names
      */
     String[] inheritCFValuesFrom() default {};
 
     /**
      * Should custom field values be inherited from a provider
+     * 
+     * @return True if value should be inherited
      */
     boolean inheritFromProvider() default false;
 }

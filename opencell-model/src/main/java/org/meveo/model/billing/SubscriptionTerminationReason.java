@@ -30,6 +30,11 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
+/**
+ * Subscription termination rule
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "code" })
@@ -40,14 +45,23 @@ public class SubscriptionTerminationReason extends BusinessEntity {
 
     private static final long serialVersionUID = 8579279870178217508L;
 
+    /**
+     * Apply agreement
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "apply_agreement")
     private boolean applyAgreement;
 
+    /**
+     * Reimburse
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "apply_reimbursment")
     private boolean applyReimbursment;
 
+    /**
+     * Apply termination charges
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "apply_termination_charges")
     private boolean applyTerminationCharges;

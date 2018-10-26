@@ -168,7 +168,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     private BigDecimal unMatchingAmount = BigDecimal.ZERO;
 
     /**
-     * Associated Customer account (identifier)
+     * Associated Customer account
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_account_id")
@@ -202,7 +202,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     private String occDescription;
 
     /**
-     * Associated order number of multiple orders separated by '|'
+     * Associated order number. Multiple orders separated by '|'.
      */
     @Column(name = "order_num")
     private String orderNumber;
@@ -338,7 +338,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     private String billingAccountName;
 
     /**
-     * DD request item (identifier)
+     * DD request item
      */
     @ManyToOne(optional = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "ddrequest_item_id")

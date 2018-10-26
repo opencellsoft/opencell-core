@@ -42,7 +42,8 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
 
 /**
- * Entity for EDR data.
+ * Event data record - EDR - information
+ * 
  * @author anasseh
  * @lastModifiedVersion 5.1
  */
@@ -58,6 +59,9 @@ public class EDR extends BaseEntity {
 
     public static String EDR_TABLE_ORIGIN = "EDR_TABLE";
 
+    /**
+     * Matched subscription
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "subscription_id")
     @NotNull
@@ -71,43 +75,70 @@ public class EDR extends BaseEntity {
     private String originBatch;
 
     /**
-     * the origin record the EDR comes from (like a CDR magic number)
+     * The origin record the EDR comes from (like a CDR magic number)
      */
     @Column(name = "origin_record", length = 255)
     @Size(max = 255)
     private String originRecord;
 
+    /**
+     * Event date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "event_date")
     private Date eventDate;
 
+    /**
+     * Quantity
+     */
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal quantity;
 
+    /**
+     * Parameter
+     */
     @Column(name = "parameter_1", length = 255)
     @Size(max = 255)
     private String parameter1;
 
+    /**
+     * Parameter
+     */
     @Column(name = "parameter_2", length = 255)
     @Size(max = 255)
     private String parameter2;
 
+    /**
+     * Parameter
+     */
     @Column(name = "parameter_3", length = 255)
     @Size(max = 255)
     private String parameter3;
 
+    /**
+     * Parameter
+     */
     @Column(name = "parameter_4", length = 255)
     @Size(max = 255)
     private String parameter4;
 
+    /**
+     * Parameter
+     */
     @Column(name = "parameter_5", length = 255)
     @Size(max = 255)
     private String parameter5;
 
+    /**
+     * Parameter
+     */
     @Column(name = "parameter_6", length = 255)
     @Size(max = 255)
     private String parameter6;
 
+    /**
+     * Parameter
+     */
     @Column(name = "parameter_7", length = 255)
     @Size(max = 255)
     private String parameter7;
@@ -116,69 +147,123 @@ public class EDR extends BaseEntity {
     @Size(max = 255)
     private String parameter8;
 
+    /**
+     * Parameter
+     */
     @Column(name = "parameter_9", length = 255)
     @Size(max = 255)
     private String parameter9;
 
+    /**
+     * Date type parameter
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_parameter_1")
     private Date dateParam1;
 
+    /**
+     * Date type parameter
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_parameter_2")
     private Date dateParam2;
 
+    /**
+     * Date type parameter
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_parameter_3")
     private Date dateParam3;
 
+    /**
+     * Date type parameter
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_parameter_4")
     private Date dateParam4;
 
+    /**
+     * Date type parameter
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_parameter_5")
     private Date dateParam5;
 
+    /**
+     * Decimal type parameter
+     */
     @Column(name = "decimal_parameter_1", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal decimalParam1;
 
+    /**
+     * Decimal type parameter
+     */
     @Column(name = "decimal_parameter_2", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal decimalParam2;
 
+    /**
+     * Decimal type parameter
+     */
     @Column(name = "decimal_parameter_3", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal decimalParam3;
 
+    /**
+     * Decimal type parameter
+     */
     @Column(name = "decimal_parameter_4", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal decimalParam4;
 
+    /**
+     * Decimal type parameter
+     */
     @Column(name = "decimal_parameter_5", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal decimalParam5;
 
+    /**
+     * Processing status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private EDRStatusEnum status;
 
+    /**
+     * Rejection reason
+     */
     @Column(name = "reject_reason", columnDefinition = "text")
     @Size(max = 255)
     private String rejectReason;
 
+    /**
+     * Record creation timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created")
     private Date created;
 
+    /**
+     * Last update timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_updated")
     private Date lastUpdate;
 
+    /**
+     * Access code
+     */
     @Column(name = "access_code", length = 255)
     @Size(max = 255)
     private String accessCode;
 
+    /**
+     * Header EDR
+     */
     @JoinColumn(name = "header_edr_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private EDR headerEDR;
 
+    /**
+     * Parameter
+     */
     @Column(name = "EXTRA_PARAMETER", columnDefinition = "TEXT")
     private String extraParameter;
 
@@ -454,11 +539,11 @@ public class EDR extends BaseEntity {
         }
 
         EDR other = (EDR) obj;
-        
+
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
-        
+
         return this.toString().equals(other.toString());
     }
 

@@ -20,6 +20,8 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 
 /**
+ * Payment history
+ * 
  * @author anasseh
  * @lastModifiedVersion 5.0.2
  */
@@ -44,11 +46,11 @@ public class PaymentHistory extends AuditableEntity {
     /** The seller Code. */
     @Column(name = "seller_code")
     private String sellerCode;
-    
+
     /** The customer Code. */
     @Column(name = "customer_code")
     private String customerCode;
-    
+
     /** The operation date. */
     @Column(name = "operation_date")
     @NotNull
@@ -403,5 +405,5 @@ public class PaymentHistory extends AuditableEntity {
      */
     public void setCustomerCode(String customerCode) {
         this.customerCode = customerCode;
-    }    
+    }
 }

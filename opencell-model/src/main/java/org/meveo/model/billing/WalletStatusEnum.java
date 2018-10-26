@@ -25,11 +25,8 @@ import org.meveo.model.IdentifiableEnum;
  */
 public enum WalletStatusEnum implements IdentifiableEnum {
 
-    ACTIVATED(1, "walletStatus.activated"),
-    RESTRICTED(2, "walletStatus.restricted"),
-    EXPIRED(3, "walletStatus.expired"),
-    SUSPENDED(4, "walletStatus.suspended"),
-    TERMINATED(5, "walletStatus.terminated");
+    ACTIVATED(1, "walletStatus.activated"), RESTRICTED(2, "walletStatus.restricted"), EXPIRED(3, "walletStatus.expired"), SUSPENDED(4, "walletStatus.suspended"), TERMINATED(5,
+            "walletStatus.terminated");
 
     private Integer id;
     private String label;

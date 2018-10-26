@@ -20,39 +20,39 @@ package org.meveo.model.billing;
 
 public enum LanguageEnum {
 
-	EN(1, "Englais"), 
-	FR(2, "Francais");
+    EN(1, "Englais"), FR(2, "Francais");
 
-	private Integer id;
-	private String label;
+    private Integer id;
+    private String label;
 
-	LanguageEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
+    LanguageEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
 
-	}
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	/**
-	 * Gets enum by its id.
-	 * @param id id of language
-	 * @return language enum.
-	 */
-	public static LanguageEnum getValue(Integer id) {
-		if (id != null) {
-			for (LanguageEnum status : values()) {
-				if (id.equals(status.getId())) {
-					return status;
-				}
-			}
-		}
-		return null;
-	}
+    /**
+     * Gets enum by its id.
+     * 
+     * @param id id of language
+     * @return language enum.
+     */
+    public static LanguageEnum getValue(Integer id) {
+        if (id != null) {
+            for (LanguageEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
 }

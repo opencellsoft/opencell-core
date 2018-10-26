@@ -48,7 +48,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
- * Access point linked to Subscription and Zone.
+ * Access point linked to Subscription
  */
 @Entity
 @ObservableEntity
@@ -64,32 +64,52 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
-    // input
+    /**
+     * Validity period - start date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date")
     private Date startDate;
 
+    /**
+     * Validity period - end date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_date")
     private Date endDate;
 
+    /**
+     * Access point identifier/number
+     */
     @Column(name = "acces_user_id", length = 255)
     @Size(max = 255)
     private String accessUserId;
 
+    /**
+     * Parent subscription
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
+    /**
+     * Unique identifier - UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
+    /**
+     * Custom field values in JSON format
+     */
     @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
+    /**
+     * Accumulated custom field values in JSON format
+     */
     @Type(type = "cfjson")
     @Column(name = "cf_values_accum", columnDefinition = "text")
     private CustomFieldValues cfAccumulatedValues;

@@ -25,24 +25,24 @@ import org.meveo.model.AccountEntity;
 
 public class AccountCodeGenerationListener {
 
-	@PrePersist
-	public void prePersist(AccountEntity account) {
-		if (account.getCode() == null) {
-			account.setCode("A" + account.getId());
-		}
-		if (account.getCode() != null && account.isAppendGeneratedCode()) {
-			account.setCode(account.getCode() + "_" + "A" + account.getId());
-		}
-	}
+    @PrePersist
+    public void prePersist(AccountEntity account) {
+        if (account.getCode() == null) {
+            account.setCode("A" + account.getId());
+        }
+        if (account.getCode() != null && account.isAppendGeneratedCode()) {
+            account.setCode(account.getCode() + "_" + "A" + account.getId());
+        }
+    }
 
-	@PreUpdate
-	public void preUpdate(AccountEntity account) {
-		if (account.getCode() == null) {
-			account.setCode("A" + account.getId());
-		}
-		if (account.getCode() != null && account.isAppendGeneratedCode()) {
-			account.setCode(account.getCode() + "_" + "A" + account.getId());
-		}
-	}
+    @PreUpdate
+    public void preUpdate(AccountEntity account) {
+        if (account.getCode() == null) {
+            account.setCode("A" + account.getId());
+        }
+        if (account.getCode() != null && account.isAppendGeneratedCode()) {
+            account.setCode(account.getCode() + "_" + "A" + account.getId());
+        }
+    }
 
 }

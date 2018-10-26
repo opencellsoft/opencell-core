@@ -48,7 +48,6 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 
@@ -72,21 +71,21 @@ public class Seller extends BusinessCFEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Currency (identifier)
+     * Currency
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
     private TradingCurrency tradingCurrency;
 
     /**
-     * Country (identifier)
+     * Country
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country_id")
     private TradingCountry tradingCountry;
 
     /**
-     * Language (identifier)
+     * Language
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
@@ -105,7 +104,7 @@ public class Seller extends BusinessCFEntity {
     private ContactInformation contactInformation;
 
     /**
-     * Parent seller in seller hierarchy (identifier)
+     * Parent seller in seller hierarchy
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_seller_id")
@@ -118,7 +117,7 @@ public class Seller extends BusinessCFEntity {
     private List<InvoiceTypeSellerSequence> invoiceTypeSequence = new ArrayList<>();
 
     /**
-     * Business account model (identifier) that created this Seller
+     * Business account model that created this Seller
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bam_id")

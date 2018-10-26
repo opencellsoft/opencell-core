@@ -24,6 +24,8 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 
 /**
+ * Discount plan item/details
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  **/
@@ -37,24 +39,39 @@ public class DiscountPlanItem extends EnableEntity {
 
     private static final long serialVersionUID = 4543503736567841084L;
 
+    /**
+     * Code
+     */
     @Column(name = "code", length = 255, nullable = false)
     @Size(max = 255, min = 1)
     @NotNull
     private String code;
 
+    /**
+     * Parent discount plan
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_id", nullable = false)
     @NotNull
     private DiscountPlan discountPlan;
 
+    /**
+     * Apply discount to a given invoice category. If not specified, discount will be applied to any invoice category.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_category_id")
     private InvoiceCategory invoiceCategory;
 
+    /**
+     * Apply discount to a given invoice subcategory.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
 
+    /**
+     * Discount percent
+     */
     @Column(name = "discount_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     @Min(0)

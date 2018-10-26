@@ -41,7 +41,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
-    
+
     @Inject
     private ScriptInstanceCategoryService scriptInstanceCategoryService;
 
@@ -154,11 +154,11 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
     /**
      * Execute a script instance with a given code and context
      *
-     * @param scriptInstanceCode
-     * @param context
-     * @return
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param scriptInstanceCode Script instance code
+     * @param context Context of values
+     * @return A map of values
+     * @throws MeveoApiException Api exception
+     * @throws BusinessException General business exception
      */
     public Map<String, Object> execute(String scriptInstanceCode, Map<String, Object> context) throws MeveoApiException, BusinessException {
 
@@ -240,14 +240,13 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
         scriptInstance.setDescription(dto.getDescription());
         scriptInstance.setScript(dto.getScript());
 
-		if (!StringUtils.isBlank(dto.getScriptInstanceCategoryCode())) {
-			ScriptInstanceCategory scriptInstanceCategory = scriptInstanceCategoryService
-					.findByCode(dto.getScriptInstanceCategoryCode());
-			if (scriptInstanceCategory != null) {
-				scriptInstance.setScriptInstanceCategory(scriptInstanceCategory);
-			}
-		}
-        
+        if (!StringUtils.isBlank(dto.getScriptInstanceCategoryCode())) {
+            ScriptInstanceCategory scriptInstanceCategory = scriptInstanceCategoryService.findByCode(dto.getScriptInstanceCategoryCode());
+            if (scriptInstanceCategory != null) {
+                scriptInstance.setScriptInstanceCategory(scriptInstanceCategory);
+            }
+        }
+
         if (dto.getType() != null) {
             scriptInstance.setSourceTypeEnum(dto.getType());
         } else {

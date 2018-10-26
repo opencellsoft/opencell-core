@@ -30,7 +30,7 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
- * Language entity.
+ * Language
  */
 @Entity
 @Cacheable
@@ -41,10 +41,16 @@ import org.meveo.model.ExportIdentifier;
 public class Language extends AuditableEntity {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Language 3 letter code
+     */
     @Column(name = "language_code", length = 3)
     @Size(max = 3)
     private String languageCode;
 
+    /**
+     * Description
+     */
     @Column(name = "description_en", length = 100)
     @Size(max = 100)
     private String descriptionEn;

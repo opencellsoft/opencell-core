@@ -11,6 +11,8 @@ import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
+ * Sales channel
+ * 
  * @author Edward P. Legaspi
  */
 @Entity

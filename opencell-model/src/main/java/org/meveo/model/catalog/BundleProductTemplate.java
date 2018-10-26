@@ -22,6 +22,8 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 
 /**
+ * Product bundle to product mapping
+ * 
  * @author Edward P. Legaspi
  */
 @Entity
@@ -33,22 +35,34 @@ import org.meveo.model.IEntity;
         @Parameter(name = "sequence_name", value = "cat_bundle_product_template_seq"), })
 public class BundleProductTemplate implements IEntity {
 
+    /**
+     * Identifier
+     */
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
     @Column(name = "id")
     @Access(AccessType.PROPERTY)
     protected Long id;
 
+    /**
+     * Product template
+     */
     @ManyToOne(optional = false)
     @JoinColumn(name = "product_template_id")
     @NotNull
     private ProductTemplate productTemplate;
 
+    /**
+     * Bundle template
+     */
     @ManyToOne(optional = false)
     @JoinColumn(name = "bundle_template_id")
     @NotNull
     private BundleTemplate bundleTemplate;
 
+    /**
+     * Product quantity included in a bundle
+     */
     @Column(name = "quantity")
     private int quantity;
 

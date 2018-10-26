@@ -62,6 +62,8 @@ public class TaxInvoiceAggregateDto extends BaseEntityDto {
 
     /**
      * Instantiates a new tax invoice aggregate dto.
+     * 
+     * @param taxAggregate Tax aggregate entity
      */
     public TaxInvoiceAggregateDto(TaxInvoiceAgregate taxAggregate) {
 

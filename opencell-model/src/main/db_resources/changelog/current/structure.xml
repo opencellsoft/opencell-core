@@ -2194,6 +2194,9 @@
         <addColumn tableName="ar_ddrequest_builder">
             <column name="cf_values_accum" type="${type.json}"></column>
         </addColumn>
+        <addColumn tableName="ar_payment_schedule_tmpl">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
         
         <sql>update ${db.schema.adapted}crm_provider set cf_values_accum=cf_values</sql>
         <sql>update ${db.schema.adapted}account_entity set cf_values_accum=cf_values</sql>
@@ -2224,6 +2227,7 @@
         <sql>update ${db.schema.adapted}dwh_report_extract set cf_values_accum=cf_values</sql>
         <sql>update ${db.schema.adapted}billing_invoice_type set cf_values_accum=cf_values</sql>
         <sql>update ${db.schema.adapted}ar_ddrequest_builder set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}ar_payment_schedule_tmpl set cf_values_accum=cf_values</sql>
     </changeSet>
     
     <changeSet id="#3464_20180701" author="AndriusKarpavicius">

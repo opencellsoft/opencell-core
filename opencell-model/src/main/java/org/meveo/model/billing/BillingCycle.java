@@ -116,7 +116,7 @@ public class BillingCycle extends BusinessCFEntity {
     private BigDecimal invoicingThreshold;
 
     /**
-     * Invoice type (identifier)
+     * Invoice type
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_type_id")
@@ -158,7 +158,7 @@ public class BillingCycle extends BusinessCFEntity {
     private BillingEntityTypeEnum type;
 
     /**
-     * Script to run (identifier)
+     * Script to run
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")

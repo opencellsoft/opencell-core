@@ -32,7 +32,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
- * Customer Category
+ * Customer category
  * 
  * @author Andrius Karpavicius
  */
@@ -46,18 +46,30 @@ public class CustomerCategory extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Is account exonerated from taxes
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "exonerated_from_taxes")
     private boolean exoneratedFromTaxes = false;
 
+    /**
+     * Expression to determine if account is exonerated from taxes
+     */
     @Column(name = "exoneration_tax_el", length = 2000)
     @Size(max = 2000)
     private String exonerationTaxEl;
 
+    /**
+     * Expression to determine if account is exonerated from taxes - for Spark
+     */
     @Column(name = "exoneration_tax_el_sp", length = 2000)
     @Size(max = 2000)
     private String exonerationTaxElSpark;
 
+    /**
+     * Exoneration reason
+     */
     @Column(name = "exoneration_reason", length = 255)
     @Size(max = 255)
     private String exonerationReason;

@@ -42,7 +42,7 @@ public class ExportTest {
                 String converted = writer.toString().replaceAll(" />", "/>");
                 String expected = IOUtils.toString(this.getClass().getResourceAsStream("/export/data_" + version + "_expected.xml")).replaceAll(" />", "/>");
 
-               // Assert.assertEquals(expected, converted);
+                // Assert.assertEquals(expected, converted);
 
             } catch (Exception e) {
                 log.error("Failed to convert file {}", version, e);

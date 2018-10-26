@@ -48,7 +48,7 @@ public class CounterInstance extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;
 
     /**
-     * Counter template (identifier) that counter was instantiated from
+     * Counter template that counter was instantiated from
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counter_template_id")

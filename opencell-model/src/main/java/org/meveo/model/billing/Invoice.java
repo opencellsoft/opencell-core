@@ -90,21 +90,21 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Billing account that invoice was issued to (identifier)
+     * Billing account that invoice was issued to
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id")
     private BillingAccount billingAccount;
 
     /**
-     * Billing run that produced the invoice (identifier)
+     * Billing run that produced the invoice
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run_id")
     private BillingRun billingRun;
 
     /**
-     * Recorded invoice (identifier)
+     * Recorded invoice
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recorded_invoice_id")
@@ -188,7 +188,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private BigDecimal netToPay;
 
     /**
-     * Expected payment method (identifier)
+     * Expected payment method
      */
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
@@ -251,14 +251,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private boolean isDetailedInvoice = true;
 
     /**
-     * Adjusted invoice (identifier)
+     * Adjusted invoice
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice adjustedInvoice;
 
     /**
-     * Invoice type (identifier)
+     * Invoice type
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_type_id")
@@ -336,7 +336,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private String pdfFilename;
 
     /**
-     * Payment method (identifier)
+     * Payment method
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id")
@@ -349,7 +349,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private BigDecimal dueBalance;
 
     /**
-     * Seller that invoice was issued to (identifier)
+     * Seller that invoice was issued to
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)

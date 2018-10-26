@@ -22,14 +22,14 @@ public abstract class ServiceChargeTemplate<T extends ChargeTemplate> extends Ba
     private static final long serialVersionUID = -1872859127097329926L;
 
     /**
-     * Service template (identifier)
+     * Service template
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_template_id")
     protected ServiceTemplate serviceTemplate;
 
     /**
-     * Charge template (identifier)
+     * Charge template
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "charge_template_id")

@@ -79,14 +79,14 @@ public class CustomerAccount extends AccountEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Address book (identifier)
+     * Address book
      */
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "crm_address_book_id")
     private AddressBook addressbook;
 
     /**
-     * Currency of account (identifier)
+     * Currency of account
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
@@ -151,7 +151,7 @@ public class CustomerAccount extends AccountEntity {
     private ContactInformation contactInformation;
 
     /**
-     * Parent customer (identifier)
+     * Parent customer
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
@@ -185,6 +185,26 @@ public class CustomerAccount extends AccountEntity {
     @Size(max = 2000)
     private String dueDateDelayELSpark;
 
+    /**
+     * Default language in invoices. Can be overriten in Billing account.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_language_id")
+    private TradingLanguage tradingLanguage;
+
+    /**
+     * Available payment methods
+     */
+    @OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PaymentMethod> paymentMethods = new ArrayList<PaymentMethod>();
+
+    /**
+     * Is account excluded from payment
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "excluded_from_payment")
+    private boolean excludedFromPayment;
+
     public CustomerAccount() {
         accountType = ACCOUNT_TYPE;
     }
@@ -196,17 +216,6 @@ public class CustomerAccount extends AccountEntity {
     public void setAddressbook(AddressBook addressbook) {
         this.addressbook = addressbook;
     }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trading_language_id")
-    private TradingLanguage tradingLanguage;
-
-    @OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PaymentMethod> paymentMethods = new ArrayList<PaymentMethod>();
-
-    @Type(type = "numeric_boolean")
-    @Column(name = "excluded_from_payment")
-    private boolean excludedFromPayment;
 
     public Customer getCustomer() {
         return customer;

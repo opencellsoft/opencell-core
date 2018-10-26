@@ -13,7 +13,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 /**
- * Audit log
+ * Audit log of user performed actions
  * 
  * @author Edward P. Legaspi
  **/

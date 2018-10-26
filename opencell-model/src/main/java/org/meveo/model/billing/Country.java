@@ -66,21 +66,21 @@ public class Country extends AuditableEntity {
     private String description;
 
     /**
-     * Corresponding Currency (identifier)
+     * Corresponding Currency
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id")
     private Currency currency;
 
     /**
-     * Corresponding language (identifier)
+     * Corresponding language
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "language_id")
     private Language language;
 
     /**
-     * Translated descriptions in JSON format
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")

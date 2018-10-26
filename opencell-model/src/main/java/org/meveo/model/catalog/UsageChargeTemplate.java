@@ -65,26 +65,44 @@ public class UsageChargeTemplate extends ChargeTemplate {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * EDR parameter to match
+     */
     @Column(name = "filter_param_1", length = 255)
     @Size(max = 255)
     private String filterParam1 = WILCARD;
 
+    /**
+     * EDR parameter to match
+     */
     @Column(name = "filter_param_2", length = 255)
     @Size(max = 255)
     private String filterParam2 = WILCARD;
 
+    /**
+     * EDR parameter to match
+     */
     @Column(name = "filter_param_3", length = 255)
     @Size(max = 255)
     private String filterParam3 = WILCARD;
 
+    /**
+     * EDR parameter to match
+     */
     @Column(name = "filter_param_4", length = 255)
     @Size(max = 255)
     private String filterParam4 = WILCARD;
 
+    /**
+     * Expression to determine if EDR matches
+     */
     @Column(name = "filter_expression", length = 2000)
     @Size(max = 2000)
     private String filterExpression = null;
 
+    /**
+     * Expression to determine if EDR matches - for Spark
+     */
     @Column(name = "filter_el_sp", length = 2000)
     @Size(max = 2000)
     private String filterExpressionSpark = null;

@@ -483,6 +483,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     /**
      * Field no longer used since v.5.2
      * 
+     * @return Quantity
      */
     @Deprecated
     public BigDecimal getQuantity() {
@@ -491,6 +492,8 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
     /**
      * Field no longer used since v.5.2
+     * 
+     * @param quantity Quantity
      */
     @Deprecated
     public void setQuantity(BigDecimal quantity) {
@@ -500,6 +503,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     /**
      * Field no longer used since v.5.2
      * 
+     * @param quantity Quantity
      */
     @Deprecated
     public void addQuantity(BigDecimal quantity) {
@@ -509,6 +513,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     /**
      * Field no longer used since v.5.2
      * 
+     * @return Discount
      */
     @Deprecated
     public BigDecimal getDiscount() {
@@ -517,6 +522,8 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
     /**
      * Field no longer used since v.5.2
+     * 
+     * @param discount Discount
      */
     @Deprecated
     public void setDiscount(BigDecimal discount) {

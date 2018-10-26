@@ -87,7 +87,6 @@ public class DDRequestLOT extends AuditableEntity {
     @JoinColumn(name = "ddrequest_builder_id")
     private DDRequestBuilder ddRequestBuilder;
 
-
     public String getFileName() {
         return fileName;
     }
@@ -182,5 +181,4 @@ public class DDRequestLOT extends AuditableEntity {
         this.ddRequestBuilder = ddRequestBuilder;
     }
 
-      
 }

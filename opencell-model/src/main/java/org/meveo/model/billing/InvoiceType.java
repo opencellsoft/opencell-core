@@ -46,7 +46,6 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.scripts.ScriptInstance;
 
-
 /**
  * @author Edward P. Legaspi
  * @author Bahije Mounir
@@ -83,7 +82,7 @@ public class InvoiceType extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_sequence_id", nullable = true)
     private InvoiceSequence invoiceSequence;
-    
+
     @Column(name = "prefix_el", length = 2000)
     @Size(max = 2000)
     private String prefixEL = "";
@@ -98,7 +97,7 @@ public class InvoiceType extends BusinessCFEntity {
     @Column(name = "billing_template_name")
     @Size(max = 50)
     private String billingTemplateName;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "use_self_sequence")
     private boolean useSelfSequence = true;
@@ -120,7 +119,7 @@ public class InvoiceType extends BusinessCFEntity {
     @Column(name = "billing_template_name_el", length = 2000)
     @Size(max = 2000)
     private String billingTemplateNameEL;
-    
+
     @ManyToOne()
     @JoinColumn(name = "tax_script_instance_id")
     private ScriptInstance taxScript;
@@ -128,7 +127,7 @@ public class InvoiceType extends BusinessCFEntity {
     @Column(name = "occ_template_code_el", length = 2000)
     @Size(max = 2000)
     private String occTemplateCodeEl;
-    
+
     @Column(name = "occ_template_negative_code_el", length = 2000)
     @Size(max = 2000)
     private String occTemplateNegativeCodeEl;
@@ -158,14 +157,14 @@ public class InvoiceType extends BusinessCFEntity {
     }
 
     public InvoiceSequence getInvoiceSequence() {
-		return invoiceSequence;
-	}
+        return invoiceSequence;
+    }
 
-	public void setInvoiceSequence(InvoiceSequence invoiceSequence) {
-		this.invoiceSequence = invoiceSequence;
-	}
+    public void setInvoiceSequence(InvoiceSequence invoiceSequence) {
+        this.invoiceSequence = invoiceSequence;
+    }
 
-	public List<InvoiceTypeSellerSequence> getSellerSequence() {
+    public List<InvoiceTypeSellerSequence> getSellerSequence() {
         return sellerSequence;
     }
 
@@ -242,12 +241,11 @@ public class InvoiceType extends BusinessCFEntity {
     public void setTaxScript(ScriptInstance taxScript) {
         this.taxScript = taxScript;
     }
-    
+
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return null;
     }
-    
 
     /**
      * @return the useSelfSequence
@@ -263,7 +261,7 @@ public class InvoiceType extends BusinessCFEntity {
         this.useSelfSequence = useSelfSequence;
     }
 
-        public String getOccTemplateCodeEl() {
+    public String getOccTemplateCodeEl() {
         return occTemplateCodeEl;
     }
 
@@ -279,13 +277,13 @@ public class InvoiceType extends BusinessCFEntity {
         this.occTemplateNegativeCodeEl = occTemplateNegativeCodeEl;
     }
 
-	public String getPrefixEL() {
-		return prefixEL;
-	}
+    public String getPrefixEL() {
+        return prefixEL;
+    }
 
-	public void setPrefixEL(String prefixEL) {
-		this.prefixEL = prefixEL;
-	}
+    public void setPrefixEL(String prefixEL) {
+        this.prefixEL = prefixEL;
+    }
 
     public ScriptInstance getCustomInvoiceXmlScriptInstance() {
         return customInvoiceXmlScriptInstance;

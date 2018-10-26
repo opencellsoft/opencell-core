@@ -9,7 +9,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
@@ -19,62 +18,80 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
-import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 
+/**
+ * General chart configuration
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
 @ModuleItem
-@ExportIdentifier({ "code"})
-@Table(name = "dwh_chart", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@ExportIdentifier({ "code" })
+@Table(name = "dwh_chart", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @Inheritance(strategy = InheritanceType.JOINED)
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "dwh_chart_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "dwh_chart_seq"), })
 public class Chart extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 7127515648757614672L;
 
+    /**
+     * Role allowed to see the chart
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private Role role;
 
+    /**
+     * Measurable quantity to display in a chart
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "msr_qty_id")
     private MeasurableQuantity measurableQuantity;
 
+    /**
+     * Chart width
+     */
     @Column(name = "width", length = 10)
     @Size(max = 10)
     private String width = "500px";
 
+    /**
+     * Chart height
+     */
     @Column(name = "height", length = 10)
     @Size(max = 10)
     private String height = "300px";
 
+    /**
+     * CSS Style
+     */
     @Column(name = "css_style", length = 1000)
     @Size(max = 1000)
     private String style;
 
+    /**
+     * CSS style class
+     */
     @Column(name = "css_style_class", length = 255)
     @Size(max = 255)
     private String styleClass;
 
+    /**
+     * Exterder
+     */
     @Column(name = "extender", length = 255)
     @Size(max = 255)
     private String extender;
 
-    @Type(type="numeric_boolean")
+    /**
+     * Is chart visible
+     */
+    @Type(type = "numeric_boolean")
     @Column(name = "visible")
     private Boolean visible = false;
-
-    @Transient
-    private User user;
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public Role getRole() {
         return role;

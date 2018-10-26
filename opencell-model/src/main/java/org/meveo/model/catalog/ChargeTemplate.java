@@ -57,6 +57,11 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.finance.RevenueRecognitionRule;
 
+/**
+ * Charge template/definition
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ModuleItem
 @ObservableEntity
@@ -75,31 +80,52 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
         RECURRING, USAGE, SUBSCRIPTION, TERMINATION
     }
 
+    /**
+     * Operation type - Credit/Debit
+     */
     @Column(name = "credit_debit_flag")
     protected OperationTypeEnum type;
 
+    /**
+     * Is amount editable
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "amount_editable")
     protected Boolean amountEditable;
 
+    /**
+     * Corresponding invoice subcategory
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_sub_category", nullable = false)
     @NotNull
     protected InvoiceSubCategory invoiceSubCategory;
 
+    /**
+     * EDR templates charge may trigger
+     */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_chrg_edr", joinColumns = @JoinColumn(name = "charge_tmpl_id"), inverseJoinColumns = @JoinColumn(name = "trigg_edr_id"))
     protected List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
 
+    /**
+     * Input unit description
+     */
     @Column(name = "input_unit_description", length = 20)
     @Size(max = 20)
     protected String inputUnitDescription;
 
+    /**
+     * Rating unit description
+     */
     @Column(name = "rating_unit_description", length = 20)
     @Size(max = 20)
     protected String ratingUnitDescription;
 
+    /**
+     * Unit multiplicator between input and rating unit
+     */
     @Column(name = "unit_multiplicator", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
     protected BigDecimal unitMultiplicator;
 
@@ -116,10 +142,16 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
     @Column(name = "rounding_mode")
     protected RoundingModeEnum roundingMode = RoundingModeEnum.NEAREST;
 
+    /**
+     * Revenue recognition rule
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "revenue_recog_rule_id")
     protected RevenueRecognitionRule revenueRecognitionRule;
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value.
+     */
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     protected Map<String, String> descriptionI18n;

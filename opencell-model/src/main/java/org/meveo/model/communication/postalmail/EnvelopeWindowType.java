@@ -19,5 +19,5 @@
 package org.meveo.model.communication.postalmail;
 
 public enum EnvelopeWindowType {
-	SIMPLE, DOUBLE;
+    SIMPLE, DOUBLE;
 }

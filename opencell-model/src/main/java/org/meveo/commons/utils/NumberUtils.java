@@ -123,7 +123,7 @@ public class NumberUtils {
     public static BigDecimal[] computeDerivedAmounts(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal taxPercent, boolean isEnterprise, int rounding,
             RoundingMode roundingMode) {
 
-        if (taxPercent==null || taxPercent.compareTo(BigDecimal.ZERO) == 0) {
+        if (taxPercent == null || taxPercent.compareTo(BigDecimal.ZERO) == 0) {
             if (isEnterprise) {
                 amountWithoutTax = amountWithoutTax.setScale(rounding, roundingMode);
             } else {

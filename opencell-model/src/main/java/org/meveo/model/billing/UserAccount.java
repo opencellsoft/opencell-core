@@ -95,7 +95,7 @@ public class UserAccount extends AccountEntity {
     private Date terminationDate;
 
     /**
-     * Parent Billing account (identifier)
+     * Parent Billing account
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id")
@@ -112,7 +112,7 @@ public class UserAccount extends AccountEntity {
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     /**
-     * Primary waller (identifier)
+     * Primary waller
      */
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")

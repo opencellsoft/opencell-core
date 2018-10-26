@@ -49,7 +49,7 @@ public class EntityReferenceWrapper implements Serializable, IReferenceEntity {
         }
         code = entity.getCode();
     }
-    
+
     public EntityReferenceWrapper(IReferenceEntity entity) {
         super();
         if (entity == null) {
@@ -102,17 +102,17 @@ public class EntityReferenceWrapper implements Serializable, IReferenceEntity {
     }
 
     @Override
-	public String getReferenceCode() {
-		return getCode();
-	}
-    
-    @Override
-	public void setReferenceCode(Object value) {
-		setCode(value.toString());
-	}
+    public String getReferenceCode() {
+        return getCode();
+    }
 
-	@Override
-	public String getReferenceDescription() {
-		return null;
-	}
+    @Override
+    public void setReferenceCode(Object value) {
+        setCode(value.toString());
+    }
+
+    @Override
+    public String getReferenceDescription() {
+        return null;
+    }
 }

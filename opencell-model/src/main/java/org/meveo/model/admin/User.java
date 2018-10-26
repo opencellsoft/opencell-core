@@ -105,7 +105,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     private String userName;
 
     /**
-     * Address book (identifier) - list of contacts
+     * Address book - list of contacts
      */
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "crm_address_book_id")
@@ -127,7 +127,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     private Set<Role> roles = new HashSet<Role>();
 
     /**
-     * User group (identifier)
+     * User group
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hierarchy_level_id")
@@ -138,7 +138,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
      */
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "adm_secured_entity", joinColumns = { @JoinColumn(name = "user_id") })
-    @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
+    @AttributeOverrides(value = { @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
             @AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)) })
     private List<SecuredEntity> securedEntities = new ArrayList<>();
 

@@ -54,7 +54,7 @@ public class CounterPeriod extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;
 
     /**
-     * Counter instance (identifier)
+     * Counter instance
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counter_instance_id")

@@ -86,7 +86,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Offer subscribed to (identifier)
+     * Offer subscribed to
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_id")
@@ -152,7 +152,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     private List<EDR> edrs = new ArrayList<>();
 
     /**
-     * Parent User account (identifier)
+     * Parent User account
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id", nullable = false)
@@ -244,14 +244,14 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     private String minimumLabelElSpark;
 
     /**
-     * Optional billing cycle for invoicing by subscription (identifier)
+     * Optional billing cycle for invoicing by subscription
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle")
     private BillingCycle billingCycle;
 
     /**
-     * Last billing run that invoiced this subscription (identifier)
+     * Last billing run that invoiced this subscription
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")

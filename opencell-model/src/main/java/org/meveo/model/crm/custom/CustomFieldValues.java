@@ -206,6 +206,7 @@ public class CustomFieldValues implements Serializable {
      * Check if entity has a value for a given custom field on a given date. Will always return true on non-versioned fields
      * 
      * @param cfCode Custom field code
+     * @param date Date
      * @return True if entity has a value for a given custom field
      */
     public boolean hasCfValue(String cfCode, Date date) {
@@ -323,7 +324,7 @@ public class CustomFieldValues implements Serializable {
      * @return A list of CF value entities
      */
     private List<CustomFieldValue> getCfValues(String cfCode) {
-        if (valuesByCode==null){
+        if (valuesByCode == null) {
             return null;
         }
         return valuesByCode.get(cfCode);
@@ -382,6 +383,7 @@ public class CustomFieldValues implements Serializable {
      * TODO can be an issue with lower/upper case mismatch
      * 
      * @param cfCode Custom field code
+     * @param date Date
      * @param keyToMatch Key to match
      * @return Map value that closely matches map key
      */

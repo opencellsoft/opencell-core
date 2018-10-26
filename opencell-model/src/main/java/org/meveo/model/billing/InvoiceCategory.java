@@ -81,21 +81,21 @@ public class InvoiceCategory extends BusinessCFEntity {
     private Integer sortIndex;
 
     /**
-     * Translated descriptions in JSON format
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
 
     /**
-     * Account operation template (identifier)
+     * Account operation template
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "occ_template_id")
     private OCCTemplate occTemplate;
 
     /**
-     * An opposite account operation template (identifier)
+     * An opposite account operation template
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "occ_templ_negative_id")

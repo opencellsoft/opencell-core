@@ -103,7 +103,7 @@ public abstract class AccountEntity extends BusinessCFEntity {
     protected String providerContact;
 
     /**
-     * Primary contact (identifier)
+     * Primary contact
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "primary_contact")
@@ -117,7 +117,7 @@ public abstract class AccountEntity extends BusinessCFEntity {
     protected String accountType;
 
     /**
-     * Business account model (identifier) that created this account
+     * Business account model that created this account
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bam_id")

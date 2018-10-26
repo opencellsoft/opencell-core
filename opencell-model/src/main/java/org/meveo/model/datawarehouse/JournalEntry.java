@@ -55,192 +55,192 @@ import org.meveo.model.billing.AccountingCode;
  */
 @Deprecated
 @Entity
-@Table(name = "dwh_journal_entries", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"origin_id", "invoice_number", "accounting_code_id" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "dwh_journal_entries_seq"), })
+@Table(name = "dwh_journal_entries", uniqueConstraints = @UniqueConstraint(columnNames = { "origin_id", "invoice_number", "accounting_code_id" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "dwh_journal_entries_seq"), })
 public class JournalEntry implements IEntity, IJPAVersionedEntity {
-	@SuppressWarnings("unused")
-	private static final long serialVersionUID = 1L;
+    @SuppressWarnings("unused")
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-	@Column(name = "id")
+    @Id
+    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
+    @Column(name = "id")
     @Access(AccessType.PROPERTY)
-	private Long id;
+    private Long id;
 
-	@Version
-	@Column(name = "version")
-	private Integer version;
+    @Version
+    @Column(name = "version")
+    private Integer version;
 
-	@Column(name = "type")
-	@Enumerated(EnumType.STRING)
-	private JournalEntryTypeEnum type;
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private JournalEntryTypeEnum type;
 
-	@Column(name = "origin_id")
-	private Long originId;
+    @Column(name = "origin_id")
+    private Long originId;
 
-	@Column(name = "invoice_number", length = 20)
+    @Column(name = "invoice_number", length = 20)
     @Size(max = 20)
-	private String invoiceNumber;
+    private String invoiceNumber;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "accounting_code_id")
-	private AccountingCode accountingCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
 
-	@Column(name = "invoice_date")
-	@Temporal(TemporalType.DATE)
-	private Date invoiceDate;
+    @Column(name = "invoice_date")
+    @Temporal(TemporalType.DATE)
+    private Date invoiceDate;
 
-	@Column(name = "customer_account_code", length = 20)
+    @Column(name = "customer_account_code", length = 20)
     @Size(max = 20)
-	private String customerAccountCode;
+    private String customerAccountCode;
 
-	@Column(name = "tax_code", length = 10)
+    @Column(name = "tax_code", length = 10)
     @Size(max = 10)
-	private String taxCode;
+    private String taxCode;
 
-	@Column(name = "tax_description", length = 20)
+    @Column(name = "tax_description", length = 20)
     @Size(max = 20)
-	private String taxDescription;
+    private String taxDescription;
 
-	@Column(name = "tax_percent")
-	private BigDecimal taxPercent;
+    @Column(name = "tax_percent")
+    private BigDecimal taxPercent;
 
-	@Column(name = "sub_cat_desc", length = 50)
+    @Column(name = "sub_cat_desc", length = 50)
     @Size(max = 50)
-	private String subCatDescription;
+    private String subCatDescription;
 
-	@Column(name = "amount_without_tax", precision = 23, scale = 12)
-	private BigDecimal amountWithoutTax;
+    @Column(name = "amount_without_tax", precision = 23, scale = 12)
+    private BigDecimal amountWithoutTax;
 
-	@Column(name = "amount_tax", precision = 23, scale = 12)
-	private BigDecimal amountTax;
+    @Column(name = "amount_tax", precision = 23, scale = 12)
+    private BigDecimal amountTax;
 
-	@Column(name = "amount_with_tax", precision = 23, scale = 12)
-	private BigDecimal amountWithTax;
+    @Column(name = "amount_with_tax", precision = 23, scale = 12)
+    private BigDecimal amountWithTax;
 
-	public JournalEntryTypeEnum getType() {
-		return type;
-	}
+    public JournalEntryTypeEnum getType() {
+        return type;
+    }
 
-	public Integer getVersion() {
-		return version;
-	}
+    public Integer getVersion() {
+        return version;
+    }
 
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
 
-	public void setType(JournalEntryTypeEnum type) {
-		this.type = type;
-	}
+    public void setType(JournalEntryTypeEnum type) {
+        this.type = type;
+    }
 
-	public Long getOriginId() {
-		return originId;
-	}
+    public Long getOriginId() {
+        return originId;
+    }
 
-	public void setOriginId(Long originId) {
-		this.originId = originId;
-	}
+    public void setOriginId(Long originId) {
+        this.originId = originId;
+    }
 
-	public String getInvoiceNumber() {
-		return invoiceNumber;
-	}
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
 
-	public void setInvoiceNumber(String invoiceNumber) {
-		this.invoiceNumber = invoiceNumber;
-	}
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
 
-	public AccountingCode getAccountingCode() {
-		return accountingCode;
-	}
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
 
-	public void setAccountingCode(AccountingCode accountingCode) {
-		this.accountingCode = accountingCode;
-	}
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
+    }
 
-	public Date getInvoiceDate() {
-		return invoiceDate;
-	}
+    public Date getInvoiceDate() {
+        return invoiceDate;
+    }
 
-	public void setInvoiceDate(Date invoiceDate) {
-		this.invoiceDate = invoiceDate;
-	}
+    public void setInvoiceDate(Date invoiceDate) {
+        this.invoiceDate = invoiceDate;
+    }
 
-	public String getCustomerAccountCode() {
-		return customerAccountCode;
-	}
+    public String getCustomerAccountCode() {
+        return customerAccountCode;
+    }
 
-	public void setCustomerAccountCode(String customerAccountCode) {
-		this.customerAccountCode = customerAccountCode;
-	}
+    public void setCustomerAccountCode(String customerAccountCode) {
+        this.customerAccountCode = customerAccountCode;
+    }
 
-	public String getTaxCode() {
-		return taxCode;
-	}
+    public String getTaxCode() {
+        return taxCode;
+    }
 
-	public void setTaxCode(String taxCode) {
-		this.taxCode = taxCode;
-	}
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
 
-	public String getTaxDescription() {
-		return taxDescription;
-	}
+    public String getTaxDescription() {
+        return taxDescription;
+    }
 
-	public void setTaxDescription(String taxDescription) {
-		this.taxDescription = taxDescription;
-	}
+    public void setTaxDescription(String taxDescription) {
+        this.taxDescription = taxDescription;
+    }
 
-	public BigDecimal getTaxPercent() {
-		return taxPercent;
-	}
+    public BigDecimal getTaxPercent() {
+        return taxPercent;
+    }
 
-	public void setTaxPercent(BigDecimal taxPercent) {
-		this.taxPercent = taxPercent;
-	}
+    public void setTaxPercent(BigDecimal taxPercent) {
+        this.taxPercent = taxPercent;
+    }
 
-	public String getSubCatDescription() {
-		return subCatDescription;
-	}
+    public String getSubCatDescription() {
+        return subCatDescription;
+    }
 
-	public void setSubCatDescription(String subCatDescription) {
-		this.subCatDescription = subCatDescription;
-	}
+    public void setSubCatDescription(String subCatDescription) {
+        this.subCatDescription = subCatDescription;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public BigDecimal getAmountTax() {
-		return amountTax;
-	}
+    public BigDecimal getAmountTax() {
+        return amountTax;
+    }
 
-	public void setAmountTax(BigDecimal amountTax) {
-		this.amountTax = amountTax;
-	}
+    public void setAmountTax(BigDecimal amountTax) {
+        this.amountTax = amountTax;
+    }
 
-	public BigDecimal getAmountWithTax() {
-		return amountWithTax;
-	}
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
-	public void setAmountWithTax(BigDecimal amountWithTax) {
-		this.amountWithTax = amountWithTax;
-	}
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Serializable getId() {
-		return id;
-	}
+    public Serializable getId() {
+        return id;
+    }
 
-	public boolean isTransient() {
-		return false;
-	}
+    public boolean isTransient() {
+        return false;
+    }
 
 }

@@ -72,10 +72,10 @@ public class DDRequestLotOp extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ddrequest_builder_id")
     private DDRequestBuilder ddRequestBuilder;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "filter_id")
-    private Filter filter;    
+    private Filter filter;
 
     /**
      * @return the fromDueDate
@@ -183,6 +183,4 @@ public class DDRequestLotOp extends AuditableEntity {
         this.filter = filter;
     }
 
-   
-   
 }

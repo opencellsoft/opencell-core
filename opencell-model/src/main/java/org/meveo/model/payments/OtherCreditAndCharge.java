@@ -30,18 +30,18 @@ import javax.persistence.TemporalType;
 @DiscriminatorValue(value = "OCC")
 public class OtherCreditAndCharge extends AccountOperation {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "operation_date")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date operationDate;
+    @Column(name = "operation_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date operationDate;
 
-	public Date getOperationDate() {
-		return operationDate;
-	}
+    public Date getOperationDate() {
+        return operationDate;
+    }
 
-	public void setOperationDate(Date operationDate) {
-		this.operationDate = operationDate;
-	}
+    public void setOperationDate(Date operationDate) {
+        this.operationDate = operationDate;
+    }
 
 }

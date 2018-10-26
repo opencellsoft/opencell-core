@@ -40,9 +40,9 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Object
     @Override
     public boolean areEqual(Object one, Object another) {
 
-//        Logger log = LoggerFactory.getLogger(getClass());
-//        log.error("CF json compare {}", one);
-//        log.error("CF json compare to {}", another);
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // log.error("CF json compare {}", one);
+        // log.error("CF json compare to {}", another);
 
         if (one == another) {
             return true;

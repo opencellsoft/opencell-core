@@ -453,7 +453,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         TradingLanguage tradingLanguage = customerAccount.getTradingLanguage();
         String prDescription = null;
         if (tradingLanguage != null) {
-            prDescription = tradingLanguage.getPrDescription();
+            prDescription = tradingLanguage.getLanguage().getDescriptionEn();
         }
         Element customerAccountTag = doc.createElement("customerAccount");
         customerAccountTag.setAttribute("id", customerAccount.getId() + "");

@@ -42,6 +42,11 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.Address;
 
+/**
+ * Order to subscribe to services or [purchase] products or change or cancel existing subscription
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code" })
@@ -138,6 +143,9 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     @NotNull
     private OrderStatusEnum status = OrderStatusEnum.IN_CREATION;
 
+    /**
+     * Status message
+     */
     @Column(name = "status_message", length = 2000)
     private String statusMessage;
 
@@ -147,13 +155,22 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
+    /**
+     * User group that order processing is routed to
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routed_to_user_group_id")
     private UserHierarchyLevel routedToUserGroup;
 
+    /**
+     * Application/source that order was received from
+     */
     @Column(name = "received_from", length = 50)
     private String receivedFromApp;
 
+    /**
+     * Invoices produced
+     */
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "orders")
     private List<Invoice> invoices = new ArrayList<>();
 
@@ -171,33 +188,57 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     @Size(max = 2000)
     private String dueDateDelayELSpark;
 
+    /**
+     * Allowed payment methods
+     */
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
+    /**
+     * Quote that was transformed into order
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id")
     private Quote quote;
 
+    /**
+     * Billing cycle when invoicing by order
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle")
     private BillingCycle billingCycle;
 
+    /**
+     * Last billing run that processed this order
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
-    
+
+    /**
+     * Rated transactions to reach minimum amount per invoice
+     */
     @Transient
     private List<RatedTransaction> minRatedTransactions;
-    
+
+    /**
+     * Total invoicing amount without tax
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountWithoutTax;
-    
+    private BigDecimal totalInvoicingAmountWithoutTax;
+
+    /**
+     * Total invoicing amount with tax
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountWithTax;
-    
+    private BigDecimal totalInvoicingAmountWithTax;
+
+    /**
+     * Total invoicing tax amount
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountTax;
+    private BigDecimal totalInvoicingAmountTax;
 
     public String getExternalId() {
         return externalId;
@@ -429,36 +470,36 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     public void setBillingRun(BillingRun billingRun) {
         this.billingRun = billingRun;
     }
-    
-	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
-		minRatedTransactions = ratedTransactions;
-	}
 
-	public List<RatedTransaction> getMinRatedTransactions() {
-		return minRatedTransactions;
-	}
+    public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        minRatedTransactions = ratedTransactions;
+    }
 
-	public BigDecimal getTotalInvoicingAmountWithoutTax() {
-		return totalInvoicingAmountWithoutTax;
-	}
+    public List<RatedTransaction> getMinRatedTransactions() {
+        return minRatedTransactions;
+    }
 
-	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
-		this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
-	}
+    public BigDecimal getTotalInvoicingAmountWithoutTax() {
+        return totalInvoicingAmountWithoutTax;
+    }
 
-	public BigDecimal getTotalInvoicingAmountWithTax() {
-		return totalInvoicingAmountWithTax;
-	}
+    public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+        this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
+    }
 
-	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
-		this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
-	}
+    public BigDecimal getTotalInvoicingAmountWithTax() {
+        return totalInvoicingAmountWithTax;
+    }
 
-	public BigDecimal getTotalInvoicingAmountTax() {
-		return totalInvoicingAmountTax;
-	}
+    public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+        this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
+    }
 
-	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
-		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
-	}
+    public BigDecimal getTotalInvoicingAmountTax() {
+        return totalInvoicingAmountTax;
+    }
+
+    public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+        this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+    }
 }

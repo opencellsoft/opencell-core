@@ -116,7 +116,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     private Date terminationDate;
 
     /**
-     * Customer account (identifier)
+     * Customer account
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_account_id")
@@ -159,28 +159,28 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     private BigDecimal discountRate;
 
     /**
-     * Billing cycle (identifier)
+     * Billing cycle
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle")
     private BillingCycle billingCycle;
 
     /**
-     * Country (identifier)
+     * Country for tax calculation
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country_id")
     private TradingCountry tradingCountry;
 
     /**
-     * Language (identifier)
+     * Invoice language
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
 
     /**
-     * Last billing run (identifier)
+     * Last billing run
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
@@ -219,7 +219,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     private List<RatedTransaction> ratedTransactions;
 
     /**
-     * Applicable discount plan (identifier)
+     * Applicable discount plan
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_id")

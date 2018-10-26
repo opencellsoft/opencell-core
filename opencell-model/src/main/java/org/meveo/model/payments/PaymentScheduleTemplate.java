@@ -41,53 +41,52 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 612388141736383814L;
-    
+
     @Column(name = "payment_label")
     @NotNull
     private String paymentLabel;
-    
+
     @Column(name = "due_date_days")
     @NotNull
     private Integer dueDateDays;
-    
+
     @Column(name = "amount")
     @NotNull
     private BigDecimal amount;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendar_id")
     @NotNull
     private Calendar calendar;
-    
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_template_id")
     @NotNull
     private ServiceTemplate serviceTemplate;
-   
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adv_pay_inv_type_id")
     @NotNull
     private InvoiceType advancePaymentInvoiceType;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "is_generate_adv_pay_inv", nullable = false)
     @NotNull
     private boolean generateAdvancePaymentInvoice;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adv_pay_sub_cat_id")
     @NotNull
     private InvoiceSubCategory advancePaymentInvoiceSubCategory;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "is_do_payment", nullable = false)
     @NotNull
     private boolean doPayment;
-    
-    @OneToMany(mappedBy = "paymentScheduleTemplate", cascade = CascadeType.ALL)   
+
+    @OneToMany(mappedBy = "paymentScheduleTemplate", cascade = CascadeType.ALL)
     private List<PaymentScheduleInstance> paymentScheduleInstances;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "apply_agreement")
     private boolean applyAgreement = false;
@@ -246,5 +245,4 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity {
         this.applyAgreement = applyAgreement;
     }
 
-   
 }

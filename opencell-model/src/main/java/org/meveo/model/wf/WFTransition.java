@@ -48,6 +48,11 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
+/**
+ * Workflow status transition group
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ExportIdentifier({ "uuid" })
 @Table(name = "wf_transition", uniqueConstraints = @UniqueConstraint(columnNames = { "uuid" }))
@@ -59,37 +64,66 @@ public class WFTransition extends BaseEntity implements Comparable<WFTransition>
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Unique identifier - UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
+    /**
+     * 
+     * Workflow status change - from status
+     */
     @Column(name = "from_status")
     private String fromStatus;
 
+    /**
+     * 
+     * Workflow status change - to status
+     */
     @Column(name = "to_status")
     private String toStatus;
 
+    /**
+     * Execution priority sorting sequence
+     */
     @Column(name = "priority")
     private int priority;
 
+    /**
+     * Description
+     */
     @Column(name = "description", nullable = true, length = 255)
     @Size(max = 255)
     @NotNull
     private String description;
 
+    /**
+     * Workflow
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workflow_id")
     private Workflow workflow;
 
+    /**
+     * Decision rules
+     */
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
     @JoinTable(name = "wf_transition_decision_rule", joinColumns = @JoinColumn(name = "transition_id"), inverseJoinColumns = @JoinColumn(name = "decision_rule_id"))
     private Set<WFDecisionRule> wfDecisionRules = new HashSet<>();
 
+    /**
+     * Actions
+     */
     @OneToMany(mappedBy = "wfTransition", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy("priority ASC")
     private List<WFAction> wfActions = new ArrayList<WFAction>();
 
+    /*
+     * Expression to check if transition applies
+     */
     @Column(name = "condition_el", length = 2000)
     @Size(max = 2000)
     private String conditionEl;

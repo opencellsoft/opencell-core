@@ -12,12 +12,13 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-
-@Constraint(validatedBy=ClassNameValidator.class)
-@Target({METHOD, FIELD, PARAMETER, TYPE})
+@Constraint(validatedBy = ClassNameValidator.class)
+@Target({ METHOD, FIELD, PARAMETER, TYPE })
 @Retention(RUNTIME)
-public @interface ClassName  {
-	String message() default "{org.meveo.validation.constraint.ClassName}";
-	Class<?>[] groups() default {};
-	Class<? extends Payload>[] payload() default {};
+public @interface ClassName {
+    String message() default "{org.meveo.validation.constraint.ClassName}";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 }

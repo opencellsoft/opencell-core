@@ -52,21 +52,21 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Billing account that invoice was issued to (identifier)
+     * Billing account that invoice was issued to
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id")
     protected BillingAccount billingAccount;
 
     /**
-     * Invoice that Invoice aggregate is part of (identifier)
+     * Invoice that Invoice aggregate is part of
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     protected Invoice invoice;
 
     /**
-     * Billing run that produced the invoice (identifier)
+     * Billing run that produced the invoice
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run_id")
@@ -111,21 +111,21 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     protected BigDecimal amountWithTax = BigDecimal.ZERO;
 
     /**
-     * Currency that invoice is in (identifier)
+     * Currency that invoice is in
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
     protected TradingCurrency tradingCurrency;
 
     /**
-     * Country that invoice is for (for tax calculation) (identifier)
+     * Country that invoice is for (for tax calculation)
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country_id")
     protected TradingCountry tradingCountry;
 
     /**
-     * Invoice language (identifier)
+     * Invoice language
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")

@@ -58,6 +58,11 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.rating.EDR;
 
+/**
+ * Consumption operation
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "billing_wallet_operation")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -103,29 +108,44 @@ public class WalletOperation extends BusinessEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The wallet on which the account operation is applied.
+     * The wallet on which the operation is applied.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
 
+    /**
+     * Operation date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "operation_date")
     private Date operationDate;
 
+    /**
+     * Invoicing date if invoice date should be in a future and does not match teh billing cycle invoicing dates
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "invoicing_date")
     private Date invoicingDate;
 
+    /**
+     * Operation type Credit/Debit
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "credit_debit_flag")
     private OperationTypeEnum type;
 
+    /**
+     * Associated charge instance
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "charge_instance_id", nullable = false)
     @NotNull
     private ChargeInstance chargeInstance;
 
+    /**
+     * Currency of operation rated amounts
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id")
     private Currency currency;
@@ -143,31 +163,56 @@ public class WalletOperation extends BusinessEntity {
     @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal taxPercent;
 
+    /**
+     * Unit price without tax
+     */
     @Column(name = "unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal unitAmountWithoutTax;
 
+    /**
+     * Unit price with tax
+     */
     @Column(name = "unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal unitAmountWithTax;
 
+    /**
+     * Unit price tax amount
+     */
     @Column(name = "unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal unitAmountTax;
 
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal quantity;
 
+    /**
+     * Total amount without tax
+     */
     @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithoutTax;
 
+    /**
+     * Total amount with tax
+     */
     @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithTax;
 
+    /**
+     * Total tax amount
+     */
     @Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountTax;
 
+    /**
+     * Counter instance to track consumption
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counter_id")
     private CounterInstance counter;
 
+    /**
+     * Aggregated service instance. Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aggregate_serv_id")
     private ServiceInstance aggregatedServiceInstance;
@@ -176,93 +221,167 @@ public class WalletOperation extends BusinessEntity {
     // @JoinColumn(name = "edr_id")
     // private EDR usageEdr;
 
+    /**
+     * Additional rating parameter
+     */
     @Column(name = "parameter_1", length = 255)
     @Size(max = 255)
     private String parameter1;
 
+    /**
+     * Additional rating parameter
+     */
     @Column(name = "parameter_2", length = 255)
     @Size(max = 255)
     private String parameter2;
 
+    /**
+     * Additional rating parameter
+     */
     @Column(name = "parameter_3", length = 255)
     @Size(max = 255)
     private String parameter3;
 
+    /**
+     * Additional rating parameter
+     */
     @Column(name = "parameter_extra", columnDefinition = "TEXT")
     private String parameterExtra;
 
+    /**
+     * Operation start date. Used in cases when operation corresponds to a period.
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date")
     private Date startDate;
 
+    /**
+     * Operation end date. Used in cases when operation corresponds to a period.
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_date")
     private Date endDate;
 
+    /**
+     * Service/charge subscription timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
     private Date subscriptionDate;
 
+    /**
+     * Offer code
+     */
     @Column(name = "offer_code", length = 255)
     @Size(max = 255, min = 1)
     protected String offerCode;
 
+    /**
+     * Status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private WalletOperationStatusEnum status;
 
+    /**
+     * Seller associated to operation
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private Seller seller;
 
+    /**
+     * Price plan applied during rating
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "priceplan_id")
     private PricePlanMatrix priceplan;
 
+    /**
+     * Rerated wallet operation
+     */
     @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
     private WalletOperation reratedWalletOperation;
 
+    /**
+     * Input unit description
+     */
     @Column(name = "input_unit_description", length = 20)
     @Size(max = 20)
     private String inputUnitDescription;
 
+    /**
+     * Rating unit description
+     */
     @Column(name = "rating_unit_description", length = 20)
     @Size(max = 20)
     private String ratingUnitDescription;
 
+    /**
+     * Input quantity
+     */
     @Column(name = "input_quantity", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
     private BigDecimal inputQuantity;
 
+    /**
+     * EDR that produced this operation
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "edr_id")
     private EDR edr;
 
+    /**
+     * Order number in cases when operation was originated from an order
+     */
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
 
+    /**
+     * Raw rating amount without tax from Price plan without any rounding. Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "raw_amount_without_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal rawAmountWithoutTax;
 
+    /**
+     * Raw rating amount with tax from Price plan without any rounding. Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal rawAmountWithTax;
 
+    /**
+     * Associated Invoice subcategory
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
 
+    /**
+     * Associated Subscription when operation is tied to subscription.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     protected Subscription subscription;
 
+    /**
+     * Billing account
+     */
     @Transient
     private BillingAccount billingAccount;
 
+    /**
+     * Billing run
+     */
     @Transient
     private BillingRun billingRun;
 
+    /**
+     * Offer template
+     */
     @Transient
     private OfferTemplate offerTemplate;
 

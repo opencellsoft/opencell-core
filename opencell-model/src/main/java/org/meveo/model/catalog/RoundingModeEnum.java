@@ -10,7 +10,7 @@ import java.math.RoundingMode;
 public enum RoundingModeEnum {
 
     /**
-     * The common rounding. Value of >=0.5 is rounded up.
+     * The common rounding. Value of &gt;=0.5 is rounded up.
      * 
      * See java.math.RoundingMode.HALF_UP
      */

@@ -46,7 +46,7 @@ public class PreInvoicingReportsDTO {
     private BigDecimal tipBillableBAAmountHT;
     private BigDecimal wiretransferBillableBAAmountHT;
     private BigDecimal creditDebitCardBillableBAAmountHT;
-   // List<InvoiceSubCategory> InvoiceSubCategories = new ArrayList<InvoiceSubCategory>();
+    // List<InvoiceSubCategory> InvoiceSubCategories = new ArrayList<InvoiceSubCategory>();
 
     private BigDecimal SubCategoriesAmountHT = new BigDecimal(0);
     private BigDecimal TaxesAmount = new BigDecimal(0);
@@ -66,8 +66,6 @@ public class PreInvoicingReportsDTO {
     public void setBillingAccountNumber(Integer billingAccountNumber) {
         this.billingAccountNumber = billingAccountNumber;
     }
-    
-    
 
     public Date getLastTransactionDate() {
         return lastTransactionDate;
@@ -165,8 +163,6 @@ public class PreInvoicingReportsDTO {
         this.wiretransferBillableBANumber = wiretransferBillableBANumber;
     }
 
-  
-
     public BigDecimal getCheckBillableBAAmountHT() {
         return checkBillableBAAmountHT;
     }
@@ -199,8 +195,6 @@ public class PreInvoicingReportsDTO {
         this.wiretransferBillableBAAmountHT = wiretransferBillableBAAmountHT;
     }
 
-   
-
     public BigDecimal getSubCategoriesAmountHT() {
         return SubCategoriesAmountHT;
     }
@@ -217,34 +211,28 @@ public class PreInvoicingReportsDTO {
         TaxesAmount = taxesAmount;
     }
 
-	public Integer getCreditDebitCardBANumber() {
-		return creditDebitCardBANumber;
-	}
+    public Integer getCreditDebitCardBANumber() {
+        return creditDebitCardBANumber;
+    }
 
-	public void setCreditDebitCardBANumber(Integer creditDebitCardBANumber) {
-		this.creditDebitCardBANumber = creditDebitCardBANumber;
-	}
+    public void setCreditDebitCardBANumber(Integer creditDebitCardBANumber) {
+        this.creditDebitCardBANumber = creditDebitCardBANumber;
+    }
 
-	public Integer getCreditDebitCardBillableBANumber() {
-		return creditDebitCardBillableBANumber;
-	}
+    public Integer getCreditDebitCardBillableBANumber() {
+        return creditDebitCardBillableBANumber;
+    }
 
-	public void setCreditDebitCardBillableBANumber(
-			Integer creditDebitCardBillableBANumber) {
-		this.creditDebitCardBillableBANumber = creditDebitCardBillableBANumber;
-	}
+    public void setCreditDebitCardBillableBANumber(Integer creditDebitCardBillableBANumber) {
+        this.creditDebitCardBillableBANumber = creditDebitCardBillableBANumber;
+    }
 
-	public BigDecimal getCreditDebitCardBillableBAAmountHT() {
-		return creditDebitCardBillableBAAmountHT;
-	}
+    public BigDecimal getCreditDebitCardBillableBAAmountHT() {
+        return creditDebitCardBillableBAAmountHT;
+    }
 
-	public void setCreditDebitCardBillableBAAmountHT(
-			BigDecimal creditDebitCardBillableBAAmountHT) {
-		this.creditDebitCardBillableBAAmountHT = creditDebitCardBillableBAAmountHT;
-	}
-	
-	
-    
-    
+    public void setCreditDebitCardBillableBAAmountHT(BigDecimal creditDebitCardBillableBAAmountHT) {
+        this.creditDebitCardBillableBAAmountHT = creditDebitCardBillableBAAmountHT;
+    }
 
 }

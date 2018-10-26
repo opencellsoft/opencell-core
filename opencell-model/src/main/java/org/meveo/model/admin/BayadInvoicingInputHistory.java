@@ -36,8 +36,7 @@ public class BayadInvoicingInputHistory extends InputHistory {
     /**
      * Convert from {@link InputHistory} to {@link BayadInvoicingInputHistory}.
      * 
-     * @param inputInfo
-     *            {@link InputHistory} superclass.
+     * @param inputInfo {@link InputHistory} superclass.
      */
     public BayadInvoicingInputHistory(InputHistory inputInfo) {
         // TODO this conversion is possible source of the bug (in case of

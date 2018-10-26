@@ -109,15 +109,15 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
 
     /**
-     * Deprecated in 5.3 for not use
+     * Calendar to use when creating Wallet operations. Service subscription start date is taken as calendar's initiation date. Invoicing calendar to calculate if operation should
+     * be invoiced on an future date.
      */
-    @Deprecated
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
     private Calendar invoicingCalendar;
 
     /**
-     * Business service model (identifier) that created this service
+     * Business service model that created this service
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_service_model_id")

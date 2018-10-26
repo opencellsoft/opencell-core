@@ -59,21 +59,21 @@ public class Customer extends AccountEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Address book (identifier)
+     * Address book
      */
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_book_id")
     private AddressBook addressbook;
 
     /**
-     * Customer category (identifier)
+     * Customer category
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_category_id")
     private CustomerCategory customerCategory;
 
     /**
-     * Customer brand (identifier)
+     * Customer brand
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_brand_id")
@@ -83,7 +83,7 @@ public class Customer extends AccountEntity {
     private List<CustomerAccount> customerAccounts = new ArrayList<>();
 
     /**
-     * Seller (identifier). Deprecated in 5.2. Now seller is set in subscription.
+     * Seller. Deprecated in 5.2. Now seller is set in subscription.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
@@ -91,7 +91,7 @@ public class Customer extends AccountEntity {
     private Seller seller;
 
     /**
-     * Additional details (identifier)
+     * Additional details
      */
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "additional_details_id")

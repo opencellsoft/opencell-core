@@ -19,7 +19,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
-import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.NoTaxException;
@@ -37,7 +36,6 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterPeriod;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.ServiceInstance;
@@ -61,7 +59,6 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.util.ApplicationProvider;
@@ -112,9 +109,6 @@ public class UsageRatingService implements Serializable {
 
     @Inject
     private Event<CounterPeriodEvent> counterPeriodEvent;
-
-    @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;

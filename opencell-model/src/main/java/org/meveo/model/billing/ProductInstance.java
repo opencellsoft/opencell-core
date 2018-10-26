@@ -48,7 +48,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.ProductTemplate;
 
 /**
- * Product instance
+ * Purchased product
  * 
  * @author Andrius Karpavicius
  *
@@ -65,32 +65,56 @@ public class ProductInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Associated User account
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
+    /**
+     * Subscription. Optional. Null if purchase is not part of subscription
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
+    /**
+     * Product template/definition
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_template_id")
     private ProductTemplate productTemplate;
 
+    /**
+     * Purchase date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "application_date")
     private Date applicationDate = new Date();
 
+    /**
+     * Instantiated product charges
+     */
     @OneToMany(mappedBy = "productInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ProductChargeInstance> productChargeInstances = new ArrayList<>();
 
+    /**
+     * Quantity purchased
+     */
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
 
+    /**
+     * Order number when purchase was initiated by an order
+     */
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
 
+    /**
+     * Seller that offered product to purchase
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;

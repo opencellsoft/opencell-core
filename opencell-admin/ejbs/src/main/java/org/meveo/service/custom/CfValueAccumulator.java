@@ -51,12 +51,12 @@ Subscription  A,B,C
 
 
 CF value change is propagated downwards:
-Provider (A) > BA(A) >> Sub(A)
-Provider (B) > CA (B) >> Sub(B)
-CA (B) > Sub (B)
-CA (C)> BA (C) >> Sub (C)
-BA (A)> Sub (A)
-BA (C) > Sub (C)
+Provider (A) &gt; BA(A) &gt;&gt; Sub(A)
+Provider (B) &gt; CA (B) &gt;&gt; Sub(B)
+CA (B) &gt; Sub (B)
+CA (C)&gt; BA (C) &gt;&gt; Sub (C)
+BA (A)&gt; Sub (A)
+BA (C) &gt; Sub (C)
 
 CF value is accumulated from:
 
@@ -125,7 +125,7 @@ public class CfValueAccumulator {
     protected static Map<String, Class<?>> appliesToMap = new HashMap<>();
 
     /**
-     * Custom field value accumulation rules identified by a custom field template code and a provider code in: <provider code>_<cft code>
+     * Custom field value accumulation rules identified by a custom field template code and a provider code in: &lt;provider code&gt;_&lt;cft code&gt;
      */
     private static Map<String, CfValueAccumulatorRule> cfAccumulatorRules = new HashMap<>();
 

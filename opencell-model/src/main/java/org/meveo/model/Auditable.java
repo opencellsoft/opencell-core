@@ -39,14 +39,14 @@ public class Auditable implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Creation timestamp
+     * Record/entity creation timestamp
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created", nullable = false, updatable = false)
     private Date created;
 
     /**
-     * Last update timestamp
+     * Last record/entity update timestamp
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated")

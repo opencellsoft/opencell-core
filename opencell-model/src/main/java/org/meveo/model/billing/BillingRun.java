@@ -92,7 +92,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
     private Date statusDate;
 
     /**
-     * Billing cycle (identifier)
+     * Billing cycle
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "billing_cycle_id")
@@ -230,21 +230,21 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
     private String rejectionReason;
 
     /**
-     * Currency (identifier)
+     * Currency
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pr_currency_id")
     private Currency currency;
 
     /**
-     * Country (identifier)
+     * Country
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pr_country_id")
     private Country country;
 
     /**
-     * Language (identifier)
+     * Language
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pr_language_id")

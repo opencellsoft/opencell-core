@@ -93,16 +93,16 @@ public class ServiceInstance extends BusinessCFEntity {
     private Subscription subscription;
 
     /**
-     * Service template/definition (identifier)
+     * Service template/definition
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_template_id")
     private ServiceTemplate serviceTemplate;
 
     /**
-     * Deprecated in 5.3 for not use
+     * Calendar to use when creating Wallet operations. Service subscription start date is taken as calendar's initiation date. Invoicing calendar to calculate if operation should
+     * be invoiced on an future date.
      */
-    @Deprecated
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
     private Calendar invoicingCalendar;
@@ -243,16 +243,28 @@ public class ServiceInstance extends BusinessCFEntity {
     @Embedded
     private SubscriptionRenewal serviceRenewal = new SubscriptionRenewal();
 
+    /**
+     * Amount from Payment schedule overridden for this service instance. If null, the amount PS will be taken from the Payment schedule template.
+     */
     @Column(name = "amount_ps")
     private BigDecimal amountPS;
 
+    /**
+     * Calendar from Payment schedule overridden for this service instance. If null, the calendar PS will be taken from the Payment schedule template.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendar_ps_id")
     private Calendar calendarPS;
 
+    /**
+     * The list of Payment schedule instances linked to this Service instance
+     */
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
     private List<PaymentScheduleInstance> psInstances;
 
+    /**
+     * Due date days from Payment schedule overridden for this service instance. If null, the due date dats PS will be taken from the Payment schedule template.
+     */
     @Column(name = "due_date_days_ps")
     private Integer dueDateDaysPS;
 

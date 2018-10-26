@@ -18,19 +18,6 @@ public class SecuredEntity implements Serializable {
 
     private static final long serialVersionUID = 84222776645282176L;
 
-    public SecuredEntity() {
-    }
-
-    public SecuredEntity(BusinessEntity businessEntity) {
-        this.setCode(businessEntity.getCode());
-        this.setEntityClass(ReflectionUtils.getCleanClassName(businessEntity.getClass().getName()));
-    }
-
-    public SecuredEntity(SecuredEntity securedEntity) {
-        this.setCode(securedEntity.getCode());
-        this.setEntityClass(securedEntity.getEntityClass());
-    }
-
     /**
      * Accessible entity code
      */
@@ -45,6 +32,19 @@ public class SecuredEntity implements Serializable {
     @Column(name = "entity_class", length = 255)
     @Size(max = 255)
     private String entityClass;
+
+    public SecuredEntity() {
+    }
+
+    public SecuredEntity(BusinessEntity businessEntity) {
+        this.setCode(businessEntity.getCode());
+        this.setEntityClass(ReflectionUtils.getCleanClassName(businessEntity.getClass().getName()));
+    }
+
+    public SecuredEntity(SecuredEntity securedEntity) {
+        this.setCode(securedEntity.getCode());
+        this.setEntityClass(securedEntity.getEntityClass());
+    }
 
     public String getCode() {
         return code;

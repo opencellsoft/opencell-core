@@ -52,6 +52,11 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.rating.EDR;
 
+/**
+ * Rated transaction - usually corresponds 1-1 to Wallet operation, but could also be cases with multiple RatedTransactions created from a single Wallet operation.
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "billing_rated_transaction")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -142,6 +147,9 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Wallet instance associated to rated transaction
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
@@ -162,140 +170,245 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     private UserAccount userAccount;
 
     /**
-     * Seller associated to rated transaction
+     * Seller associated to operation
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     @NotNull
     private Seller seller;
 
+    /**
+     * Wallet operation identifier
+     */
     @Column(name = "wallet_operation_id")
     private Long walletOperationId;
 
+    /**
+     * Wallet operation
+     */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_operation_id", insertable = false, updatable = false)
     private WalletOperation walletOperationEntity;
 
+    /**
+     * Billing run that invoiced this Rated transaction
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run_id")
     private BillingRun billingRun;
 
+    /**
+     * Operation date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "usage_date")
     private Date usageDate;
 
+    /**
+     * Associated Invoice subcategory
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
 
+    /**
+     * Operation code - corresponds in majority of cases to charge code
+     */
     @Column(name = "code", length = 255)
     @Size(max = 255)
     private String code;
 
+    /**
+     * Description - corresponds in majority of cases to charge description
+     */
     @Column(name = "description", length = 255)
     @Size(max = 255)
     private String description;
 
+    /**
+     * Input unit description
+     */
     @Column(name = "unity_description", length = 20)
     @Size(max = 20)
     private String unityDescription;
 
+    /**
+     * Rating unit description
+     */
     @Column(name = "rating_unit_description", length = 20)
     @Size(max = 20)
     private String ratingUnitDescription;
 
+    /**
+     * Unit price without tax
+     */
     @Column(name = "unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal unitAmountWithoutTax;
 
+    /**
+     * Unit price with tax
+     */
     @Column(name = "unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal unitAmountWithTax;
 
+    /**
+     * Unit price tax amount
+     */
     @Column(name = "unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal unitAmountTax;
 
+    /**
+     * Quantity
+     */
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal quantity;
 
+    /**
+     * Total amount without tax
+     */
     @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithoutTax;
 
+    /**
+     * Total amount with tax
+     */
     @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithTax;
 
+    /**
+     * Total tax amount
+     */
     @Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountTax;
 
+    /**
+     * Invoice that invoiced this Rated transaction
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 
+    /**
+     * Subcategory invoice aggregate that Rated transaction was invoiced under
+     */
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "aggregate_id_f")
     private SubCategoryInvoiceAgregate invoiceAgregateF;
 
+    /**
+     * Category invoice aggregate that Rated transaction was invoiced under
+     */
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "aggregate_id_r")
     private CategoryInvoiceAgregate invoiceAgregateR;
 
+    /**
+     * Tax invoice aggregate that Rated transaction was invoiced under
+     */
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "aggregate_id_t")
     private TaxInvoiceAgregate invoiceAgregateT;
 
+    /**
+     * Status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private RatedTransactionStatusEnum status;
 
+    /**
+     * Do not trigger invoicing
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "do_not_trigger_invoicing")
     private boolean doNotTriggerInvoicing = false;
 
+    /**
+     * Additional parameter used in rating
+     */
     @Column(name = "parameter_1", length = 255)
     @Size(max = 255)
     private String parameter1;
 
+    /**
+     * Additional parameter used in rating
+     */
     @Column(name = "parameter_2", length = 255)
     @Size(max = 255)
     private String parameter2;
 
+    /**
+     * Additional parameter used in rating
+     */
     @Column(name = "parameter_3", length = 255)
     @Size(max = 255)
     private String parameter3;
 
+    /**
+     * Operation start date. Used in cases when operation corresponds to a period.
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date")
     private Date startDate;
 
+    /**
+     * Operation end date. Used in cases when operation corresponds to a period.
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_date")
     private Date endDate;
 
+    /**
+     * Additional parameter used in rating
+     */
     @Column(name = "parameter_extra", columnDefinition = "TEXT")
     private String parameterExtra;
 
+    /**
+     * Order number in cases when operation was originated from an order
+     */
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
 
+    /**
+     * Price plan applied during rating
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "priceplan_id")
     private PricePlanMatrix priceplan;
 
+    /**
+     * Offer code
+     */
     @Column(name = "offer_code", length = 255)
     @Size(max = 255, min = 1)
     protected String offerCode;
 
+    /**
+     * EDR that produced this operation
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "edr_id")
     private EDR edr;
 
+    /**
+     * Adjusted rated transaction
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adjusted_rated_tx")
     private RatedTransaction adjustedRatedTx;
 
+    /**
+     * Associated Subscription when operation is tied to subscription.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
+    /**
+     * Associated Charge instance when operation is tied to charge instance
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "charge_instance_id")
     private ChargeInstance chargeInstance;
@@ -313,9 +426,15 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal taxPercent;
 
+    /**
+     * Offer template
+     */
     @Transient
     private OfferTemplate offerTemplate;
 
+    /**
+     * Corresponding Wallet operation
+     */
     @Transient
     private WalletOperation walletOperation;
 
@@ -363,10 +482,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     }
 
     public RatedTransaction(Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity,
-            BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount, UserAccount userAccount,
-            InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber, Subscription subscription,
-            String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code, String description, Date startDate,
-            Date endDate, Seller seller, Tax tax, BigDecimal taxPercent) {
+            BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount,
+            UserAccount userAccount, InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber,
+            Subscription subscription, String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code,
+            String description, Date startDate, Date endDate, Seller seller, Tax tax, BigDecimal taxPercent) {
 
         super();
 

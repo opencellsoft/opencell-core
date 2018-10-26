@@ -39,7 +39,7 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
 
     private static final long serialVersionUID = 1L;
 
-    // TODO : Create sql script to ad index. @Index(name = "CODE_IDX")
+    // TODO : Create sql script to add index. @Index(name = "CODE_IDX")
     /**
      * Code
      */
@@ -109,7 +109,7 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     }
 
     /**
-     * @return Description with code in the following format: <code>_<description>
+     * @return Description with code in the following format: &lt;code&gt;_&lt;description&gt;
      */
     public String getDescriptionAndCode() {
         if (!StringUtils.isBlank(description)) {

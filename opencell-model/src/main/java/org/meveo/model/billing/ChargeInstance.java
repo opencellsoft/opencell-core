@@ -105,14 +105,15 @@ public class ChargeInstance extends BusinessEntity {
     protected Date terminationDate;
 
     /**
-     * Charge template (identifier) that charge was instantiated from
+     * Charge template/definition that charge was instantiated from
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "charge_template_id")
     protected ChargeTemplate chargeTemplate;
 
     /**
-     * Invoicing calendar (identifier)
+     * Calendar to use when creating Wallet operations. Service subscription start date is taken as calendar's initiation date. Invoicing calendar to calculate if operation should
+     * be invoiced on an future date.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
@@ -194,14 +195,14 @@ public class ChargeInstance extends BusinessEntity {
     protected String prDescription;
 
     /**
-     * Currency (identifier)
+     * Currency
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency")
     protected TradingCurrency currency;
 
     /**
-     * Country (identifier)
+     * Country
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country")

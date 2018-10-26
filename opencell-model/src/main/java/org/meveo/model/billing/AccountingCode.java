@@ -34,7 +34,7 @@ public class AccountingCode extends EnableBusinessEntity {
     private static final long serialVersionUID = -8962374797036999750L;
 
     /**
-     * Parent accounting code (identifier)
+     * Parent accounting code
      */
     @ManyToOne
     @JoinColumn(name = "parent_accounting_code_id")

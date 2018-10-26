@@ -76,7 +76,7 @@ public class Address implements Serializable, Cloneable {
     protected String city;
 
     /**
-     * Country (identifier)
+     * Country
      */
     @ManyToOne
     @JoinColumn(name = "address_country_id")

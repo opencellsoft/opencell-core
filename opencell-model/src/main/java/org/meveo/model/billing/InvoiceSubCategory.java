@@ -83,6 +83,9 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     @JoinColumn(name = "invoice_category_id")
     private InvoiceCategory invoiceCategory;
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
@@ -90,11 +93,11 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
-    
+
     @ManyToOne()
     @JoinColumn(name = "tax_script_instance_id")
     private ScriptInstance taxScript;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "occ_template_id")
     private OCCTemplate occTemplate;
@@ -196,5 +199,5 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     public void setOccTemplateNegative(OCCTemplate occTemplateNegative) {
         this.occTemplateNegative = occTemplateNegative;
     }
-    
+
 }

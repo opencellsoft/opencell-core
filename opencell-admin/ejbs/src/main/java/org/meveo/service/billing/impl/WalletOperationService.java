@@ -1234,14 +1234,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         // All charge was over one wallet
         if (woAmounts.size() == 1) {
             Long walletId = woAmounts.keySet().iterator().next();
-                    op.setWallet(getEntityManager().find(WalletInstance.class, walletId));
+            op.setWallet(getEntityManager().find(WalletInstance.class, walletId));
             log.debug("prepaid walletoperation fit in walletInstance {}", walletId);
-                    create(op);
-                    result.add(op);
-                    walletCacheContainerProvider.updateBalance(op);
+            create(op);
+            result.add(op);
+            walletCacheContainerProvider.updateBalance(op);
 
             // Charge was over multiple wallets
-                } else {
+        } else {
 
             for (Entry<Long, BigDecimal> amountInfo : woAmounts.entrySet()) {
                 Long walletId = amountInfo.getKey();
@@ -1249,25 +1249,25 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
                 BigDecimal newOverOldCoeff = walletAmount.divide(op.getAmountWithTax(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                 BigDecimal newOpAmountWithTax = walletAmount;
-                    BigDecimal newOpAmountWithoutTax = op.getAmountWithoutTax().multiply(newOverOldCoeff);
+                BigDecimal newOpAmountWithoutTax = op.getAmountWithoutTax().multiply(newOverOldCoeff);
 
-                    newOpAmountWithoutTax = round(newOpAmountWithoutTax, rounding, roundingMode);
-                    newOpAmountWithTax = round(newOpAmountWithTax, rounding, roundingMode);
-                    BigDecimal newOpAmountTax = newOpAmountWithTax.subtract(newOpAmountWithoutTax);
-                    BigDecimal newOpQuantity = op.getQuantity().multiply(newOverOldCoeff);
+                newOpAmountWithoutTax = round(newOpAmountWithoutTax, rounding, roundingMode);
+                newOpAmountWithTax = round(newOpAmountWithTax, rounding, roundingMode);
+                BigDecimal newOpAmountTax = newOpAmountWithTax.subtract(newOpAmountWithoutTax);
+                BigDecimal newOpQuantity = op.getQuantity().multiply(newOverOldCoeff);
 
-                    WalletOperation newOp = op.getUnratedClone();
-                    newOp.setWallet(getEntityManager().find(WalletInstance.class, walletId));
-                    newOp.setAmountWithTax(newOpAmountWithTax);
-                    newOp.setAmountTax(newOpAmountTax);
-                    newOp.setAmountWithoutTax(newOpAmountWithoutTax);
-                    newOp.setQuantity(newOpQuantity);
+                WalletOperation newOp = op.getUnratedClone();
+                newOp.setWallet(getEntityManager().find(WalletInstance.class, walletId));
+                newOp.setAmountWithTax(newOpAmountWithTax);
+                newOp.setAmountTax(newOpAmountTax);
+                newOp.setAmountWithoutTax(newOpAmountWithoutTax);
+                newOp.setQuantity(newOpQuantity);
                 log.debug("prepaid walletoperation partially fit in walletInstance {}, we charge {} of  ", newOp.getWallet(), newOpAmountTax, op.getAmountWithTax());
-                    create(newOp);
-                    result.add(newOp);
-                    walletCacheContainerProvider.updateBalance(newOp);
-                }
+                create(newOp);
+                result.add(newOp);
+                walletCacheContainerProvider.updateBalance(newOp);
             }
+        }
         return result;
     }
 

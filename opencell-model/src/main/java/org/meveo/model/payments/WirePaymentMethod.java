@@ -3,9 +3,13 @@ package org.meveo.model.payments;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+/**
+ * Payment by wire transfer method
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @DiscriminatorValue(value = "WIRETRANSFER")
-
 public class WirePaymentMethod extends PaymentMethod {
 
     private static final long serialVersionUID = 8726571628074346184L;
