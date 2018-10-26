@@ -987,4 +987,10 @@ public class OrderBean extends CustomFieldBean<Order> {
         }
         setPaymentMethod(entity.getPaymentMethod());
     }
+    
+    @ActionMethod
+    public void updateStatus(OrderStatusEnum status) throws BusinessException {
+        entity.setStatus(status);
+        saveOrUpdate(entity);
+    }
 }

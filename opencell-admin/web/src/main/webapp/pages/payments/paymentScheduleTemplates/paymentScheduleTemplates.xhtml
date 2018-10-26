@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:hftl="http://hftl.org" xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{paymentScheduleTemplateBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.Paiements']}"
+					disabled="true" />
+				<p:menuitem value="#{messages['menu.paymentSchedules']}" outcome="paymentScheduleTemplates" />
+			</p:breadCrumb>
+		</h:form>
+        <hftl:entityPopup id="serviceTemplatePopup"
+            header="#{messages['serviceTemplate.popup.header']}"
+            backingBean="#{serviceTemplateBean}"
+            searchField1Label="#{messages['businessEntity.code']}"
+            searchField1="code" 
+            searchField2Label="#{messages['businessEntity.description']}"
+            searchField2="description"
+            column1Label="#{messages['businessEntity.code']}"
+            column1="code"
+            column2Label="#{messages['businessEntity.description']}"
+            column2="description" 
+            selection="#{paymentScheduleTemplateBean.filters['serviceTemplate']}"
+            updateField=":searchForm:serviceTemplateId">
+        </hftl:entityPopup>
+        
+		<hftl:searchPanel label="#{messages['paymentScheduleTemplate.search']}"
+			backingBean="#{paymentScheduleTemplateBean}">
+			<hftl:searchField label="#{messages['businessEntity.code']}"
+				field="code" />
+			<hftl:searchField label="#{messages['businessEntity.description']}"
+				id="description" field="description" />			
+			<hftl:searchField label="#{messages['paymentScheduleTemplate.serviceTemplate']}"
+				 field="serviceTemplate" id="serviceTemplateId" valueLabelField="code" popup="true"
+                popupId="serviceTemplatePopup" />		
+			<hftl:searchField label="#{messages['paymentScheduleTemplate.amount']}"
+				id="amount" field="amount" />								
+						
+		</hftl:searchPanel>
+
+		<hftl:dataList backingBean="#{paymentScheduleTemplateBean}"
+			label="#{messages['paymentScheduleTemplate.title']}" sortBy="code">
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['paymentScheduleTemplate.serviceTemplate']}" field="serviceTemplate.code"  />
+			<hftl:column label="#{messages['paymentScheduleTemplate.amount']}" field="amount" />
+			<hftl:column label="#{messages['paymentScheduleTemplate.calendar']}" field="calendar.code" />
+			
+			<hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" renderEnableLink="true"/>
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

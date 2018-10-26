@@ -33,6 +33,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
@@ -41,6 +42,7 @@ import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -55,13 +57,14 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductChargeInstanceService;
@@ -72,6 +75,7 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -79,14 +83,15 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- * 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Named
 @ViewScoped
@@ -141,6 +146,13 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
+    
+    @Inject
+    private SellerService sellerService;
+
+
+    @Inject
+    private WalletTemplateService walletTemplateService;
 
     private ServiceInstance selectedServiceInstance;
 
@@ -159,6 +171,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private boolean showApplyOneShotForm = false;
 
     private String selectedWalletTemplateCode;
+
+    private List<WalletTemplate> prepaidWalletTemplates;
 
     /**
      * User Account Id passed as a parameter. Used when creating new subscription entry from user account definition window, so default uset Account will be set on newly created
@@ -306,6 +320,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         selectedWalletTemplateCode = null;
     }
 
+    
     public void editOneShotChargeIns(OneShotChargeInstance oneShotChargeIns) {
         this.oneShotChargeInstance = oneShotChargeInstanceService.refreshOrRetrieve(oneShotChargeIns);
         selectedWalletTemplate = new WalletTemplate();
@@ -340,7 +355,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             }
 
             oneShotChargeInstance.setSubscription(entity);
-            oneShotChargeInstance.setSeller(entity.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+            oneShotChargeInstance.setSeller(entity.getSeller());
             oneShotChargeInstance.setCurrency(entity.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
             oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
 
@@ -526,6 +541,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                     serviceInstance.setSubscriptionDate(calendar.getTime());
                 }
                 serviceInstance.setQuantity(quantity);
+                if (BooleanUtils.isTrue(serviceInstance.getAutoEndOfEngagement())) {
+                    serviceInstance.setEndAgreementDate(serviceInstance.getSubscribedTillDate());
+                }
                 serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
                 serviceInstances.add(serviceInstance);
                 serviceTemplates.remove(serviceTemplate);
@@ -841,38 +859,13 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
     }
 
-    public List<WalletTemplate> findBySubscriptionChargeTemplate() {
-        if (oneShotChargeInstance == null || oneShotChargeInstance.getChargeTemplate() == null) {
-            return null;
-        }
+    public List<WalletTemplate> findWalletTemplatesForOneShot() {
 
-        List<WalletTemplate> result = new ArrayList<WalletTemplate>();
-
-        OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findById(oneShotChargeInstance.getChargeTemplate().getId());
-
-        List<ServiceChargeTemplateSubscription> serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptionService
-            .findBySubscriptionChargeTemplate(oneShotChargeTemplate);
-
-        if (serviceChargeTemplateSubscriptions != null) {
-            for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceChargeTemplateSubscriptions) {
-                if (serviceChargeTemplateSubscription.getWalletTemplates() != null) {
-                    for (WalletTemplate walletTemplate : serviceChargeTemplateSubscription.getWalletTemplates()) {
-                        if (!result.contains(walletTemplate)) {
-                            log.debug("adding wallet={}", walletTemplate);
-                            result.add(walletTemplate);
+        if (prepaidWalletTemplates == null && !entity.isTransient()) {
+            prepaidWalletTemplates = walletTemplateService.findBySubscription(entity);
                         }
-                    }
-                }
-            }
-        } else {
-            // get principal
-            if (entity.getUserAccount() != null) {
-                log.debug("adding postpaid wallet={}", entity.getUserAccount().getWallet().getWalletTemplate());
-                result.add(entity.getUserAccount().getWallet().getWalletTemplate());
-            }
-        }
 
-        return result;
+        return prepaidWalletTemplates;
     }
 
     public void deleteServiceInstance(ServiceInstance serviceInstance) {
@@ -932,6 +925,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         recurringChargeInstances = null;
         usageChargeInstances = null;
         productChargeInstances = null;
+        prepaidWalletTemplates = null;
     }
 
     public boolean filterByDate(Object value, Object filter, Locale locale) throws ParseException {
@@ -1044,6 +1038,13 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public void updateSubscribedTillDate() {
         entity.updateSubscribedTillAndRenewalNotifyDates();
     }
+    
+    /**
+     * Auto update end of engagement date.
+     */
+    public void  autoUpdateEndOfEngagementDate() {
+        entity.autoUpdateEndOfEngagementDate();
+    }
 
     /**
      * Copy subscription renewal information from offer
@@ -1060,4 +1061,36 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		List<ServiceInstance> si = serviceInstanceService.findBySubscription(entity);
 		return (si == null || si.isEmpty()) ? true : false;
 	}
+    
+    public List<Seller> listProductSellers() {
+        if(productInstance != null && productInstance.getProductTemplate() != null) {
+            if(productInstance.getProductTemplate().getSellers().size() > 0) {
+                return productInstance.getProductTemplate().getSellers();
+            } else {
+                return sellerService.list();
+            }
+        } else {
+            return new ArrayList<Seller>();
+        }
+    }
+    
+    public List<Seller> listSellers() {
+        if(entity.getOffer() != null) {
+            OfferTemplate offer = offerTemplateService.findByCode(entity.getOffer().getCode());
+            if(offer.getSellers().size() > 0) {
+                return offer.getSellers();
+            } else {
+                return sellerService.list();
+            }
+        } else {
+            return new ArrayList<Seller>();
+        }
+    }
+    
+    @ActionMethod
+    public String cancelSubscriptionRenewal() throws BusinessException {
+    	subscriptionService.cancelSubscriptionRenewal(entity);
+    	RequestContext.getCurrentInstance().reset("subscriptionTab");
+    	return null;
+    }
 }

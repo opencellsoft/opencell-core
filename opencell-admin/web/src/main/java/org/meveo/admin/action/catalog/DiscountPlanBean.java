@@ -38,8 +38,10 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
     @Override
     public DiscountPlan initEntity() {
         discountPlanItem.setAccountingCode(appProvider.getDiscountAccountingCode());
-
-        return super.initEntity();
+        
+        entity = super.initEntity();
+        
+        return entity;
     }
 
     @Override
@@ -78,17 +80,17 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 
         } else {
 
-            discountPlanItem.setDiscountPlan(getEntity());
+            discountPlanItem.setDiscountPlan(entity);
 
             try {
-                if (getEntity().getDiscountPlanItems().contains(discountPlanItem)) {
+                if (entity.getDiscountPlanItems().contains(discountPlanItem)) {
                     messages.error(new BundleKey("messages", "discountPlan.discountPlanItem.unique"));
                 } else {
                     discountPlanItemService.create(discountPlanItem);
                     messages.info(new BundleKey("messages", "save.successful"));
                 }
 
-                discountPlanService.refresh(getEntity());
+                entity = discountPlanService.findById(entity.getId());
 
             } catch (BusinessException e) {
                 log.error("failed to save or update discount plan", e);
@@ -109,7 +111,7 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
     public void deleteDiscountPlanItem(DiscountPlanItem discountPlanItem) {
         try {
             discountPlanItemService.remove(discountPlanItem.getId());
-            discountPlanService.refresh(getEntity());
+            entity = discountPlanService.findById(entity.getId());
             messages.info(new BundleKey("messages", "delete.successful"));
 
         } catch (Exception e) {

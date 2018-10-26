@@ -30,7 +30,11 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.dto.payment.GatewayPaymentNamesEnum;
+import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentGatewayTypeEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -52,6 +56,11 @@ public class PaymentGatewayBean extends CustomFieldBean<PaymentGateway> {
      */
     @Inject
     private PaymentGatewayService paymentGatewayeService;
+
+    @Inject
+    private PaymentMethodApi paymentMethodApi;
+
+    private String redirectionUrl;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -139,4 +148,92 @@ public class PaymentGatewayBean extends CustomFieldBean<PaymentGateway> {
         Collections.sort(classNames);
         return classNames;
     }
+
+    public void getIngenicoUrl(
+            String customerAccountCode,
+            String returnUrl
+    ) throws BusinessException {
+
+        getIngenicoUrl(
+                customerAccountCode,
+                returnUrl,
+                false,
+                "INGENICO_GC",
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+    public void getIngenicoUrl(
+            String customerAccountCode,
+            String returnUrl,
+            Boolean skipAuthentication
+    ) throws BusinessException {
+
+        getIngenicoUrl(
+                customerAccountCode,
+                returnUrl,
+                skipAuthentication,
+                "INGENICO_GC",
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+    /**
+     * Example of use case of paymentMethodApi.createIframeUrl
+     * @param customerAccountCode
+     * @throws BusinessException
+     */
+    public void getIngenicoUrl(
+            String customerAccountCode,
+            String returnUrl,
+            Boolean skipAuthentication,
+            String gatewayPaymentName,
+            String amount,
+            String authorizationMode,
+            String countryCode,
+            String currencyCode,
+            String locale
+    ) throws BusinessException {
+
+
+        if (StringUtils.isBlank(amount)) amount = "100";
+        if (StringUtils.isBlank(authorizationMode)) authorizationMode = "FINAL_AUTHORIZATION";
+        if (StringUtils.isBlank(countryCode)) countryCode = "US";
+        if (StringUtils.isBlank(currencyCode)) currencyCode = "EUR";
+        if (StringUtils.isBlank(locale)) locale = "en_GB";
+        if (StringUtils.isBlank(skipAuthentication)) skipAuthentication = false;
+        if (StringUtils.isBlank(gatewayPaymentName)) gatewayPaymentName = "INGENICO_GC";
+
+
+
+        HostedCheckoutInput hostedCheckoutInput = new HostedCheckoutInput();
+        hostedCheckoutInput.setCustomerAccountCode(customerAccountCode);
+        hostedCheckoutInput.setReturnUrl(returnUrl);
+        hostedCheckoutInput.setAmount(amount);
+        hostedCheckoutInput.setAuthorizationMode(authorizationMode);
+        hostedCheckoutInput.setCountryCode(countryCode);
+        hostedCheckoutInput.setCurrencyCode(currencyCode);
+        hostedCheckoutInput.setLocale(locale);
+        hostedCheckoutInput.setSkipAuthentication(skipAuthentication);
+        hostedCheckoutInput.setGatewayPaymentName(GatewayPaymentNamesEnum.valueOf(gatewayPaymentName));
+
+
+        this.redirectionUrl = paymentMethodApi.getHostedCheckoutUrl(hostedCheckoutInput);
+
+    }
+
+    public String getRedirectionUrl() {
+        return redirectionUrl;
+    }
+
+    public void setRedirectionUrl(String redirectionUrl) {
+        this.redirectionUrl = redirectionUrl;
+    }
+
 }

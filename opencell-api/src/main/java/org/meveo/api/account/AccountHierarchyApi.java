@@ -99,7 +99,7 @@ import org.meveo.util.MeveoParamBean;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -995,11 +995,8 @@ public class AccountHierarchyApi extends BaseApi {
      * @param accountHierarchyTypeEnum
      * @param businessAccountModel
      * @return the created User Account DTO
-     * @throws MeveoApiException
-     * @throws BusinessException
      */
-    private UserAccountDto createUserAccountDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum)
-            throws MeveoApiException, BusinessException {
+    private UserAccountDto createUserAccountDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum) {
 
         UserAccountDto userAccountDto = new UserAccountDto();
         userAccountDto.setCode(postData.getCode());
@@ -1017,6 +1014,9 @@ public class AccountHierarchyApi extends BaseApi {
         userAccountDto.setExternalRef1(postData.getExternalRef1());
         userAccountDto.setExternalRef2(postData.getExternalRef2());
         userAccountDto.setJobTitle(postData.getJobTitle());
+        userAccountDto.setContactInformation(postData.getContactInformation());
+        userAccountDto.setRegistrationNo(postData.getRegistrationNo());
+        userAccountDto.setVatNo(postData.getVatNo());
 
         CustomFieldsDto cfsDto = new CustomFieldsDto();
         if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
@@ -1039,11 +1039,8 @@ public class AccountHierarchyApi extends BaseApi {
      * @param accountHierarchyTypeEnum
      * @param businessAccountModel
      * @return the created billing account
-     * @throws MeveoApiException
-     * @throws BusinessException
      */
-    private BillingAccountDto createBillingAccountDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum)
-            throws MeveoApiException, BusinessException {
+    private BillingAccountDto createBillingAccountDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum) {
        
         BillingAccountDto billingAccountDto = new BillingAccountDto();
         billingAccountDto.setCode(postData.getCode());
@@ -1069,6 +1066,9 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setExternalRef1(postData.getExternalRef1());
         billingAccountDto.setExternalRef2(postData.getExternalRef2());
         billingAccountDto.setJobTitle(postData.getJobTitle());
+        billingAccountDto.setContactInformation(postData.getContactInformation());
+        billingAccountDto.setRegistrationNo(postData.getRegistrationNo());
+        billingAccountDto.setVatNo(postData.getVatNo());
 
         CustomFieldsDto cfsDto = new CustomFieldsDto();
         if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
@@ -1091,11 +1091,8 @@ public class AccountHierarchyApi extends BaseApi {
      * @param accountHierarchyTypeEnum
      * @param businessAccountModel
      * @return the created Customer account dto
-     * @throws MeveoApiException
-     * @throws BusinessException
      */
-    private CustomerAccountDto createCustomerAccountDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum)
-            throws MeveoApiException, BusinessException {
+    private CustomerAccountDto createCustomerAccountDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum) {
 
         CustomerAccountDto customerAccountDto = new CustomerAccountDto();
         customerAccountDto.setCode(postData.getCode());
@@ -1118,6 +1115,8 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setExternalRef1(postData.getExternalRef1());
         customerAccountDto.setExternalRef2(postData.getExternalRef2());
         customerAccountDto.setJobTitle(postData.getJobTitle());
+        customerAccountDto.setRegistrationNo(postData.getRegistrationNo());
+        customerAccountDto.setVatNo(postData.getVatNo());
 
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
@@ -1148,11 +1147,8 @@ public class AccountHierarchyApi extends BaseApi {
      * @param accountHierarchyTypeEnum
      * @param businessAccountModel
      * @return the created customer dto
-     * @throws MeveoApiException
-     * @throws BusinessException
      */
-    private CustomerDto createCustomerDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum)
-            throws MeveoApiException, BusinessException {
+    private CustomerDto createCustomerDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum) {
 
         CustomerDto customerDto = new CustomerDto();
         customerDto.setCode(postData.getCode());

@@ -1,0 +1,70 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{paymentScheduleInstanceBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">     
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.Paiements']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.paymentSchedules']}" outcome="paymentScheduleInstances" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['paymentScheduleInstance.title']}"
+					disabled="true" rendered="#{paymentScheduleInstanceBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['paymentScheduleInstance.title']} - #{paymentScheduleInstanceBean.entity.code}"
+					disabled="true" rendered="#{!paymentScheduleInstanceBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+		
+     				
+				
+		<hftl:formPanel label="#{messages['paymentScheduleInstance.title']}" backingBean="#{paymentScheduleInstanceBean}"  formId="formPaymentScheduleInstance" showEnableDisableButton="true" >
+			<p:tabView id="tabView" activeIndex="#{paymentScheduleInstanceBean.activeTab}">
+				<p:tab  title="#{messages['commons.tab.information']}" >
+					<hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true"/>
+					<hftl:formField label="#{messages['businessEntity.description']}" field="description" />						
+					
+					<hftl:formField  id="calendarId" label="#{messages['paymentScheduleTemplate.calendar']}" field="calendar"  valueLabelField="code" listBean="#{calendarBean}" componentWidth="10"  />
+					<hftl:formField label="#{messages['paymentScheduleInstance.serviceInstance']}"  field="serviceInstance" childField="code"  disabled="true"/>					
+					<hftl:formField label="#{messages['paymentScheduleInstance.startDate']}" field="startDate" required="true"/>
+					<hftl:formField label="#{messages['paymentScheduleInstance.endDate']}" field="endDate" required="true"/>
+					<hftl:formField label="#{messages['paymentScheduleTemplate.amount']}" field="amount" required="true"/>				
+					<hftl:formField label="#{messages['paymentScheduleTemplate.status']}" field="status" required="true" disabled="true"/>
+					 <hftl:formField label="#{messages['paymentScheduleTemplate.dayInMonth']}" field="dueDateDays" /> 
+					
+					<hftl:dataList backingBean="#{paymentScheduleInstanceItemBean}" dataModel="#{paymentScheduleInstanceItemBean.getItemsForInstance(paymentScheduleInstanceBean.entity)}" 
+	                label="#{messages['paymentScheduleInstanceItem.title']}" sortBy="dueDate" exportButton="false" checkMany="false">														
+							<hftl:column label="#{messages['paymentScheduleTemplate.amount']}" field="paymentScheduleInstance.amount" />
+							<hftl:column label="#{messages['paymentScheduleInstanceItem.dueDate']}" field="dueDate" isDate="true"/>
+							<hftl:column label="#{messages['paymentScheduleInstanceItem.requestPaymentDate']}" field="requestPaymentDate" isDate="true"/>
+							<hftl:column label="#{messages['paymentScheduleInstanceItem.paymentStatus']}" field="paid" isMessage="true"/>														
+			        </hftl:dataList>										
+				</p:tab>				
+			</p:tabView>		
+<ui:param name="buttons" value="true" />
+			<ui:define name="buttons">
+				<h:panelGroup
+					rendered="#{not empty paymentScheduleInstanceBean.entity.id and paymentScheduleInstanceBean.canUserUpdateEntity()}">
+					<p:commandButton action="#{paymentScheduleInstanceBean.cancel}"
+						value="#{messages['paymentSchedule.cancelButton']}" ajax="false"
+						onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
+						disabled="#{paymentScheduleInstanceBean.entity.status.toString() != 'IN_PROGRESS'}" />
+					<p:commandButton action="#{paymentScheduleInstanceBean.terminate}"
+						value="#{messages['paymentSchedule.terminateButton']}" ajax="false"
+						onclick="if(confirm('#{messages['confirmationMessage.confirmTermination']}')){return true;}else{return false;}"
+						disabled="#{paymentScheduleInstanceBean.entity.status.toString() != 'IN_PROGRESS'}" />					
+				</h:panelGroup>
+			</ui:define>									
+		</hftl:formPanel>
+	</ui:define>
+
+</ui:composition>

@@ -33,7 +33,6 @@
             <hftl:column label="#{messages['customer.customerCategory']}" field="customerCategory.descriptionOrCode" isMessage="false" />
             <hftl:column label="#{messages['customer.customerBrand']}" field="customerBrand.descriptionOrCode" isMessage="false" />
             <hftl:column label="#{messages['businessEntity.description']}" field="description" />
-            <hftl:column label="#{messages['seller.title']}" field="seller.descriptionOrCode" valueIdField="seller.id" entityView="sellerDetail" />
             <hftl:actionsColumn useCustomIdParam="true" permission="#{currentUser.hasRole('accountManagement')}" />
         </hftl:dataList>
 

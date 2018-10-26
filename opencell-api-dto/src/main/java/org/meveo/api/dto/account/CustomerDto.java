@@ -8,14 +8,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.crm.AdditionalDetailsDto;
-import org.meveo.api.dto.crm.AddressBookDto;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.intcrm.AdditionalDetails;
 
 /**
  * The Class CustomerDto.
  *
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
  */
 @XmlRootElement(name = "Customer")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -42,15 +41,6 @@ public class CustomerDto extends AccountDto {
     
     /** The mandate date. */
     private Date mandateDate;
-    
-    /** The vat no. */
-    private String vatNo;
-    
-    /** The registration no. */
-    private String registrationNo;
-
-    /** The contact information. */
-    private ContactInformationDto contactInformation;
 
     /**
      * Use for GET / LIST only.
@@ -172,24 +162,6 @@ public class CustomerDto extends AccountDto {
     }
 
     /**
-     * Gets the contact information.
-     *
-     * @return the contact information
-     */
-    public ContactInformationDto getContactInformation() {
-        return contactInformation;
-    }
-
-    /**
-     * Sets the contact information.
-     *
-     * @param contactInformation the new contact information
-     */
-    public void setContactInformation(ContactInformationDto contactInformation) {
-        this.contactInformation = contactInformation;
-    }
-
-    /**
      * Gets the mandate identification.
      *
      * @return the mandate identification
@@ -224,42 +196,6 @@ public class CustomerDto extends AccountDto {
     public void setMandateDate(Date mandateDate) {
         this.mandateDate = mandateDate;
     }
-
-    /**
-     * Gets the registration no.
-     *
-     * @return the registration no
-     */
-    public String getRegistrationNo() {
-        return registrationNo;
-    }
-
-    /**
-     * Sets the registration no.
-     *
-     * @param registrationNo the new registration no
-     */
-    public void setRegistrationNo(String registrationNo) {
-        this.registrationNo = registrationNo;
-    }
-
-    /**
-     * Gets the vat no.
-     *
-     * @return the vat no
-     */
-    public String getVatNo() {
-        return vatNo;
-    }
-
-    /**
-     * Sets the vat no.
-     *
-     * @param vatNo the new vat no
-     */
-    public void setVatNo(String vatNo) {
-        this.vatNo = vatNo;
-    }
    
     public AdditionalDetailsDto getAdditionalDetails() {
 		return additionalDetails;
@@ -273,6 +209,6 @@ public class CustomerDto extends AccountDto {
 	@Override
     public String toString() {
         return "CustomerDto [customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller=" + seller + ", mandateIdentification=" + mandateIdentification
-                + ", mandateDate=" + mandateDate + ", contactInformation=" + contactInformation + ", customerAccounts=" + customerAccounts + "]";
+                + ", mandateDate=" + mandateDate + ", contactInformation=" + getContactInformation() + ", customerAccounts=" + customerAccounts + "]";
     }
 }

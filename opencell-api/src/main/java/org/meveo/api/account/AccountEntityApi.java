@@ -10,6 +10,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.shared.Address;
+import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
@@ -17,7 +18,7 @@ import org.meveo.service.catalog.impl.TitleService;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  **/
 @Stateless
 public class AccountEntityApi extends BaseApi {
@@ -62,6 +63,18 @@ public class AccountEntityApi extends BaseApi {
         accountEntity.setAddress(address);
         accountEntity.setName(name);
         accountEntity.setJobTitle(postData.getJobTitle());
+        accountEntity.setVatNo(postData.getVatNo());
+        accountEntity.setRegistrationNo(postData.getRegistrationNo());
+        
+        if (postData.getContactInformation() != null) {
+            if (accountEntity.getContactInformation() == null) {
+            	accountEntity.setContactInformation(new ContactInformation());
+            }
+            accountEntity.getContactInformation().setEmail(postData.getContactInformation().getEmail());
+            accountEntity.getContactInformation().setPhone(postData.getContactInformation().getPhone());
+            accountEntity.getContactInformation().setMobile(postData.getContactInformation().getMobile());
+            accountEntity.getContactInformation().setFax(postData.getContactInformation().getFax());
+        }
     }
 
     public void updateAccount(AccountEntity accountEntity, AccountDto postData) throws MeveoApiException {
@@ -132,6 +145,30 @@ public class AccountEntityApi extends BaseApi {
         }
         if (!StringUtils.isBlank(postData.getJobTitle())) {
             accountEntity.setJobTitle(postData.getJobTitle());
+        }
+        if (!StringUtils.isBlank(postData.getVatNo())) {
+            accountEntity.setVatNo(postData.getVatNo());
+        }
+        if (!StringUtils.isBlank(postData.getRegistrationNo())) {
+            accountEntity.setRegistrationNo(postData.getRegistrationNo());
+        }
+
+        if (postData.getContactInformation() != null) {
+            if (accountEntity.getContactInformation() == null) {
+            	accountEntity.setContactInformation(new ContactInformation());
+            }
+            if (!StringUtils.isBlank(postData.getContactInformation().getEmail())) {
+            	accountEntity.getContactInformation().setEmail(postData.getContactInformation().getEmail());
+            }
+            if (!StringUtils.isBlank(postData.getContactInformation().getPhone())) {
+            	accountEntity.getContactInformation().setPhone(postData.getContactInformation().getPhone());
+            }
+            if (!StringUtils.isBlank(postData.getContactInformation().getMobile())) {
+            	accountEntity.getContactInformation().setMobile(postData.getContactInformation().getMobile());
+            }
+            if (!StringUtils.isBlank(postData.getContactInformation().getFax())) {
+            	accountEntity.getContactInformation().setFax(postData.getContactInformation().getFax());
+            }
         }
 
     }

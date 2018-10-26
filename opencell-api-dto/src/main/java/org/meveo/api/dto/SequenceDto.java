@@ -23,12 +23,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.Sequence;
 
 /**
  * The Class SequenceDto.
  *
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.2
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -39,11 +42,16 @@ public class SequenceDto extends BaseEntityDto {
 
     /** The prefix EL. */
     private String prefixEL;
+    
+    /** The invoice sequence code. */
+    private String invoiceSequenceCode;
 
     /** The sequence size. */
+    @Deprecated
     private Integer sequenceSize;
 
     /** The current invoice nb. */
+    @Deprecated
     private Long currentInvoiceNb;
 
     /**
@@ -57,11 +65,12 @@ public class SequenceDto extends BaseEntityDto {
      *
      * @param sequence the sequence
      */
-    public SequenceDto(Sequence sequence) {
+    @Deprecated
+    public SequenceDto(InvoiceSequence sequence, String prefixEl) {
         if (sequence != null) {
-            this.prefixEL = sequence.getPrefixEL();
             this.sequenceSize = sequence.getSequenceSize();
             this.currentInvoiceNb = sequence.getCurrentInvoiceNb();
+            this.prefixEL = prefixEl;
         }
     }
 
@@ -70,9 +79,9 @@ public class SequenceDto extends BaseEntityDto {
      *
      * @return the sequence
      */
-    public Sequence fromDto() {
-        Sequence sequence = new Sequence();
-        sequence.setPrefixEL(getPrefixEL());
+    @Deprecated
+    public InvoiceSequence fromDto() {
+    	InvoiceSequence sequence = new InvoiceSequence();
         sequence.setSequenceSize(getSequenceSize());
         sequence.setCurrentInvoiceNb(getCurrentInvoiceNb());
         return sequence;
@@ -84,10 +93,8 @@ public class SequenceDto extends BaseEntityDto {
      * @param sequence the sequence
      * @return the sequence
      */
-    public Sequence updateFromDto(Sequence sequence) {
-        if (!StringUtils.isBlank(getPrefixEL())) {
-            sequence.setPrefixEL(getPrefixEL());
-        }
+    @Deprecated
+    public InvoiceSequence updateFromDto(InvoiceSequence sequence) {
         if (getSequenceSize() != null) {
             sequence.setSequenceSize(getSequenceSize());
         }
@@ -120,6 +127,7 @@ public class SequenceDto extends BaseEntityDto {
      *
      * @return the sequenceSize
      */
+    @Deprecated
     public Integer getSequenceSize() {
         return sequenceSize;
     }
@@ -129,6 +137,7 @@ public class SequenceDto extends BaseEntityDto {
      *
      * @param sequenceSize the sequenceSize to set
      */
+    @Deprecated
     public void setSequenceSize(Integer sequenceSize) {
         this.sequenceSize = sequenceSize;
     }
@@ -138,6 +147,7 @@ public class SequenceDto extends BaseEntityDto {
      *
      * @return the currentInvoiceNb
      */
+    @Deprecated
     public Long getCurrentInvoiceNb() {
         return currentInvoiceNb;
     }
@@ -147,13 +157,32 @@ public class SequenceDto extends BaseEntityDto {
      *
      * @param currentInvoiceNb the currentInvoiceNb to set
      */
+    @Deprecated
     public void setCurrentInvoiceNb(Long currentInvoiceNb) {
         this.currentInvoiceNb = currentInvoiceNb;
     }
+    
+    /**
+     * Gets the invoice sequence code.
+     * 
+	 * @return the invoiceSequenceCode
+	 */
+	public String getInvoiceSequenceCode() {
+		return invoiceSequenceCode;
+	}
+
+	/**
+	 * Sets the invoice sequence code.
+	 * 
+	 * @param invoiceSequenceCode the invoiceSequenceCode to set
+	 */
+	public void setInvoiceSequenceCode(String invoiceSequenceCode) {
+		this.invoiceSequenceCode = invoiceSequenceCode;
+	}
 
     @Override
     public String toString() {
-        return "SequenceDto [prefixEL=" + prefixEL + ", sequenceSize=" + sequenceSize + ", currentInvoiceNb=" + currentInvoiceNb + "]";
+        return "SequenceDto [prefixEL=" + prefixEL + ", invoiceSequenceCode=" + invoiceSequenceCode + ", sequenceSize=" + sequenceSize + ", currentInvoiceNb=" + currentInvoiceNb + "]";
     }
 
 }

@@ -40,6 +40,10 @@ import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 
+/**
+ * Workflow change what user group order is assigned to. And only that user can
+ * execute some workflow action/script that change order status.
+ */
 @Entity
 @ModuleItem
 @Cacheable

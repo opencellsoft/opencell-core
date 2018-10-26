@@ -13,6 +13,20 @@
 	</ui:define>
 
 	<ui:define name="body">
+	
+		<hftl:entityPopup id="accountingCodePopup"
+				header="#{messages['accountingCode']}"
+				backingBean="#{accountingCodeListBean}"
+				selection="#{taxListBean.filters['accountingCode']}"
+				searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+				searchField2Label="#{messages['businessEntity.description']}" searchField2="description"
+				column1Label="#{messages['businessEntity.code']}" 
+				column1="code"
+				column2Label="#{messages['businessEntity.description']}" 
+				column2="description"
+				updateField=":searchForm:accountingCodeId">
+			</hftl:entityPopup>
+	
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
@@ -26,8 +40,11 @@
 			<hftl:searchField label="#{messages['tax.code']}" field="code" />
 			<hftl:searchField label="#{messages['tax.description']}"
 				id="description" field="description" />
-			<hftl:searchField label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" valueLabelField="code" listBean="#{accountingCodeListBean}" />
-			<!-- 	<hftl:searchField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
+			 <hftl:searchField id="accountingCodeId"
+							label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode"
+							valueLabelField="code" listenerUpdate="@this" popup="true"
+							popupId="accountingCodePopup" showResetButton="true" />
+				
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['tax.title']}"

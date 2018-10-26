@@ -116,7 +116,7 @@ public interface ReportExtractRs extends IBaseRs {
      */
     @POST
     @Path("/run")
-    ActionStatus runReport(RunReportExtractDto postData);
+    ReportExtractExecutionResultResponseDto runReport(RunReportExtractDto postData);
 
     /**
      * Enable a Report extract with a given code

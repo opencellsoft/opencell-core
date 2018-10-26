@@ -1,0 +1,109 @@
+package org.meveo.service.script;
+
+import com.ingenico.connect.gateway.sdk.java.Client;
+import com.ingenico.connect.gateway.sdk.java.domain.token.TokenResponse;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.notification.InboundRequest;
+import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.CreditCardTypeEnum;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.IngenicoGatewayPayment;
+import org.meveo.service.payments.impl.PaymentMethodService;
+
+import java.util.Map;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author Mounir Bahije
+ *
+ *         Script executed to save card enrolled with Ingenico Hosted Checkout
+ *
+ */
+public class SaveIngenicoCard extends Script {
+
+    private final static Logger logger = Logger.getLogger(SaveIngenicoCard.class.getName());
+
+    private PaymentMethodService paymentMethodService = (PaymentMethodService) getServiceInterface("PaymentMethodService");
+    private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface("CustomerAccountService");
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+
+        String verification = "";
+        InboundRequest inReq = (InboundRequest) methodContext.get("event");
+
+        if ("GET".equalsIgnoreCase(inReq.getMethod())) {
+            String body = inReq.getBody();
+            Map<String, String> headers = inReq.getHeaders();
+            for (String headerKey : headers.keySet()) {
+                if ("X-GCS-Webhooks-Endpoint-Verification".equalsIgnoreCase(headerKey)) {
+                    String headerValue = headers.get(headerKey);
+                    verification = headerValue;
+                    inReq.setResponseBody(verification);
+                }
+            }
+        }
+
+        if ("POST".equalsIgnoreCase(inReq.getMethod())) {
+
+            String resultJson = inReq.getBody();
+            JSONParser jsonParser = new JSONParser();
+            JSONObject obj = null;
+            try {
+                obj = (JSONObject) jsonParser.parse(resultJson);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Boolean isAuthorized = (Boolean) ((JSONObject) ((JSONObject) obj.get("payment")).get("statusOutput")).get("isAuthorized");
+            if (isAuthorized) {
+                Long paymentProductId = (Long) ((JSONObject) ((JSONObject) ((JSONObject) obj.get("payment")).get("paymentOutput")).get("cardPaymentMethodSpecificOutput")).get("paymentProductId");
+                String tokenId = (String) ((JSONObject) ((JSONObject) ((JSONObject) obj.get("payment")).get("paymentOutput")).get("cardPaymentMethodSpecificOutput")).get("token");
+                String customerAccountCode = (String) ((JSONObject) ((JSONObject) ((JSONObject) obj.get("payment")).get("paymentOutput")).get("references")).get("merchantReference");
+                String merchantId = (String) obj.get("merchantId");
+
+                IngenicoGatewayPayment IngenicoGatewayPayment = new IngenicoGatewayPayment();
+                Client client = IngenicoGatewayPayment.getClient();
+                try {
+                    String longIdCA = customerAccountCode.substring(customerAccountCode.lastIndexOf("-") + 1);
+                    CreditCardTypeEnum cardType = fromId(Long.valueOf(paymentProductId).intValue());
+                    TokenResponse response = client.merchant(merchantId).tokens().get(tokenId);
+                    String cardNumber = response.getCard().getData().getCardWithoutCvv().getCardNumber();
+                    String expiryDate = response.getCard().getData().getCardWithoutCvv().getExpiryDate();
+                    String ownerName = response.getCard().getData().getCardWithoutCvv().getCardholderName();
+                    CustomerAccount ca = new CustomerAccount();
+                    ca = customerAccountService.findById(Long.valueOf(longIdCA));
+                    CardPaymentMethod paymentMethod = new CardPaymentMethod();
+                    paymentMethod.setCardNumber(cardNumber);
+                    paymentMethod.setCardType(cardType);
+                    paymentMethod.setCustomerAccount(ca);
+                    paymentMethod.setPreferred(true);
+                    paymentMethod.setMonthExpiration(new Integer(expiryDate.substring(0, 2)));
+                    paymentMethod.setYearExpiration(new Integer(expiryDate.substring(2, 4)));
+                    paymentMethod.setOwner(ownerName);
+                    paymentMethod.setTokenId(tokenId);
+                    paymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(cardNumber));
+                    if (!paymentMethodService.cardTokenExist(paymentMethod)) {
+                        paymentMethodService.create(paymentMethod);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new BusinessException(e.getMessage());
+                }
+            }
+        }
+    }
+
+    private CreditCardTypeEnum fromId(Integer id) {
+        for (CreditCardTypeEnum es : CreditCardTypeEnum.values()) {
+            if (es.getId().equals(id)) {
+                return es;
+            }
+        }
+        throw new IllegalArgumentException();
+    }
+}

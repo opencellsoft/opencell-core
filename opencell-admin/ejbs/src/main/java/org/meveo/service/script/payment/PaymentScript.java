@@ -10,7 +10,7 @@ import org.meveo.service.script.Script;
  * The Class PaymentScript.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  */
 public class PaymentScript extends Script implements PaymentScriptInterface {
 
@@ -125,45 +125,80 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
     /** The Constant RESULT_BANK_NAME. */
     public static final String RESULT_BANK_NAME = "RESULT_BANK_NAME";
 
+    /** The Constant CONTEXT_PG. */
+    public static final String CONTEXT_PG = "PAYMENT_GATEWAY";
+
+    /** The Constant PAYMENT_ID. */
+    public static final String PAYMENT_ID = "PAYMENT_ID";
+
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.script.payment.PaymentScriptInterface#doPaymentCard(java.util.Map)
+     */
     @Override
     public void doPaymentCard(Map<String, Object> methodContext) throws BusinessException {
     }
     
+    /* (non-Javadoc)
+     * @see org.meveo.service.script.payment.PaymentScriptInterface#doPaymentSepa(java.util.Map)
+     */
     @Override
     public void doPaymentSepa(Map<String, Object> methodContext) throws BusinessException {
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.service.script.payment.PaymentScriptInterface#cancelPayment(java.util.Map)
+     */
     @Override
     public void cancelPayment(Map<String, Object> methodContext) throws BusinessException {
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.service.script.payment.PaymentScriptInterface#doRefundToken(java.util.Map)
+     */
     @Override
     public void doRefundToken(Map<String, Object> methodContext) throws BusinessException {
     }
     
+    /* (non-Javadoc)
+     * @see org.meveo.service.script.payment.PaymentScriptInterface#doRefundSepa(java.util.Map)
+     */
     @Override
     public void doRefundSepa(Map<String, Object> methodContext) throws BusinessException {
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.service.script.payment.PaymentScriptInterface#doRefundCard(java.util.Map)
+     */
     @Override
     public void doRefundCard(Map<String, Object> methodContext) throws BusinessException {
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.service.script.payment.PaymentScriptInterface#doPaymentToken(java.util.Map)
+     */
     @Override
     public void doPaymentToken(Map<String, Object> methodContext) throws BusinessException {
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.service.script.payment.PaymentScriptInterface#createCardToken(java.util.Map)
+     */
     @Override
     public void createCardToken(Map<String, Object> methodContext) throws BusinessException {
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.service.script.payment.PaymentScriptInterface#checkPayment(java.util.Map)
+     */
     @Override
     public void checkPayment(Map<String, Object> methodContext) throws BusinessException {
     }
     
+    /* (non-Javadoc)
+     * @see org.meveo.service.script.payment.PaymentScriptInterface#checkMandat(java.util.Map)
+     */
     @Override
     public void checkMandat(Map<String, Object> methodContext) throws BusinessException {
-    }
-    
-    
+    }   
 }

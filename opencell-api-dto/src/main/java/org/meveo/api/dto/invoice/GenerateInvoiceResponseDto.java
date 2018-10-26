@@ -1,5 +1,7 @@
 package org.meveo.api.dto.invoice;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -20,7 +22,7 @@ public class GenerateInvoiceResponseDto extends BaseResponse {
     private static final long serialVersionUID = 5811304676103235597L;
 
     /** The generate invoice result dto. */
-    private GenerateInvoiceResultDto generateInvoiceResultDto;
+    private List<GenerateInvoiceResultDto> generateInvoiceResultDto;
 
     /**
      * Instantiates a new generate invoice response dto.
@@ -34,7 +36,7 @@ public class GenerateInvoiceResponseDto extends BaseResponse {
      *
      * @return the generateInvoiceResultDto
      */
-    public GenerateInvoiceResultDto getGenerateInvoiceResultDto() {
+    public List<GenerateInvoiceResultDto> getGenerateInvoiceResultDto() {
         return generateInvoiceResultDto;
     }
 
@@ -43,7 +45,7 @@ public class GenerateInvoiceResponseDto extends BaseResponse {
      *
      * @param generateInvoiceResultDto the generateInvoiceResultDto to set
      */
-    public void setGenerateInvoiceResultDto(GenerateInvoiceResultDto generateInvoiceResultDto) {
+    public void setGenerateInvoiceResultDto(List<GenerateInvoiceResultDto> generateInvoiceResultDto) {
         this.generateInvoiceResultDto = generateInvoiceResultDto;
     }
 

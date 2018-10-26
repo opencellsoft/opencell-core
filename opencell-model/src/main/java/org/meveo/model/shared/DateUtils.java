@@ -28,17 +28,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
  */
 public class DateUtils {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DateUtils.class);
 
     private static long lastTime = System.currentTimeMillis() / 1000;
 
@@ -485,6 +491,15 @@ public class DateUtils {
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(gCalendar);
 
     }
+    
+    public static XMLGregorianCalendar dateToXMLGregorianCalendarFieldUndefined(Date date) throws DatatypeConfigurationException {
+        if (date == null) {
+            return null;
+        }
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        return DatatypeFactory.newInstance().newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
+    }
 
     final static Pattern fourDigitsPattern = Pattern.compile("(?<!\\d)\\d{4}(?!\\d)");
     final static Pattern monthPattern = Pattern.compile("(?<!\\d)[0-1][0-9](?!\\d)");
@@ -619,5 +634,41 @@ public class DateUtils {
         }
 
         return !dateToCheck.before(startDate) && !dateToCheck.after(endDate);
+    }
+    
+    /**
+     * Format DDMMY : <br>
+     * SimpleDateFormat way is not working for this format. e.g : with sfd, 2009 will return '9' but 2018 will return 18<br>
+     * BUT the need here is to return always the last digit of the year !
+     *
+     * @param date the date
+     * @return the string
+     */
+    public static String formatDDMMY (Date date) {
+        
+        String ddMM = formatDateWithPattern(date, "ddMM");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        String y = String.valueOf(calendar.get(Calendar.YEAR) % 10);
+        
+        return ddMM+y;
+    }
+    
+    public static Date truncateTime(Date date) {
+        try {
+            if (date == null) {
+                return null;
+            }
+            Calendar cal = Calendar.getInstance(); // locale-specific
+            cal.setTime(date);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            return cal.getTime();
+        } catch (Exception e) {
+            LOG.error(" error on truncateTime : [{}] ", e.getMessage());
+            return date;
+        }
     }
 }

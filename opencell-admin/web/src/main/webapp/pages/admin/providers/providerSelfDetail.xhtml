@@ -53,11 +53,16 @@
 					<hftl:formField label="#{messages['provider.paymentMethods']}" field="paymentMethods" listType="pickUpList" valueLabelField="label" dualListModel="#{providerBean.paymentMethodsModel}" newLine="true"/>
                   
                     <p:fieldset legend="#{messages['provider.bankCoordinates.title']}" styleClass="clearLeft">
+                    
                         <hftl:formField label="#{messages['bankCoordinates.bic']}" field="bankCoordinates" childField="bic" size="15" newLine="true" />
-
                         <hftl:formField label="#{messages['bankCoordinates.iban']}" field="bankCoordinates" childField="iban" size="41" />
-
                         <hftl:formField label="#{messages['bankCoordinates.ics']}" field="bankCoordinates" childField="ics" size="42" />
+                        
+                        <hftl:formField label="#{messages['bankCoordinates.branchCode']}" field="bankCoordinates" childField="branchCode" size="5" />
+                        <hftl:formField label="#{messages['bankCoordinates.accountNumber']}" field="bankCoordinates" childField="accountNumber" size="11" />
+                        <hftl:formField label="#{messages['bankCoordinates.bankCode']}" field="bankCoordinates" childField="bankCode" size="5" />
+                        <hftl:formField label="#{messages['bankCoordinates.issuerName']}" field="bankCoordinates" childField="issuerName" size="50" />
+                                                
                     </p:fieldset>
                     <p:fieldset legend="#{messages['provider.invoiceConfiguration.title']}" styleClass="clearLeft">
                         <hftl:formField label="#{messages['invoiceConfiguration.displaySubscriptions']}" field="invoiceConfiguration" childField="displaySubscriptions"
@@ -90,9 +95,34 @@
                     </p:fieldset>
                     
                     <p:fieldset legend="#{messages['rumSequence.title']}" styleClass="clearLeft">
-                        <hftl:formField label="#{messages['rumSequence.prefix']}" field="rumSequence" childField="prefix" size="15" newLine="true" />
-                        <hftl:formField label="#{messages['rumSequence.sequenceSize']}" field="rumSequence" childField="sequenceSize" maxValue="20" />
-                        <hftl:formField label="#{messages['rumSequence.currentSequenceNb']}" field="rumSequence" childField="currentSequenceNb" maxValue="35" disabled="true" />
+                        <hftl:formField label="#{messages['genericSequence.prefix']}" field="rumSequence" childField="prefix" size="15" newLine="true" />
+                        <hftl:formField label="#{messages['genericSequence.sequenceSize']}" field="rumSequence" childField="sequenceSize" maxValue="20" />
+                        <hftl:formField label="#{messages['genericSequence.currentSequenceNb']}" field="rumSequence" childField="currentSequenceNb" maxValue="35" disabled="true" />
+                    </p:fieldset>
+                    
+                    <p:fieldset legend="#{messages['customer.number.sequence.title']}" styleClass="clearLeft">
+                        <hftl:formField label="#{messages['genericSequence.prefix']}" field="customerNoSequence" childField="prefix" size="15" newLine="true" />
+                        <hftl:formField label="#{messages['genericSequence.sequenceSize']}" field="customerNoSequence" childField="sequenceSize" maxValue="20" />
+                        <hftl:formField label="#{messages['genericSequence.currentSequenceNb']}" field="customerNoSequence" childField="currentSequenceNb" maxValue="35" disabled="true" />
+                    </p:fieldset>
+                    	
+                    <p:fieldset legend="#{messages['gdprConfiguration.title']}" styleClass="clearLeft">
+                    	<label title="#{messages['gdprConfiguration.note.duration']}"></label>
+                    	<hftl:formField label="#{messages['gdprConfiguration.inactiveSubscriptionLife']}" field="gdprConfiguration" childField="inactiveSubscriptionLife" />
+                    	<hftl:formField label="#{messages['gdprConfiguration.inactiveOrderLife']}" field="gdprConfiguration" childField="inactiveOrderLife" />
+                    	<hftl:formField label="#{messages['gdprConfiguration.invoiceLife']}" field="gdprConfiguration" childField="invoiceLife" />
+                    	<hftl:formField label="#{messages['gdprConfiguration.accountingLife']}" field="gdprConfiguration" childField="accountingLife" />
+                    	<hftl:formField label="#{messages['gdprConfiguration.customerProspectLife']}" field="gdprConfiguration" childField="customerProspectLife" />
+                    	<hftl:formField label="#{messages['gdprConfiguration.mailingLife']}" field="gdprConfiguration" childField="mailingLife" />
+                    	<hftl:formField label="#{messages['gdprConfiguration.aoCheckUnpaidLife']}" field="gdprConfiguration" childField="aoCheckUnpaidLife" />
+                    	
+                    	<hftl:formField newLine="true" label="#{messages['gdprConfiguration.job.deleteSubscription']}" field="gdprConfiguration" childField="deleteSubscription" />
+                    	<hftl:formField label="#{messages['gdprConfiguration.job.deleteOrder']}" field="gdprConfiguration" childField="deleteOrder" />
+                    	<hftl:formField label="#{messages['gdprConfiguration.job.deleteInvoice']}" field="gdprConfiguration" childField="deleteInvoice" />
+                    	<hftl:formField label="#{messages['gdprConfiguration.job.deleteAccounting']}" field="gdprConfiguration" childField="deleteAccounting" />
+                    	<hftl:formField label="#{messages['gdprConfiguration.job.deleteCustomerProspect']}" field="gdprConfiguration" childField="deleteCustomerProspect" />
+                    	<hftl:formField label="#{messages['gdprConfiguration.job.deleteMailing']}" field="gdprConfiguration" childField="deleteMailingLife" />
+                    	<hftl:formField label="#{messages['gdprConfiguration.job.deleteAoCheckUnpaid']}" field="gdprConfiguration" childField="deleteAoCheckUnpaidLife" />
                     </p:fieldset>
 					
                 </p:tab>

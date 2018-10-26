@@ -40,6 +40,8 @@ import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentScheduleInstanceItem;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -54,6 +56,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     @Inject
     private AccountOperationService accountOperationService;
+
+    @Inject
+    private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
 
     /**
      * Match account operations.
@@ -72,9 +77,14 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         BigDecimal amountCredit = amount;
         BigDecimal amountDebit = amount;
         boolean fullMatch = false;
+        List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<PaymentScheduleInstanceItem>();
 
         // log.debug("AKK will match for amount {} partial match is for {}", amount, aoToMatchLast != null ? aoToMatchLast.getId() + "_" + aoToMatchLast.getReference() : null);
         for (AccountOperation accountOperation : listOcc) {
+
+            if (accountOperation instanceof RecordedInvoice && ((RecordedInvoice) accountOperation).getPaymentScheduleInstanceItem() != null) {
+                listPaymentScheduleInstanceItem.add(((RecordedInvoice) accountOperation).getPaymentScheduleInstanceItem());
+            }
 
             if (aoToMatchLast != null && accountOperation.getId().equals(aoToMatchLast.getId())) {
                 continue;
@@ -111,9 +121,6 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
             accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
             matchingAmount.setMatchingAmount(amountToMatch);
-
-            accountOperation = accountOperationService.update(accountOperation);
-
             matchingAmount.updateAudit(currentUser);
             matchingAmount.setAccountOperation(accountOperation);
             matchingAmount.setMatchingCode(matchingCode);
@@ -128,6 +135,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             AccountOperation accountOperation = accountOperationService.findById(aoToMatchLast.getId());
             amountToMatch = BigDecimal.ZERO;
             fullMatch = false;
+            if (accountOperation instanceof RecordedInvoice && ((RecordedInvoice) accountOperation).getPaymentScheduleInstanceItem() != null) {
+                listPaymentScheduleInstanceItem.add(((RecordedInvoice) accountOperation).getPaymentScheduleInstanceItem());
+            }
 
             MatchingAmount matchingAmount = new MatchingAmount();
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
@@ -157,9 +167,6 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
             accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
             matchingAmount.setMatchingAmount(amountToMatch);
-
-            accountOperation = accountOperationService.update(accountOperation);
-
             matchingAmount.updateAudit(currentUser);
             matchingAmount.setAccountOperation(accountOperation);
             matchingAmount.setMatchingCode(matchingCode);
@@ -173,6 +180,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         matchingCode.setMatchingDate(new Date());
         matchingCode.setMatchingType(matchingTypeEnum);
         create(matchingCode);
+        if (!listPaymentScheduleInstanceItem.isEmpty()) {
+            for (PaymentScheduleInstanceItem paymentScheduleInstanceItem : listPaymentScheduleInstanceItem) {
+                paymentScheduleInstanceItemService.applyOneShotPS(paymentScheduleInstanceItem);
+            }
+        }
 
     }
 
@@ -199,6 +211,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
      */
     public void unmatching(Long idMatchingCode) throws BusinessException {
         log.info("start cancelMatching with id {}", idMatchingCode);
+        PaymentScheduleInstanceItem paymentScheduleInstanceItem = null;
         if (idMatchingCode == null) {
             throw new BusinessException("Error when idMatchingCode is null!");
         }
@@ -216,6 +229,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 if (operation.getMatchingStatus() != MatchingStatusEnum.P && operation.getMatchingStatus() != MatchingStatusEnum.L) {
                     throw new BusinessException("Error:matchingCode containt unMatching operation");
                 }
+                if (operation instanceof RecordedInvoice && ((RecordedInvoice) operation).getPaymentScheduleInstanceItem() != null) {
+                    paymentScheduleInstanceItem = ((RecordedInvoice) operation).getPaymentScheduleInstanceItem();
+                }
                 operation.setUnMatchingAmount(operation.getUnMatchingAmount().add(matchingAmount.getMatchingAmount()));
                 operation.setMatchingAmount(operation.getMatchingAmount().subtract(matchingAmount.getMatchingAmount()));
                 if (BigDecimal.ZERO.compareTo(operation.getMatchingAmount()) == 0) {
@@ -230,6 +246,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         }
         log.info("remove matching code ....");
         remove(matchingCode);
+        if (paymentScheduleInstanceItem != null) {
+            paymentScheduleInstanceItemService.applyOneShotRejectPS(paymentScheduleInstanceItem);
+        }
         log.info("successfully end cancelMatching!");
     }
 
@@ -322,6 +341,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             matching(listOcc, matchedAmount, null, matchingTypeEnum);
             matchingReturnObject.setOk(true);
             log.info("matchOperations successful : no partial");
+
             return matchingReturnObject;
         }
 

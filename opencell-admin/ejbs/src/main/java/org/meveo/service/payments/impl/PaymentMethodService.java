@@ -25,6 +25,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -39,18 +40,28 @@ import org.meveo.service.base.PersistenceService;
 /**
  * PaymentMethod service implementation.
  * 
- *  @author anasseh
- *  @lastModifiedVersion 5.0 
+ * @author anasseh
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
+    /** The gateway payment factory. */
     @Inject
     private GatewayPaymentFactory gatewayPaymentFactory;
-    
+
+    /** The payment gateway service. */
     @Inject
     private PaymentGatewayService paymentGatewayService;
 
+    /** The customer account service. */
+    @Inject
+    private CustomerAccountService customerAccountService;
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.base.PersistenceService#create(org.meveo.model.IEntity)
+     */
     @Override
     public void create(PaymentMethod paymentMethod) throws BusinessException {
 
@@ -71,6 +82,35 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
     }
 
+    /**
+     * Test if the card with a TokenId and aoociated to a customer account Exist.
+     *
+     * @param paymentMethod Payment Method
+     * @return true, if successful
+     * @throws BusinessException the business exception
+     */
+    public boolean cardTokenExist(PaymentMethod paymentMethod) throws BusinessException {
+
+        boolean result = false;
+        if (paymentMethod instanceof CardPaymentMethod) {
+            CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;
+            if ((cardPayment == null) || (cardPayment.getCustomerAccount() == null)) {
+                result = true;
+            }
+            long nbrOfCardCustomerAccount = (long) getEntityManager().createNamedQuery("PaymentMethod.getNumberOfCardCustomerAccount")
+                .setParameter("customerAccountId", cardPayment.getCustomerAccount().getId()).setParameter("monthExpiration", cardPayment.getMonthExpiration())
+                .setParameter("yearExpiration", cardPayment.getYearExpiration()).setParameter("hiddenCardNumber", cardPayment.getHiddenCardNumber())
+                .setParameter("cardType", cardPayment.getCardType()).getSingleResult();
+
+            if (nbrOfCardCustomerAccount > 0)
+                result = true;
+        }
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.base.PersistenceService#update(org.meveo.model.IEntity)
+     */
     @Override
     public PaymentMethod update(PaymentMethod entity) throws BusinessException {
         if (entity.isPreferred()) {
@@ -91,6 +131,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         return paymentMethod;
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.service.base.PersistenceService#remove(org.meveo.model.IEntity)
+     */
     @Override
     public void remove(PaymentMethod paymentMethod) throws BusinessException {
 
@@ -122,9 +165,12 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (!StringUtils.isBlank(cardPaymentMethod.getTokenId())) {
             return;
         }
-        String cardNumber = cardPaymentMethod.getCardNumber();       
+        String cardNumber = cardPaymentMethod.getCardNumber();
         GatewayPaymentInterface gatewayPaymentInterface = null;
-        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, cardPaymentMethod,null);
+        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, cardPaymentMethod, null);
+        if (paymentGateway == null) {
+            throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
+        }
         try {
             gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
         } catch (Exception e) {
@@ -143,6 +189,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     }
 
     /**
+     * Find by token id.
+     *
      * @param tokenId payment's token id
      * @return card payment method instance.
      */
@@ -151,7 +199,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         queryBuilder.addCriterion("tokenId", "=", tokenId, true);
         return (CardPaymentMethod) queryBuilder.getQuery(getEntityManager()).getSingleResult();
     }
-    
+
     /**
      * Create a new DDPaymentMethod from the createMandate callBback.
      * 
@@ -159,11 +207,11 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
      * @param mandatInfoDto Mandat info dto
      * @throws BusinessException Business Exception
      */
-    public void createMandateCallBack(CustomerAccount customerAccount,MandatInfoDto mandatInfoDto) throws BusinessException {
-       log.debug("createMandateCallBack customerAccount:{} mandatInfoDto:{}",customerAccount,mandatInfoDto);
+    public void createMandateCallBack(CustomerAccount customerAccount, MandatInfoDto mandatInfoDto) throws BusinessException {
+        log.debug("createMandateCallBack customerAccount:{} mandatInfoDto:{}", customerAccount, mandatInfoDto);
         DDPaymentMethod ddPaymentMethod = new DDPaymentMethod();
         ddPaymentMethod.setCustomerAccount(customerAccount);
-        ddPaymentMethod.setMandateIdentification(mandatInfoDto.getReference());  
+        ddPaymentMethod.setMandateIdentification(mandatInfoDto.getReference());
         ddPaymentMethod.setMandateDate(mandatInfoDto.getDateSigned());
         ddPaymentMethod.setPreferred(true);
         ddPaymentMethod.setAlias(mandatInfoDto.getReference());
@@ -174,4 +222,58 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         ddPaymentMethod.setBankCoordinates(bankCoordinates);
         create(ddPaymentMethod);
     }
+
+    /**
+     * Gets the hosted checkout url.
+     *
+     * @param hostedCheckoutInput the hosted checkout input
+     * @return the hosted checkout url
+     * @throws BusinessException the business exception
+     */
+    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
+        CustomerAccount customerAccount = customerAccountService.findByCode(hostedCheckoutInput.getCustomerAccountCode());
+        if (customerAccount == null) {
+            throw new BusinessException("Can't found CustomerAccount with code:" + hostedCheckoutInput.getCustomerAccountCode());
+        }
+
+        if ( ( customerAccount.getTradingCurrency() != null ) && (!StringUtils.isBlank(customerAccount.getTradingCurrency().getCurrencyCode()))) {
+            hostedCheckoutInput.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
+        }
+        if ( ( customerAccount.getAddress() != null ) && ( customerAccount.getAddress().getCountry() != null ) && (!StringUtils.isBlank(customerAccount.getAddress().getCountry().getCountryCode()))) {
+            hostedCheckoutInput.setCountryCode(customerAccount.getAddress().getCountry().getCountryCode().toLowerCase());
+        }
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, null, null);
+        if (matchedPaymentGatewayForTheCA == null) {
+            throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
+        }
+        try {
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(matchedPaymentGatewayForTheCA);
+        } catch (Exception e1) {
+            throw new BusinessException("Can't build gatewayPaymentInterface");
+        }
+        hostedCheckoutInput.setCustomerAccountId(customerAccount.getId());
+        String hostedCheckoutUrl = gatewayPaymentInterface.getHostedCheckoutUrl(hostedCheckoutInput);
+
+        return hostedCheckoutUrl;
+    }
+
+    public Object getClient(Long customerAccountId) throws BusinessException {
+        CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
+        if (customerAccount == null) {
+            throw new BusinessException("Can't found CustomerAccount with Id:" + customerAccountId);
+        }
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, null, null);
+        if (matchedPaymentGatewayForTheCA == null) {
+                throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
+            }
+        try {
+                gatewayPaymentInterface = gatewayPaymentFactory.getInstance(matchedPaymentGatewayForTheCA);
+            } catch (Exception e1) {
+                throw new BusinessException("Can't build gatewayPaymentInterface");
+            }
+        return gatewayPaymentInterface.getClientObject();
+    }
+
 }

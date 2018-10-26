@@ -14,10 +14,29 @@
     </ui:define>
 
     <ui:define name="body">
+    
+        <hftl:entityPopup id="accountingCodePopup"
+			header="#{messages['accountingCode']}"
+			backingBean="#{accountingCodeListBean}"  
+			selection="#{accountOperationBean.filters['accountingCode']}"
+			searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}" searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" 
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}" 
+			column2="description" 
+			updateField=":parentTab:searchForm:cAaccountingCodeId">
+		</hftl:entityPopup>
+    
+    	 <hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" 
+        		updateField=":parentTab:formCustomerAccount:childTab:customerSelectId :parentTab:formCustomerAccount:childTab:customerSelectId_text" selection="#{customerAccountBean.entity.customer}"
+        		backingBean="#{customerListBean}" searchField1Label="#{messages['customer.code']}" searchField1="code"
+            	column1Label="#{messages['customer.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
 
         <p:importEnum type="org.meveo.model.payments.CustomerAccountStatusEnum" var="CustomerAccountStatusEnum" />
         <p:importEnum type="org.meveo.model.payments.PaymentMethodEnum" var="PaymentMethodEnum" />
-
+        
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.customers']}" disabled="true" />
@@ -26,11 +45,6 @@
                 <p:menuitem value="#{messages['menu.customerAccount']} - #{customerAccountBean.entity.code}" disabled="true" rendered="#{!customerAccountBean.entity.transient}" />
             </p:breadCrumb>
         </h:form>
-
-        <hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" backingBean="#{customerListBean}" searchField1Label="#{messages['customer.code']}" searchField1="code"
-            column1Label="#{messages['customer.code']}" column1="code" selection="#{customerAccountBean.entity.customer}"
-            updateField=":parentTab:formCustomerAccount:childTab:customerSelectId :parentTab:formCustomerAccount:childTab:customerSelectId_text">
-        </hftl:entityPopup>
 
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1">
@@ -44,10 +58,10 @@
                             <p:tabView id="childTab" activeIndex="#{customerAccountBean.activeTab}">
                                 <p:tab id="tab0" title="#{messages['customerAccount.tab.account']}">
 
-                                    <hftl:formField id="customerSelectId" label="#{messages['customerAccount.customer']}" field="customer" valueLabelField="code" required="true" popup="true"
-                                        popupId="searchCustomerPopup" allowEdit="false" displayOneLine="true" componentWidth="100" />
-
                                     <p:fieldset legend="#{messages['customerAccount.form']}" styleClass="clearLeft">
+                                    
+                                    	<hftl:formField id="customerSelectId" label="#{messages['customerAccount.customer']}" field="customer" valueLabelField="code" required="true" popup="true"
+                                        popupId="searchCustomerPopup" allowEdit="true" componentWidth="200"/>
 
                                         <hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" />
                                         <hftl:formField label="#{messages['accountEntity.primaryContact']}" field="primaryContact" valueLabelField="code" listBean="#{providerContactBean}" />
@@ -95,7 +109,9 @@
                                         <hftl:formField label="#{messages['customerAccount.creditCategory']}" field="creditCategory" valueLabelField="code" listBean="#{creditCategoryBean}" />
                                         <hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}" field="dueDateDelayEL" required="false" />                                       
                                         <hftl:formField label="#{messages['customerAccount.status']}" field="status" disabled="true" />                                       
-                                         
+                                        <hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
+										<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
+								
                                     </p:fieldset>
                                 </p:tab>
 
@@ -272,8 +288,11 @@
                             <hftl:searchField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />
                             <hftl:searchField label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus" />
                             <hftl:searchField label="#{messages['accountOperation.occCode']}" field="occCode" />
-                            <hftl:searchField label="#{messages['accountingCode']}" field="accountingCode" valueLabelField="code" listBean="#{accountingCodeListBean}" />
-                            <hftl:searchField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />
+							
+						    <hftl:searchField id="cAaccountingCodeId" label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" valueLabelField="code"  popup="true"
+							popupId="accountingCodePopup" showResetButton="true" />
+							
+							<hftl:searchField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />
                             <hftl:searchField label="#{messages['accountOperation.dueDate']}" field="dueDate" />
                             <hftl:searchField label="#{messages['order.number']}" field="orderNumber" />
                         </hftl:searchPanel>
@@ -342,9 +361,14 @@
 
                             <hftl:column label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus.label" isMessage="true" width="10%" />
 
-                            <hftl:actionsColumn width="15%" renderDeleteLink="false" editView="#{accountOperationBean.displayOperation(entity)}" renderViewLink="true" />
-                            
-                            <ui:define name="add-on-buttons">
+							<hftl:actionsColumn width="15%" renderDeleteLink="false"
+								editView="#{accountOperationBean.displayOperation(entity)}"
+								backView="backToCaFromOcc"
+								backEntityId="#{customerAccountBean.objectId}"
+								backTab="0" backMainTab="1"
+								renderViewLink="true" />
+
+							<ui:define name="add-on-buttons">
                                 <h:panelGroup layout="block" styleClass="form-panel-actions" rendered="#{accountOperationBean.canUserUpdateEntity()}">
                                     <p:commandButton action="#{accountOperationBean.matching(customerAccountBean.entity.id)}" value="#{messages['customerAccount.buttonLettrage']}"
                                         rendered="#{customerAccountBean.isActiveAccount()}" />

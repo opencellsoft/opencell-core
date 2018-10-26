@@ -142,6 +142,7 @@ public class InvoiceApi extends BaseApi {
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO) throws MeveoApiException, BusinessException, Exception {
         log.debug("InvoiceDto:" + JsonUtils.toJson(invoiceDTO, true));
         validateInvoiceDto(invoiceDTO);
+
         Auditable auditable = new Auditable(currentUser);
         Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
 
@@ -159,7 +160,7 @@ public class InvoiceApi extends BaseApi {
         BigDecimal invoiceAmountWithTax = BigDecimal.ZERO;
         Invoice invoice = new Invoice();
         invoice.setBillingAccount(billingAccount);
-
+        invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
         invoice.setInvoiceDate(invoiceDTO.getInvoiceDate());
         invoice.setDueDate(invoiceDTO.getDueDate());
 
@@ -253,7 +254,7 @@ public class InvoiceApi extends BaseApi {
                         ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax,
                         amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null, null, null, null,
                         ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
-                        ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate());
+                        ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), null);
 
                     meveoRatedTransaction.setInvoice(invoice);
                     meveoRatedTransaction.setWallet(userAccount.getWallet());
@@ -353,13 +354,13 @@ public class InvoiceApi extends BaseApi {
         for (Entry<Long, TaxInvoiceAgregate> entry : taxInvoiceAgregateMap.entrySet()) {
             invoiceAgregateService.create(entry.getValue());
         }
-        
+
         int invoiceRounding = appProvider.getInvoiceRounding() == null ? 2 : appProvider.getInvoiceRounding();
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
-        
-        invoice.setAmountWithoutTax( round(invoiceAmountWithoutTax, invoiceRounding, invoiceRoundingMode) );
-        invoice.setAmountTax( round(invoiceAmountTax, invoiceRounding, invoiceRoundingMode) );
-        invoice.setAmountWithTax( round(invoiceAmountWithTax, invoiceRounding, invoiceRoundingMode) );
+
+        invoice.setAmountWithoutTax(round(invoiceAmountWithoutTax, invoiceRounding, invoiceRoundingMode));
+        invoice.setAmountTax(round(invoiceAmountTax, invoiceRounding, invoiceRoundingMode));
+        invoice.setAmountWithTax(round(invoiceAmountWithTax, invoiceRounding, invoiceRoundingMode));
 
         BigDecimal netToPay = invoice.getAmountWithTax();
         if (!appProvider.isEntreprise() && invoiceDTO.isIncludeBalance()) {
@@ -368,20 +369,9 @@ public class InvoiceApi extends BaseApi {
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");
             }
-            netToPay = invoice.getAmountWithTax().add( round(balance, invoiceRounding, invoiceRoundingMode) );
+            netToPay = invoice.getAmountWithTax().add(round(balance, invoiceRounding, invoiceRoundingMode));
         }
         invoice.setNetToPay(netToPay);
-
-        try {
-            populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, true);
-
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
 
         invoice = invoiceService.update(invoice);
         CreateInvoiceResponseDto response = new CreateInvoiceResponseDto();
@@ -395,7 +385,8 @@ public class InvoiceApi extends BaseApi {
 
         // pdf and xml are added to response if requested
         if (invoiceDTO.isAutoValidation()) {
-            response.setInvoiceNumber(validateInvoice(invoice.getId()));
+            invoiceService.assignInvoiceNumber(invoice);
+            response.setInvoiceNumber(invoice.getInvoiceNumber());
             if (invoiceDTO.isReturnXml() || invoiceDTO.isReturnPdf()) {
                 invoiceService.produceInvoiceXml(invoice);
                 String invoiceXml = invoiceService.getInvoiceXml(invoice);
@@ -493,12 +484,12 @@ public class InvoiceApi extends BaseApi {
      * @throws ImportInvoiceException import invoice exception
      * @throws InvoiceExistException invoice exist exception
      */
-    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto)
+    public List<GenerateInvoiceResultDto> generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto)
             throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
         return generateInvoice(generateInvoiceRequestDto, false);
     }
 
-    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, boolean isDraft)
+    public List<GenerateInvoiceResultDto> generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, boolean isDraft)
             throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
 
         if (generateInvoiceRequestDto == null) {
@@ -565,17 +556,22 @@ public class InvoiceApi extends BaseApi {
         boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
-
-        Invoice invoice = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
-        this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
-        invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
- 
-        GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
-        if (isDraft) {
-            invoiceService.cancelInvoice(invoice);
+        List<GenerateInvoiceResultDto> invoicesDtos = new ArrayList<>();
+        List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
+        if(invoices != null) {
+	        for(Invoice invoice : invoices) {
+	            this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
+	            invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
+	            
+	            GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
+	            invoicesDtos.add(generateInvoiceResultDto);
+	            if (isDraft) {
+	                invoiceService.cancelInvoice(invoice);
+	            }   
+	        }
         }
-
-        return generateInvoiceResultDto;
+        
+        return invoicesDtos;
     }
     
     public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includeXml, boolean includePdf) throws BusinessException {

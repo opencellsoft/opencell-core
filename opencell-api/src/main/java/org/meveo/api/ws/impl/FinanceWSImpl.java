@@ -193,13 +193,13 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
     }
 
     @Override
-    public ActionStatus runReportExtract(RunReportExtractDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    public ReportExtractExecutionResultResponseDto runReportExtract(RunReportExtractDto postData) {
+    	ReportExtractExecutionResultResponseDto result = new ReportExtractExecutionResultResponseDto();
 
         try {
-            reportExtractApi.runReportExtract(postData);
+        	result.setReportExtractExecutionResult(reportExtractApi.runReportExtract(postData));
         } catch (Exception e) {
-            processException(e, result);
+            processException(e, result.getActionStatus());
         }
 
         return result;

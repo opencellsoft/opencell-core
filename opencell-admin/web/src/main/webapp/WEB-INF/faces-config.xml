@@ -910,6 +910,12 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<redirect />
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>invoiceSequences</from-outcome>
+		<to-view-id>/pages/billing/invoiceSequences/invoiceSequences.xhtml
+		</to-view-id>
+		<redirect />
+	</navigation-case>
+	<navigation-case>
 		<from-outcome>invoiceCategoryDetail</from-outcome>
 		<to-view-id>/pages/catalog/invoiceCategories/invoiceCategoryDetail.xhtml
 		</to-view-id>
@@ -1026,6 +1032,25 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 			</view-param>
 		</redirect>
 	</navigation-case>
+	<navigation-case>
+		<from-outcome>backToCaFromOcc</from-outcome>
+		<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtm</to-view-id>
+		<redirect include-view-params="true">
+		    <view-param>
+				<name>customerAccountId</name>
+				<value>#{accountOperationBean.backEntityId}</value>
+			</view-param>
+			<view-param>
+				<name>mainTab</name>
+				<value>#{accountOperationBean.backMainTab}</value>
+			</view-param>
+			<view-param>
+				<name>tab</name>
+				<value>#{accountOperationBean.backTab}</value>
+			</view-param>
+		</redirect>
+	</navigation-case>
+	
 
 	<navigation-case>
 		<from-outcome>crmAccounts</from-outcome>
@@ -1145,6 +1170,12 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<redirect />
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>dDRequestBuilders</from-outcome>
+		<to-view-id>/pages/payments/dDRequestBuilders/dDRequestBuilders.xhtml
+		</to-view-id>
+		<redirect />
+	</navigation-case>	
+	<navigation-case>
 		<from-outcome>ddrequestLots</from-outcome>
 		<to-view-id>/pages/payments/ddrequestLot/ddrequestLots.xhtml
 		</to-view-id>
@@ -1157,6 +1188,30 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<redirect />
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>paymentScheduleTemplates</from-outcome>
+		<to-view-id>/pages/payments/paymentScheduleTemplates/paymentScheduleTemplates.xhtml
+		</to-view-id>
+		<redirect />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>paymentScheduleTemplateDetail</from-outcome>
+		<to-view-id>/pages/payments/paymentScheduleTemplates/paymentScheduleTemplateDetail.xhtml
+		</to-view-id>
+		<redirect />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>paymentScheduleInstances</from-outcome>
+		<to-view-id>/pages/payments/paymentScheduleInstances/paymentScheduleInstances.xhtml
+		</to-view-id>
+		<redirect />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>paymentScheduleInstanceDetail</from-outcome>
+		<to-view-id>/pages/payments/paymentScheduleInstances/paymentScheduleInstanceDetail.xhtml
+		</to-view-id>
+		<redirect include-view-params="true" />
+	</navigation-case>	
+	<navigation-case>
 		<from-outcome>paymentGateways</from-outcome>
 		<to-view-id>/pages/payments/paymentGateways/paymentGateways.xhtml
 		</to-view-id>
@@ -1167,7 +1222,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<to-view-id>/pages/payments/paymentGateways/paymentGatewayDetail.xhtml
 		</to-view-id>
 		<redirect />
-	</navigation-case>	
+	</navigation-case>
 	<navigation-case>
 		<from-outcome>ddrequestLotOps</from-outcome>
 		<to-view-id>/pages/payments/ddrequestLotOp/ddrequestLotOps.xhtml

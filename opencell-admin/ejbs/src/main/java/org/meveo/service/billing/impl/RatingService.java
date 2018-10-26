@@ -271,6 +271,12 @@ public class RatingService extends BusinessService<WalletOperation> {
 
                 walletOperation.setInvoicingDate(chargeInstance.getInvoicingCalendar().nextCalendarDate(walletOperation.getOperationDate()));
             }
+            
+            if(chargeInstance.getSeller() != null) {
+            	walletOperation.setSeller(chargeInstance.getSeller());
+            } else {
+            	walletOperation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+            }
         }
 
         walletOperation.setCode(chargeTemplate.getCode());
@@ -403,7 +409,8 @@ public class RatingService extends BusinessService<WalletOperation> {
                             edrService.create(newEdr);
                         }
                     } else {
-                        throw new BusinessException("cannot find subscription for the trigerred EDR with code " + triggeredEDRTemplate.getCode());
+                    	// removed for the case of product instance on user account without subscription
+                        //throw new BusinessException("cannot find subscription for the trigerred EDR with code " + triggeredEDRTemplate.getCode());
                     }
                 } else {
                     CDR cdr = new CDR();
@@ -629,9 +636,9 @@ public class RatingService extends BusinessService<WalletOperation> {
             priceWithoutTax = walletOperation.getQuantity().multiply(unitPriceWithoutTax);
 
             // process ratingEL here
-            if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getRatingEL())) {
-                priceWithoutTax = new BigDecimal(
-                    evaluateDoubleExpression(walletOperation.getPriceplan().getRatingEL(), walletOperation, walletOperation.getWallet().getUserAccount()));
+            if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getRatingELWithoutTax())) {
+                priceWithoutTax = BigDecimal.valueOf(
+                    evaluateDoubleExpression(walletOperation.getPriceplan().getRatingELWithoutTax(), walletOperation, walletOperation.getWallet().getUserAccount()));
             }
 
             if (rounding != null && rounding > 0) {
@@ -653,6 +660,13 @@ public class RatingService extends BusinessService<WalletOperation> {
         } else {
 
             priceWithTax = walletOperation.getQuantity().multiply(unitPriceWithTax);
+            
+            // process ratingEL here
+            if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getRatingELWithTax())) {
+            	priceWithTax = BigDecimal.valueOf(
+                    evaluateDoubleExpression(walletOperation.getPriceplan().getRatingELWithTax(), walletOperation, walletOperation.getWallet().getUserAccount()));
+            }
+            
             if (rounding != null && rounding > 0) {
                 priceWithTax = round(priceWithTax, rounding, roundingMode);
             }
@@ -895,25 +909,8 @@ public class RatingService extends BusinessService<WalletOperation> {
                 operation.setUnitAmountTax(null);
 
                 ChargeInstance chargeInstance = operationToRerate.getChargeInstance();
-                TradingCountry tradingCountry = chargeInstance.getUserAccount().getBillingAccount().getTradingCountry();
-                ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
-                InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(chargeTemplate.getInvoiceSubCategory(),
-                    tradingCountry, operation.getOperationDate());
-                if (invoiceSubcategoryCountry == null) {
-                    throw new IncorrectChargeTemplateException("reRate: No invoiceSubcategoryCountry exists for invoiceSubCategory code="
-                            + chargeTemplate.getInvoiceSubCategory().getCode() + " and trading country=" + tradingCountry.getCountryCode());
-                }
-
-                Tax tax = null;               
-                if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
-                    tax = invoiceSubcategoryCountry.getTax();
-                } else {
-                    tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), wallet == null ? null : userAccount, operation.getBillingAccount(),
-                        null);
-                }
-                if (tax == null) {
-                    throw new IncorrectChargeTemplateException("reRate: no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
-                }
+                
+                Tax tax = invoiceSubCategoryCountryService.determineTax(chargeInstance, operation.getOperationDate());
                 operation.setTaxPercent(tax.getPercent());
 
                 rateBareWalletOperation(operation, null, null, priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(),

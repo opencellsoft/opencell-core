@@ -12,6 +12,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
+import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -35,7 +36,8 @@ import org.primefaces.model.SortOrder;
  * 
  * @author Edward P. Legaspi
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class PaymentMethodApi extends BaseApi {
@@ -251,9 +253,6 @@ public class PaymentMethodApi extends BaseApi {
                     throw new InvalidDTOException("Missing account owner.");
                 }
 
-                if (StringUtils.isBlank(bankCoordinates.getBankName())) {
-                    throw new InvalidDTOException("Missing bank name.");
-                }
                 CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
                 org.meveo.model.crm.Customer cust = null;
                 if (customerAccount == null) {
@@ -307,4 +306,9 @@ public class PaymentMethodApi extends BaseApi {
             paymentMethodService.disable(paymentMethod);
         }
     }
+
+    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException {
+        return paymentMethodService.getHostedCheckoutUrl(hostedCheckoutInput);
+    }
+
 }

@@ -18,8 +18,6 @@
  */
 package org.meveo.model;
 
-import java.util.Map;
-
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
@@ -34,8 +32,10 @@ import org.apache.commons.lang3.StringUtils;
  * @author Said Ramli
  * @lastModifiedVersion 5.1
  */
+@ReferenceIdentifierCode("code")
+@ReferenceIdentifierDescription("description")
 @MappedSuperclass
-public abstract class BusinessEntity extends AuditableEntity implements ISearchable {
+public abstract class BusinessEntity extends AuditableEntity implements ISearchable, IReferenceEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -142,10 +142,11 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
         }
 
         BusinessEntity other = (BusinessEntity) obj;
+        
+		if (id != null && other.getId() != null && getClass().equals(other.getClass()) && id.equals(other.getId())) {
+			return true;
+		}
 
-        if (id != null && other.getId() != null && id.equals(other.getId())) {
-            return true;
-        }
         if (code == null) {
             if (other.getCode() != null) {
                 return false;
@@ -173,4 +174,19 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     public boolean isCodeChanged() {
         return !StringUtils.equals(code, previousCode);
     }
+    
+    @Override
+    public String getReferenceCode() {
+    	return code;
+    }
+    
+    @Override
+    public void setReferenceCode(Object value) {
+    	setCode(value.toString());
+    }
+
+    @Override
+    public String getReferenceDescription() {
+		return description;
+	}
 }

@@ -25,6 +25,9 @@ import javax.persistence.Embeddable;
 import javax.validation.constraints.Size;
 
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.commons.utils.AesEncrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Embeddable
 public class BankCoordinates implements Serializable, Cloneable {
@@ -47,8 +50,8 @@ public class BankCoordinates implements Serializable, Cloneable {
     @Size(max = 2)
     private String key;
 
-    @Column(name = "iban", length = 34)
-    @Size(max = 34)
+    @Column(name = "iban", length = 80)
+    @Size(max = 80)
     private String iban;
 
     @Column(name = "bic", length = 11)
@@ -83,7 +86,7 @@ public class BankCoordinates implements Serializable, Cloneable {
     }
 
     public BankCoordinates(BankCoordinates bankCoordinates) {
-        this(bankCoordinates.bankCode, bankCoordinates.branchCode, bankCoordinates.accountNumber, bankCoordinates.key, bankCoordinates.iban, bankCoordinates.bic,
+        this(bankCoordinates.bankCode, bankCoordinates.branchCode, bankCoordinates.accountNumber, bankCoordinates.key, bankCoordinates.getIban(), bankCoordinates.bic,
             bankCoordinates.accountOwner, bankCoordinates.bankName);
     }
 
@@ -93,7 +96,7 @@ public class BankCoordinates implements Serializable, Cloneable {
         this.branchCode = branchCode;
         this.accountNumber = accountNumber;
         this.key = key;
-        this.iban = iban;
+        setIban(iban);
         this.bic = bic;
         this.accountOwner = accountOwner;
         this.bankName = bankName;
@@ -132,11 +135,22 @@ public class BankCoordinates implements Serializable, Cloneable {
     }
 
     public String getIban() {
-        return iban;
+    	try {
+			return decryptIban(iban);
+		} catch (Exception e) {
+			Logger log = LoggerFactory.getLogger(BankCoordinates.class);
+			log.error("Error when decrypting Iban", e);
+			return null;
+		}
     }
 
     public void setIban(String iban) {
-        this.iban = iban;
+    	try {
+			this.iban = encryptIban(encryptIban(iban));
+		} catch (Exception e) {
+			Logger log = LoggerFactory.getLogger(BankCoordinates.class);
+			log.error("Error when encrypting Iban", e);
+		}
     }
 
     public String getBic() {
@@ -222,4 +236,35 @@ public class BankCoordinates implements Serializable, Cloneable {
 
         return StringUtils.compare(iban, other.getIban()) == 0;
     }
+    
+    /**
+	 * 
+	 * @param iban
+	 * @return encrypted iban if encryption key exist in config file else return iban
+	 * @throws Exception
+	 */
+	private String encryptIban(String iban) throws Exception {
+
+		if (iban != null && !(iban.startsWith("AES"))) {
+			AesEncrypt ae = new AesEncrypt();
+			return ae.getEncyptedIban(iban, ae);
+		}
+		return iban;
+	}
+
+	/**
+	 * 
+	 * @param iban
+	 * @return decrypted iban if iban is already encypted
+	 * @throws Exception
+	 */
+	private String decryptIban(String iban) throws Exception {
+
+		if (iban != null && iban.startsWith("AES")) {
+			iban = iban.substring(3);
+			AesEncrypt ae = new AesEncrypt();
+			return ae.getDecryptedIban(iban, ae);
+		}
+		return iban;
+	}
 }

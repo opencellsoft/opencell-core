@@ -18,6 +18,8 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -46,50 +48,23 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
     @EJB
     private OneShotChargeInstanceService oneShotChargeInstanceService;
 
+    /**
+     * Get Charge instance of a given code that belongs to a given subscription
+     * 
+     * @param code Charge code
+     * @param subscription Subscription
+     * @param status Charge status - optional
+     * @return A Charge instance entity
+     * @throws BusinessException
+     */
     @SuppressWarnings("unchecked")
-    public P findByCodeAndService(String code, Long subscriptionId) {
-        P chargeInstance = null;
-        try {
-            log.debug("start of find {} by code (code={}) ..", "ChargeInstance", code);
-            QueryBuilder qb = new QueryBuilder(ChargeInstance.class, "c");
-            qb.addCriterion("c.code", "=", code, true);
-            qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
-            chargeInstance = (P) qb.getQuery(getEntityManager()).getSingleResult();
-            log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "ChargeInstance", code, chargeInstance != null });
-
-        } catch (NoResultException nre) {
-            log.warn("findByCodeAndService : no charges have been found");
-        } catch (Exception e) {
-            log.error("findByCodeAndService error={} ", e.getMessage());
-        }
-        return chargeInstance;
-    }
-
-    @SuppressWarnings("unchecked")
-    public P findByCodeAndService(String code, Long subscriptionId, InstanceStatusEnum status) {
-        P chargeInstance = null;
-        try {
-            log.debug("start of find {} by code (code={}) ..", "ChargeInstance", code);
-            QueryBuilder qb = new QueryBuilder(ChargeInstance.class, "c");
-            qb.addCriterion("c.code", "=", code, true);
-            qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
-            qb.addCriterionEntity("c.status", status);
-            chargeInstance = (P) qb.getQuery(getEntityManager()).getSingleResult();
-            log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "ChargeInstance", code, chargeInstance != null });
-
-        } catch (NoResultException nre) {
-            log.warn("findByCodeAndService : no charges have been found");
-        } catch (Exception e) {
-            log.error("findByCodeAndService error={} ", e.getMessage());
-        }
-        return chargeInstance;
-    }
-
-    @SuppressWarnings("unchecked")
-    public P findByCodeAndSubscription(String code, Subscription subscription) throws BusinessException {
+    public P findByCodeAndSubscription(String code, Subscription subscription, InstanceStatusEnum status) throws BusinessException {
         QueryBuilder qb = new QueryBuilder(ChargeInstance.class, "c");
         qb.addCriterion("code", "=", code, true);
         qb.addCriterionEntity("subscription", subscription);
+        if (status != null) {
+            qb.addCriterionEntity("c.status", status);
+        }
 
         try {
             return (P) qb.getQuery(getEntityManager()).getSingleResult();
@@ -98,7 +73,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
             throw new BusinessException("More than one charge with code " + code + " found in subscription " + subscription.getId());
 
         } catch (NoResultException e) {
-            log.warn("failed to find By code and subscription", e);
+            log.warn("findByCodeAndService : no charges have been found");
             return null;
         }
     }
@@ -131,4 +106,12 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
         return null;
     }
 
+    /**
+     * Get a list of prepaid and active usage charge instances to populate a cache
+     * 
+     * @return A list of prepaid and active usage charge instances
+     */
+    public List<ChargeInstance> getPrepaidChargeInstancesForCache() {
+        return getEntityManager().createNamedQuery("ChargeInstance.listPrepaid", ChargeInstance.class).getResultList();
+    }
 }

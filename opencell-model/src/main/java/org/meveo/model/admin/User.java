@@ -27,10 +27,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -61,7 +61,10 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IReferenceEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.ReferenceIdentifierCode;
+import org.meveo.model.ReferenceIdentifierDescription;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.intcrm.AddressBook;
@@ -77,13 +80,15 @@ import org.meveo.model.shared.Name;
 @Cacheable
 @CustomFieldEntity(cftCodePrefix = "USER")
 @ExportIdentifier({ "userName" })
+@ReferenceIdentifierCode("userName")
+@ReferenceIdentifierDescription("email")
 @Table(name = "adm_user")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_user_seq"), })
 @NamedQueries({ @NamedQuery(name = "User.listUsersInMM", query = "SELECT u FROM User u LEFT JOIN u.roles as role WHERE role.name IN (:roleNames)"),
         @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u WHERE lower(u.userName)=:username", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
-public class User extends AuditableEntity implements ICustomFieldEntity {
+public class User extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -323,5 +328,20 @@ public class User extends AuditableEntity implements ICustomFieldEntity {
     public void setLastLoginDate(Date lastLoginDate) {
         this.lastLoginDate = lastLoginDate;
     }
+
+    @Override
+	public String getReferenceCode() {
+		return getUserName();
+	}
+    
+    @Override
+	public void setReferenceCode(Object value) {
+		setUserName(value.toString());
+	}
+
+	@Override
+	public String getReferenceDescription() {
+		return getNameOrUsername();
+	}
 
 }

@@ -17,6 +17,8 @@ import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
 import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
@@ -361,6 +363,43 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         RateSubscriptionResponseDto result = new RateSubscriptionResponseDto();
         try {
             result = subscriptionApi.rateSubscription(postData);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return result;
+    }
+
+	@Override
+	public ActionStatus activate(String subscriptionCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.activateSubscription(subscriptionCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+	}
+
+	@Override
+	public ActionStatus cancelSubscriptionRenewal(String subscriptionCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.cancelSubscriptionRenewal(subscriptionCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+	}
+
+    @Override
+    public SubscriptionForCustomerResponseDto activateForCustomer(SubscriptionForCustomerRequestDto postData) {
+        SubscriptionForCustomerResponseDto result = new SubscriptionForCustomerResponseDto();
+        try {
+            result = subscriptionApi.activateForCustomer(postData);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

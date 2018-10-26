@@ -12,6 +12,8 @@ import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
+import org.meveo.api.dto.payment.DDRequestBuilderDto;
+import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PaymentDto;
@@ -22,6 +24,11 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplatesDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
@@ -29,10 +36,12 @@ import org.meveo.api.dto.response.payment.CreditCategoryResponseDto;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.CreditCategoryApi;
+import org.meveo.api.payment.DDRequestBuilderApi;
 import org.meveo.api.payment.DDRequestLotOpApi;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.api.payment.PaymentGatewayApi;
 import org.meveo.api.payment.PaymentMethodApi;
+import org.meveo.api.payment.PaymentScheduleApi;
 import org.meveo.api.ws.PaymentWs;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 
@@ -40,8 +49,9 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
  * The implementation for PaymentWs.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  */
+@SuppressWarnings("deprecation")
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class PaymentWsImpl extends BaseWs implements PaymentWs {
@@ -60,6 +70,12 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 
     @Inject
     private PaymentGatewayApi paymentGatewayApi;
+    
+    @Inject
+    private DDRequestBuilderApi ddRequestBuilderApi;
+    
+    @Inject
+    private PaymentScheduleApi paymentScheduleApi;
 
     @Override
     public ActionStatus create(PaymentDto postData) {
@@ -379,7 +395,7 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     }
 
     /********************************************/
-    /**** Payment Methods ****/
+    /**** Payment Gateway                   ****/
     /******************************************/
 
     @Override
@@ -498,6 +514,239 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
             processException(e, result.getActionStatus());
         }
 
+        return result;
+    }
+    
+    /********************************************/
+    /**** DDRequest Builder                 ****/
+    /******************************************/
+    
+    @Override
+    public DDRequestBuilderResponseDto addDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder) {
+        DDRequestBuilderResponseDto response = new DDRequestBuilderResponseDto();
+        try {
+            ddRequestBuilderApi.create(ddRequestBuilder);
+            response.getDdRequestBuilders().add(ddRequestBuilderApi.find(ddRequestBuilder.getCode()));
+
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+
+        return response;
+    }
+
+    @Override
+    public ActionStatus updateDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            ddRequestBuilderApi.update(ddRequestBuilder);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus removeDDRequestBuilder(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            ddRequestBuilderApi.remove(code);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public DDRequestBuilderResponseDto listDDRequestBuilders(PagingAndFiltering pagingAndFiltering) {
+        DDRequestBuilderResponseDto result = new DDRequestBuilderResponseDto();
+        try {
+            result = ddRequestBuilderApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return null;
+    }
+
+    @Override
+    public DDRequestBuilderResponseDto findDDRequestBuilder(String code) {
+        DDRequestBuilderResponseDto result = new DDRequestBuilderResponseDto();
+
+        try {
+            result.getDdRequestBuilders().add(ddRequestBuilderApi.find(code));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public DDRequestBuilderResponseDto createOrUpdateDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder) {
+        DDRequestBuilderResponseDto response = new DDRequestBuilderResponseDto();
+        try {
+            ddRequestBuilderApi.createOrUpdate(ddRequestBuilder);
+            response.getDdRequestBuilders().add(ddRequestBuilderApi.find(ddRequestBuilder.getCode()));
+
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+        return response;
+    }
+
+    @Override
+    public ActionStatus enableDDRequestBuilder(String code) {
+        ActionStatus result = new ActionStatus();
+        try {
+            ddRequestBuilderApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableDDRequestBuilder(String code) {
+        ActionStatus result = new ActionStatus();
+        try {
+            ddRequestBuilderApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    /********************************************/
+    /**** Payment Schedules                 ****/
+    /******************************************/
+    
+    @Override
+    public ActionStatus createOrUpdatePaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            result.setMessage("" + paymentScheduleApi.createOrUpdatePaymentScheduleTemplate(paymentScheduleTemplateDto));
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public ActionStatus createPaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            result.setMessage("" + paymentScheduleApi.createPaymentScheduleTemplate(paymentScheduleTemplateDto));
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus updatePaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            result.setMessage("" + paymentScheduleApi.updatePaymentScheduleTemplate(paymentScheduleTemplateDto));
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public ActionStatus removePaymentScheduleTemplate(String paymentScheduleTemplateCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+           paymentScheduleApi.removePaymentScheduleTemplate(paymentScheduleTemplateCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public PaymentScheduleTemplateResponseDto findPaymentScheduleTemplate(String paymentScheduleTemplateCode) {
+        PaymentScheduleTemplateResponseDto result = new PaymentScheduleTemplateResponseDto();
+        try {
+            result.setPaymentScheduleTemplateDto(paymentScheduleApi.findPaymentScheduleTemplate(paymentScheduleTemplateCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(PagingAndFiltering pagingAndFiltering) {
+        PaymentScheduleTemplatesDto result = new PaymentScheduleTemplatesDto();
+        try {
+            result = paymentScheduleApi.listPaymentScheduleTemplate(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public ActionStatus updatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+           paymentScheduleApi.updatePaymentScheduleInstance(paymentScheduleInstanceDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public PaymentScheduleInstancesDto listPaymentScheduleInstance(PagingAndFiltering pagingAndFiltering) {
+        PaymentScheduleInstancesDto result = new PaymentScheduleInstancesDto();
+        try {
+            result = paymentScheduleApi.listPaymentScheduleInstance(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public ActionStatus terminatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+           paymentScheduleApi.terminatePaymentScheduleInstance(paymentScheduleInstanceDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public ActionStatus cancelPaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+           paymentScheduleApi.cancelPaymentScheduleInstance(paymentScheduleInstanceDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
         return result;
     }
 }

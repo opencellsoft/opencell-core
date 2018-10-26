@@ -39,8 +39,15 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.listeners.AccountCodeGenerationListener;
 import org.meveo.model.shared.Address;
+import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 
+/**
+ * Parent class of all account entities.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
+ */
 @Entity
 @ObservableEntity
 @Table(name = "account_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "account_type" }))
@@ -89,6 +96,16 @@ public abstract class AccountEntity extends BusinessCFEntity {
     
     @Column(name = "job_title", length = 255)
     private String jobTitle;
+    
+    @Embedded
+    private ContactInformation contactInformation;
+    
+    @Column(name = "vat_no", length = 100)
+    private String vatNo;
+    
+    @Column(name = "registration_no", length = 100)
+    private String registrationNo;
+
 
     public String getExternalRef1() {
         return externalRef1;
@@ -165,4 +182,47 @@ public abstract class AccountEntity extends BusinessCFEntity {
 	public void setJobTitle(String jobTitle) {
 		this.jobTitle = jobTitle;
 	}
+	
+	public void anonymize(String code) {
+		name.anonymize(code);
+		address.anonymize(code);
+	}
+	
+	public String getVatNo() {
+		return vatNo;
+	}
+
+	public void setVatNo(String vatNo) {
+		this.vatNo = vatNo;
+	}
+
+	public String getRegistrationNo() {
+		return registrationNo;
+	}
+
+	public void setRegistrationNo(String registrationNo) {
+		this.registrationNo = registrationNo;
+	}
+
+	/**
+     * Instantiate contactInformation field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record
+     * will be updated in DB
+     * 
+     * @return ContactInformation value or instantiated ContactInformation field value
+     */
+	public ContactInformation getContactInformationNullSafe() {
+	    if(contactInformation == null) {
+	        contactInformation = new ContactInformation();
+	    }
+        return contactInformation;
+    }
+	
+	public ContactInformation getContactInformation() {
+        return contactInformation;
+    }
+
+    public void setContactInformation(ContactInformation contactInformation) {
+        this.contactInformation = contactInformation;
+    }
+    
 }

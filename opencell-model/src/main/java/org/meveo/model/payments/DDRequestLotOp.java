@@ -34,8 +34,16 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.filter.Filter;
+import org.meveo.model.scripts.ScriptInstance;
 
+/**
+ * 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
+ */
 @Entity
 @Table(name = "ar_ddrequest_lot_op")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -68,9 +76,21 @@ public class DDRequestLotOp extends AuditableEntity {
     @Size(max = 255)
     private String errorCause;
 
-    @Column(name = "file_format")
-    @Enumerated(EnumType.STRING)
-    private DDRequestFileFormatEnum fileFormat;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ddrequest_builder_id")
+    private DDRequestBuilder ddRequestBuilder;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "filter_id")
+    private Filter filter;    
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "script_instance_id")
+    private ScriptInstance scriptInstance;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "recurrent")
+    private Boolean recurrent;
 
     /**
      * @return the fromDueDate
@@ -151,17 +171,61 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
-     * @return the fileFormat
+     * @return the ddRequestBuilder
      */
-    public DDRequestFileFormatEnum getFileFormat() {
-        return fileFormat;
+    public DDRequestBuilder getDdRequestBuilder() {
+        return ddRequestBuilder;
     }
 
     /**
-     * @param fileFormat the fileFormat to set
+     * @param ddRequestBuilder the ddRequestBuilder to set
      */
-    public void setFileFormat(DDRequestFileFormatEnum fileFormat) {
-        this.fileFormat = fileFormat;
+    public void setDdRequestBuilder(DDRequestBuilder ddRequestBuilder) {
+        this.ddRequestBuilder = ddRequestBuilder;
     }
 
+    /**
+     * @return the filter
+     */
+    public Filter getFilter() {
+        return filter;
+    }
+
+    /**
+     * @param filter the filter to set
+     */
+    public void setFilter(Filter filter) {
+        this.filter = filter;
+    }
+
+    /**
+     * @return the scriptInstance
+     */
+    public ScriptInstance getScriptInstance() {
+        return scriptInstance;
+    }
+
+    /**
+     * @return the recurrent
+     */
+    public Boolean getRecurrent() {
+        return recurrent;
+    }
+
+    /**
+     * @param scriptInstance the scriptInstance to set
+     */
+    public void setScriptInstance(ScriptInstance scriptInstance) {
+        this.scriptInstance = scriptInstance;
+    }
+
+    /**
+     * @param recurrent the recurrent to set
+     */
+    public void setRecurrent(Boolean recurrent) {
+        this.recurrent = recurrent;
+    }
+
+   
+   
 }

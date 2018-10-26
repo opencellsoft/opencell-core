@@ -21,13 +21,16 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.sequence.CustomerSequenceDto;
+import org.meveo.api.dto.sequence.GenericSequenceDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  **/
 @Path("/account/customer")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -235,5 +238,63 @@ public interface CustomerRs extends IBaseRs {
     @GET
     @Path("/exportCustomerHierarchy")
     ActionStatus exportCustomerHierarchy(@QueryParam("customerCode") String customerCode);
+    
+    /**
+     * Right to be forgotten. This concerns listing of risky or grey/black listed customers and their data.
+	 * Upon request, they can require their data to be erased.
+	 * In such case, mandatory information (accounting, invoicing, payments) must be preserved but the data tables including the customer's data must be anonymize (firstname/name/emails/phones/addresses/etc) so if this person register back it will be treated as a new customer without history.
+     * @param customerCode The code of the customer
+     * @return Request processing status
+     */
+    @GET
+    @Path("/anonymizeGpdr")
+    ActionStatus anonymizeGpdr(@QueryParam("customerCode") String customerCode);
 
+    /**
+	 * Update the Provider's customer number sequence configuration.
+	 * 
+	 * @param postData
+	 *            DTO
+	 * @return status of the operation
+	 */
+	@PUT
+	@Path("customerNumberSequence")
+	ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData);
+	
+    /**
+	 * Calculates and returns the next value of the mandate number.
+	 * 
+	 * @return next customer no value
+	 */
+	@POST
+	@Path("customerNumberSequence")
+	GenericSequenceValueResponseDto getNextCustomerNumber();
+	
+	/**
+	 * Creates a new customer sequence.
+	 * @param postData customer sequence data
+	 * @return request status
+	 */
+	@POST
+	@Path("/account/customer/sequence")
+	ActionStatus createCustomerSequence(CustomerSequenceDto postData);
+	
+	/**
+	 * Updates a new customer sequence with a given code.
+	 * @param postData customer sequence data
+	 * @return request status
+	 */
+	@PUT
+	@Path("/account/customer/sequence")
+	ActionStatus updateCustomerSequence(CustomerSequenceDto postData);
+	
+	/**
+	 * Generates the next customer sequence number.
+	 * @param code code of the sequence
+	 * @return sequence value dto
+	 */
+	@POST
+	@Path("/account/customer/sequence/{code}/next")
+	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@PathParam("code") String code);
+	
 }

@@ -29,23 +29,37 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+/**
+ * The Class CategoryInvoiceAgregate.
+ */
 @Entity
 @DiscriminatorValue("R")
 public class CategoryInvoiceAgregate extends InvoiceAgregate {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /** The invoice category. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicecategory")
     private InvoiceCategory invoiceCategory;
 
-    @OneToMany(mappedBy = "categoryInvoiceAgregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new HashSet<SubCategoryInvoiceAgregate>();
+    /** The sub category invoice agregates. */
+    @OneToMany(mappedBy = "categoryInvoiceAgregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new HashSet<>();
 
+    /**
+     * Instantiates a new category invoice agregate.
+     */
     public CategoryInvoiceAgregate() {
 
     }
 
+    /**
+     * Instantiates a new category invoice agregate.
+     *
+     * @param categoryInvoiceAgregate the category invoice agregate
+     */
     public CategoryInvoiceAgregate(CategoryInvoiceAgregate categoryInvoiceAgregate) {
         this.setInvoiceCategory(categoryInvoiceAgregate.getInvoiceCategory());
         this.setItemNumber(categoryInvoiceAgregate.getItemNumber());
@@ -58,22 +72,47 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
         this.setDiscountAggregate(false);
     }
 
+    /**
+     * Gets the invoice category.
+     *
+     * @return the invoice category
+     */
     public InvoiceCategory getInvoiceCategory() {
         return invoiceCategory;
     }
 
+    /**
+     * Sets the invoice category.
+     *
+     * @param invoiceCategory the new invoice category
+     */
     public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
         this.invoiceCategory = invoiceCategory;
     }
 
+    /**
+     * Gets the sub category invoice agregates.
+     *
+     * @return the sub category invoice agregates
+     */
     public Set<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregates() {
         return subCategoryInvoiceAgregates;
     }
 
+    /**
+     * Sets the sub category invoice agregates.
+     *
+     * @param subCategoryInvoiceAgregates the new sub category invoice agregates
+     */
     public void setSubCategoryInvoiceAgregates(Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) {
         this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
     }
 
+    /**
+     * Adds the sub category invoice aggregate.
+     *
+     * @param subCategoryInvoiceAgregate the sub category invoice agregate
+     */
     public void addSubCategoryInvoiceAggregate(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
         if (subCategoryInvoiceAgregates == null) {
             subCategoryInvoiceAgregates = new HashSet<SubCategoryInvoiceAgregate>();
@@ -86,6 +125,9 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.model.BaseEntity#hashCode()
+     */
     @Override
     public int hashCode() {
         if (id != null) {
@@ -98,6 +140,9 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
         return 961;
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.model.billing.InvoiceAgregate#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

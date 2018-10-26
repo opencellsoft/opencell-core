@@ -28,6 +28,7 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.TradingCountry;
@@ -39,6 +40,7 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.InvoiceSequenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -46,7 +48,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -67,6 +69,9 @@ public class SellerApi extends BaseApi {
     @Inject
     private InvoiceTypeService invoiceTypeService;
     
+    @Inject
+    private InvoiceSequenceService invoiceSequenceService;
+
     @Inject
     private CountryService countryService;
 
@@ -114,8 +119,21 @@ public class SellerApi extends BaseApi {
                 if (invoiceType == null) {
                     throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
                 }
-                seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
-            }
+                
+                if(StringUtils.isBlank(entry.getValue().getInvoiceSequenceCode())) {
+                	// v5.2 : code for API backward compatibility call, invoice sequence code must be mandatory in future versions
+                	InvoiceSequence invoiceSequenceInvoiceTypeSeller = entry.getValue().fromDto();
+                    invoiceSequenceInvoiceTypeSeller.setCode(invoiceType.getCode() + "_" + seller.getCode());
+                    invoiceSequenceService.create(invoiceSequenceInvoiceTypeSeller);
+                    seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, invoiceSequenceInvoiceTypeSeller, entry.getValue().getPrefixEL()));
+                } else {
+                	InvoiceSequence invoiceSequenceInvoiceTypeSeller = invoiceSequenceService.findByCode(entry.getValue().getInvoiceSequenceCode());
+                	if (invoiceSequenceInvoiceTypeSeller == null) {
+        	            throw new EntityDoesNotExistsException(InvoiceTypeSellerSequence.class, entry.getValue().getInvoiceSequenceCode());
+        	        }
+                    seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, invoiceSequenceInvoiceTypeSeller, entry.getValue().getPrefixEL()));
+                }
+           }
         }
         
         if (postData.getContactInformation() != null) {
@@ -268,15 +286,23 @@ public class SellerApi extends BaseApi {
                 if (invoiceType == null) {
                     throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
                 }
-                if (entry.getValue().getCurrentInvoiceNb() != null) {
-                    if (entry.getValue().getCurrentInvoiceNb().longValue() < invoiceTypeService.getMaxCurrentInvoiceNumber(invoiceType.getCode()).longValue()) {
-                        throw new MeveoApiException("Not able to update, check the current number");
-                    }
-                }
+
                 if (seller.isContainsInvoiceTypeSequence(invoiceType)) {
-                    seller.getInvoiceTypeSequenceByType(invoiceType).setSequence(entry.getValue().updateFromDto(seller.getInvoiceTypeSequenceByType(invoiceType).getSequence()));
+                    InvoiceSequence invoiceSequenceInvoiceTypeSeller = seller.getInvoiceTypeSequenceByType(invoiceType).getInvoiceSequence();
+                    if (entry.getValue().getCurrentInvoiceNb() != null) {
+                        if (entry.getValue().getCurrentInvoiceNb().longValue() < invoiceSequenceService.getMaxCurrentInvoiceNumber(invoiceSequenceInvoiceTypeSeller.getCode()).longValue()) {
+                            throw new MeveoApiException("Not able to update, check the current number");
+                        }
+                    }
+                    invoiceSequenceInvoiceTypeSeller = entry.getValue().updateFromDto(invoiceSequenceInvoiceTypeSeller);
+                    invoiceSequenceService.update(invoiceSequenceInvoiceTypeSeller);
+                    seller.getInvoiceTypeSequenceByType(invoiceType).setInvoiceSequence(invoiceSequenceInvoiceTypeSeller);
+                    seller.getInvoiceTypeSequenceByType(invoiceType).setPrefixEL(entry.getValue().getPrefixEL());
                 } else {
-                    seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
+                    InvoiceSequence invoiceSequenceInvoiceTypeSeller = entry.getValue().fromDto();
+                    invoiceSequenceInvoiceTypeSeller.setCode(invoiceType.getCode() + "_" + seller.getCode());
+                    invoiceSequenceService.create(invoiceSequenceInvoiceTypeSeller);
+                    seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, invoiceSequenceInvoiceTypeSeller, entry.getValue().getPrefixEL()));
                 }
             }
         }

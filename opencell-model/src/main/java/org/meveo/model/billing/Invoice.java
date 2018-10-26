@@ -40,6 +40,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -53,6 +55,7 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
@@ -60,10 +63,12 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.quote.Quote;
+import org.meveo.model.shared.DateUtils;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
  */
 @Entity
 @ObservableEntity
@@ -76,8 +81,9 @@ import org.meveo.model.quote.Quote;
         @NamedQuery(name = "Invoice.validatedNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL and inv.invoiceNumber IS NOT NULL"),
         @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL"),
         @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
-        @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate"),
+        @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.seller.id, inv.invoiceDate"),
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.billingAccount.customerAccount.customer.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
+        @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
         @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId") })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
@@ -95,7 +101,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "recorded_invoice_id")
     private RecordedInvoice recordedInvoice;
 
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
     @Column(name = "invoice_number", length = 50)
@@ -220,6 +226,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private BigDecimal dueBalance;
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = false)
+    private Seller seller;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
@@ -228,6 +238,17 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
     @Transient
     private Long invoiceAdjustmentCurrentProviderNb;
+    
+    
+    /**
+     * 3583 : dueDate and invoiceDate should be truncated before persist or update.
+     */
+    @PrePersist
+    @PreUpdate
+    public void prePersistOrUpdate() {
+        this.dueDate =  DateUtils.truncateTime(this.dueDate);
+        this.invoiceDate =  DateUtils.truncateTime(this.invoiceDate);
+    }
 
     public List<RatedTransaction> getRatedTransactions() {
         return ratedTransactions;
@@ -557,10 +578,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         uuid = UUID.randomUUID().toString();
         return oldUuid;
     }
-
+    
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return null;
+        return new ICustomFieldEntity[] { billingRun };
     }
 
     public Set<Invoice> getLinkedInvoices() {
@@ -701,6 +722,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	public void setDueBalance(BigDecimal dueBalance) {
 		this.dueBalance = dueBalance;
 	}
+
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+	
 
     public Subscription getSubscription() {
         return subscription;

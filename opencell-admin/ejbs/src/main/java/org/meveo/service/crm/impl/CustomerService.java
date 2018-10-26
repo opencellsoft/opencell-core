@@ -36,7 +36,7 @@ import org.meveo.service.base.AccountService;
  * Customer service implementation.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class CustomerService extends AccountService<Customer> {
@@ -111,15 +111,18 @@ public class CustomerService extends AccountService<Customer> {
             return true;
         }        
         String countryCodeFromSellerOrProvider = null;
-        TradingCountry sellerTradingCountry = sellerService.refreshOrRetrieve(customer.getSeller()).getTradingCountry();
-        if (sellerTradingCountry != null) {
-            countryCodeFromSellerOrProvider = sellerTradingCountry.getCountryCode();
-        } else {
-            if (appProvider.getBankCoordinates() != null && !StringUtils.isBlank(appProvider.getBankCoordinates().getIban())
-                    && appProvider.getBankCoordinates().getIban().length() > 1) {
-                countryCodeFromSellerOrProvider = appProvider.getBankCoordinates().getIban().substring(0, 2);
+        if (appProvider.getBankCoordinates() != null && !StringUtils.isBlank(appProvider.getBankCoordinates().getIban())
+                && appProvider.getBankCoordinates().getIban().length() > 1) {
+            countryCodeFromSellerOrProvider = appProvider.getBankCoordinates().getIban().substring(0, 2);
+        }
+        
+        if(customer.getSeller() != null) {
+            TradingCountry sellerTradingCountry = sellerService.refreshOrRetrieve(customer.getSeller()).getTradingCountry();
+            if (sellerTradingCountry != null) {
+                countryCodeFromSellerOrProvider = sellerTradingCountry.getCountryCode();
             }
         }
+        
         log.trace("countryCodeFromSellerOrProvider:"+countryCodeFromSellerOrProvider);
         if (countryCodeFromSellerOrProvider != null && iban.startsWith(countryCodeFromSellerOrProvider)) {
             return false;
@@ -136,4 +139,8 @@ public class CustomerService extends AccountService<Customer> {
             return null;
         }
     }
+    
+	public void deleteGPDR(Customer entity, String randomCode) {
+    	entity.anonymize(randomCode);
+	}
 }

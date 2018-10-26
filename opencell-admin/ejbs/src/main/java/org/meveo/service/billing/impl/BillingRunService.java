@@ -51,12 +51,12 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RejectedBillingAccount;
-import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.payments.PaymentMethod;
@@ -70,7 +70,7 @@ import org.meveo.service.base.PersistenceService;
  * 
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @author Tien Lan PHUNG 
+ * @author Tien Lan PHUNG
  * @author Abdelmounaim Akadid 
  * @lastModifiedVersion 5.1
  * 
@@ -475,39 +475,36 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void cleanBillingRun(BillingRun billingRun) throws BusinessException {
-        long start = System.currentTimeMillis();
+        
+        Query queryminTrans = getEntityManager().createQuery("delete from " + RatedTransaction.class.getName()
+            + " where billingRun=:billingRun and wallet is null");
+        queryminTrans.setParameter("billingRun", billingRun);
+        queryminTrans.executeUpdate();
+
         Query queryTrans = getEntityManager().createQuery("update " + RatedTransaction.class.getName()
                 + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where billingRun=:billingRun");
         queryTrans.setParameter("billingRun", billingRun);
         queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
         queryTrans.executeUpdate();
-
-        log.info("> cleanBillingRun >> Update rated transaction > {}", System.currentTimeMillis() - start);
-
+        
         Query queryAgregate = getEntityManager().createQuery("SELECT id from " + InvoiceAgregate.class.getName() + " where billingRun=:billingRun");
         queryAgregate.setParameter("billingRun", billingRun);
 
         List<Long> invoiceAgregates = (List<Long>) queryAgregate.getResultList();
-        log.info("> cleanBillingRun >> Collect Invoice Aggregates > {}", System.currentTimeMillis() - start);
 
         for (Long invoiceAgregate : invoiceAgregates) {
             invoiceAgregateService.setInvoiceToNull(invoiceAgregate);
             remove(InvoiceAgregate.class, invoiceAgregate);
         }
-        log.info("> cleanBillingRun >> Invoice Aggregated will be Removed  > {}", System.currentTimeMillis() - start);
         getEntityManager().flush();
-        log.info("> cleanBillingRun >> Invoice Aggregated Removed  > {}", System.currentTimeMillis() - start);
 
         Query queryInvoices = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
         queryInvoices.setParameter("billingRun", billingRun);
         queryInvoices.executeUpdate();
-        log.info("> cleanBillingRun >> Invoices deleted > {}", System.currentTimeMillis() - start);
 
         Query queryBA = getEntityManager().createQuery("update " + BillingAccount.class.getName() + " set billingRun=null where billingRun=:billingRun");
         queryBA.setParameter("billingRun", billingRun);
         queryBA.executeUpdate();
-
-        log.info("> cleanBillingRun >> End. > {}", System.currentTimeMillis() - start);
     }
 
     /**
@@ -764,7 +761,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         List<InvoicesToNumberInfo> invoiceSummary = invoiceService.getInvoicesToNumberSummary(billingRun.getId());
         // Reserve invoice number for each invoice type/seller/invoice date combination
         for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
-            Sequence sequence = serviceSingleton.reserveInvoiceNumbers(invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(),
+            InvoiceSequence sequence = serviceSingleton.reserveInvoiceNumbers(invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(),
                 invoicesToNumberInfo.getInvoiceDate(), invoicesToNumberInfo.getNrOfInvoices());
             invoicesToNumberInfo.setNumberingSequence(sequence);
         }
@@ -886,56 +883,53 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         log.debug("validate, billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
 
         List<? extends IBillableEntity> entities = getEntities(billingRun);
-
-        if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
-
-            billingRunExtensionService.updateBRAmounts(billingRun.getId());
-
-            log.info("Nb entities to process={}", (entities != null ? entities.size() : 0));
-            if (entities != null && entities.size() > 0) {
-                int billableEntities = 0;
-                SubListCreator subListCreator = new SubListCreator(entities, (int) nbRuns);
-                List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
-                MeveoUser lastCurrentUser = currentUser.unProxy();
-                while (subListCreator.isHasNext()) {
-                    Future<Integer> count = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<IBillableEntity>)subListCreator.getNextWorkSet(), billingRun, jobInstanceId,
-                        lastCurrentUser);
-                    asyncReturns.add(count);
-                    try {
-                        Thread.sleep(waitingMillis);
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-
-                if(billingRun.getBillingCycle().getType() == BillingEntityTypeEnum.BILLINGACCOUNT) {
-                    for (Future<Integer> futureItsNow : asyncReturns) {
-                        billableEntities += futureItsNow.get().intValue();
-                    }
-                } else {
-                    billableEntities = entities.size();
-                }
-
-                log.info("Total billable entities:" + billableEntities);
-                billingRunExtensionService.updateBillingRun(billingRun.getId(), entities.size(), billableEntities, BillingRunStatusEnum.PREINVOICED, new Date());
-
-                if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()) {
-                    log.info("Will proceed to create aggregates and invoice");
-                    createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, entities);
-                    billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
-                }
-            }
-
-        } else if (BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
-            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, entities);
+        List<IBillableEntity> billableEntities = new ArrayList<>();
+        
+        if (!BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
+	        log.info("Nb entities to process={}", (entities != null ? entities.size() : 0));
+	        if (entities != null && entities.size() > 0) {
+	            SubListCreator subListCreator = new SubListCreator(entities, (int) nbRuns);
+	            List<Future<List<IBillableEntity>>> asyncReturns = new ArrayList<Future<List<IBillableEntity>>>();
+	            MeveoUser lastCurrentUser = currentUser.unProxy();
+	            while (subListCreator.isHasNext()) {
+	            	Future<List<IBillableEntity>> billableEntitiesAsynReturn = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<IBillableEntity>)subListCreator.getNextWorkSet(), billingRun, jobInstanceId,
+	                    lastCurrentUser);
+	                asyncReturns.add(billableEntitiesAsynReturn);
+	                try {
+	                    Thread.sleep(waitingMillis);
+	                } catch (InterruptedException e) {
+	                    log.error("", e);
+	                }
+	            }
+	
+	            for (Future<List<IBillableEntity>> futureItsNow : asyncReturns) {
+	            	billableEntities.addAll(futureItsNow.get());
+	            }
+	        }
+	
+	        if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
+	            log.info("Total billable entities:" + billableEntities.size());
+	            billingRunExtensionService.updateBRAmounts(billingRun.getId(), billableEntities);
+	            billingRunExtensionService.updateBillingRun(billingRun.getId(), entities.size(), billableEntities.size(), BillingRunStatusEnum.PREINVOICED, new Date());
+	        }
+        }
+        
+        boolean proceedToPostInvoicing = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || 
+        		(BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) 
+        				&& (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()));
+        
+        if (proceedToPostInvoicing) {
+            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
-
-        } else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
+        } 
+        
+        if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
+            invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
         }
     }
-
+    
     /**
      * Force validate.
      *

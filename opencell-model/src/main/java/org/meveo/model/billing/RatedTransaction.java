@@ -43,6 +43,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ISearchable;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.rating.EDR;
@@ -58,18 +59,22 @@ import org.meveo.model.rating.EDR;
                 + " r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND r.orderNumber=:orderNumber "
                 + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate AND r.invoice is null order by r.usageDate desc "),
         
+        @NamedQuery(name = "RatedTransaction.sumByOrderNumber", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax) FROM RatedTransaction r "
+                + "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND r.orderNumber=:orderNumber AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+                + " AND r.doNotTriggerInvoicing=false AND r.invoice is null"),
+  
         @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscription", query = "SELECT r FROM RatedTransaction r where r.subscription=:subscription"
                 + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" 
                 + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate " 
-                + " AND r.invoice is null AND r.wallet is not null order by r.usageDate desc "),
+                + " AND r.invoice is null order by r.usageDate desc "),
         
         @NamedQuery(name = "RatedTransaction.listAllRTByBillingAccount", query = "SELECT r FROM RatedTransaction r where r.billingAccount=:billingAccount "
-                + " AND r.invoice is null AND r.wallet is not null order by r.usageDate desc "),
+                + " AND r.invoice is null order by r.usageDate desc "),
         
         @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccount", query = "SELECT r FROM RatedTransaction r where r.billingAccount=:billingAccount "
                 + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" 
                 + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
-                + " AND r.invoice is null AND r.wallet is not null order by r.usageDate desc "),
+                + " AND r.invoice is null order by r.usageDate desc "),
         
         @NamedQuery(name = "RatedTransaction.countListToInvoiceByOrderNumber", query = "SELECT count(r) FROM RatedTransaction r where "
                 + "r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND r.orderNumber=:orderNumber and r.invoice is null" 
@@ -127,6 +132,8 @@ import org.meveo.model.rating.EDR;
                 + " AND r.billingAccount=:billingAccount"),
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
                 + " AND r.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByCA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
+                + " AND r.billingAccount.customerAccount=:customerAccount"),
         @NamedQuery(name = "RatedTransaction.setStatusToCanceledByRsCodes", query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED"
                 + " where rt.id IN :rsToCancelCodes and rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN")
 })
@@ -268,6 +275,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     protected Subscription subscription;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
 
     @Transient
     private OfferTemplate offerTemplate;
@@ -316,7 +327,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     public RatedTransaction(WalletOperation walletOperation, Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax,
             BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet,
             BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber, Subscription subscription,
-            String unityDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code, String description, Date startDate, Date endDate) {
+            String unityDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code, String description, Date startDate, Date endDate, Seller seller) {
 
         super();
 
@@ -356,6 +367,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.edr = edr;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.seller = seller;
+
 
         if (unityDescription != null) {
             this.unityDescription = unityDescription;
@@ -703,5 +716,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
+    }
+    
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
     }
 }

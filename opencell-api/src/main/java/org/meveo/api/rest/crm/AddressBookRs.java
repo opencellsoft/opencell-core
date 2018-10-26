@@ -16,7 +16,7 @@ import org.meveo.api.rest.IBaseRs;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface AddressBookRs extends IBaseRs {
 	@GET
-    @Path("/")
+    @Path("/createAll")
     ActionStatus createAll();
 
     @GET

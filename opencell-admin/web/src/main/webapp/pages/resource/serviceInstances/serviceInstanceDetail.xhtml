@@ -4,6 +4,7 @@
 
     <ui:define name="metadata">
         <f:metadata>
+            <f:viewParam name="objectId" value="#{serviceInstanceBean.objectId}"></f:viewParam>
             <f:viewParam name="serviceInstanceId" value="#{serviceInstanceBean.objectId}"></f:viewParam>
             <f:viewParam name="subscriptionId" value="#{subscriptionBean.objectId}" />
             <f:viewParam name="tab" value="#{serviceInstanceBean.activeTab}" />
@@ -50,14 +51,15 @@
                     <hftl:formField label="#{messages['serviceInstance.status']}" field="status" allowEdit="false" />
                     <hftl:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" allowEdit="false" />
                     <hftl:formField label="#{messages['serviceInstance.subscriptionDate']}" field="subscriptionDate" allowEdit="#{serviceInstanceBean.entity.status eq 'INACTIVE'}" />
-                    <hftl:formField label="#{messages['serviceInstance.endAgreementDate']}" field="endAgreementDate" />
+                    <hftl:formField label="#{messages['serviceInstance.endAgreementDate']}" id="endAgreementDateId" field="endAgreementDate" disabled="#{serviceInstanceBean.entity.autoEndOfEngagement}"/>
                     <hftl:formField label="#{messages[serviceInstanceBean.entity.status=='SUSPENDED'?'serviceInstance.suspensionDate':'serviceInstance.terminationDate']}"
                         field="terminationDate" allowEdit="false" />
                     <hftl:formField label="#{messages['serviceInstance.quantity']}" field="quantity"/>
                     <hftl:formField label="#{messages['serviceInstance.terminationReason']}" allowEdit="false" field="subscriptionTerminationReason"
                         listBean="#{subscriptionTerminationReasonBean}" valueLabelField="descriptionOrCode" rendered="#{not empty serviceInstanceBean.entity.subscriptionTerminationReason}" />
                      <hftl:formField label="#{messages['serviceInstance.rateUntilDate']}" field="rateUntilDate" /> 
-                    
+                    <hftl:formField label="#{messages['subscription.autoEndOfEngagement']}" listenerUpdate="endAgreementDateId" newLine="true"
+								field="autoEndOfEngagement" actionListenerBean="#{serviceInstanceBean}" actionListenerMethod="autoUpdateEndOfEngagementDate" />
                     <hftl:formField label="#{messages['serviceTemplate.minimumLabel']} EL" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="25"  />  
                     <c:choose> 
 	                    <c:when test="${appProvider.entreprise}">
@@ -68,15 +70,38 @@
 					    </c:otherwise>
 					</c:choose>
 					<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />  
-                       
+                         <hftl:formField label="#{messages['serviceInstance.amountPS']}" field="amountPS" /> 
+                          <hftl:formField label="#{messages['serviceInstance.calendarPS']}" field="calendarPS" valueLabelField="code" listBean="#{calendarBean}" id="calendarPsId" /> 
+                         <hftl:formField label="#{messages['paymentScheduleTemplate.dayInMonth']}" field="dueDateDaysPS" /> 
                     <p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
 	                    <h:panelGroup id="serviceRenewal">
+
 	                    	<hftl:formField label="#{messages['subscription.initialTermType']}" field="serviceRenewal" childField="initialTermType" componentWidth="100" listenerUpdate="termType"></hftl:formField>
 	                    	<h:panelGroup id="termType">
-	                            <hftl:formField label="#{messages['subscription.initialyActiveFor']}" field="serviceRenewal" childField="initialyActiveFor" size="2" minValue="1" componentWidth="15" disabled="#{serviceInstanceBean.entity.renewed}" listenerUpdate="serviceRenewal" actionListenerBean="#{serviceInstanceBean}" actionListenerMethod="updateSubscribedTillDate" rendered="#{serviceInstanceBean.entity.serviceRenewal.initialTermType eq InitialTermTypeEnum.RECURRING}"/>
-	                            <hftl:formField label="#{messages['subscription.initialyActiveForUnit']}" field="serviceRenewal" childField="initialyActiveForUnit" required="#{serviceInstanceBean.entity.serviceRenewal.initialyActiveFor!=null}" disabled="#{serviceInstanceBean.entity.serviceRenewal.initialyActiveFor==null || serviceInstanceBean.entity.renewed}" listenerUpdate="serviceRenewal" actionListenerBean="#{serviceInstanceBean}" actionListenerMethod="updateSubscribedTillDate" rendered="#{serviceInstanceBean.entity.serviceRenewal.initialTermType eq InitialTermTypeEnum.RECURRING}" />
-	                            <hftl:formField label="#{messages['subscription.subscribedTillDate']}" field="subscribedTillDate" required="true" rendered="#{serviceInstanceBean.entity.serviceRenewal.initialTermType eq InitialTermTypeEnum.FIXED}" listenerUpdate="serviceRenewal" />
-                            </h:panelGroup>
+								<hftl:formField
+									label="#{messages['subscription.initialyActiveFor']}"
+									field="serviceRenewal" childField="initialyActiveFor" size="2"
+									minValue="1" componentWidth="15"
+									disabled="#{serviceInstanceBean.entity.renewed}"
+									listenerUpdate="serviceRenewal :formId:tabView:endAgreementDateId"
+									actionListenerBean="#{serviceInstanceBean}"
+									actionListenerMethod="updateSubscribedTillDate"
+									rendered="#{serviceInstanceBean.entity.serviceRenewal.initialTermType eq InitialTermTypeEnum.RECURRING}" />
+								<hftl:formField
+									label="#{messages['subscription.initialyActiveForUnit']}"
+									field="serviceRenewal" childField="initialyActiveForUnit"
+									required="#{serviceInstanceBean.entity.serviceRenewal.initialyActiveFor!=null}"
+									disabled="#{serviceInstanceBean.entity.serviceRenewal.initialyActiveFor==null || serviceInstanceBean.entity.renewed}"
+									listenerUpdate="serviceRenewal :formId:tabView:endAgreementDateId"
+									actionListenerBean="#{serviceInstanceBean}"
+									actionListenerMethod="updateSubscribedTillDate"
+									rendered="#{serviceInstanceBean.entity.serviceRenewal.initialTermType eq InitialTermTypeEnum.RECURRING}" />
+								<hftl:formField
+									label="#{messages['subscription.subscribedTillDate']}"
+									field="subscribedTillDate" required="true"
+									rendered="#{serviceInstanceBean.entity.serviceRenewal.initialTermType eq InitialTermTypeEnum.FIXED}"
+									listenerUpdate="serviceRenewal" />
+							</h:panelGroup>
                             <h:panelGroup rendered="#{serviceInstanceBean.entity.subscribedTillDate!=null}">
 	                            <hftl:formField label="#{messages['subscription.autoRenew']}" field="serviceRenewal" childField="autoRenew" required="true"
 	                                listenerUpdate="serviceRenewal" newLine="true" />
@@ -118,6 +143,20 @@
 						</p:column>
 					</p:dataTable>
                 </p:tab>
+                <p:tab title="#{messages['paymentScheduleInstance.title']}" id="psInstances">
+	                <hftl:dataList backingBean="#{paymentScheduleInstanceBean}" dataModel="#{paymentScheduleInstanceBean.getInstancesForService(serviceInstanceBean.entity)}" 
+	                label="#{messages['paymentScheduleInstance.title']}" sortBy="startDate" exportButton="false" checkMany="false">
+							<hftl:column label="#{messages['businessEntity.code']}" field="code" noLinkToView="true" />							
+							<hftl:column label="#{messages['paymentScheduleTemplate.amount']}" field="amount" />
+							<hftl:column label="#{messages['paymentScheduleTemplate.status']}" field="status" />
+							<hftl:column label="#{messages['paymentScheduleTemplate.calendar']}" field="calendar.code" />
+							<hftl:column label="#{messages['paymentScheduleInstance.startDate']}" field="startDate"  isDate="true"/>
+							<hftl:column label="#{messages['paymentScheduleInstance.endDate']}" field="endDate"  isDate="true"/>
+				
+							<hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" backingBean="#{paymentScheduleInstanceBean}" objectIdParamName="objectId"
+							 renderDeleteLink="false" renderEditLink="true" backTab="psInstances" backView="serviceInstanceDetail" backEntityId="#{serviceInstanceBean.entity.id}"/>
+			        </hftl:dataList>
+                </p:tab>                    
 
                 <hftl:customFields backingBean="#{serviceInstanceBean}" messagesId=":formId:messages" />
             </p:tabView>

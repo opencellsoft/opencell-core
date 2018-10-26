@@ -50,13 +50,16 @@ import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
+import org.meveo.api.dto.sequence.CustomerSequenceDto;
+import org.meveo.api.dto.sequence.GenericSequenceDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author Edward P. Legaspi
  * @author anasseh
  * 
- * @lastModifiedVersion willBeSetHere
+ * @lastModifiedVersion 5.2
  **/
 @WebService
 public interface AccountWs extends IBaseWs {
@@ -539,6 +542,79 @@ public interface AccountWs extends IBaseWs {
      * @param customerCode the code of the customer
      * @return ActionStatus action status.
      */
-	@WebMethod
+    @WebMethod
 	ActionStatus exportCustomerHierarchy(@WebParam(name = "customerCode") String customerCode);
+    
+    /**
+     * Right to be forgotten. This concerns listing of risky or grey/black listed customers and their data.
+	 * Upon request, they can require their data to be erased.
+	 * In such case, mandatory information (accounting, invoicing, payments) must be preserved but the data tables including the customer's data must be anonymize (firstname/name/emails/phones/addresses/etc) so if this person register back it will be treated as a new customer without history.
+     * @param customerCode The code of the customer
+     * @return Request processing status
+     */
+    @WebMethod
+	ActionStatus anonymizeGpdr(@WebParam(name = "customerCode") String customerCode);
+	
+	// Sequences
+	
+	/**
+	 * Update the Provider's RUM sequence configuration.
+	 * 
+	 * @param postData
+	 *            DTO
+	 * @return status of the operation
+	 */
+	@WebMethod
+	ActionStatus updateMandateNumberSequence(@WebParam(name = "sequence") GenericSequenceDto postData);
+
+	/**
+	 * Calculates and returns the next value of the mandate number.
+	 * 
+	 * @return next mandate value
+	 */
+	@WebMethod
+	GenericSequenceValueResponseDto getNextMandateNumberSequence();
+	
+	/**
+	 * Update the Provider's customer number sequence configuration.
+	 * 
+	 * @param postData
+	 *            DTO
+	 * @return status of the operation
+	 */
+	@WebMethod
+	ActionStatus updateCustomerNumberSequence(@WebParam(name = "sequence") GenericSequenceDto postData);
+	
+	/**
+	 * Calculates and returns the next value of the mandate number.
+	 * 
+	 * @return next customer no value
+	 */
+	@WebMethod
+	GenericSequenceValueResponseDto getNextCustomerNumberSequence();
+
+	/**
+	 * Creates a new customer sequence.
+	 * @param postData customer sequence data
+	 * @return request status
+	 */
+	@WebMethod
+	ActionStatus createCustomerSequence(@WebParam(name = "customerSequence") CustomerSequenceDto postData);
+
+	/**
+	 * Updates a new customer sequence with a given code.
+	 * @param postData customer sequence data
+	 * @return request status
+	 */
+	@WebMethod
+	ActionStatus updateCustomerSequence(@WebParam(name = "customerSequence") CustomerSequenceDto postData);
+
+	/**
+	 * Generates the next customer sequence number.
+	 * @param code code of the sequence
+	 * @return sequence value dto
+	 */
+	@WebMethod
+	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@WebParam(name = "code") String code);
+	
 }

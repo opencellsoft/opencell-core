@@ -44,6 +44,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.ProductTemplate;
 
 @Entity
@@ -74,10 +75,8 @@ public class ProductInstance extends BusinessCFEntity {
     @Column(name = "application_date")
     private Date applicationDate = new Date();
 
-    @OneToMany(mappedBy = "productInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<ProductChargeInstance> productChargeInstances = new ArrayList<ProductChargeInstance>();
+    @OneToMany(mappedBy = "productInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ProductChargeInstance> productChargeInstances = new ArrayList<>();
 
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
@@ -85,6 +84,10 @@ public class ProductInstance extends BusinessCFEntity {
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = false)
+    private Seller seller;
 
     public ProductInstance() {
         super();
@@ -104,6 +107,11 @@ public class ProductInstance extends BusinessCFEntity {
             this.userAccount = userAccount;
         } else {
             this.userAccount = subscription.getUserAccount();
+        }
+        if (subscription != null && subscription.getSeller() != null) {
+            this.seller = subscription.getSeller();
+        } else {
+            this.seller = this.userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         }
     }
 
@@ -185,6 +193,14 @@ public class ProductInstance extends BusinessCFEntity {
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return new ICustomFieldEntity[] { productTemplate };
+    }
+    
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
     }
 
 }

@@ -10,36 +10,47 @@
 
     <ui:define name="body">
 
-        <!--        <hftl:entityPopup id="invSubCatCountryPopup" -->
-        <!--            header="#{messages['tradingCountry.popup.header']}" -->
-        <!--            updateField=":tabView:formTax:countrySelectedId" -->
-        <!--            selection="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.tradingCountry}" -->
-        <!--            backingBean="#{tradingCountryBean}" -->
-        <!--            searchField1Label="#{messages['businessEntity.code']}" -->
-        <!--            searchField1="country.countryCode" -->
-        <!--            column1Label="#{messages['businessEntity.code']}" -->
-        <!--            column1="countryCode" -->
-        <!--            column2Label="#{messages['businessEntity.description']}" -->
-        <!--            column2="prDescription" /> -->
-
-        <!--        <hftl:entityPopup id="searchInvoiceCategoryPopup" -->
-        <!--            header="#{messages['invoiceCategory.panel']}" -->
-        <!--            updateField=":tabView:formPanel:formId:categorySelectId" -->
-        <!--            selection="#{invoiceSubCategoryBean.entity.invoiceCategory}" -->
-        <!--            backingBean="#{invoiceCategoryBean}" -->
-        <!--            searchField1Label="#{messages['invoiceCategory.code']}" -->
-        <!--            searchField1="code" -->
-        <!--            searchField2Label="#{messages['invoiceCategory.description']}" -->
-        <!--            searchField2="description" -->
-        <!--            column1Label="#{messages['invoiceCategory.code']}" column1="code" -->
-        <!--            column2Label="#{messages['invoiceCategory.description']}" -->
-        <!--            column2="description" /> -->
+        <hftl:entityPopup id="searchOccTemplatePopup" header="#{messages['invoiceType.occTemplate']}" 
+        updateField=":tabView:formId:occTemplateSelectedId :tabView:formId:occTemplateSelectedId_text"
+            selection="#{invoiceSubCategoryBean.entity.occTemplate}" backingBean="#{occTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="searchOccTemplateNegativePopup" header="#{messages['invoiceType.occTemplate']}"
+            updateField=":tabView:formId:occTemplateNegativeSelectedId :tabView:formId:occTemplateNegativeSelectedId_text" selection="#{invoiceSubCategoryBean.entity.occTemplateNegative}"
+            backingBean="#{occTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>    
 
         <hftl:entityPopup id="invSubCatCountTaxPopup" header="#{messages['tax.panel']}" backingBean="#{taxBean}" updateField=":tabView:formTax:taxSelectedId"
             selection="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.tax}" searchField1Label="#{messages['tax.code']}" searchField1="code" searchField2Label="#{messages['tax.description']}"
             searchField2="description" column1Label="#{messages['tax.code']}" column1="code" column2Label="#{messages['tax.description']}" column2="description" />
 
-        <h:form id="crumbmenuForm">
+		<hftl:entityPopup id="taxScriptPopup"
+			header="#{messages['scriptInstance.popup.header']}"
+			backingBean="#{scriptInstanceBean}"
+			selection="#{invoiceSubCategoryBean.entity.taxScript}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" eventBackingBean="#{invoiceSubCategoryBean}"
+			updateField=":#{p:component('taxScriptSelectId')} :#{p:component('taxScriptSelectId_text')}"></hftl:entityPopup>
+
+		<hftl:entityPopup id="accountingCodePopup"
+			header="#{messages['accountingCode']}"
+			backingBean="#{accountingCodeListBean}"
+			selection="#{invoiceSubCategoryBean.entity.accountingCode}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" 
+			updateField=":tabView:formId:accountingCodeId :tabView:formId:accountingCodeId_text">
+		</hftl:entityPopup>
+
+		<h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
                 <p:menuitem outcome="invoiceSubCategories" value="#{messages['invoiceSubCategory.title']}" />
@@ -56,14 +67,18 @@
 
                         <hftl:formField id="categorySelectId" label="#{messages['invoiceSubCategory.invoiceCategory']}" field="invoiceCategory" valueLabelField="code" required="true"
                             listBean="#{invoiceCategoryBean}" />
-                        <!--                            popup="true" popupId="searchInvoiceCategoryPopup" /> -->
-
                         <hftl:formField label="#{messages['invoiceSubCategory.code']}" field="code" required="true" validateUnique="true" useConverter="false" />
-
-                        <hftl:formField label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" listBean="#{accountingCodeListBean}" valueLabelField="code" listenerUpdate="@this" />
-
+						<hftl:formField id="accountingCodeId"
+							label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode"
+							valueLabelField="code" listenerUpdate="@this" popup="true"
+							popupId="accountingCodePopup" showResetButton="true" />
                         <hftl:formLanguageFields field="description" />
-                    </hftl:formPanel>
+						<hftl:formField id="taxScriptSelectId" label="#{messages['invoiceSubCategory.taxScript']}" field="taxScript" valueLabelField="code" required="false" popup="true" popupId="taxScriptPopup" showResetButton="true" />
+						<hftl:formField label="#{messages['invoiceType.occTemplate']}" id="occTemplateSelectedId" field="occTemplate" valueLabelField="code" showResetButton="true" popup="true" popupId="searchOccTemplatePopup"
+               />
+                         <hftl:formField label="#{messages['invoiceType.occTemplateNegative']}" id="occTemplateNegativeSelectedId" field="occTemplateNegative" valueLabelField="code" popup="true"
+                popupId="searchOccTemplateNegativePopup" showResetButton="true" required="false" />   
+					</hftl:formPanel>
 
                 </p:tab>
 

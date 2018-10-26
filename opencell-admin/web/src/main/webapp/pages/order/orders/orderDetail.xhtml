@@ -137,7 +137,7 @@
                                         </hftl:decorateFormField>
                                     </c:if>
 
-                                    <c:if test="#{orderBean.entity.paymentMethodType eq PaymentMethodEnum.DIRECTDEBIT}">
+                                    <c:if test="#{orderBean.paymentMethodType eq PaymentMethodEnum.DIRECTDEBIT}">
                                         <hftl:decorateFormField label="#{messages['customerAccount.mandateIdentification']}" fieldId="mandateIdentification">
                                             <p:inputText id="mandateIdentification" value="#{orderBean.paymentMethod.mandateIdentification}" required="true" />
                                         </hftl:decorateFormField>
@@ -156,7 +156,6 @@
                             </p:outputPanel>
                         </p:fieldset>
                         <div class="clearLeft"></div>
-                        <hftl:customFields prefix="order" backingBean="#{orderBean}" messagesId=":orderForm:messages" />
 
                     </hf:namingContainer>
                 </p:tab>
@@ -546,18 +545,9 @@
 
                                                     <div class="clearLeft"></div>
                                                     <h:panelGroup id="cf_#{itemStatus.index}_panel">
-
                                                         <!-- custom fields -->
-                                                        <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(itemConfiguration.entityForCFValues) == 1}">
-                                                            <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                                messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
-                                                        </c:if>
-                                                        <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(itemConfiguration.entityForCFValues) > 1}">
-                                                            <p:tabView>
-                                                                <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                                    messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
-                                                            </p:tabView>
-                                                        </c:if>
+                                                        <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
+                                                            messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                                                     </h:panelGroup>
                                                 </p:tab>
                                             </c:forEach>
@@ -594,15 +584,16 @@
                         </p:panel>
                     </h:panelGroup>
                 </p:tab>
+                <hftl:customFields prefix="order" backingBean="#{orderBean}" messagesId=":orderForm:messages" />
                 <hftl:displayWorkflowsHistory entity="#{orderBean.entity}" />
             </p:tabView>
 
             <ui:param name="buttons" value="true" />
             <ui:define name="buttons">
-
-
                 <p:commandButton value="#{messages['order.sendToProcess']}" action="#{orderBean.sendToProcess()}" update=":orderForm:messages @form" process="@this" ajax="false"
                     rendered="#{!orderBean.entity.transient and orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+                <p:commandButton value="#{messages['order.revertToDraft']}" action="#{orderBean.updateStatus(OrderStatusEnum.IN_CREATION)}" update=":orderForm:messages @form" process="@this" ajax="false"
+                    rendered="#{!orderBean.entity.transient and orderBean.entity.status eq OrderStatusEnum.ACKNOWLEDGED}" />
             </ui:define>
 
         </hftl:formPanel>

@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -41,6 +39,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
@@ -68,6 +68,7 @@ import org.slf4j.LoggerFactory;
         @Parameter(name = "sequence_name", value = "billing_charge_instance_seq"), })
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @Inheritance(strategy = InheritanceType.JOINED)
+@NamedQueries({ @NamedQuery(name = "ChargeInstance.listPrepaid", query = "SELECT c FROM ChargeInstance c where c.prepaid=true and  c.status='ACTIVE'") })
 public class ChargeInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -119,11 +120,11 @@ public class ChargeInstance extends BusinessEntity {
     @Size(max = 255)
     protected String criteria3;
 
-    @OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    protected Set<WalletOperation> walletOperations = new HashSet<WalletOperation>();
+    @OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    protected List<WalletOperation> walletOperations = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id")
+    @JoinColumn(name = "seller_id", nullable = true)
     protected Seller seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -150,7 +151,10 @@ public class ChargeInstance extends BusinessEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_chrginst_wallet", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "wallet_instance_id"))
     @OrderColumn(name = "INDX")
-    protected List<WalletInstance> walletInstances = new ArrayList<WalletInstance>();
+    protected List<WalletInstance> walletInstances = new ArrayList<>();
+
+    @Transient
+    private List<WalletInstance> prepaidWalletInstances;
 
     @Transient
     protected List<WalletOperation> sortedWalletOperations;
@@ -182,7 +186,7 @@ public class ChargeInstance extends BusinessEntity {
         this.amountWithTax = amountWithTax;
         this.userAccount = serviceInstance.getSubscription().getUserAccount();
         this.subscription = serviceInstance.getSubscription();
-        this.seller = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        this.seller = subscription.getSeller();
         this.country = subscription.getUserAccount().getBillingAccount().getTradingCountry();
         this.currency = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
         this.chargeTemplate = chargeTemplate;
@@ -283,11 +287,11 @@ public class ChargeInstance extends BusinessEntity {
         this.invoicingCalendar = invoicingCalendar;
     }
 
-    public Set<WalletOperation> getWalletOperations() {
+    public List<WalletOperation> getWalletOperations() {
         return walletOperations;
     }
 
-    public void setWalletOperations(Set<WalletOperation> walletOperations) {
+    public void setWalletOperations(List<WalletOperation> walletOperations) {
         this.walletOperations = walletOperations;
     }
 
@@ -390,4 +394,22 @@ public class ChargeInstance extends BusinessEntity {
         this.orderNumber = orderNumber;
     }
 
+    /**
+     * Get a list of prepaid wallet instances
+     * 
+     * @return A list of prepaid wallet instances associated to a charge
+     */
+    public List<WalletInstance> getPrepaidWalletInstances() {
+
+        if (prepaidWalletInstances == null) {
+            prepaidWalletInstances = new ArrayList<>();
+
+            for (WalletInstance wallet : getWalletInstances()) {
+                if (wallet.getWalletTemplate() != null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
+                    prepaidWalletInstances.add(wallet);
+                }
+            }
+        }
+        return prepaidWalletInstances;
+    }
 }

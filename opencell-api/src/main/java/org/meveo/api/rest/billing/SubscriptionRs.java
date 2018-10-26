@@ -6,6 +6,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -19,6 +20,8 @@ import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
 import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
@@ -300,5 +303,27 @@ public interface SubscriptionRs extends IBaseRs {
     @POST
     @Path("/rate")
     RateSubscriptionResponseDto rate(RateSubscriptionRequestDto postData);
+    
+    @POST
+    @Path("/activate")
+    ActionStatus activate(String subscriptionCode);
+    
+    /**
+     * Activate a given Subscription for a customer.
+     *
+     * @param postData the post data
+     * @return the raw result holding the Subscription EndAgreementDate in its response.
+     */
+    @POST
+    @Path("/activateForCustomer")
+    SubscriptionForCustomerResponseDto activateForCustomer(SubscriptionForCustomerRequestDto postData);
 
+    /**
+     * Cancels the renewal term of an active subscription.
+     * @param subscriptionCode code of the subscription
+     * @return status of the request
+     */
+    @POST
+    @Path("/cancelSubscriptionRenewal/{subscriptionCode}")
+    ActionStatus cancelSubscriptionRenewal(@PathParam("subscriptionCode") String subscriptionCode);
 }

@@ -14,6 +14,7 @@ import org.meveo.model.AccountEntity;
  * The Class AccountDto.
  *
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
  */
 @XmlRootElement(name = "Account")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -47,6 +48,15 @@ public abstract class AccountDto extends BusinessEntityDto {
     /** The loaded. */
     @XmlTransient
     protected boolean loaded = false;
+    
+    /** The vat no. */
+    private String vatNo;
+    
+    /** The registration no. */
+    private String registrationNo;
+
+    /** The contact information. */
+    private ContactInformationDto contactInformation;
 
     /**
      * Instantiates a new account dto.
@@ -55,14 +65,20 @@ public abstract class AccountDto extends BusinessEntityDto {
         super();
     }
     
-    /**
-     * Instantiates a new account dto. Used on account hierarchy
-     *
-     * @param accountEntity the accountEntity entity
-     */
-    public AccountDto(AccountEntity accountEntity) {
-        super(accountEntity);
-    }
+	/**
+	 * Instantiates a new account dto. Used on account hierarchy
+	 *
+	 * @param e the accountEntity entity
+	 */
+	public AccountDto(AccountEntity e) {
+		super(e);
+		
+		setVatNo(e.getVatNo());
+		setRegistrationNo(e.getVatNo());
+		if (e.getContactInformation() != null) {
+			setContactInformation(new ContactInformationDto(e.getContactInformation()));
+		}
+	}
 
     /**
      * Instantiates a new account dto.
@@ -277,5 +293,32 @@ public abstract class AccountDto extends BusinessEntityDto {
         return "AccountDto [code=" + getCode() + ", description=" + getDescription() + ", externalRef1=" + externalRef1 + ", externalRef2=" + externalRef2 + ", name=" + name
                 + ", address=" + address + ", customFields=" + customFields + ", loaded=" + loaded + ", businessAccountModel=" + businessAccountModel + "]";
     }
+
+	public String getVatNo() {
+		return vatNo;
+	}
+
+	public void setVatNo(String vatNo) {
+		this.vatNo = vatNo;
+	}
+
+	public String getRegistrationNo() {
+		return registrationNo;
+	}
+
+	public void setRegistrationNo(String registrationNo) {
+		this.registrationNo = registrationNo;
+	}
+
+	public ContactInformationDto getContactInformation() {
+		if (contactInformation == null) {
+			contactInformation = new ContactInformationDto();
+		}
+		return contactInformation;
+	}
+
+	public void setContactInformation(ContactInformationDto contactInformation) {
+		this.contactInformation = contactInformation;
+	}
 
 }
