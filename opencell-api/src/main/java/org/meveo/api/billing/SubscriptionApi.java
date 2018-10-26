@@ -1058,12 +1058,8 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
-<<<<<<< HEAD
-     * Find subscription 
-=======
      * Find subscription
      * 
->>>>>>> integration
      * @param subscriptionCode code of subscription to find
      * @param mergedCF true/false
      * @param inheritCF Custom field inheritance type
