@@ -26,8 +26,9 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 
 /**
+ * @author Edward P. Legaspi
  * @author phung
- *
+ * @lastModifiedVersion 5.2
  */
 @Named
 @ViewScoped
@@ -40,7 +41,8 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     @Inject
     private JobExecutionService jobExecutionService;
-@Inject
+    
+    @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
 
     public JobInstanceBean() {

@@ -40,7 +40,6 @@ import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
-import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
@@ -60,10 +59,11 @@ import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.filter.FilterService;
 
 /**
  * The Class DDRequestLOTService.
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
@@ -76,17 +76,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
     @Inject
     private AutomatedPaymentService automatedPaymentService;
 
-    /** The account operation service. */
-    @Inject
-    private AccountOperationService accountOperationService;
-
     /** The matching code service. */
     @Inject
     private MatchingCodeService matchingCodeService;
-
-    /** The filter service. */
-    @Inject
-    private FilterService filterService;
 
     /** The payment history service. */
     @Inject
@@ -175,32 +167,14 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
     /**
      * Creates the DDRequest lot.
      *
-     * @param fromDueDate the from due date
-     * @param toDueDate the to due date
-     * @param ddRequestBuilder the dd request builder
-     * @param filter the filter
+     * @param listAoToPay list of account operations
+     * @param ddRequestBuilder direct debit request builder
      * @return the DD request LOT
      * @throws BusinessEntityException the business entity exception
      * @throws Exception the exception
      */
-    public DDRequestLOT createDDRquestLot(Date fromDueDate, Date toDueDate, DDRequestBuilder ddRequestBuilder, Filter filter) throws BusinessEntityException, Exception {
-        log.info("createDDRquestLot fromDueDate: {}   toDueDate: {}", fromDueDate, toDueDate);
-        List<AccountOperation> listAoToPay = null;
-        if (filter == null) {
-            if (fromDueDate == null) {
-                throw new BusinessEntityException("fromDuDate is empty");
-            }
-            if (toDueDate == null) {
-                throw new BusinessEntityException("toDueDate is empty");
-            }
-            if (fromDueDate.after(toDueDate)) {
-                throw new BusinessEntityException("fromDueDate is after toDueDate");
-            }
-            listAoToPay = accountOperationService.getAOsToPay(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate);
-        } else {
-            listAoToPay = (List<AccountOperation>) filterService.filteredListAsObjects(filter);
-        }
-
+    public DDRequestLOT createDDRquestLot(List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder) throws BusinessEntityException, Exception {
+        
         if (listAoToPay == null || listAoToPay.isEmpty()) {
             throw new BusinessEntityException("no invoices!");
         }
@@ -267,7 +241,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
         ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider));
         ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT, appProvider);
         ddRequestLOT.setSendDate(new Date());
-        log.info("Successful createDDRquestLot fromDueDate: {} toDueDate: {} totalAmount: {}", fromDueDate, toDueDate, ddRequestLOT.getTotalAmount());
+        log.info("Successful createDDRquestLot totalAmount: {}", ddRequestLOT.getTotalAmount());
         return ddRequestLOT;
     }
 

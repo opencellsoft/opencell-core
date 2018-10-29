@@ -592,6 +592,9 @@ public class QuoteApi extends BaseApi {
         Subscription subscription = new Subscription();
         subscription.setCode(subscriptionCode);
         subscription.setUserAccount(quoteItem.getUserAccount());
+        if(quoteItem.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller() != null) {
+            subscription.setSeller(quoteItem.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+        }
         subscription.setOffer(offerTemplate);
         subscription.setSubscriptionDate((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
             DateUtils.setTimeToZero(quoteItem.getQuote().getQuoteDate())));

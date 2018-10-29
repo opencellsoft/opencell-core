@@ -579,7 +579,7 @@ public class CustomerAccount extends AccountEntity {
     @Override
     public void anonymize(String code) {
         super.anonymize(code);
-        getContactInformation().anonymize(code);
+		getContactInformationNullSafe().anonymize(code);
         if (getBillingAccounts() != null) {
             for (BillingAccount ba : getBillingAccounts()) {
                 ba.anonymize(code);

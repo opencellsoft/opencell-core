@@ -57,7 +57,8 @@ import org.meveo.model.shared.DateUtils;
  * Custom field template
  * 
  * @author Andrius Karpavicius
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2
  * 
  **/
 @Entity
@@ -902,6 +903,12 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
             if (dataType == CustomFieldMapKeyEnum.STRING) {
                 valBuilder.append((String) columnValue);
             } else if (dataType == CustomFieldMapKeyEnum.LONG || dataType == CustomFieldMapKeyEnum.DOUBLE) {
+                // Case of String value
+                if (dataType == CustomFieldMapKeyEnum.LONG) {
+                    columnValue = Long.valueOf(columnValue.toString());
+                } else if (dataType == CustomFieldMapKeyEnum.DOUBLE) {
+                    columnValue = Double.valueOf(columnValue.toString());
+                }
                 DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
                 df.setMaximumFractionDigits(340);
                 valBuilder.append(df.format(columnValue));

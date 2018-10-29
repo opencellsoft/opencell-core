@@ -106,6 +106,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -557,6 +558,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         // Split RTs billing account groups to billing account/seller groups
+        log.info("Split RTs billing account groups to billing account/seller groups");
         for (Map.Entry<BillingAccount, List<RatedTransaction>> entryBaTr : mapBillingAccountRT.entrySet()) {
             BillingAccount billingAccount = entryBaTr.getKey();
             List<RatedTransaction> ratedTransactions = entryBaTr.getValue();
@@ -585,6 +587,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 ratedTransactionGroups.add(ratedTransactionGroup);
             }
         }
+        log.info("end Split RTs");
 
         return ratedTransactionGroups;
 
@@ -630,6 +633,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Store RTs, to reach minimum amount per invoice, to DB
         if (minAmountTransactions != null) {
             for (RatedTransaction minRatedTransaction : minAmountTransactions) {
+                BillingAccount ba = billingAccountService.retrieveIfNotManaged(minRatedTransaction.getBillingAccount());
+                minRatedTransaction.setBillingAccount(ba);
                 ratedTransactionService.create(minRatedTransaction);
             }
         }
@@ -795,9 +800,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
             }
         } catch (Exception e) {
+            log.error("Error for entity {}", entity.getCode(), e);
             if (entity instanceof BillingAccount) {
                 BillingAccount ba = (BillingAccount) entity;
-                log.error("Error for entity {}", ba.getCode(), e);
                 if (billingRun != null) {
                     rejectedBillingAccountService.create(ba, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());
                 } else {

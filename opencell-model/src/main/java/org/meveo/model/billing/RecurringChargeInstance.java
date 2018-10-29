@@ -96,6 +96,9 @@ public class RecurringChargeInstance extends ChargeInstance {
         this.recurringChargeTemplate = recurringChargeTemplate;
         this.quantity = serviceInstance.getQuantity() == null ? BigDecimal.ONE : serviceInstance.getQuantity();
         this.serviceInstance = serviceInstance;
+        if (serviceInstance.getSubscription().getSeller() != null) {
+            this.seller = serviceInstance.getSubscription().getSeller();
+        }
     }
 
     public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, Date subscriptionDate, Subscription subscription, Seller seller,
@@ -112,9 +115,11 @@ public class RecurringChargeInstance extends ChargeInstance {
         this.recurringChargeTemplate = recurringChargeTemplate;
         this.setQuantity(quantity == null ? BigDecimal.ONE : quantity);
         this.setSubscription(subscription);
-        this.setSeller(subscription.getSeller());
         this.country = tradingCountry;
         this.currency = tradingCurrency;
+        if (subscription != null && subscription.getSeller() != null) {
+            this.seller = subscription.getSeller();
+        }
     }
 
     public RecurringChargeTemplate getRecurringChargeTemplate() {

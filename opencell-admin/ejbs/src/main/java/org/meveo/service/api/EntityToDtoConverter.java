@@ -97,6 +97,10 @@ public class EntityToDtoConverter {
      */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValues, CustomFieldInheritanceEnum inheritCF) {
 
+        if (entity == null) {
+            return null;
+        }
+
         if (inheritCF == null) {
             inheritCF = CustomFieldInheritanceEnum.INHERIT_NO_MERGE;
         }

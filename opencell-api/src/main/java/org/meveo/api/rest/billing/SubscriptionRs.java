@@ -20,6 +20,8 @@ import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
 import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
@@ -304,6 +306,16 @@ public interface SubscriptionRs extends IBaseRs {
     @POST
     @Path("/activate")
     ActionStatus activate(String subscriptionCode);
+    
+    /**
+     * Activate a given Subscription for a customer.
+     *
+     * @param postData the post data
+     * @return the raw result holding the Subscription EndAgreementDate in its response.
+     */
+    @POST
+    @Path("/activateForCustomer")
+    SubscriptionForCustomerResponseDto activateForCustomer(SubscriptionForCustomerRequestDto postData);
 
     /**
      * Cancels the renewal term of an active subscription.

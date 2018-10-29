@@ -1,8 +1,5 @@
 package org.meveo.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,12 +18,16 @@ import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 
 
 /**
  * The Class CustomFieldDto.
  * 
- * @lastModifiedVersion 5.0.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2
  */
 @XmlRootElement(name = "CustomField")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -101,6 +102,10 @@ public class CustomFieldDto {
     /** The index type. */
     @XmlElement()
     private CustomFieldIndexTypeEnum indexType;
+    
+    /** The file value. */
+    @XmlElement
+    protected String fileValue;
 
     /**
      * Instantiates a new custom field dto.
@@ -505,6 +510,24 @@ public class CustomFieldDto {
     public void setIndexType(CustomFieldIndexTypeEnum indexType) {
         this.indexType = indexType;
     }
+   
+    /**
+     * Gets the file value.
+     * 
+     * @return the fileValue
+     */
+    public String getFileValue() {
+        return fileValue;
+    }
+
+    /**
+     * Sets the file value.
+     * 
+     * @param fileValue the fileValue to set
+     */
+    public void setFileValue(String fileValue) {
+        this.fileValue = fileValue;
+    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -528,6 +551,7 @@ public class CustomFieldDto {
         sb.append(", entityReferenceValue=").append(entityReferenceValue);
         sb.append(", valueConverted=").append(valueConverted);
         sb.append(", indexType=").append(indexType);
+        sb.append(", fileValue='").append(fileValue).append('\'');
         sb.append('}');
         return sb.toString();
     }

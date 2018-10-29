@@ -2,9 +2,11 @@ package org.meveo.model.catalog;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
+ */
 public enum CounterTemplateLevel {
-    UA, BA;
+    SI, SU, UA, BA;
 
     public String getLabel() {
         return "enum.counterTemplateLevel." + name();

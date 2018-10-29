@@ -55,6 +55,7 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.shared.Address;
+import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -171,6 +172,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         }
         if (entity.getName() == null) {
             entity.setName(new Name());
+        }
+        if (entity.getContactInformation() == null) {
+            entity.setContactInformation(new ContactInformation());
         }
         return entity;
     }

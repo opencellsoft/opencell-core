@@ -2835,7 +2835,38 @@ ORDER BY
             <column name="role_name" value="hideMenuHeaderFooter"/>
         </insert>
     </changeSet>
-
+    <changeSet author="TassaditChafa" id="#3277_26102018">
+		<insert tableName="adm_role">
+			<column name="id" valueNumeric="-108" />
+			<column name="version" valueNumeric="0" />
+			<column name="role_description" value="reportExtractManagement" />
+			<column name="role_name" value="reportExtractManagement" />
+		</insert>
+	</changeSet>
+	<changeSet author="TassaditChafa" id="#3276_26102018">
+		<insert tableName="adm_role">
+			<column name="id" valueNumeric="-109" />
+			<column name="version" valueNumeric="0" />
+			<column name="role_description" value="filesManagement" />
+			<column name="role_name" value="filesManagement" />
+		</insert>
+	</changeSet>
+	<changeSet author="TassaditChafa" id="#3275_26102018">
+		<insert tableName="adm_role">
+			<column name="id" valueNumeric="-110" />
+			<column name="version" valueNumeric="0" />
+			<column name="role_description" value="creditNoteVisualization" />
+			<column name="role_name" value="creditNoteVisualization" />
+		</insert>
+	</changeSet>
+	<changeSet author="TassaditChafa" id="#3274_26102018">
+		<insert tableName="adm_role">
+			<column name="id" valueNumeric="-111" />
+			<column name="version" valueNumeric="0" />
+			<column name="role_description" value="creditNoteManagement" />
+			<column name="role_name" value="creditNoteManagement" />
+		</insert>
+	</changeSet>
     <changeSet author="Edwardlegaspi" id="#3232_20180530">
         <insert tableName="meveo_script_instance_cat">
             <column name="id" valueNumeric="-1"/>

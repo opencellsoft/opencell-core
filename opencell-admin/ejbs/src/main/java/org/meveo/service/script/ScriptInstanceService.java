@@ -85,6 +85,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      * @throws BusinessException Any execution exception
      */
     @Override
+    @Lock(LockType.READ)
     public Map<String, Object> execute(String scriptCode, Map<String, Object> context)
             throws BusinessException {
 

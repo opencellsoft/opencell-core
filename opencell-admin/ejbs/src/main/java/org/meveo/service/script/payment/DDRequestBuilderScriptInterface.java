@@ -1,15 +1,18 @@
 package org.meveo.service.script.payment;
 
+import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.DDRejectFileInfos;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.service.script.ScriptInterface;
 
 /**
  * The Interface DDRequestBuilderScriptInterface.
  *
  * @author anasseh
+ * @author Said Ramli
  * @lastModifiedVersion 5.2
  */
 public interface DDRequestBuilderScriptInterface extends ScriptInterface {
@@ -57,7 +60,6 @@ public interface DDRequestBuilderScriptInterface extends ScriptInterface {
      */
     public DDRejectFileInfos processDDRejectedFile(Map<String, Object> methodContext) throws BusinessException;
 
-
     /**
      * Generate the SCT request file.
      *
@@ -76,4 +78,13 @@ public interface DDRequestBuilderScriptInterface extends ScriptInterface {
      */
     String getSCTFileName(Map<String, Object> methodContext) throws BusinessException;
 
+    /**
+     * Find list of Account Operations to pay.
+     *
+     * @param methodContext the method context
+     * @return list of Account Operations to pay.
+     * @throws BusinessException the business exception
+     */
+    public List<AccountOperation> findListAoToPay(Map<String, Object> methodContext) throws BusinessException;
+    
 }

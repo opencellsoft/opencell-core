@@ -81,7 +81,8 @@ import org.slf4j.LoggerFactory;
  * @author Andrius Karpavicius
  * @author Wassim Drira
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2
  * 
  **/
 public abstract class BaseApi {
@@ -432,7 +433,7 @@ public abstract class BaseApi {
                 continue;
             }
 
-            Object valueConverted = getValueConverted(cfDto);
+            Object valueConverted = getValueConverted(cfDto, cft);
 
             // Validate that value is valid (min/max, regexp). When
             // value is a list or a map, check separately each value
@@ -602,19 +603,39 @@ public abstract class BaseApi {
             throw new InvalidParameterException(sb.toString());
         }
     }
-
+    
+    /**
+     * From DTO.
+     *
+     * @param cft the custom field template
+     * @param cfDto the custom field dto.
+     * 
+     * @return the list or the linked hash map
+     */
+    private Object fromDTO(CustomFieldTemplate cft, CustomFieldDto cfDto) {
+        Object values = null;
+        if (!StringUtils.isBlank(cfDto.getFileValue())) {
+            values = customFieldTemplateService.serializeFromFile(cft, cfDto);
+        }
+        return values;
+    }
+    
+    
     /**
      * Get a value converted from DTO a proper Map, List, EntityWrapper, Date, Long, Double or String value.
      * 
      * @param cfDto cf dto.
+     * @param cft the the custom field template
      * @return custom field converted object.
      */
-    protected Object getValueConverted(CustomFieldDto cfDto) {
+    private Object getValueConverted(CustomFieldDto cfDto, CustomFieldTemplate cft) {
 
         if (cfDto.getMapValue() != null && !cfDto.getMapValue().isEmpty()) {
             return CustomFieldValueDto.fromDTO(cfDto.getMapValue());
         } else if (cfDto.getListValue() != null && !cfDto.getListValue().isEmpty()) {
             return CustomFieldValueDto.fromDTO(cfDto.getListValue());
+        } else if (!StringUtils.isBlank(cfDto.getFileValue())) {
+            return fromDTO(cft, cfDto);
         } else if (cfDto.getStringValue() != null) {
             return cfDto.getStringValue();
         } else if (cfDto.getDateValue() != null) {
@@ -630,6 +651,17 @@ public abstract class BaseApi {
             // CustomEntityInstanceDto for child entity type) are not converted
         }
         return null;
+    }
+    
+
+    /**
+     * Get a value converted from DTO a proper Map, List, EntityWrapper, Date, Long, Double or String value.
+     * 
+     * @param cfDto cf dto.
+     * @return custom field converted object.
+     */
+    protected Object getValueConverted(CustomFieldDto cfDto) {
+        return getValueConverted(cfDto, null);
     }
 
     protected <T> T keepOldValueIfNull(T newValue, T oldValue) {

@@ -88,6 +88,9 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
             invoiceSubcategoryCountry.setTax(tax);
         }
 
+        TradingCountry sellingCountry = null;
+        sellingCountry = tradingCountryService.findByTradingCountryCode(postData.getSellingCountry());
+        
         invoiceSubcategoryCountry.setInvoiceSubCategory(invoiceSubCategory);
         invoiceSubcategoryCountry.setTradingCountry(buyersCountry);
         invoiceSubcategoryCountry.setSellingCountry(sellersCountry);
@@ -97,6 +100,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         invoiceSubcategoryCountry.setStartValidityDate(postData.getStartValidityDate());
         invoiceSubcategoryCountry.setEndValidityDate(postData.getEndValidityDate());
         invoiceSubcategoryCountry.setPriority(postData.getPriority());
+        invoiceSubcategoryCountry.setSellingCountry(sellingCountry);
 
         invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry);
     }

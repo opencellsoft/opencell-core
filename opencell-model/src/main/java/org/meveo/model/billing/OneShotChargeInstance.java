@@ -85,6 +85,9 @@ public class OneShotChargeInstance extends ChargeInstance {
         } else {
             setSubscriptionServiceInstance(serviceInstance);
         }
+        if (serviceInstance.getSubscription().getSeller() != null) {
+            this.seller = serviceInstance.getSubscription().getSeller();
+        }
     }
 
     public OneShotChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumber,
@@ -109,13 +112,15 @@ public class OneShotChargeInstance extends ChargeInstance {
         this.amountWithTax = amountWithTax;
         this.userAccount = subscription.getUserAccount();
         this.subscription = subscription;
-        this.seller = subscription.getSeller();
         this.country = subscription.getUserAccount().getBillingAccount().getTradingCountry();
         this.currency = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
         this.chargeTemplate = chargeTemplate;
         this.quantity = quantity == null ? BigDecimal.ONE : quantity;
         this.orderNumber = orderNumber;
         this.status = InstanceStatusEnum.ACTIVE;
+        if (subscription.getSeller() != null) {
+            this.seller = subscription.getSeller();
+        }
     }
 
     public ServiceInstance getSubscriptionServiceInstance() {

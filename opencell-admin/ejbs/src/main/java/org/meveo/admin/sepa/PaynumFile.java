@@ -17,6 +17,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
 import org.meveo.service.payments.impl.DDRequestBuilderInterface;
 import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
@@ -24,11 +25,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author anasseh
+ * @author Said Ramli
  * @lastModifiedVersion 5.2
  *
  */
 @DDRequestBuilderClass
-public class PaynumFile implements DDRequestBuilderInterface {
+public class PaynumFile extends AbstractDDRequestBuilder {
     Logger log = LoggerFactory.getLogger(PaynumFile.class);
 
     @Override
@@ -138,7 +140,7 @@ public class PaynumFile implements DDRequestBuilderInterface {
     }
 
     private static String getSecretCode(CustomerAccount customerAccount) throws Exception {
-        String code = customerAccount.getContactInformation().getEmail();
+        String code = customerAccount.getContactInformationNullSafe().getEmail();
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hash = digest.digest(code.getBytes("UTF-8"));
         return Base64.encodeBase64URLSafeString(hash);
