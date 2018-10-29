@@ -258,7 +258,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return status of the operation
 	 */
 	@PUT
-	@Path("/customerNumberSequence")
+	@Path("customerNumberSequence")
 	ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData);
 	
     /**
@@ -267,7 +267,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return next customer no value
 	 */
 	@POST
-	@Path("/customerNumberSequence")
+	@Path("customerNumberSequence")
 	GenericSequenceValueResponseDto getNextCustomerNumber();
 	
 	/**
