@@ -125,6 +125,9 @@ public class EntityToDtoConverter {
      * @return the custom fields DTO
      */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, CustomFieldInheritanceEnum inheritCF) {
+        if (entity == null) {
+            return null;
+        }
         Map<String, List<CustomFieldValue>> cfValuesByCode = entity.getCfValues() != null ? entity.getCfValues().getValuesByCode() : new HashMap<>();
         return getCustomFieldsDTO(entity, cfValuesByCode, inheritCF);
     }

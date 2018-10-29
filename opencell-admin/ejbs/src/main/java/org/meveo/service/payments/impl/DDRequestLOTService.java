@@ -167,10 +167,8 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
     /**
      * Creates the DDRequest lot.
      *
-     * @param fromDueDate the from due date
-     * @param toDueDate the to due date
-     * @param ddRequestBuilder the dd request builder
-     * @param filter the filter
+     * @param listAoToPay list of account operations
+     * @param ddRequestBuilder direct debit request builder
      * @return the DD request LOT
      * @throws BusinessEntityException the business entity exception
      * @throws Exception the exception

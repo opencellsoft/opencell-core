@@ -140,7 +140,7 @@ public class PaynumFile extends AbstractDDRequestBuilder {
     }
 
     private static String getSecretCode(CustomerAccount customerAccount) throws Exception {
-        String code = customerAccount.getContactInformation().getEmail();
+        String code = customerAccount.getContactInformationNullSafe().getEmail();
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hash = digest.digest(code.getBytes("UTF-8"));
         return Base64.encodeBase64URLSafeString(hash);

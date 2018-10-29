@@ -431,7 +431,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         	entity = orderService.findByCode(((Order) entity).getCode());
         } 
         
-        entity = calculateInvoicing(entity, null, billingRun.getLastTransactionDate());
+        entity = calculateInvoicing(entity, null, billingRun.getLastTransactionDate(), billingRun);
         
         BigDecimal invoiceAmount = entity.getTotalInvoicingAmountWithoutTax();
         if (invoiceAmount != null) {
@@ -812,7 +812,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @return Invoice amount
      * @throws BusinessException General business exception
      */
-    public IBillableEntity calculateInvoicing(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) throws BusinessException {
+    public IBillableEntity calculateInvoicing(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate, BillingRun billingRun) throws BusinessException {
 
     	List<RatedTransaction> minAmountTransactions = new ArrayList<RatedTransaction>();
     	
@@ -1016,7 +1016,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                         BigDecimal.ONE, amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount,
                                         invoiceSubCategory, "", "", "", "", null, null, "", "", null, "NO_OFFER", null,
                                         RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), serviceMinLabel, null, null, subscription.getSeller());
-                                    
+                                    ratedTransaction.setBillingRun(billingRun);
                                     minAmountTransactions.add(ratedTransaction);
 
                                     serviceAmountWithoutTax = serviceAmountWithoutTax.add(amountWithoutTax);
@@ -1110,7 +1110,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                 BigDecimal.ONE, amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount, invoiceSubCategory, "",
                                 "", "", "", null, subscription, "", "", null, "NO_OFFER", null,
                                 RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode() + "_" + subscription.getCode(), subscriptionMinLabel, null, null, subscription.getSeller());
-
+                            ratedTransaction.setBillingRun(billingRun);
                             minAmountTransactions.add(ratedTransaction);
                             
                             subscriptionAmountWithoutTax = subscriptionAmountWithoutTax.add(amountWithoutTax);
@@ -1218,7 +1218,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	                    RatedTransaction ratedTransaction = new RatedTransaction(null, minRatingDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax, BigDecimal.ONE,
 	                        amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount, invoiceSubCategory, "", "", "", "", null, null, "", "", null,
 	                        "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_BA.getCode() + "_" + billingAccount.getCode(), billingAccountMinLabel, null, null, null);
-
+                        ratedTransaction.setBillingRun(billingRun);
 	                    minAmountTransactions.add(ratedTransaction);
 	
 	                    billingAccountAmountWithoutTax = billingAccountAmountWithoutTax.add(amountWithoutTax);

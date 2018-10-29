@@ -1,41 +1,41 @@
-<!-- 
+<!--
 	This page-access configuration file defines different constraints/rules for accessing pages.
-	
+
 	The page-access element is the root element and contains multiple page elements.  It also has a path attribute:
-		
+
 		path - the root path/directory that contains the pages that will be protected by the page rules/constraints.
-		
+
 	The page element defines a view-id that determines what page/pages are affected by the constraints.
-		
+
 		view-id - this attribute is a regular expression (regex) that determines what page/pages will be checked
 				using the constraints or page access rules defined by the page element.
-	
-	NOTE: The page view-ids are evaluated in the order they are listed.  Therefore, more general rules should be 
+
+	NOTE: The page view-ids are evaluated in the order they are listed.  Therefore, more general rules should be
 		  defined at the bottom while more specific ones should be defined at the top.
-		  
+
 	The constraint element contains the EL expression that is evaluated to check permissions.  It has 2 optional
 	attributes:
-		
-		type - is a value that determines if the constraint/rule is used when checking for READ(viewing), WRITE(modifying), 
-				or READ_WRITE access.  The default value is READ_WRITE, which means the same rule is evaluated when trying 
+
+		type - is a value that determines if the constraint/rule is used when checking for READ(viewing), WRITE(modifying),
+				or READ_WRITE access.  The default value is READ_WRITE, which means the same rule is evaluated when trying
 				to view the page(READ) or checking for the ability to do modifications(WRITE) on the page.
 		prepend- this is used if more than one rule/constraint is going to be used. There are two valid values: AND, OR.
 				The default value is OR.
-				
+
 	Below is an example of how a page is defined:
-	
+
 	<page view-id=".+\/admin\/(?!.*Detail).*">
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	In this example, the view-id will match all pages under the /admin/ directory whose path does not contain the word "Detail"
 	The constraints defined will be evaluated as:
 		For WRITE permissions it will use the EL: #{currentUser.hasRole('administrationManagement')}
 		For READ  permissions it will use the EL: #{currentUser.hasRole('administrationManagement') or currentUser.hasRole('administrationVisualization')}
-	This is because the first constraint has the following default type attribute: type="READ_WRITE" 
+	This is because the first constraint has the following default type attribute: type="READ_WRITE"
 	At the same time, the second constraint has a default prepend attribute of: prepend="OR"
-	
+
  -->
 
 
@@ -45,64 +45,68 @@
 	<page view-id=".+\/admin\/properties\/properties" >
 		<constraint>currentUser.hasRole('superAdminManagement')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/reporting\/cache\/.*" >
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/admin\/providers\/providerSelfDetail">
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/admin\/providers\/provider.*">
 		<constraint>currentUser.hasRole('superAdminManagement')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/tradingCountries\/tradingCountry.*">
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint>currentUser.hasRole('superAdminManagement')</constraint>
 	</page>
-    
-	
+
+
 	<page view-id=".+\/admin\/sellers\/.*">
 		<constraint>currentUser.hasRole('catalogManagement')</constraint>
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/admin\/title\/.*">
 		<constraint>currentUser.hasRole('catalogManagement')</constraint>
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/admin\/creditCategories\/.*">
 		<constraint>currentUser.hasRole('catalogManagement')</constraint>
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/admin\/meveoUsers\/.*">
 		<constraint>currentUser.hasRole('userManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('userVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/admin\/userGroupHierarchy\/.+" >
     	<constraint>currentUser.hasRole('marketingCatalogManager')</constraint>
         <constraint type="READ">currentUser.hasRole('marketingCatalogVisualization')</constraint>
         <constraint>currentUser.hasRole('administrationVisualization')</constraint>
     </page>
-	
+
+	<page view-id=".+\/admin\/files\/.+">
+			<constraint type="READ">currentUser.hasRole('filesManagement')</constraint>
+	</page>
+
 	<page view-id=".+\/admin\/.+">
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	<!-- PAGE RULES FOR BILLING PAGES -->
 	<page view-id=".+\/billing\/invoicing\/billingRuns">
 		<constraint>currentUser.hasRole('accountManagement')</constraint>
@@ -110,7 +114,7 @@
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/billing\/invoicing\/exceptionelInvoicing">
 		<constraint>currentUser.hasRole('accountManagement')</constraint>
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
@@ -127,7 +131,7 @@
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('createInvoice')</constraint>
-	</page>	
+	</page>
 
 	<page view-id=".+\/billing\/invoices\/.*">
 		<constraint>currentUser.hasRole('creditNoteManagement')</constraint>
@@ -136,7 +140,7 @@
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/billing\/ratedTransactions\/.*">
 		<constraint>currentUser.hasRole('accountManagement')</constraint>
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
@@ -144,30 +148,30 @@
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/billing\/walletOperations\/.*">
 		<constraint>currentUser.hasRole('accountManagement')</constraint>
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/billing\/billingAccounts\/.*">
 		<constraint>currentUser.hasRole('accountManagement')</constraint>
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/billing\/wallets\/wallet.*">
 		<constraint>#{currentUser.hasRole('billingManagement')}</constraint>
 	</page>
-	
+
 	<page view-id=".+\/billing\/.+">
 		<constraint>currentUser.hasRole('accountManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 	</page>
-	
+
 	<!-- PAGE RULES FOR CATALOG PAGES -->
 	<page view-id=".+\/catalog\/pricePlanMatrixes\/.*">
 		<constraint>currentUser.hasRole('catalogManagement')</constraint>
@@ -175,97 +179,97 @@
 		<constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/catalog\/discountPlans\/.*">
 		<constraint>currentUser.hasRole('catalogManagement')</constraint>
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/catalog\/calendars\/.*" >
 		<constraint>currentUser.hasRole('catalogManagement')</constraint>
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/catalog\/.+">
 		<constraint>currentUser.hasRole('marketingCatalogManager')</constraint>
-		<constraint>currentUser.hasRole('catalogManagement')</constraint>		
+		<constraint>currentUser.hasRole('catalogManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
 	</page>
-	
+
 	<!-- PAGE RULES FOR CRM PAGES -->
 	<page view-id=".+\/crm\/customers\/customer.*" >
-		<constraint>currentUser.hasRole('accountManagement')</constraint> 
+		<constraint>currentUser.hasRole('accountManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/crm\/customerBrands\/.*" >
 		<constraint>currentUser.hasRole('catalogManagement')</constraint>
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/crm\/customerCategories\/.*" >
 		<constraint>currentUser.hasRole('catalogManagement')</constraint>
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/crm\/providerContacts\/.*" >
 		<constraint>currentUser.hasRole('catalogManagement')</constraint>
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/crm\/syntheseClients\/syntheseClientDetail" >
-		<constraint>currentUser.hasRole('accountManagement')</constraint> 
+		<constraint>currentUser.hasRole('accountManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('customerSummaryVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/crm\/.+" >
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	<!-- PAGE RULES FOR MEDINA PAGES -->
 	<page view-id=".+\/medina\/access\/access.*" >
 		<constraint>currentUser.hasRole('accountManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/medina\/.+" >
 		<constraint>currentUser.hasRole('catalogManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
 	</page>
-	
+
 	<!-- PAGE RULES FOR NOTIFICATION PAGES -->
 	<page view-id=".+\/notification\/.+">
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	<!-- PAGE RULES FOR PAYMENT PAGES -->
 	<page view-id=".+\/payments\/customerAccounts\/customerAccount.*">
 		<constraint>currentUser.hasRole('accountManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/payments\/occTemplates\/occTemplate.*">
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
 	</page>
-		
+
 	<page view-id=".+\/payments\/.+">
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 	</page>
-	
+
 	<!-- PAGE RULES FOR RATING PAGES -->
 	<page view-id=".+\/rating\/.+">
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
@@ -279,7 +283,7 @@
 		<constraint type="READ">currentUser.hasRole('reportingVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
-	
+
 	<page view-id=".+\/reporting\/.+">
 		<constraint>currentUser.hasRole('reportingManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('reportingVisualization')</constraint>
@@ -290,27 +294,33 @@
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 	</page>
+
 	<!--  PAGE RULES FOR FINANCE PAGES -->
 	<page view-id=".+\/finance\/.+">
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
+		<constraint type="READ">currentUser.hasRole('reportExtractManagement')</constraint>
 	</page>
-    
+	<!--  PAGE RULES FOR reportExtract PAGES -->
+	<page view-id=".+\/finance\/reportExtracts\/.+">
+		<constraint type="READ">currentUser.hasRole('reportExtractManagement')</constraint>
+	</page>
+
     <!--  PAGE RULES FOR FULL TEXT SEARCH AND INDEXING PAGES -->
     <page view-id=".+\/index\/index">
         <constraint>currentUser.hasRole('superAdminManagement')</constraint>
         <constraint>currentUser.hasRole('administrationManagement')</constraint>
     </page>
-	
+
     <page view-id=".+\/index\/fullTextSearch">
         <constraint>true</constraint>
     </page>
-    
+
     <page view-id=".+\/order\/workflows\/.+" >
     	<constraint>currentUser.hasRole('marketingCatalogManager')</constraint>
         <constraint type="READ">currentUser.hasRole('marketingCatalogVisualization')</constraint>
     </page>
-    
+
     <page view-id=".+\/order\/.+" >
         <constraint>currentUser.hasRole('orderManagement')</constraint>
         <constraint type="READ">currentUser.hasRole('orderVisualization')</constraint>
@@ -320,11 +330,11 @@
         <constraint>currentUser.hasRole('quoteManagement')</constraint>
         <constraint type="READ">currentUser.hasRole('quoteVisualization')</constraint>
     </page>
-    
+
     <!-- PAGE RULES FOR INTCRM PAGES -->
 	<page view-id=".+\/intcrm\/.*">
 		<constraint>currentUser.hasRole('administrationManagement')
 		</constraint>
 	</page>
-    
+
 </page-access>

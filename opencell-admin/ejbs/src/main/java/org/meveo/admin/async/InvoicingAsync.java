@@ -106,9 +106,6 @@ public class InvoicingAsync {
                 break;
             }
             try {
-            	if(entity.getMinRatedTransactions().size() >0) {
-            		System.out.println("createAgregatesAndInvoiceAsync amount");
-            	}
                 invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, entity.getMinRatedTransactions(), false);
             } catch (Exception e) {
                 log.error("Error for entity=" + entity + " : " + e);

@@ -282,7 +282,7 @@ public class CustomerImportService extends ImportService {
             customerAccount.setAddress(address);
         }
 
-        ContactInformation contactInformation = customerAccount.getContactInformation() == null ? new ContactInformation() : customerAccount.getContactInformation();
+        ContactInformation contactInformation = customerAccount.getContactInformationNullSafe();
         contactInformation.setEmail(custAcc.getEmail());
         contactInformation.setPhone(custAcc.getTel1());
         contactInformation.setMobile(custAcc.getTel2());

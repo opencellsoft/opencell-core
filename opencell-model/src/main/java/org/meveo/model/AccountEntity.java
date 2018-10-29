@@ -204,10 +204,20 @@ public abstract class AccountEntity extends BusinessCFEntity {
 		this.registrationNo = registrationNo;
 	}
 
-	public ContactInformation getContactInformation() {
+	/**
+     * Instantiate contactInformation field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record
+     * will be updated in DB
+     * 
+     * @return ContactInformation value or instantiated ContactInformation field value
+     */
+	public ContactInformation getContactInformationNullSafe() {
 	    if(contactInformation == null) {
 	        contactInformation = new ContactInformation();
 	    }
+        return contactInformation;
+    }
+	
+	public ContactInformation getContactInformation() {
         return contactInformation;
     }
 

@@ -152,10 +152,10 @@ public class ExportCustomersJobBean {
                 dto.setCustomFields(CustomFields.toDTO(ca.getCfValues().getValuesByCode()));
             }
             dto.setCreditCategory(ca.getCreditCategory() == null ? null : ca.getCreditCategory().getCode());
-            if (ca.getContactInformation() != null) {
-                dto.setEmail(ca.getContactInformation().getEmail());
-                dto.setTel1(ca.getContactInformation().getPhone());
-                dto.setTel2(ca.getContactInformation().getMobile());
+            if (ca.getContactInformationNullSafe() != null) {
+                dto.setEmail(ca.getContactInformationNullSafe().getEmail());
+                dto.setTel1(ca.getContactInformationNullSafe().getPhone());
+                dto.setTel2(ca.getContactInformationNullSafe().getMobile());
             }
         }
         return dto;

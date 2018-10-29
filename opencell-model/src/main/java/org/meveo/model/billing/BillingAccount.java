@@ -427,7 +427,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Override
 	public void anonymize(String code) {
 		super.anonymize(code);
-		getContactInformation().anonymize(code);
+		getContactInformationNullSafe().anonymize(code);
 		if (getUsersAccounts() != null) {
 			for (UserAccount ua : getUsersAccounts()) {
 				ua.anonymize(code);
