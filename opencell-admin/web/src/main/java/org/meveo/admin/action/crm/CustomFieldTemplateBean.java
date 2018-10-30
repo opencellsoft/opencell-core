@@ -1,21 +1,5 @@
 package org.meveo.admin.action.crm;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
@@ -40,11 +24,26 @@ import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DualListModel;
 import org.reflections.Reflections;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.lang.reflect.Modifier;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 /**
- * 
+ * The Class CustomFieldTemplateBean.
+ *
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2.1
  */
+
 @Named
 @ViewScoped
 public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldTemplate> {
@@ -88,6 +87,25 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        if (!StringUtils.isBlank(entity.getDisplayFormat())) {
+            if (entity.getFieldType() == CustomFieldTypeEnum.LONG || entity.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+                try {
+                    new DecimalFormat(entity.getDisplayFormat());
+                } catch (IllegalArgumentException e) {
+                    messages.error(new BundleKey("messages", "customFieldTemplate.invalidDisplayFormat"));
+                    return null;
+                }
+            }
+            if (entity.getFieldType() == CustomFieldTypeEnum.DATE) {
+                try {
+                    new SimpleDateFormat(entity.getDisplayFormat());
+                } catch (IllegalArgumentException e) {
+                    messages.error(new BundleKey("messages", "customFieldTemplate.invalidDisplayFormat"));
+                    return null;
+                }
+            }
+        }
 
         if (entity.getFieldType() == CustomFieldTypeEnum.LIST) {
             entity.setListValues(new TreeMap<String, String>());
@@ -143,7 +161,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         for (CustomizedEntity customizedEntity : entities) {
             clazzNames.add(customizedEntity.getClassnameToDisplay());
         }
-        
+
         return clazzNames;
     }
     
@@ -169,7 +187,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         List<CustomizedEntity> calendars = new ArrayList<>();
         for (Class<? extends Calendar> calendarClass : calendarClasses) {
             String classSimpleName = calendarClass.getSimpleName();
-            if ( !Modifier.isAbstract(calendarClass.getModifiers()) && ( (isEmpty(entityName) || classSimpleName.toLowerCase().contains(entityName)) ) ) {
+            if (!Modifier.isAbstract(calendarClass.getModifiers()) && ((isEmpty(entityName) || classSimpleName.toLowerCase().contains(entityName)))) {
                 calendars.add(new CustomizedEntity(calendarClass));
             }
         }
@@ -241,7 +259,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
             perksSource.add(new CustomFieldMatrixColumn("description", "Description"));
 
             Map<String, CustomFieldTemplate> cfts = customFieldTemplateService
-                    .findByAppliesTo(EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(entity.getEntityClazz())));
+                .findByAppliesTo(EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(entity.getEntityClazz())));
 
             for (CustomFieldTemplate cft : cfts.values()) {
                 perksSource.add(new CustomFieldMatrixColumn(cft.getCode(), cft.getDescription()));
