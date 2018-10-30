@@ -255,7 +255,7 @@
                                  	<hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
 									<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
                                  	       
-                               	    <hftl:formField label="#{messages['menu.discountPlans']}" field="discountPlans" listType="pickUpList" valueLabelField="code" required="false" dualListModel="#{billingAccountBean.discountPlanDM}" />
+                               	    <hftl:formField rendered="#{billingAccountBean.edit}" label="#{messages['menu.discountPlans']}" field="discountPlans" listType="pickUpList" valueLabelField="code" required="false" dualListModel="#{billingAccountBean.discountPlanDM}" />
 							     </p:fieldset>		
 							     
                                  <p:fieldset legend="#{messages['commons.status']}" styleClass="clearLeft" >

@@ -2108,10 +2108,25 @@
 <changeSet id="#3692_20181015" author="HatimOudad">
      <modifyDataType columnName="iban" newDataType="varchar(80)" tableName="ar_payment_token "/>
     </changeSet>
+
+    <changeSet id="#3668_20181610" author="SaidRamli">
+        <addColumn tableName="ar_ddrequest_lot_op">
+            <column name="script_instance_id" type="bigint" /> 
+            <column name="recurrent" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
     
     <changeSet id="#3705_20181019 - Create discount plan bridge table" author="EdwardPLegaspi" dbms="postgresql">
+    	<dropUniqueConstraint tableName="cat_discount_plan_item" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn"/>
+    	<addUniqueConstraint columnNames="discount_plan_id, code" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_discount_plan_item" />
+    
     	<addColumn tableName="cat_discount_plan_item">
-    		<column name="discount_plan_item_type" type="varchar(25)"></column>
+    		<column name="discount_plan_item_type" type="varchar(25)" />
+    		<column name="discount_amount" type="numeric(23, 12)" />
+    		<column name="start_date" type="date" />
+    		<column name="end_date" type="date" />
+    		<column name="default_duration" type="int4" />
+    		<column name="duration_unit" type="varchar(50)" />
     	</addColumn>
     	
     	<update tableName="cat_discount_plan_item">
@@ -2139,12 +2154,5 @@
     	<update tableName="billing_billing_account">
     		<column name="discount_plan_id"></column>
     	</update>
-    </changeSet>
-
-    <changeSet id="#3668_20181610" author="SaidRamli">
-        <addColumn tableName="ar_ddrequest_lot_op">
-            <column name="script_instance_id" type="bigint" /> 
-            <column name="recurrent" type="${type.boolean}" defaultValueNumeric="0"/>
-        </addColumn>
     </changeSet>
 </databaseChangeLog>

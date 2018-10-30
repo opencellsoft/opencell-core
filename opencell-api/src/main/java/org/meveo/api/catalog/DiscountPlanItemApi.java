@@ -18,6 +18,7 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -60,9 +61,19 @@ public class DiscountPlanItemApi extends BaseApi {
         if (StringUtils.isBlank(postData.getDiscountPlanCode())) {
             missingParameters.add("discountPlanCode");
         }
-        if (postData.getPercent() == null) {
-            missingParameters.add("percent");
+        if (postData.getDiscountPlanItemType() == null) {
+            missingParameters.add("discountPlanItemType");
         }
+		if (postData.getDiscountPlanItemType() != null
+				&& postData.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)
+				&& postData.getPercent() == null) {
+			missingParameters.add("percent");
+		}
+		if (postData.getDiscountPlanItemType() != null
+				&& postData.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.FIXED)
+				&& postData.getDiscountAmount() == null) {
+			missingParameters.add("discountAmount");
+		}
 
         handleMissingParameters();
 
@@ -70,7 +81,7 @@ public class DiscountPlanItemApi extends BaseApi {
         if (discountPlanItem != null) {
             throw new EntityAlreadyExistsException(DiscountPlanItem.class, postData.getCode());
         }
-        discountPlanItem = fromDto(postData, null);
+        discountPlanItem = toDiscountPlanItem(postData, null);
         discountPlanItemService.create(discountPlanItem);
     }
 
@@ -94,9 +105,9 @@ public class DiscountPlanItemApi extends BaseApi {
         if (discountPlanItem == null) {
             throw new EntityDoesNotExistsException(DiscountPlanItem.class, postData.getCode());
         }
-        discountPlanItem = fromDto(postData, discountPlanItem);
+        discountPlanItem = toDiscountPlanItem(postData, discountPlanItem);
 
-        discountPlanItem = discountPlanItemService.update(discountPlanItem);
+        discountPlanItemService.update(discountPlanItem);
     }
 
     /**
@@ -170,7 +181,7 @@ public class DiscountPlanItemApi extends BaseApi {
      * @throws MeveoApiException meveo api exception.
      */
     public List<DiscountPlanItemDto> list() throws MeveoApiException {
-        List<DiscountPlanItemDto> discountPlanItemDtos = new ArrayList<DiscountPlanItemDto>();
+        List<DiscountPlanItemDto> discountPlanItemDtos = new ArrayList<>();
         List<DiscountPlanItem> discountPlanItems = discountPlanItemService.list();
         if (discountPlanItems != null && !discountPlanItems.isEmpty()) {
             DiscountPlanItemDto dpid = null;
@@ -182,57 +193,74 @@ public class DiscountPlanItemApi extends BaseApi {
         return discountPlanItemDtos;
     }
 
-    public DiscountPlanItem fromDto(DiscountPlanItemDto dto, DiscountPlanItem discountPlanItemToUpdate) throws MeveoApiException {
-        DiscountPlanItem discountPlanItem = discountPlanItemToUpdate;
-        if (discountPlanItem == null) {
-            discountPlanItem = new DiscountPlanItem();
-            discountPlanItem.setCode(dto.getCode());
-            if (dto.isDisabled() != null) {
-                discountPlanItem.setDisabled(dto.isDisabled());
+    public DiscountPlanItem toDiscountPlanItem(DiscountPlanItemDto source, DiscountPlanItem target) throws MeveoApiException {
+        if (target == null) {
+            target = new DiscountPlanItem();
+            target.setCode(source.getCode());
+            if (source.isDisabled() != null) {
+                target.setDisabled(source.isDisabled());
             }
         }
 
-        if (!StringUtils.isBlank(dto.getDiscountPlanCode())) {
-            DiscountPlan discountPlan = discountPlanService.findByCode(dto.getDiscountPlanCode());
+        if (!StringUtils.isBlank(source.getDiscountPlanCode())) {
+            DiscountPlan discountPlan = discountPlanService.findByCode(source.getDiscountPlanCode());
             if (discountPlan == null) {
-                throw new EntityDoesNotExistsException(DiscountPlan.class, dto.getDiscountPlanCode());
+                throw new EntityDoesNotExistsException(DiscountPlan.class, source.getDiscountPlanCode());
             }
-            if (discountPlanItem.getDiscountPlan() != null && discountPlan != discountPlanItem.getDiscountPlan()) {
-                throw new MeveoApiException("Parent discountPlan " + discountPlanItem.getDiscountPlan().getCode() + " of item " + dto.getCode()
-                        + " NOT match with DTO discountPlan " + dto.getDiscountPlanCode());
+            if (target.getDiscountPlan() != null && discountPlan != target.getDiscountPlan()) {
+                throw new MeveoApiException("Parent discountPlan " + target.getDiscountPlan().getCode() + " of item " + source.getCode()
+                        + " NOT match with DTO discountPlan " + source.getDiscountPlanCode());
             }
-            discountPlanItem.setDiscountPlan(discountPlan);
+            target.setDiscountPlan(discountPlan);
         }
 
-        if (!StringUtils.isBlank(dto.getInvoiceCategoryCode())) {
-            InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(dto.getInvoiceCategoryCode());
+        if (!StringUtils.isBlank(source.getInvoiceCategoryCode())) {
+            InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(source.getInvoiceCategoryCode());
             if (invoiceCategory == null) {
-                throw new EntityDoesNotExistsException(InvoiceCategory.class, dto.getInvoiceCategoryCode());
+                throw new EntityDoesNotExistsException(InvoiceCategory.class, source.getInvoiceCategoryCode());
             }
-            discountPlanItem.setInvoiceCategory(invoiceCategory);
+            target.setInvoiceCategory(invoiceCategory);
         }
 
-        if (!StringUtils.isBlank(dto.getInvoiceSubCategoryCode())) {
-            InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(dto.getInvoiceSubCategoryCode());
+        if (!StringUtils.isBlank(source.getInvoiceSubCategoryCode())) {
+            InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(source.getInvoiceSubCategoryCode());
             if (invoiceSubCategory == null) {
-                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, dto.getInvoiceSubCategoryCode());
+                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, source.getInvoiceSubCategoryCode());
             }
-            discountPlanItem.setInvoiceSubCategory(invoiceSubCategory);
+            target.setInvoiceSubCategory(invoiceSubCategory);
         }
-        if (dto.getPercent() != null) {
-            discountPlanItem.setPercent(dto.getPercent());
+        if (source.getPercent() != null) {
+            target.setPercent(source.getPercent());
         }
-        if (dto.getAccountingCode() != null) {
-            discountPlanItem.setAccountingCode(dto.getAccountingCode());
+        if (source.getAccountingCode() != null) {
+            target.setAccountingCode(source.getAccountingCode());
         }
-        if (dto.getExpressionEl() != null) {
-            discountPlanItem.setExpressionEl(dto.getExpressionEl());
+        if (source.getExpressionEl() != null) {
+            target.setExpressionEl(source.getExpressionEl());
         }
-        if (dto.getDiscountPercentEl() != null) {
-            discountPlanItem.setDiscountPercentEl(dto.getDiscountPercentEl());
-        }
+        if (source.getDiscountPercentEl() != null) {
+            target.setDiscountPercentEl(source.getDiscountPercentEl());
+		}
+		if (source.getDiscountAmount() != null) {
+			target.setDiscountAmount(source.getDiscountAmount());
+		}
+		if (source.getDiscountPlanItemType() != null) {
+			target.setDiscountPlanItemType(source.getDiscountPlanItemType());
+		}
+		if (source.getStartDate() != null) {
+			target.setStartDate(source.getStartDate());
+		}
+		if (source.getEndDate() != null) {
+			target.setEndDate(source.getEndDate());
+		}
+		if (source.getDefaultDuration() != null) {
+			target.setDefaultDuration(source.getDefaultDuration());
+		}
+		if (source.getDurationUnit() != null) {
+			target.setDurationUnit(source.getDurationUnit());
+		}
 
-        return discountPlanItem;
+        return target;
     }
 
     /**

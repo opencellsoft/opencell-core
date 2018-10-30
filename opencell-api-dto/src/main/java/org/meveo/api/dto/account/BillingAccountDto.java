@@ -185,6 +185,14 @@ public class BillingAccountDto extends AccountDto {
 			discountPlans = e.getDiscountPlans().stream().map(p -> p.getCode()).collect(Collectors.toList());
 		}
 	}
+	
+	public void addDiscountPlan(String dp) {
+		if (discountPlans == null) {
+			discountPlans = new ArrayList<>();
+		}
+
+		discountPlans.add(dp);
+	}
 
     /**
      * Gets the customer account.

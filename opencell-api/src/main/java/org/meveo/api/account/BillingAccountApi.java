@@ -184,15 +184,11 @@ public class BillingAccountApi extends AccountEntityApi {
         billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
         billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
 
-        if (!StringUtils.isBlank(postData.getDiscountPlan())) {
-            DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
-            if (discountPlan == null) {
-                throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getDiscountPlan());
-            }
-            billingAccount.setDiscountPlan(discountPlan);
-        } else {
-            billingAccount.setDiscountPlan(null);
-        }
+		if (!StringUtils.isBlank(postData.getDiscountPlan())) {
+			postData.addDiscountPlan(postData.getDiscountPlan());
+		} else {
+			billingAccount.setDiscountPlan(null);
+		}
         
 		if (postData.getDiscountPlans() != null && !postData.getDiscountPlans().isEmpty()) {
 			for (String discountPlanCode : postData.getDiscountPlans()) {
@@ -348,11 +344,7 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
         }
         if (!StringUtils.isBlank(postData.getDiscountPlan())) {
-            DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
-            if (discountPlan == null) {
-                throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getDiscountPlan());
-            }
-            billingAccount.setDiscountPlan(discountPlan);
+			postData.addDiscountPlan(postData.getDiscountPlan());
         } else if (postData.getDiscountPlan() != null) {
             billingAccount.setDiscountPlan(null);
         }

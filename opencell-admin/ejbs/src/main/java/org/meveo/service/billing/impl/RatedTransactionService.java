@@ -70,6 +70,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
@@ -928,46 +929,58 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         try {
 
             BillingAccount billingAccount = userAccount.getBillingAccount();
-            DiscountPlan discountPlan = billingAccount.getDiscountPlan();
-            if (discountPlan != null && discountPlan.isActive()) {
-                CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-                List<DiscountPlanItem> discountPlanItems = discountPlan.getDiscountPlanItems();
+            
+			if (billingAccount.getDiscountPlans() != null && !billingAccount.getDiscountPlans().isEmpty()) {
+				for (DiscountPlan discountPlan : billingAccount.getDiscountPlans()) {
+					if (discountPlan != null && discountPlan.isActive()) {
+						CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+						List<DiscountPlanItem> discountPlanItems = discountPlan.getDiscountPlanItems();
 
-                for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-                    if (discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice)) {
+						for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+							// check if discount is applicable
+							if (discountPlanItem.isEffective(invoice.getInvoiceDate()) && discountPlanItem.isActive()
+									&& matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(),
+											customerAccount, billingAccount, invoice)) {
 
-                        // Apply discount to a particular invoice subcategory
-                        if (discountPlanItem.getInvoiceSubCategory() != null) {
-                            appendDiscountAggregate(userAccount, isExonerated, userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(), discountPlanItem,
-                                taxInvoiceAgregateMap, isVirtual);
+								// Apply discount to a particular invoice subcategory
+								if (discountPlanItem.getInvoiceSubCategory() != null) {
+									appendDiscountAggregate(userAccount, isExonerated, userAccount.getWallet(), invoice,
+											discountPlanItem.getInvoiceSubCategory(), discountPlanItem,
+											taxInvoiceAgregateMap, isVirtual);
 
-                            // Apply discount to all subcategories of a particular invoice category
-                        } else if (discountPlanItem.getInvoiceCategory() != null) {
-                            InvoiceCategory invoiceCat = discountPlanItem.getInvoiceCategory();
-                            for (InvoiceSubCategory invoiceSubCat : invoiceCat.getInvoiceSubCategories()) {
-                                appendDiscountAggregate(userAccount, isExonerated, userAccount.getWallet(), invoice, invoiceSubCat, discountPlanItem, taxInvoiceAgregateMap,
-                                    isVirtual);
-                            }
+									// Apply discount to all subcategories of a particular invoice category
+								} else if (discountPlanItem.getInvoiceCategory() != null) {
+									InvoiceCategory invoiceCat = discountPlanItem.getInvoiceCategory();
+									for (InvoiceSubCategory invoiceSubCat : invoiceCat.getInvoiceSubCategories()) {
+										appendDiscountAggregate(userAccount, isExonerated, userAccount.getWallet(),
+												invoice, invoiceSubCat, discountPlanItem, taxInvoiceAgregateMap,
+												isVirtual);
+									}
 
-                            // Apply discount to all subcategories in the invoice
-                        } else {
+									// Apply discount to all subcategories in the invoice
+								} else {
+									List<InvoiceSubCategory> allSubcategories = new ArrayList<>();
+									for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
+										if (invoiceAgregate instanceof SubCategoryInvoiceAgregate
+												&& ((SubCategoryInvoiceAgregate) invoiceAgregate).getWallet()
+														.equals(userAccount.getWallet())
+												&& !invoiceAgregate.isDiscountAggregate()) {
+											allSubcategories.add(((SubCategoryInvoiceAgregate) invoiceAgregate)
+													.getInvoiceSubCategory());
+										}
+									}
 
-                            List<InvoiceSubCategory> allSubcategories = new ArrayList<>();
-                            for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-
-                                if (invoiceAgregate instanceof SubCategoryInvoiceAgregate
-                                        && ((SubCategoryInvoiceAgregate) invoiceAgregate).getWallet().equals(userAccount.getWallet()) && !invoiceAgregate.isDiscountAggregate()) {
-                                    allSubcategories.add(((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory());
-                                }
-                            }
-                            for (InvoiceSubCategory invoiceSubCategory : allSubcategories) {
-                                appendDiscountAggregate(userAccount, isExonerated, userAccount.getWallet(), invoice, invoiceSubCategory, discountPlanItem, taxInvoiceAgregateMap,
-                                    isVirtual);
-                            }
-                        }
-                    }
-                }
-            }
+									for (InvoiceSubCategory invoiceSubCategory : allSubcategories) {
+										appendDiscountAggregate(userAccount, isExonerated, userAccount.getWallet(),
+												invoice, invoiceSubCategory, discountPlanItem, taxInvoiceAgregateMap,
+												isVirtual);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 
         } catch (BusinessException e) {
             log.error("Error when trying to create discount aggregates", e);
@@ -992,26 +1005,22 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BigDecimal amount = BigDecimal.ZERO;
         BigDecimal discountPercent = discountPlanItem.getPercent();
 
-        // AKK commented out, as why to call service if can be done locally in a simple loop
-        // if (!isVirtual) {
-        // amount = invoiceAgregateService.findTotalAmountByWalletSubCat(wallet, invoiceSubCat, invoice);
-        // } else {
+        // compute the invoiceSubCategory amount without tax
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
             if (invoiceAgregate instanceof SubCategoryInvoiceAgregate && ((SubCategoryInvoiceAgregate) invoiceAgregate).getWallet().equals(wallet)
                     && ((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory().equals(invoiceSubCat) && !invoiceAgregate.isDiscountAggregate()) {
                 amount = amount.add(invoiceAgregate.getAmountWithoutTax());
             }
         }
-        // }
 
         if (amount != null && !BigDecimal.ZERO.equals(amount)) {
             if (discountPlanItem.getDiscountPercentEl() != null) {
                 discountPercent = getDecimalExpression(discountPlanItem.getDiscountPercentEl(), userAccount, wallet, invoice, amount);
-                log.debug("for discountPlan " + discountPlanItem.getCode() + " percentEL ->" + discountPercent + " on amount=" + amount);
-            }
-            BigDecimal discountAmountWithoutTax = amount.multiply(discountPercent.divide(HUNDRED)).negate();
-            // BigDecimal discountAmountWithoutTax=amount.multiply(discountPlanItem.getPercent().divide(HUNDRED)).negate();
-            List<Tax> taxes = new ArrayList<Tax>();
+				log.debug("for discountPlan {} percentEL -> {} on amount={}", discountPlanItem.getCode(),
+						discountPercent, amount);
+            }			
+            
+            List<Tax> taxes = new ArrayList<>();
             for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCat.getInvoiceSubcategoryCountries()) {
                 if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
                         && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
@@ -1022,6 +1031,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 }
             }
             
+            BigDecimal discountAmountWithoutTax;
+			if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+				discountAmountWithoutTax = amount.multiply(discountPercent.divide(HUNDRED)).negate();
+			} else {
+				discountAmountWithoutTax = discountPlanItem.getDiscountAmount().negate();
+			}
+            
             SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
             BigDecimal discountAmountTax = BigDecimal.ZERO;
             if (!isExonerated) {
@@ -1029,7 +1045,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     BigDecimal amountTax = discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));
                     discountAmountTax = discountAmountTax.add(amountTax);
                     invoiceAgregateSubcat.addSubCategoryTax(tax);
-                    TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId());
+                    TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId().toString());
                     if (taxInvoiceAgregate != null) {
                         taxInvoiceAgregate.addAmountTax(amountTax);
                         taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
@@ -1053,8 +1069,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             invoiceAgregateSubcat.setInvoiceSubCategory(invoiceSubCat);
 
             invoiceAgregateSubcat.setDiscountAggregate(true);
-            invoiceAgregateSubcat.setDiscountPercent(discountPercent);
-            // invoiceAgregateSubcat.setDiscountPercent(discountPlanItem.getPercent());
+			if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+				invoiceAgregateSubcat.setDiscountPercent(discountPercent);
+			}
             invoiceAgregateSubcat.setDiscountPlanCode(discountPlanItem.getDiscountPlan().getCode());
             invoiceAgregateSubcat.setDiscountPlanItemCode(discountPlanItem.getCode());
         }
