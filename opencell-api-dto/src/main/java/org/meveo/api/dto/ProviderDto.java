@@ -59,6 +59,15 @@ public class ProviderDto extends AuditableEntityDto {
     
     /** The rounding. */
     private Integer rounding;
+
+    /** The rounding. mode*/
+    private String roundingMode;
+
+    /** The invoice rounding. */
+    private Integer invoiceRounding;
+
+    /** The invoice rounding mode. */
+    private String invoiceRoundingMode;
     
     /** The prepaid reservation expiration delayin millisec. */
     private Long prepaidReservationExpirationDelayinMillisec;
@@ -421,6 +430,58 @@ public class ProviderDto extends AuditableEntityDto {
      */
     public void setRounding(Integer rounding) {
         this.rounding = rounding;
+    }
+
+    /**
+     * Gets the rounding mode
+     * @return the rounding mode
+     * @see org.meveo.model.catalog.RoundingModeEnum
+     */
+    public String getRoundingMode() {
+        return roundingMode;
+    }
+
+    /**
+     * Sets the rounding mode
+     * @param roundingMode the rounding mode
+     * @see org.meveo.model.catalog.RoundingModeEnum
+     */
+    public void setRoundingMode(String roundingMode) {
+        this.roundingMode = roundingMode;
+    }
+
+    /**
+     * Gets the invoice rounding
+     * @return the invoice rounding
+     */
+    public Integer getInvoiceRounding() {
+        return invoiceRounding;
+    }
+
+    /**
+     * Sets the invoice rounding
+     * @param invoiceRounding the new invoice rounding
+     */
+    public void setInvoiceRounding(Integer invoiceRounding) {
+        this.invoiceRounding = invoiceRounding;
+    }
+
+    /**
+     * Gets the invoice rounding mode
+     * @return the invoice rounding mode.
+     * @see org.meveo.model.catalog.RoundingModeEnum
+     */
+    public String getInvoiceRoundingMode() {
+        return invoiceRoundingMode;
+    }
+
+    /**
+     * Sets the invoice rounding mode
+     * @param invoiceRoundingMode the new invoice rounding mode.
+     * @see org.meveo.model.catalog.RoundingModeEnum
+     */
+    public void setInvoiceRoundingMode(String invoiceRoundingMode) {
+        this.invoiceRoundingMode = invoiceRoundingMode;
     }
 
     /**
