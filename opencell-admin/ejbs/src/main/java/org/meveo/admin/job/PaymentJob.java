@@ -193,7 +193,7 @@ public class PaymentJob extends Job {
         dueDateRangeScript.setEntityClazz("org.meveo.model.scripts.ScriptInstance");
         dueDateRangeScript.setValueRequired(false);
         dueDateRangeScript.setDefaultValue("");
-        result.put(cfAoFilterScriptCode, dueDateRangeScript);
+        result.put(cfDueDateRangeScriptCode, dueDateRangeScript);
 
         return result;
     }
