@@ -142,6 +142,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                     if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
                         List<AccountOperation> listAoToPay = this.filterAoToPay( ddRequestBuilderInterface.findListAoToPay(ddrequestLotOp), jobInstance);
                         DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(listAoToPay, ddRequestBuilder);
+                        result.addReport(ddRequestLOT.getRejectedCause());
                         dDRequestLOTService.createPaymentsForDDRequestLot(ddRequestLOT);
                     } else if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
                         ddRequestBuilderInterface.generateDDRequestLotFile(ddrequestLotOp.getDdrequestLOT(), appProvider);
@@ -216,8 +217,12 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
             DDRequestLotOp newDDRequestLotOp = new DDRequestLotOp();
             newDDRequestLotOp.setRecurrent(true);
             newDDRequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
-            
-            newDDRequestLotOp.setScriptInstance(ddrequestLotOp.getScriptInstance());
+            ScriptInstance dueDateRange = ddrequestLotOp.getScriptInstance();
+            newDDRequestLotOp.setScriptInstance(dueDateRange);
+            if (dueDateRange == null) {
+                newDDRequestLotOp.setFromDueDate(ddrequestLotOp.getFromDueDate());
+                newDDRequestLotOp.setToDueDate(ddrequestLotOp.getToDueDate());
+            }
             newDDRequestLotOp.setDdRequestBuilder(ddrequestLotOp.getDdRequestBuilder());
             newDDRequestLotOp.setFilter(ddrequestLotOp.getFilter());
             newDDRequestLotOp.setDdrequestOp(ddrequestLotOp.getDdrequestOp());
