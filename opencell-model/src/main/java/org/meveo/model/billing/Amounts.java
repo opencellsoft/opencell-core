@@ -14,29 +14,40 @@ public class Amounts implements Serializable {
     private static final long serialVersionUID = 9184599956127715623L;
 
     /**
-     * Amount with tax
-     */
-    private BigDecimal amountWithTax;
-
-    /**
      * Amount without tax
      */
-    private BigDecimal amountWithoutTax;
+    private BigDecimal amountWithoutTax = BigDecimal.ZERO;
 
+    /**
+     * Amount with tax
+     */
+    private BigDecimal amountWithTax = BigDecimal.ZERO;
+
+    /**
+     * Instantiate
+     */
     public Amounts() {
     }
 
-    public Amounts(BigDecimal amountWithTax, BigDecimal amountWithoutTax) {
+    /**
+     * Instantiate with given amounts
+     * 
+     * @param amountWithoutTax Amount without tax
+     * @param amountWithTax Amount with tax
+     */
+    public Amounts(BigDecimal amountWithoutTax, BigDecimal amountWithTax) {
         super();
-        if (amountWithTax == null) {
-            this.amountWithTax = BigDecimal.ZERO;
-        } else {
-            this.amountWithTax = amountWithTax;
-        }
+
         if (amountWithoutTax == null) {
             this.amountWithoutTax = BigDecimal.ZERO;
         } else {
             this.amountWithoutTax = amountWithoutTax;
+        }
+
+        if (amountWithTax == null) {
+            this.amountWithTax = BigDecimal.ZERO;
+        } else {
+            this.amountWithTax = amountWithTax;
         }
     }
 
@@ -73,5 +84,32 @@ public class Amounts implements Serializable {
     @Override
     public String toString() {
         return "amountWithTax=" + amountWithTax + ", amountWithoutTax=" + amountWithoutTax;
+    }
+
+    /**
+     * Add given amounts
+     * 
+     * @param amountWithoutTaxToAdd Amount without tax
+     * @param amountWithTaxToAdd Amount with tax
+     */
+    public void addAmounts(BigDecimal amountWithoutTaxToAdd, BigDecimal amountWithTaxToAdd) {
+
+        if (amountWithoutTaxToAdd != null) {
+            this.amountWithoutTax = this.amountWithoutTax.add(amountWithoutTaxToAdd);
+        }
+
+        if (amountWithTaxToAdd != null) {
+            this.amountWithTax = this.amountWithTax.add(amountWithTaxToAdd);
+        }
+    }
+
+    /**
+     * Add given amounts
+     * 
+     * @param amountsToAdd Amounts to add
+     */
+    public void addAmounts(Amounts amountsToAdd) {
+        this.amountWithoutTax = this.amountWithoutTax.add(amountsToAdd.getAmountWithoutTax());
+        this.amountWithTax = this.amountWithTax.add(amountsToAdd.getAmountWithTax());
     }
 }

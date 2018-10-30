@@ -33,9 +33,11 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
         BillingRun billingRun = findById(billingRunId);
         
         for(IBillableEntity entity : entites) {
-        	amountTax = amountTax.add(entity.getTotalInvoicingAmountTax());
-        	amountWithoutTax = amountWithoutTax.add(entity.getTotalInvoicingAmountWithoutTax());
-        	amountWithTax = amountWithTax.add(entity.getTotalInvoicingAmountWithTax());
+            if (entity.getTotalInvoicingAmountTax() != null) {
+                amountTax = amountTax.add(entity.getTotalInvoicingAmountTax());
+                amountWithoutTax = amountWithoutTax.add(entity.getTotalInvoicingAmountWithoutTax());
+                amountWithTax = amountWithTax.add(entity.getTotalInvoicingAmountWithTax());
+            }
         }
             
         billingRun.setPrAmountWithoutTax(amountWithoutTax);

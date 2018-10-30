@@ -152,11 +152,11 @@ public class RatedTransactionDto extends BaseEntityDto {
         this.setUsageDate(ratedTransaction.getUsageDate());
         this.setUnitAmountWithoutTax(ratedTransaction.getUnitAmountWithoutTax());
         this.setUnitAmountWithTax(ratedTransaction.getUnitAmountWithTax());
-        this.setUnitAmountTax(ratedTransaction.getUnitAmountWithTax());
+        this.setUnitAmountTax(ratedTransaction.getUnitAmountTax());
         this.setQuantity(ratedTransaction.getQuantity());
         this.setAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
         this.setAmountWithTax(ratedTransaction.getAmountWithTax());
-        this.setAmountTax(ratedTransaction.getAmountWithTax());
+        this.setAmountTax(ratedTransaction.getAmountTax());
         this.setCode(ratedTransaction.getCode());
         this.setDescription(ratedTransaction.getDescription());
         this.setUnityDescription(ratedTransaction.getUnityDescription());

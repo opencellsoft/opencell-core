@@ -111,11 +111,21 @@ import org.meveo.model.rating.EDR;
                 + "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " AND r.doNotTriggerInvoicing=false " + "AND r.invoice is null" + " AND r.billingAccount=:billingAccount"),
 
-        @NamedQuery(name = "RatedTransaction.sumByCharge", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax), r.invoiceSubCategory.id  FROM RatedTransaction r "
+        @NamedQuery(name = "RatedTransaction.sumByCharge", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id  FROM RatedTransaction r "
                 + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
-                + " AND r.doNotTriggerInvoicing=false AND r.invoice is null AND r.billingAccount=:billingAccount AND r.walletOperationEntity.chargeInstance=:chargeInstance"
+                + " AND r.doNotTriggerInvoicing=false AND r.invoice is null and r.chargeInstance in (:chargeInstances)"
                 + " GROUP BY r.invoiceSubCategory.id"),
 
+        @NamedQuery(name = "RatedTransaction.sumBySubscription", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id  FROM RatedTransaction r "
+                + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+                + " AND r.doNotTriggerInvoicing=false AND r.invoice is null and r.subscription = :subscription"
+                + " GROUP BY r.invoiceSubCategory.id"),
+
+        @NamedQuery(name = "RatedTransaction.sumByBillingAccountNoSubscription", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.seller.id  FROM RatedTransaction r "
+                + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+                + " AND r.doNotTriggerInvoicing=false AND r.invoice is null and r.billingAccount = :billingAccount and r.subscription is null"
+                + " GROUP BY r.invoiceSubCategory.id, r.seller.id"),        
+        
         @NamedQuery(name = "RatedTransaction.updateInvoiced", query = "UPDATE RatedTransaction r "
                 + "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED " + "where r.invoice is null"
                 + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN " + " and r.doNotTriggerInvoicing=false" + " AND r.usageDate<:lastTransactionDate "
@@ -518,13 +528,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.seller = seller;
         this.tax = tax;
         this.taxPercent = taxPercent;
-
-        if (inputUnitDescription != null) {
-            this.unityDescription = inputUnitDescription;
-        }
-        if (ratingUnitDescription != null) {
-            this.ratingUnitDescription = ratingUnitDescription;
-        }
+        this.unityDescription = inputUnitDescription;
+        this.ratingUnitDescription = ratingUnitDescription;
     }
 
     public RatedTransaction(WalletOperation walletOperation) {

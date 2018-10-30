@@ -106,7 +106,6 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -215,7 +214,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
-    
+
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
@@ -364,7 +363,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         InvoiceType invoiceType = invoiceTypeService.findById(invoice.getInvoiceType().getId());
 
         Seller seller = invoice.getSeller();
-        if(seller == null && cust.getSeller() != null) {
+        if (seller == null && cust.getSeller() != null) {
             seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
         }
 
@@ -635,6 +634,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             for (RatedTransaction minRatedTransaction : minAmountTransactions) {
                 BillingAccount ba = billingAccountService.retrieveIfNotManaged(minRatedTransaction.getBillingAccount());
                 minRatedTransaction.setBillingAccount(ba);
+
                 ratedTransactionService.create(minRatedTransaction);
             }
         }
@@ -648,14 +648,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
             }
 
-            log.error("AKK transaction groups to process {}", ratedTransactionGroups.size());
             // Process each BA/seller combination separately
             for (RatedTransactionGroup ratedTransactionGroup : ratedTransactionGroups) {
 
                 BillingAccount billingAccount = billingAccountService.findById(ratedTransactionGroup.getBillingAccount().getId(), true);
                 List<RatedTransaction> ratedTransactions = ratedTransactionGroup.getRatedTransactions();
-
-                log.error("AKK RT size is {}", ratedTransactions.size());
 
                 Map<InvoiceType, List<RatedTransaction>> mapInvTypeRT = new HashMap<InvoiceType, List<RatedTransaction>>();
 
@@ -717,7 +714,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     Order order = null;
                     if (entity instanceof Order) {
-                        log.error("AKK will set order to invoice");
                         order = (Order) entity;
                         paymentMethod = order.getPaymentMethod();
                         invoice.setOrder(order);
@@ -1889,7 +1885,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         getEntityManager().createNamedQuery("RatedTransaction.deleteInvoice").setParameter("invoice", invoice).executeUpdate();
 
         super.remove(invoice);
-        
+
         log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
     }
 

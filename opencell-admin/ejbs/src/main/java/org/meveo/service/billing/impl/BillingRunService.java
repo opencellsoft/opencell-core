@@ -611,7 +611,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
             
             if(billingCycle.getType() == BillingEntityTypeEnum.ORDER) { 
-                log.error("AKK will get by orders");
                 return billingAccountService.findOrders(billingCycle, startDate, endDate);
             }
             
