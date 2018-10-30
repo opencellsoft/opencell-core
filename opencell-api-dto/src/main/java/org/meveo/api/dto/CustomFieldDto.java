@@ -27,8 +27,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * The Class CustomFieldDto.
  * 
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2
- */
+ * @lastModifiedVersion 5.2.1
+*/
+
 @XmlRootElement(name = "CustomField")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(Include.NON_NULL)
@@ -98,6 +99,7 @@ public class CustomFieldDto {
     // A transient object. Contains a converted value from DTO to some object when it is applicable
     @XmlTransient
     protected Object valueConverted;
+   
 
     /** The index type. */
     @XmlElement()
@@ -107,6 +109,10 @@ public class CustomFieldDto {
     @XmlElement
     protected String fileValue;
 
+    /** The formatted value. */
+    @XmlElement()
+    protected CustomFieldFormattedValueDto formattedValue;
+    
     /**
      * Instantiates a new custom field dto.
      */
@@ -528,6 +534,20 @@ public class CustomFieldDto {
     public void setFileValue(String fileValue) {
         this.fileValue = fileValue;
     }
+    
+    /**
+     * @return the formattedValue
+     */
+    public CustomFieldFormattedValueDto getFormattedValue() {
+        return formattedValue;
+    }
+
+    /**
+     * @param formattedValue the formattedValue to set
+     */
+    public void setFormattedValue(CustomFieldFormattedValueDto formattedValue) {
+        this.formattedValue = formattedValue;
+    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -552,6 +572,7 @@ public class CustomFieldDto {
         sb.append(", valueConverted=").append(valueConverted);
         sb.append(", indexType=").append(indexType);
         sb.append(", fileValue='").append(fileValue).append('\'');
+        sb.append(", formattedValue=").append(formattedValue);
         sb.append('}');
         return sb.toString();
     }

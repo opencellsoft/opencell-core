@@ -40,6 +40,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -91,7 +92,8 @@ import org.primefaces.context.RequestContext;
  * 
  * @author Wassim Drira
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2.1
  */
 @Named
 @ViewScoped
@@ -251,14 +253,15 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             boolean alreadyInstanciated = false;
 
-            for (ServiceInstance serviceInstance : serviceInstances) {
-                if (serviceTemplate.getCode().equals(serviceInstance.getCode()) && (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE
-                        || (!allowServiceMultiInstantiation && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE))) {
-                    alreadyInstanciated = true;
-                    break;
+            if (!allowServiceMultiInstantiation) {
+                for (ServiceInstance serviceInstance : serviceInstances) {
+                    if (serviceTemplate.getCode().equals(serviceInstance.getCode())) {
+                        alreadyInstanciated = true;
+                        break;
+                    }
                 }
             }
-
+            
             if (!alreadyInstanciated) {
                 serviceTemplate.setDescriptionOverride(serviceTemplate.getDescription());
                 serviceTemplates.add(serviceTemplate);
@@ -546,7 +549,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 }
                 serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
                 serviceInstances.add(serviceInstance);
-                serviceTemplates.remove(serviceTemplate);
+                ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
+                if (!paramBean.isServiceMultiInstantiation()) {
+                    serviceTemplates.remove(serviceTemplate);
+                }
             }
 
             if (!isChecked) {

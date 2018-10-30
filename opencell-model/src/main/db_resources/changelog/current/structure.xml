@@ -2115,6 +2115,13 @@
             <column name="recurrent" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#3644_04102018" author="AbdellatifBari">
+        <addColumn tableName="crm_custom_field_tmpl">
+            <column name="display_format" type="varchar(80)" />
+        </addColumn>
+     </changeSet>
+
     <changeSet id="#3464_20180522" author="AndriusKarpavicius">
         <addColumn tableName="crm_provider">
             <column name="cf_values_accum" type="${type.json}"></column>

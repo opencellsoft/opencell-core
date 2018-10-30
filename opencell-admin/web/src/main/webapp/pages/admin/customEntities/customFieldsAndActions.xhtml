@@ -262,7 +262,7 @@
 
                     <h:panelGroup>
                         <hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="30"
-                            listenerUpdate="listValuesField defaultValueField entityClazzField validations versioning storageType_enum matrixColumns childEntityFields protectableField"
+                            listenerUpdate="listValuesField defaultValueField displayFormat entityClazzField validations versioning storageType_enum matrixColumns childEntityFields protectableField"
                             actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="updateDefaultValues" allowEdit="false" />
                         <!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" componentWidth="20" edit="false" /> -->
                         <!--                 <hftl:formField label="#{messages['customFieldTemplate.guipos']}" field="guiPosition" componentWidth="20" edit="false" /> -->
@@ -288,6 +288,11 @@
                                 rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.DATE and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.ENTITY and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY and customFieldTemplateBean.entity.storageType == 'SINGLE'}" />
                         </h:panelGroup>
 
+						<h:panelGroup id="displayFormat">
+							<hftl:formField label="#{messages['customFieldTemplate.displayFormat']}" field="displayFormat" componentWidth="60" size="80" 
+								rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LONG or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DATE}" />
+                        </h:panelGroup>
+                        
                         <hftl:formField label="#{messages['customFieldTemplate.tags']}" field="tags" componentWidth="100" textArea="true" maxlength="2000" rows="1" />
 
                         <h:panelGroup id="entityClazzField">

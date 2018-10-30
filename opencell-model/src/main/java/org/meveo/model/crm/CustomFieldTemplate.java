@@ -58,9 +58,9 @@ import org.meveo.model.shared.DateUtils;
  * 
  * @author Andrius Karpavicius
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2
- * 
+ * @lastModifiedVersion 5.2.1
  **/
+ * 
 @Entity
 @ModuleItem
 @Cacheable
@@ -296,6 +296,10 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
+
+    @Column(name = "display_format", length = 80)
+    @Size(max = 80)
+    private String displayFormat;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -935,4 +939,20 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     public void setProtectable(boolean protectable) {
         this.protectable = protectable;
     }
+
+    /**
+     * @return the displayFormat
+     */
+    public String getDisplayFormat() {
+        return displayFormat;
+    }
+
+    /**
+     * @param displayFormat the displayFormat to set
+     */
+    public void setDisplayFormat(String displayFormat) {
+        this.displayFormat = displayFormat;
+    }
+    
+    
 }

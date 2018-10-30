@@ -1,5 +1,7 @@
 package org.meveo.service.api;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -13,6 +15,7 @@ import javax.inject.Inject;
 
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldFormattedValueDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EntityReferenceDto;
@@ -37,7 +40,8 @@ import org.slf4j.Logger;
 /**
  * The Class EntityToDtoConverter.
  * 
- * @lastModifiedVersion 5.0.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2.1
  */
 @Stateless
 public class EntityToDtoConverter {
@@ -271,6 +275,94 @@ public class EntityToDtoConverter {
         }
     }
 
+    private String getFormattedDateValue(Date dateValue, String pattern) {
+        String formattedValue = null;
+        if (!StringUtils.isBlank(pattern)) {
+            SimpleDateFormat simpleDateFormat = null;
+            try {
+                simpleDateFormat = new SimpleDateFormat(pattern);
+            } catch (IllegalArgumentException e) {
+                simpleDateFormat = new SimpleDateFormat();
+            }
+            formattedValue = simpleDateFormat.format(dateValue);
+        }
+        return formattedValue;
+    }
+
+    private String getFormattedDecimalValue(Number numberValue, String pattern) {
+        String formattedValue = null;
+        if (!StringUtils.isBlank(pattern)) {
+            DecimalFormat decimalFormat = null;
+            try {
+                decimalFormat = new DecimalFormat(pattern);
+            } catch (IllegalArgumentException e) {
+                decimalFormat = new DecimalFormat();
+            }
+            formattedValue = decimalFormat.format(numberValue);
+        }
+        return formattedValue;
+    }
+
+    private String getFormattedValue(CustomFieldTemplate cft, Object value) {
+        String formattedValue = null;
+        if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
+            formattedValue = getFormattedDecimalValue((Long) value, cft.getDisplayFormat());
+        }
+        if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+            formattedValue = getFormattedDecimalValue((Double) value, cft.getDisplayFormat());
+        }
+        if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+            formattedValue = getFormattedDateValue((Date) value, cft.getDisplayFormat());
+        }
+        return formattedValue;
+    }
+
+    private void setFormattedDateValue(CustomFieldDto dto, CustomFieldTemplate cft) {
+        if (!StringUtils.isBlank(cft.getDisplayFormat()) && cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+            CustomFieldFormattedValueDto formattedValueDto = new CustomFieldFormattedValueDto();
+            formattedValueDto.setSingleValue(getFormattedDateValue(dto.getDateValue(), cft.getDisplayFormat()));
+            dto.setFormattedValue(formattedValueDto);
+        }
+    }
+
+    private void setFormattedDecimalValue(CustomFieldDto dto, CustomFieldTemplate cft, Number numberValue) {
+        if (!StringUtils.isBlank(cft.getDisplayFormat()) && (cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE)) {
+            CustomFieldFormattedValueDto formattedValueDto = new CustomFieldFormattedValueDto();
+            formattedValueDto.setSingleValue(getFormattedDecimalValue(numberValue, cft.getDisplayFormat()));
+            dto.setFormattedValue(formattedValueDto);
+        }
+    }
+
+    private void setFormattedListValue(CustomFieldDto dto, CustomFieldTemplate cft, @SuppressWarnings("rawtypes") List listValue) {
+        if (!StringUtils.isBlank(cft.getDisplayFormat())
+                && (cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.DATE)) {
+            if (listValue != null && !listValue.isEmpty()) {
+                CustomFieldFormattedValueDto formattedValueDto = new CustomFieldFormattedValueDto();
+                List<String> listFormattedValue = new ArrayList<String>();
+                for (Object item : listValue) {
+                    listFormattedValue.add(getFormattedValue(cft, item));
+                }
+                formattedValueDto.setListValue(listFormattedValue);
+                dto.setFormattedValue(formattedValueDto);
+            }
+        }
+    }
+
+    private void setFormattedMapValue(CustomFieldDto dto, CustomFieldTemplate cft, Map<String, Object> mapValue) {
+        if (!StringUtils.isBlank(cft.getDisplayFormat())
+                && (cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.DATE)) {
+            if (mapValue != null && !mapValue.isEmpty()) {
+                CustomFieldFormattedValueDto formattedValueDto = new CustomFieldFormattedValueDto();
+                LinkedHashMap<String, String> mapFormattedValue = new LinkedHashMap<String, String>();
+                for (Map.Entry<String, Object> item : mapValue.entrySet()) {
+                    mapFormattedValue.put(item.getKey(), getFormattedValue(cft, item.getValue()));
+                }
+                formattedValueDto.setMapValue(mapFormattedValue);
+                dto.setFormattedValue(formattedValueDto);
+            }
+        }
+    }
+
     /**
      * Custom field to DTO.
      *
@@ -288,18 +380,24 @@ public class EntityToDtoConverter {
         dto.setDescription(cft.getDescription());
         dto.setFieldType(cft.getFieldType());
         dto.setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(cft.getDescriptionI18n()));
+
         if (value instanceof String) {
             dto.setStringValue((String) value);
         } else if (value instanceof Date) {
             dto.setDateValue((Date) value);
+            setFormattedDateValue(dto, cft);
         } else if (value instanceof Long) {
             dto.setLongValue((Long) value);
+            setFormattedDecimalValue(dto, cft, (Long) value);
         } else if (value instanceof Double) {
             dto.setDoubleValue((Double) value);
+            setFormattedDecimalValue(dto, cft, (Double) value);
         } else if (value instanceof List) {
             dto.setListValue(customFieldValueToDTO((List) value, isChildEntityTypeField));
+            setFormattedListValue(dto, cft, (List) value);
         } else if (value instanceof Map) {
             dto.setMapValue(customFieldValueToDTO((Map) value));
+            setFormattedMapValue(dto, cft, (Map) value);
         } else if (value instanceof EntityReferenceWrapper) {
             dto.setEntityReferenceValue(new EntityReferenceDto((EntityReferenceWrapper) value));
         }
