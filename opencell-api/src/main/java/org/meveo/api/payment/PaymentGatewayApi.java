@@ -125,6 +125,8 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         paymentGateway.setMarchandId(paymentGatewayDto.getMarchandId());
         paymentGateway.setSecretKey(paymentGatewayDto.getSecretKey());
         paymentGateway.setApiKey(paymentGatewayDto.getApiKey());
+        paymentGateway.setWebhooksKeyId(paymentGatewayDto.getWebhooksKeyId());
+        paymentGateway.setWebhooksSecretKey(paymentGatewayDto.getWebhooksSecretKey());
         paymentGateway.setProfile(paymentGatewayDto.getProfile());
         if (paymentGatewayDto.isDisabled() != null) {
             paymentGateway.setDisabled(paymentGatewayDto.isDisabled());
@@ -212,6 +214,15 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         if (!StringUtils.isBlank(paymentGatewayDto.getApiKey())) {
             paymentGateway.setApiKey(paymentGatewayDto.getApiKey());
         }
+
+       if (!StringUtils.isBlank(paymentGatewayDto.getWebhooksKeyId())) {
+            paymentGateway.setWebhooksKeyId(paymentGatewayDto.getWebhooksKeyId());
+        }
+        if (!StringUtils.isBlank(paymentGatewayDto.getWebhooksSecretKey())) {
+            paymentGateway.setWebhooksSecretKey(paymentGatewayDto.getWebhooksSecretKey());
+        }
+
+
         if (!StringUtils.isBlank(paymentGatewayDto.getProfile())) {
             paymentGateway.setProfile(paymentGatewayDto.getProfile());
         }

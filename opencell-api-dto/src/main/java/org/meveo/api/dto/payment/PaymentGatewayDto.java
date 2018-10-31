@@ -59,6 +59,12 @@ public class PaymentGatewayDto extends EnableBusinessDto {
     
     /** The api key. */
     private String apiKey;
+
+    /** The webhooks secret key. */
+    private String webhooksSecretKey;
+
+    /** The webhooks key id. */
+    private String webhooksKeyId;
     
     /** The profile. */
     private String profile;
@@ -94,6 +100,8 @@ public class PaymentGatewayDto extends EnableBusinessDto {
         this.marchandId = paymentGateway.getMarchandId();
         this.secretKey = "*******";
         this.apiKey = paymentGateway.getApiKey();
+        this.webhooksKeyId = paymentGateway.getWebhooksKeyId();
+        this.webhooksSecretKey = paymentGateway.getWebhooksSecretKey();
         this.profile = paymentGateway.getProfile();
         
     }
@@ -303,6 +311,39 @@ public class PaymentGatewayDto extends EnableBusinessDto {
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
+
+    /**
+      * Gets Webhooks Secret Key
+      * @return
+      */
+    public String getWebhooksSecretKey() {
+        return webhooksSecretKey;
+    }
+
+    /**
+      * Sets Webhooks Secret Key
+      * @param webhooksSecretKey
+      */
+    public void setWebhooksSecretKey(String webhooksSecretKey) {
+       this.webhooksSecretKey = webhooksSecretKey;
+    }
+
+    /**
+      * Gets Webhooks Key Id
+      * @return
+      */
+    public String getWebhooksKeyId() {
+        return webhooksKeyId;
+    }
+
+    /**
+      * Sets webhooks Key Id
+      * @param webhooksKeyId
+      */
+    public void setWebhooksKeyId(String webhooksKeyId) {
+        this.webhooksKeyId = webhooksKeyId;
+    }
+
 
     /**
      * @return the profile
