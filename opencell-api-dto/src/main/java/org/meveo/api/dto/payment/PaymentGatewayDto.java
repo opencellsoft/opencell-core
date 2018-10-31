@@ -18,7 +18,8 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * The PaymentGateway Dto.
  * 
  * @author anasseh
- *
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2
  */
 @XmlRootElement(name = "PaymentGateway")
 @XmlAccessorType(XmlAccessType.FIELD)

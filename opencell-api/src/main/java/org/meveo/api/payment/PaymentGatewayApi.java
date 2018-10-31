@@ -36,7 +36,8 @@ import org.primefaces.model.SortOrder;
  * PaymentGatewayDto CRUD.
  * 
  * @author anasseh
- *
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewayDto> {

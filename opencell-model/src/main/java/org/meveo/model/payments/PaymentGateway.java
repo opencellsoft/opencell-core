@@ -31,6 +31,7 @@ import org.meveo.model.scripts.ScriptInstance;
  *
  *
  * @author anasseh
+ * @author Mounir Bahije
  * @since Opencell 4.8
  * @lastModifiedVersion 5.2
  */
