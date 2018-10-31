@@ -2121,5 +2121,14 @@
             <column name="display_format" type="varchar(80)" />
         </addColumn>
      </changeSet>
+    
+    <changeSet id="#3735_20181031_add_legal_information_seller" author="Khalid HORRI">
+        <addColumn tableName="crm_seller">
+            <column name="vat_no" type="varchar(100)"></column>
+            <column name="registration_no" type="varchar(100)"></column>
+            <column name="legal_text" type="text"></column>
+            <column name="legal_type" type="varchar(255)"></column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
