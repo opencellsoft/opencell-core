@@ -60,7 +60,6 @@ import org.meveo.model.shared.DateUtils;
  * @author Abdellatif BARI
  * @lastModifiedVersion 5.2.1
  **/
- * 
 @Entity
 @ModuleItem
 @Cacheable
