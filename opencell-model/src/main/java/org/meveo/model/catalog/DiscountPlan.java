@@ -19,7 +19,7 @@ import org.meveo.model.ObservableEntity;
 
 /**
  * Discount plan
- * 
+ * @author Edward P. Legaspi
  * @author Andrius Karpavicius
  */
 @Entity
