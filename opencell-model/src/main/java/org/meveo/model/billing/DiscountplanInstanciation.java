@@ -34,6 +34,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 
 /**
+ * TODO: Is this class still used?
  * DiscountplanInstanciation entity.
  */
 @Entity

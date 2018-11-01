@@ -675,20 +675,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BigDecimal discountAmountTax = BigDecimal.ZERO;
         BigDecimal discountAmountWithTax = BigDecimal.ZERO;
 
-        Object[] object = new BigDecimal[] { BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO };
-        if (!isVirtual) {
-            // invoiceAgregateService.findTotalAmountsForDiscountAggregates(invoice);
-            discountAmountWithoutTax = (BigDecimal) object[0];
-            discountAmountTax = (BigDecimal) object[1];
-            discountAmountWithTax = (BigDecimal) object[2];
-
-        } else {
-            for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-                if (invoiceAgregate instanceof SubCategoryInvoiceAgregate && invoiceAgregate.isDiscountAggregate()) {
-                    discountAmountWithoutTax.add(invoiceAgregate.getAmountWithoutTax());
-                    discountAmountTax.add(invoiceAgregate.getAmountTax());
-                    discountAmountWithTax.add(invoiceAgregate.getAmountWithTax());
-                }
+        for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
+            if (invoiceAgregate instanceof SubCategoryInvoiceAgregate && invoiceAgregate.isDiscountAggregate()) {
+            	discountAmountWithoutTax = discountAmountWithoutTax.add(invoiceAgregate.getAmountWithoutTax());
+            	discountAmountTax = discountAmountTax.add(invoiceAgregate.getAmountTax());
+            	discountAmountWithTax = discountAmountWithTax.add(invoiceAgregate.getAmountWithTax());
             }
         }
 
@@ -1022,7 +1013,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     BigDecimal amountTax = discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));
                     discountAmountTax = discountAmountTax.add(amountTax);
                     invoiceAgregateSubcat.addSubCategoryTax(tax);
-                    TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId());
+                    TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId().toString());
                     if (taxInvoiceAgregate != null) {
                         taxInvoiceAgregate.addAmountTax(amountTax);
                         taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
@@ -1045,7 +1036,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             invoiceAgregateSubcat.setDiscountAggregate(true);
             invoiceAgregateSubcat.setDiscountPercent(discountPercent);
-            // invoiceAgregateSubcat.setDiscountPercent(discountPlanItem.getPercent());
             invoiceAgregateSubcat.setDiscountPlanCode(discountPlanItem.getDiscountPlan().getCode());
             invoiceAgregateSubcat.setDiscountPlanItemCode(discountPlanItem.getCode());
         }
