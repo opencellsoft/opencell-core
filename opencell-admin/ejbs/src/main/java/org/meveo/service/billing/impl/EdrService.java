@@ -71,7 +71,7 @@ public class EdrService extends PersistenceService<EDR> {
         if (rateUntilDate != null) {
             qb.addCriterion("c.eventDate", "<", rateUntilDate, false);
         }
-        qb.addOrderDoubleCriterion("subscription", true, "id", true);
+        qb.addOrderMultiCriterion("c.subscription", true, "c.id", true);
 
         try {
             return qb.getIdQuery(getEntityManager()).getResultList();

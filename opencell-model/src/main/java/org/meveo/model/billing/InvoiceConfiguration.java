@@ -19,6 +19,8 @@ import org.meveo.model.IEntity;
 import org.meveo.model.crm.Provider;
 
 /**
+ * Invoicing configuration
+ * 
  * @author Edward P. Legaspi
  **/
 @Entity
@@ -30,54 +32,93 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
 
     private static final long serialVersionUID = -735961368678724497L;
 
+    /**
+     * Should subscriptions be displayed in the XML invoice
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "display_subscriptions")
     private Boolean displaySubscriptions = false;
 
+    /**
+     * Should services be displayed in the XML invoice
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "display_services")
     private Boolean displayServices = false;
 
+    /**
+     * Should offers be displayed in the XML invoice
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "display_offers")
     private Boolean displayOffers = false;
 
+    /**
+     * Should price plans be displayed in the XML invoice
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "display_priceplans")
     private Boolean displayPricePlans = false;
 
+    /**
+     * Should EDRs be displayed in the XML invoice
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "display_edrs")
     private Boolean displayEdrs = false;
 
+    /**
+     * Should provider information be displayed in the XML invoice
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "display_provider")
     private Boolean displayProvider = false;
 
+    /**
+     * Should subcategory aggregates be displayed in the XML invoice
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "display_detail")
     private Boolean displayDetail = true;
 
+    /**
+     * Should custom field values be displayed in the XML invoice in XML or JSON format
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "display_cf_as_xml")
     private Boolean displayCfAsXML = false;
 
+    /**
+     * Should counter periods be displayed in the XML invoice
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "display_charges_periods")
     private Boolean displayChargesPeriods = false;
 
+    /**
+     * Should Billing cycle be displayed in the XML invoice
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "display_billing_cycle")
     private Boolean displayBillingCycle = false;
 
+    /**
+     * Should orders be displayed in the XML invoice
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "display_orders")
     private Boolean displayOrders = false;
 
+    /**
+     * Provider/tenant that invoice configuration is associated with
+     */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id")
     private Provider provider;
-    
+
+    /**
+     * Next to be assigned invoice number
+     */
     @Column(name = "current_invoice_nb")
     private Long currentInvoiceNb = 0L;
 
@@ -190,8 +231,6 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     public void setDisplayOrders(Boolean displayOrders) {
         this.displayOrders = displayOrders;
     }
-    
-    
 
     /**
      * @return the currentInvoiceNb

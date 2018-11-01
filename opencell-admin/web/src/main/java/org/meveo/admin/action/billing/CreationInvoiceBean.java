@@ -172,8 +172,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private Date rtStartDate;
     private Date rtEndDate;
     
-    private Integer invoiceRounding =  appProvider != null ? (appProvider.getInvoiceRounding() == null ? 2 : appProvider.getInvoiceRounding()) : 2; 
-    private RoundingModeEnum invoiceRoundingMode =  appProvider != null ? appProvider.getInvoiceRoundingMode() : RoundingModeEnum.DOWN; 
+    private Integer invoiceRounding =  appProvider.getInvoiceRounding(); 
+    private RoundingModeEnum invoiceRoundingMode =  appProvider.getInvoiceRoundingMode(); 
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -314,6 +314,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             ratedTransaction.setOrderNumber(orderNumber);
             ratedTransaction.setInvoice(entity);
             ratedTransaction.setInvoiceSubCategory(selectInvoiceSubCat);
+            ratedTransaction.setSeller(ratedTransaction.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
 
             agregateHandler.addRT(ratedTransaction, selectInvoiceSubCat.getDescription(), getFreshUA());
             updateAmountsAndLines(getFreshBA());
@@ -530,7 +531,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 subCategoryInvoiceAgregate.setInvoice(invoiceCopy);
                 subCategoryInvoiceAgregate.setCategoryInvoiceAgregate(catInvAggr);
                 subCategoryInvoiceAgregate.setRatedtransactions(new ArrayList<RatedTransaction>());
-                subCategoryInvoiceAgregate.setSubCategoryTaxes(new HashSet<Tax>());
                 invoiceAgregateService.create(subCategoryInvoiceAgregate);
                 subCategoryInvoiceAggregatesCopy.add(subCategoryInvoiceAgregate);
                 
@@ -686,6 +686,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                         newRT.setEndDate(rt.getEndDate());
                         newRT.setOrderNumber(rt.getOrderNumber());
                         newRT.setInvoice(entity);
+                        newRT.setSeller(rt.getSeller());
                         agregateHandler.addRT(newRT, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
                         updateAmountsAndLines(getFreshBA());
                     }

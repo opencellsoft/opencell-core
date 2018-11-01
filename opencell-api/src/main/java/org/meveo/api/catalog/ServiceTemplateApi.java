@@ -91,7 +91,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
     @Inject
     private BusinessServiceModelService businessServiceModelService;
-    
+
     @Inject
     private SubscriptionApi subscriptionApi;
 
@@ -263,7 +263,9 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setLongDescription(postData.getLongDescription());
         serviceTemplate.setInvoicingCalendar(invoicingCalendar);
         serviceTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
+        serviceTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
         serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
+        serviceTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         serviceTemplate.setServiceRenewal(subscriptionApi.subscriptionRenewalFromDto(serviceTemplate.getServiceRenewal(), postData.getRenewalRule(), false));
 
         if (postData.isDisabled() != null) {
@@ -322,10 +324,21 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         serviceTemplate.setDescription(postData.getDescription());
         serviceTemplate.setLongDescription(postData.getLongDescription());
-        serviceTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
-        serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
+
+        if (postData.getMinimumAmountEl() != null) {
+            serviceTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
+        }
+        if (postData.getMinimumAmountElSpark() != null) {
+            serviceTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
+        }
+        if (postData.getMinimumLabelEl() != null) {
+            serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
+        }
+        if (postData.getMinimumLabelElSpark() != null) {
+            serviceTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
+        }
         serviceTemplate.setServiceRenewal(subscriptionApi.subscriptionRenewalFromDto(serviceTemplate.getServiceRenewal(), postData.getRenewalRule(), false));
-        
+
         Calendar invoicingCalendar = null;
         if (postData.getInvoicingCalendar() != null) {
             invoicingCalendar = calendarService.findByCode(postData.getInvoicingCalendar());

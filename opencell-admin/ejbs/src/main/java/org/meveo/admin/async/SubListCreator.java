@@ -5,18 +5,20 @@ package org.meveo.admin.async;
 
 import java.util.List;
 
+import org.meveo.model.IEntity;
+
 /**
  * @author anasseh
  *
  */
 
-public class SubListCreator {
+public class SubListCreator<E> {
 
 	/** number of threads. */
 	private int nbThreads = 1;
 
 	/** list to split. */
-	private List<?> theBigList;
+	private List<E> theBigList;
 
 	/** has next value to proceed . */
 	private boolean hasNext = true;
@@ -45,7 +47,7 @@ public class SubListCreator {
 	 * @throws Exception
 	 *             exception
 	 */
-	public SubListCreator(List<?> theList, int nbRuns) throws Exception {
+	public SubListCreator(List<E> theList, int nbRuns) throws Exception {
 		if (nbRuns < 1) {
 			throw new Exception("nbRuns should not be < 1 ");
 		}
@@ -74,8 +76,8 @@ public class SubListCreator {
 	/**
 	 * @return list of next work set
 	 */
-	public List<?> getNextWorkSet() {
-		List<?> toRuns = theBigList.subList(from, to);
+	public List<E> getNextWorkSet() {
+		List<E> toRuns = theBigList.subList(from, to);
 		from = to;
 		to = from + blocToRun;
 		if (listSize - modulo == to) {

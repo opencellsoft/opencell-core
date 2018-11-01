@@ -13,11 +13,10 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Type;
 
-
 /**
  * Embeddable set of renewal fields. Use in ServiceTemplate and Subscription.
  * 
- * @author Edward P. Legaspi
+ * @author Andrius Karpavicius
  * @lastModifiedVersion 5.1
  */
 @Embeddable
@@ -72,18 +71,18 @@ public class SubscriptionRenewal implements Serializable {
             return calendarField;
         }
     }
-    
+
     public enum InitialTermTypeEnum {
-    	/**
-    	 * Uses RenewalPeriodUnitEnum.
-    	 */
-    	RECURRING,
-    	/**
-    	 * Uses date picker.
-    	 */
-    	FIXED;
-    	
-    	public String getLabel() {
+        /**
+         * Uses RenewalPeriodUnitEnum.
+         */
+        RECURRING,
+        /**
+         * Uses date picker.
+         */
+        FIXED;
+
+        public String getLabel() {
             return this.getClass().getSimpleName() + "." + this.name();
         }
     }
@@ -147,10 +146,10 @@ public class SubscriptionRenewal implements Serializable {
      */
     @Column(name = "renew_for")
     private Integer renewFor;
-    
-	@Enumerated(EnumType.STRING)
-	@Column(name = "initial_term_type")
-	private InitialTermTypeEnum initialTermType = InitialTermTypeEnum.RECURRING;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "initial_term_type")
+    private InitialTermTypeEnum initialTermType = InitialTermTypeEnum.RECURRING;
 
     public boolean isAutoRenew() {
         return autoRenew;
@@ -240,12 +239,12 @@ public class SubscriptionRenewal implements Serializable {
         }
     }
 
-	public InitialTermTypeEnum getInitialTermType() {
-		return initialTermType;
-	}
+    public InitialTermTypeEnum getInitialTermType() {
+        return initialTermType;
+    }
 
-	public void setInitialTermType(InitialTermTypeEnum initialTermType) {
-		this.initialTermType = initialTermType;
-	}
+    public void setInitialTermType(InitialTermTypeEnum initialTermType) {
+        this.initialTermType = initialTermType;
+    }
 
 }

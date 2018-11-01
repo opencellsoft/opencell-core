@@ -3,6 +3,7 @@ package org.meveo.model.module;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -22,6 +23,11 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ExportIdentifier;
 
+/**
+ * Deployable module's items. References an entity.
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ExportIdentifier({ "meveoModule.code", "appliesTo", "itemClass", "itemCode" })
 @Table(name = "meveo_module_item")
@@ -31,27 +37,46 @@ public class MeveoModuleItem extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Module that item belongs to
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "module_id")
     private MeveoModule meveoModule;
 
+    /**
+     * Included entity's AppliesTo field value. Applies to Custom field template and custom entity action.
+     */
     @Column(name = "applies_to", length = 100)
     @Size(max = 100)
     private String appliesTo;
 
+    /**
+     * Included entity's class
+     */
     @Column(name = "item_type", length = 100, nullable = false)
     @Size(max = 100)
     @NotNull
     private String itemClass;
 
+    /**
+     * Included entity's code
+     */
     @Column(name = "item_code", length = 255, nullable = false)
     @Size(max = 255)
     @NotNull
     private String itemCode;
 
-    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
+    /**
+     * Included entity's validity period if applicable.
+     */
+    @Embedded
+    @AttributeOverrides(value = { @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity = new DatePeriod();
 
+    /**
+     * Entity included as a module item
+     */
     @Transient
     private BusinessEntity itemEntity;
 

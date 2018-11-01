@@ -35,6 +35,7 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.CountryService;
@@ -68,7 +69,7 @@ public class SellerApi extends BaseApi {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
-    
+
     @Inject
     private InvoiceSequenceService invoiceSequenceService;
 
@@ -83,10 +84,8 @@ public class SellerApi extends BaseApi {
         return create(postData, checkCustomField, null);
     }
 
-    
     /**
-     * Create Seller
-     * v5.0: Added ContactInformation and Address
+     * Create Seller v5.0: Added ContactInformation and Address
      * 
      * @param postData postData SellerDto
      * @param checkCustomField checkCustomField
@@ -119,31 +118,31 @@ public class SellerApi extends BaseApi {
                 if (invoiceType == null) {
                     throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
                 }
-                
-                if(StringUtils.isBlank(entry.getValue().getInvoiceSequenceCode())) {
-                	// v5.2 : code for API backward compatibility call, invoice sequence code must be mandatory in future versions
-                	InvoiceSequence invoiceSequenceInvoiceTypeSeller = entry.getValue().fromDto();
+
+                if (StringUtils.isBlank(entry.getValue().getInvoiceSequenceCode())) {
+                    // v5.2 : code for API backward compatibility call, invoice sequence code must be mandatory in future versions
+                    InvoiceSequence invoiceSequenceInvoiceTypeSeller = entry.getValue().fromDto();
                     invoiceSequenceInvoiceTypeSeller.setCode(invoiceType.getCode() + "_" + seller.getCode());
                     invoiceSequenceService.create(invoiceSequenceInvoiceTypeSeller);
                     seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, invoiceSequenceInvoiceTypeSeller, entry.getValue().getPrefixEL()));
                 } else {
-                	InvoiceSequence invoiceSequenceInvoiceTypeSeller = invoiceSequenceService.findByCode(entry.getValue().getInvoiceSequenceCode());
-                	if (invoiceSequenceInvoiceTypeSeller == null) {
-        	            throw new EntityDoesNotExistsException(InvoiceTypeSellerSequence.class, entry.getValue().getInvoiceSequenceCode());
-        	        }
+                    InvoiceSequence invoiceSequenceInvoiceTypeSeller = invoiceSequenceService.findByCode(entry.getValue().getInvoiceSequenceCode());
+                    if (invoiceSequenceInvoiceTypeSeller == null) {
+                        throw new EntityDoesNotExistsException(InvoiceTypeSellerSequence.class, entry.getValue().getInvoiceSequenceCode());
+                    }
                     seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, invoiceSequenceInvoiceTypeSeller, entry.getValue().getPrefixEL()));
                 }
-           }
+            }
         }
-        
+
         if (postData.getContactInformation() != null) {
             seller.setContactInformation(toContactInformation(postData.getContactInformation()));
         }
-        
+
         if (postData.getAddress() != null) {
             seller.setAddress(toAddress(postData.getAddress()));
         }
-        
+
         // check trading entities
         if (!StringUtils.isBlank(postData.getCurrencyCode())) {
             TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode());
@@ -201,7 +200,7 @@ public class SellerApi extends BaseApi {
 
         return seller;
     }
-    
+
     /**
      * ContactInformationDto to ContactInformation
      * 
@@ -217,9 +216,9 @@ public class SellerApi extends BaseApi {
         contactInformation.setPhone(contactInformationDto.getPhone());
         contactInformation.setMobile(contactInformationDto.getMobile());
         contactInformation.setFax(contactInformationDto.getFax());
-        return contactInformation;        
+        return contactInformation;
     }
-    
+
     /**
      * AddressDto to Address
      * 
@@ -228,13 +227,13 @@ public class SellerApi extends BaseApi {
      * 
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
-     */ 
-     private Address toAddress(AddressDto addressDto) {
+     */
+    private Address toAddress(AddressDto addressDto) {
         Address address = new Address();
         address.setAddress1(addressDto.getAddress1());
         address.setAddress2(addressDto.getAddress2());
         address.setAddress3(addressDto.getAddress3());
-        address.setCity(addressDto.getCity());        
+        address.setCity(addressDto.getCity());
         if (!StringUtils.isBlank(addressDto.getCountry())) {
             address.setCountry(countryService.findByCode(addressDto.getCountry()));
         }
@@ -243,7 +242,6 @@ public class SellerApi extends BaseApi {
         return address;
     }
 
-    
     public void update(SellerDto postData) throws MeveoApiException, BusinessException {
         update(postData, true);
     }
@@ -253,8 +251,7 @@ public class SellerApi extends BaseApi {
     }
 
     /**
-     * Update Seller
-     * v5.0: Added ContactInformation and Address
+     * Update Seller v5.0: Added ContactInformation and Address
      * 
      * @param postData postData Seller Dto
      * @param checkCustomField checkCustomField
@@ -290,7 +287,8 @@ public class SellerApi extends BaseApi {
                 if (seller.isContainsInvoiceTypeSequence(invoiceType)) {
                     InvoiceSequence invoiceSequenceInvoiceTypeSeller = seller.getInvoiceTypeSequenceByType(invoiceType).getInvoiceSequence();
                     if (entry.getValue().getCurrentInvoiceNb() != null) {
-                        if (entry.getValue().getCurrentInvoiceNb().longValue() < invoiceSequenceService.getMaxCurrentInvoiceNumber(invoiceSequenceInvoiceTypeSeller.getCode()).longValue()) {
+                        if (entry.getValue().getCurrentInvoiceNb().longValue() < invoiceSequenceService.getMaxCurrentInvoiceNumber(invoiceSequenceInvoiceTypeSeller.getCode())
+                            .longValue()) {
                             throw new MeveoApiException("Not able to update, check the current number");
                         }
                     }
@@ -306,15 +304,15 @@ public class SellerApi extends BaseApi {
                 }
             }
         }
-        
+
         if (postData.getContactInformation() != null) {
             seller.setContactInformation(toContactInformation(postData.getContactInformation()));
         }
-        
+
         if (postData.getAddress() != null) {
             seller.setAddress(toAddress(postData.getAddress()));
         }
-        
+
         // check trading entities
         if (!StringUtils.isBlank(postData.getCurrencyCode())) {
             TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode());
@@ -382,13 +380,33 @@ public class SellerApi extends BaseApi {
         return seller;
     }
 
-    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass=Seller.class))
+    /**
+     * Retrieve seller information by its code
+     * 
+     * @param sellerCode Seller's code
+     * @return Seller information
+     * @throws MeveoApiException
+     */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Seller.class))
     public SellerDto find(String sellerCode) throws MeveoApiException {
+        return find(sellerCode, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    /**
+     * Retrieve seller information by its code
+     * 
+     * @param sellerCode Seller's code
+     * @param inheritCF Should inherited custom field values be retrieved
+     * @return Seller information
+     * @throws MeveoApiException
+     */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Seller.class))
+    public SellerDto find(String sellerCode, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
         if (StringUtils.isBlank(sellerCode)) {
             missingParameters.add("sellerCode");
-            handleMissingParameters();
         }
+        handleMissingParameters();
 
         SellerDto result = new SellerDto();
 
@@ -397,12 +415,12 @@ public class SellerApi extends BaseApi {
             throw new EntityDoesNotExistsException(Seller.class, sellerCode);
         }
 
-        result = new SellerDto(seller, entityToDtoConverter.getCustomFieldsDTO(seller, true));
+        result = new SellerDto(seller, entityToDtoConverter.getCustomFieldsDTO(seller, inheritCF));
 
         return result;
     }
-    
-    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass=Seller.class))
+
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Seller.class))
     public void remove(String sellerCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(sellerCode)) {
@@ -431,7 +449,7 @@ public class SellerApi extends BaseApi {
         List<Seller> sellers = sellerService.list();
         if (sellers != null) {
             for (Seller seller : sellers) {
-                result.getSeller().add(new SellerDto(seller, entityToDtoConverter.getCustomFieldsDTO(seller, true)));
+                result.getSeller().add(new SellerDto(seller, entityToDtoConverter.getCustomFieldsDTO(seller, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
             }
         }
 

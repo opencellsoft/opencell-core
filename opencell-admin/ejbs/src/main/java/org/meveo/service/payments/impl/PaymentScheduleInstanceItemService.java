@@ -176,7 +176,6 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             categoryInvoiceAgregate.setDescription(invoiceSubCat.getInvoiceCategory().getDescription());
             categoryInvoiceAgregate.addSubCategoryInvoiceAggregate(subCategoryInvoiceAgregate);
             categoryInvoiceAgregate.setInvoice(invoice);
-            categoryInvoiceAgregate.setAccountingCode(tax.getAccountingCode());
             categoryInvoiceAgregate.setAmountWithoutTax(amounts[0]);
             categoryInvoiceAgregate.setAmountWithTax(amounts[2]);
             categoryInvoiceAgregate.setAmountTax(amounts[1]);

@@ -12,7 +12,6 @@ import org.meveo.model.BusinessEntity;
 
 /**
  * @author Edward P. Legaspi
- * @version %I%, %G%
  * @since 8 Apr 2018
  **/
 @Entity

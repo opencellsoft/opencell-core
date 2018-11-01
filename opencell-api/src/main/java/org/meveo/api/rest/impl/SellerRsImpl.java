@@ -13,6 +13,7 @@ import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.SellerRs;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -51,11 +52,11 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
     }
 
     @Override
-    public GetSellerResponse find(String sellerCode) {
+    public GetSellerResponse find(String sellerCode, CustomFieldInheritanceEnum inheritCF) {
         GetSellerResponse result = new GetSellerResponse();
 
         try {
-            result.setSeller(sellerApi.find(sellerCode));
+            result.setSeller(sellerApi.find(sellerCode, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

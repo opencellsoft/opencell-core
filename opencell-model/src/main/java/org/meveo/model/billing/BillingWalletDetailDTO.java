@@ -22,32 +22,32 @@ import java.math.BigDecimal;
 
 public class BillingWalletDetailDTO {
 
-	private BigDecimal amount;
-	private BigDecimal amountWithoutTax;
-	private BigDecimal amountTax;
+    private BigDecimal amount;
+    private BigDecimal amountWithoutTax;
+    private BigDecimal amountTax;
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public BigDecimal getAmountTax() {
-		return amountTax;
-	}
+    public BigDecimal getAmountTax() {
+        return amountTax;
+    }
 
-	public void setAmountTax(BigDecimal amountTax) {
-		this.amountTax = amountTax;
-	}
+    public void setAmountTax(BigDecimal amountTax) {
+        this.amountTax = amountTax;
+    }
 
 }

@@ -113,19 +113,19 @@ public class CustomerApi extends AccountEntityApi {
 
     @Inject
     private InvoiceService invoiceService;
-    
+
     @Inject
     private GdprService gdprService;
-    
-    @Inject
-	private AddressBookService addressBookService;
 
-	@Inject
-	private AdditionalDetailsService additionalDetailsService;
-    
+    @Inject
+    private AddressBookService addressBookService;
+
+    @Inject
+    private AdditionalDetailsService additionalDetailsService;
+
     @Inject
     private ProviderService providerService;
-    
+
     @Inject
     private CustomerSequenceApi customerSequenceApi;
 
@@ -200,20 +200,20 @@ public class CustomerApi extends AccountEntityApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-        
+
         AddressBook addressBook = new AddressBook("C_" + customer.getCode());
-		addressBookService.create(addressBook);
+        addressBookService.create(addressBook);
 
-		AdditionalDetails additionalDetails = new AdditionalDetails();
-		if (postData.getAdditionalDetails() != null) {
-			additionalDetails.setCompanyName(postData.getAdditionalDetails().getCompanyName());
-			additionalDetails.setPosition(postData.getAdditionalDetails().getPosition());
-			additionalDetails.setInstantMessengers(postData.getAdditionalDetails().getInstantMessengers());
-		}
-		additionalDetailsService.create(additionalDetails);
+        AdditionalDetails additionalDetails = new AdditionalDetails();
+        if (postData.getAdditionalDetails() != null) {
+            additionalDetails.setCompanyName(postData.getAdditionalDetails().getCompanyName());
+            additionalDetails.setPosition(postData.getAdditionalDetails().getPosition());
+            additionalDetails.setInstantMessengers(postData.getAdditionalDetails().getInstantMessengers());
+        }
+        additionalDetailsService.create(additionalDetails);
 
-		customer.setAdditionalDetails(additionalDetails);
-		customer.setAddressbook(addressBook);
+        customer.setAdditionalDetails(additionalDetails);
+        customer.setAddressbook(addressBook);
 
         customerService.create(customer);
 
@@ -235,9 +235,6 @@ public class CustomerApi extends AccountEntityApi {
         }
         if (StringUtils.isBlank(postData.getCustomerCategory())) {
             missingParameters.add("customerCategory");
-        }
-        if (StringUtils.isBlank(postData.getSeller())) {
-            missingParameters.add("seller");
         }
         if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
             missingParameters.add("name.lastName");
@@ -300,27 +297,27 @@ public class CustomerApi extends AccountEntityApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-        
-        if (customer.getAddressbook() == null) {
-			AddressBook addressBook = new AddressBook("C_" + customer.getCode());
-			addressBookService.create(addressBook);
-			customer.setAddressbook(addressBook);
-		}
 
-		if (customer.getAdditionalDetails() == null) {
-			AdditionalDetails additionalDetails = new AdditionalDetails();
-			if (!StringUtils.isBlank(postData.getAdditionalDetails().getCompanyName())) {
-				additionalDetails.setCompanyName(postData.getAdditionalDetails().getCompanyName());
-			}
-			if (!StringUtils.isBlank(postData.getAdditionalDetails().getPosition())) {
-				additionalDetails.setPosition(postData.getAdditionalDetails().getPosition());
-			}
-			additionalDetailsService.create(additionalDetails);
-			if (!StringUtils.isBlank(postData.getAdditionalDetails().getInstantMessengers())) {
-				additionalDetails.setInstantMessengers(postData.getAdditionalDetails().getInstantMessengers());
-			}
-			customer.setAdditionalDetails(additionalDetails);
-		}
+        if (customer.getAddressbook() == null) {
+            AddressBook addressBook = new AddressBook("C_" + customer.getCode());
+            addressBookService.create(addressBook);
+            customer.setAddressbook(addressBook);
+        }
+
+        if (customer.getAdditionalDetails() == null) {
+            AdditionalDetails additionalDetails = new AdditionalDetails();
+            if (!StringUtils.isBlank(postData.getAdditionalDetails().getCompanyName())) {
+                additionalDetails.setCompanyName(postData.getAdditionalDetails().getCompanyName());
+            }
+            if (!StringUtils.isBlank(postData.getAdditionalDetails().getPosition())) {
+                additionalDetails.setPosition(postData.getAdditionalDetails().getPosition());
+            }
+            additionalDetailsService.create(additionalDetails);
+            if (!StringUtils.isBlank(postData.getAdditionalDetails().getInstantMessengers())) {
+                additionalDetails.setInstantMessengers(postData.getAdditionalDetails().getInstantMessengers());
+            }
+            customer.setAdditionalDetails(additionalDetails);
+        }
 
         customer = customerService.update(customer);
 
@@ -479,6 +476,7 @@ public class CustomerApi extends AccountEntityApi {
             customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
         }
         customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());
+        customerCategory.setExonerationTaxElSpark(postData.getExonerationTaxElSpark());
         customerCategory.setExonerationReason(postData.getExonerationReason());
 
         customerCategoryService.create(customerCategory);
@@ -512,6 +510,10 @@ public class CustomerApi extends AccountEntityApi {
         }
         if (postData.getExonerationTaxEl() != null && StringUtils.compare(postData.getExonerationTaxEl(), customerCategory.getExonerationTaxEl()) != 0) {
             customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());
+            toUpdate = true;
+        }
+        if (postData.getExonerationTaxElSpark() != null && StringUtils.compare(postData.getExonerationTaxElSpark(), customerCategory.getExonerationTaxElSpark()) != 0) {
+            customerCategory.setExonerationTaxElSpark(postData.getExonerationTaxElSpark());
             toUpdate = true;
         }
         if (postData.getExonerationReason() != null && StringUtils.compare(postData.getExonerationReason(), customerCategory.getExonerationReason()) != 0) {
@@ -685,10 +687,10 @@ public class CustomerApi extends AccountEntityApi {
                 }
             }
             if (!StringUtils.isBlank(customerDto.getVatNo())) {
-            	existedCustomerDto.setVatNo(customerDto.getVatNo());
+                existedCustomerDto.setVatNo(customerDto.getVatNo());
             }
             if (!StringUtils.isBlank(customerDto.getRegistrationNo())) {
-            	existedCustomerDto.setRegistrationNo(customerDto.getRegistrationNo());
+                existedCustomerDto.setRegistrationNo(customerDto.getRegistrationNo());
             }
             accountHierarchyApi.populateNameAddress(existedCustomerDto, customerDto);
             if (!StringUtils.isBlank(customerDto.getCustomFields())) {
@@ -771,31 +773,31 @@ public class CustomerApi extends AccountEntityApi {
             }
         }
     }
-    
-	public void anonymizeGpdr(String customerCode) throws BusinessException {
-		Customer entity = customerService.findByCode(customerCode);
-		gdprService.anonymize(entity);		
-	}
 
-	public void updateCustomerNumberSequence(GenericSequenceDto postData) throws MeveoApiException, BusinessException {
-		if (postData.getSequenceSize() > 20) {
-			throw new MeveoApiException("sequenceSize must be <= 20.");
-		}
+    public void anonymizeGpdr(String customerCode) throws BusinessException {
+        Customer entity = customerService.findByCode(customerCode);
+        gdprService.anonymize(entity);
+    }
 
-		Provider provider = providerService.findById(appProvider.getId());
-		provider.setCustomerNoSequence(GenericSequenceApi.toGenericSequence(postData, provider.getCustomerNoSequence()));
-		providerService.update(provider);		
-	}
+    public void updateCustomerNumberSequence(GenericSequenceDto postData) throws MeveoApiException, BusinessException {
+        if (postData.getSequenceSize() > 20) {
+            throw new MeveoApiException("sequenceSize must be <= 20.");
+        }
 
-	public GenericSequenceValueResponseDto getNextCustomerNumber() throws BusinessException {
-		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+        Provider provider = providerService.findById(appProvider.getId());
+        provider.setCustomerNoSequence(GenericSequenceApi.toGenericSequence(postData, provider.getCustomerNoSequence()));
+        providerService.update(provider);
+    }
 
-		GenericSequence genericSequence = providerService.getNextCustomerNumber();
-		String sequenceNumber = StringUtils.getLongAsNChar(genericSequence.getCurrentSequenceNb(), genericSequence.getSequenceSize());
-		result.setSequence(GenericSequenceApi.fromGenericSequence(genericSequence));
-		result.setValue(genericSequence.getPrefix() + sequenceNumber);
+    public GenericSequenceValueResponseDto getNextCustomerNumber() throws BusinessException {
+        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
 
-		return result;
-	}
-	
+        GenericSequence genericSequence = providerService.getNextCustomerNumber();
+        String sequenceNumber = StringUtils.getLongAsNChar(genericSequence.getCurrentSequenceNb(), genericSequence.getSequenceSize());
+        result.setSequence(GenericSequenceApi.fromGenericSequence(genericSequence));
+        result.setValue(genericSequence.getPrefix() + sequenceNumber);
+
+        return result;
+    }
+
 }

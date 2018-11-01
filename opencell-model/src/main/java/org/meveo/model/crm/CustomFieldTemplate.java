@@ -54,11 +54,12 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 
 /**
- * @author akadid abdelmounaim
+ * Custom field template
+ * 
+ * @author Andrius Karpavicius
  * @author Abdellatif BARI
  * @lastModifiedVersion 5.2.1
  **/
-
 @Entity
 @ModuleItem
 @Cacheable
@@ -72,7 +73,8 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "CustomFieldTemplate.getCFTByCodeAndAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.code=:code and cft.appliesTo=:appliesTo", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
         @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo=:appliesTo order by cft.code", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+        @NamedQuery(name = "CustomFieldTemplate.getCFTsForAccumulation", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo='SELLER' or cft.code in (SELECT cftu.code from CustomFieldTemplate cftu where cftu.appliesTo in :appliesTo group by cftu.code having count(cftu.code)>1) order by cft.code") })
 public class CustomFieldTemplate extends EnableBusinessEntity implements Comparable<CustomFieldTemplate> {
 
     private static final long serialVersionUID = -1403961759495272885L;
@@ -92,58 +94,92 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         }
     }
 
+    /**
+     * Field data type
+     */
     @Column(name = "field_type", nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull
     private CustomFieldTypeEnum fieldType;
 
+    /**
+     * Entity type that field applies to
+     */
     @Column(name = "applies_to", nullable = false, length = 100)
     @Size(max = 100)
     @NotNull
     private String appliesTo;
 
+    /**
+     * Is value mandatory
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "value_required")
     private boolean valueRequired;
 
+    /**
+     * Values for selection from a picklist
+     */
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "crm_custom_field_tmpl_val")
     private Map<String, String> listValues;
 
+    /**
+     * Matrix columns. Contains both key and value columns.
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @OrderBy("columnUse ASC, position ASC")
     @CollectionTable(name = "crm_custom_field_tmpl_mcols", joinColumns = { @JoinColumn(name = "cft_id") })
-    @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 20)),
+    @AttributeOverrides(value = { @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 20)),
             @AttributeOverride(name = "label", column = @Column(name = "label", nullable = false, length = 50)),
             @AttributeOverride(name = "keyType", column = @Column(name = "key_type", nullable = false, length = 10)),
+            @AttributeOverride(name = "position", column = @Column(name = "position", nullable = false)),
             @AttributeOverride(name = "columnUse", column = @Column(name = "column_use", nullable = false)) })
     private List<CustomFieldMatrixColumn> matrixColumns = new ArrayList<CustomFieldMatrixColumn>();
 
+    /**
+     * Matrix key type columns
+     */
     @Transient
     private List<CustomFieldMatrixColumn> matrixKeyColumns;
 
+    /**
+     * Matrix value type columns
+     */
     @Transient
     private List<CustomFieldMatrixColumn> matrixValueColumns;
 
+    /**
+     * Is field value versionable
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "versionable")
     private boolean versionable;
 
+    /**
+     * Calendar to calculate period date range
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendar_id")
     private Calendar calendar;
 
-    // @Column(name = "cache_value_for")
-    // private Integer cacheValueTimeperiod;
-
+    /**
+     * Default value
+     */
     @Column(name = "default_value", length = 250)
     @Size(max = 250)
     private String defaultValue;
 
+    /**
+     * Use parent's entities field value as a default value
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "inh_as_def_value")
     private boolean useInheritedAsDefaultValue;
-    
+
+    /**
+     * Should value not be updated once entered
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "cf_protectable")
     protected boolean protectable;
@@ -155,15 +191,24 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Size(max = 255)
     private String entityClazz;
 
+    /**
+     * Field data grouping type
+     */
     @Column(name = "storage_type", nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull
     private CustomFieldStorageTypeEnum storageType = CustomFieldStorageTypeEnum.SINGLE;
 
+    /**
+     * Key data type for Map type field
+     */
     @Column(name = "mapkey_type")
     @Enumerated(EnumType.STRING)
     private CustomFieldMapKeyEnum mapKeyType;
 
+    /**
+     * Should event be fired when end period is reached for versioned values
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "trigger_end_period_event", nullable = false)
     private boolean triggerEndPeriodEvent;
@@ -181,34 +226,47 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Size(max = 2000)
     private String guiPosition;
 
+    /**
+     * Allow to edit value
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "allow_edit")
     @NotNull
     private boolean allowEdit = true;
 
+    /**
+     * If true, field wont be visible/appicable on new entity entry
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "hide_on_new")
     @NotNull
     private boolean hideOnNew;
 
+    /**
+     * Validation - maximum value
+     */
     @Column(name = "max_value")
     private Long maxValue;
 
+    /**
+     * Validation - minimum value
+     */
     @Column(name = "min_value")
     private Long minValue;
 
+    /**
+     * Validation - regular expression
+     */
     @Column(name = "reg_exp", length = 80)
     @Size(max = 80)
     private String regExp;
 
+    /**
+     * Expression to determine if field is applies
+     */
     @Column(name = "applicable_on_el", length = 2000)
     @Size(max = 2000)
     private String applicableOnEl;
-
-    // @Type(type = "numeric_boolean")
-    // @Column(name = "cache_value")
-    // @NotNull
-    // private boolean cacheValue;
 
     /**
      * Child entity fields to display as summary. Field names are separated by a comma.
@@ -231,10 +289,13 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Size(max = 2000)
     private String tags;
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
-    
+
     @Column(name = "display_format", length = 80)
     @Size(max = 80)
     private String displayFormat;
@@ -269,7 +330,8 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * create a Map of attribute from sorted List
-     * @return  a sorted LinkedHashMap values
+     * 
+     * @return a sorted LinkedHashMap values
      */
     public Map<String, String> getListValuesSorted() {
         if (listValues != null && !listValues.isEmpty()) {

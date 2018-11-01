@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.invoice.InvoiceConfigurationDto;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.Provider;
 
 /**
@@ -23,55 +24,87 @@ public class ProviderDto extends AuditableEntityDto {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5599223889050605880L;
 
-    /** The code. */
+    /**
+     * The code.
+     */
     @XmlAttribute(required = true)
     private String code;
 
-    /** The description. */
+    /**
+     * The description.
+     */
     private String description;
-    
-    /** The currency. */
+
+    /**
+     * The currency.
+     */
     private String currency;
-    
-    /** The country. */
+
+    /**
+     * The country.
+     */
     private String country;
-    
-    /** The language. */
+
+    /**
+     * The language.
+     */
     private String language;
-    
-    /** The multi currency. */
+
+    /**
+     * The multi currency.
+     */
     private Boolean multiCurrency;
-    
-    /** The multi country. */
+
+    /**
+     * The multi country.
+     */
     private Boolean multiCountry;
-    
-    /** The multi language. */
+
+    /**
+     * The multi language.
+     */
     private Boolean multiLanguage;
-    
-    /** The user account. */
+
+    /**
+     * The user account.
+     */
     private String userAccount;
 
-    /** The enterprise. */
+    /**
+     * The enterprise.
+     */
     private Boolean enterprise;
-    
-    /** The level duplication. */
+
+    /**
+     * The level duplication.
+     */
     private Boolean levelDuplication;
-    
-    /** The rounding. */
+
+    /**
+     * The rounding.
+     */
     private Integer rounding;
 
-    /** The rounding. mode*/
-    private String roundingMode;
+    /**
+     * The Rating amount rounding mode
+     */
+    private RoundingModeEnum roundingMode;
 
-    /** The invoice rounding. */
-    private Integer invoiceRounding;
+    /**
+     * The invoice amount rounding.
+     */
+    private int invoiceRounding;
 
-    /** The invoice rounding mode. */
-    private String invoiceRoundingMode;
-    
-    /** The prepaid reservation expiration delayin millisec. */
+    /**
+     * The invoice amount rounding mode.
+     */
+    private RoundingModeEnum invoiceRoundingMode;
+
+    /**
+     * The prepaid reservation expiration delayin millisec.
+     */
     private Long prepaidReservationExpirationDelayinMillisec;
-    
+
     /**
      * The discount accounting code.
      *
@@ -79,16 +112,16 @@ public class ProviderDto extends AuditableEntityDto {
      */
     @Deprecated
     private String discountAccountingCode;
-    
+
     /** The email. */
     private String email;
-    
+
     /** The bank coordinates. */
     private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
-    
+
     /** The recognize revenue. */
     private Boolean recognizeRevenue;
-    
+
     /** The invoice configuration. */
     private InvoiceConfigurationDto invoiceConfiguration = new InvoiceConfigurationDto();
 
@@ -138,6 +171,9 @@ public class ProviderDto extends AuditableEntityDto {
             multiCountry = provider.getMulticountryFlag();
             multiLanguage = provider.getMultilanguageFlag();
             rounding = provider.getRounding();
+            roundingMode = provider.getRoundingMode();
+            invoiceRounding = provider.getInvoiceRounding();
+            invoiceRoundingMode = provider.getInvoiceRoundingMode();
             prepaidReservationExpirationDelayinMillisec = provider.getPrepaidReservationExpirationDelayinMillisec();
             discountAccountingCode = provider.getDiscountAccountingCode();
             email = provider.getEmail();
@@ -415,72 +451,58 @@ public class ProviderDto extends AuditableEntityDto {
     }
 
     /**
-     * Gets the rounding.
-     *
-     * @return the rounding
+     * @return Rating amount rounding precision
      */
     public Integer getRounding() {
         return rounding;
     }
 
     /**
-     * Sets the rounding.
-     *
-     * @param rounding the new rounding
+     * @param rounding Rating amount rounding precision
      */
     public void setRounding(Integer rounding) {
         this.rounding = rounding;
     }
 
     /**
-     * Gets the rounding mode
-     * @return the rounding mode
-     * @see org.meveo.model.catalog.RoundingModeEnum
+     * @return Rating amount rounding mode
      */
-    public String getRoundingMode() {
+    public RoundingModeEnum getRoundingMode() {
         return roundingMode;
     }
 
     /**
-     * Sets the rounding mode
-     * @param roundingMode the rounding mode
-     * @see org.meveo.model.catalog.RoundingModeEnum
+     * @param roundingMode Rating amount rounding mode
      */
-    public void setRoundingMode(String roundingMode) {
+    public void setRoundingMode(RoundingModeEnum roundingMode) {
         this.roundingMode = roundingMode;
     }
 
     /**
-     * Gets the invoice rounding
-     * @return the invoice rounding
+     * @return Invoice and invoice aggregate amount rounding precision
      */
     public Integer getInvoiceRounding() {
         return invoiceRounding;
     }
 
     /**
-     * Sets the invoice rounding
-     * @param invoiceRounding the new invoice rounding
+     * @param invoiceRounding Invoice and invoice aggregate amount rounding precision
      */
     public void setInvoiceRounding(Integer invoiceRounding) {
         this.invoiceRounding = invoiceRounding;
     }
 
     /**
-     * Gets the invoice rounding mode
-     * @return the invoice rounding mode.
-     * @see org.meveo.model.catalog.RoundingModeEnum
+     * @return Invoice and invoice aggregate amount rounding mode
      */
-    public String getInvoiceRoundingMode() {
+    public RoundingModeEnum getInvoiceRoundingMode() {
         return invoiceRoundingMode;
     }
 
     /**
-     * Sets the invoice rounding mode
-     * @param invoiceRoundingMode the new invoice rounding mode.
-     * @see org.meveo.model.catalog.RoundingModeEnum
+     * @param invoiceRoundingMode Invoice and invoice aggregate amount rounding mode
      */
-    public void setInvoiceRoundingMode(String invoiceRoundingMode) {
+    public void setInvoiceRoundingMode(RoundingModeEnum invoiceRoundingMode) {
         this.invoiceRoundingMode = invoiceRoundingMode;
     }
 
@@ -556,7 +578,9 @@ public class ProviderDto extends AuditableEntityDto {
         this.recognizeRevenue = recognizeRevenue;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see java.lang.Object#toString()
      */
     @Override

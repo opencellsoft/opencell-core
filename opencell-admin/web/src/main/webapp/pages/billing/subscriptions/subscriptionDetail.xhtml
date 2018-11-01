@@ -144,21 +144,6 @@
 			updateField=":subscriptionTab:subscriptionFormId:informationTab:billingCycleSelectId :subscriptionTab:subscriptionFormId:informationTab:billingCycleSelectId_text">
 		</hftl:entityPopup>
 		
-		<hftl:entityPopup id="sellerPopup"
-			header="#{messages['seller.popup.header']}"
-			backingBean="#{subscriptionBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['businessEntity.description']}"
-			searchField2="description"
-			column1Label="#{messages['businessEntity.code']}" column1="code"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="description"
-			selection="#{subscriptionBean.entity.seller}"
-			dataModel="#{subscriptionBean.listSellers()}"
-			updateField=":subscriptionTab:subscriptionFormId:informationTab:sellerSelectId :subscriptionTab:subscriptionFormId:informationTab:sellerSelectId_text">
-		</hftl:entityPopup>
-		
 		<hftl:entityPopup id="productSellerPopup"
 			header="#{messages['seller.popup.header']}"
 			backingBean="#{subscriptionBean}"

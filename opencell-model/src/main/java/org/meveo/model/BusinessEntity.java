@@ -27,9 +27,9 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * The Class BusinessEntity.
+ * Represents a business entity that can be uniquely identified by a code
  * 
- * @author Said Ramli
+ * @author Andrius Karpavicius
  * @lastModifiedVersion 5.1
  */
 @ReferenceIdentifierCode("code")
@@ -39,8 +39,11 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
 
     private static final long serialVersionUID = 1L;
 
+    // TODO : Create sql script to add index. @Index(name = "CODE_IDX")
+    /**
+     * Code
+     */
     @Column(name = "code", nullable = false, length = 255)
-    // TODO : Create sql script to ad index. @Index(name = "CODE_IDX")
     @Size(max = 255, min = 1)
     @NotNull
     protected String code;
@@ -51,13 +54,19 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     @Transient
     protected String previousCode;
 
+    /**
+     * Description
+     */
     @Column(name = "description", nullable = true, length = 255)
     @Size(max = 255)
     protected String description;
 
+    /**
+     * If True, append Identifier to the code value
+     */
     @Transient
     protected boolean appendGeneratedCode = false;
-    
+
     public String getCode() {
         return code;
     }
@@ -88,6 +97,9 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
         this.appendGeneratedCode = appendGeneratedCode;
     }
 
+    /**
+     * @return Description or code value if description was not provided
+     */
     public String getDescriptionOrCode() {
         if (!StringUtils.isBlank(description)) {
             return description;
@@ -96,6 +108,9 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
         }
     }
 
+    /**
+     * @return Description with code in the following format: &lt;code&gt;_&lt;description&gt;
+     */
     public String getDescriptionAndCode() {
         if (!StringUtils.isBlank(description)) {
             return code + " - " + description;
@@ -142,10 +157,10 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
         }
 
         BusinessEntity other = (BusinessEntity) obj;
-        
-		if (id != null && other.getId() != null && getClass().equals(other.getClass()) && id.equals(other.getId())) {
-			return true;
-		}
+
+        if (id != null && other.getId() != null && getClass().equals(other.getClass()) && id.equals(other.getId())) {
+            return true;
+        }
 
         if (code == null) {
             if (other.getCode() != null) {
@@ -162,8 +177,13 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
         return String.format("%s[%s, code=%s]", this.getClass().getSimpleName(), super.toString(), code);
     }
 
-    public void setDescriptionOrCode(String val) {
-        setDescription(val);
+    /**
+     * A "fake" method needed for JSF functionality as a setter equivalent for getDescriptionOrCode()
+     * 
+     * @param description Description
+     */
+    public void setDescriptionOrCode(String description) {
+        setDescription(description);
     }
 
     /**
@@ -174,19 +194,19 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     public boolean isCodeChanged() {
         return !StringUtils.equals(code, previousCode);
     }
-    
+
     @Override
     public String getReferenceCode() {
-    	return code;
+        return code;
     }
-    
+
     @Override
     public void setReferenceCode(Object value) {
-    	setCode(value.toString());
+        setCode(value.toString());
     }
 
     @Override
     public String getReferenceDescription() {
-		return description;
-	}
+        return description;
+    }
 }

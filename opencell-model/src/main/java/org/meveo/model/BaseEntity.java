@@ -32,13 +32,15 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
+import org.meveo.model.persistence.CustomFieldJsonType;
 import org.meveo.model.persistence.JsonBinaryType;
 import org.meveo.model.persistence.JsonStringType;
 
 /**
  * Base class for all entity classes.
  */
-@TypeDefs({ @TypeDef(name = "json", typeClass = JsonStringType.class), @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class) })
+@TypeDefs({ @TypeDef(name = "json", typeClass = JsonStringType.class), @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class),
+        @TypeDef(name = "cfjson", typeClass = CustomFieldJsonType.class) })
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable, IEntity, IJPAVersionedEntity {
     private static final long serialVersionUID = 1L;
@@ -47,15 +49,21 @@ public abstract class BaseEntity implements Serializable, IEntity, IJPAVersioned
     public static final int NB_DECIMALS = 12;
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    /**
+     * Record/entity identifier
+     */
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
     @Column(name = "id")
     @Access(AccessType.PROPERTY) // Access is set to property so a call to getId() wont trigger hibernate proxy loading
     protected Long id;
 
+    /**
+     * Modification version number
+     */
     @Version
     @Column(name = "version")
-    private Integer version;
+    protected Integer version;
 
     public Long getId() {
         return id;

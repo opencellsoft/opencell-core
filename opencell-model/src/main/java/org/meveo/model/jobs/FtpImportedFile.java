@@ -14,33 +14,48 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 
+/**
+ * File imported via FTP
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "ftp_imported_file")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ftp_imported_file_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ftp_imported_file_seq"), })
 public class FtpImportedFile extends BusinessEntity {
     private static final long serialVersionUID = 430457580612075457L;
 
+    /**
+     * URI
+     */
     @Column(name = "uri", length = 2000, nullable = false)
     @Size(max = 2000)
     @NotNull
     private String uri;
 
+    /**
+     * File size
+     */
     @Column(name = "size")
     private Long size;
 
+    /**
+     * Import timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "import_date")
     private Date importDate = new Date();
 
+    /**
+     * Last file modification timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_modification")
     private Date lastModification;
 
-
-    public FtpImportedFile(){
+    public FtpImportedFile() {
     }
-
-
 
     /**
      * @return the uri
@@ -98,15 +113,15 @@ public class FtpImportedFile extends BusinessEntity {
         this.lastModification = lastModification;
     }
 
-
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "FtpImportedFile [uri=" + uri + ", size=" + size + ", importDate=" + importDate + ", lastModification=" + lastModification + ", code=" + code + ", description=" + description + ", appendGeneratedCode=" + appendGeneratedCode + ", id=" + id + "]";
+        return "FtpImportedFile [uri=" + uri + ", size=" + size + ", importDate=" + importDate + ", lastModification=" + lastModification + ", code=" + code + ", description="
+                + description + ", appendGeneratedCode=" + appendGeneratedCode + ", id=" + id + "]";
     }
 
-
-    }
+}

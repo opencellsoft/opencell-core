@@ -18,27 +18,41 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
 /**
- * @author Edward P. Legaspi
- **/
+ * Discount plan
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ObservableEntity
 @Cacheable
-@ExportIdentifier({ "code"})
-@Table(name = "cat_discount_plan", uniqueConstraints = { @UniqueConstraint(columnNames = { "code"}) })
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_discount_plan_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "cat_discount_plan", uniqueConstraints = { @UniqueConstraint(columnNames = { "code" }) })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_discount_plan_seq"), })
 public class DiscountPlan extends EnableBusinessEntity {
 
     private static final long serialVersionUID = -2762453947446654646L;
 
+    /**
+     * Minimum duration. Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "min_duration")
     private int minDuration = 0;
 
+    /**
+     * Maximum duration. Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "max_duration")
     private int maxDuration = 99999;
 
-//	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-	@OneToMany(mappedBy = "discountPlan", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<DiscountPlanItem> discountPlanItems;
+    // @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    /**
+     * Discount plan items
+     */
+    @OneToMany(mappedBy = "discountPlan", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DiscountPlanItem> discountPlanItems;
 
     public int getMinDuration() {
         return minDuration;

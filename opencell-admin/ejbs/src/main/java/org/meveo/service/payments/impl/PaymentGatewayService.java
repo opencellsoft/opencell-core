@@ -84,6 +84,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
 
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("customerAccount", customerAccount);
+        userMap.put("ca", customerAccount);
         userMap.put("paymentMethod", paymentMethod);
         userMap.put("paymentGateway", paymentGateway);
 

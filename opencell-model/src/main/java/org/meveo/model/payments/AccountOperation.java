@@ -26,7 +26,6 @@ import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -48,6 +47,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -56,11 +56,9 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
-import org.meveo.model.shared.DateUtils;
 
 /**
- * Account Transaction.
+ * Account operation
  *
  * @author Edward P. Legaspi
  * @author Said Ramli
@@ -77,8 +75,8 @@ import org.meveo.model.shared.DateUtils;
 @CustomFieldEntity(cftCodePrefix = "ACC_OP")
 @NamedQueries({
         @NamedQuery(name = "AccountOperation.listAoToPayWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and " + 
-            "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
-            "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),  
+                "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
+                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),  
         @NamedQuery(name = "AccountOperation.listAoToPay", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.customerAccount.id=:caIdIN  and ao.transactionCategory='DEBIT' and " + 
                 "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
                 "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),       
@@ -91,146 +89,262 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Operation due date
+     */
     @Column(name = "due_date")
     @Temporal(TemporalType.DATE)
     private Date dueDate;
 
+    /**
+     * Operation type
+     */
     @Column(name = "transaction_type", insertable = false, updatable = false, length = 31)
     @Size(max = 31)
     private String type;
 
+    /**
+     * Operation date
+     */
     @Column(name = "transaction_date")
     @Temporal(TemporalType.DATE)
     private Date transactionDate;
 
+    /**
+     * Operation category Debit/Credit
+     */
     @Column(name = "transaction_category")
     @Enumerated(EnumType.STRING)
     private OperationCategoryEnum transactionCategory;
 
+    /**
+     * Reference
+     */
     @Column(name = "reference", length = 255)
     @Size(max = 255)
     private String reference;
 
+    /**
+     * Accounting code
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 
+    /**
+     * Deprecated in 5.2. Use accountingCode instead
+     */
     @Deprecated
     @Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
     private String accountCodeClientSide;
 
+    /**
+     * Amount with tax
+     */
     @Column(name = "amount", precision = 23, scale = 12)
     private BigDecimal amount;
 
+    /**
+     * Amount without tax
+     */
     @Column(name = "amount_without_tax", precision = 23, scale = 12)
     private BigDecimal amountWithoutTax;
 
+    /**
+     * Tax amount
+     */
     @Column(name = "tax_amount", precision = 23, scale = 12)
     private BigDecimal taxAmount;
 
+    /**
+     * Matched amount
+     */
     @Column(name = "matching_amount", precision = 23, scale = 12)
     private BigDecimal matchingAmount = BigDecimal.ZERO;
 
+    /**
+     * Unmatched amount
+     */
     @Column(name = "un_matching_amount", precision = 23, scale = 12)
     private BigDecimal unMatchingAmount = BigDecimal.ZERO;
 
+    /**
+     * Associated Customer account
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_account_id")
     private CustomerAccount customerAccount;
 
+    /**
+     * Matching status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "matching_status")
     private MatchingStatusEnum matchingStatus;
 
+    /**
+     * A list of matches
+     */
     @OneToMany(mappedBy = "accountOperation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatchingAmount> matchingAmounts = new ArrayList<>();
 
+    /**
+     * OCC code
+     */
     @Column(name = "occ_code", length = 255)
     @Size(max = 255)
     private String occCode;
 
+    /**
+     * OCC description
+     */
     @Column(name = "occ_description", length = 255)
     @Size(max = 255)
     private String occDescription;
 
+    /**
+     * Associated order number. Multiple orders separated by '|'.
+     */
     @Column(name = "order_num")
-    private String orderNumber;// order number, '|' will be used as seperator if many orders
+    private String orderNumber;
 
+    /**
+     * Unique identifier - UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    // @Type(type = "json")
-    @Convert(converter = CustomFieldValuesConverter.class)
+    /**
+     * Custom field values in JSON format
+     */
+    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
+    /**
+     * Accumulated custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
+    /**
+     * Bank LOT number
+     */
     @Column(name = "bank_lot", columnDefinition = "text")
     private String bankLot;
 
+    /**
+     * Bank reference
+     */
     @Column(name = "bank_reference", length = 255)
     @Size(max = 255)
     private String bankReference;
 
+    /**
+     * Deposit timestamp
+     */
     @Column(name = "deposit_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date depositDate;
 
+    /**
+     * Bank collection timestamp
+     */
     @Column(name = "bank_collection_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date bankCollectionDate;
 
+    /**
+     * Payment method
+     */
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum paymentMethod;
-    
+
+    /**
+     * Associated invoices
+     */
     @OneToMany(mappedBy = "recordedInvoice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invoice> invoices;
-    
+
+    /**
+     * Code
+     */
     @Transient
     private String code;
 
+    /**
+     * Description
+     */
     @Transient
     private String description;
-    
+
+    /**
+     * Additional payment information - // IBAN for direct debit
+     */
     @Column(name = "payment_info", length = 255)
     @Size(max = 255)
-    private String paymentInfo;// IBAN for direct debit
+    private String paymentInfo;
 
+    /**
+     * Additional payment information - bank code
+     */
     @Column(name = "payment_info1", length = 255)
     @Size(max = 255)
-    private String paymentInfo1;// bank code
+    private String paymentInfo1;
 
+    /**
+     * Additional payment information - Code box/code guichet
+     */
     @Column(name = "payment_info2", length = 255)
     @Size(max = 255)
-    private String paymentInfo2;// code guichet
+    private String paymentInfo2;
 
+    /**
+     * Additional payment information - Account number
+     */
     @Column(name = "payment_info3", length = 255)
     @Size(max = 255)
-    private String paymentInfo3;// Num compte
+    private String paymentInfo3;
 
+    /**
+     * Additional payment information - RIB
+     */
     @Column(name = "payment_info4", length = 255)
     @Size(max = 255)
-    private String paymentInfo4;// RIB
+    private String paymentInfo4;
 
+    /**
+     * Additional payment information - Bank name
+     */
     @Column(name = "payment_info5", length = 255)
     @Size(max = 255)
-    private String paymentInfo5;// bankName
+    private String paymentInfo5;
 
+    /**
+     * Additional payment information - BIC
+     */
     @Column(name = "payment_info6", length = 255)
     @Size(max = 255)
-    private String paymentInfo6;// bic
+    private String paymentInfo6;
 
+    /**
+     * Billing account name
+     */
     @Column(name = "billing_account_name", length = 255)
     @Size(max = 255)
     private String billingAccountName;
-   
+
+    /**
+     * DD request item
+     */
     @ManyToOne(optional = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "ddrequest_item_id")
     private DDRequestItem ddRequestItem;
-   
 
     public Date getDueDate() {
         return dueDate;
@@ -262,7 +376,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
-       
+
     }
 
     public BigDecimal getMatchingAmount() {
@@ -397,6 +511,16 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
     }
 
     @Override
@@ -649,6 +773,5 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     public void setDdRequestItem(DDRequestItem ddRequestItem) {
         this.ddRequestItem = ddRequestItem;
     }
-    
-    
+
 }

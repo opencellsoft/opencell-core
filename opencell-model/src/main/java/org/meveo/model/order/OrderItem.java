@@ -31,6 +31,11 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.shared.Address;
 
+/**
+ * Order item
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ExportIdentifier({ "order.code", "itemId" })
 @Table(name = "ord_order_item")
@@ -40,6 +45,9 @@ public class OrderItem extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
+    /**
+     * Order
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false, updatable = false)
     @NotNull
@@ -76,7 +84,7 @@ public class OrderItem extends BaseEntity {
     private List<OrderItemProductOffering> orderItemProductOfferings = new ArrayList<>();
 
     /**
-     * Serialized orderItem dto.
+     * Serialized orderItem dto
      */
     @Column(name = "source", nullable = false, columnDefinition = "TEXT")
     private String source;
@@ -103,15 +111,27 @@ public class OrderItem extends BaseEntity {
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
+    /**
+     * Shipping address
+     */
     @Embedded
     private Address shippingAddress = new Address();
-    
+
+    /**
+     * Order action history
+     */
     @OneToMany(mappedBy = "orderItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderHistory> orderHistories = new ArrayList<>();
 
+    /**
+     * Source of order in XML format
+     */
     @Transient
     private Object orderItemDto;
 
+    /**
+     * Main product offering
+     */
     @Transient
     private ProductOffering mainOffering;
 
@@ -270,11 +290,11 @@ public class OrderItem extends BaseEntity {
         return StringUtils.compare(getItemId(), other.getItemId()) == 0;
     }
 
-	public List<OrderHistory> getOrderHistories() {
-		return orderHistories;
-	}
+    public List<OrderHistory> getOrderHistories() {
+        return orderHistories;
+    }
 
-	public void setOrderHistories(List<OrderHistory> orderHistories) {
-		this.orderHistories = orderHistories;
-	}
+    public void setOrderHistories(List<OrderHistory> orderHistories) {
+        this.orderHistories = orderHistories;
+    }
 }

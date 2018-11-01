@@ -18,14 +18,10 @@
  */
 package org.meveo.model.billing;
 
-public enum SubscriptionStatusEnum  {
+public enum SubscriptionStatusEnum {
 
-    CREATED(1, "AccountStatusEnum.created"),
-    ACTIVE(1, "AccountStatusEnum.active"),
-    CANCELED(2, "AccountStatusEnum.canceled"),
-    RESILIATED(3, "AccountStatusEnum.resiliated"),
-    CLOSED(4, "AccountStatusEnum.closed"),
-    SUSPENDED(5, "AccountStatusEnum.suspended"); 
+    CREATED(1, "AccountStatusEnum.created"), ACTIVE(1, "AccountStatusEnum.active"), CANCELED(2, "AccountStatusEnum.canceled"), RESILIATED(3,
+            "AccountStatusEnum.resiliated"), CLOSED(4, "AccountStatusEnum.closed"), SUSPENDED(5, "AccountStatusEnum.suspended");
 
     private Integer id;
     private String label;
@@ -46,6 +42,7 @@ public enum SubscriptionStatusEnum  {
 
     /**
      * Gets enum by its id.
+     * 
      * @param id id of subscription status
      * @return subscription status.
      */

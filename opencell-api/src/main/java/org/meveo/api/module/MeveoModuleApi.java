@@ -850,7 +850,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     private void businessProductModelToDto(BusinessProductModel bpm, BusinessProductModelDto dto) {
 
         if (bpm.getProductTemplate() != null) {
-            dto.setProductTemplate(new ProductTemplateDto(bpm.getProductTemplate(), entityToDtoConverter.getCustomFieldsDTO(bpm.getProductTemplate(), true), true, true));
+            dto.setProductTemplate(new ProductTemplateDto(bpm.getProductTemplate(), entityToDtoConverter.getCustomFieldsDTO(bpm.getProductTemplate(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE), true, true));
         }
     }
 
@@ -879,7 +879,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     private void businessServiceModelToDto(BusinessServiceModel bsm, BusinessServiceModelDto dto) {
 
         if (bsm.getServiceTemplate() != null) {
-            dto.setServiceTemplate(new ServiceTemplateDto(bsm.getServiceTemplate(), entityToDtoConverter.getCustomFieldsDTO(bsm.getServiceTemplate(), true), true));
+            dto.setServiceTemplate(new ServiceTemplateDto(bsm.getServiceTemplate(), entityToDtoConverter.getCustomFieldsDTO(bsm.getServiceTemplate(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE), true));
         }
         dto.setDuplicateService(bsm.isDuplicateService());
         dto.setDuplicatePricePlan(bsm.isDuplicatePricePlan());

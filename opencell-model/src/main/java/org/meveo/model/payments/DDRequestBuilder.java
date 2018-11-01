@@ -59,17 +59,16 @@ public class DDRequestBuilder extends EnableBusinessCFEntity {
     /** The nb operation per file. */
     @Column(name = "nb_ops_file")
     private Long nbOperationPerFile;
-    
+
     /** The max size file in ko */
     @Column(name = "max_size_file")
     private Long maxSizeFile;
-    
+
     @Column(name = "payment_level")
     @Enumerated(EnumType.STRING)
     @NotNull
     private PaymentLevelEnum paymentLevel;
 
- 
     public DDRequestBuilder() {
 
     }
@@ -80,7 +79,7 @@ public class DDRequestBuilder extends EnableBusinessCFEntity {
     public DDRequestBuilderTypeEnum getType() {
         return type;
     }
-    
+
     /**
      * @param type the type to set
      */
@@ -156,6 +155,6 @@ public class DDRequestBuilder extends EnableBusinessCFEntity {
      */
     public void setPaymentLevel(PaymentLevelEnum paymentLevel) {
         this.paymentLevel = paymentLevel;
-    }    
-    
+    }
+
 }

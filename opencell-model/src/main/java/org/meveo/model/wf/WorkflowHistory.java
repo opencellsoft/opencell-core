@@ -38,6 +38,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 
+/**
+ * Workflow action history
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "wf_history")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -46,30 +51,51 @@ public class WorkflowHistory extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Action date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "action_date")
     private Date actionDate;
 
+    /**
+     * Worklow
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workflow_id")
     private Workflow workflow;
 
+    /**
+     * Afected entity instance code
+     */
     @Column(name = "entity_instance_code")
     @NotNull
     private String entityInstanceCode;
 
+    /**
+     * Workflow status change - from status
+     */
     @Column(name = "from_status")
     @NotNull
-    String fromStatus = null;
+    String fromStatus;
 
+    /**
+     * Workflow status change - to status
+     */
     @Column(name = "to_status")
     @NotNull
-    String toStatus = null;
+    String toStatus;
 
+    /**
+     * Transition name
+     */
     @Column(name = "transition_name")
     @NotNull
-    String transitionName = null;
+    String transitionName;
 
+    /**
+     * Executed actions and their execution report
+     */
     @OneToMany(mappedBy = "workflowHistory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<WorkflowHistoryAction> actionsAndReports = new ArrayList<WorkflowHistoryAction>();
 

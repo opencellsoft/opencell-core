@@ -12,20 +12,33 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.billing.BankCoordinates;
 
+/**
+ * Payment by Direct debit method
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @DiscriminatorValue(value = "DIRECTDEBIT")
-
 public class DDPaymentMethod extends PaymentMethod {
 
     private static final long serialVersionUID = 8578954294545445527L;
 
+    /**
+     * Bank information
+     */
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
 
+    /**
+     * Order identification
+     */
     @Column(name = "mandate_identification", length = 255)
     @Size(max = 255)
     private String mandateIdentification = "";
 
+    /**
+     * Order date
+     */
     @Column(name = "mandate_date")
     @Temporal(TemporalType.DATE)
     private Date mandateDate;
@@ -116,7 +129,8 @@ public class DDPaymentMethod extends PaymentMethod {
     @Override
     public String toString() {
         return "DDPaymentMethod [ alias = " + getAlias() + ", account_owner = " + bankCoordinates.getAccountOwner() + ",  bank_name = " + bankCoordinates.getBankName() + ","
-                + " bic = " + bankCoordinates.getBic() + ", iban = " + bankCoordinates.getIban() + ",  mandateIdentification=" + getMandateIdentification() + ", mandateDate=" + getMandateDate() + "]";
+                + " bic = " + bankCoordinates.getBic() + ", iban = " + bankCoordinates.getIban() + ",  mandateIdentification=" + getMandateIdentification() + ", mandateDate="
+                + getMandateDate() + "]";
     }
 
 }

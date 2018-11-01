@@ -41,6 +41,12 @@ import org.meveo.model.IEntity;
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * Application security permission
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
 @ExportIdentifier("name")
@@ -52,17 +58,26 @@ import org.meveo.model.IEntity;
 public class Permission implements IEntity, Serializable {
     private static final long serialVersionUID = 2884657784984355718L;
 
+    /**
+     * Identifier
+     */
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
     @Column(name = "id")
     @Access(AccessType.PROPERTY)
     private Long id;
 
+    /**
+     * Permission code
+     */
     @Column(name = "permission", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String permission;
 
+    /**
+     * Permission name
+     */
     @Column(name = "name", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
@@ -116,7 +131,7 @@ public class Permission implements IEntity, Serializable {
         Permission other = (Permission) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-             return true;
+            return true;
         }
 
         return StringUtils.compare(this.getPermission(), other.getPermission()) == 0;

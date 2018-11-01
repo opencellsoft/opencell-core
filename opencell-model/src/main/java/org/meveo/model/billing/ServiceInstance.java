@@ -65,76 +65,124 @@ import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.shared.DateUtils;
 
 /**
+ * Service subscribed to
+ * 
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.0.1
  */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "SERVICE_INSTANCE")
+@CustomFieldEntity(cftCodePrefix = "SERVICE_INSTANCE", inheritCFValuesFrom = "serviceTemplate")
 @Table(name = "billing_service_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_service_instance_seq"), })
 @NamedQueries({
-		@NamedQuery(name = "ServiceInstance.getExpired", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
-		@NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)") })
+        @NamedQuery(name = "ServiceInstance.getExpired", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
+        @NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)") })
 public class ServiceInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Subscription that service is subscribed under
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
+    /**
+     * Service template/definition
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_template_id")
     private ServiceTemplate serviceTemplate;
 
+    /**
+     * Calendar to use when creating Wallet operations. Service subscription start date is taken as calendar's initiation date. Invoicing calendar to calculate if operation should
+     * be invoiced on an future date.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
     private Calendar invoicingCalendar;
 
+    /**
+     * Status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private InstanceStatusEnum status;
 
+    /**
+     * Last status change timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
     private Date statusDate;
 
+    /**
+     * Subscription timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
     private Date subscriptionDate;
 
+    /**
+     * Termination timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "termination_date")
     private Date terminationDate;
 
+    /**
+     * End agreement timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_agrement_date")
     private Date endAgreementDate;
-    
+
+    /**
+     * If true, end of agreement date will be extended automatically till subscribedTillDate field
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
+    /**
+     * Associated recurring charges
+     */
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<>();
 
+    /**
+     * Associated subscription charges
+     */
     @OneToMany(mappedBy = "subscriptionServiceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OneShotChargeInstance> subscriptionChargeInstances = new ArrayList<>();
 
+    /**
+     * Associated termination charges
+     */
     @OneToMany(mappedBy = "terminationServiceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OneShotChargeInstance> terminationChargeInstances = new ArrayList<>();
 
+    /**
+     * Associated usage charges
+     */
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<UsageChargeInstance> usageChargeInstances = new ArrayList<>();
 
+    /**
+     * Termination reason
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_termin_reason_id")
     private SubscriptionTerminationReason subscriptionTerminationReason;
 
+    /**
+     * Quantity subscribed
+     */
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal quantity = BigDecimal.ONE;
 
@@ -144,48 +192,89 @@ public class ServiceInstance extends BusinessCFEntity {
     @Transient
     private BigDecimal previousQuantity;
 
+    /**
+     * Order number if service was subscribed as part of an order
+     */
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
 
+    /**
+     * Create Wallet operations and Rated transactions upon service subscription only to this date. Later RT jobs needs to be run to create the remaining Wallet operations and
+     * Rated transactions.
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "rate_until_date")
     private Date rateUntilDate;
 
+    /**
+     * Expression to determine minimum amount value
+     */
     @Column(name = "minimum_amount_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountEl;
 
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
 
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    @Column(name = "minimum_amount_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    @Column(name = "minimum_label_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelElSpark;
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderHistory> orderHistories;
 
+    /**
+     * Service renewal configuration
+     */
     @Embedded
     private SubscriptionRenewal serviceRenewal = new SubscriptionRenewal();
-    
+
+    /**
+     * Amount from Payment schedule overridden for this service instance. If null, the amount PS will be taken from the Payment schedule template.
+     */
     @Column(name = "amount_ps")
-   private BigDecimal amountPS; 
-    
+    private BigDecimal amountPS;
+
+    /**
+     * Calendar from Payment schedule overridden for this service instance. If null, the calendar PS will be taken from the Payment schedule template.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendar_ps_id")
-   private Calendar calendarPS; 
-   
+    private Calendar calendarPS;
+
+    /**
+     * The list of Payment schedule instances linked to this Service instance
+     */
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
     private List<PaymentScheduleInstance> psInstances;
-    
+
+    /**
+     * Due date days from Payment schedule overridden for this service instance. If null, the due date dats PS will be taken from the Payment schedule template.
+     */
     @Column(name = "due_date_days_ps")
     private Integer dueDateDaysPS;
-    
+
     /**
      * A date till which subscription is subscribed. After this date it will either be extended or terminated
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscribed_till_date")
     private Date subscribedTillDate;
-    
+
     /**
      * Was subscription renewed
      */
@@ -213,6 +302,9 @@ public class ServiceInstance extends BusinessCFEntity {
     @Transient
     private Long orderItemId;
 
+    /**
+     * Order item action
+     */
     @Transient
     private OrderItemActionEnum orderItemAction;
 
@@ -272,7 +364,7 @@ public class ServiceInstance extends BusinessCFEntity {
     public void setServiceTemplate(ServiceTemplate serviceTemplate) {
         this.serviceTemplate = serviceTemplate;
         if (serviceTemplate != null) {
-           this.autoEndOfEngagement =  serviceTemplate.getAutoEndOfEngagement();
+            this.autoEndOfEngagement = serviceTemplate.getAutoEndOfEngagement();
         }
     }
 
@@ -423,55 +515,95 @@ public class ServiceInstance extends BusinessCFEntity {
         this.orderHistories = orderHistories;
     }
 
+    /**
+     * @return Expression to determine minimum amount value
+     */
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
 
+    /**
+     * @param minimumAmountEl Expression to determine minimum amount value
+     */
     public void setMinimumAmountEl(String minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
 
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value
+     */
     public String getMinimumLabelEl() {
         return minimumLabelEl;
     }
 
+    /**
+     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
+     */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
-    
-	public boolean isRenewed() {
-		return renewed;
-	}
 
-	public void setRenewed(boolean renewed) {
-		this.renewed = renewed;
-	}
+    /**
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
 
-	public Date getNotifyOfRenewalDate() {
-		return notifyOfRenewalDate;
-	}
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
 
-	public void setNotifyOfRenewalDate(Date notifyOfRenewalDate) {
-		this.notifyOfRenewalDate = notifyOfRenewalDate;
-	}
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
 
-	public Date getRenewalNotifiedDate() {
-		return renewalNotifiedDate;
-	}
+    /**
+     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
+    }
 
-	public void setRenewalNotifiedDate(Date renewalNotifiedDate) {
-		this.renewalNotifiedDate = renewalNotifiedDate;
-	}
+    public boolean isRenewed() {
+        return renewed;
+    }
 
-	public Date getSubscribedTillDate() {
-		return subscribedTillDate;
-	}
+    public void setRenewed(boolean renewed) {
+        this.renewed = renewed;
+    }
 
-	public void setSubscribedTillDate(Date subscribedTillDate) {
-		this.subscribedTillDate = subscribedTillDate;
-	}
-	
-	/**
+    public Date getNotifyOfRenewalDate() {
+        return notifyOfRenewalDate;
+    }
+
+    public void setNotifyOfRenewalDate(Date notifyOfRenewalDate) {
+        this.notifyOfRenewalDate = notifyOfRenewalDate;
+    }
+
+    public Date getRenewalNotifiedDate() {
+        return renewalNotifiedDate;
+    }
+
+    public void setRenewalNotifiedDate(Date renewalNotifiedDate) {
+        this.renewalNotifiedDate = renewalNotifiedDate;
+    }
+
+    public Date getSubscribedTillDate() {
+        return subscribedTillDate;
+    }
+
+    public void setSubscribedTillDate(Date subscribedTillDate) {
+        this.subscribedTillDate = subscribedTillDate;
+    }
+
+    /**
      * Check if service has expired for a current date
      * 
      * @return True if service has expired for a current date
@@ -479,7 +611,7 @@ public class ServiceInstance extends BusinessCFEntity {
     public boolean isSubscriptionExpired() {
         return subscribedTillDate != null && DateUtils.setTimeToZero(subscribedTillDate).compareTo(DateUtils.setTimeToZero(new Date())) <= 0;
     }
-    
+
     /**
      * Check if renewal notice should be fired for a current date
      * 
@@ -492,60 +624,60 @@ public class ServiceInstance extends BusinessCFEntity {
 
         return false;
     }
-    
+
     /**
      * Auto update end of engagement date.
      */
     public void autoUpdateEndOfEngagementDate() {
         if (BooleanUtils.isTrue(this.autoEndOfEngagement)) {
             this.setEndAgreementDate(this.subscribedTillDate);
-        } 
+        }
     }
-	
-	/**
-     * Update subscribedTillDate field in service while it was not renewed yet. Also calculate Notify of renewal date
-     */
-	public void updateSubscribedTillAndRenewalNotifyDates() {
-		if (isRenewed()) {
-			return;
-		}
-		
-		if (getServiceRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
-			if (getSubscriptionDate() != null && getServiceRenewal() != null && getServiceRenewal().getInitialyActiveFor() != null) {
-				if (getServiceRenewal().getInitialyActiveForUnit() == null) {
-					getServiceRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
-				}
-				java.util.Calendar calendar = new GregorianCalendar();
-				calendar.setTime(getSubscriptionDate());
-				calendar.add(getServiceRenewal().getInitialyActiveForUnit().getCalendarField(), getServiceRenewal().getInitialyActiveFor());
-				setSubscribedTillDate(calendar.getTime());
-
-			} else {
-				setSubscribedTillDate(null);
-			}
-		}
-
-		if (getSubscribedTillDate() != null && getServiceRenewal().isAutoRenew() && getServiceRenewal().getDaysNotifyRenewal() != null) {
-			java.util.Calendar calendar = new GregorianCalendar();
-			calendar.setTime(getSubscribedTillDate());
-			calendar.add(java.util.Calendar.DAY_OF_MONTH, getServiceRenewal().getDaysNotifyRenewal() * (-1));
-			setNotifyOfRenewalDate(calendar.getTime());
-		} else {
-			setNotifyOfRenewalDate(null);
-		}
-		this.autoUpdateEndOfEngagementDate();
-	}
-
-	public SubscriptionRenewal getServiceRenewal() {
-		return serviceRenewal;
-	}
-
-	public void setServiceRenewal(SubscriptionRenewal serviceRenewal) {
-		this.serviceRenewal = serviceRenewal;
-	}
 
     /**
+     * Update subscribedTillDate field in service while it was not renewed yet. Also calculate Notify of renewal date
+     */
+    public void updateSubscribedTillAndRenewalNotifyDates() {
+        if (isRenewed()) {
+            return;
+        }
 
+        if (getServiceRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
+            if (getSubscriptionDate() != null && getServiceRenewal() != null && getServiceRenewal().getInitialyActiveFor() != null) {
+                if (getServiceRenewal().getInitialyActiveForUnit() == null) {
+                    getServiceRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
+                }
+                java.util.Calendar calendar = new GregorianCalendar();
+                calendar.setTime(getSubscriptionDate());
+                calendar.add(getServiceRenewal().getInitialyActiveForUnit().getCalendarField(), getServiceRenewal().getInitialyActiveFor());
+                setSubscribedTillDate(calendar.getTime());
+
+            } else {
+                setSubscribedTillDate(null);
+            }
+        }
+
+        if (getSubscribedTillDate() != null && getServiceRenewal().isAutoRenew() && getServiceRenewal().getDaysNotifyRenewal() != null) {
+            java.util.Calendar calendar = new GregorianCalendar();
+            calendar.setTime(getSubscribedTillDate());
+            calendar.add(java.util.Calendar.DAY_OF_MONTH, getServiceRenewal().getDaysNotifyRenewal() * (-1));
+            setNotifyOfRenewalDate(calendar.getTime());
+        } else {
+            setNotifyOfRenewalDate(null);
+        }
+        this.autoUpdateEndOfEngagementDate();
+    }
+
+    public SubscriptionRenewal getServiceRenewal() {
+        return serviceRenewal;
+    }
+
+    public void setServiceRenewal(SubscriptionRenewal serviceRenewal) {
+        this.serviceRenewal = serviceRenewal;
+    }
+
+    /**
+     * 
      * @return the autoEndOfEngagement
      */
     public Boolean getAutoEndOfEngagement() {
@@ -558,7 +690,8 @@ public class ServiceInstance extends BusinessCFEntity {
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
-     /**
+
+    /**
      * @return the amountPS
      */
     public BigDecimal getAmountPS() {

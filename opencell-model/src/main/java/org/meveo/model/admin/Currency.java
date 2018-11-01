@@ -31,7 +31,7 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
- * Currency entity.
+ * Currency entity
  */
 @Entity
 @Cacheable

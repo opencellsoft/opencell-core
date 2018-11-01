@@ -29,77 +29,82 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
+/**
+ * Workflow action execution history
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "wf_history_action")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "wf_history_action_seq"), })
-public class WorkflowHistoryAction extends BaseEntity{
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "wf_history_action_seq"), })
+public class WorkflowHistoryAction extends BaseEntity {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+     * Workflow history
+     */
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wf_history_id")   
-	private WorkflowHistory workflowHistory;
-    
-	@Column(name = "action")
-    private String action = null;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wf_history_id")
+    private WorkflowHistory workflowHistory;
 
-	@Column(name = "result")  
-	private String result = null;
-	
+    /**
+     * Action executed
+     */
+    @Column(name = "action")
+    private String action;
 
-	public WorkflowHistoryAction(){
-		
-	}
+    /**
+     * Result obtained
+     */
+    @Column(name = "result")
+    private String result;
 
+    public WorkflowHistoryAction() {
 
-	/**
-	 * @return the workflowHistory
-	 */
-	public WorkflowHistory getWorkflowHistory() {
-		return workflowHistory;
-	}
+    }
 
+    /**
+     * @return the workflowHistory
+     */
+    public WorkflowHistory getWorkflowHistory() {
+        return workflowHistory;
+    }
 
-	/**
-	 * @param workflowHistory the workflowHistory to set
-	 */
-	public void setWorkflowHistory(WorkflowHistory workflowHistory) {
-		this.workflowHistory = workflowHistory;
-	}
+    /**
+     * @param workflowHistory the workflowHistory to set
+     */
+    public void setWorkflowHistory(WorkflowHistory workflowHistory) {
+        this.workflowHistory = workflowHistory;
+    }
 
+    /**
+     * @return the action
+     */
+    public String getAction() {
+        return action;
+    }
 
-	/**
-	 * @return the action
-	 */
-	public String getAction() {
-		return action;
-	}
+    /**
+     * @param action the action to set
+     */
+    public void setAction(String action) {
+        this.action = action;
+    }
 
+    /**
+     * @return the result
+     */
+    public String getResult() {
+        return result;
+    }
 
-	/**
-	 * @param action the action to set
-	 */
-	public void setAction(String action) {
-		this.action = action;
-	}
-
-
-	/**
-	 * @return the result
-	 */
-	public String getResult() {
-		return result;
-	}
-
-
-	/**
-	 * @param result the result to set
-	 */
-	public void setResult(String result) {
-		this.result = result;
-	}
+    /**
+     * @param result the result to set
+     */
+    public void setResult(String result) {
+        this.result = result;
+    }
 
 }

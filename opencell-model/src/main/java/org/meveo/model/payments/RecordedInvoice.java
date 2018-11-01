@@ -36,10 +36,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-
 @Entity
 @DiscriminatorValue(value = "I")
-@NamedQueries({        
+@NamedQueries({
         @NamedQuery(name = "RecordedInvoice.listRecordedInvoiceToPayByDate", query = "Select ri from RecordedInvoice as ri,PaymentMethod as pm  where ri.matchingStatus ='O' "
                 + "and  ri.customerAccount.excludedFromPayment = false and ri.dueDate >=:fromDueDate and ri.dueDate<=:toDueDate and ri.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ri.unMatchingAmount <> 0") })
 public class RecordedInvoice extends AccountOperation {
@@ -57,10 +56,9 @@ public class RecordedInvoice extends AccountOperation {
     @Column(name = "net_to_pay", precision = 23, scale = 12)
     private BigDecimal netToPay;
 
-    
     @OneToMany(mappedBy = "recordedInvoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<RecordedInvoiceCatAgregate> recordedInvoiceCatAgregates = new ArrayList<RecordedInvoiceCatAgregate>();
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pay_schdl_inst_item_id")
     private PaymentScheduleInstanceItem paymentScheduleInstanceItem;
@@ -89,7 +87,6 @@ public class RecordedInvoice extends AccountOperation {
         this.netToPay = netToPay;
     }
 
-    
     /**
      * @return the recordedInvoiceCatAgregates
      */
@@ -103,8 +100,6 @@ public class RecordedInvoice extends AccountOperation {
     public void setRecordedInvoiceCatAgregates(List<RecordedInvoiceCatAgregate> recordedInvoiceCatAgregates) {
         this.recordedInvoiceCatAgregates = recordedInvoiceCatAgregates;
     }
-    
-    
 
     /**
      * @return the paymentScheduleInstanceItem

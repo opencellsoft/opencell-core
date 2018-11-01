@@ -23,9 +23,10 @@ import org.meveo.model.ExportIdentifier;
  */
 @Entity
 @Cacheable
-@ExportIdentifier({  "calendar.code", "intervalBegin", "intervalEnd" })
+@ExportIdentifier({ "calendar.code", "intervalBegin", "intervalEnd" })
 @Table(name = "cat_calendar_interval")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_calendar_interval_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_calendar_interval_seq"), })
 public class CalendarDateInterval extends BaseEntity implements Comparable<CalendarDateInterval> {
 
     private static final long serialVersionUID = -8419267880869260329L;
@@ -33,9 +34,8 @@ public class CalendarDateInterval extends BaseEntity implements Comparable<Calen
     /**
      * Specified interval start. Depending on calendar interval type (calendar.intervalType) specifies:
      * 
-     * a weekday (1=monday ... 7=sunday)
-     * a month (january = 1, december = 12) and day as 3 or 4 digits in a format month without leading zero day with leading zero
-     * a hour and minute as 3 or 4 digits in a format hour without leading zero minute with leading zero
+     * a weekday (1=monday ... 7=sunday) a month (january = 1, december = 12) and day as 3 or 4 digits in a format month without leading zero day with leading zero a hour and
+     * minute as 3 or 4 digits in a format hour without leading zero minute with leading zero
      */
     @Column(name = "interval_begin", nullable = false)
     @NotNull
@@ -44,14 +44,16 @@ public class CalendarDateInterval extends BaseEntity implements Comparable<Calen
     /**
      * Specified interval end. Depending on calendar interval type (calendar.intervalType) specifies:
      * 
-     * a weekday (1=monday ... 7=sunday)
-     * a month (january = 1, december = 12) and day as 3 or 4 digits in a format  &lt;month without leading zero&gt; &lt;day with leading zero&gt;
+     * a weekday (1=monday ... 7=sunday) a month (january = 1, december = 12) and day as 3 or 4 digits in a format &lt;month without leading zero&gt; &lt;day with leading zero&gt;
      * a hour and minute as 3 or 4 digits in a format &lt;hour without leading zero&gt;&lt;minute with leading zero if hour specified&gt;
      */
     @Column(name = "interval_end", nullable = false)
     @NotNull
     private int intervalEnd;
 
+    /**
+     * Interval based type calendar
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "calendar_id")
     @NotNull
@@ -100,9 +102,9 @@ public class CalendarDateInterval extends BaseEntity implements Comparable<Calen
      * To handle special case when interval spans to another week (e.g. thursday to monday), another day (e.g. 23:15 to 00:45), or another year (e.g. 12/15 to 01/25), interval's
      * end date is adjusted accordingly:
      * 
-     * For weekday type interval when interval spans to another week (e.g. thursday to monday), the interval end value is adjusted by 7 days.
-     * For day type interval when interval spans to another year (e.g. 12/15 to 01/25), the interval end value is adjusted by 12 month.
-     * For hour type interval when interval spans to another day (e.g. 23:15 to 00:45), the interval end value is adjusted by 24 hours.
+     * For weekday type interval when interval spans to another week (e.g. thursday to monday), the interval end value is adjusted by 7 days. For day type interval when interval
+     * spans to another year (e.g. 12/15 to 01/25), the interval end value is adjusted by 12 month. For hour type interval when interval spans to another day (e.g. 23:15 to 00:45),
+     * the interval end value is adjusted by 24 hours.
      * 
      * @return Adjusted end interval value
      */
@@ -158,7 +160,7 @@ public class CalendarDateInterval extends BaseEntity implements Comparable<Calen
         } else if (!(obj instanceof CalendarDateInterval)) {
             return false;
         }
-        
+
         CalendarDateInterval other = (CalendarDateInterval) obj;
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;

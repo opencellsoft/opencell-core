@@ -78,7 +78,7 @@ public class ServiceInstanceDto extends BusinessEntityDto {
 
     /** The rate until date. */
     private Date rateUntilDate;
-    
+
     /** The amount PS. */
     private BigDecimal amountPS;
     
@@ -87,6 +87,26 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     
     /** The due date days PS. */
     private Integer dueDateDaysPS;
+
+    /**
+     * Expression to determine minimum amount value
+     */
+    private String minimumAmountEl;
+
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
+    private String minimumLabelEl;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    private String minimumLabelElSpark;
 
     /**
      * Instantiates a new service instance dto.
@@ -114,6 +134,11 @@ public class ServiceInstanceDto extends BusinessEntityDto {
             terminationReason = serviceInstance.getSubscriptionTerminationReason().getCode();
         }
         endAgreementDate = serviceInstance.getEndAgreementDate();
+
+        setMinimumAmountEl(serviceInstance.getMinimumAmountEl());
+        setMinimumAmountElSpark(serviceInstance.getMinimumAmountElSpark());
+        setMinimumLabelEl(serviceInstance.getMinimumLabelEl());
+        setMinimumLabelElSpark(serviceInstance.getMinimumLabelElSpark());
 
         if (serviceInstance.getRecurringChargeInstances() != null) {
             recurringChargeInstances = new ArrayList<ChargeInstanceDto>();
@@ -244,7 +269,6 @@ public class ServiceInstanceDto extends BusinessEntityDto {
         this.quantity = quantity;
     }
 
-
     /**
      * Gets the termination reason.
      *
@@ -262,7 +286,7 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     public void setTerminationReason(String terminationReason) {
         this.terminationReason = terminationReason;
     }
-    
+
     /**
      * Gets the end agreement date.
      *
@@ -334,7 +358,7 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     public void setRateUntilDate(Date rateUntilDate) {
         this.rateUntilDate = rateUntilDate;
     }
-    
+
     
     
     /**
@@ -398,5 +422,61 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     public String toString() {
         return "ServiceInstanceDto [code=" + code + ", description=" + description + ", status=" + status + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
                 + terminationDate + ", quantity=" + quantity + ", terminationReason=" + terminationReason + ", orderNumber=" + orderNumber + "]";
+    }
+
+    /**
+     * @return Expression to determine minimum amount value
+     */
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    /**
+     * @param minimumAmountEl Expression to determine minimum amount value
+     */
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    /**
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value
+     */
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    /**
+     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
+     */
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
+
+    /**
+     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
     }
 }

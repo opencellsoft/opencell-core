@@ -15,6 +15,11 @@ import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
+/**
+ * Custom entity instance
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ObservableEntity
 @Cacheable
@@ -27,11 +32,17 @@ public class CustomEntityInstance extends EnableBusinessCFEntity {
 
     private static final long serialVersionUID = 8281478284763353310L;
 
+    /**
+     * Custom entity template code
+     */
     @Column(name = "cet_code", length = 255, nullable = false)
     @Size(max = 255)
     @NotNull
     public String cetCode;
 
+    /**
+     * Parent entity unique identifier UUID. Used only as part of Custom field Embedded entity data type.
+     */
     @Column(name = "parent_uuid", updatable = false, length = 60)
     @Size(max = 60)
     public String parentEntityUuid;
@@ -52,7 +63,9 @@ public class CustomEntityInstance extends EnableBusinessCFEntity {
         return parentEntityUuid;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -94,5 +107,5 @@ public class CustomEntityInstance extends EnableBusinessCFEntity {
         }
         return true;
     }
-   
+
 }

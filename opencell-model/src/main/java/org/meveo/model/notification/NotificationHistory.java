@@ -18,11 +18,16 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 
+/**
+ * Notification execution history
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "adm_notif_history")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_notif_history_seq"), })
-        @NamedQueries({ @NamedQuery(name = "NotificationHistory.countHistoryToPurgeByDate", query = "select count(*) FROM NotificationHistory hist WHERE hist.auditable.created<=:date"),
+@NamedQueries({ @NamedQuery(name = "NotificationHistory.countHistoryToPurgeByDate", query = "select count(*) FROM NotificationHistory hist WHERE hist.auditable.created<=:date"),
         @NamedQuery(name = "NotificationHistory.purgeHistoryByDate", query = "delete NotificationHistory hist WHERE hist.auditable.created<=:date"),
         @NamedQuery(name = "NotificationHistory.countHistoryToPurgeByDateAndNotification", query = "select count(*) FROM NotificationHistory hist WHERE hist.auditable.created<=:date and hist.notification=:notification"),
         @NamedQuery(name = "NotificationHistory.purgeHistoryByDateAndNotification", query = "delete NotificationHistory hist WHERE hist.auditable.created<=:date and hist.notification=:notification"),
@@ -31,35 +36,59 @@ public class NotificationHistory extends AuditableEntity {
 
     private static final long serialVersionUID = -6882236977852466160L;
 
+    /**
+     * Inbound request that triggered notification
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inbound_request_id")
     private InboundRequest inboundRequest;
 
+    /**
+     * Notification that was executed
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @NotNull
     @JoinColumn(name = "notification_id")
     private Notification notification;
 
+    /**
+     * Classname of an entity upon which notification was fired
+     */
     @Column(name = "entity_classname", length = 255, nullable = false)
     @Size(max = 255)
     @NotNull
     private String entityClassName;
 
+    /**
+     * Code of an entity upon which notification was fired
+     */
     @Column(name = "entity_code", length = 35)
     @Size(max = 35)
     private String entityCode;
 
+    /**
+     * Entity's ID or a serialized entity (toString()) if ID is not available yet
+     */
     @Column(name = "serialized_entity", columnDefinition = "TEXT")
     private String serializedEntity;
 
+    /**
+     * Number of times re-tried
+     */
     @Column(name = "nb_retry")
     @Max(10)
     private int nbRetry;
 
+    /**
+     * Execution result
+     */
     @Column(name = "result", length = 1000)
     @Size(max = 1000)
     private String result;
 
+    /**
+     * Execution status
+     */
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private NotificationHistoryStatusEnum status;

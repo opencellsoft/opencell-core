@@ -28,7 +28,6 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -68,11 +67,12 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.dwh.GdprConfiguration;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.shared.InterBankTitle;
 
 /**
+ * Application tenant configuration
+ * 
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @lastModifiedVersion 5.2
@@ -90,116 +90,202 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Code
+     */
     @Column(name = "code", nullable = false, length = 60)
     @Size(max = 60, min = 1)
     @NotNull
     protected String code;
 
+    /**
+     * Description
+     */
     @Column(name = "description", length = 255)
     @Size(max = 255)
     protected String description;
 
+    /**
+     * Is it enabled. Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Type(type = "numeric_boolean")
     @Column(name = "disabled", nullable = false)
     @NotNull
     private boolean disabled;
 
+    /**
+     * Default currency
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id")
     private Currency currency;
 
+    /**
+     * Default country
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
     private Country country;
 
+    /**
+     * Default language
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "language_id")
     private Language language;
 
+    /**
+     * Does application support multiple countries
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "multicountry_flag")
     private boolean multicountryFlag;
 
+    /**
+     * Does application support multiple currencies
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "multicurrency_flag")
     private boolean multicurrencyFlag;
 
+    /**
+     * Does application support multiple languages
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "multilanguage_flag")
     private boolean multilanguageFlag;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_account_id")
     private CustomerAccount customerAccount;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id")
     private BillingAccount billingAccount;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
-    /** Payment methods allowed. */
+    /**
+     * Payment methods allowed
+     */
     @ElementCollection(targetClass = PaymentMethodEnum.class)
     @CollectionTable(name = "crm_provider_pay_methods", joinColumns = @JoinColumn(name = "provider_id"))
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private List<PaymentMethodEnum> paymentMethods = new ArrayList<PaymentMethodEnum>();
 
-    /** The Rating rounding. */
-    @Column(name = "rating_rounding", columnDefinition = "int DEFAULT 2")
-    private Integer rounding = 2;
-    
-    /** The Rating rounding mode*/
-    @Column (name = "rounding_mode")
-    @Enumerated(EnumType.STRING)
-    private RoundingModeEnum roundingMode; 
+    /**
+     * The Rating amount rounding
+     */
+    @Column(name = "rating_rounding", columnDefinition = "int DEFAULT 2", nullable = false)
+    @NotNull
+    private int rounding = 2;
 
-    /** The invoice rounding. */
-    @Column(name = "invoice_rounding", columnDefinition = "int DEFAULT 2")
-    private Integer invoiceRounding = 2;
-    
-    /** The invoice rounding mode. */
-    @Column (name = "invoice_rounding_mode")
+    /**
+     * The Rating amount rounding mode
+     */
+    @Column(name = "rounding_mode", nullable = false)
     @Enumerated(EnumType.STRING)
-    private RoundingModeEnum invoiceRoundingMode; 
+    @NotNull
+    private RoundingModeEnum roundingMode = RoundingModeEnum.NEAREST;
 
+    /**
+     * The invoice amount rounding
+     */
+    @Column(name = "invoice_rounding", columnDefinition = "int DEFAULT 2", nullable = false)
+    @NotNull
+    private int invoiceRounding = 2;
+
+    /**
+     * The invoice amount rounding mode
+     */
+    @Column(name = "invoice_rounding_mode", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private RoundingModeEnum invoiceRoundingMode = RoundingModeEnum.NEAREST;
+
+    /**
+     * Bank coordinates
+     */
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
 
+    /**
+     * Is application running in B2B or B2C mode. In B2B (enterprise=true) mode amounts without tax are used for rating and invoicing. In B2C mode amounts with tax are used.
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "entreprise")
     private boolean entreprise = false;
 
+    /**
+     * In automatic invoicing invoice preInvoicing status is skipped and invoice is advanced to postInvoiced status.
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "automatic_invoicing")
     private boolean automaticInvoicing = false;
 
+    /**
+     * Inter bank title
+     */
     @Embedded
     private InterBankTitle interBankTitle = new InterBankTitle();
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Type(type = "numeric_boolean")
     @Column(name = "amount_validation")
     private boolean amountValidation = false;
 
+    /**
+     * With account level duplication, accounts will default to the name and other properties of the parent account.
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "level_duplication")
     private boolean levelDuplication = false;
 
+    /**
+     * Contact email
+     */
     @Column(name = "email", length = 100)
     @Pattern(regexp = ".+@.+\\..{2,4}")
     @Size(max = 100)
     protected String email;
 
+    /**
+     * Shall Rated transactions with Zero amount be displayed in an XML invoice
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "display_free_tx_in_invoice")
     private boolean displayFreeTransacInInvoice = false;
 
+    /**
+     * Unique identifier - UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
@@ -213,39 +299,62 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Size(max = 255)
     private String discountAccountingCode;
 
+    /**
+     * Default prepaid reservation delay in miliseconds
+     */
     @Column(name = "prepaid_resrv_delay_ms")
-    private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
+    private Long prepaidReservationExpirationDelayinMillisec = 60000L;
 
+    /**
+     * Invoice configuration
+     */
     @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, targetEntity = org.meveo.model.billing.InvoiceConfiguration.class, orphanRemoval = true)
     private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
 
+    /**
+     * Should revenue be recognized
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "recognize_revenue")
     private boolean recognizeRevenue;
 
-    // @Type(type = "json")
-    @Convert(converter = CustomFieldValuesConverter.class)
+    /**
+     * Custom field values in JSON format
+     */
+    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
-    
+
+    /**
+     * Accumulated custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
+    /**
+     * Expired data delete configuration
+     */
     @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true)
     private GdprConfiguration gdprConfiguration;
-    
+
+    /**
+     * RUM number sequence
+     */
     @Embedded
-	@AttributeOverrides({ //
-			@AttributeOverride(name = "prefix", column = @Column(name = "rum_prefix")), //
-			@AttributeOverride(name = "sequenceSize", column = @Column(name = "rum_sequence_size")), //
-			@AttributeOverride(name = "currentSequenceNb", column = @Column(name = "rum_current_sequence_nb"))
-	})
-	private GenericSequence rumSequence = new GenericSequence();
-    
+    @AttributeOverrides(value = { @AttributeOverride(name = "prefix", column = @Column(name = "rum_prefix")),
+            @AttributeOverride(name = "sequenceSize", column = @Column(name = "rum_sequence_size")),
+            @AttributeOverride(name = "currentSequenceNb", column = @Column(name = "rum_current_sequence_nb")) })
+    private GenericSequence rumSequence = new GenericSequence();
+
+    /**
+     * Customer number sequence
+     */
     @Embedded
-	@AttributeOverrides({ //
-			@AttributeOverride(name = "prefix", column = @Column(name = "cust_no_prefix")), //
-			@AttributeOverride(name = "sequenceSize", column = @Column(name = "cust_no_sequence_size")), //
-			@AttributeOverride(name = "currentSequenceNb", column = @Column(name = "cust_no_current_sequence_nb"))
-	})
-	private GenericSequence customerNoSequence = new GenericSequence();
+    @AttributeOverrides(value = { @AttributeOverride(name = "prefix", column = @Column(name = "cust_no_prefix")),
+            @AttributeOverride(name = "sequenceSize", column = @Column(name = "cust_no_sequence_size")),
+            @AttributeOverride(name = "currentSequenceNb", column = @Column(name = "cust_no_current_sequence_nb")) })
+    private GenericSequence customerNoSequence = new GenericSequence();
 
     public String getCode() {
         return code;
@@ -383,10 +492,16 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         this.interBankTitle = interBankTitle;
     }
 
+    /**
+     * @return Rating amount rounding precision
+     */
     public Integer getRounding() {
         return rounding;
     }
 
+    /**
+     * @param rounding Rating amount rounding precision
+     */
     public void setRounding(Integer rounding) {
         this.rounding = rounding;
     }
@@ -519,6 +634,9 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         return uuid;
     }
 
+    /**
+     * @param uuid Unique identifier
+     */
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
@@ -541,82 +659,86 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     }
 
     /**
-     * @return the roundingMode
+     * @return Rating amount rounding mode
      */
     public RoundingModeEnum getRoundingMode() {
         return roundingMode;
     }
 
     /**
-     * @param roundingMode the roundingMode to set
+     * @param roundingMode Rating amount rounding mode
      */
     public void setRoundingMode(RoundingModeEnum roundingMode) {
         this.roundingMode = roundingMode;
     }
 
     /**
-     * @return the invoiceRounding
+     * @return Invoice and invoice aggregate amount rounding precision
      */
-    public Integer getInvoiceRounding() {
-        if (this.invoiceRounding == null) {
-            this.invoiceRounding = this.rounding;
-        }
+    public int getInvoiceRounding() {
         return invoiceRounding;
     }
 
     /**
-     * @return the invoiceRoundingMode
+     * @param invoiceRounding Invoice and invoice aggregate amount rounding precision
      */
-    public RoundingModeEnum getInvoiceRoundingMode() {
-        if (this.invoiceRoundingMode == null) {
-            this.invoiceRoundingMode = this.roundingMode;
-        }
-        return invoiceRoundingMode;
-    }
-
-    /**
-     * @param invoiceRounding the invoiceRounding to set
-     */
-    public void setInvoiceRounding(Integer invoiceRounding) {
+    public void setInvoiceRounding(int invoiceRounding) {
         this.invoiceRounding = invoiceRounding;
     }
 
     /**
-     * @param invoiceRoundingMode the invoiceRoundingMode to set
+     * @return Invoice and invoice aggregate amount rounding mode
+     */
+    public RoundingModeEnum getInvoiceRoundingMode() {
+        return invoiceRoundingMode;
+    }
+
+    /**
+     * @param invoiceRoundingMode Invoice and invoice aggregate amount rounding mode
      */
     public void setInvoiceRoundingMode(RoundingModeEnum invoiceRoundingMode) {
         this.invoiceRoundingMode = invoiceRoundingMode;
     }
 
-	public GdprConfiguration getGdprConfiguration() {
-		return gdprConfiguration;
-	}
+    public GdprConfiguration getGdprConfiguration() {
+        return gdprConfiguration;
+    }
 
-	public void setGdprConfiguration(GdprConfiguration gdprConfiguration) {
-		this.gdprConfiguration = gdprConfiguration;
-	}
-	
-	public GdprConfiguration getGdprConfigurationNullSafe() {
-		if (gdprConfiguration == null) {
-			gdprConfiguration = new GdprConfiguration();
-		}
+    public void setGdprConfiguration(GdprConfiguration gdprConfiguration) {
+        this.gdprConfiguration = gdprConfiguration;
+    }
 
-		return gdprConfiguration;
-	}
+    public GdprConfiguration getGdprConfigurationNullSafe() {
+        if (gdprConfiguration == null) {
+            gdprConfiguration = new GdprConfiguration();
+        }
+
+        return gdprConfiguration;
+    }
 
     public GenericSequence getRumSequence() {
-		return rumSequence;
-	}
+        return rumSequence;
+    }
 
-	public void setRumSequence(GenericSequence rumSequence) {
-		this.rumSequence = rumSequence;
-	}
+    public void setRumSequence(GenericSequence rumSequence) {
+        this.rumSequence = rumSequence;
+    }
 
-	public GenericSequence getCustomerNoSequence() {
-		return customerNoSequence;
-	}
+    public GenericSequence getCustomerNoSequence() {
+        return customerNoSequence;
+    }
 
-	public void setCustomerNoSequence(GenericSequence customerNoSequence) {
-		this.customerNoSequence = customerNoSequence;
-	}
+    public void setCustomerNoSequence(GenericSequence customerNoSequence) {
+        this.customerNoSequence = customerNoSequence;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
+    }
 }

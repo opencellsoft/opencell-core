@@ -1,6 +1,7 @@
 package org.meveo.api;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -70,11 +71,11 @@ public class UsageApi extends BaseApi {
 				log.debug("chargeAggregate  desc {},  quantity {}, amount {}, unit {}",row[0],row[1],row[2],row[3]);
 				ChargeAggregateDto chargeAggregate = new ChargeAggregateDto();
 				chargeAggregate.setDescription((String) row[0]);
-				chargeAggregate.setAmount(""+NumberUtils.round((BigDecimal)row[2], 2)+" "+currencyCode);
+				chargeAggregate.setAmount(NumberUtils.round((BigDecimal)row[2], 2, RoundingMode.HALF_UP)+" "+currencyCode);
 				BigDecimal quantity = BigDecimal.ZERO;
 				String quantityToDisplay = "0";
 				if((BigDecimal)row[1] != null){
-					quantity = NumberUtils.round((BigDecimal)row[1], 2);
+					quantity = NumberUtils.round((BigDecimal)row[1], 2, RoundingMode.HALF_UP);
 					quantityToDisplay = quantity.toPlainString();
 
 					if(("mn".equals((String) row[3]) || "min".equals((String) row[3]) ) && quantity.doubleValue() >59 ){

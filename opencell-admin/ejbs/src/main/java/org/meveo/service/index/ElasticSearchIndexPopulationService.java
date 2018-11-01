@@ -52,7 +52,6 @@ import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -285,33 +284,31 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
             ICustomFieldEntity cfEntity = (ICustomFieldEntity) entity;
 
-            for (Entry<String, List<CustomFieldValue>> cfValueInfo : cfEntity.getCfValues().getValuesByCode().entrySet()) {
+            // At the moment does not handle versioned values - just take the today's value
+            for (Entry<String, Object> cfValueInfo : cfEntity.getCfValuesAsValues().entrySet()) {
 
-                if (cfValueInfo.getValue().isEmpty()) {
-                    continue;
-                }
-
-                // At the moment does not handle versioned values - just take the first value
-                Object value = cfValueInfo.getValue().get(0).getValue();
+                String cfCode = cfValueInfo.getKey();
+                Object value = cfValueInfo.getValue();
                 if (value instanceof Map || value instanceof EntityReferenceWrapper) {
                     value = JsonUtils.toJson(value, false);
                 }
 
-                if (cftIndexable != null && cftIndexable.contains(entity.getClass().getName() + "_" + cfValueInfo.getKey())) {
-                    jsonValueMap.put(cfValueInfo.getKey(), value);
+                if (cftIndexable != null && cftIndexable.contains(entity.getClass().getName() + "_" + cfCode)) {
+                    jsonValueMap.put(cfCode, value);
 
-                } else if (cftNotIndexable != null && cftNotIndexable.contains(entity.getClass().getName() + "_" + cfValueInfo.getKey())) {
+                } else if (cftNotIndexable != null && cftNotIndexable.contains(entity.getClass().getName() + "_" + cfCode)) {
                     continue;
 
                 } else {
-                    CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(cfValueInfo.getKey(), (ICustomFieldEntity) entity);
+                    CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(cfCode, (ICustomFieldEntity) entity);
                     if (cft != null && cft.getIndexType() != null) {
                         if (cftIndexable != null) {
-                            cftIndexable.add(entity.getClass().getName() + "_" + cfValueInfo.getKey());
+                            cftIndexable.add(entity.getClass().getName() + "_" + cfCode);
                         }
-                        jsonValueMap.put(cfValueInfo.getKey(), value);
+                        jsonValueMap.put(cfCode, value);
+                        
                     } else if (cftNotIndexable != null) {
-                        cftNotIndexable.add(entity.getClass().getName() + "_" + cfValueInfo.getKey());
+                        cftNotIndexable.add(entity.getClass().getName() + "_" + cfCode);
                     }
                 }
             }

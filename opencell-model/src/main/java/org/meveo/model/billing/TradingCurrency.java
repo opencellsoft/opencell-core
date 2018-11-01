@@ -40,6 +40,11 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Currency;
 
+/**
+ * Currency enabled in application
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ObservableEntity
 @Cacheable
@@ -52,17 +57,31 @@ import org.meveo.model.admin.Currency;
 public class TradingCurrency extends EnableEntity {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Currency
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id")
     private Currency currency;
 
+    /**
+     * Description. Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "pr_description", length = 255)
     @Size(max = 255)
     private String prDescription;
 
+    /**
+     * Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "pr_currency_to_this", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal prCurrencyToThis;
 
+    /**
+     * Currency code
+     */
     @Transient
     String currencyCode;
 

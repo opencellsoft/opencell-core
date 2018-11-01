@@ -19,7 +19,6 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +34,6 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
 import org.meveo.admin.exception.BusinessException;
-import static org.meveo.commons.utils.NumberUtils.getRoundingMode;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -369,30 +367,28 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return qb.find(getEntityManager());
     }
 
-    public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance charge, ServiceInstance serviceInstance, Subscription subscription) throws BusinessException {
-        int rounding = appProvider.getRounding() == null ? 3 : appProvider.getRounding();
-        BigDecimal result = null;
+    public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance chargeInstance, ServiceInstance serviceInstance, Subscription subscription)
+            throws BusinessException {
+
         if (StringUtils.isBlank(expression)) {
-            return result;
+            return null;
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
-        if (expression.indexOf("charge") >= 0) {
-            userMap.put("charge", charge);
+        if (expression.indexOf("charge") >= 0 || expression.indexOf("ci") >= 0) {
+            userMap.put("charge", chargeInstance);
+            userMap.put("ci", chargeInstance);
         }
-        if (expression.indexOf("service") >= 0) {
+        if (expression.indexOf("service") >= 0 || expression.indexOf("serviceInstance") >= 0) {
             userMap.put("service", serviceInstance);
+            userMap.put("serviceInstance", serviceInstance);
         }
         if (expression.indexOf("sub") >= 0) {
             userMap.put("sub", subscription);
         }
+        
+        BigDecimal result = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
+        result = result.setScale(chargeInstance.getChargeTemplate().getUnitNbDecimal(), chargeInstance.getChargeTemplate().getRoundingMode().getRoundingMode());
 
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
-        try {
-            result = (BigDecimal) res;
-            result = result.setScale(rounding, getRoundingMode(appProvider.getRoundingMode()));
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to BigDecimal but " + res);
-        }
         return result;
     }
 

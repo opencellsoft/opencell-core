@@ -11,15 +11,18 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
+ * Credit category
+ * 
  * @author Edward P. Legaspi
  **/
 @Entity
 @Cacheable
-@ExportIdentifier({ "code"})
-@Table(name = "ar_credit_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_credit_category_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "ar_credit_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_credit_category_seq"), })
 public class CreditCategory extends BusinessEntity {
 
-	private static final long serialVersionUID = 3517517101499066805L;
+    private static final long serialVersionUID = 3517517101499066805L;
 
 }

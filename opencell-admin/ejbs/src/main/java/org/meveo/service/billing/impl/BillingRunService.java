@@ -595,7 +595,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
 
-        log.debug("getBillingAccount ids for billingRun {}", billingRun.getId());
+        log.debug("Retrieving billable entities billingRun {}", billingRun.getId());
 
         if (billingCycle != null) {
             
@@ -615,6 +615,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
             
             return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+            
         } else {
             List<BillingAccount> result = new ArrayList<BillingAccount>();
             String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
@@ -641,9 +642,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws BusinessException {
         
-        List<? extends IEntity> entities = getEntities(billingRun);
+        List<? extends IBillableEntity> entities = getEntities(billingRun);
         
-        SubListCreator subListCreator = null;
+        SubListCreator<IBillableEntity> subListCreator = null;
 
         try {
             subListCreator = new SubListCreator(entities, (int) nbRuns);
@@ -848,13 +849,14 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws Exception {
-        log.debug("validate, billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
+        log.debug("Processing billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
 
         List<? extends IBillableEntity> entities = getEntities(billingRun);
+        
         List<IBillableEntity> billableEntities = new ArrayList<>();
         
         if (!BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
-	        log.info("Nb entities to process={}", (entities != null ? entities.size() : 0));
+	        log.info("Will process {} entities of type {}", (entities != null ? entities.size() : 0), billingRun.getBillingCycle().getType());
 	        if (entities != null && entities.size() > 0) {
 	            SubListCreator subListCreator = new SubListCreator(entities, (int) nbRuns);
 	            List<Future<List<IBillableEntity>>> asyncReturns = new ArrayList<Future<List<IBillableEntity>>>();
@@ -881,11 +883,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	            billingRunExtensionService.updateBillingRun(billingRun.getId(), entities.size(), billableEntities.size(), BillingRunStatusEnum.PREINVOICED, new Date());
 	        }
         }
-        
-        boolean proceedToPostInvoicing = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || 
-        		(BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) 
-        				&& (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()));
-        
+
+        boolean proceedToPostInvoicing = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())
+                && (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()));
+
         if (proceedToPostInvoicing) {
             createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);

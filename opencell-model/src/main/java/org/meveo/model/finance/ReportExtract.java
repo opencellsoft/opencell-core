@@ -80,12 +80,12 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
 
     @Column(name = "style", columnDefinition = "TEXT")
     private String style;
-    
+
     @ImageType
     @Column(name = "image_path", length = 100)
     @Size(max = 100)
     private String imagePath;
-    
+
     @OneToMany(mappedBy = "reportExtract", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<ReportExtractExecutionResult> executionResults = new ArrayList<>();
 
@@ -155,7 +155,7 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     public void setParams(Map<String, String> params) {
         this.params = params;
     }
-    
+
     public ReportExtractResultTypeEnum getReportExtractResultType() {
         return reportExtractResultType;
     }

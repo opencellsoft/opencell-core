@@ -17,6 +17,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.catalog.impl.TaxService;
 
@@ -149,7 +150,7 @@ public class TaxApi extends BaseApi {
             throw new EntityDoesNotExistsException(Tax.class, taxCode);
         }
 
-        result = new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, true));
+        result = new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
         return result;
     }
@@ -188,7 +189,7 @@ public class TaxApi extends BaseApi {
         List<Tax> taxes = taxService.list();
         if (taxes != null && !taxes.isEmpty()) {
             for (Tax tax : taxes) {
-                TaxDto taxDto = new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, true));
+                TaxDto taxDto = new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                 taxesDto.getTax().add(taxDto);
             }
         }

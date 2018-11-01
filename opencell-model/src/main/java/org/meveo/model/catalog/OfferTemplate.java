@@ -58,7 +58,7 @@ import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 public class OfferTemplate extends ProductOffering {
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_offer_model_id")
     private BusinessOfferModel businessOfferModel;
 
@@ -93,7 +93,7 @@ public class OfferTemplate extends ProductOffering {
 
     @Transient
     private String transientCode;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;

@@ -41,7 +41,7 @@ public class PaynumFile extends AbstractDDRequestBuilder {
         String codeCreancier = paramBean.getProperty(codeCreancier_paramKey, null);
         fileName = DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd")
                 + "_" + (ddRequestLot.getNbItemsOk() - ddRequestLot.getNbItemsKo()) + "_" + (ddRequestLot.getTotalAmount()
-                    .setScale((appProvider.getRounding() == null ? 2 : appProvider.getRounding()), RoundingMode.HALF_UP).multiply(new BigDecimal(100)).longValue())
+                    .setScale(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).multiply(new BigDecimal(100)).longValue())
                 + "_ppf_factures_" + codeCreancier + ".csv";
 
         String outputDir =  ArConfig.getDDRequestOutputDirectory();

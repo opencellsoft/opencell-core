@@ -29,58 +29,99 @@ import org.meveo.commons.utils.AesEncrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Bank account information
+ * 
+ * @author Andrius Karpavicius
+ */
 @Embeddable
 public class BankCoordinates implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Bank code
+     */
     @Column(name = "bank_code", length = 5)
     @Size(max = 5)
     private String bankCode;
 
+    /**
+     * Branch code
+     */
     @Column(name = "branch_code", length = 5)
     @Size(max = 5)
     private String branchCode;
 
+    /**
+     * Account number
+     */
     @Column(name = "account_number", length = 11)
     @Size(max = 11)
     private String accountNumber;
 
+    /**
+     * Key
+     */
     @Column(name = "hash_key", length = 2)
     @Size(max = 2)
     private String key;
 
+    /**
+     * IBAN number
+     */
     @Column(name = "iban", length = 80)
     @Size(max = 80)
     private String iban;
 
+    /**
+     * BIC number
+     */
     @Column(name = "bic", length = 11)
     @Size(max = 11)
     private String bic;
 
+    /**
+     * Account owner name
+     */
     @Column(name = "account_owner", length = 50)
     @Size(max = 50)
     private String accountOwner;
 
+    /**
+     * Bank name
+     */
     @Column(name = "bank_name", length = 50)
     @Size(max = 50)
     private String bankName;
 
+    /**
+     * Bank identifier
+     */
     @Column(name = "bank_id", length = 50)
     @Size(max = 50)
     private String bankId;
 
+    /**
+     * Issuer number
+     */
     @Column(name = "issuer_number", length = 50)
     @Size(max = 50)
     private String issuerNumber;
 
+    /**
+     * Issuer name
+     */
     @Column(name = "issuer_name", length = 50)
     @Size(max = 50)
     private String issuerName;
 
+    /**
+     * ICS number. L'identifiant Créancier Sepa
+     */
     @Column(name = "ics", length = 35)
     @Size(max = 35)
-    private String ics; // L'identifiant Créancier Sepa
+    private String ics;
 
     public BankCoordinates() {
     }
@@ -141,7 +182,7 @@ public class BankCoordinates implements Serializable, Cloneable {
 			Logger log = LoggerFactory.getLogger(BankCoordinates.class);
 			log.error("Error when decrypting Iban", e);
 			return null;
-		}
+    }
     }
 
     public void setIban(String iban) {
@@ -150,7 +191,7 @@ public class BankCoordinates implements Serializable, Cloneable {
 		} catch (Exception e) {
 			Logger log = LoggerFactory.getLogger(BankCoordinates.class);
 			log.error("Error when encrypting Iban", e);
-		}
+    }
     }
 
     public String getBic() {
@@ -248,7 +289,7 @@ public class BankCoordinates implements Serializable, Cloneable {
 		if (iban != null && !(iban.startsWith("AES"))) {
 			AesEncrypt ae = new AesEncrypt();
 			return ae.getEncyptedIban(iban, ae);
-		}
+}
 		return iban;
 	}
 

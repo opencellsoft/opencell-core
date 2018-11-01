@@ -29,6 +29,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -258,7 +259,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
         }
 
-        result = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, true));
+        result = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
         return result;
     }
@@ -268,7 +269,8 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
 
         Seller seller = sellerService.findByCode(sellerCode);
         TradingCurrency currency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode);
-        TradingCountry country = tradingCountryService.findByTradingCountryCode(countryCode);
+        TradingCountry buyersCountry = tradingCountryService.findByTradingCountryCode(countryCode);
+        TradingCountry sellersCountry = seller.getTradingCountry();
 
         List<OneShotChargeTemplate> oneShotChargeTemplates = oneShotChargeTemplateService.getSubscriptionChargeTemplates();
         List<OneShotChargeTemplateWithPriceDto> oneShotChargeTemplatesWPrice = new ArrayList<>();
@@ -280,21 +282,22 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             oneShotChargeDto.setDescription(oneShotChargeTemplate.getDescription());
             InvoiceSubCategory invoiceSubCategory = oneShotChargeTemplate.getInvoiceSubCategory();
 
-            if (country == null) {
+            if (buyersCountry == null) {
                 log.warn("country with code={} does not exists", countryCode);
             } else {
-                Tax tax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, country, today, true);
+
+                Tax tax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, buyersCountry, today, true);
                 if (tax != null) {
                     oneShotChargeDto.setTaxCode(tax.getCode());
                     oneShotChargeDto.setTaxDescription(tax.getDescription());
                     oneShotChargeDto.setTaxPercent(tax.getPercent() == null ? 0.0 : tax.getPercent().doubleValue());
                 }
-                    BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(seller, null, currency, country, oneShotChargeTemplate, date, null, BigDecimal.ONE, null,
+                BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(seller, null, currency, buyersCountry, oneShotChargeTemplate, date, null, BigDecimal.ONE, null,
                     null, null, true, true);
-                    if (unitPrice != null) {
-                        oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());
-                    }
+                if (unitPrice != null) {
+                    oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());
                 }
+            }
 
             oneShotChargeTemplatesWPrice.add(oneShotChargeDto);
         }

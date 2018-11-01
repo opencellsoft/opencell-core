@@ -21,49 +21,50 @@ import org.meveo.model.BaseEntity;
  **/
 @Entity
 @Table(name = "meveo_filter_order_condition")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_filter_order_condition_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "meveo_filter_order_condition_seq"), })
 public class OrderCondition extends BaseEntity {
 
-	private static final long serialVersionUID = 1523437333405252113L;
+    private static final long serialVersionUID = 1523437333405252113L;
 
-	@ElementCollection
-	@CollectionTable(name = "meveo_filter_oc_field_names", joinColumns = @JoinColumn(name = "order_condition_id"))
-	@Column(name = "field_name")
-	private List<String> fieldNames = new ArrayList<String>();
+    @ElementCollection
+    @CollectionTable(name = "meveo_filter_oc_field_names", joinColumns = @JoinColumn(name = "order_condition_id"))
+    @Column(name = "field_name")
+    private List<String> fieldNames = new ArrayList<String>();
 
-	@Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "ascending")
-	private boolean ascending;
+    private boolean ascending;
 
-	@OneToOne(mappedBy = "orderCondition")
-	public Filter filter;
+    @OneToOne(mappedBy = "orderCondition")
+    public Filter filter;
 
-	public List<String> getFieldNames() {
-		return fieldNames;
-	}
+    public List<String> getFieldNames() {
+        return fieldNames;
+    }
 
-	public void setFieldNames(List<String> fieldNames) {
-		this.fieldNames = fieldNames;
-	}
+    public void setFieldNames(List<String> fieldNames) {
+        this.fieldNames = fieldNames;
+    }
 
-	public boolean isAscending() {
-		return ascending;
-	}
+    public boolean isAscending() {
+        return ascending;
+    }
 
-	public void setAscending(boolean ascending) {
-		this.ascending = ascending;
-	}
+    public void setAscending(boolean ascending) {
+        this.ascending = ascending;
+    }
 
-	public Filter getFilter() {
-		return filter;
-	}
+    public Filter getFilter() {
+        return filter;
+    }
 
-	public void setFilter(Filter filter) {
-		this.filter = filter;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
+    public void setFilter(Filter filter) {
+        this.filter = filter;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -72,8 +73,8 @@ public class OrderCondition extends BaseEntity {
         } else if (!(obj instanceof OrderCondition)) {
             return false;
         }
-        
-		OrderCondition other = (OrderCondition) obj;
-		return (other.getId() != null) && other.getId().equals(this.getId());
-	}
+
+        OrderCondition other = (OrderCondition) obj;
+        return (other.getId() != null) && other.getId().equals(this.getId());
+    }
 }

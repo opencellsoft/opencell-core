@@ -79,11 +79,11 @@ public class DDRequestLotOp extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ddrequest_builder_id")
     private DDRequestBuilder ddRequestBuilder;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "filter_id")
-    private Filter filter;    
-    
+    private Filter filter;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
@@ -205,18 +205,20 @@ public class DDRequestLotOp extends AuditableEntity {
         return scriptInstance;
     }
 
-    /**
-     * @return the recurrent
-     */
-    public Boolean getRecurrent() {
-        return recurrent;
-    }
 
     /**
      * @param scriptInstance the scriptInstance to set
      */
     public void setScriptInstance(ScriptInstance scriptInstance) {
         this.scriptInstance = scriptInstance;
+}
+
+
+    /**
+     * @return the recurrent
+     */
+    public Boolean getRecurrent() {
+        return recurrent;
     }
 
     /**

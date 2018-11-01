@@ -46,78 +46,108 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 697688141736383814L;
 
-    /** The type. */
+    /**
+     * The type
+     */
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     @NotNull
     private PaymentGatewayTypeEnum type;
 
-    /** Payment method allowed on the payment gateway. */
+    /**
+     * Payment method allowed on the payment gateway
+     */
     @Column(name = "payment_method", nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum paymentMethodType;
 
-    /** The script instance. */
+    /**
+     * The script instance
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
-    /** The implementation class name. */
+    /**
+     * The implementation class name
+     */
     @Column(name = "implementation_class_name", length = 255)
     @Size(max = 255)
     private String implementationClassName;
 
-    /** The application EL. */
+    /**
+     * The application EL
+     */
     @Column(name = "application_el", length = 2000)
     @Size(max = 2000)
     private String applicationEL;
 
-    /** The trading country. */
+    /**
+     * The trading country
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
     private Country country;
 
-    /** The trading currency. */
+    /**
+     * The trading currency
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
     private TradingCurrency tradingCurrency;
 
-    /** The card type. */
+    /**
+     * The card type
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "card_type")
     private CreditCardTypeEnum cardType;
 
-    /** The nb tries. */
+    /**
+     * The nb tries
+     */
     @Column(name = "nb_tries")
     private Integer nbTries;
 
-    /** The replay cause. */
+    /**
+     * The replay cause
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "replay_cause")
     private PaymentReplayCauseEnum replayCause;
 
-    /** The errors to replay. */
+    /**
+     * The errors to replay
+     */
     @Column(name = "errors_to_replay")
     private String errorsToReplay;
-    
-    /** The marchand id. */
+
+    /**
+     * The marchand id
+     */
     @Column(name = "marchand_id")
     private String marchandId;
-    
-    /** The secret key. */
+
+    /**
+     * The secret key
+     */
     @Column(name = "secret_key")
     private String secretKey;
-    
-    /** The api key. */
+
+    /**
+     * The api key
+     */
     @Column(name = "api_key")
     private String apiKey;
-    
-    /** The profile. */
+
+    /**
+     * The profile
+     */
     @Column(name = "profile")
     private String profile;
-    
+
     /**
-     * Instantiates a new payment gateway.
+     * Instantiates a new payment gateway
      */
     public PaymentGateway() {
 
@@ -320,10 +350,7 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     public void setErrorsToReplay(String errorsToReplay) {
         this.errorsToReplay = errorsToReplay;
     }
-    
-    
 
-    
     /**
      * Gets the marchand id.
      *
@@ -396,13 +423,16 @@ public class PaymentGateway extends EnableBusinessCFEntity {
         this.profile = profile;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.model.BusinessEntity#toString()
      */
     @Override
     public String toString() {
-        return "PaymentGateway [marchandId="+marchandId+", type=" + type + ", paymentMethodType=" + paymentMethodType + ", scriptInstance=" + (scriptInstance == null ? null : scriptInstance.getCode())
-                + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL + ", Country=" + (country == null ? null : country.getCountryCode())
-                + ", tradingCurrency=" + (tradingCurrency == null ? null : tradingCurrency.getCurrencyCode()) + ", cardType=" + cardType + "]";
+        return "PaymentGateway [marchandId=" + marchandId + ", type=" + type + ", paymentMethodType=" + paymentMethodType + ", scriptInstance="
+                + (scriptInstance == null ? null : scriptInstance.getCode()) + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL
+                + ", Country=" + (country == null ? null : country.getCountryCode()) + ", tradingCurrency=" + (tradingCurrency == null ? null : tradingCurrency.getCurrencyCode())
+                + ", cardType=" + cardType + "]";
     }
 }

@@ -21,34 +21,53 @@ package org.meveo.model;
 import java.util.UUID;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
 
+/**
+ * Represents a business entity that has custom fields
+ * 
+ * @author Andrius Karpavicius
+ */
 @MappedSuperclass
 public abstract class BusinessCFEntity extends BusinessEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = -6054446440106807337L;
 
+    /**
+     * Unique identifier UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
-    private String uuid = UUID.randomUUID().toString();
+    protected String uuid = UUID.randomUUID().toString();
 
-    // @Type(type = "json")
-    @Convert(converter = CustomFieldValuesConverter.class)
+    /**
+     * Custom field values in JSON format
+     */
+    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
-    private CustomFieldValues cfValues;
+    protected CustomFieldValues cfValues;
+
+    /**
+     * Accumulated custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    protected CustomFieldValues cfAccumulatedValues;
 
     @Override
     public String getUuid() {
         return uuid;
     }
 
+    /**
+     * @param uuid Unique identifier
+     */
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
@@ -61,6 +80,16 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
     }
 
     /**

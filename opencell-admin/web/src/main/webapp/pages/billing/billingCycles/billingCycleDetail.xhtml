@@ -1,102 +1,67 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:hftl="http://hftl.org"
-	xmlns:p="http://primefaces.org/ui"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="objectId" value="#{billingCycleBean.objectId}" />
         </f:metadata>
     </ui:define>
-    
-	<ui:define name="body">
-		<hftl:entityPopup id="searchInvoiceTypePopup"
-			header="#{messages['invoiceType.panel']}"
-			updateField=":formBillingCycle:tabView:invoiceTypeSelectedId :formBillingCycle:tabView:invoiceTypeSelectedId_text"
-			selection="#{billingCycleBean.entity.invoiceType}"
-			backingBean="#{invoiceTypeBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="code" column1Label="#{messages['businessEntity.code']}"
-			column1="code"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="description">
-		</hftl:entityPopup>
-		<hftl:entityPopup id="billingCycleScriptPopup"
-			header="#{messages['scriptInstance.popup.header']}"
-			backingBean="#{scriptInstanceBean}"
-			selection="#{billingCycleBean.entity.scriptInstance}"
-			searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
-			column1Label="#{messages['businessEntity.code']}" column1="code"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="description" eventBackingBean="#{billingCycleBean}"
-			updateField=":formBillingCycle:tabView:scriptSelectId :formBillingCycle:tabView:scriptSelectId_text">
-		</hftl:entityPopup>
 
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
-				<p:menuitem outcome="billingCycles"
-					value="#{messages['menu.billingCycles']}" />
-				<p:menuitem value="#{messages['commons.new']} #{messages['billingCycle']}"
-					disabled="true" rendered="#{billingCycleBean.entity.transient}" />
-				<p:menuitem
-					value="#{messages['billingCycle']} - #{billingCycleBean.entity.code}"
-					disabled="true" rendered="#{!billingCycleBean.entity.transient}" />
-			</p:breadCrumb>
-		</h:form>
+    <ui:define name="body">
+        <hftl:entityPopup id="searchInvoiceTypePopup" header="#{messages['invoiceType.panel']}"
+            updateField=":formBillingCycle:tabView:invoiceTypeSelectedId :formBillingCycle:tabView:invoiceTypeSelectedId_text" selection="#{billingCycleBean.entity.invoiceType}"
+            backingBean="#{invoiceTypeBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="billingCycleScriptPopup" header="#{messages['scriptInstance.popup.header']}" backingBean="#{scriptInstanceBean}" selection="#{billingCycleBean.entity.scriptInstance}"
+            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description" eventBackingBean="#{billingCycleBean}"
+            updateField=":formBillingCycle:tabView:scriptSelectId :formBillingCycle:tabView:scriptSelectId_text">
+        </hftl:entityPopup>
 
-		<hftl:formPanel edit="#{billingCycleBean.edit}" formId="formBillingCycle" submitPartialProcess=":formBillingCycle:tabView"
-			label="#{messages['billingCycle.panel']}"
-			backingBean="#{billingCycleBean}">
-			<p:tabView id="tabView" activeIndex="#{billingCycleBean.activeTab}">
-			<p:tab title="#{messages['customer.tab.information']}">
-			<hftl:formField label="#{messages['billingCycle.code']}" field="code"
-				validateUnique="true" required="true" />
-			<hftl:formField label="#{messages['billingCycle.description']}"
-				id="description" field="description" useConverter="false" size="50"
-				/>
-			<hftl:formField label="#{messages['billingCycle.billingTemplateName']}"
-				field="billingTemplateName" 
-				required="false" />
-			<hftl:formField label="#{messages['billingCycle.billingTemplateNameEL']}"
-				field="billingTemplateNameEL" 
-				required="false" />
-			<hftl:formField label="#{messages['billingCycle.transactionDateDelay']}"
-				field="transactionDateDelay" required="true" negativeValue="true" />
-			<hftl:formField label="#{messages['billingCycle.invoiceProductionDateDelay']}"
-				field="invoiceDateProductionDelay" required="true" negativeValue="true"/>
-			<hftl:formField label="#{messages['billingCycle.dueDateDelay']}"
-				field="dueDateDelay" required="true" />
-			<hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}"
-				field="dueDateDelayEL" required="false" />
-			<hftl:formField label="#{messages['billingCycle.invoiceDateDelay']}"
-				field="invoiceDateDelay" required="true" />
-			<hftl:formField label="#{messages['billingCycle.calendar']}"
-				field="calendar" valueLabelField="code" required="true"
-				listBean="#{calendarBean}" />
-			<hftl:formField label="#{messages['billingCycle.invoicingThreshold']}"
-				field="invoicingThreshold"	required="false" />
-			
-			<div style="clear: both;">
-			<hftl:formField label="#{messages['invoiceType.name']}" id="invoiceTypeSelectedId" field="invoiceType"  valueLabelField="code"  
-							popup="true" popupId="searchInvoiceTypePopup" showResetButton="true" required="false"/>	
-							
-			<hftl:formField label="#{messages['billingCycle.invoiceTypeEL']}" field="invoiceTypeEl" textArea="true" rows="1" maxlength="2000" />			
-			
- 			<hftl:formField label="#{messages['billingCycle.type']}" field="type" noSelectionLabel="false" disabled="false" />		
- 			
- 			<hftl:formField id="scriptSelectId" label="#{messages['billingCycle.scriptCode']}" field="scriptInstance" valueLabelField="code" required="false"
-    							popup="true" popupId="billingCycleScriptPopup" showResetButton="true" /> 
-			</div>
-							
-			</p:tab>				
-			<hftl:customFields backingBean="#{billingCycleBean}" messagesId=":formBillingCycle:messages" />
-			</p:tabView>							
-		</hftl:formPanel>
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+                <p:menuitem outcome="billingCycles" value="#{messages['menu.billingCycles']}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['billingCycle']}" disabled="true" rendered="#{billingCycleBean.entity.transient}" />
+                <p:menuitem value="#{messages['billingCycle']} - #{billingCycleBean.entity.code}" disabled="true" rendered="#{!billingCycleBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
 
-	</ui:define>
+        <hftl:formPanel edit="#{billingCycleBean.edit}" formId="formBillingCycle" submitPartialProcess=":formBillingCycle:tabView" label="#{messages['billingCycle.panel']}"
+            backingBean="#{billingCycleBean}">
+            <p:tabView id="tabView" activeIndex="#{billingCycleBean.activeTab}">
+                <p:tab title="#{messages['customer.tab.information']}">
+                    <hftl:formField label="#{messages['billingCycle.code']}" field="code" validateUnique="true" required="true" />
+                    <hftl:formField label="#{messages['billingCycle.description']}" id="description" field="description" useConverter="false" size="50" />
+                    <hftl:formField label="#{messages['billingCycle.billingTemplateName']}" field="billingTemplateName" required="false" />
+                    <hftl:formField label="#{messages['billingCycle.billingTemplateNameEL']}" field="billingTemplateNameEL" required="false" />
+                    <hftl:formField label="#{messages['billingCycle.transactionDateDelay']}" field="transactionDateDelay" required="false" negativeValue="true" />
+                    <hftl:formField label="#{messages['billingCycle.invoiceProductionDateDelay']}" field="invoiceDateProductionDelay" required="false" negativeValue="true" />
+                    <hftl:formField label="#{messages['billingCycle.dueDateDelay']}" field="dueDateDelay" required="false" />
+                    <hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}" field="dueDateDelayEL" required="false" />
+                    <hftl:formField label="#{messages['billingCycle.dueDateDelayELSpark']}" field="dueDateDelayELSpark" required="false" />
+                    <hftl:formField label="#{messages['billingCycle.invoiceDateDelay']}" field="invoiceDateDelay" required="true" />
+                    <hftl:formField label="#{messages['billingCycle.calendar']}" field="calendar" valueLabelField="code" required="true" listBean="#{calendarBean}" />
+                    <hftl:formField label="#{messages['billingCycle.invoicingThreshold']}" field="invoicingThreshold" required="false" />
+
+                    <div style="clear: both;">
+                        <hftl:formField label="#{messages['invoiceType.name']}" id="invoiceTypeSelectedId" field="invoiceType" valueLabelField="code" popup="true" popupId="searchInvoiceTypePopup"
+                            showResetButton="true" required="false" />
+
+                        <hftl:formField label="#{messages['billingCycle.invoiceTypeEL']}" field="invoiceTypeEl" textArea="true" rows="1" maxlength="2000" />
+
+                        <hftl:formField label="#{messages['billingCycle.type']}" field="type" noSelectionLabel="false" disabled="false" />
+
+                        <hftl:formField id="scriptSelectId" label="#{messages['billingCycle.scriptCode']}" field="scriptInstance" valueLabelField="code" required="false" popup="true"
+                            popupId="billingCycleScriptPopup" showResetButton="true" />
+                    </div>
+
+                </p:tab>
+                <hftl:customFields backingBean="#{billingCycleBean}" messagesId=":formBillingCycle:messages" />
+            </p:tabView>
+        </hftl:formPanel>
+
+    </ui:define>
 
 </ui:composition>

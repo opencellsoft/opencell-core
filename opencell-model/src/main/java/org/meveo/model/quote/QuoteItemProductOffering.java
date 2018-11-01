@@ -21,11 +21,49 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.catalog.ProductOffering;
 
+/**
+ * Quote item to product offering mapping
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ExportIdentifier({ "quoteItem.code", "productOffering.code" })
 @Table(name = "ord_quot_item_offerings")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ord_quot_item_offerings_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ord_quot_item_offerings_seq"), })
 public class QuoteItemProductOffering implements IEntity {
+
+    /**
+     * Identifier
+     */
+    @Id
+    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    @Access(AccessType.PROPERTY)
+    protected Long id;
+
+    /**
+     * Quote item
+     */
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "quote_item_id")
+    @NotNull
+    private QuoteItem quoteItem;
+
+    /**
+     * Product offering
+     */
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "prd_offering_id")
+    @NotNull
+    private ProductOffering productOffering;
+
+    /**
+     * Item ordering sequence
+     */
+    @Column(name = "item_order", nullable = false)
+    @NotNull
+    private int itemOrder;
 
     public QuoteItemProductOffering() {
 
@@ -36,26 +74,6 @@ public class QuoteItemProductOffering implements IEntity {
         this.productOffering = productOffering;
         this.itemOrder = itemOrder;
     }
-
-    @Id
-    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    @Access(AccessType.PROPERTY)
-    protected Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "quote_item_id")
-    @NotNull
-    private QuoteItem quoteItem;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "prd_offering_id")
-    @NotNull
-    private ProductOffering productOffering;
-
-    @Column(name = "item_order", nullable = false)
-    @NotNull
-    private int itemOrder;
 
     @Override
     public Serializable getId() {

@@ -18,12 +18,8 @@
  */
 package org.meveo.model.communication;
 
-
 public enum MeveoInstanceStatusEnum {
-	UNKNOWN(1, "meveoInstanceStatus.unknown"), 
-	PARENT(2, "meveoInstanceStatus.parent"), 
-	CHILD(3, "meveoInstanceStatus.child"),
-	PARTNER(4, "meveoInstanceStatus.partner");
+    UNKNOWN(1, "meveoInstanceStatus.unknown"), PARENT(2, "meveoInstanceStatus.parent"), CHILD(3, "meveoInstanceStatus.child"), PARTNER(4, "meveoInstanceStatus.partner");
 
     private Integer id;
     private String label;
@@ -52,4 +48,3 @@ public enum MeveoInstanceStatusEnum {
         return null;
     }
 }
-

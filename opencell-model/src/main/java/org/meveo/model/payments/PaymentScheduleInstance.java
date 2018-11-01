@@ -47,50 +47,46 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     @Enumerated(EnumType.STRING)
     @NotNull
     private PaymentScheduleStatusEnum status;
-    
-    @Column(name = "status_date")  
+
+    @Column(name = "status_date")
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
     private Date statusDate;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_schedule_tmpl_id")
     @NotNull
     private PaymentScheduleTemplate paymentScheduleTemplate;
-    
-    @Column(name = "start_date")  
+
+    @Column(name = "start_date")
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
     private Date startDate;
-    
-    @Column(name = "end_date")  
+
+    @Column(name = "end_date")
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
     private Date endDate;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_instance_id")
     @NotNull
     private ServiceInstance serviceInstance;
-    
+
     @Column(name = "amount")
     @NotNull
     private BigDecimal amount;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendar_id")
     @NotNull
     private Calendar calendar;
-    
+
     @Column(name = "due_date_days")
     @NotNull
     private Integer dueDateDays;
-    
-    
-    
-  
-    
-    @OneToMany(mappedBy = "paymentScheduleInstance", cascade = CascadeType.ALL)   
+
+    @OneToMany(mappedBy = "paymentScheduleInstance", cascade = CascadeType.ALL)
     private List<PaymentScheduleInstanceItem> paymentScheduleInstanceItems;
 
     /**
@@ -233,5 +229,4 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
         this.dueDateDays = dueDateDays;
     }
 
-      
 }

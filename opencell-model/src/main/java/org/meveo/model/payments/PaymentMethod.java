@@ -21,6 +21,8 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.ObservableEntity;
 
 /**
+ * Payment method
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
@@ -42,39 +44,72 @@ public abstract class PaymentMethod extends EnableEntity {
 
     private static final long serialVersionUID = 8726571628074346184L;
 
+    /**
+     * Alias
+     */
     @Column(name = "alias")
     protected String alias;
 
+    /**
+     * Is it a preferred payment method
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "is_default")
     protected boolean preferred;
 
+    /**
+     * Customer account
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_account_id")
     protected CustomerAccount customerAccount;
 
+    /**
+     * Payment type
+     */
     @Column(name = "token_type", insertable = false, updatable = false, length = 12)
     @Enumerated(EnumType.STRING)
     protected PaymentMethodEnum paymentType;
 
+    /**
+     * User identifier
+     */
     @Column(name = "USER_ID")
     private String userId;
 
+    /**
+     * Additional information
+     */
     @Column(name = "INFO_1", columnDefinition = "TEXT")
     private String info1;
 
+    /**
+     * Additional information
+     */
     @Column(name = "INFO_2", columnDefinition = "TEXT")
     private String info2;
 
+    /**
+     * Additional information
+     */
     @Column(name = "INFO_3", columnDefinition = "TEXT")
     private String info3;
 
+    /**
+     * Additional information
+     */
     @Column(name = "INFO_4", columnDefinition = "TEXT")
     private String info4;
 
+    /**
+     * Additional information
+     */
     @Column(name = "INFO_5", columnDefinition = "TEXT")
     private String info5;
-    
+
+    /**
+     * Token identifier
+     */
     @Column(name = "token_id")
     private String tokenId;
 

@@ -36,6 +36,11 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 
+/**
+ * One shot charge as part of subscribed service
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "billing_recurring_charge_inst")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -44,22 +49,37 @@ public class RecurringChargeInstance extends ChargeInstance {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Charge template/definition that charge was instantiated from
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recurring_chrg_tmpl_id")
     private RecurringChargeTemplate recurringChargeTemplate;
 
+    /**
+     * Subscribed service
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_instance_id")
     protected ServiceInstance serviceInstance;
 
+    /**
+     * Subscription date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
     protected Date subscriptionDate;
 
+    /**
+     * Next charge date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "next_charge_date")
     protected Date nextChargeDate;
 
+    /**
+     * Quantity subscribed
+     */
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     @NotNull
     protected BigDecimal quantity = BigDecimal.ONE;

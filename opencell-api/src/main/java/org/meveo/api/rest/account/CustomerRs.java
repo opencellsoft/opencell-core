@@ -62,7 +62,7 @@ public interface CustomerRs extends IBaseRs {
      * Search for a customer with a given code
      *
      * @param customerCode The customer's code
-     * @param inheritCF Custom field inheritance type
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return The customer's data
      */
     @GET
@@ -106,7 +106,7 @@ public interface CustomerRs extends IBaseRs {
      * @param limit Pagination - number of records to retrieve
      * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder Sorting - sort order.
-     * @param inheritCF Custom field inheritance type.
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE..
      * @return List of customers
      */
     @GET

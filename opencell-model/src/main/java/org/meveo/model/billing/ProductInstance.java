@@ -47,9 +47,15 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.ProductTemplate;
 
+/**
+ * Purchased product
+ * 
+ * @author Andrius Karpavicius
+ *
+ */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "PRODUCT_INSTANCE")
+@CustomFieldEntity(cftCodePrefix = "PRODUCT_INSTANCE", inheritCFValuesFrom = "productTemplate")
 @ExportIdentifier({ "code" })
 @Table(name = "billing_product_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
@@ -59,42 +65,82 @@ public class ProductInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Associated User account
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
+    /**
+     * Subscription. Optional. Null if purchase is not part of subscription
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
+    /**
+     * Product template/definition
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_template_id")
     private ProductTemplate productTemplate;
 
+    /**
+     * Purchase date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "application_date")
     private Date applicationDate = new Date();
 
+    /**
+     * Instantiated product charges
+     */
     @OneToMany(mappedBy = "productInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ProductChargeInstance> productChargeInstances = new ArrayList<>();
 
+    /**
+     * Quantity purchased
+     */
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
 
+    /**
+     * Order number when purchase was initiated by an order
+     */
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
-    
+
+    /**
+     * Seller that offered product to purchase
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
+    /**
+     * Instantiate a product instance
+     */
     public ProductInstance() {
         super();
     }
 
+    /**
+     * Instantiate a product instance
+     * 
+     * @param userAccount User account
+     * @param subscription Subscription if tied to one
+     * @param productTemplate Product template
+     * @param quantity Quantity
+     * @param applicationDate Application date
+     * @param code Code to assign
+     * @param description Description
+     * @param orderNumber Order number if tied to one
+     * @param seller Seller. Defaults to subscription.seller in case product instance is tied to a subscription.
+     */
     public ProductInstance(UserAccount userAccount, Subscription subscription, ProductTemplate productTemplate, BigDecimal quantity, Date applicationDate, String code,
-            String description, String orderNumber) {
+            String description, String orderNumber, Seller seller) {
         this.applicationDate = applicationDate;
         this.code = code;
         this.description = description;
@@ -105,8 +151,10 @@ public class ProductInstance extends BusinessCFEntity {
         this.subscription = subscription;
         if (subscription == null) {
             this.userAccount = userAccount;
+            this.seller = seller;
         } else {
             this.userAccount = subscription.getUserAccount();
+            this.seller = subscription.getSeller();
         }
         if (subscription != null && subscription.getSeller() != null) {
             this.seller = subscription.getSeller();
@@ -194,7 +242,7 @@ public class ProductInstance extends BusinessCFEntity {
     public ICustomFieldEntity[] getParentCFEntities() {
         return new ICustomFieldEntity[] { productTemplate };
     }
-    
+
     public Seller getSeller() {
         return seller;
     }

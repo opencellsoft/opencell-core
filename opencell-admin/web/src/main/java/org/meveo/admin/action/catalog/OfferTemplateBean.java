@@ -54,6 +54,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValueHolder;
 import org.meveo.service.api.EntityToDtoConverter;
@@ -110,7 +111,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @Inject
     private ProductTemplateService productTemplateService;
-    
+
     private Long bomId;
 
     private boolean newVersion;
@@ -410,7 +411,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         // template that was duplicated in initEntity() method
         if (instantiatedFromBom) {
             Map<String, List<CustomFieldValue>> offerCfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValuesByCode();
-            CustomFieldsDto offerCfs = entityToDtoConverter.getCustomFieldsDTO(entity, offerCfValues, false, false);
+            CustomFieldsDto offerCfs = entityToDtoConverter.getCustomFieldsDTO(entity, offerCfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
 
             List<ServiceConfigurationDto> servicesConfigurations = new ArrayList<>();
             // process the services
@@ -421,8 +422,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                     ServiceConfigurationDto serviceConfigurationDto = toServiceConfigurationDto(ost, st);
                     serviceConfigurationDto.setItemIndex(itemIndex++);
                     servicesConfigurations.add(serviceConfigurationDto);
+                    }
                 }
-            }
 
             List<ServiceConfigurationDto> productsConfigurations = new ArrayList<>();
             // process products
@@ -498,13 +499,13 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                         CustomFieldValueHolder cfValueHolder = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid());
                         if (cfValueHolder != null) {
                             Map<String, List<CustomFieldValue>> stCustomFieldInstances = cfValueHolder.getValuesByCode();
-                            if (stCustomFieldInstances != null) {
-                                // populate offer cf
-                                customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), true, false, false);
-                                serviceTemplate = serviceTemplateService.update(serviceTemplate);
-                            }
+                        if (stCustomFieldInstances != null) {
+                            // populate offer cf
+                            customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), true, false, false);
+                            serviceTemplate = serviceTemplateService.update(serviceTemplate);
                         }
                     }
+                }
                 }
 
                 return (isNewEntity && !outcome.equals("mm_offers")) ? getEditViewName() : outcome;
@@ -517,7 +518,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     private ServiceConfigurationDto toServiceConfigurationDto(OfferServiceTemplate ost, ServiceTemplate st) throws BusinessException {
         ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
         
-        Map<String, List<CustomFieldValue>> stCfValues = customFieldDataEntryBean.saveCustomFieldsToEntity(null, st.getUuid(), false, true);
+        Map<String, List<CustomFieldValue>> stCfValues = customFieldDataEntryBean.saveCustomFieldsToEntity(null, st.getUuid(), false, true, false);
         serviceConfigurationDto.setCode(st.getCode());
         serviceConfigurationDto.setDescription(st.getDescription());
         serviceConfigurationDto.setMandatory(ost.isMandatory());

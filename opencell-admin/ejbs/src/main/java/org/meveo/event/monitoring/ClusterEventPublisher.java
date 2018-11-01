@@ -19,6 +19,13 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 
+/**
+ * Handle data synchronization between cluster nodes. Inform about CRUD actions to certain entities. Messages are written to topic "topic/CLUSTEREVENTTOPIC".
+ * 
+ * Used in cases when each cluster node caches locally some information that needs to be updated when data changes.
+ * 
+ * @author Andrius Karpavicius
+ */
 @JMSDestinationDefinitions(value = { @JMSDestinationDefinition(name = "java:/topic/CLUSTEREVENTTOPIC", interfaceName = "javax.jms.Topic", destinationName = "ClusterEventTopic") })
 @Stateless
 public class ClusterEventPublisher implements Serializable {
@@ -38,6 +45,12 @@ public class ClusterEventPublisher implements Serializable {
     @Resource(lookup = "java:/topic/CLUSTEREVENTTOPIC")
     private Topic topic;
 
+    /**
+     * Publish event about some action on a given entity
+     * 
+     * @param entity Entity that triggered event
+     * @param action Action performed
+     */
     public void publishEvent(IEntity entity, CrudActionEnum action) {
 
         if (!EjbUtils.isRunningInClusterMode()) {

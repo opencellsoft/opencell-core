@@ -36,7 +36,6 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterPeriod;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.ServiceInstance;
@@ -60,7 +59,6 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.util.ApplicationProvider;
@@ -113,9 +111,6 @@ public class UsageRatingService implements Serializable {
     private Event<CounterPeriodEvent> counterPeriodEvent;
 
     @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
-
-    @Inject
     private PricePlanMatrixService pricePlanMatrixService;
 
     @Inject
@@ -160,7 +155,6 @@ public class UsageRatingService implements Serializable {
 
         UsageChargeInstance chargeInstance = usageChargeInstance;
 
-        // Not a virtual operation
         Subscription subscription = edr.getSubscription();
 
         // For virtual operation, lookup charge in the subscription
@@ -188,14 +182,12 @@ public class UsageRatingService implements Serializable {
         walletOperation.setSubscription(chargeInstance.getSubscription());
         walletOperation.setEdr(edr);
 
-        // log.debug("AKK URS line 193");
         UserAccount userAccount = chargeInstance.getUserAccount();
         BillingAccount billingAccount = userAccount.getBillingAccount();
-        // log.debug("AKK URS line 196");
 
-        TradingCountry tradingCountry = chargeInstance.getCountry();
+        TradingCountry buyersCountry = chargeInstance.getCountry();
 
-        ChargeTemplate chargeTemplate = usageChargeInstance.getChargeTemplate();// em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplateId());
+        ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();// em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplateId());
 
         boolean isExonerated = billingAccountService.isExonerated(billingAccount);
 
@@ -204,9 +196,9 @@ public class UsageRatingService implements Serializable {
         TradingCurrency currency = chargeInstance.getCurrency();
         
         Tax tax = invoiceSubCategoryCountryService.determineTax(chargeInstance, edr.getEventDate());
-        
+       
         walletOperation.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
-        walletOperation.setRatingUnitDescription(usageChargeInstance.getRatingUnitDescription());
+        walletOperation.setRatingUnitDescription(chargeInstance.getRatingUnitDescription());
         walletOperation.setInputUnitDescription(chargeTemplate.getInputUnitDescription());
 
         // we set here the wallet to the principal wallet but it will later be overridden by charging algorithm
@@ -214,26 +206,29 @@ public class UsageRatingService implements Serializable {
         walletOperation.setBillingAccount(billingAccount);
         walletOperation.setCode(chargeTemplate.getCode());
 
-        // log.debug("AKK URS line 232 descriptionMap is empty {}", descriptionMap.isEmpty());
         String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
 
         String translationKey = "CT_" + chargeTemplate.getCode() + languageCode;
         String descTranslated = descriptionMap.get(translationKey);
         if (descTranslated == null) {
-            descTranslated = (usageChargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : usageChargeInstance.getDescription();
+            descTranslated = (chargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : chargeInstance.getDescription();
             if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().get(languageCode) != null) {
                 descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
             }
             descriptionMap.put(translationKey, descTranslated);
         }
 
-        // log.debug("AKK URS line 245");
         walletOperation.setDescription(descTranslated);
 
         walletOperation.setInputQuantity(quantityToCharge);
         walletOperation
             .setQuantity(NumberUtils.getInChargeUnit(quantityToCharge, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
-        walletOperation.setTaxPercent(isExonerated ? BigDecimal.ZERO : tax.getPercent());
+        if (isExonerated){
+            walletOperation.setTaxPercent(BigDecimal.ZERO);
+        } else {
+            walletOperation.setTax(tax);
+            walletOperation.setTaxPercent(tax.getPercent());
+        }
         walletOperation.setStartDate(null);
         walletOperation.setEndDate(null);
         walletOperation.setCurrency(currency.getCurrency());
@@ -243,9 +238,7 @@ public class UsageRatingService implements Serializable {
         // walletOperation.setOfferCode(subscription.getOffer().getCode()); Offer code is set in walletOperation.setOfferTemplate()
         walletOperation.setOfferTemplate(subscription.getOffer());
 
-        // log.debug("AKK URS line 261 offer id is {}", subscription.getOffer().getId());
-        ratingService.rateBareWalletOperation(walletOperation, usageChargeInstance.getAmountWithoutTax(), usageChargeInstance.getAmountWithTax(), tradingCountry.getId(), currency);
-        // log.debug("AKK URS line 263");
+        ratingService.rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), buyersCountry.getId(), currency);
     }
 
     /**
@@ -843,7 +836,6 @@ public class UsageRatingService implements Serializable {
         if (expression == null) {
             return null;
         }
-        String result = null;
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("edr", edr);
         userMap.put("op", walletOperation);
@@ -858,12 +850,7 @@ public class UsageRatingService implements Serializable {
             }
         }
 
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
-        try {
-            result = (String) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to string but " + res);
-        }
+        String result = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
         return result;
     }
 
@@ -875,7 +862,7 @@ public class UsageRatingService implements Serializable {
      * @throws BusinessException business exception
      */
     private Double evaluateDoubleExpression(String expression, EDR edr, WalletOperation walletOperation) throws BusinessException {
-        Double result = null;
+        
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("edr", edr);
         userMap.put("op", walletOperation);
@@ -890,13 +877,7 @@ public class UsageRatingService implements Serializable {
             }
         }
 
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
-        try {
-            result = (Double) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to double but " + res);
-        }
-
+        Double result = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
         return result;
     }
 }
