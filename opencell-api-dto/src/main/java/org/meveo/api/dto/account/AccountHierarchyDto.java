@@ -105,6 +105,9 @@ public class AccountHierarchyDto implements Serializable {
 
     /** Discount Plan. */
     private String discountPlan;
+    
+    /** List of Discount Plans. */
+    private List<String> discountPlans;
 
     /** Custom Fiends. */
     private CustomFieldsDto customFields;
@@ -793,5 +796,13 @@ public class AccountHierarchyDto implements Serializable {
                 + ", billingCycleCode=" + billingCycleCode + ", address1=" + address1 + ", address2=" + address2 + ", address3=" + address3 + ", zipCode=" + zipCode + ", state="
                 + state + ", city=" + city + ", customFields=" + customFields + ", limit=" + limit + ", sortField=" + sortField + ", index=" + index + ", invoicingThreshold="
                 + invoicingThreshold + ", discountPlan=" + discountPlan + "]";
-    }    
+    }
+
+	public List<String> getDiscountPlans() {
+		return discountPlans;
+	}
+
+	public void setDiscountPlans(List<String> discountPlans) {
+		this.discountPlans = discountPlans;
+	}    
 }

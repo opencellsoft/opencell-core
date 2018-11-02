@@ -1,6 +1,7 @@
 package org.meveo.api.dto.catalog;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -12,6 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.IEnableDto;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.catalog.DiscountPlanItem.DurationPeriodUnitEnum;
 
 /**
  * Discount plan item
@@ -87,6 +90,28 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
      */
     private Boolean disabled;
+    
+    /** Absolute discount amount. */
+    private BigDecimal discountAmount;
+    
+    /** Effective start date */
+    private Date startDate;
+    
+    /** Effective end date */
+	private Date endDate;
+	
+	/** Type of discount, whether absolute or percentage. */
+	private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
+	
+	/**
+	 * Length of effectivity. 
+	 * If start date is not null and end date is null, we use the defaultDuration from the discount plan.
+	 * If start date is null, and defaultDuration is not null, defaultDuration is ignored. 
+	 */
+	private Integer defaultDuration;
+	
+	/** Unit of duration */
+	private DurationPeriodUnitEnum durationUnit;
 
     /**
      * Instantiates a new discount plan item dto.
@@ -111,6 +136,12 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.discountPercentEl = discountPlanItem.getDiscountPercentEl();
         this.discountPercentElSpark = discountPlanItem.getDiscountPercentElSpark();
         this.disabled = discountPlanItem.isDisabled();
+        this.discountAmount = discountPlanItem.getDiscountAmount();
+		this.discountPlanItemType = discountPlanItem.getDiscountPlanItemType();
+		this.startDate = discountPlanItem.getStartDate();
+		this.endDate = discountPlanItem.getEndDate();
+		this.durationUnit = discountPlanItem.getDurationUnit();
+		this.defaultDuration = discountPlanItem.getDefaultDuration();
     }
 
     /**
@@ -292,4 +323,52 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode=" + invoiceCategoryCode + ", invoiceSubCategoryCode="
                 + invoiceSubCategoryCode + ", percent=" + percent + ", accountingCode=" + accountingCode + ", expressionEl=" + expressionEl + "]";
     }
+
+	public BigDecimal getDiscountAmount() {
+		return discountAmount;
+	}
+
+	public void setDiscountAmount(BigDecimal discountAmount) {
+		this.discountAmount = discountAmount;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public Integer getDefaultDuration() {
+		return defaultDuration;
+	}
+
+	public void setDefaultDuration(Integer defaultDuration) {
+		this.defaultDuration = defaultDuration;
+	}
+
+	public DurationPeriodUnitEnum getDurationUnit() {
+		return durationUnit;
+	}
+
+	public void setDurationUnit(DurationPeriodUnitEnum durationUnit) {
+		this.durationUnit = durationUnit;
+	}
+
+	public DiscountPlanItemTypeEnum getDiscountPlanItemType() {
+		return discountPlanItemType;
+	}
+
+	public void setDiscountPlanItemType(DiscountPlanItemTypeEnum discountPlanItemType) {
+		this.discountPlanItemType = discountPlanItemType;
+	}
 }

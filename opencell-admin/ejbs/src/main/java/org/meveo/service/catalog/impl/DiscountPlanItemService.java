@@ -29,7 +29,13 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
     @Override
     public void create(DiscountPlanItem dpi) throws BusinessException {
-        dpi.setDiscountPlan(discountPlanService.findById(dpi.getDiscountPlan().getId()));
+    	//check date
+		if (!dpi.isValid()) {
+			log.error("Invalid effectivity dates");
+			throw new BusinessException("Invalid effectivity dates");
+		}
+    	
+    	dpi.setDiscountPlan(discountPlanService.findById(dpi.getDiscountPlan().getId()));
         super.create(dpi);
         // Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it is cached
         // refresh(dpi.getDiscountPlan());
@@ -37,6 +43,12 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
     @Override
     public DiscountPlanItem update(DiscountPlanItem dpi) throws BusinessException {
+    	//check date
+		if (!dpi.isValid()) {
+			log.error("Invalid effectivity dates");
+			throw new BusinessException("Invalid effectivity dates");
+		}
+		
         dpi.setDiscountPlan(discountPlanService.findById(dpi.getDiscountPlan().getId()));
         dpi = super.update(dpi);
         // Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it is cached

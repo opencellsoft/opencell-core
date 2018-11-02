@@ -22,15 +22,12 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
@@ -42,7 +39,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
@@ -52,11 +48,11 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.order.OrderService;
 
 /**
  * The Class BillingAccountService.
  * 
+ * @author Edward P. Legaspi
  * @author Said Ramli
  * @author Abdelmounaim Akadid
  * @author Mounir Bahije
@@ -68,12 +64,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     /** The user account service. */
     @Inject
     private UserAccountService userAccountService;
-
-    @Inject
-    private SubscriptionService subscriptionService;
-
-    @Inject
-    private OrderService orderService;
 
     /** The billing run service. */
     @EJB
@@ -439,4 +429,5 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public List<Long> findBillingAccountIdsByBillingRun(Long billingRunId) {
         return getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRunId).getResultList();
     }
+
 }
