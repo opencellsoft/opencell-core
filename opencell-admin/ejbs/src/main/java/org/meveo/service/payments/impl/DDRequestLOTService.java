@@ -191,7 +191,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
             for (AccountOperation ao : listAoToPay) {
                 String errorMsg = getMissingField(ao);
                 Name caName =  ao.getCustomerAccount().getName();
-                String caFullName = caName != null ? caName.getFullName() : "";
+                String caFullName = this.getCaFullName(caName); 
                 ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
                 if (errorMsg != null) {
                     nbItemsKo++;
@@ -215,7 +215,8 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
             for (Map.Entry<CustomerAccount, List<AccountOperation>> entry : aosByCA.entrySet()) {
                 BigDecimal amountToPayByItem = BigDecimal.ZERO;
                 String allErrorsByItem = "";
-                String caFullName = entry.getKey().getName().getFirstName();
+                CustomerAccount ca = entry.getKey();
+                String caFullName = this.getCaFullName(ca.getName());
                 for (AccountOperation ao : entry.getValue()) {
                     String errorMsg = getMissingField(ao);
                     if (errorMsg != null) {
@@ -243,6 +244,10 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
         ddRequestLOT.setSendDate(new Date());
         log.info("Successful createDDRquestLot totalAmount: {}", ddRequestLOT.getTotalAmount());
         return ddRequestLOT;
+    }
+
+    private String getCaFullName(Name caName) {
+        return caName != null ? caName.getFullName() : "";
     }
 
     /**
