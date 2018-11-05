@@ -40,7 +40,10 @@
                     <hftl:formField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage" valueLabelField="languageCode"
                         listBean="#{tradingLanguageBean}" />
                     <hftl:formField id="parentSelectId" label="#{messages['seller.parent']}" field="seller" valueLabelField="code" listBean="#{sellerBean}" listenerUpdate="@this" />
-
+                    <hftl:formField label="#{messages['seller.vatNo']}" field="vatNo" id="vatNo"/>
+                    <hftl:formField label="#{messages['seller.registrationNo']}" field="registrationNo" id="registrationNo"/>
+                    <hftl:formField label="#{messages['seller.legalText']}" textArea="true" rows="1" field="legalText" id="legalText"/>
+                    <hftl:formField label="#{messages['seller.legalType']}" field="legalType" id="legalType"/>
                     <h:panelGroup>
                         <p:dataTable id="sellerSequenceTable" label="#{messages['inboundRequest.responseHeaders']}" value="#{sellerBean.entity.invoiceTypeSequence}"
                             var="invoiceTypeSeq" paginator="false" resizableColumns="true">
