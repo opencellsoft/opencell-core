@@ -181,6 +181,23 @@ public class UsageRatingService implements Serializable {
         walletOperation.setOrderNumber(chargeInstance.getOrderNumber());
         walletOperation.setSubscription(chargeInstance.getSubscription());
         walletOperation.setEdr(edr);
+		if (chargeInstance != null) {
+			walletOperation.setDescription(chargeInstance.getDescription());
+			walletOperation.setChargeInstance(chargeInstance);
+			if (chargeInstance.getInvoicingCalendar() != null) {
+				chargeInstance.getInvoicingCalendar().setInitDate(subscription.getSubscriptionDate());
+
+				walletOperation.setInvoicingDate(
+						chargeInstance.getInvoicingCalendar().nextCalendarDate(walletOperation.getOperationDate()));
+			}
+
+			if (chargeInstance.getSeller() != null) {
+				walletOperation.setSeller(chargeInstance.getSeller());
+			} else {
+				walletOperation.setSeller(chargeInstance.getUserAccount().getBillingAccount().getCustomerAccount()
+						.getCustomer().getSeller());
+			}
+		}
 
         UserAccount userAccount = chargeInstance.getUserAccount();
         BillingAccount billingAccount = userAccount.getBillingAccount();
