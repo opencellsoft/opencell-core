@@ -1091,6 +1091,8 @@ public class RatingService extends BusinessService<WalletOperation> {
             ScriptInterface script = scriptInstanceService.getCachedScriptInstance(scriptInstanceCode);
             HashMap<String, Object> context = new HashMap<String, Object>();
             context.put(Script.CONTEXT_ENTITY, bareWalletOperation);
+            context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+            context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
             script.execute(context);
         } catch (Exception e) {
             log.error("Error when run script {}", scriptInstanceCode, e);

@@ -46,6 +46,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -191,6 +193,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     /**
      * Payment methods allowed
      */
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ElementCollection(targetClass = PaymentMethodEnum.class)
     @CollectionTable(name = "crm_provider_pay_methods", joinColumns = @JoinColumn(name = "provider_id"))
     @Column(name = "payment_method")
@@ -308,7 +311,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     /**
      * Invoice configuration
      */
-    @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, targetEntity = org.meveo.model.billing.InvoiceConfiguration.class, orphanRemoval = true)
+    @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, targetEntity = org.meveo.model.billing.InvoiceConfiguration.class, orphanRemoval = true, fetch = FetchType.LAZY)
     private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
 
     /**
@@ -335,7 +338,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     /**
      * Expired data delete configuration
      */
-    @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private GdprConfiguration gdprConfiguration;
 
     /**

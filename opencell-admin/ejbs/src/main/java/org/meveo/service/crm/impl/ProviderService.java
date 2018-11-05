@@ -66,7 +66,7 @@ public class ProviderService extends PersistenceService<Provider> {
      */
     @Inject
     private HttpServletRequest request;
-    
+
     @Inject
     private ServiceSingleton serviceSingleton;
 
@@ -75,7 +75,7 @@ public class ProviderService extends PersistenceService<Provider> {
      */
     public Provider getProvider() {
 
-        Provider provider = getEntityManager().createNamedQuery("Provider.first", Provider.class).getResultList().get(0);
+        Provider provider = getEntityManager().createNamedQuery("Provider.first", Provider.class).setMaxResults(0).getSingleResult();
 
         if (provider.getCurrency() != null) {
             provider.getCurrency().getCurrencyCode();
@@ -86,10 +86,10 @@ public class ProviderService extends PersistenceService<Provider> {
         if (provider.getLanguage() != null) {
             provider.getLanguage().getLanguageCode();
         }
-        if (provider.getInvoiceConfiguration() != null) {
-            provider.getInvoiceConfiguration().getDisplayBillingCycle();
-        }
-        provider.getPaymentMethods().size();
+        // if (provider.getInvoiceConfiguration() != null) {
+        // provider.getInvoiceConfiguration().getDisplayBillingCycle();
+        // }
+        // provider.getPaymentMethods().size();
         return provider;
     }
 
@@ -110,7 +110,7 @@ public class ProviderService extends PersistenceService<Provider> {
     public Provider update(Provider provider) throws BusinessException {
         // Refresh appProvider application scope variable
         refreshAppProvider(provider);
-        
+
         provider = super.update(provider);
 
         // clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
@@ -208,21 +208,21 @@ public class ProviderService extends PersistenceService<Provider> {
         }
     }
 
-    public GenericSequence getNextMandateNumber() throws BusinessException {		
-		GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.RUM);
-		Provider provider = findById(appProvider.getId());
-		provider.setRumSequence(genericSequence);
-		update(provider);
-		
-		return genericSequence;
-	}
-    
-    public GenericSequence getNextCustomerNumber() throws BusinessException {		
-		GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.CUSTOMER_NO);
-		Provider provider = findById(appProvider.getId());
-		provider.setCustomerNoSequence(genericSequence);
-		update(provider);
-		
-		return genericSequence;
-	}
+    public GenericSequence getNextMandateNumber() throws BusinessException {
+        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.RUM);
+        Provider provider = findById(appProvider.getId());
+        provider.setRumSequence(genericSequence);
+        update(provider);
+
+        return genericSequence;
+    }
+
+    public GenericSequence getNextCustomerNumber() throws BusinessException {
+        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.CUSTOMER_NO);
+        Provider provider = findById(appProvider.getId());
+        provider.setCustomerNoSequence(genericSequence);
+        update(provider);
+
+        return genericSequence;
+    }
 }

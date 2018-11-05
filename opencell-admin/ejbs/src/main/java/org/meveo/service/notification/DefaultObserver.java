@@ -62,7 +62,6 @@ import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
 /**
@@ -135,19 +134,18 @@ public class DefaultObserver {
         log.debug("execute notification script: {}", scriptInstance.getCode());
 
         try {
-            ScriptInterface scriptInterface = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
+
             Map<Object, Object> userMap = new HashMap<>();
             userMap.put("event", entityOrEvent);
+            context.put("entityOrEvent", entityOrEvent);
             userMap.put("manager", manager);
 
-            context.put("entityOrEvent", entityOrEvent);
             for (Map.Entry<String, String> entry : params.entrySet()) {
                 context.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression(entry.getValue(), userMap, Object.class));
             }
 
-            scriptInterface.init(context);
-            scriptInterface.execute(context);
-            scriptInterface.finalize(context);
+            scriptInstanceService.executeWInitAndFinalize(entityOrEvent, scriptInstance.getCode(), context);
+
         } catch (Exception e) {
             log.error("failed script execution", e);
             if (e instanceof BusinessException) {

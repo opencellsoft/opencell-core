@@ -2,6 +2,7 @@ package org.meveo.model.billing;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,6 +26,7 @@ import org.meveo.model.crm.Provider;
  **/
 @Entity
 @ExportIdentifier({ "provider" })
+@Cacheable
 @Table(name = "billing_invoice_configuration", uniqueConstraints = @UniqueConstraint(columnNames = { "provider_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_configuration_seq"), })

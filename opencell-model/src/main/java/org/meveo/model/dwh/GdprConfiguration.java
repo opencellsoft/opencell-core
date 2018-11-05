@@ -2,6 +2,7 @@ package org.meveo.model.dwh;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +15,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.crm.Provider;
 
 /**
@@ -23,6 +25,7 @@ import org.meveo.model.crm.Provider;
  * @lastModifiedVersion 5.2
  **/
 @Entity
+@Cacheable
 @Table(name = "adm_gdpr_configuration")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", //
         parameters = { @Parameter(name = "sequence_name", value = "adm_gdpr_configuration_seq"), })
@@ -248,4 +251,23 @@ public class GdprConfiguration extends BaseEntity implements Serializable, IEnti
         this.deleteAoCheckUnpaidLife = deleteAoCheckUnpaidLife;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof InvoiceConfiguration)) {
+            return false;
+        }
+
+        GdprConfiguration other = (GdprConfiguration) obj;
+
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+            return true;
+        }
+
+        // Always return true as there can be only one record of Gdpr configuration
+        return true;
+    }
 }
