@@ -580,7 +580,7 @@ public class ProviderDto extends AuditableEntityDto {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

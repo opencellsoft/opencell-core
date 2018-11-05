@@ -72,6 +72,7 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
         this.discountPlanItem = discountPlanItem;
     }
 
+    @ActionMethod
     public void saveOrUpdateDiscountPlanItem() throws BusinessException {
 
         if (discountPlanItem.getId() != null) {

@@ -74,6 +74,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
@@ -381,16 +382,22 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         // Determine which discount plan items apply to this invoice
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
-        DiscountPlan discountPlan = billingAccount.getDiscountPlan();
-        if (discountPlan != null && discountPlan.isActive()) {
-            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-            List<DiscountPlanItem> discountPlanItems = discountPlan.getDiscountPlanItems();
-            for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-                if (discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice)) {
-                    applicableDiscountPlanItems.add(discountPlanItem);
-                }
-            }
-        }
+        
+		if (billingAccount.getDiscountPlans() != null && !billingAccount.getDiscountPlans().isEmpty()) {
+			CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+			for (DiscountPlan discountPlan : billingAccount.getDiscountPlans()) {
+				if (discountPlan != null && discountPlan.isActive()) {
+					List<DiscountPlanItem> discountPlanItems = discountPlan.getDiscountPlanItems();
+					for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+						if (discountPlanItem.isEffective(invoice.getInvoiceDate()) && discountPlanItem.isActive()
+								&& matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(), customerAccount,
+										billingAccount, invoice)) {
+							applicableDiscountPlanItems.add(discountPlanItem);
+						}
+					}
+				}
+			}
+		}
 
         // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates
         BigDecimal[] amounts = null;
@@ -493,8 +500,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                 invoice, amount);
                             log.debug("for discountPlan " + discountPlanItem.getCode() + " percentEL ->" + discountPercent + " on amount=" + amount);
                         }
-
-                        BigDecimal discountAmount = amount.multiply(discountPercent.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
+                        
+                        BigDecimal discountAmount;
+            			if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+            				discountAmount = amount.multiply(discountPercent.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
+            			} else {
+            				discountAmount = discountPlanItem.getDiscountAmount().negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());;
+            			}
 
                         if (discountAmount.compareTo(BigDecimal.ZERO) < 0) {
                             SubCategoryInvoiceAgregate discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount,
@@ -505,7 +517,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                             discountAggregate.setCategoryInvoiceAgregate(cAggregate);
 
                             discountAggregate.setDiscountAggregate(true);
-                            discountAggregate.setDiscountPercent(discountPercent);
+							if (discountPlanItem.getDiscountPlanItemType()
+									.equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+								discountAggregate.setDiscountPercent(discountPercent);
+							}
                             discountAggregate.setDiscountPlanItem(discountPlanItem);
                             discountAggregate.setDescription(discountPlanItem.getCode());
 
@@ -1683,4 +1698,5 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Object[] amounts = (Object[]) q.getSingleResult();
         return amounts;
     }
+
 }

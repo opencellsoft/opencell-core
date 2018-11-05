@@ -177,6 +177,9 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     
     /** The discount plan. */
     private String discountPlan;
+    
+    /** The list of discount plans. */
+    private List<String> discountPlans;
 
     /** The ua status. */
     // user account
@@ -969,5 +972,13 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
                 + ", dateDunningLevel=" + dateDunningLevel + ", dunningLevel=" + dunningLevel + ", billingCycle=" + billingCycle + ", country=" + country + ", nextInvoiceDate="
                 + nextInvoiceDate + ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email=" + email + ", uaStatus=" + uaStatus + ",customFields="
                 + customFields + ", invoicingThreshold=" + invoicingThreshold + ", invoicingThreshold=" + invoicingThreshold + "]";
-    }    
+    }
+
+	public List<String> getDiscountPlans() {
+		return discountPlans;
+	}
+
+	public void setDiscountPlans(List<String> discountPlans) {
+		this.discountPlans = discountPlans;
+	}    
 }

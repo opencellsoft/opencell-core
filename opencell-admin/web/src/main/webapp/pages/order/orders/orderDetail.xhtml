@@ -148,9 +148,15 @@
                                         <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.accountOwner']}" field="accountOwner" size="55"
                                             required="true" />
                                         <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bic']}" field="bic" size="15" required="true" />
-                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.iban']}" field="iban" size="45" required="true" />                                    
+                                         <c:if test="#{orderBean.isOrderEditable()}">
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.iban']}" field="iban" size="45" required="true"  converter="ibanConverter" />
+                                        </c:if>
+                                        <c:if test="#{!(orderBean.isOrderEditable())}">
+                                        <hftl:decorateFormField label="#{messages['bankCoordinates.iban']}" fieldId="iban">
+                                            <h:outputText id="iban" value="#{orderBean.paymentMethod.bankCoordinates.iban}" required="true" converter="ibanConverter" />
+                                        </hftl:decorateFormField>
+                                        </c:if>                               
                                     </c:if>
-
                                 </h:panelGroup>
 
                             </p:outputPanel>
