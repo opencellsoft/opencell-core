@@ -41,7 +41,7 @@ public class PaymentJob extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return JobCategoryEnum.ACCOUNT_RECEIVABLES;
+        return JobCategoryEnum.PAYMENT;
     }
 
     @Override

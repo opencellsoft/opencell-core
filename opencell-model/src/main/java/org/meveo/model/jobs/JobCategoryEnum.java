@@ -25,7 +25,7 @@ public enum JobCategoryEnum {
 	    INVOICING(2, "jobCategoryEnum.invoicing"),
 	    IMPORT_HIERARCHY(3, "jobCategoryEnum.importHierarchy"),
 	    DWH(4, "jobCategoryEnum.dwh"),
-	    ACCOUNT_RECEIVABLES(5,"jobCategoryEnum.accountReceivables"),
+	    PAYMENT(5,"jobCategoryEnum.payment"),
 	    WALLET(6, "jobCategoryEnum.wallet"),
 	    UTILS(7, "jobCategoryEnum.utils"),
 	    MEDIATION(8, "jobCategoryEnum.mediation");
