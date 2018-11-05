@@ -422,19 +422,19 @@
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
 				<version>${jackson.version}</version>
-				<scope>provided</scope>
+				<!--<scope>provided</scope>-->
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
 				<version>${jackson.version}</version>
-				<scope>provided</scope>
+				<!--<scope>provided</scope>-->
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-annotations</artifactId>
 				<version>${jackson.version}</version>
-				<scope>provided</scope>
+				<!--<scope>provided</scope>-->
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -618,7 +618,7 @@
 					<configuration>
 						<source>1.8</source>
 						<target>1.8</target>
-						<useIncrementalCompilation>false</useIncrementalCompilation>
+						<!--<useIncrementalCompilation>false</useIncrementalCompilation>-->
 					</configuration>
 				</plugin>
 				<plugin>
@@ -780,11 +780,11 @@
 			</properties>
 			<dependencies>
 				<!-- Dependency for liquibase plugin -->
-				<dependency>
-					<groupId>org.mariadb.jdbc</groupId>
-					<artifactId>mariadb-java-client</artifactId>
-					<version>1.5.4</version>
-				</dependency>
+				<!--<dependency>-->
+					<!--<groupId>org.mariadb.jdbc</groupId>-->
+					<!--<artifactId>mariadb-java-client</artifactId>-->
+					<!--<version>1.5.4</version>-->
+				<!--</dependency>-->
 			</dependencies>
 		</profile>
 
