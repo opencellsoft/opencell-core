@@ -2450,4 +2450,85 @@
     	</update>
     </changeSet>
     
+    <changeSet  id="#3514_20181105" author="AmineBenAicha">
+		<createSequence sequenceName="crm_general_ledger_seq" />
+		<createSequence sequenceName="ar_other_transaction_seq" />
+		
+		<createTable tableName="crm_general_ledger">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_general_ledger_pkey" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_crm_general_ledger_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="crm_general_ledger" />
+        
+        <createTable tableName="ar_other_transaction">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_other_transaction_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="amount" type="numeric(23, 12)" />
+            <column name="due_date" type="date" />
+            <column name="matching_amount" type="numeric(23, 12)" />
+            <column name="matching_status" type="varchar(255)" />
+            <column name="occ_code" type="varchar(255)" />
+            <column name="occ_description" type="varchar(255)" />
+            <column name="reference" type="varchar(255)" />
+            <column name="transaction_category" type="varchar(255)" />
+            <column name="transaction_date" type="date" />
+            <column name="un_matching_amount" type="numeric(23, 12)" />
+            <column name="bank_lot" type="varchar(255)" />
+            <column name="bank_reference" type="varchar(255)" />
+            <column name="payment_method" type="varchar(255)" />
+            <column name="amount_without_tax" type="numeric(23, 12)" />
+            <column name="billing_account_name" type="varchar(255)" />
+            <column name="invoice_date" type="date" />
+            <column name="payment_info" type="varchar(255)" />
+            <column name="payment_info1" type="varchar(255)" />
+            <column name="payment_info2" type="varchar(255)" />
+            <column name="payment_info3" type="varchar(255)" />
+            <column name="payment_info4" type="varchar(255)" />
+            <column name="payment_info5" type="varchar(255)" />
+            <column name="payment_info6" type="varchar(255)" />
+            <column name="tax_amount" type="numeric(23, 12)" />
+            <column name="operation_date" type="datetime" />
+            <column name="bank_collection_date" type="datetime" />
+            <column name="deposit_date" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="uuid" type="varchar(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="order_num" type="varchar(500)" />
+            <column name="cf_values" type="${type.json}"/>
+            <column name="cf_values_accum" type="${type.json}"></column>
+			<column name="general_ledger_id" type="bigint" />
+            <column name="accounting_code_id" type="bigint"></column>
+            <column name="ddrequest_item_id" type="bigint"></column>
+        </createTable>
+    	<addForeignKeyConstraint constraintName="fk_ar_other_transaction_general_ledger" referencedTableName="crm_general_ledger" referencedColumnNames="id" baseTableName="ar_other_transaction" baseColumnNames="general_ledger_id" />
+    	<addForeignKeyConstraint constraintName="fk_ar_other_transaction_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_other_transaction" baseColumnNames="accounting_code_id" />
+    	<addForeignKeyConstraint baseColumnNames="ddrequest_item_id" baseTableName="ar_other_transaction" constraintName="fk_ar_other_transaction_ddreq_item" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_ddrequest_item" />
+		
+		<addColumn tableName="crm_seller">
+            <column name="general_ledger_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_crm_seller_general_ledger" referencedTableName="crm_general_ledger" referencedColumnNames="id" baseTableName="crm_seller" baseColumnNames="general_ledger_id" />
+    </changeSet>
+    
 </databaseChangeLog> 
