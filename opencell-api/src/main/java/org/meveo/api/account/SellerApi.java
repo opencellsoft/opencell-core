@@ -49,7 +49,8 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.2
+ * @auther Khalid HORRI
+ * @lastModifiedVersion 5.3
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -109,19 +110,19 @@ public class SellerApi extends BaseApi {
             throw new EntityAlreadyExistsException(Seller.class, postData.getCode());
         }
 
+
         Seller seller = new Seller();
-        seller.setCode(postData.getCode());
-        seller.setDescription(postData.getDescription());
+        seller = this.sellerDtoToSeller(seller, postData);
         if (postData.getInvoiceTypeSequences() != null) {
             for (Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet()) {
                 InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey());
                 if (invoiceType == null) {
                     throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
                 }
-
+                
                 if (StringUtils.isBlank(entry.getValue().getInvoiceSequenceCode())) {
-                    // v5.2 : code for API backward compatibility call, invoice sequence code must be mandatory in future versions
-                    InvoiceSequence invoiceSequenceInvoiceTypeSeller = entry.getValue().fromDto();
+                	// v5.2 : code for API backward compatibility call, invoice sequence code must be mandatory in future versions
+                	InvoiceSequence invoiceSequenceInvoiceTypeSeller = entry.getValue().fromDto();
                     invoiceSequenceInvoiceTypeSeller.setCode(invoiceType.getCode() + "_" + seller.getCode());
                     invoiceSequenceService.create(invoiceSequenceInvoiceTypeSeller);
                     seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, invoiceSequenceInvoiceTypeSeller, entry.getValue().getPrefixEL()));
@@ -201,6 +202,33 @@ public class SellerApi extends BaseApi {
         return seller;
     }
 
+
+    /**
+     *  Map the data from SellerDto to Seller
+     * @param seller
+     * @param postData
+     * @return the seller with new data
+     */
+    private Seller sellerDtoToSeller(Seller seller, SellerDto postData) {
+
+        seller.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+        seller.setDescription(postData.getDescription());
+        if (!StringUtils.isBlank(postData.getVatNo())) {
+            seller.setVatNo(postData.getVatNo());
+        }
+        if (!StringUtils.isBlank(postData.getRegistrationNo())) {
+            seller.setRegistrationNo(postData.getRegistrationNo());
+        }
+        if (!StringUtils.isBlank(postData.getLegalText())) {
+            seller.setLegalText(postData.getLegalText());
+        }
+        if (!StringUtils.isBlank(postData.getLegalType())) {
+            seller.setLegalType(postData.getLegalType());
+        }
+        return seller;
+
+    }
+
     /**
      * ContactInformationDto to ContactInformation
      * 
@@ -275,8 +303,7 @@ public class SellerApi extends BaseApi {
         if (seller == null) {
             throw new EntityDoesNotExistsException(Seller.class, postData.getCode());
         }
-        seller.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        seller.setDescription(postData.getDescription());
+        seller = this.sellerDtoToSeller(seller, postData);
         if (postData.getInvoiceTypeSequences() != null) {
             for (Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet()) {
                 InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey());
@@ -382,7 +409,7 @@ public class SellerApi extends BaseApi {
 
     /**
      * Retrieve seller information by its code
-     * 
+     *
      * @param sellerCode Seller's code
      * @return Seller information
      * @throws MeveoApiException
@@ -394,7 +421,7 @@ public class SellerApi extends BaseApi {
 
     /**
      * Retrieve seller information by its code
-     * 
+     *
      * @param sellerCode Seller's code
      * @param inheritCF Should inherited custom field values be retrieved
      * @return Seller information
