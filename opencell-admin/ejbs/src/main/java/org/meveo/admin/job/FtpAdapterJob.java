@@ -34,32 +34,34 @@ public class FtpAdapterJob extends Job {
     @Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        String distDirectory = null;
+        String localDirectory = null;
         String remoteServer = null;
         int remotePort = 21;
-        String removeDistantFile = null;
-        String ftpInputDirectory = null;
+        String removeOriginalFile = null;
+        String remoteDirectory = null;
         String ftpExtension = null;
         String ftpUsername = null;
         String ftpPassword = null;
         String ftpProtocol = null;
+        String operation = null;
 
         try {
-            distDirectory = paramBeanFactory.getChrootDir() + ((String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_distDirectory")).replaceAll("\\..", "");
+            localDirectory = paramBeanFactory.getChrootDir() + ((String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_localDirectory")).replaceAll("\\..", "");
             remoteServer = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_remoteServer");
             remotePort = ((Long) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_remotePort")).intValue();
-            removeDistantFile = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_removeDistantFile");
-            ftpInputDirectory = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_ftpInputDirectory");
+            removeOriginalFile = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_removeOriginalFile");
+            remoteDirectory = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_remoteDirectory");
             ftpExtension = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_ftpFileExtension");
             ftpUsername = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_ftpUsername");
             ftpPassword = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_ftpPassword");
             ftpProtocol = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_ftpProtocol");
+            operation = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_operation");
 
         } catch (Exception e) {
             log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e);
         }
-        ftpAdapterJobBean.execute(result, jobInstance, distDirectory, remoteServer, remotePort, "true".equalsIgnoreCase(removeDistantFile), ftpInputDirectory, ftpExtension,
-            ftpUsername, ftpPassword, ftpProtocol);
+        ftpAdapterJobBean.execute(result, jobInstance, localDirectory, remoteServer, remotePort, "true".equalsIgnoreCase(removeOriginalFile), remoteDirectory, ftpExtension,
+            ftpUsername, ftpPassword, ftpProtocol, operation);
     }
 
     @Override
@@ -71,15 +73,15 @@ public class FtpAdapterJob extends Job {
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
-        CustomFieldTemplate distDirectory = new CustomFieldTemplate();
-        distDirectory.setCode("FtpAdapterJob_distDirectory");
-        distDirectory.setAppliesTo("JOB_FtpAdapterJob");
-        distDirectory.setActive(true);
-        distDirectory.setDescription(resourceMessages.getString("FtpAdapter.distDirectory"));
-        distDirectory.setFieldType(CustomFieldTypeEnum.STRING);
-        distDirectory.setValueRequired(true);
-        distDirectory.setMaxValue(150L);
-        result.put("FtpAdapterJob_distDirectory", distDirectory);
+        CustomFieldTemplate localDirectory = new CustomFieldTemplate();
+        localDirectory.setCode("FtpAdapterJob_localDirectory");
+        localDirectory.setAppliesTo("JOB_FtpAdapterJob");
+        localDirectory.setActive(true);
+        localDirectory.setDescription(resourceMessages.getString("FtpAdapter.localDirectory"));
+        localDirectory.setFieldType(CustomFieldTypeEnum.STRING);
+        localDirectory.setValueRequired(true);
+        localDirectory.setMaxValue(150L);
+        result.put("FtpAdapterJob_localDirectory", localDirectory);
 
         CustomFieldTemplate remoteServer = new CustomFieldTemplate();
         remoteServer.setCode("FtpAdapterJob_remoteServer");
@@ -100,28 +102,28 @@ public class FtpAdapterJob extends Job {
         remotePort.setValueRequired(true);
         result.put("FtpAdapterJob_remotePort", remotePort);
 
-        CustomFieldTemplate removeDistantFile = new CustomFieldTemplate();
-        removeDistantFile.setCode("FtpAdapterJob_removeDistantFile");
-        removeDistantFile.setAppliesTo("JOB_FtpAdapterJob");
-        removeDistantFile.setActive(true);
-        removeDistantFile.setDescription(resourceMessages.getString("FtpAdapter.removeDistantFile"));
-        removeDistantFile.setFieldType(CustomFieldTypeEnum.LIST);
-        Map<String, String> removeDistantFileListValues = new HashMap<String, String>();
-        removeDistantFileListValues.put("TRUE", "True");
-        removeDistantFileListValues.put("FALSE", "False");
-        removeDistantFile.setListValues(removeDistantFileListValues);
-        removeDistantFile.setValueRequired(true);
-        result.put("FtpAdapterJob_removeDistantFile", removeDistantFile);
+        CustomFieldTemplate removeOriginalFile = new CustomFieldTemplate();
+        removeOriginalFile.setCode("FtpAdapterJob_removeOriginalFile");
+        removeOriginalFile.setAppliesTo("JOB_FtpAdapterJob");
+        removeOriginalFile.setActive(true);
+        removeOriginalFile.setDescription(resourceMessages.getString("FtpAdapter.removeOriginalFile"));
+        removeOriginalFile.setFieldType(CustomFieldTypeEnum.LIST);
+        Map<String, String> removeOriginalFileListValues = new HashMap<String, String>();
+        removeOriginalFileListValues.put("TRUE", "True");
+        removeOriginalFileListValues.put("FALSE", "False");
+        removeOriginalFile.setListValues(removeOriginalFileListValues);
+        removeOriginalFile.setValueRequired(true);
+        result.put("FtpAdapterJob_removeOriginalFile", removeOriginalFile);
 
-        CustomFieldTemplate ftpInputDirectory = new CustomFieldTemplate();
-        ftpInputDirectory.setCode("FtpAdapterJob_ftpInputDirectory");
-        ftpInputDirectory.setAppliesTo("JOB_FtpAdapterJob");
-        ftpInputDirectory.setActive(true);
-        ftpInputDirectory.setDescription(resourceMessages.getString("FtpAdapter.ftpInputDirectory"));
-        ftpInputDirectory.setFieldType(CustomFieldTypeEnum.STRING);
-        ftpInputDirectory.setValueRequired(true);
-        ftpInputDirectory.setMaxValue(100L);
-        result.put("FtpAdapterJob_ftpInputDirectory", ftpInputDirectory);
+        CustomFieldTemplate remoteDirectory = new CustomFieldTemplate();
+        remoteDirectory.setCode("FtpAdapterJob_remoteDirectory");
+        remoteDirectory.setAppliesTo("JOB_FtpAdapterJob");
+        remoteDirectory.setActive(true);
+        remoteDirectory.setDescription(resourceMessages.getString("FtpAdapter.remoteDirectory"));
+        remoteDirectory.setFieldType(CustomFieldTypeEnum.STRING);
+        remoteDirectory.setValueRequired(true);
+        remoteDirectory.setMaxValue(100L);
+        result.put("FtpAdapterJob_remoteDirectory", remoteDirectory);
 
         CustomFieldTemplate ftpUsername = new CustomFieldTemplate();
         ftpUsername.setCode("FtpAdapterJob_ftpUsername");
@@ -165,6 +167,19 @@ public class FtpAdapterJob extends Job {
         ftpProtocol.setListValues(ftpProtocolListValues);
         ftpProtocol.setValueRequired(true);
         result.put("FtpAdapterJob_ftpProtocol", ftpProtocol);
+
+        CustomFieldTemplate operation = new CustomFieldTemplate();
+        operation.setCode("FtpAdapterJob_operation");
+        operation.setAppliesTo("JOB_FtpAdapterJob");
+        operation.setActive(true);
+        operation.setDescription(resourceMessages.getString("FtpAdapter.operation"));
+        operation.setFieldType(CustomFieldTypeEnum.LIST);
+        Map<String, String> operationlListValues = new HashMap<String, String>();
+        operationlListValues.put("IMPORT", "IMPORT");
+        operationlListValues.put("EXPORT", "EXPORT");
+        operation.setListValues(operationlListValues);
+        operation.setValueRequired(true);
+        result.put("FtpAdapterJob_operation", operation);
 
         return result;
     }

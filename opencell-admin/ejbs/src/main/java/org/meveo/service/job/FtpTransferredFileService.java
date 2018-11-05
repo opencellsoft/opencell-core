@@ -20,10 +20,10 @@ package org.meveo.service.job;
 
 import javax.ejb.Stateless;
 
-import org.meveo.model.jobs.FtpImportedFile;
+import org.meveo.model.jobs.FtpTransferredFile;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
-public class FtpImportedFileService extends BusinessService<FtpImportedFile> {
+public class FtpTransferredFileService extends BusinessService<FtpTransferredFile> {
 
 }

@@ -27,7 +27,7 @@
 			label="#{messages['menu.importedFiles']}" edit="false" showEditButton="false"
 			backingBean="#{ftpImportedFileBean}">
 			<hftl:formField label="#{messages['importedFile.dateImport']}"
-				field="importDate" isDate="true" edit="false"/>
+				field="transferDate" isDate="true" edit="false"/>
 			<hftl:formField label="#{messages['importedFile.code']}" field="code" edit="false" />
 			<hftl:formField label="#{messages['importedFile.description']}" field="description" edit="false" />
 			<hftl:formField label="#{messages['importedFile.uri']}" field="uri"
@@ -36,6 +36,7 @@
 				newLine="true" edit="false"/>
 			<hftl:formField label="#{messages['importedFile.lastModified']}"
 				field="lastModification" isDate="true" edit="false"/>
+			<hftl:formField label="#{messages['importedFile.operation']}" field="operation" edit="false" />
 		</hftl:formPanel>
 	</ui:define>
 
