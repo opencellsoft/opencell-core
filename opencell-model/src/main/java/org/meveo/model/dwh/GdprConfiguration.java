@@ -34,13 +34,6 @@ public class GdprConfiguration extends BaseEntity implements Serializable, IEnti
     private static final long serialVersionUID = -207809406272424682L;
 
     /**
-     * Provider/tenant that configuration is associated with
-     */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
-    private Provider provider;
-
-    /**
      * Lifetime of inactive subscription
      */
     @Column(name = "inactive_subscription_life", columnDefinition = "int default 5")
@@ -185,14 +178,6 @@ public class GdprConfiguration extends BaseEntity implements Serializable, IEnti
 
     public void setAoCheckUnpaidLife(int aoCheckUnpaidLife) {
         this.aoCheckUnpaidLife = aoCheckUnpaidLife;
-    }
-
-    public Provider getProvider() {
-        return provider;
-    }
-
-    public void setProvider(Provider provider) {
-        this.provider = provider;
     }
 
     public boolean isDeleteSubscription() {

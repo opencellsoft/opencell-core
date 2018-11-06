@@ -487,7 +487,6 @@ public class ProviderApi extends BaseApi {
         if (invoiceConfigurationDto != null) {
             if (provider.getInvoiceConfiguration() == null) {
                 InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
-                invoiceConfiguration.setProvider(provider);
                 provider.setInvoiceConfiguration(invoiceConfiguration);
             }
             InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration();
@@ -520,7 +519,6 @@ public class ProviderApi extends BaseApi {
             }
             if (provider.getInvoiceConfiguration() == null || provider.getInvoiceConfiguration().isTransient()) {
                 provider.setInvoiceConfiguration(invoiceConfiguration);
-                provider.getInvoiceConfiguration().setProvider(provider);
             }
             if (invoiceConfigurationDto.getDisplayFreeTransacInInvoice() != null) {
                 provider.setDisplayFreeTransacInInvoice(invoiceConfigurationDto.getDisplayFreeTransacInInvoice());

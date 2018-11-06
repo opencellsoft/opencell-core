@@ -40,6 +40,7 @@ import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
+import org.meveo.cache.TenantCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -69,6 +70,9 @@ public class CacheBean implements Serializable {
 
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
+
+    @Inject
+    private TenantCacheContainerProvider tenantCacheContainerProvider;
 
     /** Logger. */
     @Inject
@@ -131,6 +135,7 @@ public class CacheBean implements Serializable {
             caches.putAll(notificationCacheContainerProvider.getCaches());
             caches.putAll(customFieldsCacheContainerProvider.getCaches());
             caches.putAll(jobCacheContainerProvider.getCaches());
+            caches.putAll(tenantCacheContainerProvider.getCaches());
 
             selectedCache = caches.get(cacheName);
         }
@@ -150,6 +155,7 @@ public class CacheBean implements Serializable {
         caches.putAll(notificationCacheContainerProvider.getCaches());
         caches.putAll(customFieldsCacheContainerProvider.getCaches());
         caches.putAll(jobCacheContainerProvider.getCaches());
+        caches.putAll(tenantCacheContainerProvider.getCaches());
         caches = new TreeMap<String, Cache>(caches);
 
         for (Entry<String, Cache> cache : caches.entrySet()) {

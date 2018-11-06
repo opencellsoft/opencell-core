@@ -1276,7 +1276,7 @@
         </createTable>
          <sql>insert into  ${db.schema.adapted}temp_to_delete (max_id) values((select max(current_invoice_nb) from ${db.schema.adapted}billing_invoice_type)); </sql>
          <sql>insert into  ${db.schema.adapted}temp_to_delete (max_id) values((select max(current_invoice_nb) from ${db.schema.adapted}billing_seq_invtyp_sell)); </sql>
-         <sql>update ${db.schema.adapted}billing_invoice_configuration set current_invoice_nb = (select max(max_id) from temp_to_delete);</sql>
+         <sql>update ${db.schema.adapted}billing_invoice_configuration set current_invoice_nb = (select max(max_id) from ${db.schema.adapted}temp_to_delete);</sql>
          <dropTable tableName="temp_to_delete"/>
     </changeSet>    
 
@@ -1570,7 +1570,7 @@
      		<column name="uuid" type="varchar(60)"></column>
      		<column name="cf_values" type="${type.json}"/>   
      	</addColumn>
-     	<sql><![CDATA[update billing_invoice_type set uuid=concat('InvoiceType-',code)]]></sql>
+     	<sql><![CDATA[update ${db.schema.adapted}billing_invoice_type set uuid=concat('InvoiceType-',code)]]></sql>
      	<addNotNullConstraint tableName="billing_invoice_type" columnName="uuid" columnDataType="varchar(60)"/>
      </changeSet>
      
@@ -2440,5 +2440,41 @@
     		<column name="discount_plan_id"></column>
     	</update>
     </changeSet>
+
+    <changeSet id="#3765_20181106" author="AndriusKarpavicius">
+        <addColumn tableName="crm_provider">
+            <column name="invoice_config_id" type="bigint" />
+            <column name="gdpr_config_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_provider_invoice_config" referencedTableName="billing_invoice_configuration" baseColumnNames="invoice_config_id" baseTableName="crm_provider" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_provider_gdpr_config" referencedTableName="adm_gdpr_configuration" baseColumnNames="gdpr_config_id" baseTableName="crm_provider" referencedColumnNames="id"/>       
+    </changeSet>
+
+    <changeSet id="#3765_20181106-migration-P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}crm_provider set invoice_config_id = billing_invoice_configuration.id from ${db.schema.adapted}billing_invoice_configuration where
+            crm_provider.id=billing_invoice_configuration.provider_id
+        </sql>
+        <sql>update ${db.schema.adapted}crm_provider set gdpr_config_id = adm_gdpr_configuration.id from ${db.schema.adapted}adm_gdpr_configuration where
+            crm_provider.id=adm_gdpr_configuration.provider_id
+        </sql>
+    </changeSet>
+
+    <changeSet id="#3765_20181106-migration-M" author="AndriusKarpavicius" dbms="mysql">
+        <sql>update ${db.schema.adapted}crm_provider join ${db.schema.adapted}billing_invoice_configuration on crm_provider.id=billing_invoice_configuration.provider_id set crm_provider.invoice_config_id =
+            billing_invoice_configuration.id
+        </sql>
+        <sql>update ${db.schema.adapted}crm_provider join ${db.schema.adapted}adm_gdpr_configuration on crm_provider.id=adm_gdpr_configuration.provider_id set crm_provider.gdpr_config_id =
+            adm_gdpr_configuration.id
+        </sql>
+        <dropForeignKeyConstraint baseTableName="billing_invoice_configuration" constraintName="provider_invoice_configuration_fk"/>
+        <dropIndex tableName="billing_invoice_configuration" indexName="provider_invoice_configuration_fk"/>
+        <dropUniqueConstraint tableName="billing_invoice_configuration" constraintName="uk_billing_invoice_configuration"/>
+        <dropForeignKeyConstraint baseTableName="adm_gdpr_configuration" constraintName="fk_crm_provider_adm_gdpr_conf"/>
+        <dropIndex tableName="adm_gdpr_configuration" indexName="fk_crm_provider_adm_gdpr_conf"/>
+    </changeSet>
     
+    <changeSet id="#3765_20181106-end" author="AndriusKarpavicius">
+        <dropColumn tableName="billing_invoice_configuration" columnName="provider_id"/>
+        <dropColumn tableName="adm_gdpr_configuration" columnName="provider_id"/>
+    </changeSet>    
 </databaseChangeLog> 

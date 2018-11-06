@@ -17,6 +17,7 @@ import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
+import org.meveo.cache.TenantCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.crm.Provider;
@@ -76,6 +77,9 @@ public class ApplicationInitializer {
 
     @Inject
     private JobCacheContainerProvider jobCache;
+
+    @Inject
+    private TenantCacheContainerProvider tenantCache;
 
     @Inject
     private ElasticClient elasticClient;
@@ -140,6 +144,7 @@ public class ApplicationInitializer {
         notifCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         cftCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         jobCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+        tenantCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
 
         if (createESIndex) {
             elasticClient.cleanAndReindex(MeveoUser.instantiate("applicationInitializer", isMainProvider ? null : provider.getCode()));
