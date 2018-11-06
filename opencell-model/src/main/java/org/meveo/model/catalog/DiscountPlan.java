@@ -1,5 +1,6 @@
 package org.meveo.model.catalog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Cacheable;
@@ -19,7 +20,7 @@ import org.meveo.model.ObservableEntity;
 
 /**
  * Discount plan
- * 
+ * @author Edward P. Legaspi
  * @author Andrius Karpavicius
  */
 @Entity
@@ -49,9 +50,9 @@ public class DiscountPlan extends EnableBusinessEntity {
 
     // @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     /**
-     * Discount plan items
+     * Discount plan items. Must not be eager to reload in GUI.
      */
-    @OneToMany(mappedBy = "discountPlan", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "discountPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DiscountPlanItem> discountPlanItems;
 
     public int getMinDuration() {
@@ -77,6 +78,14 @@ public class DiscountPlan extends EnableBusinessEntity {
     public void setDiscountPlanItems(List<DiscountPlanItem> discountPlanItems) {
         this.discountPlanItems = discountPlanItems;
     }
+    
+	public void addDiscountPlanItem(DiscountPlanItem di) {
+		if (discountPlanItems == null) {
+			discountPlanItems = new ArrayList<>();
+		}
+
+		discountPlanItems.add(di);
+	}
 
     @Override
     public String toString() {

@@ -21,6 +21,7 @@ package org.meveo.admin.action.billing;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.faces.event.ValueChangeEvent;
@@ -39,6 +40,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
@@ -48,7 +50,9 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.primefaces.model.DualListModel;
 
 /**
  * Standard backing bean for {@link BillingAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -78,6 +82,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     @Inject
     private CustomerAccountService customerAccountService;
+    
+    @Inject
+    private DiscountPlanService discountPlanService;
 
     /** Selected billing account in exceptionelInvoicing page. */
     private ListItemsSelector<BillingAccount> itemSelector;
@@ -87,6 +94,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     private Date exceptionalLastTransactionDate = new Date();
 
     private CounterInstance selectedCounterInstance;
+    
+    private DualListModel<DiscountPlan> discountPlanDM;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -118,6 +127,21 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         if (entity.getContactInformation() == null) {
             entity.setContactInformation(new ContactInformation());
         }
+        
+        if (entity.getDiscountPlans() == null) {
+			entity.setDiscountPlans(new HashSet<>());
+		}
+
+		if (discountPlanDM == null) {
+			List<DiscountPlan> sourceDS = null;
+			sourceDS = discountPlanService.list();
+			List<DiscountPlan> targetDS = new ArrayList<>();
+			if (entity.getDiscountPlans() != null) {
+				targetDS.addAll(entity.getDiscountPlans());
+			}
+			sourceDS.removeAll(targetDS);
+			discountPlanDM = new DualListModel<>(sourceDS, targetDS);
+		}
 
         return entity;
     }
@@ -141,6 +165,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             if (entity.isTransient()) {
                 billingAccountService.initBillingAccount(entity);
             }
+
+			entity.setDiscountPlans(new HashSet<>(discountPlanService.refreshOrRetrieve(discountPlanDM.getTarget())));
 
             String outcome = super.saveOrUpdate(killConversation);
 
@@ -380,4 +406,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     public void setExceptionalLastTransactionDate(Date exceptionalLastTransactionDate) {
         this.exceptionalLastTransactionDate = exceptionalLastTransactionDate;
     }
+
+	public DualListModel<DiscountPlan> getDiscountPlanDM() {
+		return discountPlanDM;
+	}
+
+	public void setDiscountPlanDM(DualListModel<DiscountPlan> discountPlanDM) {
+		this.discountPlanDM = discountPlanDM;
+	}
 }

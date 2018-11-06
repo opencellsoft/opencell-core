@@ -186,15 +186,22 @@ public class BillingAccountApi extends AccountEntityApi {
         billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
         billingAccount.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
 
-        if (!StringUtils.isBlank(postData.getDiscountPlan())) {
-            DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
-            if (discountPlan == null) {
-                throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getDiscountPlan());
-            }
-            billingAccount.setDiscountPlan(discountPlan);
-        } else {
-            billingAccount.setDiscountPlan(null);
-        }
+		if (!StringUtils.isBlank(postData.getDiscountPlan())) {
+			postData.addDiscountPlan(postData.getDiscountPlan());
+		} else {
+			billingAccount.setDiscountPlan(null);
+		}
+        
+		if (postData.getDiscountPlans() != null && !postData.getDiscountPlans().isEmpty()) {
+			for (String discountPlanCode : postData.getDiscountPlans()) {
+				DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode);
+				if(discountPlan == null) {
+					throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanCode);
+				}
+				billingAccount.addDiscountPlanNullSafe(discountPlan);
+			}
+		}
+        
         if (postData.getElectronicBilling() == null) {
             billingAccount.setElectronicBilling(false);
         } else {
@@ -345,17 +352,21 @@ public class BillingAccountApi extends AccountEntityApi {
         if (postData.getMinimumLabelElSpark() != null) {
             billingAccount.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
-        if (postData.getDiscountPlan() != null) {
-            if (StringUtils.isBlank(postData.getDiscountPlan())) {
-                billingAccount.setDiscountPlan(null);
-            } else {
-                DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
-                if (discountPlan == null) {
-                    throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getDiscountPlan());
-                }
-                billingAccount.setDiscountPlan(discountPlan);
-            }
+        if (!StringUtils.isBlank(postData.getDiscountPlan())) {
+			postData.addDiscountPlan(postData.getDiscountPlan());
+        } else if (postData.getDiscountPlan() != null) {
+            billingAccount.setDiscountPlan(null);
         }
+        
+		if (postData.getDiscountPlans() != null && !postData.getDiscountPlans().isEmpty()) {
+			for (String discountPlanCode : postData.getDiscountPlans()) {
+				DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode);
+				if(discountPlan == null) {
+					throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanCode);
+				}
+				billingAccount.addDiscountPlanNullSafe(discountPlan);
+			}
+		}
 
         if (businessAccountModel != null) {
             billingAccount.setBusinessAccountModel(businessAccountModel);
