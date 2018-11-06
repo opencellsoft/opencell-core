@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.model.admin;
+package org.meveo.model.billing;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +32,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.OtherTransaction;
 
 /**
@@ -41,9 +42,9 @@ import org.meveo.model.payments.OtherTransaction;
  * @lastModifiedVersion 5.3
  */
 @Entity
-@Table(name = "crm_general_ledger", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@Table(name = "billing_general_ledger", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "crm_general_ledger_seq"), })
+        @Parameter(name = "sequence_name", value = "billing_general_ledger_seq"), })
 public class GeneralLedger extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;

@@ -45,8 +45,8 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.admin.GeneralLedger;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.GeneralLedger;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**

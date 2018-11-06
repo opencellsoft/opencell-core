@@ -43,6 +43,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.GeneralLedger;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.TradingCountry;
