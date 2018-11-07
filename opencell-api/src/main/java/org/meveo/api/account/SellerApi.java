@@ -49,7 +49,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @auther Khalid HORRI
+ * @author Khalid HORRI
  * @lastModifiedVersion 5.3
  **/
 @Stateless
