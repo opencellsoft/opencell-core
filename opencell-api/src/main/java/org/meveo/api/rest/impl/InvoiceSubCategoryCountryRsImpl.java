@@ -14,6 +14,8 @@ import org.meveo.api.rest.InvoiceSubCategoryCountryRs;
 
 /**
  * @author Edward P. Legaspi
+ * @author Khalid HORRI
+ * @lastModifiedVersion 5.2
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -67,6 +69,19 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
 
         try {
             invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, sellersCountryCode, buyersCountryCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus remove(String invoiceSubCategoryCode, String buyersCountryCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, null, buyersCountryCode);
         } catch (Exception e) {
             processException(e, result);
         }
