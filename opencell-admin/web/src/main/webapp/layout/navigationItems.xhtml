@@ -230,7 +230,7 @@
 		rendered="#{currentUser.hasRole('billingVisualization') or currentUser.hasRole('billingManagement')}">
 		<p:menuitem id="edr" outcome="edr" value="#{messages['menu.edr']}" />
 		<p:menuitem id="importedFiles" outcome="importedFiles"
-			value="#{messages['menu.importedFiles']}"
+			value="#{messages['menu.transferredFiles']}"
 			rendered="#{currentUser.hasRole('billingManagement')}" />
 	</p:submenu>
 	
