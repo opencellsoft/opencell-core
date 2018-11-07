@@ -2463,7 +2463,7 @@
         <update tableName="meveo_job_instance">
             <column name="cf_values" valueComputed="replace(cf_values, '}]}', '}],&quot;FtpAdapterJob_operation&quot;:[{&quot;string&quot;:&quot;IMPORT&quot;}]}')" />
         </update>
-        <renameColumn tableName="ftp_imported_file" oldColumnName="import_date" newColumnName="transfer_date" />
+        <renameColumn tableName="ftp_imported_file" oldColumnName="import_date" newColumnName="transfer_date" columnDataType="timestamp"/>
         <addColumn tableName="ftp_imported_file">
             <column name="operation" type="varchar(100)" value="IMPORT" defaultValue="IMPORT" />
         </addColumn>
