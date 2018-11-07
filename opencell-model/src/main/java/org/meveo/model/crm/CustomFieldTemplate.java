@@ -663,7 +663,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      * @return Date period matching calendar's dates
      */
     public DatePeriod getDatePeriod(Date date) {
-        if (isVersionable() && getCalendar() != null) {
+		if (isVersionable() && getCalendar() != null && date != null) {
             return new DatePeriod(getCalendar().previousCalendarDate(date), getCalendar().nextCalendarDate(date));
         }
         return null;
