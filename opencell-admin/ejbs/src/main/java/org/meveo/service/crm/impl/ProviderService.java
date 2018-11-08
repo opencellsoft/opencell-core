@@ -21,6 +21,7 @@ package org.meveo.service.crm.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -34,7 +35,9 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.cache.TenantCacheContainerProvider;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.crm.Provider;
@@ -56,6 +59,12 @@ import org.meveo.service.billing.impl.ServiceSingleton;
 public class ProviderService extends PersistenceService<Provider> {
 
     /**
+     * A hardcoded ID of a current provider/tenant. Each provider/tenant has its's own schema and all should have same ID for fast retrieval instead of ordering and taking a first
+     * record
+     */
+    private static long CURRENT_PROVIDER_ID = 1L;
+
+    /**
      * The tenant registry to add or remove a new tenant.
      */
     @EJB
@@ -66,30 +75,45 @@ public class ProviderService extends PersistenceService<Provider> {
      */
     @Inject
     private HttpServletRequest request;
-    
+
     @Inject
     private ServiceSingleton serviceSingleton;
 
+    @Inject
+    private TenantCacheContainerProvider tenantCacheContainerProvider;
+
+    static boolean useTenantCache = true;
+
+    @PostConstruct
+    private void init() {
+        useTenantCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cacheTenant", "true"));
+    }
+
     /**
-     * @return provider
+     * Get current provider retrieved from Cache or database. Populates cache if not found in cache.
+     * 
+     * @return Current provider retrieved from Cache or database
      */
     public Provider getProvider() {
+        Provider provider = null;
+        if (useTenantCache) {
+            provider = tenantCacheContainerProvider.getTenant();
+        }
+        if (provider == null) {
+            provider = getProviderNoCache();
+            tenantCacheContainerProvider.addUpdateTenant(provider);
+        }
+        return provider;
+    }
 
-        Provider provider = getEntityManager().createNamedQuery("Provider.first", Provider.class).getResultList().get(0);
+    /**
+     * Get current provider retrieved from Database. Does not use cache.
+     * 
+     * @return Current provider retrieved from Database
+     */
+    public Provider getProviderNoCache() {
 
-        if (provider.getCurrency() != null) {
-            provider.getCurrency().getCurrencyCode();
-        }
-        if (provider.getCountry() != null) {
-            provider.getCountry().getCountryCode();
-        }
-        if (provider.getLanguage() != null) {
-            provider.getLanguage().getLanguageCode();
-        }
-        if (provider.getInvoiceConfiguration() != null) {
-            provider.getInvoiceConfiguration().getDisplayBillingCycle();
-        }
-        provider.getPaymentMethods().size();
+        Provider provider = getEntityManager().find(Provider.class, CURRENT_PROVIDER_ID);
         return provider;
     }
 
@@ -108,9 +132,11 @@ public class ProviderService extends PersistenceService<Provider> {
 
     @Override
     public Provider update(Provider provider) throws BusinessException {
-        // Refresh appProvider application scope variable
-        refreshAppProvider(provider);
-        
+        // Refresh appProvider application scope variable if applicable
+        if (appProvider.getId().equals(provider.getId())) {
+            refreshAppProvider(provider);
+        }
+
         provider = super.update(provider);
 
         // clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
@@ -124,7 +150,7 @@ public class ProviderService extends PersistenceService<Provider> {
      * @throws BusinessException Business exception
      */
     public void updateProviderCode(String newCode) throws BusinessException {
-        Provider provider = getProvider();
+        Provider provider = getProviderNoCache();
         provider.setCode(newCode);
         updateNoCheck(provider);
     }
@@ -148,6 +174,8 @@ public class ProviderService extends PersistenceService<Provider> {
         appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         appProvider.setPaymentMethods(provider.getPaymentMethods());
         appProvider.setCfValues(provider.getCfValues());
+
+        tenantCacheContainerProvider.addUpdateTenant(provider);
     }
 
     /**
@@ -208,21 +236,21 @@ public class ProviderService extends PersistenceService<Provider> {
         }
     }
 
-    public GenericSequence getNextMandateNumber() throws BusinessException {		
-		GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.RUM);
-		Provider provider = findById(appProvider.getId());
-		provider.setRumSequence(genericSequence);
-		update(provider);
-		
-		return genericSequence;
-	}
-    
-    public GenericSequence getNextCustomerNumber() throws BusinessException {		
-		GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.CUSTOMER_NO);
-		Provider provider = findById(appProvider.getId());
-		provider.setCustomerNoSequence(genericSequence);
-		update(provider);
-		
-		return genericSequence;
-	}
+    public GenericSequence getNextMandateNumber() throws BusinessException {
+        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.RUM);
+        Provider provider = findById(appProvider.getId());
+        provider.setRumSequence(genericSequence);
+        update(provider);
+
+        return genericSequence;
+    }
+
+    public GenericSequence getNextCustomerNumber() throws BusinessException {
+        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.CUSTOMER_NO);
+        Provider provider = findById(appProvider.getId());
+        provider.setCustomerNoSequence(genericSequence);
+        update(provider);
+
+        return genericSequence;
+    }
 }

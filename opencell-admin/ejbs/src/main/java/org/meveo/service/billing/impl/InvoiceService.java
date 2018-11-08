@@ -819,6 +819,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             ScriptInterface script = scriptInstanceService.getCachedScriptInstance(scriptInstanceCode);
             HashMap<String, Object> context = new HashMap<String, Object>();
             context.put(Script.CONTEXT_ENTITY, entity);
+            context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+            context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
             context.put("br", billingRun);
             context.put("invoiceType", invoiceType);
             context.put("ratedTransactions", ratedTransactions);

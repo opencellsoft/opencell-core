@@ -8,7 +8,6 @@ import javax.inject.Named;
 
 import org.meveo.model.crm.Provider;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.PersistenceUtils;
 
 @Stateless
 public class CurrentProviderProducer {
@@ -43,9 +42,9 @@ public class CurrentProviderProducer {
         // }
         Provider provider = providerService.getProvider();
 
-        provider = PersistenceUtils.initializeAndUnproxy(provider);
-
-        providerService.detach(provider);
+        // provider = PersistenceUtils.initializeAndUnproxy(provider);
+        //
+        // providerService.detach(provider);
 
         return provider;
     }

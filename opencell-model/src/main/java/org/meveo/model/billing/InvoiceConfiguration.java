@@ -2,13 +2,10 @@ package org.meveo.model.billing;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -16,7 +13,6 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
-import org.meveo.model.crm.Provider;
 
 /**
  * Invoicing configuration
@@ -25,7 +21,8 @@ import org.meveo.model.crm.Provider;
  **/
 @Entity
 @ExportIdentifier({ "provider" })
-@Table(name = "billing_invoice_configuration", uniqueConstraints = @UniqueConstraint(columnNames = { "provider_id" }))
+@Cacheable
+@Table(name = "billing_invoice_configuration")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_configuration_seq"), })
 public class InvoiceConfiguration extends BaseEntity implements Serializable, IEntity {
@@ -108,13 +105,6 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     @Type(type = "numeric_boolean")
     @Column(name = "display_orders")
     private Boolean displayOrders = false;
-
-    /**
-     * Provider/tenant that invoice configuration is associated with
-     */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
-    private Provider provider;
 
     /**
      * Next to be assigned invoice number
@@ -208,14 +198,6 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
                 + "displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", " + "displayDetail=" + displayDetail
                 + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders="
                 + displayOrders + "]";
-    }
-
-    public Provider getProvider() {
-        return provider;
-    }
-
-    public void setProvider(Provider provider) {
-        this.provider = provider;
     }
 
     /**

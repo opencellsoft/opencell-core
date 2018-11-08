@@ -13,12 +13,15 @@ import javax.inject.Inject;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
+import org.meveo.util.ApplicationProvider;
 
 /**
  * @author anasseh
@@ -32,6 +35,14 @@ public class ScriptingAsync {
 
     @Inject
     private CurrentUserProvider currentUserProvider;
+    
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+    
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
     /**
      * Run a script
@@ -51,6 +62,8 @@ public class ScriptingAsync {
         ScriptInterface script = null;
         try {
             script = scriptInstanceService.getScriptInstance(scriptCode);
+            context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+            context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
             script.execute(context);
             if (context.containsKey(Script.JOB_RESULT_NB_OK)) {
                 result.setNbItemsCorrectlyProcessed(convert(context.get(Script.JOB_RESULT_NB_OK)));

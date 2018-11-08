@@ -36,16 +36,14 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -85,7 +83,6 @@ import org.meveo.model.shared.InterBankTitle;
 @Table(name = "crm_provider", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_provider_seq"), })
-@NamedQueries({ @NamedQuery(name = "Provider.first", query = "select p from Provider p order by id", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class Provider extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -191,6 +188,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     /**
      * Payment methods allowed
      */
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ElementCollection(targetClass = PaymentMethodEnum.class)
     @CollectionTable(name = "crm_provider_pay_methods", joinColumns = @JoinColumn(name = "provider_id"))
     @Column(name = "payment_method")
@@ -308,7 +306,8 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     /**
      * Invoice configuration
      */
-    @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, targetEntity = org.meveo.model.billing.InvoiceConfiguration.class, orphanRemoval = true)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "invoice_config_id")
     private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
 
     /**
@@ -335,7 +334,8 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     /**
      * Expired data delete configuration
      */
-    @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "gdpr_config_id")
     private GdprConfiguration gdprConfiguration;
 
     /**

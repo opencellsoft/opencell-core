@@ -97,7 +97,7 @@ public abstract class BaseEntity implements Serializable, IEntity, IJPAVersioned
      */
     @Override
     public boolean equals(Object obj) {
-        throw new IllegalStateException("Equals method was not overriden!");
+        throw new IllegalStateException("Equals method was not overriden in "+ getClass().getName());
     }
 
     @Override

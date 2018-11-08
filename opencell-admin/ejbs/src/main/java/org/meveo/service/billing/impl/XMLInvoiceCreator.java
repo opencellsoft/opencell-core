@@ -204,6 +204,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             ScriptInterface script = scriptInstanceService.getScriptInstance(invoiceXmlScript);
             Map<String, Object> methodContext = new HashMap<String, Object>();
             methodContext.put(Script.CONTEXT_ENTITY, invoice);
+            methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+            methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
             methodContext.put("isVirtual", Boolean.valueOf(isVirtual));
             methodContext.put("XMLInvoiceCreator", this);
             if (script == null) {
