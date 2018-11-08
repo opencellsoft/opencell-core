@@ -38,7 +38,7 @@ public class SepaDirectDebitJob extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return JobCategoryEnum.PAYMENT;
+        return JobCategoryEnum.ACCOUNT_RECEIVABLES;
     }
 
     @Override

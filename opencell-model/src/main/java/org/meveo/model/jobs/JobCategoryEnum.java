@@ -21,8 +21,8 @@ package org.meveo.model.jobs;
 public enum JobCategoryEnum {
 
     RATING(1, "jobCategoryEnum.rating"), INVOICING(2, "jobCategoryEnum.invoicing"), IMPORT_HIERARCHY(3, "jobCategoryEnum.importHierarchy"), DWH(4,
-            "jobCategoryEnum.dwh"), PAYMENT(5,
-                    "jobCategoryEnum.payment"), WALLET(6, "jobCategoryEnum.wallet"), UTILS(7, "jobCategoryEnum.utils"), MEDIATION(8, "jobCategoryEnum.mediation");
+            "jobCategoryEnum.dwh"), ACCOUNT_RECEIVABLES(5,
+                    "jobCategoryEnum.accountReceivables"), WALLET(6, "jobCategoryEnum.wallet"), UTILS(7, "jobCategoryEnum.utils"), MEDIATION(8, "jobCategoryEnum.mediation");
 
     private Integer id;
     private String label;
