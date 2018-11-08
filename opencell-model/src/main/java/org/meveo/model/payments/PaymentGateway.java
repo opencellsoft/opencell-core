@@ -31,6 +31,7 @@ import org.meveo.model.scripts.ScriptInstance;
  *
  *
  * @author anasseh
+ * @author Mounir Bahije
  * @since Opencell 4.8
  * @lastModifiedVersion 5.2
  */
@@ -139,6 +140,14 @@ public class PaymentGateway extends EnableBusinessCFEntity {
      */
     @Column(name = "api_key")
     private String apiKey;
+
+    /** The webhooks key id. */
+    @Column(name = "webhooks_key_id")
+    private String webhooksKeyId;
+
+    /** The webhooks secret key. */
+    @Column(name = "webhooks_secret_key")
+    private String webhooksSecretKey;
 
     /**
      * The profile
@@ -403,6 +412,38 @@ public class PaymentGateway extends EnableBusinessCFEntity {
      */
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
+    }
+
+    /**
+      * Gets  Webhooks Key Id
+      * @return the webhooksKeyId
+      */
+    public String getWebhooksKeyId() {
+        return webhooksKeyId;
+    }
+
+    /**
+      * Sets the Webhooks Key Id.
+      * @param webhooksKeyId
+      */
+    public void setWebhooksKeyId(String webhooksKeyId) {
+        this.webhooksKeyId = webhooksKeyId;
+    }
+
+    /**
+     * Gets the Webhooks Secret Key.
+     * @return the webhooksSecretKey
+     */
+    public String getWebhooksSecretKey() {
+        return webhooksSecretKey;
+    }
+
+    /**
+     * Sets the Webhooks Secret Key.
+     * @param webhooksSecretKey
+     */
+    public void setWebhooksSecretKey(String webhooksSecretKey) {
+        this.webhooksSecretKey = webhooksSecretKey;
     }
 
     /**
