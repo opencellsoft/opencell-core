@@ -177,8 +177,6 @@ public class UsageRatingService implements Serializable {
             }
         }
 
-        walletOperation.setChargeInstance(chargeInstance);
-
         walletOperation.setSubscriptionDate(subscription.getSubscriptionDate());
         walletOperation.setOperationDate(edr.getEventDate());
         walletOperation.setParameter1(edr.getParameter1());
