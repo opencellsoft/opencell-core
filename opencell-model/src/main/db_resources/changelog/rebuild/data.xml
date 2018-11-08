@@ -8095,7 +8095,7 @@
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2017-06-19 00:00:00.000" />
-            <column name="job_category" value="PAYMENT" />
+            <column name="job_category" value="ACCOUNT_RECEIVABLES" />
             <column name="job_template" value="AccountOperationsGenerationJob" />
             <column name="code" value="AO_Job" />
             <column name="creator" value="OPENCELL.ADMIN" />

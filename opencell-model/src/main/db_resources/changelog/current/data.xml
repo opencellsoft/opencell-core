@@ -3060,10 +3060,10 @@ public class PaymentCallBackScript extends Script {
 		  '#{event.pathInfo.startsWith("/DEMO/custom_payment-callback?")}', 'INBOUND_REQ', 'opencell.admin', NULL, NULL, NULL, -11, 0);]]></sql>	
 
 <sql><![CDATA[INSERT INTO ${db.schema.adapted}adm_notification_params VALUES (-10, '#{event.getParameters()}', 'params');]]></sql>	
-<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-16, 6, 0, now(), now(), 'PaymentCard_Job', NULL, 'PAYMENT',
+<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-16, 6, 0, now(), now(), 'PaymentCard_Job', NULL, 'ACCOUNT_RECEIVABLES',
  'PaymentJob', NULL, 'opencell.admin', 'opencell.admin', NULL, NULL, '2c72550b-4e79-4dab-a8bd-df8499abd25b', NULL, 1, '{"PaymentJob_creditOrDebit":[{"string":"Credit"}],"waitingMillis":[{"long":0}],
  "PaymentJob_matchingAO":[{"string":"YES"}],"PaymentJob_cardOrDD":[{"string":"CARD"}],"PaymentJob_createAO":[{"string":"YES"}],"nbRuns":[{"long":1}],"PaymentJob_AOorCA":[{"string":"CA"}]}', NULL);]]></sql>	
-<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-17, 3, 0, now(), now(), 'RefundCard_Job', NULL, 'PAYMENT', 'PaymentJob',
+<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-17, 3, 0, now(), now(), 'RefundCard_Job', NULL, 'ACCOUNT_RECEIVABLES', 'PaymentJob',
  NULL, 'opencell.admin', 'opencell.admin', NULL, NULL, 'a4bb9554-85f3-4c0a-8f62-438fec7bdac2', NULL, 1, '{"PaymentJob_creditOrDebit":[{"string":"Debit"}],"waitingMillis":[{"long":0}],
  "PaymentJob_matchingAO":[{"string":"YES"}],"PaymentJob_cardOrDD":[{"string":"CARD"}],"PaymentJob_createAO":[{"string":"YES"}],"nbRuns":[{"long":1}],"PaymentJob_AOorCA":[{"string":"CA"}]}', NULL);]]></sql>	
 
