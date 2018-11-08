@@ -2409,7 +2409,16 @@
         <addDefaultValue tableName="billing_invoice" columnName="id" defaultValueSequenceNext="billing_invoice_seq"/>
         <addDefaultValue tableName="billing_invoice_agregate" columnName="id" defaultValueSequenceNext="billing_invoice_agregate_seq"/>
     </changeSet>
-    
+
+    <changeSet id="#3755_20181031" author="MounirBahije">
+        <addColumn tableName="ar_payment_gateway">
+            <column name="webhooks_secret_key" type="varchar(255)" />
+        </addColumn>
+        <addColumn tableName="ar_payment_gateway">
+            <column name="webhooks_key_id" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
     <changeSet id="#3705_20181019 - Create discount plan bridge table" author="EdwardPLegaspi" dbms="postgresql">
     	<dropUniqueConstraint tableName="cat_discount_plan_item" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn"/>
     	<addUniqueConstraint columnNames="discount_plan_id, code" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_discount_plan_item" />
@@ -2517,3 +2526,4 @@
         <dropColumn tableName="adm_gdpr_configuration" columnName="provider_id"/>
     </changeSet>    
 </databaseChangeLog> 
+
