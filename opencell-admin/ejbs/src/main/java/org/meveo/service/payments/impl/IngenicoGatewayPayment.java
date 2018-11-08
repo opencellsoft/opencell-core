@@ -80,8 +80,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
      * Connect.
      */
     private void connect() {
-        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
-        ParamBean paramBean = paramBeanFactory.getInstance();
+        ParamBean paramBean = paramBean();
         //Init properties
         paramBean.getProperty("connect.api.authorizationType", "changeIt");
         paramBean.getProperty("connect.api.connectTimeout", "5000");
@@ -93,6 +92,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         communicatorConfiguration.setApiKeyId(paymentGateway.getApiKey());
         communicatorConfiguration.setSecretApiKey(paymentGateway.getSecretKey());
         client = Factory.createClient(communicatorConfiguration);
+    }
+
+    private ParamBean paramBean() {
+        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
+        ParamBean paramBean = paramBeanFactory.getInstance();
+        return paramBean;
     }
 
     /**
@@ -387,7 +392,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         card.setExpiryDate(expirayDate);
         cardPaymentMethodSpecificInput.setCard(card);
         cardPaymentMethodSpecificInput.setPaymentProductId(cardType.getId());
-        cardPaymentMethodSpecificInput.setAuthorizationMode("SALE"); // TODO ask for confirmation and externalize value
+        cardPaymentMethodSpecificInput.setAuthorizationMode(getAuthorizationMode()); 
         return cardPaymentMethodSpecificInput;
     }
 
@@ -398,15 +403,18 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
      * @return the card token input
      */
     private CardPaymentMethodSpecificInput getCardTokenInput(CardPaymentMethod cardPaymentMethod) {
-        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
-        ParamBean paramBean = paramBeanFactory.getInstance();
+        ParamBean paramBean = paramBean();
         CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
         cardPaymentMethodSpecificInput.setToken(cardPaymentMethod.getTokenId());
         cardPaymentMethodSpecificInput.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
         cardPaymentMethodSpecificInput.setIsRecurring(Boolean.TRUE);
         cardPaymentMethodSpecificInput.setRecurringPaymentSequenceIndicator("recurring");
-        cardPaymentMethodSpecificInput.setAuthorizationMode("SALE"); // TODO ask for confirmation and externalize value
+        cardPaymentMethodSpecificInput.setAuthorizationMode(getAuthorizationMode());
         return cardPaymentMethodSpecificInput;
+    }
+
+    private String getAuthorizationMode() {
+        return paramBean().getProperty("ingenico.api.authorizationMode", "SALE");
     }
 
     /**
