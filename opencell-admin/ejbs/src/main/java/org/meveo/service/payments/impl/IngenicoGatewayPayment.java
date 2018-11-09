@@ -320,9 +320,9 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             billingAddress.setAdditionalInfo(customerAccount.getAddress().getAddress3());
             billingAddress.setCity(customerAccount.getAddress().getCity());
             billingAddress.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode());
-            billingAddress.setHouseNumber(customerAccount.getAddress().getAddress1());
+            billingAddress.setHouseNumber("");
             billingAddress.setState(customerAccount.getAddress().getState());
-            billingAddress.setStreet(customerAccount.getAddress().getAddress2());
+            billingAddress.setStreet(customerAccount.getAddress().getAddress1());
             billingAddress.setZip(customerAccount.getAddress().getZipCode());
         }
         return billingAddress;
