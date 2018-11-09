@@ -2115,4 +2115,13 @@
             <column name="recurrent" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#3755_20181031" author="MounirBahije">
+        <addColumn tableName="ar_payment_gateway">
+            <column name="webhooks_secret_key" type="varchar(255)" />
+        </addColumn>
+        <addColumn tableName="ar_payment_gateway">
+            <column name="webhooks_key_id" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

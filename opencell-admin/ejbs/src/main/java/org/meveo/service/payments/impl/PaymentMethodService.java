@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -39,7 +39,7 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * PaymentMethod service implementation.
- * 
+ *
  * @author anasseh
  * @author Mounir Bahije
  * @lastModifiedVersion 5.2
@@ -78,7 +78,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         // Mark other payment methods as not preferred
         if (paymentMethod.isPreferred()) {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+                    .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
         }
     }
 
@@ -98,9 +98,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
                 result = true;
             }
             long nbrOfCardCustomerAccount = (long) getEntityManager().createNamedQuery("PaymentMethod.getNumberOfCardCustomerAccount")
-                .setParameter("customerAccountId", cardPayment.getCustomerAccount().getId()).setParameter("monthExpiration", cardPayment.getMonthExpiration())
-                .setParameter("yearExpiration", cardPayment.getYearExpiration()).setParameter("hiddenCardNumber", cardPayment.getHiddenCardNumber())
-                .setParameter("cardType", cardPayment.getCardType()).getSingleResult();
+                    .setParameter("customerAccountId", cardPayment.getCustomerAccount().getId()).setParameter("monthExpiration", cardPayment.getMonthExpiration())
+                    .setParameter("yearExpiration", cardPayment.getYearExpiration()).setParameter("hiddenCardNumber", cardPayment.getHiddenCardNumber())
+                    .setParameter("cardType", cardPayment.getCardType()).getSingleResult();
 
             if (nbrOfCardCustomerAccount > 0)
                 result = true;
@@ -125,7 +125,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         // Mark other payment methods as not preferred
         if (paymentMethod.isPreferred()) {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+                    .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
         }
 
         return paymentMethod;
@@ -156,7 +156,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     /**
      * Store payment information in payment gateway and return token id in a payment gateway.
-     * 
+     *
      * @param cardPaymentMethod Card payment method
      * @param customerAccount Customer account
      * @throws BusinessException business exception.
@@ -180,8 +180,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
         if (gatewayPaymentInterface != null) {
             String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
-                StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
-                cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType());
+                    StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
+                    cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType());
 
             cardPaymentMethod.setTokenId(tockenID);
         }
@@ -202,7 +202,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     /**
      * Create a new DDPaymentMethod from the createMandate callBback.
-     * 
+     *
      * @param customerAccount Customer Account
      * @param mandatInfoDto Mandat info dto
      * @throws BusinessException Business Exception
@@ -243,6 +243,37 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             hostedCheckoutInput.setCountryCode(customerAccount.getAddress().getCountry().getCountryCode().toLowerCase());
         }
         GatewayPaymentInterface gatewayPaymentInterface = null;
+        gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount);
+        hostedCheckoutInput.setCustomerAccountId(customerAccount.getId());
+        String hostedCheckoutUrl = gatewayPaymentInterface.getHostedCheckoutUrl(hostedCheckoutInput);
+
+        return hostedCheckoutUrl;
+    }
+
+    /**
+     * Gets Client Object
+     * @param customerAccountId
+     * @return
+     * @throws BusinessException
+     */
+    public Object getClient(Long customerAccountId) throws BusinessException {
+        CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
+        if (customerAccount == null) {
+            throw new BusinessException("Can't found CustomerAccount with Id:" + customerAccountId);
+        }
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount);
+        return gatewayPaymentInterface.getClientObject();
+    }
+
+    /**
+     * Gets Gateway Payment Interface
+     * @param customerAccount
+     * @return
+     * @throws BusinessException
+     */
+    public GatewayPaymentInterface getGatewayPaymentInterface(CustomerAccount customerAccount) throws BusinessException {
+        GatewayPaymentInterface gatewayPaymentInterface = null;
         PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, null, null);
         if (matchedPaymentGatewayForTheCA == null) {
             throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
@@ -252,28 +283,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         } catch (Exception e1) {
             throw new BusinessException("Can't build gatewayPaymentInterface");
         }
-        hostedCheckoutInput.setCustomerAccountId(customerAccount.getId());
-        String hostedCheckoutUrl = gatewayPaymentInterface.getHostedCheckoutUrl(hostedCheckoutInput);
-
-        return hostedCheckoutUrl;
-    }
-
-    public Object getClient(Long customerAccountId) throws BusinessException {
-        CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
-        if (customerAccount == null) {
-            throw new BusinessException("Can't found CustomerAccount with Id:" + customerAccountId);
-        }
-        GatewayPaymentInterface gatewayPaymentInterface = null;
-        PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, null, null);
-        if (matchedPaymentGatewayForTheCA == null) {
-                throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
-            }
-        try {
-                gatewayPaymentInterface = gatewayPaymentFactory.getInstance(matchedPaymentGatewayForTheCA);
-            } catch (Exception e1) {
-                throw new BusinessException("Can't build gatewayPaymentInterface");
-            }
-        return gatewayPaymentInterface.getClientObject();
+        return gatewayPaymentInterface;
     }
 
 }
