@@ -141,18 +141,24 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                     }
                     if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
                         List<AccountOperation> listAoToPay = this.filterAoToPay( ddRequestBuilderInterface.findListAoToPay(ddrequestLotOp), jobInstance);
-                        DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(listAoToPay, ddRequestBuilder);
-                        result.addReport(ddRequestLOT.getRejectedCause());
-                        dDRequestLOTService.createPaymentsForDDRequestLot(ddRequestLOT);
+                        DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
+                        if (ddRequestLOT != null) {
+                            result.addReport(ddRequestLOT.getRejectedCause());
+                            dDRequestLOTService.createPaymentsForDDRequestLot(ddRequestLOT);
+                            ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);
+                            result.registerSucces();
+                            if (BooleanUtils.isTrue(ddrequestLotOp.getRecurrent())) {
+                                this.createNewDdrequestLotOp(ddrequestLotOp);
+                            }
+                        }
                     } else if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
                         ddRequestBuilderInterface.generateDDRequestLotFile(ddrequestLotOp.getDdrequestLOT(), appProvider);
+                        ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);
+                        result.registerSucces();
+                        if (BooleanUtils.isTrue(ddrequestLotOp.getRecurrent())) {
+                            this.createNewDdrequestLotOp(ddrequestLotOp);
+                        }
                     }
-                    ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);
-                    result.registerSucces();
-                    if (BooleanUtils.isTrue(ddrequestLotOp.getRecurrent())) {
-                        this.createNewDdrequestLotOp(ddrequestLotOp);
-                    }
-
                 } catch (Exception e) {
                     log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
                     ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
