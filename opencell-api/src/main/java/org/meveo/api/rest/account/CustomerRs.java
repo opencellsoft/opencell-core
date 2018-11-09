@@ -258,7 +258,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return status of the operation
 	 */
 	@PUT
-	@Path("customerNumberSequence")
+	@Path("/customerNumberSequence")
 	ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData);
 	
     /**
@@ -267,7 +267,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return next customer no value
 	 */
 	@POST
-	@Path("customerNumberSequence")
+	@Path("/customerNumberSequence")
 	GenericSequenceValueResponseDto getNextCustomerNumber();
 	
 	/**
@@ -276,7 +276,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return request status
 	 */
 	@POST
-	@Path("sequence")
+	@Path("/sequence")
 	ActionStatus createCustomerSequence(CustomerSequenceDto postData);
 	
 	/**
@@ -285,7 +285,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return request status
 	 */
 	@PUT
-	@Path("sequence")
+	@Path("/sequence")
 	ActionStatus updateCustomerSequence(CustomerSequenceDto postData);
 	
 	/**
@@ -294,7 +294,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return sequence value dto
 	 */
 	@POST
-	@Path("sequence/{code}/next")
+	@Path("/sequence/{code}/next")
 	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@PathParam("code") String code);
 	
 }
