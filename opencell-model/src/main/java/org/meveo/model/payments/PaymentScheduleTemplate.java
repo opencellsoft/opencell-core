@@ -25,6 +25,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * @author anasseh
@@ -90,6 +91,10 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "apply_agreement")
     private boolean applyAgreement = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "script_instance_id")
+    private ScriptInstance scriptInstance;
 
     /**
      * @return the paymentLabel
@@ -245,4 +250,11 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity {
         this.applyAgreement = applyAgreement;
     }
 
+    public ScriptInstance getScriptInstance() {
+        return scriptInstance;
+    }
+
+    public void setScriptInstance(ScriptInstance scriptInstance) {
+        this.scriptInstance = scriptInstance;
+    }
 }
