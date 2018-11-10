@@ -58,13 +58,14 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.order.Order;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceAgregateHandler;
@@ -124,6 +125,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @Inject
     private ChargeTemplateServiceAll chargeTemplateServiceAll;
+    
+    @Inject
+    private SellerService sellerService;
 
     private Invoice invoiceToAdd;
     private Invoice selectedInvoice;
@@ -498,6 +502,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
         try {
             invoiceCopy = (Invoice) BeanUtils.cloneBean(entity);
+            BillingAccount billingAccount = billingAccountService.findByCode(invoiceCopy.getBillingAccount().getCode());
+            Customer customer = billingAccount.getCustomerAccount().getCustomer();
+            invoiceCopy.setSeller(customer.getSeller());
             invoiceCopy.setInvoiceAgregates(new ArrayList<InvoiceAgregate>());
             getPersistenceService().create(invoiceCopy);
             
@@ -592,6 +599,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             entity.setDetailedInvoice(isDetailed());
 
             invoiceService.assignInvoiceNumber(entity);
+            entity.setSeller(invoiceCopy.getSeller());
             super.saveOrUpdate(false);
             invoiceService.commit();
             entity = invoiceService.refreshOrRetrieve(entity);
@@ -612,6 +620,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 subcat.setInvoice(entity);
                 invoiceAgregateService.create(subcat);
                 for (RatedTransaction rt : subcat.getRatedtransactions()) {
+                	rt.setSeller(sellerService.retrieveIfNotManaged(rt.getSeller()));
                     rt.setInvoice(entity);
                     rt.setStatus(RatedTransactionStatusEnum.BILLED);
                     if (rt.isTransient()) {
