@@ -711,14 +711,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         }
         
-        RoundingModeEnum roundingMode = appProvider.getRoundingMode();
-        int rounding = getProviderRounding();
-        
-        // generate invoice line for min amount RT
-        Element userAccountTag = doc.createElement("userAccount");
-        userAccountTag.setAttribute("description", "-");
-        userAccountTag.appendChild(getMinAmountRTCategories(doc, ratedTransactions, enterprise, rounding, roundingMode, billingAccountLanguage));
-        userAccountsTag.appendChild(userAccountTag);
+        if (displayDetail) {
+	        RoundingModeEnum roundingMode = appProvider.getRoundingMode();
+	        int rounding = getProviderRounding();
+	        
+	        // generate invoice line for min amount RT
+	        Element userAccountTag = doc.createElement("userAccount");
+	        userAccountTag.setAttribute("description", "-");
+	        userAccountTag.appendChild(getMinAmountRTCategories(doc, ratedTransactions, enterprise, rounding, roundingMode, billingAccountLanguage));
+	        userAccountsTag.appendChild(userAccountTag);
+		}
         
     }
 
