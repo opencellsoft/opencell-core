@@ -48,6 +48,7 @@ import org.meveo.service.script.payment.AccountOperationFilterScript;
 import org.meveo.service.script.payment.DateRangeScript;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
+import static org.apache.commons.lang3.StringUtils.isEmpty;;
 
 /**
  * The Class SepaDirectDebitJobBean.
@@ -145,19 +146,17 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                         if (ddRequestLOT != null) {
                             result.addReport(ddRequestLOT.getRejectedCause());
                             dDRequestLOTService.createPaymentsForDDRequestLot(ddRequestLOT);
-                            ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);
-                            result.registerSucces();
-                            if (BooleanUtils.isTrue(ddrequestLotOp.getRecurrent())) {
-                                this.createNewDdrequestLotOp(ddrequestLotOp);
+                            if (isEmpty(ddRequestLOT.getRejectedCause())) {
+                                result.registerSucces(); 
                             }
-                        }
+                        } 
                     } else if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
                         ddRequestBuilderInterface.generateDDRequestLotFile(ddrequestLotOp.getDdrequestLOT(), appProvider);
-                        ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);
                         result.registerSucces();
-                        if (BooleanUtils.isTrue(ddrequestLotOp.getRecurrent())) {
-                            this.createNewDdrequestLotOp(ddrequestLotOp);
-                        }
+                    }
+                    ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);
+                    if (BooleanUtils.isTrue(ddrequestLotOp.getRecurrent())) {
+                        this.createNewDdrequestLotOp(ddrequestLotOp);
                     }
                 } catch (Exception e) {
                     log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);

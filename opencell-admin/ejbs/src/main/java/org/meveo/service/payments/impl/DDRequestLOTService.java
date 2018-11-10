@@ -182,8 +182,6 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
      * @throws BusinessEntityException the business entity exception
      * @throws Exception the exception
      */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public DDRequestLOT createDDRquestLot(DDRequestLotOp ddrequestLotOp,List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder, JobExecutionResultImpl result) throws BusinessEntityException, Exception {
 
         try {
