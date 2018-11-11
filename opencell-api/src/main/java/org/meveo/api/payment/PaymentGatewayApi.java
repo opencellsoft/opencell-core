@@ -130,6 +130,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         paymentGateway.setWebhooksKeyId(paymentGatewayDto.getWebhooksKeyId());
         paymentGateway.setWebhooksSecretKey(paymentGatewayDto.getWebhooksSecretKey());
         paymentGateway.setProfile(paymentGatewayDto.getProfile());
+        paymentGateway.setImplementationClassName(paymentGatewayDto.getImplementationClassName());
         if (paymentGatewayDto.isDisabled() != null) {
             paymentGateway.setDisabled(paymentGatewayDto.isDisabled());
         }
@@ -158,7 +159,6 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         }
 
         if (StringUtils.isBlank(paymentGatewayDto.getCode())) {
-            code = paymentGatewayDto.getCode();
             missingParameters.add("code");
         }
         handleMissingParameters();
@@ -168,6 +168,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         }
 
         PaymentGateway paymentGateway = null;
+        code = paymentGatewayDto.getCode();
         paymentGateway = paymentGatewayService.findByCode(code);
         if (paymentGateway == null) {
             throw new EntityDoesNotExistsException(PaymentGateway.class, code);
@@ -224,6 +225,9 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         }
         if (!StringUtils.isBlank(paymentGatewayDto.getProfile())) {
             paymentGateway.setProfile(paymentGatewayDto.getProfile());
+        }
+        if (!StringUtils.isBlank(paymentGatewayDto.getImplementationClassName())) {
+            paymentGateway.setImplementationClassName(paymentGatewayDto.getImplementationClassName());
         }
 
         paymentGateway.setCode(StringUtils.isBlank(paymentGatewayDto.getUpdatedCode()) ? code : paymentGatewayDto.getUpdatedCode());
