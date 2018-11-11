@@ -98,11 +98,6 @@
         <constraint>currentUser.hasRole('administrationVisualization')</constraint>
     </page>
 
-	<page view-id=".+\/admin\/files\/.+">
-			<constraint>currentUser.hasRole('administrationManagement')</constraint>
-			<constraint >currentUser.hasRole('filesManagement')</constraint>
-	</page>
-
 	<page view-id=".+\/admin\/.+">
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>

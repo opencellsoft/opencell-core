@@ -29,8 +29,11 @@ import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
@@ -39,7 +42,9 @@ import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BankCoordinates;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
@@ -47,6 +52,9 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.DDRequestLotOp;
+import org.meveo.model.payments.DDRequestOpEnum;
+import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
@@ -59,6 +67,7 @@ import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.script.payment.DateRangeScript;
 
 /**
  * The Class DDRequestLOTService.
@@ -173,76 +182,92 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
      * @throws BusinessEntityException the business entity exception
      * @throws Exception the exception
      */
-    public DDRequestLOT createDDRquestLot(List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder) throws BusinessEntityException, Exception {
-        
-        if (listAoToPay == null || listAoToPay.isEmpty()) {
-            throw new BusinessEntityException("no invoices!");
-        }
-        BigDecimal totalAmount = BigDecimal.ZERO;
-        DDRequestLOT ddRequestLOT = new DDRequestLOT();
-        ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
-        ddRequestLOT.setSendDate(new Date());
-        create(ddRequestLOT);
-        int nbItemsKo = 0;
-        int nbItemsOk = 0;
-        String allErrors = "";
-        DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
-        if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.AO) {
-            for (AccountOperation ao : listAoToPay) {
-                String errorMsg = getMissingField(ao);
-                Name caName =  ao.getCustomerAccount().getName();
-                String caFullName = caName != null ? caName.getFullName() : "";
-                ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
-                if (errorMsg != null) {
-                    nbItemsKo++;
-                    allErrors += errorMsg + " ; ";
-                } else {
-                    nbItemsOk++;
-                    totalAmount = totalAmount.add(ao.getUnMatchingAmount());
-                }
+    public DDRequestLOT createDDRquestLot(DDRequestLotOp ddrequestLotOp,List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder, JobExecutionResultImpl result) throws BusinessEntityException, Exception {
+
+        try {
+            if (listAoToPay == null || listAoToPay.isEmpty()) {
+                throw new BusinessEntityException("no invoices!");
             }
-        }
-        if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.CA) {
-            Map<CustomerAccount, List<AccountOperation>> aosByCA = new HashMap<CustomerAccount, List<AccountOperation>>();
-            for (AccountOperation ao : listAoToPay) {
-                List<AccountOperation> aos = new ArrayList<AccountOperation>();
-                if (aosByCA.containsKey(ao.getCustomerAccount())) {
-                    aos = aosByCA.get(ao.getCustomerAccount());
-                }
-                aos.add(ao);
-                aosByCA.put(ao.getCustomerAccount(), aos);
-            }
-            for (Map.Entry<CustomerAccount, List<AccountOperation>> entry : aosByCA.entrySet()) {
-                BigDecimal amountToPayByItem = BigDecimal.ZERO;
-                String allErrorsByItem = "";
-                String caFullName = entry.getKey().getName().getFirstName();
-                for (AccountOperation ao : entry.getValue()) {
+            BigDecimal totalAmount = BigDecimal.ZERO;
+            DDRequestLOT ddRequestLOT = new DDRequestLOT();
+            ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
+            ddRequestLOT.setSendDate(new Date());
+            create(ddRequestLOT);
+            int nbItemsKo = 0;
+            int nbItemsOk = 0;
+            String allErrors = "";
+            DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
+            if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.AO) {
+                for (AccountOperation ao : listAoToPay) {
                     String errorMsg = getMissingField(ao);
+                    Name caName =  ao.getCustomerAccount().getName();
+                    String caFullName = this.getCaFullName(caName); 
+                    ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
                     if (errorMsg != null) {
-                        allErrorsByItem += errorMsg + " ; ";
+                        nbItemsKo++;
+                        allErrors += errorMsg + " ; ";
                     } else {
-                        amountToPayByItem = amountToPayByItem.add(ao.getUnMatchingAmount());
+                        nbItemsOk++;
+                        totalAmount = totalAmount.add(ao.getUnMatchingAmount());
                     }
                 }
-                ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(amountToPayByItem, ddRequestLOT, caFullName, allErrorsByItem, entry.getValue()));
-                if (StringUtils.isBlank(allErrorsByItem)) {
-                    nbItemsOk++;
-                    totalAmount = totalAmount.add(amountToPayByItem);
-                } else {
-                    nbItemsKo++;
-                    allErrors += allErrorsByItem + " ; ";
+            }
+            if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.CA) {
+                Map<CustomerAccount, List<AccountOperation>> aosByCA = new HashMap<CustomerAccount, List<AccountOperation>>();
+                for (AccountOperation ao : listAoToPay) {
+                    List<AccountOperation> aos = new ArrayList<AccountOperation>();
+                    if (aosByCA.containsKey(ao.getCustomerAccount())) {
+                        aos = aosByCA.get(ao.getCustomerAccount());
+                    }
+                    aos.add(ao);
+                    aosByCA.put(ao.getCustomerAccount(), aos);
+                }
+                for (Map.Entry<CustomerAccount, List<AccountOperation>> entry : aosByCA.entrySet()) {
+                    BigDecimal amountToPayByItem = BigDecimal.ZERO;
+                    String allErrorsByItem = "";
+                    CustomerAccount ca = entry.getKey();
+                    String caFullName = this.getCaFullName(ca.getName());
+                    for (AccountOperation ao : entry.getValue()) {
+                        String errorMsg = getMissingField(ao);
+                        if (errorMsg != null) {
+                            allErrorsByItem += errorMsg + " ; ";
+                        } else {
+                            amountToPayByItem = amountToPayByItem.add(ao.getUnMatchingAmount());
+                        }
+                    }
+                    ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(amountToPayByItem, ddRequestLOT, caFullName, allErrorsByItem, entry.getValue()));
+                    if (StringUtils.isBlank(allErrorsByItem)) {
+                        nbItemsOk++;
+                        totalAmount = totalAmount.add(amountToPayByItem);
+                    } else {
+                        nbItemsKo++;
+                        allErrors += allErrorsByItem + " ; ";
+                    }
                 }
             }
+            ddRequestLOT.setNbItemsKo(nbItemsKo);
+            ddRequestLOT.setNbItemsOk(nbItemsOk);
+            ddRequestLOT.setRejectedCause(StringUtils.truncate(allErrors, 255, true));
+            ddRequestLOT.setTotalAmount(totalAmount);
+            ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider));
+            ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT, appProvider);
+            ddRequestLOT.setSendDate(new Date());
+            log.info("Successful createDDRquestLot totalAmount: {}", ddRequestLOT.getTotalAmount());
+            return ddRequestLOT;
+        } catch (Exception e) {
+            log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
+            ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
+            ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
+            result.registerError(ddrequestLotOp.getId(), e.getMessage());
+            result.addReport("ddrequestLotOp id : " + ddrequestLotOp.getId() + " RejectReason : " + e.getMessage());
+            return null;
         }
-        ddRequestLOT.setNbItemsKo(nbItemsKo);
-        ddRequestLOT.setNbItemsOk(nbItemsOk);
-        ddRequestLOT.setRejectedCause(StringUtils.truncate(allErrors, 255, true));
-        ddRequestLOT.setTotalAmount(totalAmount);
-        ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider));
-        ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT, appProvider);
-        ddRequestLOT.setSendDate(new Date());
-        log.info("Successful createDDRquestLot totalAmount: {}", ddRequestLOT.getTotalAmount());
-        return ddRequestLOT;
+        
+       
+    }
+
+    private String getCaFullName(Name caName) {
+        return caName != null ? caName.getFullName() : "";
     }
 
     /**

@@ -1,12 +1,9 @@
 package org.meveo.service.payments.impl;
 
+import java.util.List;
 import java.util.Map;
 
-
-import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedCheckoutRequest;
-import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedCheckoutResponse;
-import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.definitions.HostedCheckoutSpecificInput;
-import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
@@ -38,9 +35,20 @@ import com.ingenico.connect.gateway.sdk.java.domain.definitions.Card;
 import com.ingenico.connect.gateway.sdk.java.domain.definitions.CardWithoutCvv;
 import com.ingenico.connect.gateway.sdk.java.domain.definitions.CompanyInformation;
 import com.ingenico.connect.gateway.sdk.java.domain.errors.definitions.APIError;
+import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedCheckoutRequest;
+import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedCheckoutResponse;
+import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.definitions.HostedCheckoutSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.PaymentResponse;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardPaymentMethodSpecificInput;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Customer;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Order;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.OrderReferences;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Payment;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.PaymentStatusOutput;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentMethodSpecificInput;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentProduct771SpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.CustomerToken;
@@ -72,8 +80,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
      * Connect.
      */
     private void connect() {
-        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
-        ParamBean paramBean = paramBeanFactory.getInstance();
+        ParamBean paramBean = paramBean();
         //Init properties
         paramBean.getProperty("connect.api.authorizationType", "changeIt");
         paramBean.getProperty("connect.api.connectTimeout", "5000");
@@ -85,6 +92,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         communicatorConfiguration.setApiKeyId(paymentGateway.getApiKey());
         communicatorConfiguration.setSecretApiKey(paymentGateway.getSecretKey());
         client = Factory.createClient(communicatorConfiguration);
+    }
+
+    private ParamBean paramBean() {
+        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
+        ParamBean paramBean = paramBeanFactory.getInstance();
+        return paramBean;
     }
 
     /**
@@ -202,31 +215,10 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     private PaymentResponseDto doPayment(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount, String cardNumber,
             String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
         try {
-            AmountOfMoney amountOfMoney = new AmountOfMoney();
-            amountOfMoney.setAmount(ctsAmount);
-            amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
-
-            Customer customer = new Customer();
-            customer.setBillingAddress(getBillingAddress(customerAccount));
-
-            Order order = new Order();
-            order.setAmountOfMoney(amountOfMoney);
-            order.setCustomer(customer);
-
-            CreatePaymentRequest body = new CreatePaymentRequest();
-            if (ddPaymentMethod != null) {
-                body.setSepaDirectDebitPaymentMethodSpecificInput(getSepaInput(ddPaymentMethod));
-            }
-            if (paymentCardToken != null) {
-                body.setCardPaymentMethodSpecificInput(getCardTokenInput(paymentCardToken));
-            }
-            if (!StringUtils.isBlank(cardNumber)) {
-                body.setCardPaymentMethodSpecificInput((getCardInput(cardNumber, ownerName, cvv, expirayDate, cardType)));
-            }
-
-            body.setOrder(order);
-           
+            
+            CreatePaymentRequest body = constructNewBody(ddPaymentMethod, paymentCardToken, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType);
             CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments().create(body);
+            
             if (response != null) {
                 PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
                 doPaymentResponseDto.setPaymentID(response.getPayment().getId());
@@ -236,10 +228,17 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
                     doPaymentResponseDto.setTokenId(response.getCreationOutput().getToken());
                     doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken());
                 }
-                if (response.getPayment() != null && response.getPayment().getStatusOutput() != null && response.getPayment().getStatusOutput().getErrors() != null) {
-                    doPaymentResponseDto.setErrorMessage(response.getPayment().getStatusOutput().getErrors().toString());
+                Payment payment = response.getPayment();
+                if (payment != null && response.getPayment().getStatusOutput().getErrors() != null) {
+                    PaymentStatusOutput statusOutput = payment.getStatusOutput();
+                    if (statusOutput != null) {
+                        List<APIError> errors = statusOutput.getErrors();
+                        if (CollectionUtils.isNotEmpty(errors)) {
+                            doPaymentResponseDto.setErrorMessage(errors.toString());
+                            doPaymentResponseDto.setErrorCode(errors.get(0).getCode()); 
+                        }
+                    }
                 }
-
                 return doPaymentResponseDto;
             } else {
                 throw new BusinessException("Gateway response is null");
@@ -249,6 +248,34 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         } catch (ApiException e) {
             throw new BusinessException(e.getResponseBody());
         }
+    }
+    
+    private CreatePaymentRequest constructNewBody(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount,
+            String cardNumber, String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType) {
+        AmountOfMoney amountOfMoney = new AmountOfMoney();
+        amountOfMoney.setAmount(ctsAmount);
+        amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
+
+        Customer customer = new Customer();
+        customer.setBillingAddress(getBillingAddress(customerAccount));
+
+        Order order = new Order();
+        order.setAmountOfMoney(amountOfMoney);
+        order.setCustomer(customer);
+
+        CreatePaymentRequest body = new CreatePaymentRequest();
+        if (ddPaymentMethod != null) {
+            body.setSepaDirectDebitPaymentMethodSpecificInput(getSepaInput(ddPaymentMethod));
+        }
+        if (paymentCardToken != null) {
+            body.setCardPaymentMethodSpecificInput(getCardTokenInput(paymentCardToken));
+        }
+        if (!StringUtils.isBlank(cardNumber)) {
+            body.setCardPaymentMethodSpecificInput((getCardInput(cardNumber, ownerName, cvv, expirayDate, cardType)));
+        }
+
+        body.setOrder(order);
+        return body;
     }
 
     @Override
@@ -365,6 +392,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         card.setExpiryDate(expirayDate);
         cardPaymentMethodSpecificInput.setCard(card);
         cardPaymentMethodSpecificInput.setPaymentProductId(cardType.getId());
+        cardPaymentMethodSpecificInput.setAuthorizationMode(getAuthorizationMode()); 
         return cardPaymentMethodSpecificInput;
     }
 
@@ -375,15 +403,18 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
      * @return the card token input
      */
     private CardPaymentMethodSpecificInput getCardTokenInput(CardPaymentMethod cardPaymentMethod) {
-        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
-        ParamBean paramBean = paramBeanFactory.getInstance();
+        ParamBean paramBean = paramBean();
         CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
         cardPaymentMethodSpecificInput.setToken(cardPaymentMethod.getTokenId());
         cardPaymentMethodSpecificInput.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
         cardPaymentMethodSpecificInput.setIsRecurring(Boolean.TRUE);
         cardPaymentMethodSpecificInput.setRecurringPaymentSequenceIndicator("recurring");
-
+        cardPaymentMethodSpecificInput.setAuthorizationMode(getAuthorizationMode());
         return cardPaymentMethodSpecificInput;
+    }
+
+    private String getAuthorizationMode() {
+        return paramBean().getProperty("ingenico.api.authorizationMode", "SALE");
     }
 
     /**
@@ -488,7 +519,4 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     public void setPaymentGateway(PaymentGateway paymentGateway) {
         this.paymentGateway = paymentGateway;
     }
-    
-    
-
 }
