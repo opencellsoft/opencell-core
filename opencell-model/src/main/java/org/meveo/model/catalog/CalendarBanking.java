@@ -46,13 +46,13 @@ public class CalendarBanking extends Calendar {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("holidayBegin")
-    private List<CalendarHolidayPeriod> holidays;
+    private List<CalendarHoliday> holidays;
 
-    public List<CalendarHolidayPeriod> getHolidays() {
+    public List<CalendarHoliday> getHolidays() {
         return holidays;
     }
 
-    public void setHolidays(List<CalendarHolidayPeriod> holidays) {
+    public void setHolidays(List<CalendarHoliday> holidays) {
         this.holidays = holidays;
     }
     
@@ -96,7 +96,7 @@ public class CalendarBanking extends Calendar {
         	if(isWeekend(nextCalendarDate)) {            		
         		nextCalendarDate = getDateAfterWeekend(nextCalendarDate);
         	}
-        	for (CalendarHolidayPeriod holidayPeriod : holidays) {
+        	for (CalendarHoliday holidayPeriod : holidays) {
             	if(holidayPeriod.isHolidayDate(nextCalendarDate)) {
             		nextCalendarDate = holidayPeriod.getDateAfterHoliday(nextCalendarDate);
             		if(isWeekend(nextCalendarDate)) {            		
@@ -140,7 +140,7 @@ public class CalendarBanking extends Calendar {
 			if(isWeekend(previousCalendarDate)) {            		
 				previousCalendarDate = getDateBeforeWeekend(previousCalendarDate);
         	}
-			for (CalendarHolidayPeriod holidayPeriod : holidays) {
+			for (CalendarHoliday holidayPeriod : holidays) {
 				if (holidayPeriod.isHolidayDate(previousCalendarDate)) {
 					previousCalendarDate = holidayPeriod.getDateBeforeHoliday(previousCalendarDate);
 					if(isWeekend(previousCalendarDate)) {            		
@@ -228,10 +228,10 @@ public class CalendarBanking extends Calendar {
     	CalendarBanking c = new CalendarBanking();
     	c.setWeekendBegin(6);
     	c.setWeekendEnd(7);
-    	CalendarHolidayPeriod h = new CalendarHolidayPeriod();
+    	CalendarHoliday h = new CalendarHoliday();
     	h.setHolidayBegin(1112);
     	h.setHolidayEnd(1130);
-    	CalendarHolidayPeriod h2 = new CalendarHolidayPeriod();
+    	CalendarHoliday h2 = new CalendarHoliday();
     	h2.setHolidayBegin(121);
     	h2.setHolidayEnd(1231);
     	c.setHolidays(Lists.newArrayList(h));

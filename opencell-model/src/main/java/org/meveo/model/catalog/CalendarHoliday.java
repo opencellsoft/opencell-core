@@ -28,10 +28,10 @@ import org.meveo.model.ExportIdentifier;
 @Entity
 @Cacheable
 @ExportIdentifier({ "calendar.code", "holidayBegin", "holidayEnd" })
-@Table(name = "cat_calendar_holiday_period")
+@Table(name = "cat_calendar_holiday")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cat_calendar_holiday_period_seq"), })
-public class CalendarHolidayPeriod extends BaseEntity implements Comparable<CalendarHolidayPeriod> {
+        @Parameter(name = "sequence_name", value = "cat_calendar_holiday_seq"), })
+public class CalendarHoliday extends BaseEntity implements Comparable<CalendarHoliday> {
 
     private static final long serialVersionUID = -8419267880869260329L;
 
@@ -57,11 +57,11 @@ public class CalendarHolidayPeriod extends BaseEntity implements Comparable<Cale
     @NotNull
     private CalendarBanking calendar;
 
-    public CalendarHolidayPeriod() {
+    public CalendarHoliday() {
         super();
     }
 
-    public CalendarHolidayPeriod(CalendarBanking calendar, int holidayBegin, int holidayEnd) {
+    public CalendarHoliday(CalendarBanking calendar, int holidayBegin, int holidayEnd) {
         super();
         this.calendar = calendar;
         this.holidayBegin = holidayBegin;
@@ -139,7 +139,7 @@ public class CalendarHolidayPeriod extends BaseEntity implements Comparable<Cale
     }
 
     @Override
-    public int compareTo(CalendarHolidayPeriod other) {
+    public int compareTo(CalendarHoliday other) {
         return holidayBegin - other.getHolidayBegin();
     }
 
@@ -150,11 +150,11 @@ public class CalendarHolidayPeriod extends BaseEntity implements Comparable<Cale
             return true;
         } else if (obj == null) {
             return false;
-        } else if (!(obj instanceof CalendarHolidayPeriod)) {
+        } else if (!(obj instanceof CalendarHoliday)) {
             return false;
         }
 
-        CalendarHolidayPeriod other = (CalendarHolidayPeriod) obj;
+        CalendarHoliday other = (CalendarHoliday) obj;
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
