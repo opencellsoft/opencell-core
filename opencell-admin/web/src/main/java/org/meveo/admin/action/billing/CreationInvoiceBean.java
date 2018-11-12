@@ -547,6 +547,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     rtCopy.setInvoice(invoiceCopy);
                     rtCopy.setId(null);
                     rtCopy.setStatus(RatedTransactionStatusEnum.BILLED);
+                    rtCopy.setBillingAccount(billingAccount);
                     ratedTransactionService.create(rtCopy);
                     ratedTransactionCopy.add(rtCopy);
                 }
@@ -623,6 +624,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 	rt.setSeller(sellerService.retrieveIfNotManaged(rt.getSeller()));
                     rt.setInvoice(entity);
                     rt.setStatus(RatedTransactionStatusEnum.BILLED);
+                    rt.setBillingAccount(entity.getBillingAccount());
                     if (rt.isTransient()) {
                         ratedTransactionService.create(rt);
                     } else {
