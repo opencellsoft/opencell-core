@@ -21,8 +21,7 @@ import org.meveo.model.catalog.DiscountPlanItem.DurationPeriodUnitEnum;
  *
  * @author Tyshan Shi(tyshan@manaty.net)
  * @author Edward P. Legaspi
- * @since Aug 1, 2016 9:34:34 PM
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.3
  */
 @XmlRootElement(name = "DiscountPlanItem")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,11 +55,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     private String invoiceSubCategoryCode;
 
     /**
-     * Discount percent
-     */
-    private BigDecimal percent;
-
-    /**
      * Accounting code
      */
     @Deprecated // until further analysis
@@ -77,22 +71,9 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     private String expressionElSpark;
 
     /**
-     * Expression to calculate discount percentage
-     */
-    private String discountPercentEl;
-
-    /**
-     * Expression to calculate discount percentage - for Spark
-     */
-    private String discountPercentElSpark;
-
-    /**
      * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
      */
     private Boolean disabled;
-    
-    /** Absolute discount amount. */
-    private BigDecimal discountAmount;
     
     /** Effective start date */
     private Date startDate;
@@ -112,6 +93,21 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 	
 	/** Unit of duration */
 	private DurationPeriodUnitEnum durationUnit;
+	
+	/**
+     * The absolute or percentage discount amount.
+     */
+	private BigDecimal discountValue;
+	
+	/**
+     * The absolute or percentage discount amount EL.
+     */
+	private String discountValueEL;
+	
+	/**
+     * Expression to calculate discount percentage - for Spark
+     */
+	private String discountValueElSpark;
 
     /**
      * Instantiates a new discount plan item dto.
@@ -129,19 +125,18 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.discountPlanCode = discountPlanItem.getDiscountPlan().getCode();
         this.invoiceCategoryCode = discountPlanItem.getInvoiceCategory() != null ? discountPlanItem.getInvoiceCategory().getCode() : null;
         this.invoiceSubCategoryCode = discountPlanItem.getInvoiceSubCategory() != null ? discountPlanItem.getInvoiceSubCategory().getCode() : null;
-        this.percent = discountPlanItem.getPercent();
         this.accountingCode = discountPlanItem.getAccountingCode();
         this.expressionEl = discountPlanItem.getExpressionEl();
         this.expressionElSpark = discountPlanItem.getExpressionElSpark();
-        this.discountPercentEl = discountPlanItem.getDiscountPercentEl();
-        this.discountPercentElSpark = discountPlanItem.getDiscountPercentElSpark();
         this.disabled = discountPlanItem.isDisabled();
-        this.discountAmount = discountPlanItem.getDiscountAmount();
 		this.discountPlanItemType = discountPlanItem.getDiscountPlanItemType();
 		this.startDate = discountPlanItem.getStartDate();
 		this.endDate = discountPlanItem.getEndDate();
 		this.durationUnit = discountPlanItem.getDurationUnit();
 		this.defaultDuration = discountPlanItem.getDefaultDuration();
+		this.discountValue = discountPlanItem.getDiscountValue();
+		this.discountValueEL = discountPlanItem.getDiscountValueEL();
+		this.discountValueElSpark = discountPlanItem.getDiscountValueElSpark();
     }
 
     /**
@@ -217,24 +212,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     }
 
     /**
-     * Gets the percent.
-     *
-     * @return the percent
-     */
-    public BigDecimal getPercent() {
-        return percent;
-    }
-
-    /**
-     * Sets the percent.
-     *
-     * @param percent the new percent
-     */
-    public void setPercent(BigDecimal percent) {
-        this.percent = percent;
-    }
-
-    /**
      * Gets the accounting code.
      *
      * @return the accounting code
@@ -280,34 +257,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.expressionElSpark = expressionElSpark;
     }
 
-    /**
-     * @return Expression to calculate discount percentage
-     */
-    public String getDiscountPercentEl() {
-        return discountPercentEl;
-    }
-
-    /**
-     * @param discountPercentEl Expression to calculate discount percentage
-     */
-    public void setDiscountPercentEl(String discountPercentEl) {
-        this.discountPercentEl = discountPercentEl;
-    }
-
-    /**
-     * @return Expression to calculate discount percentage - for Spark
-     */
-    public String getDiscountPercentElSpark() {
-        return discountPercentElSpark;
-    }
-
-    /**
-     * @param discountPercentElSpark Expression to calculate discount percentage - for Spark
-     */
-    public void setDiscountPercentElSpark(String discountPercentElSpark) {
-        this.discountPercentElSpark = discountPercentElSpark;
-    }
-
     @Override
     public void setDisabled(Boolean disabled) {
         this.disabled = disabled;
@@ -317,20 +266,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     public Boolean isDisabled() {
         return disabled;
     }
-
-    @Override
-    public String toString() {
-        return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode=" + invoiceCategoryCode + ", invoiceSubCategoryCode="
-                + invoiceSubCategoryCode + ", percent=" + percent + ", accountingCode=" + accountingCode + ", expressionEl=" + expressionEl + "]";
-    }
-
-	public BigDecimal getDiscountAmount() {
-		return discountAmount;
-	}
-
-	public void setDiscountAmount(BigDecimal discountAmount) {
-		this.discountAmount = discountAmount;
-	}
 
 	public Date getStartDate() {
 		return startDate;
@@ -370,5 +305,40 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 
 	public void setDiscountPlanItemType(DiscountPlanItemTypeEnum discountPlanItemType) {
 		this.discountPlanItemType = discountPlanItemType;
+	}
+
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
+	}
+
+	public String getDiscountValueElSpark() {
+		return discountValueElSpark;
+	}
+
+	public void setDiscountValueElSpark(String discountValueElSpark) {
+		this.discountValueElSpark = discountValueElSpark;
+	}
+
+	@Override
+	public String toString() {
+		return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode="
+				+ invoiceCategoryCode + ", invoiceSubCategoryCode=" + invoiceSubCategoryCode + ", accountingCode="
+				+ accountingCode + ", expressionEl=" + expressionEl + ", expressionElSpark=" + expressionElSpark
+				+ ", disabled=" + disabled + ", startDate=" + startDate + ", endDate=" + endDate
+				+ ", discountPlanItemType=" + discountPlanItemType + ", defaultDuration=" + defaultDuration
+				+ ", durationUnit=" + durationUnit + ", discountValue=" + discountValue + ", discountValueEL="
+				+ discountValueEL + ", discountValueElSpark=" + discountValueElSpark + "]";
+	}
+
+	public void setDiscountValueEL(String discountValueEL) {
+		this.discountValueEL = discountValueEL;
+	}
+
+	public String getDiscountValueEL() {
+		return discountValueEL;
 	}
 }
