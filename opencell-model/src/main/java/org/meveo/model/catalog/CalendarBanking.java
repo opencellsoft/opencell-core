@@ -1,5 +1,6 @@
 package org.meveo.model.catalog;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -49,6 +50,9 @@ public class CalendarBanking extends Calendar {
     private List<CalendarHoliday> holidays;
 
     public List<CalendarHoliday> getHolidays() {
+        if(holidays == null) {
+            holidays =  new ArrayList<CalendarHoliday>();
+        }
         return holidays;
     }
 
@@ -96,7 +100,7 @@ public class CalendarBanking extends Calendar {
         	if(isWeekend(nextCalendarDate)) {            		
         		nextCalendarDate = getDateAfterWeekend(nextCalendarDate);
         	}
-        	for (CalendarHoliday holidayPeriod : holidays) {
+        	for (CalendarHoliday holidayPeriod : getHolidays()) {
             	if(holidayPeriod.isHolidayDate(nextCalendarDate)) {
             		nextCalendarDate = holidayPeriod.getDateAfterHoliday(nextCalendarDate);
             		if(isWeekend(nextCalendarDate)) {            		
@@ -140,7 +144,7 @@ public class CalendarBanking extends Calendar {
 			if(isWeekend(previousCalendarDate)) {            		
 				previousCalendarDate = getDateBeforeWeekend(previousCalendarDate);
         	}
-			for (CalendarHoliday holidayPeriod : holidays) {
+			for (CalendarHoliday holidayPeriod : getHolidays()) {
 				if (holidayPeriod.isHolidayDate(previousCalendarDate)) {
 					previousCalendarDate = holidayPeriod.getDateBeforeHoliday(previousCalendarDate);
 					if(isWeekend(previousCalendarDate)) {            		

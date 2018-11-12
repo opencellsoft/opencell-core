@@ -37,8 +37,10 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarDateInterval;
+import org.meveo.model.catalog.CalendarHoliday;
 import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarIntervalTypeEnum;
 import org.meveo.model.catalog.CalendarJoin;
@@ -83,6 +85,11 @@ public class CalendarBean extends BaseBean<Calendar> {
 
     private Integer weekdayIntervalFrom;
     private Integer weekdayIntervalTo;
+    
+    private String holidayToAdd;
+
+    private Integer weekendFrom;
+    private Integer weekendTo;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -145,6 +152,30 @@ public class CalendarBean extends BaseBean<Calendar> {
         this.weekdayIntervalTo = weekdayIntervalTo;
     }
 
+    public String getHolidayToAdd() {
+        return holidayToAdd;
+    }
+
+    public void setHolidayToAdd(String holidayToAdd) {
+        this.holidayToAdd = holidayToAdd;
+    }
+
+    public Integer getWeekendFrom() {
+        return weekendFrom;
+    }
+
+    public void setWeekendFrom(Integer weekendFrom) {
+        this.weekendFrom = weekendFrom;
+    }
+
+    public Integer getWeekendTo() {
+        return weekendTo;
+    }
+
+    public void setWeekendTo(Integer weekendTo) {
+        this.weekendTo = weekendTo;
+    }
+
     public void setDayInYearModel(DualListModel<DayInYear> perks) {
         this.dayInYearListModel = perks;
     }
@@ -162,6 +193,7 @@ public class CalendarBean extends BaseBean<Calendar> {
         values.put("PERIOD", resourceMessages.getString("calendar.calendarType.PERIOD"));
         values.put("INTERVAL", resourceMessages.getString("calendar.calendarType.INTERVAL"));
         values.put("JOIN", resourceMessages.getString("calendar.calendarType.JOIN"));
+        values.put("BANKING", resourceMessages.getString("calendar.calendarType.BANKING"));
 
         return values;
     }
@@ -183,7 +215,7 @@ public class CalendarBean extends BaseBean<Calendar> {
 
         String newType = (String) ((EditableValueHolder) event.getComponent()).getValue();
 
-        Class[] classes = { CalendarYearly.class, CalendarDaily.class, CalendarPeriod.class, CalendarInterval.class, CalendarJoin.class };
+        Class[] classes = { CalendarYearly.class, CalendarDaily.class, CalendarPeriod.class, CalendarInterval.class, CalendarJoin.class, CalendarBanking.class };
         for (Class clazz : classes) {
 
             if (newType.equalsIgnoreCase(((DiscriminatorValue) clazz.getAnnotation(DiscriminatorValue.class)).value())) {
@@ -309,6 +341,41 @@ public class CalendarBean extends BaseBean<Calendar> {
 
     public List<CalendarIntervalTypeEnum> getCalendarIntervalTypeEnumValues() {
         return Arrays.asList(CalendarIntervalTypeEnum.values());
+    }
+    
+    public void addHoliday() throws BusinessException {
+
+        CalendarHoliday holiday = null;
+
+
+        if (holidayToAdd == null) {
+            return;
+        }
+
+        String[] monthDays = holidayToAdd.split(" - ");
+        if (monthDays[0].compareTo("12/31") > 0 || monthDays[0].compareTo("01/01") < 0 || monthDays[1].compareTo("12/31") > 0 || monthDays[1].compareTo("01/01") < 0) {
+            return;
+        }
+
+        monthDays[0] = monthDays[0].replace("/", "");
+        monthDays[1] = monthDays[1].replace("/", "");
+        holiday = new CalendarHoliday((CalendarBanking) entity, Integer.parseInt(monthDays[0]), Integer.parseInt(monthDays[1]));
+        
+        holidayToAdd = null;
+
+        // Check if not duplicate
+        if (((CalendarBanking) entity).getHolidays() != null && ((CalendarBanking) entity).getHolidays().contains(holiday)) {
+            return;
+        }
+        if (((CalendarBanking) entity).getHolidays() == null) {
+            ((CalendarBanking) entity).setHolidays(new ArrayList<CalendarHoliday>());
+        }
+        ((CalendarBanking) entity).getHolidays().add(holiday);
+        Collections.sort(((CalendarBanking) entity).getHolidays());
+    }
+    
+    public void removeHoliday(CalendarHoliday holiday) {
+        ((CalendarBanking) entity).getHolidays().remove(holiday);
     }
 
     @Override
