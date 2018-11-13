@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -382,22 +383,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         // Determine which discount plan items apply to this invoice
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
-        
-		if (billingAccount.getDiscountPlans() != null && !billingAccount.getDiscountPlans().isEmpty()) {
-			CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-			for (DiscountPlan discountPlan : billingAccount.getDiscountPlans()) {
-				if (discountPlan != null && discountPlan.isActive()) {
-					List<DiscountPlanItem> discountPlanItems = discountPlan.getDiscountPlanItems();
-					for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-						if (discountPlanItem.isEffective(invoice.getInvoiceDate()) && discountPlanItem.isActive()
-								&& matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(), customerAccount,
-										billingAccount, invoice)) {
-							applicableDiscountPlanItems.add(discountPlanItem);
-						}
-					}
-				}
-			}
-		}
+
+        if (billingAccount.getDiscountPlans() != null && !billingAccount.getDiscountPlans().isEmpty()) {
+            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+            for (DiscountPlan discountPlan : billingAccount.getDiscountPlans()) {
+                if (discountPlan != null && discountPlan.isActive()) {
+                    List<DiscountPlanItem> discountPlanItems = discountPlan.getDiscountPlanItems();
+                    for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+                        if (discountPlanItem.isEffective(invoice.getInvoiceDate()) && discountPlanItem.isActive()
+                                && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice)) {
+                            applicableDiscountPlanItems.add(discountPlanItem);
+                        }
+                    }
+                }
+            }
+        }
 
         // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates
         BigDecimal[] amounts = null;
@@ -500,13 +500,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                 invoice, amount);
                             log.debug("for discountPlan " + discountPlanItem.getCode() + " percentEL ->" + discountPercent + " on amount=" + amount);
                         }
-                        
+
                         BigDecimal discountAmount;
-            			if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-            				discountAmount = amount.multiply(discountPercent.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
-            			} else {
-            				discountAmount = discountPlanItem.getDiscountAmount().negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());;
-            			}
+                        if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+                            discountAmount = amount.multiply(discountPercent.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
+                        } else {
+                            discountAmount = discountPlanItem.getDiscountAmount().negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
+                        }
 
                         if (discountAmount.compareTo(BigDecimal.ZERO) < 0) {
                             SubCategoryInvoiceAgregate discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount,
@@ -517,10 +517,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                             discountAggregate.setCategoryInvoiceAgregate(cAggregate);
 
                             discountAggregate.setDiscountAggregate(true);
-							if (discountPlanItem.getDiscountPlanItemType()
-									.equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-								discountAggregate.setDiscountPercent(discountPercent);
-							}
+                            if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+                                discountAggregate.setDiscountPercent(discountPercent);
+                            }
                             discountAggregate.setDiscountPlanItem(discountPlanItem);
                             discountAggregate.setDescription(discountPlanItem.getCode());
 
@@ -1283,14 +1282,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         UserAccount userAccount = serviceInstance.getSubscription().getUserAccount();
         Map<String, Amounts> minRTAmountMap = new HashMap<String, Amounts>();
 
-        for (Entry<String, Amounts> amountsEntry : serviceAmountMap.entrySet()) {
+        BigDecimal totalRatio = BigDecimal.ZERO;
+        Iterator<Entry<String, Amounts>> amountIterator = serviceAmountMap.entrySet().iterator();
+
+        while (amountIterator.hasNext()) {
+            Entry<String, Amounts> amountsEntry = amountIterator.next();
 
             String mapKey = amountsEntry.getKey();
 
             BigDecimal serviceAmount = appProvider.isEntreprise() ? amountsEntry.getValue().getAmountWithoutTax() : amountsEntry.getValue().getAmountWithTax();
 
             BigDecimal diff = minAmount.subtract(totalServiceAmount);
-            BigDecimal ratio = totalServiceAmount.compareTo(serviceAmount) == 0 ? BigDecimal.ONE : serviceAmount.divide(totalServiceAmount, 2, RoundingMode.HALF_UP);
+            BigDecimal ratio = totalServiceAmount.compareTo(serviceAmount) == 0 ? BigDecimal.ONE : serviceAmount.divide(totalServiceAmount, 4, RoundingMode.HALF_UP);
+
+            // Ensure that all ratios sum up to 1
+            if (!amountIterator.hasNext()) {
+                ratio = BigDecimal.ONE.subtract(totalRatio);
+            }
 
             String[] ids = mapKey.split("_");
 
@@ -1305,14 +1313,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 appProvider.getRoundingMode().getRoundingMode());
 
             RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1],
-                amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, null, null, null, null,
-                "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), minAmountLabel, null, null, seller, tax,
-                tax.getPercent());
+                amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, "NO_OFFER", null,
+                RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), minAmountLabel, null, null, seller, tax, tax.getPercent());
 
             minAmountTransactions.add(ratedTransaction);
 
             // Remember newly "created" transaction amounts, as they are not persisted yet to DB
             minRTAmountMap.put(mapKey, new Amounts(amounts[0], amounts[1]));
+
+            totalRatio = totalRatio.add(ratio);
         }
 
         return minRTAmountMap;
@@ -1409,7 +1418,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         // Create Rated transactions to reach minimum amount per Subscription
         UserAccount userAccount = subscription.getUserAccount();
 
-        for (Entry<String, Amounts> amountsEntry : subscriptionLevelAmounts.entrySet()) {
+        BigDecimal totalRatio = BigDecimal.ZERO;
+        Iterator<Entry<String, Amounts>> amountIterator = subscriptionLevelAmounts.entrySet().iterator();
+
+        while (amountIterator.hasNext()) {
+            Entry<String, Amounts> amountsEntry = amountIterator.next();
 
             String amountsKey = amountsEntry.getKey();
 
@@ -1417,7 +1430,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             BigDecimal diff = minAmount.subtract(totalSubscriptionAmount);
             BigDecimal ratio = totalSubscriptionAmount.compareTo(subscriptionAmount) == 0 ? BigDecimal.ONE
-                    : subscriptionAmount.divide(totalSubscriptionAmount, 2, RoundingMode.HALF_UP);
+                    : subscriptionAmount.divide(totalSubscriptionAmount, 4, RoundingMode.HALF_UP);
+
+            // Ensure that all ratios sum up to 1
+            if (!amountIterator.hasNext()) {
+                ratio = BigDecimal.ONE.subtract(totalRatio);
+            }
 
             String[] ids = amountsKey.split("_");
             InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(Long.parseLong(ids[1]));
@@ -1440,6 +1458,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             // Update the total/ba level amounts
             baLeveltotalAmounts.addAmounts(amounts[0], amounts[1]);
             baLevelAmounts.get(amountsKey).addAmounts(amounts[0], amounts[1]);
+
+            totalRatio = totalRatio.add(ratio);
         }
     }
 
@@ -1503,14 +1523,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         // Create Rated transactions to reach minimum amount per Billing account
-        for (Entry<String, Amounts> amountsEntry : baLevelAmounts.entrySet()) {
+        BigDecimal totalRatio = BigDecimal.ZERO;
+        Iterator<Entry<String, Amounts>> amountIterator = baLevelAmounts.entrySet().iterator();
+
+        while (amountIterator.hasNext()) {
+            Entry<String, Amounts> amountsEntry = amountIterator.next();
 
             String amountsKey = amountsEntry.getKey();
 
             BigDecimal baAmount = appProvider.isEntreprise() ? amountsEntry.getValue().getAmountWithoutTax() : amountsEntry.getValue().getAmountWithTax();
 
             BigDecimal diff = minAmount.subtract(totalBaAmount);
-            BigDecimal ratio = totalBaAmount.compareTo(baAmount) == 0 ? BigDecimal.ONE : baAmount.divide(totalBaAmount, 2, RoundingMode.HALF_UP);
+            BigDecimal ratio = totalBaAmount.compareTo(baAmount) == 0 ? BigDecimal.ONE : baAmount.divide(totalBaAmount, 4, RoundingMode.HALF_UP);
+
+            // Ensure that all ratios sum up to 1
+            if (!amountIterator.hasNext()) {
+                ratio = BigDecimal.ONE.subtract(totalRatio);
+            }
 
             String[] ids = amountsKey.split("_");
             Long sellerId = Long.parseLong(amountsEntry.getKey().substring(0, amountsEntry.getKey().indexOf("_")));
@@ -1536,6 +1565,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             baLeveltotalAmounts.addAmounts(amounts[0], amounts[1]);
             baLevelAmounts.get(amountsKey).addAmounts(amounts[0], amounts[1]);
 
+            totalRatio = totalRatio.add(ratio);
         }
 
     }
