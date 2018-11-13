@@ -431,5 +431,35 @@
     	<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_payment_schedule_tmpl" constraintName="fk_ps_script_instance" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
+	<changeSet author="hznibar" id="#87_20181109_2" dbms="mysql">
+        <createTable tableName="cat_calendar_holiday_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_calendar_holiday_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}cat_calendar_holiday_seq values(1)</sql>
+    </changeSet>
+    <changeSet author="hznibar" id="#87_20181109">
+    	<createSequence sequenceName="cat_calendar_holiday_seq" />
+        <createTable tableName="cat_calendar_holiday">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_calendar_holiday_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="holiday_begin" type="int4">
+                <constraints nullable="false" />
+            </column>
+            <column name="holiday_end" type="int4">
+                <constraints nullable="false" />
+            </column>
+            <column name="calendar_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addColumn tableName="cat_calendar">     
+            <column name="weekend_begin" type="int4" />
+            <column name="weekend_end" type="int4" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog> 
 
