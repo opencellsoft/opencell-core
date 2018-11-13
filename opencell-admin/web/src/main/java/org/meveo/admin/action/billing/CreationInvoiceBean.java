@@ -596,11 +596,13 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     @Override
     public String saveOrUpdate(boolean killConversation) {
         try {
-            entity.setBillingAccount(getFreshBA());
+        	BillingAccount billingAccount = getFreshBA();
+        	Customer customer = billingAccount.getCustomerAccount().getCustomer();
+            entity.setBillingAccount(billingAccount);
             entity.setDetailedInvoice(isDetailed());
 
             invoiceService.assignInvoiceNumber(entity);
-            entity.setSeller(invoiceCopy.getSeller());
+            entity.setSeller(customer.getSeller());
             super.saveOrUpdate(false);
             invoiceService.commit();
             entity = invoiceService.refreshOrRetrieve(entity);
