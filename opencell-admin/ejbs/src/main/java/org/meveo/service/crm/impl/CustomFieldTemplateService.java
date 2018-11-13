@@ -34,6 +34,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarYearly;
@@ -450,6 +451,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             } else if (cft.getCalendar() instanceof CalendarInterval) {
                 ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
                 ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
+            } else if (cft.getCalendar() instanceof CalendarBanking) {
+                ((CalendarBanking)  cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
+                ((CalendarBanking)  cft.getCalendar()).nextCalendarDate(new Date());
             }
         }
         if (cft.getListValues() != null) {

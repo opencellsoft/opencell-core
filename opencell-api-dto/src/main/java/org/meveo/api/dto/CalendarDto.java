@@ -9,8 +9,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarDateInterval;
+import org.meveo.model.catalog.CalendarHoliday;
 import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarIntervalTypeEnum;
 import org.meveo.model.catalog.CalendarJoin;
@@ -25,6 +27,7 @@ import org.meveo.model.catalog.HourInDay;
  * The Class CalendarDto.
  *
  * @author Edward P. Legaspi
+ * @author hznibar
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,6 +66,14 @@ public class CalendarDto extends BusinessEntityDto {
 
     /** List of intervals. */
     private List<CalendarDateIntervalDto> intervals;
+    
+    /** The weekend begin. */
+    private int weekendBegin;
+    
+    /** The weekend end. */
+    private int weekendEnd;
+    
+    private List<CalendarHolidayDto> holidays;
 
     /**
      * Instantiates a new calendar dto.
@@ -118,6 +129,17 @@ public class CalendarDto extends BusinessEntityDto {
 
             joinCalendar1Code = calendar.getJoinCalendar1().getCode();
             joinCalendar2Code = calendar.getJoinCalendar2().getCode();
+        } else if (calendarEntity instanceof CalendarBanking) {
+            CalendarBanking calendar = (CalendarBanking) calendarEntity;
+            weekendBegin = calendar.getWeekendBegin();
+            weekendEnd = calendar.getWeekendEnd();
+
+            if (calendar.getHolidays() != null && calendar.getHolidays().size() > 0) {
+                holidays = new ArrayList<CalendarHolidayDto>();
+                for (CalendarHoliday d : calendar.getHolidays()) {
+                    holidays.add(new CalendarHolidayDto(d));
+                }
+            }
         }
     }
 
@@ -149,7 +171,8 @@ public class CalendarDto extends BusinessEntityDto {
                 + (days != null ? days.subList(0, Math.min(days.size(), maxLen)) : null) + ", hours=" + (hours != null ? hours.subList(0, Math.min(hours.size(), maxLen)) : null)
                 + ", periodLength=" + periodLength + ", periodUnit=" + periodUnit + ", nbPeriods=" + nbPeriods + ", joinCalendar1Code=" + joinCalendar1Code + ", joinCalendar2Code="
                 + joinCalendar2Code + ", intervalType=" + intervalType + ", intervals=" + (intervals != null ? intervals.subList(0, Math.min(intervals.size(), maxLen)) : null)
-                + "]";
+                + ", weekendBegin=" + weekendBegin + ", weekendEnd=" + weekendEnd + ", holidays="
+                + (holidays != null ? holidays.subList(0, Math.min(holidays.size(), maxLen)) : null) + "]";
     }
 
     /**
@@ -313,4 +336,60 @@ public class CalendarDto extends BusinessEntityDto {
     public void setIntervals(List<CalendarDateIntervalDto> intervals) {
         this.intervals = intervals;
     }
+
+    /**
+     * Gets the weekend begin.
+     *
+     * @return the weekend begin
+     */
+    public int getWeekendBegin() {
+        return weekendBegin;
+    }
+
+    /**
+     * Sets the weekend begin.
+     *
+     * @param weekendBegin the new weekend begin
+     */
+    public void setWeekendBegin(int weekendBegin) {
+        this.weekendBegin = weekendBegin;
+    }
+
+    /**
+     * Gets the weekend end.
+     *
+     * @return the weekend end
+     */
+    public int getWeekendEnd() {
+        return weekendEnd;
+    }
+
+    /**
+     * Sets the weekend end.
+     *
+     * @param weekendEnd the new weekend end
+     */
+    public void setWeekendEnd(int weekendEnd) {
+        this.weekendEnd = weekendEnd;
+    }
+
+    /**
+     * Gets the holidays.
+     *
+     * @return the holidays
+     */
+    public List<CalendarHolidayDto> getHolidays() {
+        return holidays;
+    }
+
+    /**
+     * Sets the holidays.
+     *
+     * @param holidays the new holidays
+     */
+    public void setHolidays(List<CalendarHolidayDto> holidays) {
+        this.holidays = holidays;
+    }
+    
+    
 }

@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CalendarDateIntervalDto;
 import org.meveo.api.dto.CalendarDto;
+import org.meveo.api.dto.CalendarHolidayDto;
 import org.meveo.api.dto.CalendarTypeEnum;
 import org.meveo.api.dto.DayInYearDto;
 import org.meveo.api.dto.HourInDayDto;
@@ -19,8 +20,10 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarDateInterval;
+import org.meveo.model.catalog.CalendarHoliday;
 import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarJoin;
 import org.meveo.model.catalog.CalendarJoin.CalendarJoinTypeEnum;
@@ -34,6 +37,7 @@ import org.meveo.service.catalog.impl.HourInDayService;
 
 /**
  * @author Edward P. Legaspi
+ * @author hznibar
  **/
 @Stateless
 public class CalendarApi extends BaseApi {
@@ -165,8 +169,28 @@ public class CalendarApi extends BaseApi {
             calendar.setJoinCalendar2(cal2);
 
             calendarService.create(calendar);
+        } else if (postData.getCalendarType() == CalendarTypeEnum.BANKING) { 
+
+            CalendarBanking calendar = new CalendarBanking();
+            calendar.setCode(postData.getCode());
+            calendar.setDescription(postData.getDescription());
+            calendar.setWeekendBegin(postData.getWeekendBegin());
+            calendar.setWeekendEnd(postData.getWeekendEnd());
+
+            if (postData.getHolidays() != null && postData.getHolidays().size() > 0) {
+                List<CalendarHoliday> holidays = new ArrayList<CalendarHoliday>();
+                for (CalendarHolidayDto holiday : postData.getHolidays()) {
+                    holidays.add(new CalendarHoliday(calendar, holiday.getHolidayBegin(), holiday.getHolidayEnd()));
+                }
+
+                calendar.setHolidays(holidays);
+            }
+
+            calendarService.create(calendar);
+
+        
         } else {
-            throw new BusinessApiException("invalid calendar type, possible values YEARLY, DAILY, PERIOD, INTERVAL, JOIN");
+            throw new BusinessApiException("invalid calendar type, possible values YEARLY, DAILY, PERIOD, INTERVAL, JOIN, Banking");
         }
 
     }
@@ -262,6 +286,18 @@ public class CalendarApi extends BaseApi {
             calendarJoin.setJoinType(CalendarJoinTypeEnum.valueOf(postData.getCalendarType().name()));// Join type is expressed as Calendar type in DTO
             calendarJoin.setJoinCalendar1(cal1);
             calendarJoin.setJoinCalendar2(cal2);
+        } else if (calendar instanceof CalendarBanking) {
+            
+            CalendarBanking calendarBanking = (CalendarBanking) calendar;
+            calendarBanking.setWeekendBegin(postData.getWeekendBegin());
+            calendarBanking.setWeekendEnd(postData.getWeekendEnd());
+            calendarBanking.getHolidays().clear();
+
+            if (postData.getHolidays() != null && postData.getHolidays().size() > 0) {
+                for (CalendarHolidayDto holiday : postData.getHolidays()) {
+                    calendarBanking.getHolidays().add(new CalendarHoliday(calendarBanking, holiday.getHolidayBegin(), holiday.getHolidayEnd()));
+                }
+            }
         }
 
         calendarService.update(calendar);
