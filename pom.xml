@@ -20,7 +20,7 @@
 
 	<properties>
 		<!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific 
-			configuration (e.g. import.sql) -->
+			configuration (e.g.  import.sql) -->
 		<env>dev</env>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
