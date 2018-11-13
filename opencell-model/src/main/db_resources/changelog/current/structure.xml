@@ -2115,4 +2115,26 @@
             <column name="recurrent" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#3755_20181031" author="MounirBahije">
+        <addColumn tableName="ar_payment_gateway">
+            <column name="webhooks_secret_key" type="varchar(255)" />
+        </addColumn>
+        <addColumn tableName="ar_payment_gateway">
+            <column name="webhooks_key_id" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#3791_20181111" author="SaidRamli">
+         <sql><![CDATA[
+			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN sync_status TYPE VARCHAR(255);
+			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN async_status TYPE VARCHAR(255);
+			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN error_type TYPE VARCHAR(255);
+			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN operation_category TYPE VARCHAR(255);
+			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN payment_method_type TYPE VARCHAR(255);
+			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN payment_method_name TYPE VARCHAR(255);
+        ]]>
+        </sql>
+    </changeSet>
+    
 </databaseChangeLog>

@@ -36,6 +36,8 @@ import org.primefaces.model.SortOrder;
  * PaymentGatewayDto CRUD.
  * 
  * @author anasseh
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2
  *
  */
 @Stateless
@@ -125,7 +127,10 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         paymentGateway.setMarchandId(paymentGatewayDto.getMarchandId());
         paymentGateway.setSecretKey(paymentGatewayDto.getSecretKey());
         paymentGateway.setApiKey(paymentGatewayDto.getApiKey());
+        paymentGateway.setWebhooksKeyId(paymentGatewayDto.getWebhooksKeyId());
+        paymentGateway.setWebhooksSecretKey(paymentGatewayDto.getWebhooksSecretKey());
         paymentGateway.setProfile(paymentGatewayDto.getProfile());
+        paymentGateway.setImplementationClassName(paymentGatewayDto.getImplementationClassName());
         if (paymentGatewayDto.isDisabled() != null) {
             paymentGateway.setDisabled(paymentGatewayDto.isDisabled());
         }
@@ -154,7 +159,6 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         }
 
         if (StringUtils.isBlank(paymentGatewayDto.getCode())) {
-            code = paymentGatewayDto.getCode();
             missingParameters.add("code");
         }
         handleMissingParameters();
@@ -164,6 +168,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         }
 
         PaymentGateway paymentGateway = null;
+        code = paymentGatewayDto.getCode();
         paymentGateway = paymentGatewayService.findByCode(code);
         if (paymentGateway == null) {
             throw new EntityDoesNotExistsException(PaymentGateway.class, code);
@@ -212,8 +217,17 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         if (!StringUtils.isBlank(paymentGatewayDto.getApiKey())) {
             paymentGateway.setApiKey(paymentGatewayDto.getApiKey());
         }
+        if (!StringUtils.isBlank(paymentGatewayDto.getWebhooksKeyId())) {
+            paymentGateway.setWebhooksKeyId(paymentGatewayDto.getWebhooksKeyId());
+        }
+        if (!StringUtils.isBlank(paymentGatewayDto.getWebhooksSecretKey())) {
+            paymentGateway.setWebhooksSecretKey(paymentGatewayDto.getWebhooksSecretKey());
+        }
         if (!StringUtils.isBlank(paymentGatewayDto.getProfile())) {
             paymentGateway.setProfile(paymentGatewayDto.getProfile());
+        }
+        if (!StringUtils.isBlank(paymentGatewayDto.getImplementationClassName())) {
+            paymentGateway.setImplementationClassName(paymentGatewayDto.getImplementationClassName());
         }
 
         paymentGateway.setCode(StringUtils.isBlank(paymentGatewayDto.getUpdatedCode()) ? code : paymentGatewayDto.getUpdatedCode());
