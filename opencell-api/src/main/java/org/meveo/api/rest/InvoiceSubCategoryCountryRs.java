@@ -19,6 +19,8 @@ import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
  * Web service for managing {@link org.meveo.model.billing.InvoiceSubcategoryCountry}.
  * 
  * @author Edward P. Legaspi
+ * @author Khalid HORRI
+ * @lastModifiedVersion 5.2
  **/
 @Path("/invoiceSubCategoryCountry")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -71,6 +73,18 @@ public interface InvoiceSubCategoryCountryRs extends IBaseRs {
     @DELETE
     ActionStatus remove(@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode, @PathParam("sellersCountry") String sellersCountry,
             @PathParam("country") String country);
+
+
+    /**
+     * Remove all the InvoiceSubCategoryCountries with a given code and country and the sellerCountry is null.
+     *
+     * @param invoiceSubCategoryCode invoice sub category code
+     * @param buyerCountryCode Buyer's country
+     * @return action status
+     */
+    @Path("/{invoiceSubCategoryCode}/{country}")
+    @DELETE
+    ActionStatus remove(@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode, @PathParam("country") String buyerCountryCode);
 
     /**
      * Create or update Invoice SubCategory Country based on invoice sub-category and country.
