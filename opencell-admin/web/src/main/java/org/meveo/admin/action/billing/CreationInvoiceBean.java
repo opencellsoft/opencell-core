@@ -625,6 +625,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 	rt.setSeller(sellerService.retrieveIfNotManaged(rt.getSeller()));
                     rt.setInvoice(entity);
                     rt.setStatus(RatedTransactionStatusEnum.BILLED);
+                    rt.setBillingAccount(entity.getBillingAccount());
                     if (rt.isTransient()) {
                         ratedTransactionService.create(rt);
                     } else {
