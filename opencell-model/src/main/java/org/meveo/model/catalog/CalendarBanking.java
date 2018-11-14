@@ -16,8 +16,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.google.common.collect.Lists;
-
 /**
  * represents a calendar from which weekend and holidays can be excluded.
  *
@@ -35,14 +33,14 @@ public class CalendarBanking extends Calendar {
      */
     @Column(name = "weekend_begin", nullable = false)
     @NotNull
-    private int weekendBegin;
+    private Integer weekendBegin;
 
     /**
      * Specified weekend end. 
      */
     @Column(name = "weekend_end", nullable = false)
     @NotNull
-    private int weekendEnd;
+    private Integer weekendEnd;
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -60,19 +58,19 @@ public class CalendarBanking extends Calendar {
         this.holidays = holidays;
     }
     
-    public int getWeekendBegin() {
+    public Integer getWeekendBegin() {
 		return weekendBegin;
 	}
 
-	public void setWeekendBegin(int weekendBegin) {
+	public void setWeekendBegin(Integer weekendBegin) {
 		this.weekendBegin = weekendBegin;
 	}
 
-	public int getWeekendEnd() {
+	public Integer getWeekendEnd() {
 		return weekendEnd;
 	}
 
-	public void setWeekendEnd(int weekendEnd) {
+	public void setWeekendEnd(Integer weekendEnd) {
 		this.weekendEnd = weekendEnd;
 	}
 
@@ -226,25 +224,6 @@ public class CalendarBanking extends Calendar {
 			weekdayAdjusted = weekday + 7;
 		}
 		return getWeekendBegin() <= weekdayAdjusted && weekdayAdjusted <= getWeekendEndAdjusted();
-	}
-	
-	public static void main(String[] args) {
-    	CalendarBanking c = new CalendarBanking();
-    	c.setWeekendBegin(6);
-    	c.setWeekendEnd(7);
-    	CalendarHoliday h = new CalendarHoliday();
-    	h.setHolidayBegin(1112);
-    	h.setHolidayEnd(1130);
-    	CalendarHoliday h2 = new CalendarHoliday();
-    	h2.setHolidayBegin(121);
-    	h2.setHolidayEnd(1231);
-    	c.setHolidays(Lists.newArrayList(h));
-    	GregorianCalendar calendar = new GregorianCalendar(2018,10,11);
-    	System.out.println(c.nextCalendarDate(calendar.getTime()));
-    	System.out.println(c.previousCalendarDate(calendar.getTime()));
-    	System.out.println(c.getDateBeforeWeekend(calendar.getTime()));
-    	System.out.println(c.getDateAfterWeekend(calendar.getTime()));
-		
 	}
 
 	/**

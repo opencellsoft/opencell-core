@@ -68,10 +68,10 @@ public class CalendarDto extends BusinessEntityDto {
     private List<CalendarDateIntervalDto> intervals;
     
     /** The weekend begin. */
-    private int weekendBegin;
+    private Integer weekendBegin;
     
     /** The weekend end. */
-    private int weekendEnd;
+    private Integer weekendEnd;
     
     private List<CalendarHolidayDto> holidays;
 
@@ -342,7 +342,7 @@ public class CalendarDto extends BusinessEntityDto {
      *
      * @return the weekend begin
      */
-    public int getWeekendBegin() {
+    public Integer getWeekendBegin() {
         return weekendBegin;
     }
 
@@ -351,7 +351,7 @@ public class CalendarDto extends BusinessEntityDto {
      *
      * @param weekendBegin the new weekend begin
      */
-    public void setWeekendBegin(int weekendBegin) {
+    public void setWeekendBegin(Integer weekendBegin) {
         this.weekendBegin = weekendBegin;
     }
 
@@ -360,7 +360,7 @@ public class CalendarDto extends BusinessEntityDto {
      *
      * @return the weekend end
      */
-    public int getWeekendEnd() {
+    public Integer getWeekendEnd() {
         return weekendEnd;
     }
 
@@ -369,7 +369,7 @@ public class CalendarDto extends BusinessEntityDto {
      *
      * @param weekendEnd the new weekend end
      */
-    public void setWeekendEnd(int weekendEnd) {
+    public void setWeekendEnd(Integer weekendEnd) {
         this.weekendEnd = weekendEnd;
     }
 
