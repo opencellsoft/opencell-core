@@ -226,7 +226,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
         try {
             StringBuilder strQuery = new StringBuilder();
-            strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithTax), SUM(r.amountWithoutTax)) from WalletOperation r " + "WHERE 1=1 ");
+            strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithoutTax), SUM(r.amountWithTax)) from WalletOperation r " + "WHERE 1=1 ");
 
             if (startDate != null) {
                 strQuery.append(" AND r.operationDate>=:startDate ");
