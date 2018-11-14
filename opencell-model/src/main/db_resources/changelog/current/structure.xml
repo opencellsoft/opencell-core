@@ -431,5 +431,11 @@
     	<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_payment_schedule_tmpl" constraintName="fk_ps_script_instance" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
+    
+    <changeSet id="#3731_20181113" author="EdwardPLegaspi">
+    	<dropForeignKeyConstraint baseTableName="billing_invoice_agregate" constraintName="fk_icmfsev8m5n386ifttcgelv40"/>
+    	<addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_invoice_agregate" constraintName="fk_icmfsev8m5n386ifttcgelv40" deferrable="false" initiallyDeferred="false"
+            onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice" />
+    </changeSet>
 </databaseChangeLog> 
 
