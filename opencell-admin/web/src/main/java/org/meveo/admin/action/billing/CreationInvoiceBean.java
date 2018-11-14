@@ -548,6 +548,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     rtCopy.setInvoice(invoiceCopy);
                     rtCopy.setId(null);
                     rtCopy.setStatus(RatedTransactionStatusEnum.BILLED);
+                    rtCopy.setBillingAccount(billingAccount);
                     ratedTransactionService.create(rtCopy);
                     ratedTransactionCopy.add(rtCopy);
                 }
