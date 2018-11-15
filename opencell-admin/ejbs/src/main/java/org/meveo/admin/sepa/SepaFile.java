@@ -20,7 +20,6 @@ import org.meveo.admin.sepa.jaxb.pain001.AmountType3Choice;
 import org.meveo.admin.sepa.jaxb.pain001.CreditTransferTransactionInformation10;
 import org.meveo.admin.sepa.jaxb.pain001.CustomerCreditTransferInitiationV03;
 import org.meveo.admin.sepa.jaxb.pain001.GroupHeader32;
-import org.meveo.admin.sepa.jaxb.pain001.OrganisationIdentification4;
 import org.meveo.admin.sepa.jaxb.pain001.PaymentInstructionInformation3;
 import org.meveo.admin.sepa.jaxb.pain001.PaymentMethod3Code;
 import org.meveo.admin.sepa.jaxb.pain001.PaymentTypeInformation19;
@@ -69,25 +68,90 @@ import org.slf4j.LoggerFactory;
  * @author anasseh
  * @author Wassim Drira
  * @author Said Ramli
+ * @author hznibar
  * @lastModifiedVersion 5.2
  *
  */
 @DDRequestBuilderClass
 public class SepaFile extends AbstractDDRequestBuilder {
-    Logger log = LoggerFactory.getLogger(SepaFile.class);
+
+    private static Logger log = LoggerFactory.getLogger(SepaFile.class);
+
+    /** The prefix of reject file name. */
+    private static final String REJECT_FILE_PREFIX = "Pain002_";
+
+    /** The extension of reject file. */
+    private static final String REJECT_FILE_EXTENSION = "xml";
+
+    /** The PATTERN that the BIC should match. */
+    private static final String BIC_PATTERN = "[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}";
+
+    /** The PATTERN that the IBAN should match. */
+    private static final String IBAN_PATTERN = "[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}";
+
+    /** The location of SDD schema. */
+    private static final String SDD_SCHEMA_LOCATION = "https://github.com/w2c/sepa-sdd-xml-generator/blob/master/validation_schemes/pain.008.001.02.xsd";
+
+    /** The location of SCT schema. */
+    private static final String SCT_SCHEMA_LOCATION = "https://github.com/digitick/php-sepa-xml/blob/master/tests/pain.001.001.03.xsd";
+
+    /** The Constant SIMPLE_DATE_PATTERN. */
+    private static final String SIMPLE_DATE_PATTERN = "yyyyMMdd";
+
+    /** The Constant DATE_TIME_PATTERN. */
+    private static final String DATE_TIME_PATTERN = "yyyyMMddHHmmssSSS";
+
+    /** The Constant EMPTY_STRING. */
+    private static final String EMPTY_STRING = "";
+
+    /** The Constant DASH_STRING. */
+    private static final String DASH_STRING = "-";
+
+    /** The Constant DOUBLE_POINT. */
+    private static final String DOUBLE_POINT = "\\..";
+
+    /** The Constant COMMA_STRING. */
+    private static final String COMMA_STRING = ",";
+
+    /** The underscore separator used at sepa file name. */
+    private static final String UNDERSCORE_SEPARATOR = "_";
+
+    /** The Constant EURO_CCY. */
+    private static final String EURO_CCY = "EUR";
+
+    /** The Constant REJECT_STS_CODE. */
+    private static final String REJECT_STS_CODE = "RJCT";
+
+    /** The Constant SEPA_SERVICE_LEVEL_CD. */
+    private static final String SEPA_SERVICE_LEVEL_CD = "SEPA";
+
+    /** The Constant SEPA_LOCAL_INSTRUMENT_CODE. */
+    private static final String SEPA_LOCAL_INSTRUMENT_CODE = "CORE";
+
+    /** The Constant NUMBER_OF_TRANSACTIONS. */
+    private static final String NUMBER_OF_TRANSACTIONS_1 = "1";
+
+    /** The Constant FR_COUNTRY. */
+    private static final String FR_COUNTRY = "FR";
+
+    /** The Constant NOTPROVIDED_BIC. */
+    private static final String NOTPROVIDED_BIC = "NOTPROVIDED";
+
+    /** The Constant CATEGORY_PURPOSE_CODE. */
+    private static final String CATEGORY_PURPOSE_CODE = "SUPP";
 
     @Override
     public String getDDFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
         try {
             ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
             String fileName = ArConfig.getDDRequestFileNamePrefix() + ddRequestLot.getId();
-            fileName = fileName + "_" + appProvider.getCode();
-            fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd") + ArConfig.getDDRequestFileNameExtension();
+            fileName = fileName + UNDERSCORE_SEPARATOR + appProvider.getCode();
+            fileName = fileName + UNDERSCORE_SEPARATOR + DateUtils.formatDateWithPattern(new Date(), SIMPLE_DATE_PATTERN) + ArConfig.getDDRequestFileNameExtension();
 
             String outputDir = paramBean.getChrootDir(appProvider.getCode());
 
             outputDir = outputDir + File.separator + ArConfig.getDDRequestOutputDirectory();
-            outputDir = outputDir.replaceAll("\\..", "");
+            outputDir = outputDir.replaceAll(DOUBLE_POINT, EMPTY_STRING);
 
             log.info("DDRequest output directory=" + outputDir);
             File dir = new File(outputDir);
@@ -96,7 +160,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
             }
             return outputDir + File.separator + fileName;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new BusinessException(e.getMessage());
         }
     }
@@ -114,8 +178,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
                     addPaymentInformation(message, ddrequestItem, appProvider);
                 }
             }
-            String schemaLocation = paramBean.getProperty("sepa.schemaLocation.pain008",
-                "https://github.com/w2c/sepa-sdd-xml-generator/blob/master/validation_schemes/pain.008.001.02.xsd");
+            String schemaLocation = paramBean.getProperty("sepa.schemaLocation.pain008", SDD_SCHEMA_LOCATION);
             JAXBUtils.marshaller(document, new File(ddRequestLot.getFileName()), schemaLocation);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
@@ -125,12 +188,12 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
     @Override
     public String getDDRejectFilePrefix() throws BusinessException {
-        return "Pain002_";
+        return REJECT_FILE_PREFIX;
     }
 
     @Override
     public String getDDRejectFileExtension() throws BusinessException {
-        return "xml";
+        return REJECT_FILE_EXTENSION;
     }
 
     @Override
@@ -149,22 +212,22 @@ public class SepaFile extends AbstractDDRequestBuilder {
             }
 
             String dDRequestLOTref = orgnlGrpInfAndSts.getOrgnlMsgId();
-            if (dDRequestLOTref == null || dDRequestLOTref.indexOf("-") < 0) {
+            if (dDRequestLOTref == null || dDRequestLOTref.indexOf(DASH_STRING) < 0) {
                 throw new BusinessException("Unknown dDRequestLOTref:" + dDRequestLOTref);
             }
-            String[] dDRequestLOTrefSplited = dDRequestLOTref.split("-");
+            String[] dDRequestLOTrefSplited = dDRequestLOTref.split(DASH_STRING);
 
             ddRejectFileInfos.setDdRequestLotId(new Long(dDRequestLOTrefSplited[1]));
 
-            if (orgnlGrpInfAndSts.getGrpSts() != null && "RJCT".equals(orgnlGrpInfAndSts.getGrpSts())) {
+            if (orgnlGrpInfAndSts.getGrpSts() != null && REJECT_STS_CODE.equals(orgnlGrpInfAndSts.getGrpSts())) {
                 ddRejectFileInfos.setTheDDRequestFileWasRejected(true);
                 ddRejectFileInfos.setReturnStatusCode(orgnlGrpInfAndSts.getStsRsnInf().getRsn().getCd());
                 return ddRejectFileInfos;
             }
             OrgnlPmtInfAndSts orgnlPmtInfAndSts = cstmrPmtStsRpt.getOrgnlPmtInfAndSts();
             for (TxInfAndSts txInfAndSts : orgnlPmtInfAndSts.getTxInfAndSts()) {
-                if ("RJCT".equals(txInfAndSts.getTxSts())) {
-                    ddRejectFileInfos.getListInvoiceRefsRejected().put(new Long(txInfAndSts.getOrgnlEndToEndId()), "RJCT");
+                if (REJECT_STS_CODE.equals(txInfAndSts.getTxSts())) {
+                    ddRejectFileInfos.getListInvoiceRefsRejected().put(new Long(txInfAndSts.getOrgnlEndToEndId()), REJECT_STS_CODE);
                 }
             }
 
@@ -174,11 +237,19 @@ public class SepaFile extends AbstractDDRequestBuilder {
         return ddRejectFileInfos;
     }
 
+    /**
+     * Adds the header of SDD file.
+     *
+     * @param message the SDD message
+     * @param ddRequestLOT the dd request LOT
+     * @param appProvider the provider
+     * @throws Exception the exception
+     */
     private void addHeader(CustomerDirectDebitInitiationV02 message, DDRequestLOT ddRequestLOT, Provider appProvider) throws Exception {
 
         GroupHeader39 groupHeader = new GroupHeader39();
         message.setGrpHdr(groupHeader);
-        groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference() + "-" + ddRequestLOT.getId());
+        groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference() + DASH_STRING + ddRequestLOT.getId());
         groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
         groupHeader.setNbOfTxs(String.valueOf(ddRequestLOT.getDdrequestItems().size()));
         groupHeader.setCtrlSum(ddRequestLOT.getTotalAmount().setScale(2, RoundingMode.HALF_UP));
@@ -188,25 +259,33 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
     }
 
+    /**
+     * Adds the payment information of SDD file.
+     *
+     * @param Message the SDD message
+     * @param dDRequestItem the dd request item
+     * @param appProvider the provider
+     * @throws Exception the exception
+     */
     private void addPaymentInformation(CustomerDirectDebitInitiationV02 Message, DDRequestItem dDRequestItem, Provider appProvider) throws Exception {
 
         log.info("addPaymentInformation dDRequestItem id=" + dDRequestItem.getId());
         ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
         PaymentInstructionInformation4 paymentInformation = new PaymentInstructionInformation4();
         Message.getPmtInf().add(paymentInformation);
-        paymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference() + "-" + dDRequestItem.getId());
+        paymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference() + DASH_STRING + dDRequestItem.getId());
         paymentInformation.setPmtMtd(PaymentMethod2Code.DD);
-        paymentInformation.setNbOfTxs("1");
+        paymentInformation.setNbOfTxs(NUMBER_OF_TRANSACTIONS_1);
         paymentInformation.setCtrlSum(dDRequestItem.getAmount().setScale(2, RoundingMode.HALF_UP));
         PaymentTypeInformation20 paymentTypeInformation = new PaymentTypeInformation20();
         paymentInformation.setPmtTpInf(paymentTypeInformation);
         ServiceLevel8Choice serviceLevel = new ServiceLevel8Choice();
         paymentTypeInformation.setSvcLvl(serviceLevel);
-        serviceLevel.setCd("SEPA");
+        serviceLevel.setCd(SEPA_SERVICE_LEVEL_CD);
         LocalInstrument2Choice localInstrument = new LocalInstrument2Choice();
         paymentTypeInformation.setLclInstrm(localInstrument);
-        localInstrument.setCd(paramBean.getProperty("sepa.LclInstrm", "CORE"));
-        paymentTypeInformation.setSeqTp(SequenceType1Code.FRST);
+        localInstrument.setCd(paramBean.getProperty("sepa.LclInstrm", SEPA_LOCAL_INSTRUMENT_CODE));
+        paymentTypeInformation.setSeqTp(SequenceType1Code.RCUR);
 
         paymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(new Date())); // à revoir
 
@@ -240,10 +319,17 @@ public class SepaFile extends AbstractDDRequestBuilder {
         other.setId(providerBC.getIcs());
         PersonIdentificationSchemeName1Choice schemeName = new PersonIdentificationSchemeName1Choice();
         other.setSchmeNm(schemeName);
-        schemeName.setPrtry("SEPA");
+        schemeName.setPrtry(SEPA_SERVICE_LEVEL_CD);
         addTransaction(dDRequestItem, paymentInformation);
     }
 
+    /**
+     * Adds the transaction of SDD file.
+     *
+     * @param dDRequestItem the dd request item
+     * @param paymentInformation the payment information of SDD file
+     * @throws Exception the exception
+     */
     private void addTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation4 paymentInformation) throws Exception {
         CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
         PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
@@ -251,9 +337,9 @@ public class SepaFile extends AbstractDDRequestBuilder {
             throw new BusinessException("Payment method not valid!");
         }
         BankCoordinates bankCoordinates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
-        
+
         if (bankCoordinates == null) {
-            throw new BusinessException("Bank Coordinate is absent for Payment method "+((DDPaymentMethod) preferedPaymentMethod).getAlias());
+            throw new BusinessException("Bank Coordinate is absent for Payment method " + ((DDPaymentMethod) preferedPaymentMethod).getAlias());
         }
 
         DirectDebitTransactionInformation9 directDebitTransactionInformation = new DirectDebitTransactionInformation9();
@@ -265,7 +351,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
         ActiveOrHistoricCurrencyAndAmount instructedAmount = new ActiveOrHistoricCurrencyAndAmount();
         directDebitTransactionInformation.setInstdAmt(instructedAmount);
         instructedAmount.setValue(dDRequestItem.getAmount().setScale(2, RoundingMode.HALF_UP));
-        instructedAmount.setCcy("EUR");
+        instructedAmount.setCcy(EURO_CCY);
         DirectDebitTransaction6 directDebitTransaction = new DirectDebitTransaction6();
         directDebitTransactionInformation.setDrctDbtTx(directDebitTransaction);
         MandateRelatedInformation6 mandateRelatedInformation = new MandateRelatedInformation6();
@@ -296,13 +382,13 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
         ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
         String fileName = ArConfig.getSCTRequestFileNamePrefix() + ddRequestLot.getId();
-        fileName = fileName + "_" + appProvider.getCode();
-        fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMddHHmmssSSS") + ArConfig.getSCTRequestFileNameExtension();
+        fileName = fileName + UNDERSCORE_SEPARATOR + appProvider.getCode();
+        fileName = fileName + UNDERSCORE_SEPARATOR + DateUtils.formatDateWithPattern(new Date(), DATE_TIME_PATTERN) + ArConfig.getSCTRequestFileNameExtension();
 
         String outputDir = paramBean.getChrootDir(appProvider.getCode());
 
         outputDir = outputDir + File.separator + ArConfig.getSCTRequestOutputDir();
-        outputDir = outputDir.replaceAll("\\..", "");
+        outputDir = outputDir.replaceAll(DOUBLE_POINT, EMPTY_STRING);
 
         log.info("SCTRequest output directory=" + outputDir);
         File dir = new File(outputDir);
@@ -359,40 +445,48 @@ public class SepaFile extends AbstractDDRequestBuilder {
                     message.getGrpHdr().setCtrlSum(totalAmount.setScale(2, RoundingMode.HALF_UP));
                     message.getGrpHdr().setNbOfTxs(String.valueOf(opToGenerateByFile));
                     // the Pain001 jaxb classes are generated from the xsd located at: https://www.iso20022.org/documents/messages/1_0_version/pain/schemas/pain.001.001.03.zip
-                    String schemaLocation = paramBean.getProperty("sepa.schemaLocation.pain001", "https://github.com/digitick/php-sepa-xml/blob/master/tests/pain.001.001.03.xsd");
+                    String schemaLocation = paramBean.getProperty("sepa.schemaLocation.pain001", SCT_SCHEMA_LOCATION);
 
                     JAXBUtils.marshaller(document, new File(fileName), schemaLocation);
                     generatedFilesNames.add(fileName);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage());
                 throw new BusinessException(e.getMessage());
             }
 
         }
-        ddRequestLot.setFileName(String.join(",", generatedFilesNames));
+        ddRequestLot.setFileName(String.join(COMMA_STRING, generatedFilesNames));
 
     }
 
+    /**
+     * Adds the payment information for SCT file.
+     *
+     * @param message the SCT message
+     * @param ddrequestItem the ddrequest item
+     * @param appProvider the provider
+     * @throws Exception the exception
+     */
     private void addSctPaymentInformation(CustomerCreditTransferInitiationV03 message, DDRequestItem ddrequestItem, Provider appProvider) throws Exception {
 
         log.info("addPaymentInformation dDRequestItem id=" + ddrequestItem.getId());
 
         PaymentInstructionInformation3 paymentInformation = new PaymentInstructionInformation3();
         message.getPmtInf().add(paymentInformation);
-        paymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference() + "-" + ddrequestItem.getId());
+        paymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference() + DASH_STRING + ddrequestItem.getId());
         paymentInformation.setPmtMtd(PaymentMethod3Code.TRF);
         paymentInformation.setBtchBookg(true);
-        paymentInformation.setNbOfTxs("1");
+        paymentInformation.setNbOfTxs(String.valueOf(ddrequestItem.getAccountOperations().size()));
         paymentInformation.setCtrlSum(ddrequestItem.getAmount().setScale(2, RoundingMode.HALF_UP));
         PaymentTypeInformation19 paymentTypeInformation = new PaymentTypeInformation19();
         paymentInformation.setPmtTpInf(paymentTypeInformation);
         org.meveo.admin.sepa.jaxb.pain001.ServiceLevel8Choice serviceLevel = new org.meveo.admin.sepa.jaxb.pain001.ServiceLevel8Choice();
         paymentTypeInformation.setSvcLvl(serviceLevel);
-        serviceLevel.setCd("SEPA");
+        serviceLevel.setCd(SEPA_SERVICE_LEVEL_CD);
         org.meveo.admin.sepa.jaxb.pain001.CategoryPurpose1Choice ctgyPurp = new org.meveo.admin.sepa.jaxb.pain001.CategoryPurpose1Choice();
         paymentTypeInformation.setCtgyPurp(ctgyPurp);
-        ctgyPurp.setCd("SUPP");
+        ctgyPurp.setCd(CATEGORY_PURPOSE_CODE);
 
         paymentInformation.setReqdExctnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(new Date())); // TODO : define a configurable delay between payment and date of issue
 
@@ -410,58 +504,69 @@ public class SepaFile extends AbstractDDRequestBuilder {
             throw new BusinessException("Missing bank information on provider");
         }
         // iban pattern
-        if (!isMatched(providerBC.getIban(), "[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}")) {
+        if (!isMatched(providerBC.getIban(), IBAN_PATTERN)) {
             throw new BusinessException("IBAN not valid!");
         }
         identification.setIBAN(providerBC.getIban());
 
-        dbtrAccount.setCcy("EUR");
+        dbtrAccount.setCcy(EURO_CCY);
         org.meveo.admin.sepa.jaxb.pain001.BranchAndFinancialInstitutionIdentification4 dbtrAgent = new org.meveo.admin.sepa.jaxb.pain001.BranchAndFinancialInstitutionIdentification4();
         paymentInformation.setDbtrAgt(dbtrAgent);
         org.meveo.admin.sepa.jaxb.pain001.FinancialInstitutionIdentification7 financialInstitutionIdentification = new org.meveo.admin.sepa.jaxb.pain001.FinancialInstitutionIdentification7();
         dbtrAgent.setFinInstnId(financialInstitutionIdentification);
         if (StringUtils.isBlank(providerBC.getBic())) {
             org.meveo.admin.sepa.jaxb.pain001.GenericFinancialIdentification1 othr = new org.meveo.admin.sepa.jaxb.pain001.GenericFinancialIdentification1();
-            othr.setId("NOTPROVIDED");
+            othr.setId(NOTPROVIDED_BIC);
             financialInstitutionIdentification.setOthr(othr);
-        } else if (!isMatched(providerBC.getBic(), "[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")) {
+        } else if (!isMatched(providerBC.getBic(), BIC_PATTERN)) {
             throw new BusinessException("BIC not valid!");
-        } 
-        
+        }
+
         financialInstitutionIdentification.setBIC(providerBC.getBic());
         paymentInformation.setChrgBr(org.meveo.admin.sepa.jaxb.pain001.ChargeBearerType1Code.SLEV);
 
-        for(AccountOperation ao : ddrequestItem.getAccountOperations()) {
+        for (AccountOperation ao : ddrequestItem.getAccountOperations()) {
             addSctTransaction(ao, paymentInformation);
         }
-        //addSctTransaction(ddrequestItem, paymentInformation);
+        // addSctTransaction(ddrequestItem, paymentInformation);
     }
 
+    /**
+     * Adds the header for SCT file.
+     *
+     * @param message the SCT message
+     * @param ddRequestLot the dd request lot
+     * @param appProvider the provider
+     * @param fileNumber the file number: used when generatin severals files for one ddRequest lot
+     * @throws Exception the exception
+     */
     private void addSctHeader(CustomerCreditTransferInitiationV03 message, DDRequestLOT ddRequestLot, Provider appProvider, int fileNumber) throws Exception {
         GroupHeader32 groupHeader = new GroupHeader32();
         message.setGrpHdr(groupHeader);
-        groupHeader.setMsgId(ArConfig.getSCTRequestHeaderRefrence() + "-" + ddRequestLot.getId() + "-" + fileNumber);
+        groupHeader.setMsgId(ArConfig.getSCTRequestHeaderRefrence() + DASH_STRING + ddRequestLot.getId() + DASH_STRING + fileNumber);
         groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
         org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32 initgPty = new org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32();
         initgPty.setNm(appProvider.getDescription());
-        org.meveo.admin.sepa.jaxb.pain001.Party6Choice idProperty = new org.meveo.admin.sepa.jaxb.pain001.Party6Choice();
-        initgPty.setId(idProperty);
-        OrganisationIdentification4 orgId = new OrganisationIdentification4();
-        idProperty.setOrgId(orgId);
-        orgId.setBICOrBEI("GSZGFRPP");
         groupHeader.setInitgPty(initgPty);
 
     }
 
+    /**
+     * Adds the transaction for SCT file.
+     *
+     * @param ao the account operation
+     * @param paymentInformation the payment information of SCT file
+     * @throws Exception the exception
+     */
     private void addSctTransaction(AccountOperation ao, PaymentInstructionInformation3 paymentInformation) throws Exception {
         CustomerAccount ca = ao.getCustomerAccount();
         PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
         if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
             throw new BusinessException("Payment method not valid!");
         }
-        BankCoordinates bankCoordinates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();        
+        BankCoordinates bankCoordinates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
         if (bankCoordinates == null) {
-            throw new BusinessException("Bank Coordinate is absent for Payment method "+((DDPaymentMethod) preferedPaymentMethod).getAlias());
+            throw new BusinessException("Bank Coordinate is absent for Payment method " + ((DDPaymentMethod) preferedPaymentMethod).getAlias());
         }
 
         CreditTransferTransactionInformation10 cdtTrfTxInf = new CreditTransferTransactionInformation10();
@@ -481,25 +586,25 @@ public class SepaFile extends AbstractDDRequestBuilder {
             throw new BusinessException("Amount is invalid :" + ao.getAmount());
         }
         instdAmt.setValue(ao.getAmount().setScale(2, RoundingMode.HALF_UP));
-        instdAmt.setCcy("EUR");
+        instdAmt.setCcy(EURO_CCY);
         amt.setInstdAmt(instdAmt);
 
         org.meveo.admin.sepa.jaxb.pain001.BranchAndFinancialInstitutionIdentification4 cdtrAgent = new org.meveo.admin.sepa.jaxb.pain001.BranchAndFinancialInstitutionIdentification4();
         cdtTrfTxInf.setCdtrAgt(cdtrAgent);
         org.meveo.admin.sepa.jaxb.pain001.FinancialInstitutionIdentification7 finInstnId = new org.meveo.admin.sepa.jaxb.pain001.FinancialInstitutionIdentification7();
-        if (!isMatched(bankCoordinates.getBic(), "[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}")) {
-            throw new BusinessException("BIC not valid : "+bankCoordinates.getBic());
+        if (!isMatched(bankCoordinates.getBic(), BIC_PATTERN)) {
+            throw new BusinessException("BIC not valid : " + bankCoordinates.getBic());
         }
         finInstnId.setBIC(bankCoordinates.getBic());
         cdtrAgent.setFinInstnId(finInstnId);
         org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32 cdtr = new org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32();
         cdtTrfTxInf.setCdtr(cdtr);
         cdtr.setNm(ca.getDescription());
-        cdtr.setCtryOfRes("FR");
+        cdtr.setCtryOfRes(FR_COUNTRY);
         org.meveo.admin.sepa.jaxb.pain001.CashAccount16 cdtrAccount = new org.meveo.admin.sepa.jaxb.pain001.CashAccount16();
         cdtTrfTxInf.setCdtrAcct(cdtrAccount);
         org.meveo.admin.sepa.jaxb.pain001.AccountIdentification4Choice identification = new org.meveo.admin.sepa.jaxb.pain001.AccountIdentification4Choice();
-        if (!isMatched(bankCoordinates.getIban(), "[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}")) {
+        if (!isMatched(bankCoordinates.getIban(), IBAN_PATTERN)) {
             throw new BusinessException("IBAN of the creditor account is not valid!");
         }
         identification.setIBAN(bankCoordinates.getIban());

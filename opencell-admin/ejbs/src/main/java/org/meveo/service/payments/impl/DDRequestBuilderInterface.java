@@ -2,7 +2,6 @@ package org.meveo.service.payments.impl;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.DDRejectFileInfos;
