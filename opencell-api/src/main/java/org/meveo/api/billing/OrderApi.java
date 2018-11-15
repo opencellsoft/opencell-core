@@ -74,7 +74,7 @@ import org.tmf.dsmapi.catalog.resource.order.ProductRelationship;
 import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 
 /**
- * @author Andrius Karpavičius
+ * @author Andrius Karpavicius
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  *
@@ -819,7 +819,7 @@ public class OrderApi extends BaseApi {
 
 				boolean found = false;
 				
-				if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty()) {
+				if (subscription!=null && subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty()) {
 					for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
 						if (serviceCodesForActivation.contains(serviceInstance.getCode()) && serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
 							found = true;
