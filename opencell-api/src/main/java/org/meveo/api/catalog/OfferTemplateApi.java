@@ -183,11 +183,17 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     private OfferTemplate populateFromDto(OfferTemplateDto postData, OfferTemplate offerTemplateToUpdate) throws MeveoApiException, BusinessException {
 
         OfferTemplate offerTemplate = offerTemplateToUpdate;
+        
         if (offerTemplate == null) {
             offerTemplate = new OfferTemplate();
             if (postData.isDisabled() != null) {
                 offerTemplate.setDisabled(postData.isDisabled());
             }
+        }
+        
+        Boolean autoEndOfEngagement = postData.getAutoEndOfEngagement();
+        if (autoEndOfEngagement != null) {
+            offerTemplate.setAutoEndOfEngagement(autoEndOfEngagement);
         }
 
         BusinessOfferModel businessOffer = null;

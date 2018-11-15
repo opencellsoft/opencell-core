@@ -52,6 +52,8 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
     /** The minimum label EL. */
     private String minimumLabelEl;
+    
+    private Boolean autoEndOfEngagement;
 
     /**
      * Instantiates a new offer template dto.
@@ -228,5 +230,19 @@ public class OfferTemplateDto extends ProductOfferingDto {
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
+    }
+
+    /**
+     * @return the autoEndOfEngagement
+     */
+    public Boolean getAutoEndOfEngagement() {
+        return autoEndOfEngagement;
+    }
+
+    /**
+     * @param autoEndOfEngagement the autoEndOfEngagement to set
+     */
+    public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
+        this.autoEndOfEngagement = autoEndOfEngagement;
     }
 }
