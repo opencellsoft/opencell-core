@@ -600,7 +600,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         // Calculate invoice total amounts by the sum of tax aggregates or category aggregates minus discount aggregates
         // Left here in case tax script modifies something
-        if (!isExonerated && taxAggregates != null) {
+		if (!isExonerated && taxAggregates != null && !taxAggregates.isEmpty()) {
             for (TaxInvoiceAgregate taxAggregate : taxAggregates.values()) {
                 invoice.addAmountWithoutTax(taxAggregate.getAmountWithoutTax());
                 invoice.addAmountWithTax(taxAggregate.getAmountWithTax());

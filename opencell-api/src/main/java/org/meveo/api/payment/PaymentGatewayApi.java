@@ -62,9 +62,6 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
     public PaymentGateway create(PaymentGatewayDto paymentGatewayDto) throws MeveoApiException, BusinessException {
         String code = null;
 
-        missingParameters.add("paymentGatewayDto");
-        handleMissingParameters();
-
         code = paymentGatewayDto.getCode();
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
