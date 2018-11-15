@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -13586,7 +13586,7 @@ public class Action1 extends Script {
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 3</label>
   <script code="Action3">
-    <auditable created="*" updated="*" creator="*" updater="*"/>
+    <auditable created="*" creator="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
@@ -31670,7 +31670,7 @@ public class Action1 extends Script {
   <applicableOnEl>#{!entity.active}</applicableOnEl>
   <label>Action 3 - updated</label>
   <script code="Action34">
-    <auditable created="*" updated="*" creator="*" updater="*"/>
+    <auditable created="*" creator="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
@@ -34305,7 +34305,14 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:originalUri>http://localhost/api/rest/billing/subscription</con:originalUri>
             <con:assertion type="Simple Contains" id="36484939-ee41-47bd-a178-d8209f340427" name="Contains">
               <con:configuration>
-                <token>"mapValue":{"b":{"value":"ACCESS_STRING_VALUE_107"},"a":{"value":"SUBSCRIPTION_STRING_VALUE_02"}}</token>
+                <token>SUBSCRIPTION_STRING_VALUE_02</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="136a5730-dd23-4f7b-be04-d9c748f42383" name="SUBSCRIPTION_STRING_VALUE_07">
+              <con:configuration>
+                <token>SUBSCRIPTION_STRING_VALUE_07</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -34336,7 +34343,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>43</con:value>
+        <con:value>61</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36816,6 +36823,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     </con:testCase>
     <con:testCase id="43276789-8061-4428-8321-37de4423685e" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="update with cf" searchProperties="true">
       <con:settings/>
+      <con:testStep type="delay" name="5000x1" id="e4652bee-fb93-4eb0-8c0e-86e75eab7157">
+        <con:settings/>
+        <con:config>
+          <delay>20000</delay>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="S_UA" id="c23ac7e0-f07a-4610-8b4d-2da6607b1d35">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -36885,6 +36898,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:wsaConfig mustUnderstand="NONE" version="200508"/>
             <con:wsrmConfig version="1.2"/>
           </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="delay" name="5000x2" id="dcfcf441-fa2c-4995-993d-7fb631260f9a">
+        <con:settings/>
+        <con:config>
+          <delay>5000</delay>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="S_UA - 2" id="9d1e4204-bc87-4404-9472-e4e558127a7d">
@@ -36958,6 +36977,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="delay" name="5000x3" id="5bc342e6-aa37-4c0b-bb05-0c0a5bac07a4">
+        <con:settings/>
+        <con:config>
+          <delay>5000</delay>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:properties>
@@ -36967,7 +36992,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>80</con:value>
+        <con:value>98</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38516,7 +38541,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>50</con:value>
+        <con:value>68</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39739,7 +39764,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>41</con:value>
+        <con:value>58</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -43185,11 +43210,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:assertion type="XPath Match" id="acf44eb5-20b5-4905-9bea-10e41139b5aa" name="XPath Match 1">
               <con:configuration>
                 <path>//billingAccount/customFields/customField[@code="C"][1]</path>
-                <content><![CDATA[<customField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00-03:00" valuePeriodEndDate="2018-07-01T00:00:00-03:00">
+                <content><![CDATA[<customField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00*" valuePeriodEndDate="2018-07-01T00:00:00*">
   <fieldType>STRING</fieldType>
   <stringValue>C_BA_06</stringValue>
 </customField>]]></content>
-                <allowWildcards>false</allowWildcards>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -44802,11 +44827,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:assertion type="XPath Match" id="acf44eb5-20b5-4905-9bea-10e41139b5aa" name="XPath Match 1">
               <con:configuration>
                 <path>//billingAccount/customFields/customField[@code="C"][1]</path>
-                <content><![CDATA[<customField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00-03:00" valuePeriodEndDate="2018-07-01T00:00:00-03:00">
+                <content><![CDATA[<customField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00*" valuePeriodEndDate="2018-07-01T00:00:00*">
   <fieldType>STRING</fieldType>
   <stringValue>C_BA_06</stringValue>
 </customField>]]></content>
-                <allowWildcards>false</allowWildcards>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -45736,11 +45761,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:assertion type="XPath Match" id="acf44eb5-20b5-4905-9bea-10e41139b5aa" name="XPath Match 1">
               <con:configuration>
                 <path>//billingAccount/customFields/customField[@code="C"][1]</path>
-                <content><![CDATA[<customField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00-03:00" valuePeriodEndDate="2018-07-01T00:00:00-03:00">
+                <content><![CDATA[<customField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00*" valuePeriodEndDate="2018-07-01T00:00:00*">
   <fieldType>STRING</fieldType>
   <stringValue>C_BA_06</stringValue>
 </customField>]]></content>
-                <allowWildcards>false</allowWildcards>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -46583,11 +46608,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:assertion type="XPath Match" id="acf44eb5-20b5-4905-9bea-10e41139b5aa" name="XPath Match 1">
               <con:configuration>
                 <path>//billingAccount/customFields/customField[@code="C"][1]</path>
-                <content><![CDATA[<customField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00-03:00" valuePeriodEndDate="2018-07-01T00:00:00-03:00">
+                <content><![CDATA[<customField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00*" valuePeriodEndDate="2018-07-01T00:00:00*">
   <fieldType>STRING</fieldType>
   <stringValue>C_BA_06</stringValue>
 </customField>]]></content>
-                <allowWildcards>false</allowWildcards>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -47119,11 +47144,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:assertion type="XPath Match" id="acf44eb5-20b5-4905-9bea-10e41139b5aa" name="XPath Match 1">
               <con:configuration>
                 <path>//billingAccount/customFields/customField[@code="C"][1]</path>
-                <content><![CDATA[<customField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00-03:00" valuePeriodEndDate="2018-07-01T00:00:00-03:00">
+                <content><![CDATA[<customField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00*" valuePeriodEndDate="2018-07-01T00:00:00*">
   <fieldType>STRING</fieldType>
   <stringValue>C_BA_06</stringValue>
 </customField>]]></content>
-                <allowWildcards>false</allowWildcards>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -49961,7 +49986,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>33</con:value>
+        <con:value>49</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -50005,11 +50030,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>+01:00</con:value>
+      <con:value>Z</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>+02:00</con:value>
+      <con:value>+01:00</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>
