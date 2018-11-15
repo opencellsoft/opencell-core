@@ -699,13 +699,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             }
 
         }
-        
-        // generate invoice line for min amount RT
-        Element userAccountTag = doc.createElement("userAccount");
-        userAccountTag.setAttribute("description", "-");
-        userAccountTag.appendChild(getMinAmountRTCategories(doc, ratedTransactions, enterprise, billingAccountLanguage));
-        userAccountsTag.appendChild(userAccountTag);
 
+        if (displayDetail) {
+            // generate invoice line for min amount RT
+            Element userAccountTag = doc.createElement("userAccount");
+            userAccountTag.setAttribute("description", "-");
+            userAccountTag.appendChild(getMinAmountRTCategories(doc, ratedTransactions, enterprise, billingAccountLanguage));
+            userAccountsTag.appendChild(userAccountTag);
+        }
     }
 
     /**
