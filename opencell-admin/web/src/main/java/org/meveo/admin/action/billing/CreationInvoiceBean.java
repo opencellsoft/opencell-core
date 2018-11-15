@@ -645,11 +645,13 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 invoiceService.commit();
                 entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
             } catch (Exception e) {
+                log.error("Failed to create an XML and PDF invoice", e);
                 messages.error("Error generating xml / pdf invoice=" + e.getMessage());
             }
 
             return getListViewName();
         } catch (BusinessException be) {
+            log.error("Failed to create an invoice", be);
             messages.error(be.getMessage());
             return null;
         }

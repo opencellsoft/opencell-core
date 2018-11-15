@@ -87,7 +87,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     @PostConstruct
     private void init() {
-        accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("accumulateCF", "true"));
+        accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("accumulateCF", "false"));
     }
 
     // Previous comments
