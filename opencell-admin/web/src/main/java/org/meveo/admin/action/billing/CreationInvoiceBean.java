@@ -623,7 +623,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 subcat.setInvoice(entity);
                 invoiceAgregateService.create(subcat);
                 for (RatedTransaction rt : subcat.getRatedtransactions()) {
-                	rt.setSeller(sellerService.retrieveIfNotManaged(rt.getSeller()));
+                	rt.setSeller(customer.getSeller());
                     rt.setInvoice(entity);
                     rt.setStatus(RatedTransactionStatusEnum.BILLED);
                     rt.setBillingAccount(entity.getBillingAccount());
