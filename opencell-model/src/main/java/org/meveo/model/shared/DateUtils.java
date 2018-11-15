@@ -32,6 +32,7 @@ import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.slf4j.Logger;
@@ -670,6 +671,21 @@ public class DateUtils {
         } catch (Exception e) {
             LOG.error(" error on truncateTime : [{}] ", e.getMessage());
             return date;
+        }
+    }
+
+    public static String changeFormat(String dateValue, String fromFormat, String toFormat) {
+        try {
+            if (StringUtils.isEmpty(dateValue) || StringUtils.isEmpty(fromFormat) || StringUtils.isEmpty(toFormat)) {
+                return dateValue;
+            }
+            
+            Date date = parseDateWithPattern(dateValue, fromFormat);
+            return formatDateWithPattern(date, toFormat);
+            
+        } catch (Exception e) {
+            LOG.error(" error on changeFormat : [{}] ", e.getMessage());
+            return dateValue;
         }
     }
 }
