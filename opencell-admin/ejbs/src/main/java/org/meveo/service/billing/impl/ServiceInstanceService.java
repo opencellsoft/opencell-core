@@ -475,7 +475,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
         
         PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.findByServiceTemplate(serviceInstance.getServiceTemplate());
-        if(paymentScheduleTemplate != null) {
+        if(paymentScheduleTemplate != null && paymentScheduleTemplateService.matchExpression(paymentScheduleTemplate.getFilterEl(), serviceInstance)) {
             paymentScheduleInstanceService.instanciateFromService(paymentScheduleTemplate,serviceInstance);
         }
     }
@@ -609,7 +609,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
         
         PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.findByServiceTemplate(serviceInstance.getServiceTemplate());
-        if(paymentScheduleTemplate != null) {
+        if(paymentScheduleTemplate != null && serviceInstance.getPsInstances() != null && !serviceInstance.getPsInstances().isEmpty()) {
             paymentScheduleInstanceService.terminate(serviceInstance,terminationDate);
         }
         

@@ -39,7 +39,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
      * @throws BusinessException the business exception
      */
     @SuppressWarnings("unchecked")
-    public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType) throws BusinessException {   
+    public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType) throws BusinessException {
         PaymentGateway paymentGateway = null;
         try {
             CreditCardTypeEnum cardTypeToCheck = null;
@@ -62,13 +62,11 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
                 return null;
             }
             for (PaymentGateway pg : paymentGateways) {
-                log.info("get pg , current :"+pg.getCode());
-                if (!StringUtils.isBlank(pg.getApplicationEL())) {
-                    if (matchExpression(pg.getApplicationEL(), customerAccount, paymentMethod, pg)) {
-                        return pg;
-                    }
+                log.info("get pg , current :" + pg.getCode());
+                if (matchExpression(pg.getApplicationEL(), customerAccount, paymentMethod, pg)) {
+                    return pg;
                 }
-            }     
+            }
             paymentGateway = paymentGateways.get(0);
         } catch (Exception e) {
             log.error("Error on getPaymentGateway:", e);

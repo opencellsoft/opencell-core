@@ -15,6 +15,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Calendar;
@@ -126,7 +127,7 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
             oldPaymentScheduleInstance.setStatus(PaymentScheduleStatusEnum.OBSOLETE);
             oldPaymentScheduleInstance.setStatusDate(new Date());
             super.update(oldPaymentScheduleInstance);
-            return instanciateFromInstance(paymentScheduleInstance.getPaymentScheduleTemplate(), paymentScheduleInstance);
+            return instanciateFromPsInstance(paymentScheduleInstance.getPaymentScheduleTemplate(), paymentScheduleInstance);
         } else {
             return super.update(paymentScheduleInstance);
         }
@@ -142,7 +143,13 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
      * @throws BusinessException the business exception
      */
     public PaymentScheduleInstance instanciateFromService(PaymentScheduleTemplate paymentScheduleTemplate, ServiceInstance serviceInstance) throws BusinessException {
-        return instanciate(paymentScheduleTemplate, serviceInstance, serviceInstance.getAmountPS() == null ? paymentScheduleTemplate.getAmount() : serviceInstance.getAmountPS(),
+        BigDecimal  amount = paymentScheduleTemplate.getAmount();
+        if(!StringUtils.isBlank(paymentScheduleTemplate.getAmountEl())) {
+            amount = paymentScheduleTemplateService.evaluateAmountExpression(paymentScheduleTemplate.getAmountEl(), serviceInstance);
+        }
+        amount = serviceInstance.getAmountPS() == null ? amount : serviceInstance.getAmountPS();
+        
+        return instanciate(paymentScheduleTemplate, serviceInstance, amount,
             serviceInstance.getCalendarPS() == null ? paymentScheduleTemplate.getCalendar() : serviceInstance.getCalendarPS(), serviceInstance.getSubscriptionDate(),
             serviceInstance.getEndAgreementDate() == null ? serviceInstance.getSubscription().getEndAgreementDate() : serviceInstance.getEndAgreementDate(),
             serviceInstance.getDueDateDaysPS() == null ? paymentScheduleTemplate.getDueDateDays() : serviceInstance.getDueDateDaysPS());
@@ -150,14 +157,14 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
     }
 
     /**
-     * Instanciate from instance.
+     * Instanciate from PS instance.
      *
      * @param paymentScheduleTemplate the payment schedule template
      * @param paymentScheduleInstance the payment schedule instance
      * @return the payment schedule instance
      * @throws BusinessException the business exception
      */
-    public PaymentScheduleInstance instanciateFromInstance(PaymentScheduleTemplate paymentScheduleTemplate, PaymentScheduleInstance paymentScheduleInstance)
+    public PaymentScheduleInstance instanciateFromPsInstance(PaymentScheduleTemplate paymentScheduleTemplate, PaymentScheduleInstance paymentScheduleInstance)
             throws BusinessException {
         return instanciate(paymentScheduleTemplate, paymentScheduleInstance.getServiceInstance(), paymentScheduleInstance.getAmount(), paymentScheduleInstance.getCalendar(),
             paymentScheduleInstance.getStartDate(), paymentScheduleInstance.getEndDate(), paymentScheduleInstance.getDueDateDays());
