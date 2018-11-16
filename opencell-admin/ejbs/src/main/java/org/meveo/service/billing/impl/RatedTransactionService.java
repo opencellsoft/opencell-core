@@ -86,9 +86,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.order.OrderService;
-import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.script.billing.TaxScriptService;
 
 /**
@@ -110,16 +108,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private InvoiceSubCategoryService invoiceSubCategoryService;
 
     @Inject
-    private CustomerAccountService customerAccountService;
-
-    @Inject
     private WalletOperationService walletOperationService;
 
     @Inject
     private BillingAccountService billingAccountService;
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private TaxScriptService taxScriptService;
@@ -493,20 +485,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                     && discountPlanItem.getInvoiceSubCategory().getId().equals(scAggregate.getInvoiceSubCategory().getId()))
                             || (discountPlanItem.getInvoiceCategory() != null && discountPlanItem.getInvoiceSubCategory() == null
                                     && discountPlanItem.getInvoiceCategory().getId().equals(scAggregate.getInvoiceSubCategory().getInvoiceCategory().getId()))) {
-                        BigDecimal discountPercent = discountPlanItem.getPercent();
+                        BigDecimal discountPercent = discountPlanItem.getDiscountValue();
 
-                        if (discountPlanItem.getDiscountPercentEl() != null) {
-                            discountPercent = evaluateDiscountPercentExpression(discountPlanItem.getDiscountPercentEl(), scAggregate.getUserAccount(), scAggregate.getWallet(),
+                        if (discountPlanItem.getDiscountValueEL() != null) {
+                            discountPercent = evaluateDiscountPercentExpression(discountPlanItem.getDiscountValueEL(), scAggregate.getUserAccount(), scAggregate.getWallet(),
                                 invoice, amount);
-                            log.debug("for discountPlan " + discountPlanItem.getCode() + " percentEL ->" + discountPercent + " on amount=" + amount);
+							log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
+									discountPercent, amount);
                         }
 
                         BigDecimal discountAmount;
                         if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-                            discountAmount = amount.multiply(discountPercent.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
-                        } else {
-                            discountAmount = discountPlanItem.getDiscountAmount().negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
-                        }
+            				discountAmount = amount.multiply(discountPercent.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
+            			} else {
+            				discountAmount = discountPlanItem.getDiscountValue().negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());;
+            			}
 
                         if (discountAmount.compareTo(BigDecimal.ZERO) < 0) {
                             SubCategoryInvoiceAgregate discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount,
@@ -517,9 +510,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                             discountAggregate.setCategoryInvoiceAgregate(cAggregate);
 
                             discountAggregate.setDiscountAggregate(true);
-                            if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-                                discountAggregate.setDiscountPercent(discountPercent);
-                            }
+							if (discountPlanItem.getDiscountPlanItemType()
+									.equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+								discountAggregate.setDiscountPercent(discountPercent);
+							}
                             discountAggregate.setDiscountPlanItem(discountPlanItem);
                             discountAggregate.setDescription(discountPlanItem.getCode());
 

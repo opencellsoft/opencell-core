@@ -17,8 +17,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -76,15 +74,6 @@ public class DiscountPlanItem extends EnableEntity {
     private InvoiceSubCategory invoiceSubCategory;
 
     /**
-     * Discount percent
-     */
-    @Column(name = "discount_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
-    @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
-    @Min(0)
-    @Max(100)
-    private BigDecimal percent = BigDecimal.ZERO;
-
-    /**
      * @deprecated As of version 5.0. No replacement.
      */
     @Deprecated // until further analysis
@@ -105,27 +94,27 @@ public class DiscountPlanItem extends EnableEntity {
     @Column(name = "expression_el_sp", length = 2000)
     @Size(max = 2000)
     private String expressionElSpark;
-
+   
     /**
-     * Expression to calculate discount percentage
+     * The absolute or percentage discount amount.
      */
-    @Column(name = "discount_percent_el", length = 2000)
+    @Column(name = "discount_value", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
+	private BigDecimal discountValue;
+    
+    /**
+     * The absolute or percentage discount amount EL.
+     */
+    @Column(name = "discount_value_el", length = 2000)
     @Size(max = 2000)
-    private String discountPercentEl;
-
+	private String discountValueEL;
+    
     /**
      * Expression to calculate discount percentage - for Spark
      */
-    @Column(name = "discount_percent_el_sp", length = 2000)
+    @Column(name = "discount_value_el_sp", length = 2000)
     @Size(max = 2000)
-    private String discountPercentElSpark;
-    
-    /**
-     * The absolute discount amount
-     */
-    @Column(name = "discount_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
-	@Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
-	private BigDecimal discountAmount = new BigDecimal(0);
+    private String discountValueElSpark;
     
     /**
      * Type of discount, default is percent.
@@ -213,14 +202,6 @@ public class DiscountPlanItem extends EnableEntity {
         this.invoiceSubCategory = invoiceSubCategory;
     }
 
-    public BigDecimal getPercent() {
-        return percent;
-    }
-
-    public void setPercent(BigDecimal percent) {
-        this.percent = percent;
-    }
-
     public String getCode() {
         return code;
     }
@@ -294,34 +275,6 @@ public class DiscountPlanItem extends EnableEntity {
     public void setAccountingCode(String accountingCode) {
         this.accountingCode = accountingCode;
     }
-
-    /**
-     * @return Expression to calculate discount percentage
-     */
-    public String getDiscountPercentEl() {
-        return discountPercentEl;
-    }
-
-    /**
-     * @param discountPercentEl Expression to calculate discount percentage
-     */
-    public void setDiscountPercentEl(String discountPercentEl) {
-        this.discountPercentEl = discountPercentEl;
-    }
-
-    /**
-     * @return Expression to calculate discount percentage - for Spark
-     */
-    public String getDiscountPercentElSpark() {
-        return discountPercentElSpark;
-    }
-
-    /**
-     * @param discountPercentElSpark Expression to calculate discount percentage - for Spark
-     */
-    public void setDiscountPercentElSpark(String discountPercentElSpark) {
-        this.discountPercentElSpark = discountPercentElSpark;
-    }
     
     public DiscountPlanItemTypeEnum getDiscountPlanItemType() {
 		return discountPlanItemType;
@@ -329,14 +282,6 @@ public class DiscountPlanItem extends EnableEntity {
 
 	public void setDiscountPlanItemType(DiscountPlanItemTypeEnum discountPlanItemType) {
 		this.discountPlanItemType = discountPlanItemType;
-	}
-
-	public BigDecimal getDiscountAmount() {
-		return discountAmount;
-	}
-
-	public void setDiscountAmount(BigDecimal discountAmount) {
-		this.discountAmount = discountAmount;
 	}
 
 	public Date getStartDate() {
@@ -400,6 +345,30 @@ public class DiscountPlanItem extends EnableEntity {
 		}
 
 		return (date.compareTo(startDate) >= 0) && (date.before(computedEndDate));
+	}
+
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
+	}
+
+	public String getDiscountValueElSpark() {
+		return discountValueElSpark;
+	}
+
+	public void setDiscountValueElSpark(String discountValueElSpark) {
+		this.discountValueElSpark = discountValueElSpark;
+	}
+
+	public void setDiscountValueEL(String discountValueEL) {
+		this.discountValueEL = discountValueEL;
+	}
+
+	public String getDiscountValueEL() {
+		return discountValueEL;
 	}
 
 }

@@ -437,5 +437,22 @@
     	<addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_invoice_agregate" constraintName="fk_icmfsev8m5n386ifttcgelv40" deferrable="false" initiallyDeferred="false"
             onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice" />
     </changeSet>
+    
+    <changeSet id="#3767_20181112 - Discount fields refactor - M" author="EdwardPLegaspi" dbms="mysql">
+    	<sql>UPDATE ${db.schema.adapted}cat_discount_plan_item SET discount_percent=discount_amount WHERE discount_percent is null;</sql>
+    </changeSet>
+    
+    <changeSet id="#3767_20181112 - Discount fields refactor - P" author="EdwardPLegaspi" dbms="postgresql">
+    	<sql>UPDATE cat_discount_plan_item SET discount_percent=discount_amount WHERE discount_percent is null;</sql>  	
+    </changeSet>
+    
+    <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
+    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value"/>
+    	<dropColumn tableName="cat_discount_plan_item">
+    		<column name="discount_amount"></column>
+    	</dropColumn>
+    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el"/>
+    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el_sp" newColumnName="discount_value_el_sp"/>    	
+    </changeSet>
 </databaseChangeLog> 
 

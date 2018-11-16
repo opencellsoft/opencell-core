@@ -54,28 +54,21 @@ public class DiscountPlanItemApi extends BaseApi {
      * @throws BusinessException business exception.
      */
     public void create(DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
-
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("discountPlanItemCode");
         }
         if (StringUtils.isBlank(postData.getDiscountPlanCode())) {
             missingParameters.add("discountPlanCode");
         }
-        if (postData.getDiscountAmount() == null && postData.getPercent() == null && postData.getDiscountPercentEl() == null && postData.getDiscountPercentElSpark() == null) {
-            missingParameters.add("discountAmount, percent, discountPercentEl or discountPercentElSpark");
-        }
-        if (postData.getDiscountPlanItemType() == null) {
-            missingParameters.add("discountPlanItemType");
-        }
-		if (postData.getDiscountPlanItemType() != null
-				&& postData.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)
-				&& postData.getPercent() == null) {
-			missingParameters.add("percent");
+		if (postData.getDiscountValue() == null && postData.getDiscountValueEL() == null
+				&& postData.getDiscountValueElSpark() == null) {
+			missingParameters.add("discountValue, discountValueEL or discountValueELSpark");
 		}
-		if (postData.getDiscountPlanItemType() != null
-				&& postData.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.FIXED)
-				&& postData.getDiscountAmount() == null) {
-			missingParameters.add("discountAmount");
+		if (postData.getDiscountPlanItemType() == null) {
+			missingParameters.add("discountPlanItemType");
+		}
+		if (postData.getDiscountPlanItemType() != null && postData.getDiscountValue() == null) {
+			missingParameters.add("discountValue");
 		}
 
         handleMissingParameters();
@@ -233,9 +226,6 @@ public class DiscountPlanItemApi extends BaseApi {
             }
             discountPlanItem.setInvoiceSubCategory(invoiceSubCategory);
         }
-        if (source.getPercent() != null) {
-            discountPlanItem.setPercent(source.getPercent());
-        }
         if (source.getAccountingCode() != null) {
             discountPlanItem.setAccountingCode(source.getAccountingCode());
         }
@@ -245,14 +235,14 @@ public class DiscountPlanItemApi extends BaseApi {
         if (source.getExpressionElSpark() != null) {
             discountPlanItem.setExpressionElSpark(source.getExpressionElSpark());
         }
-        if (source.getDiscountPercentEl() != null) {
-            discountPlanItem.setDiscountPercentEl(source.getDiscountPercentEl());
-        }
-        if (source.getDiscountPercentElSpark() != null) {
-            discountPlanItem.setDiscountPercentElSpark(source.getDiscountPercentElSpark());
-        }
-        if (source.getDiscountAmount() != null) {
-			discountPlanItem.setDiscountAmount(source.getDiscountAmount());
+		if (source.getDiscountValue() != null) {
+			discountPlanItem.setDiscountValue(source.getDiscountValue());
+		}
+		if (source.getDiscountValueEL() != null) {
+			discountPlanItem.setDiscountValueEL(source.getDiscountValueEL());
+		}
+		if (source.getDiscountValueElSpark() != null) {
+			discountPlanItem.setDiscountValueElSpark(source.getDiscountValueElSpark());
 		}
 		if (source.getDiscountPlanItemType() != null) {
 			discountPlanItem.setDiscountPlanItemType(source.getDiscountPlanItemType());
