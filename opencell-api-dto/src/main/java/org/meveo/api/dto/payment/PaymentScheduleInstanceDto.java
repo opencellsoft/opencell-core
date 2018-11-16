@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.PaymentScheduleStatusEnum;
@@ -84,7 +85,23 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     @XmlElement(name = "item")
     private List<PaymentScheduleInstanceItemDto> items = new ArrayList<PaymentScheduleInstanceItemDto>();
     
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
     
+    /**
+     * @return the customFields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * @param customFields the customFields to set
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
     /**
      * Instantiates a new payment schedule instance dto.
      */

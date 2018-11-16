@@ -437,5 +437,26 @@
     	<addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_invoice_agregate" constraintName="fk_icmfsev8m5n386ifttcgelv40" deferrable="false" initiallyDeferred="false"
             onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice" />
     </changeSet>
+
+     <changeSet id="#3711_20181112" author="anasseh">
+        <addColumn tableName="ar_payment_schedule_inst">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="ar_payment_schedule_inst">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>   
+        <addColumn tableName="ar_payment_schedule_inst">
+             <column name="uuid" type="varchar(60)" />
+        </addColumn> 
+        <sql>update ${db.schema.adapted}ar_payment_schedule_inst set uuid = id</sql>    
+        <addNotNullConstraint columnName="uuid" tableName="ar_payment_schedule_inst"/>  
+        <addColumn tableName="ar_payment_schedule_tmpl">
+            <column name="amount_el" type="varchar(2000)" />
+        </addColumn>  
+        <addColumn tableName="ar_payment_schedule_tmpl">
+            <column name="filter_el" type="varchar(2000)" />
+        </addColumn>          
+    </changeSet>   
+     
 </databaseChangeLog> 
 

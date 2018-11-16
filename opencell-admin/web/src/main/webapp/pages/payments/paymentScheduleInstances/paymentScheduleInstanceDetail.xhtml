@@ -48,7 +48,8 @@
 							<hftl:column label="#{messages['paymentScheduleInstanceItem.requestPaymentDate']}" field="requestPaymentDate" isDate="true"/>
 							<hftl:column label="#{messages['paymentScheduleInstanceItem.paymentStatus']}" field="paid" isMessage="true"/>														
 			        </hftl:dataList>										
-				</p:tab>				
+				</p:tab>		
+				<hftl:customFields backingBean="#{paymentScheduleInstanceBean}" messagesId=":formPaymentScheduleInstance:messages" />		
 			</p:tabView>		
 <ui:param name="buttons" value="true" />
 			<ui:define name="buttons">

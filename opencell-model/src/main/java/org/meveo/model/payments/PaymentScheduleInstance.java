@@ -23,7 +23,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableBusinessEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.catalog.Calendar;
 
@@ -31,13 +32,14 @@ import org.meveo.model.catalog.Calendar;
  * @author anasseh
  *
  * @since Opencell 5.2
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "PAYMENT_SCH_INSTANCE", inheritCFValuesFrom = "paymentScheduleTemplate")
 @Table(name = "ar_payment_schedule_inst")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_payment_schedule_inst_seq"), })
-public class PaymentScheduleInstance extends EnableBusinessEntity {
+public class PaymentScheduleInstance extends EnableBusinessCFEntity {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 322388141736383861L;

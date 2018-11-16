@@ -55,7 +55,8 @@
 					<hftl:formField  id="calendarId" label="#{messages['paymentScheduleTemplate.calendar']}" field="calendar" required="true" valueLabelField="code" listBean="#{calendarBean}" componentWidth="10" />
 					<hftl:formField label="#{messages['paymentScheduleTemplate.serviceTemplate']}" id="serviceTemplateSelectedId" field="serviceTemplate"  required="true" valueLabelField="code" popup="true" popupId="searchServiceTemplatePopup"  />					
 					<hftl:formField label="#{messages['paymentScheduleTemplate.startDate']}" field="startDate" required="true"/>
-					<hftl:formField label="#{messages['paymentScheduleTemplate.amount']}" field="amount" required="true"/>				
+					<hftl:formField label="#{messages['paymentScheduleTemplate.amount']}" field="amount" required="true"/>	
+					<hftl:formField label="#{messages['paymentScheduleTemplate.amountEl']}" field="amountEl" textArea="true" rows="1" maxlength="2000" />				
 					<hftl:formField label="#{messages['paymentScheduleTemplate.paymentLabel']}" field="paymentLabel" required="true"/>
 					<hftl:formField label="#{messages['paymentScheduleTemplate.dayInMonth']}" field="dueDateDays" required="true"/>
 					<hftl:formField label="#{messages['paymentScheduleTemplate.advancePaymentInvoiceType']}" id="invoiceTypeSelectedId" field="advancePaymentInvoiceType" valueLabelField="code" popup="true" popupId="searchInvoiceTypePopup"
@@ -66,7 +67,8 @@
                 		required="false" showResetButton="true" />
 	               	<hftl:formField label="#{messages['paymentScheduleTemplate.doPayment']}" field="doPayment" required="true"/>	
 	                <hftl:formField label="#{messages['paymentScheduleTemplate.applyAgreement']}" field="applyAgreement" required="true"/>		
-	                <hftl:formField label="#{messages['paymentScheduleTemplate.generateAdvancePaymentInvoice']}" field="generateAdvancePaymentInvoice" required="true"/>		
+	                <hftl:formField label="#{messages['paymentScheduleTemplate.generateAdvancePaymentInvoice']}" field="generateAdvancePaymentInvoice" required="true"/>
+	                <hftl:formField label="#{messages['paymentScheduleTemplate.filterEl']}" field="filterEl" textArea="true" rows="1" maxlength="2000" />		
 
 				</p:tab>
 				<hftl:customFields backingBean="#{paymentScheduleTemplateBean}" messagesId=":formPaymentScheduleTemplate:messages" />

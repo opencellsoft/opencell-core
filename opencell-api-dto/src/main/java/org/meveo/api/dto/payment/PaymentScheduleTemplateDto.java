@@ -70,19 +70,24 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
 
     /** The advance payment invoice sub category code. */
     private String advancePaymentInvoiceSubCategoryCode;
-    
+
     /** The apply agreement. */
     private Boolean applyAgreement = false;
 
+    /** The amount el. */
+    private String amountEl;
+
+    /** The filter el. */
+    private String filterEl;
+
     /** The custom fields. */
     private CustomFieldsDto customFields;
-    
-    
+
     /**
      * Instantiates a new payment schedule template dto.
      */
     public PaymentScheduleTemplateDto() {
-        
+
     }
 
     /**
@@ -107,6 +112,8 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         this.doPayment = paymentScheduleTemplate.isDoPayment();
         this.generateAdvancePaymentInvoice = paymentScheduleTemplate.isGenerateAdvancePaymentInvoice();
         this.applyAgreement = paymentScheduleTemplate.isApplyAgreement();
+        this.amountEl = paymentScheduleTemplate.getAmountEl();
+        this.filterEl = paymentScheduleTemplate.getFilterEl();
         this.customFields = customFields;
     }
 
@@ -145,8 +152,6 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
-
-   
 
     /**
      * Gets the payment label.
@@ -326,6 +331,42 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
      */
     public void setApplyAgreement(Boolean applyAgreement) {
         this.applyAgreement = applyAgreement;
+    }
+
+    /**
+     * Gets the amount el.
+     *
+     * @return the amountEl
+     */
+    public String getAmountEl() {
+        return amountEl;
+    }
+
+    /**
+     * Sets the amount el.
+     *
+     * @param amountEl the amountEl to set
+     */
+    public void setAmountEl(String amountEl) {
+        this.amountEl = amountEl;
+    }
+
+    /**
+     * Gets the filter el.
+     *
+     * @return the filterEl
+     */
+    public String getFilterEl() {
+        return filterEl;
+    }
+
+    /**
+     * Sets the filter el.
+     *
+     * @param filterEl the filterEl to set
+     */
+    public void setFilterEl(String filterEl) {
+        this.filterEl = filterEl;
     }
 
 }

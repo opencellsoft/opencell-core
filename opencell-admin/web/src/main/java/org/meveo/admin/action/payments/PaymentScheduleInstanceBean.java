@@ -18,13 +18,12 @@
  */
 package org.meveo.admin.action.payments;
 
-import java.util.Date;
-
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.ServiceInstance;
@@ -42,7 +41,7 @@ import org.primefaces.model.LazyDataModel;
  */
 @Named
 @ViewScoped
-public class PaymentScheduleInstanceBean extends BaseBean<PaymentScheduleInstance> {
+public class PaymentScheduleInstanceBean extends CustomFieldBean<PaymentScheduleInstance> {
     private static final long serialVersionUID = 1L;
     /**
      * Injected @{link PaymentScheduleInstance} service. Extends {@link PersistenceService}.
@@ -92,8 +91,7 @@ public class PaymentScheduleInstanceBean extends BaseBean<PaymentScheduleInstanc
     }
     
     @ActionMethod
-    public String terminate() throws BusinessException {
-        log.info("\n\n\n\n\n entity.getEndDate(): "+entity.getEndDate());
+    public String terminate() throws BusinessException {       
         paymentScheduleInstanceService.terminate(entity, entity.getEndDate());
         return null;
     }
