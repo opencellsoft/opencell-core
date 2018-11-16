@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEnableDto;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
@@ -90,6 +91,10 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      * Expression to calculate discount percentage - for Spark
      */
 	private String discountValueElSpark;
+	
+	/** The custom fields. */
+    @XmlElement(required = false)
+    private CustomFieldsDto customFields;
 
     /**
      * Instantiates a new discount plan item dto.
@@ -285,5 +290,13 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 
 	public String getDiscountValueEL() {
 		return discountValueEL;
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 }

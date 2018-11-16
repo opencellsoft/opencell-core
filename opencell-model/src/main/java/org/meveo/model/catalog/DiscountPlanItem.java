@@ -1,6 +1,7 @@
 package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -18,10 +19,14 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
  * Discount plan item/details
@@ -31,12 +36,13 @@ import org.meveo.model.billing.InvoiceSubCategory;
  **/
 @Entity
 @Cacheable
+@CustomFieldEntity(cftCodePrefix = "DISCOUNT_PLAN_ITEM", inheritCFValuesFrom = { "discountPlan" })
 @ExportIdentifier({ "discount_plan_id", "code" })
 @Table(name = "cat_discount_plan_item", uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "discount_plan_id", "code" }) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "cat_discount_plan_item_seq"), })
-public class DiscountPlanItem extends EnableEntity {
+public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 4543503736567841084L;
 
@@ -120,6 +126,28 @@ public class DiscountPlanItem extends EnableEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "discount_plan_item_type", length = 25)
 	private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
+	
+	 /**
+     * Unique identifier UUID
+     */
+    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
+    protected String uuid = UUID.randomUUID().toString();
+
+    /**
+     * Custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values", columnDefinition = "text")
+    protected CustomFieldValues cfValues;
+
+    /**
+     * Accumulated custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    protected CustomFieldValues cfAccumulatedValues;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -252,5 +280,54 @@ public class DiscountPlanItem extends EnableEntity {
 	public String getDiscountValueEL() {
 		return discountValueEL;
 	}
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @param uuid Unique identifier
+     */
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    @Override
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
+
+    @Override
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
+    }
+
+    /**
+     * Change UUID value. Return old value
+     * 
+     * @return Old UUID value
+     */
+    @Override
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
+    }
+
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+    	return new ICustomFieldEntity[] { discountPlan };
+    }
 
 }

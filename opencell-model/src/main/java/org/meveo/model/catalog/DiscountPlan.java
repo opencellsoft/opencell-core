@@ -19,7 +19,8 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableBusinessEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
@@ -33,10 +34,11 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @Cacheable
 @ExportIdentifier({ "code" })
+@CustomFieldEntity(cftCodePrefix = "DISCOUNT_PLAN")
 @Table(name = "cat_discount_plan", uniqueConstraints = { @UniqueConstraint(columnNames = { "code" }) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "cat_discount_plan_seq"), })
-public class DiscountPlan extends EnableBusinessEntity {
+public class DiscountPlan extends EnableBusinessCFEntity {
 
 	private static final long serialVersionUID = -2762453947446654646L;
 

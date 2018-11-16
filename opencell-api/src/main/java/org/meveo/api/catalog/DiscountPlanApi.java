@@ -12,7 +12,9 @@ import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.DiscountPlansDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.service.catalog.impl.DiscountPlanService;
@@ -45,6 +47,17 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 		discountPlan.setDefaultDuration(postData.getDefaultDuration());
 		discountPlan.setDurationUnit(postData.getDurationUnit());
 		
+		// populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), discountPlan, true);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+		
         discountPlanService.create(discountPlan);
         return discountPlan;
     }
@@ -76,6 +89,17 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 		if (postData.getDurationUnit() != null) {
 			discountPlan.setDurationUnit(postData.getDurationUnit());
 		}
+		
+		// populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), discountPlan, false);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
         discountPlan = discountPlanService.update(discountPlan);
         return discountPlan;

@@ -56,15 +56,13 @@
                         <hftl:formField label="#{messages['BusinessEntity.description']}"
                             field="description" useConverter="false"
                             id="description" />
+                        <hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate" />
+                        <hftl:formField label="#{messages['discountPlanItem.endDate']}" field="endDate" />
+                        
+                        <hftl:formField label="#{messages['discountPlanItem.defaultDuration']}" field="defaultDuration" />
+                        <hftl:formField label="#{messages['discountPlanItem.durationUnit']}" field="durationUnit" />
                         <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
                             field="disabled" isMessage="true" />
-                            <!-- 
-                            <hftl:formField
-                            label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
-                            field="minDuration" />
-                        <hftl:formField
-                            label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
-                            field="maxDuration" /> -->
                     </hftl:formPanel>
                 </p:tab>
 
@@ -98,10 +96,7 @@
                                 field="discountPlanItemType" />
                             <hftl:column label="#{messages['discountPlanItem.discountValue']}"
                                 field="discountValue" />
-                            <hftl:column label="#{messages['discountPlanItem.startDate']}"
-                                field="startDate" isDate="true" />
-                            <hftl:column label="#{messages['discountPlanItem.endDate']}"
-                                field="endDate" isDate="true" />
+                            
 
                             <p:column styleClass="actions-column"
                                 rendered="#{discountPlanBean.edit}">
@@ -165,12 +160,6 @@
                                  
                             <hftl:formField label="#{messages['discountPlanItem.percent']} EL"
                              field="discountValueEL"  textArea="true" maxlength="2000" rows="1" />
-                            
-                            <hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate" />
-                            <hftl:formField label="#{messages['discountPlanItem.endDate']}" field="endDate" />
-                            
-                            <hftl:formField label="#{messages['discountPlanItem.defaultDuration']}" field="defaultDuration" />
-                            <hftl:formField label="#{messages['discountPlanItem.durationUnit']}" field="durationUnit" />
                              
                             <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
                             field="disabled" isMessage="true" />

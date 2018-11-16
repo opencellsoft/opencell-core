@@ -11,6 +11,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -77,6 +78,18 @@ public class DiscountPlanItemApi extends BaseApi {
             throw new EntityAlreadyExistsException(DiscountPlanItem.class, postData.getCode());
         }
         discountPlanItem = toDiscountPlanItem(postData, null);
+        
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), discountPlanItem, true);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+        
         discountPlanItemService.create(discountPlanItem);
     }
 
@@ -101,6 +114,17 @@ public class DiscountPlanItemApi extends BaseApi {
             throw new EntityDoesNotExistsException(DiscountPlanItem.class, postData.getCode());
         }
         discountPlanItem = toDiscountPlanItem(postData, discountPlanItem);
+        
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), discountPlanItem, false);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
         discountPlanItemService.update(discountPlanItem);
     }

@@ -4,8 +4,10 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
@@ -37,6 +39,10 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	
 	/** Unit of duration */
 	private DurationPeriodUnitEnum durationUnit;
+	
+	/** The custom fields. */
+    @XmlElement(required = false)
+    private CustomFieldsDto customFields;
 
     /**
      * Instantiates a new DiscountPlanDto
@@ -90,5 +96,13 @@ public class DiscountPlanDto extends EnableBusinessDto {
 
 	public void setDurationUnit(DurationPeriodUnitEnum durationUnit) {
 		this.durationUnit = durationUnit;
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 }
