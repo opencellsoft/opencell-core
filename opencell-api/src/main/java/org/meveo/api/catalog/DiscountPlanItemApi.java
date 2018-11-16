@@ -18,7 +18,6 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
-import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -103,7 +102,7 @@ public class DiscountPlanItemApi extends BaseApi {
         }
         discountPlanItem = toDiscountPlanItem(postData, discountPlanItem);
 
-        discountPlanItem = discountPlanItemService.update(discountPlanItem);
+        discountPlanItemService.update(discountPlanItem);
     }
 
     /**
@@ -246,18 +245,6 @@ public class DiscountPlanItemApi extends BaseApi {
 		}
 		if (source.getDiscountPlanItemType() != null) {
 			discountPlanItem.setDiscountPlanItemType(source.getDiscountPlanItemType());
-		}
-		if (source.getStartDate() != null) {
-			discountPlanItem.setStartDate(source.getStartDate());
-		}
-		if (source.getEndDate() != null) {
-			discountPlanItem.setEndDate(source.getEndDate());
-		}
-		if (source.getDefaultDuration() != null) {
-			discountPlanItem.setDefaultDuration(source.getDefaultDuration());
-		}
-		if (source.getDurationUnit() != null) {
-			discountPlanItem.setDurationUnit(source.getDurationUnit());
 		}
 
         return discountPlanItem;

@@ -454,5 +454,20 @@
     	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el"/>
     	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el_sp" newColumnName="discount_value_el_sp"/>    	
     </changeSet>
+    
+    <changeSet id="#3769_20181116 - Refactor discount effectivity dates" author="EdwardPLegaspi">
+    	<dropColumn tableName="cat_discount_plan_item">
+    		<column name="start_date"></column>
+    		<column name="end_date"></column>
+    		<column name="default_duration"></column>
+    		<column name="duration_unit"></column>
+    	</dropColumn>
+    	<addColumn tableName="cat_discount_plan">
+    		<column name="start_date" type="date" />
+            <column name="end_date" type="date" />
+            <column name="default_duration" type="int4" />
+            <column name="duration_unit" type="varchar(50)" />
+   		</addColumn>
+    </changeSet>
 </databaseChangeLog> 
 

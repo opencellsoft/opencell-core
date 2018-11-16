@@ -379,10 +379,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (billingAccount.getDiscountPlans() != null && !billingAccount.getDiscountPlans().isEmpty()) {
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
             for (DiscountPlan discountPlan : billingAccount.getDiscountPlans()) {
+				if (!discountPlan.isEffective(invoice.getInvoiceDate())) {
+					continue;
+				}
                 if (discountPlan != null && discountPlan.isActive()) {
                     List<DiscountPlanItem> discountPlanItems = discountPlan.getDiscountPlanItems();
                     for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-                        if (discountPlanItem.isEffective(invoice.getInvoiceDate()) && discountPlanItem.isActive()
+                        if (discountPlanItem.isActive()
                                 && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice)) {
                             applicableDiscountPlanItems.add(discountPlanItem);
                         }
