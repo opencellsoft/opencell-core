@@ -34,21 +34,23 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
 import org.primefaces.model.LazyDataModel;
 
-
 /**
- * Standard backing bean for {@link PaymentScheduleInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
- * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link PaymentScheduleInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
+ * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class PaymentScheduleInstanceBean extends CustomFieldBean<PaymentScheduleInstance> {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
     /**
      * Injected @{link PaymentScheduleInstance} service. Extends {@link PersistenceService}.
      */
     @Inject
     private PaymentScheduleInstanceService paymentScheduleInstanceService;
-    
+
+    /** The service instance service. */
     @Inject
     private ServiceInstanceService serviceInstanceService;
 
@@ -61,12 +63,13 @@ public class PaymentScheduleInstanceBean extends CustomFieldBean<PaymentSchedule
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
      * @return payment gateway.
      * 
      */
     @Override
     public PaymentScheduleInstance initEntity() {
-        super.initEntity();       
+        super.initEntity();
         return entity;
     }
 
@@ -89,14 +92,35 @@ public class PaymentScheduleInstanceBean extends CustomFieldBean<PaymentSchedule
         }
         return null;
     }
-    
+
+    /**
+     * Terminate.
+     *
+     * @return the string
+     * @throws BusinessException the business exception
+     */
     @ActionMethod
-    public String terminate() throws BusinessException {       
+    public String terminate() throws BusinessException {
         paymentScheduleInstanceService.terminate(entity, entity.getEndDate());
         return null;
     }
 
     /**
+     * Cancel.
+     *
+     * @return the string
+     * @throws BusinessException the business exception
+     */
+    @ActionMethod
+    public String cancel() throws BusinessException {
+        paymentScheduleInstanceService.cancel(entity);
+        return null;
+    }
+
+    /**
+     * Gets the persistence service.
+     *
+     * @return the persistence service
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
@@ -108,9 +132,16 @@ public class PaymentScheduleInstanceBean extends CustomFieldBean<PaymentSchedule
     protected String getDefaultSort() {
         return "startDate";
     }
-   
-    public LazyDataModel<PaymentScheduleInstance> getInstancesForService(ServiceInstance serviceInstance) throws BusinessException {                        
-        filters.put("serviceInstance", serviceInstanceService.refreshOrRetrieve(serviceInstance));    
+
+    /**
+     * Gets the instances for service.
+     *
+     * @param serviceInstance the service instance
+     * @return the instances for service
+     * @throws BusinessException the business exception
+     */
+    public LazyDataModel<PaymentScheduleInstance> getInstancesForService(ServiceInstance serviceInstance) throws BusinessException {
+        filters.put("serviceInstance", serviceInstanceService.refreshOrRetrieve(serviceInstance));
         return getLazyDataModel();
     }
 }
