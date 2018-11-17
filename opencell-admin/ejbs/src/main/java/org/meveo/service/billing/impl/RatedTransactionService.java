@@ -74,6 +74,7 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanInstance;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -378,20 +379,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         if (billingAccount.getDiscountPlans() != null && !billingAccount.getDiscountPlans().isEmpty()) {
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-            for (DiscountPlan discountPlan : billingAccount.getDiscountPlans()) {
-				if (!discountPlan.isEffective(invoice.getInvoiceDate())) {
+			for (DiscountPlanInstance dpi : billingAccount.getDiscountPlanInstances()) {
+				if (!dpi.isEffective(invoice.getInvoiceDate())) {
 					continue;
 				}
-                if (discountPlan != null && discountPlan.isActive()) {
-                    List<DiscountPlanItem> discountPlanItems = discountPlan.getDiscountPlanItems();
-                    for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-                        if (discountPlanItem.isActive()
-                                && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice)) {
-                            applicableDiscountPlanItems.add(discountPlanItem);
-                        }
-                    }
-                }
-            }
+				if (dpi.getDiscountPlan().isActive()) {
+					List<DiscountPlanItem> discountPlanItems = dpi.getDiscountPlan().getDiscountPlanItems();
+					for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+						if (discountPlanItem.isActive() && matchDiscountPlanItemExpression(
+								discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice)) {
+							applicableDiscountPlanItems.add(discountPlanItem);
+						}
+					}
+				}
+			}
         }
 
         // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates

@@ -56,6 +56,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanInstance;
 import org.meveo.model.payments.CustomerAccount;
 
 /**
@@ -285,10 +286,19 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Transient
     private BigDecimal totalInvoicingAmountWithoutTax;
 
-	/** Discount plans */
+    @Deprecated
+	/** 
+	 * Discount plans. Instantiate the discountPlan instead. 
+	 */
 	@ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_discount_plan", joinColumns = @JoinColumn(name = "billing_account_id"), inverseJoinColumns = @JoinColumn(name = "discount_plan_id"))
     private Set<DiscountPlan> discountPlans = new HashSet<>();
+
+    /**
+     * Instance of discount plans. Once instantiated effectivity date is not affected when template is updated.
+     */
+	@OneToMany(mappedBy = "discountPlan", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	private List<DiscountPlanInstance> discountPlanInstances;
     
     /**
      * Total invoicing amount with tax
@@ -635,6 +645,14 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 		}
 
 		discountPlans.add(e);
+	}
+
+	public List<DiscountPlanInstance> getDiscountPlanInstances() {
+		return discountPlanInstances;
+	}
+
+	public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstances) {
+		this.discountPlanInstances = discountPlanInstances;
 	}
 	
 }

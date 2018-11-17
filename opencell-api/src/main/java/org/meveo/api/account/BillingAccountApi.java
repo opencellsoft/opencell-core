@@ -230,6 +230,11 @@ public class BillingAccountApi extends AccountEntityApi {
         }
 
         billingAccountService.createBillingAccount(billingAccount);
+        
+        // instantiate the discounts
+		if (postData.getDiscountPlans() != null) {
+			
+		}
 
         return billingAccount;
     }

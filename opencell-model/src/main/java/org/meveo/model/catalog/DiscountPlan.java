@@ -76,6 +76,7 @@ public class DiscountPlan extends EnableBusinessCFEntity {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "end_date")
 	private Date endDate;
+	
 	/**
 	 * 
 	 * Length of effectivity. If start date is not null and end date is null, we use
@@ -117,6 +118,10 @@ public class DiscountPlan extends EnableBusinessCFEntity {
 			return calendarField;
 		}
 	}
+	
+	public boolean isValid() {
+		return (startDate == null || endDate == null || startDate.before(endDate));
+	}
 
 	public int getMinDuration() {
 		return minDuration;
@@ -148,39 +153,6 @@ public class DiscountPlan extends EnableBusinessCFEntity {
 		}
 
 		discountPlanItems.add(di);
-	}
-
-	public boolean isValid() {
-		return (startDate == null || endDate == null || startDate.before(endDate));
-	}
-
-	/**
-	 * Check if a date is within this Discount's effective date. Exclusive of the
-	 * endDate. If startDate is null, it returns true. If startDate is not null and
-	 * endDate is null, endDate is computed from the given duration.
-	 * 
-	 * @param date
-	 *            the given date
-	 * @return returns true if this DiscountItem is to be applied
-	 */
-	public boolean isEffective(Date date) {
-		if (startDate == null) {
-			return true;
-		}
-
-		Date computedEndDate = endDate;
-		if (endDate == null && defaultDuration != null && durationUnit != null) {
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(startDate);
-			cal.add(durationUnit.calendarField, defaultDuration);
-			computedEndDate = cal.getTime();
-		}
-
-		if (computedEndDate == null && date.compareTo(startDate) > 0) {
-			return true;
-		}
-
-		return (date.compareTo(startDate) >= 0) && (date.before(computedEndDate));
 	}
 
 	@Override
@@ -223,4 +195,5 @@ public class DiscountPlan extends EnableBusinessCFEntity {
 	public void setDurationUnit(DurationPeriodUnitEnum durationUnit) {
 		this.durationUnit = durationUnit;
 	}
+
 }

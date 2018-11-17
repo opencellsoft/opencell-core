@@ -483,17 +483,32 @@
 			<column name="cf_values_accum" type="${type.json}"></column>
     	</addColumn>
     </changeSet>
-    <changeSet id="#3792_20181116 - Convert discount tables to CF entity - P" author="EdwardPLegaspi" dbms="postgresql">
-    	<sql>UPDATE cat_discount_plan SET uuid=concat(code, '_', id)</sql>
-    	<sql>UPDATE cat_discount_plan_item SET uuid=concat(code, '_', id)</sql>
-    </changeSet>
-    <changeSet id="#3792_20181116 - Convert discount tables to CF entity - M" author="EdwardPLegaspi" dbms="mysql">
+    <changeSet id="#3792_20181116 - Convert discount tables to CF entity - add constraints" author="EdwardPLegaspi">
     	<sql>UPDATE ${db.schema.adapted}cat_discount_plan SET uuid=concat(code, '_', id)</sql>
     	<sql>UPDATE ${db.schema.adapted}cat_discount_plan_item SET uuid=concat(code, '_', id)</sql>
-    </changeSet>
-    <changeSet id="#3792_20181116 - Convert discount tables to CF entity - End" author="EdwardPLegaspi">
     	<addNotNullConstraint tableName="cat_discount_plan" columnName="uuid"/>
     	<addNotNullConstraint tableName="cat_discount_plan_item" columnName="uuid"/>
+    </changeSet>
+    <changeSet id="#3799_20181119 - Create discount plan instance table" author="EdwardPLegaspi">
+    	<createTable tableName="cat_discount_plan_instance">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_discount_plan_instance_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="discount_plan_id" type="bigint">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="billing_account_id" type="bigint">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="date" />
+            <column name="end_date" type="date" />
+            <column name="default_duration" type="int4" />
+            <column name="duration_unit" type="varchar(50)" />
+		</createTable>
+		<createSequence sequenceName="cat_discount_plan_instance_seq" />
+		<addForeignKeyConstraint constraintName="cat_discount_plan_instance_dp_fk" referencedTableName="cat_discount_plan" baseColumnNames="discount_plan_id" baseTableName="cat_discount_plan_instance" referencedColumnNames="id"/>
+		<addForeignKeyConstraint constraintName="cat_discount_plan_instance_ba_fk" referencedTableName="billing_billing_account" baseColumnNames="billing_account_id" baseTableName="cat_discount_plan_instance" referencedColumnNames="id"/>
     </changeSet>
 </databaseChangeLog> 
 

@@ -41,6 +41,7 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanInstance;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
@@ -127,11 +128,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         if (entity.getContactInformation() == null) {
             entity.setContactInformation(new ContactInformation());
         }
-        
         if (entity.getDiscountPlans() == null) {
 			entity.setDiscountPlans(new HashSet<>());
 		}
-
+		if (entity.getDiscountPlanInstances() == null) {
+			entity.setDiscountPlanInstances(new ArrayList<>());
+		}
 		if (discountPlanDM == null) {
 			List<DiscountPlan> sourceDS = null;
 			sourceDS = discountPlanService.list();
@@ -145,14 +147,27 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
         return entity;
     }
-
-    public void setCustomerAccountId(Long customerAccountId) {
-        this.customerAccountId = customerAccountId;
-    }
-
-    public Long getCustomerAccountId() {
-        return customerAccountId;
-    }
+    
+	public void instantiateDiscountPlans() {
+		if (discountPlanDM.getTarget() != null) {
+			for (DiscountPlan dp : discountPlanDM.getTarget()) {
+				for (DiscountPlanInstance dpi : entity.getDiscountPlanInstances()) {
+					if (dp.equals(dpi.getDiscountPlan())) {
+						// update effectivity dates
+						dpi.copyEffectivityDates(dp);
+						
+					} else {
+						// add
+						DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
+						discountPlanInstance.setBillingAccount(entity);
+						discountPlanInstance.setDiscountPlan(dp);
+						discountPlanInstance.copyEffectivityDates(dp);
+						entity.getDiscountPlanInstances().add(discountPlanInstance);
+					}
+				}
+			}
+		}
+	}
 
     @Override
     @ActionMethod
@@ -166,7 +181,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
                 billingAccountService.initBillingAccount(entity);
             }
 
-			entity.setDiscountPlans(new HashSet<>(discountPlanService.refreshOrRetrieve(discountPlanDM.getTarget())));
+//			entity.setDiscountPlans(new HashSet<>(discountPlanService.refreshOrRetrieve(discountPlanDM.getTarget())));
 
             String outcome = super.saveOrUpdate(killConversation);
 
@@ -360,7 +375,15 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             entity.setPrimaryContact(customerAccount.getPrimaryContact());
         }
     }
+    
+    public void setCustomerAccountId(Long customerAccountId) {
+        this.customerAccountId = customerAccountId;
+    }
 
+    public Long getCustomerAccountId() {
+        return customerAccountId;
+    }
+    
     @Override
     protected String getDefaultSort() {
         return "code";
