@@ -81,10 +81,6 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
 
         handleMissingParameters();
 
-        if (paymentGatewayDto != null && paymentGatewayDto.getType() == PaymentGatewayTypeEnum.NATIF) {
-            throw new BusinessException("Cant add Natif PaymentGateway");
-        }
-
         PaymentGateway paymentGateway = paymentGatewayService.findByCode(code);
         if (paymentGateway != null) {
             throw new EntityAlreadyExistsException(PaymentGateway.class, code);
@@ -158,10 +154,6 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
             missingParameters.add("code");
         }
         handleMissingParameters();
-
-        if (paymentGatewayDto.getType() == PaymentGatewayTypeEnum.NATIF) {
-            throw new BusinessException("Cant update Natif PaymentGateway");
-        }
 
         PaymentGateway paymentGateway = null;
         code = paymentGatewayDto.getCode();
