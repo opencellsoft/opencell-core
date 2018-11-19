@@ -423,7 +423,7 @@
         <dropColumn tableName="billing_invoice_configuration" columnName="provider_id" />
         <dropColumn tableName="adm_gdpr_configuration" columnName="provider_id" />
     </changeSet>
-    
+
     <changeSet id="#3770_20181108" author="AmineBenAicha">
         <addColumn tableName="ar_payment_schedule_tmpl">
     		<column name="script_instance_id" type="bigint" />
@@ -454,5 +454,18 @@
     	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el"/>
     	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el_sp" newColumnName="discount_value_el_sp"/>    	
     </changeSet>
+    
+    <changeSet id="#3791_20181111" author="SaidRamli">
+         <sql><![CDATA[
+			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN sync_status TYPE VARCHAR(255);
+			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN async_status TYPE VARCHAR(255);
+			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN error_type TYPE VARCHAR(255);
+			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN operation_category TYPE VARCHAR(255);
+			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN payment_method_type TYPE VARCHAR(255);
+			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN payment_method_name TYPE VARCHAR(255);
+        ]]>
+        </sql>
+    </changeSet>
+    
 </databaseChangeLog> 
 
