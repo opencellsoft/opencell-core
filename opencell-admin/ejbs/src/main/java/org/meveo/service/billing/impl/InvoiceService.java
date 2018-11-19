@@ -528,6 +528,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             invoice.assignTemporaryInvoiceNumber();
 
+            invoice = update(invoice);
+            
             Long endDate = System.currentTimeMillis();
             log.info("createAgregatesAndInvoice BR_ID=" + (billingRun == null ? "null" : billingRun.getId()) + ", BA_ID=" + billingAccount.getId() + ", Time en ms="
                     + (endDate - startDate));
