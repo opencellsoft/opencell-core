@@ -646,7 +646,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         File invoiceXmlFile = new File(invoiceXmlFileName);
         if (!invoiceXmlFile.exists()) {
-            throw new InvoiceXmlNotFoundException("The xml invoice file " + invoiceXmlFileName + " doesn't exist.");
+            produceInvoiceXmlNoUpdate(invoice);
         }
 
         BillingAccount billingAccount = invoice.getBillingAccount();
