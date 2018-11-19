@@ -53,8 +53,9 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
     /** The payment label. */
     private String paymentLabel;
 
-    /** The due date days. */
-    private Integer dueDateDays;
+
+    /** The payment day in month. */
+    private Integer paymentDayInMonth;
 
     /** The service template code. */
     private String serviceTemplateCode;
@@ -105,7 +106,7 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         this.code = paymentScheduleTemplate.getCode();
         this.description = paymentScheduleTemplate.getDescription();
         this.amount = paymentScheduleTemplate.getAmount();
-        this.dueDateDays = paymentScheduleTemplate.getDueDateDays();
+        this.paymentDayInMonth = paymentScheduleTemplate.getPaymentDayInMonth();
         this.id = paymentScheduleTemplate.getId();
         this.paymentLabel = paymentScheduleTemplate.getPaymentLabel();
         this.serviceTemplateCode = paymentScheduleTemplate.getServiceTemplate().getCode();
@@ -172,21 +173,21 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
     }
 
     /**
-     * Gets the due date days.
+     * Gets the payment day in month.
      *
-     * @return the dueDateDays
+     * @return the payment day in month
      */
-    public Integer getDueDateDays() {
-        return dueDateDays;
+    public Integer getPaymentDayInMonth() {
+        return paymentDayInMonth;
     }
 
     /**
-     * Sets the due date days.
+     * Sets the payment day in month.
      *
-     * @param dueDateDays the dueDateDays to set
+     * @param paymentDayInMonth the new payment day in month
      */
-    public void setDueDateDays(Integer dueDateDays) {
-        this.dueDateDays = dueDateDays;
+    public void setPaymentDayInMonth(Integer paymentDayInMonth) {
+        this.paymentDayInMonth = paymentDayInMonth;
     }
 
     /**

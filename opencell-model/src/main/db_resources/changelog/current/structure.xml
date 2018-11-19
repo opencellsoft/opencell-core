@@ -457,6 +457,12 @@
             <column name="filter_el" type="varchar(2000)" />
         </addColumn>          
     </changeSet>   
+    
+    <changeSet id="#3793_20181119" author="anasseh">
+     	<renameColumn newColumnName="payment_day_in_month" oldColumnName="due_date_days" tableName="ar_payment_schedule_inst"/>
+     	<renameColumn newColumnName="payment_day_in_month" oldColumnName="due_date_days" tableName="ar_payment_schedule_tmpl"/>
+     	<renameColumn newColumnName="payment_day_in_month_ps" oldColumnName="due_date_days_ps" tableName="billing_service_instance"/>
+    </changeSet>
      
 </databaseChangeLog> 
 

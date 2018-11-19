@@ -102,8 +102,8 @@ public class PaymentScheduleApi extends BaseApi {
             missingParameters.add("serviceTemplateCode");
         }
 
-        if (StringUtils.isBlank(paymentScheduleTemplateDto.getDueDateDays())) {
-            missingParameters.add("dueDateDays");
+        if (StringUtils.isBlank(paymentScheduleTemplateDto.getPaymentDayInMonth())) {
+            missingParameters.add("paymentDayInMonth");
         }
         if (StringUtils.isBlank(paymentScheduleTemplateDto.getAmount())) {
             missingParameters.add("amount");
@@ -160,7 +160,7 @@ public class PaymentScheduleApi extends BaseApi {
         paymentScheduleTemplate.setDescription(paymentScheduleTemplateDto.getDescription());
         paymentScheduleTemplate.setCalendar(calendar);
         paymentScheduleTemplate.setServiceTemplate(serviceTemplate);
-        paymentScheduleTemplate.setDueDateDays(paymentScheduleTemplateDto.getDueDateDays());
+        paymentScheduleTemplate.setPaymentDayInMonth(paymentScheduleTemplateDto.getPaymentDayInMonth());
         paymentScheduleTemplate.setAmount(paymentScheduleTemplateDto.getAmount());
         paymentScheduleTemplate.setPaymentLabel(paymentScheduleTemplateDto.getPaymentLabel());
         paymentScheduleTemplate.setAdvancePaymentInvoiceType(invoiceType);
@@ -249,8 +249,8 @@ public class PaymentScheduleApi extends BaseApi {
         if (serviceTemplate != null) {
             paymentScheduleTemplate.setServiceTemplate(serviceTemplate);
         }
-        if (!StringUtils.isBlank(paymentScheduleTemplateDto.getDueDateDays())) {
-            paymentScheduleTemplate.setDueDateDays(paymentScheduleTemplateDto.getDueDateDays());
+        if (!StringUtils.isBlank(paymentScheduleTemplateDto.getPaymentDayInMonth())) {
+            paymentScheduleTemplate.setPaymentDayInMonth(paymentScheduleTemplateDto.getPaymentDayInMonth());
         }
         if (!StringUtils.isBlank(paymentScheduleTemplateDto.getAmount())) {
             paymentScheduleTemplate.setAmount(paymentScheduleTemplateDto.getAmount());
@@ -447,8 +447,8 @@ public class PaymentScheduleApi extends BaseApi {
         if (!StringUtils.isBlank(paymentScheduleInstanceDto.getAmount())) {
             paymentScheduleInstance.setAmount(paymentScheduleInstanceDto.getAmount());
         }
-        if (!StringUtils.isBlank(paymentScheduleInstanceDto.getDueDateDays())) {
-            paymentScheduleInstance.setDueDateDays(paymentScheduleInstanceDto.getDueDateDays());
+        if (!StringUtils.isBlank(paymentScheduleInstanceDto.getPaymentDayInMonth())) {
+            paymentScheduleInstance.setPaymentDayInMonth(paymentScheduleInstanceDto.getPaymentDayInMonth());
         }
         if (!StringUtils.isBlank(paymentScheduleInstanceDto.getCalendarCode())) {
             Calendar calendar = calendarService.findByCode(paymentScheduleInstanceDto.getCalendarCode());

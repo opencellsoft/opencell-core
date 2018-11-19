@@ -50,10 +50,10 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity {
     @NotNull
     private String paymentLabel;
 
-    /** The due date days. */
-    @Column(name = "due_date_days")
+    /** The payment day in month. */
+    @Column(name = "payment_day_in_month")
     @NotNull
-    private Integer dueDateDays;
+    private Integer paymentDayInMonth;
 
     /** The amount. */
     @Column(name = "amount")
@@ -139,22 +139,24 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity {
         this.paymentLabel = paymentLabel;
     }
 
+   
     /**
-     * Gets the due date days.
+     * Gets the payment day in month.
      *
-     * @return the dueDateDays
+     * @return the payment day in month
      */
-    public Integer getDueDateDays() {
-        return dueDateDays;
+    public Integer getPaymentDayInMonth() {
+        return paymentDayInMonth;
     }
 
+   
     /**
-     * Sets the due date days.
+     * Sets the payment day in month.
      *
-     * @param dueDateDays the dueDateDays to set
+     * @param paymentDayInMonth the new payment day in month
      */
-    public void setDueDateDays(Integer dueDateDays) {
-        this.dueDateDays = dueDateDays;
+    public void setPaymentDayInMonth(Integer paymentDayInMonth) {
+        this.paymentDayInMonth = paymentDayInMonth;
     }
 
     /**

@@ -39,6 +39,7 @@ import org.meveo.service.script.ScriptInterface;
  *
  * @author anasseh
  * @since 5.2
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class PaymentScheduleInstanceService extends BusinessService<PaymentScheduleInstance> {
@@ -156,7 +157,7 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         return instanciate(paymentScheduleTemplate, serviceInstance, amount,
             serviceInstance.getCalendarPS() == null ? paymentScheduleTemplate.getCalendar() : serviceInstance.getCalendarPS(), serviceInstance.getSubscriptionDate(),
             serviceInstance.getEndAgreementDate() == null ? serviceInstance.getSubscription().getEndAgreementDate() : serviceInstance.getEndAgreementDate(),
-            serviceInstance.getDueDateDaysPS() == null ? paymentScheduleTemplate.getDueDateDays() : serviceInstance.getDueDateDaysPS());
+            serviceInstance.getPaymentDayInMonthPS() == null ? paymentScheduleTemplate.getPaymentDayInMonth() : serviceInstance.getPaymentDayInMonthPS());
 
     }
 
@@ -171,7 +172,7 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
     public PaymentScheduleInstance instanciateFromPsInstance(PaymentScheduleTemplate paymentScheduleTemplate, PaymentScheduleInstance paymentScheduleInstance)
             throws BusinessException {
         return instanciate(paymentScheduleTemplate, paymentScheduleInstance.getServiceInstance(), paymentScheduleInstance.getAmount(), paymentScheduleInstance.getCalendar(),
-            paymentScheduleInstance.getStartDate(), paymentScheduleInstance.getEndDate(), paymentScheduleInstance.getDueDateDays());
+            paymentScheduleInstance.getStartDate(), paymentScheduleInstance.getEndDate(), paymentScheduleInstance.getPaymentDayInMonth());
     }
 
     /**
@@ -207,7 +208,7 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         paymentScheduleInstance.setCode(paymentScheduleTemplate.getCode());
         paymentScheduleInstance.setDescription(paymentScheduleTemplate.getDescription());
         paymentScheduleInstance.setServiceInstance(serviceInstance);
-        paymentScheduleInstance.setDueDateDays(dueDateDelay);
+        paymentScheduleInstance.setPaymentDayInMonth(dueDateDelay);
         create(paymentScheduleInstance);
 
         // Evol #3770
@@ -245,11 +246,10 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         Date date = paymentScheduleInstance.getStartDate();
         CustomerAccount customerAccount = subscription.getUserAccount().getBillingAccount().getCustomerAccount();
         while (date.before(paymentScheduleInstance.getEndDate())) {
-
-            PaymentScheduleInstanceItem paymentScheduleInstanceItem = new PaymentScheduleInstanceItem();
-            paymentScheduleInstanceItem.setDueDate(DateUtils.addDaysToDate(date, dueDateDelay));
+            PaymentScheduleInstanceItem paymentScheduleInstanceItem = new PaymentScheduleInstanceItem();           
             paymentScheduleInstanceItem.setPaymentScheduleInstance(paymentScheduleInstance);
-            paymentScheduleInstanceItem.setRequestPaymentDate(computeRequestPaymentDate(customerAccount, paymentScheduleInstanceItem.getDueDate()));
+            paymentScheduleInstanceItem.setRequestPaymentDate(computeRequestPaymentDate(customerAccount, date, dueDateDelay));
+            paymentScheduleInstanceItem.setDueDate(computeDueDate(customerAccount, paymentScheduleInstanceItem.getRequestPaymentDate()));
             date = cal.nextCalendarDate(date);
             if (!date.before(paymentScheduleInstance.getEndDate())) {
                 paymentScheduleInstanceItem.setLast(true);
@@ -266,12 +266,32 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
      * Compute request payment date.
      *
      * @param customerAccount the customer account
-     * @param dueDate the due date
-     * @return the date
+     * @param startDate the start date
+     * @param dayInMonth the day in month
+     * @return the request payment date
+     */
+    private Date computeRequestPaymentDate(CustomerAccount customerAccount, Date startDate,int dayInMonth)  {
+        Date requestPaymentDate = null;
+
+        if(dayInMonth >= DateUtils.getDayFromDate(startDate) ) {
+            requestPaymentDate = DateUtils.setDayToDate(startDate, dayInMonth);
+        }else {
+            requestPaymentDate = DateUtils.setMonthToDate(startDate, DateUtils.getDayFromDate(startDate) +1);
+            requestPaymentDate = DateUtils.setMonthToDate(requestPaymentDate, dayInMonth);
+        }
+        return requestPaymentDate;
+    }
+    
+    /**
+     * Compute due date.
+     *
+     * @param customerAccount the customer account
+     * @param requestPaymentDate the request payment date
+     * @return the due date
      * @throws BusinessException the business exception
      */
-    private Date computeRequestPaymentDate(CustomerAccount customerAccount, Date dueDate) throws BusinessException {
-        Date requestPaymentDate = null;
+    private Date computeDueDate(CustomerAccount customerAccount, Date requestPaymentDate) throws BusinessException {
+        Date dueDate = null;
         PaymentMethod preferredMethod = customerAccount.getPreferredPaymentMethod();
         if (preferredMethod == null) {
             throw new BusinessException("preferredMethod is null");
@@ -286,8 +306,8 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
             ndDaysBeforeDueDate = Integer.parseInt(paramBean.getProperty("paymentSchedule.nbDaysBeforeDueDate.dd", "3"));
         }
 
-        requestPaymentDate = DateUtils.addDaysToDate(dueDate, (-1 * ndDaysBeforeDueDate));
-        return requestPaymentDate;
+        dueDate = DateUtils.addDaysToDate(requestPaymentDate,  ndDaysBeforeDueDate);
+        return dueDate;
     }
 
     /**

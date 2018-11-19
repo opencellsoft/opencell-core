@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -53,6 +52,7 @@ import org.meveo.util.ApplicationProvider;
  *
  * @author anasseh
  * @since 5.2
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class PaymentScheduleInstanceItemService extends PersistenceService<PaymentScheduleInstanceItem> {
