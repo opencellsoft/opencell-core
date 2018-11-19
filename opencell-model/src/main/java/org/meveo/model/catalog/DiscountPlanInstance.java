@@ -163,4 +163,33 @@ public class DiscountPlanInstance extends BaseEntity {
 		this.durationUnit = durationUnit;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((billingAccount == null) ? 0 : billingAccount.hashCode());
+		result = prime * result + ((discountPlan == null) ? 0 : discountPlan.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		DiscountPlanInstance other = (DiscountPlanInstance) obj;
+		if (billingAccount == null) {
+			if (other.billingAccount != null)
+				return false;
+		} else if (!billingAccount.equals(other.billingAccount))
+			return false;
+		if (discountPlan == null) {
+			if (other.discountPlan != null)
+				return false;
+		} else if (!discountPlan.equals(other.discountPlan))
+			return false;
+		return true;
+	}
+
 }

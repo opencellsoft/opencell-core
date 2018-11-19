@@ -252,15 +252,24 @@
 							     </p:fieldset>		
 							     
 							     <p:fieldset legend="#{messages['invoice.discounts']}" styleClass="clearLeft" >
-							     	<hftl:formField rendered="#{billingAccountBean.edit}" label="#{messages['menu.discountPlans']}" field="discountPlans" listType="pickUpList" valueLabelField="code" required="false" dualListModel="#{billingAccountBean.discountPlanDM}" />
-							     	<p:commandButton value="Instantiate" action="#{billingAccountBean.instantiateDiscountPlans}"></p:commandButton>
-							     	<p:dataTable id="datatable_discountPlanInstances" var="entity" lazy="true" paginator="true" resizableColumns="true" reflow="true"
-	                                    value="#{entity.discountPlanInstances}" rows="10" rowKey="#{entity.id}"
-	                                    styleClass="custom-grid">
-	                                    	<hftl:column label="#{messages['discountPlan']}" field="discountPlan.code" />
-	                                    	<hftl:column label="#{messages['discountPlanItem.startDate']}" field="startDate" />
-	                                    	<hftl:column label="#{messages['discountPlanItem.endDate']}" field="endDate" />
-                                    </p:dataTable>                                    
+							     	<p:outputPanel id="discountPanel">
+								     	<hftl:formField rendered="#{billingAccountBean.edit}" label="#{messages['menu.discountPlans']}" field="discountPlans" listType="pickUpList" valueLabelField="code" required="false" dualListModel="#{billingAccountBean.discountPlanDM}" />
+								     	<h:panelGroup layout="block" styleClass="form-panel" style="margin-bottom: 10px">
+								     		<p:commandButton rendered="#{billingAccountBean.edit}" value="Instantiate" action="#{billingAccountBean.instantiateDiscountPlans}" update="discountPanel"></p:commandButton>
+								     	</h:panelGroup>
+								     	<p:dataTable id="datatable_discountPlanInstances" var="entity" lazy="false" paginator="true" resizableColumns="true" reflow="true"
+		                                    value="#{billingAccountBean.entity.discountPlanInstances}" rows="10" rowKey="#{entity.id}"
+		                                    styleClass="custom-grid">
+		                                    	<hftl:column label="#{messages['discountPlan']}" field="discountPlan.code" />
+		                                    	<hftl:column label="#{messages['discountPlanItem.startDate']}" field="startDate" isDate="true" />
+		                                    	<hftl:column label="#{messages['discountPlanItem.endDate']}" field="endDate" isDate="true" />
+		                                    	<hftl:column label="#{messages['discountPlanItem.defaultDuration']}" field="defaultDuration" />
+		                                    	<hftl:column label="#{messages['discountPlanItem.durationUnit']}" field="durationUnit" />
+		                                    	<p:column style="width: 5%">
+		                                    		<p:commandButton icon="ui-icon-trash" update=":#{p:component('discountPanel')}" action="#{billingAccountBean.deleteDiscountPlanInstance(entity)}"></p:commandButton>
+		                                    	</p:column>
+	                                    </p:dataTable>
+                                    </p:outputPanel>                                   
 							     </p:fieldset>
 							     
                                  <p:fieldset legend="#{messages['commons.status']}" styleClass="clearLeft" >

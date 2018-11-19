@@ -51,6 +51,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.catalog.impl.DiscountPlanInstanceService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.primefaces.model.DualListModel;
@@ -86,6 +87,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     
     @Inject
     private DiscountPlanService discountPlanService;
+    
+    @Inject
+    private DiscountPlanInstanceService discountPlanInstanceService;
 
     /** Selected billing account in exceptionelInvoicing page. */
     private ListItemsSelector<BillingAccount> itemSelector;
@@ -147,26 +151,59 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
         return entity;
     }
-    
-	public void instantiateDiscountPlans() {
+
+    @ActionMethod
+	public void instantiateDiscountPlans() throws BusinessException {
 		if (discountPlanDM.getTarget() != null) {
+			entity = billingAccountService.refreshOrRetrieve(entity);
+			List<DiscountPlanInstance> toAdd = new ArrayList<>();
 			for (DiscountPlan dp : discountPlanDM.getTarget()) {
-				for (DiscountPlanInstance dpi : entity.getDiscountPlanInstances()) {
-					if (dp.equals(dpi.getDiscountPlan())) {
+				if (entity.getDiscountPlanInstances() == null || entity.getDiscountPlanInstances().isEmpty()) {
+					// add
+					DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
+					discountPlanInstance.setBillingAccount(entity);
+					discountPlanInstance.setDiscountPlan(dp);
+					discountPlanInstance.copyEffectivityDates(dp);
+					discountPlanInstanceService.create(discountPlanInstance);
+					entity.getDiscountPlanInstances().add(discountPlanInstance);
+				} else {
+					boolean found = false;
+					DiscountPlanInstance dpiMatched = null;
+					for (DiscountPlanInstance dpi : entity.getDiscountPlanInstances()) {
+						if (dp.equals(dpi.getDiscountPlan())) {
+							found = true;
+							dpiMatched = dpi;
+							break;
+						}
+					}
+					if (found && dpiMatched != null) {
 						// update effectivity dates
-						dpi.copyEffectivityDates(dp);
-						
+						dpiMatched.copyEffectivityDates(dp);
+						discountPlanInstanceService.update(dpiMatched);
 					} else {
 						// add
 						DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
 						discountPlanInstance.setBillingAccount(entity);
 						discountPlanInstance.setDiscountPlan(dp);
 						discountPlanInstance.copyEffectivityDates(dp);
-						entity.getDiscountPlanInstances().add(discountPlanInstance);
+						discountPlanInstanceService.create(discountPlanInstance);
+						toAdd.add(discountPlanInstance);
 					}
 				}
 			}
+			if (!toAdd.isEmpty()) {
+				entity.getDiscountPlanInstances().addAll(toAdd);
+			}
+
+			discountPlanDM.getSource().addAll(discountPlanDM.getTarget());
+			discountPlanDM.setTarget(new ArrayList<>());
 		}
+	}
+	
+	@ActionMethod
+	public void deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
+		discountPlanInstanceService.remove(dpi);
+		entity.getDiscountPlanInstances().remove(dpi);
 	}
 
     @Override
