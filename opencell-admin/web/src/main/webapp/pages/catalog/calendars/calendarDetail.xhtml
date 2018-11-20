@@ -329,6 +329,11 @@
 			
 			<h:panelGroup
 				rendered="#{calendarBean.entity['class'].simpleName eq 'CalendarBanking'}">
+				<hftl:formField label="#{messages['calendar.startDate']}" field="startDate"
+				required="true" useConverter="false"
+				newLine="true" />
+				<hftl:formField label="#{messages['calendar.endDate']}"
+				field="endDate" useConverter="false" id="endDate" />
 
 				<hftl:decorateFormField fieldId="weekendPeriod"
 					label="#{messages['calendar.weekendPeriod']}" newLine="true">

@@ -11,10 +11,15 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.meveo.model.shared.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * represents a calendar from which weekend and holidays can be excluded.
@@ -27,6 +32,20 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 public class CalendarBanking extends Calendar {
 
     private static final long serialVersionUID = 1L;
+    
+    private static Logger log = LoggerFactory.getLogger(CalendarBanking.class);
+    
+    /** The start date. */
+    @Column(name = "start_date")
+    @Temporal(TemporalType.DATE)
+    @NotNull
+    private Date startDate;
+
+    /** The end date. */
+    @Column(name = "end_date")
+    @Temporal(TemporalType.DATE)
+    @NotNull
+    private Date endDate;
     
     /**
      * Specified weekend start.
@@ -47,6 +66,11 @@ public class CalendarBanking extends Calendar {
     @OrderBy("holidayBegin")
     private List<CalendarHoliday> holidays;
 
+    /**
+     * Gets the holidays.
+     *
+     * @return the holidays
+     */
     public List<CalendarHoliday> getHolidays() {
         if(holidays == null) {
             holidays =  new ArrayList<CalendarHoliday>();
@@ -54,14 +78,29 @@ public class CalendarBanking extends Calendar {
         return holidays;
     }
 
+    /**
+     * Sets the holidays.
+     *
+     * @param holidays the new holidays
+     */
     public void setHolidays(List<CalendarHoliday> holidays) {
         this.holidays = holidays;
     }
     
+    /**
+     * Gets the weekend begin.
+     *
+     * @return the weekend begin
+     */
     public Integer getWeekendBegin() {
 		return weekendBegin;
 	}
 
+	/**
+	 * Sets the weekend begin.
+	 *
+	 * @param weekendBegin the new weekend begin
+	 */
 	public void setWeekendBegin(Integer weekendBegin) {
 		this.weekendBegin = weekendBegin;
 	}
@@ -70,11 +109,54 @@ public class CalendarBanking extends Calendar {
 		return weekendEnd;
 	}
 
+	/**
+	 * Sets the weekend end.
+	 *
+	 * @param weekendEnd the new weekend end
+	 */
 	public void setWeekendEnd(Integer weekendEnd) {
 		this.weekendEnd = weekendEnd;
 	}
+	
+	
 
 	/**
+	 * Gets the start date.
+	 *
+	 * @return the start date
+	 */
+	public Date getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * Sets the start date.
+     *
+     * @param startDate the new start date
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * Gets the end date.
+     *
+     * @return the end date
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * Sets the end date.
+     *
+     * @param endDate the new end date
+     */
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    /**
      * Determines a next calendar date, if it's a holiday, the next date will be the holiday end period + 1 day.
      * 
      * 
@@ -84,7 +166,11 @@ public class CalendarBanking extends Calendar {
     public Date nextCalendarDate(Date date) {
     	if(date == null) {
     		return null;
-    	}    	
+    	}   
+    	if(!DateUtils.isWithinDate(date, startDate, endDate)) {
+            log.warn("The given date: " +date +" is not in period [startDate,endDate] of banking Calendar: "+ code);
+            return date;
+        }
     	Date nextCalendarDate = date;
         int iteration = 0;
         
@@ -128,6 +214,10 @@ public class CalendarBanking extends Calendar {
 
 		if (date == null) {
 			return null;
+		}
+		if(!DateUtils.isWithinDate(date, startDate, endDate)) {
+		    log.warn("The given date: " +date +" is not in period [startDate,endDate] of banking Calendar: "+ code);
+		    return date;
 		}
 		Date previousCalendarDate = date;
         int iteration = 0;

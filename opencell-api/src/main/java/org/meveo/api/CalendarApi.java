@@ -174,6 +174,8 @@ public class CalendarApi extends BaseApi {
             CalendarBanking calendar = new CalendarBanking();
             calendar.setCode(postData.getCode());
             calendar.setDescription(postData.getDescription());
+            calendar.setStartDate(postData.getStartDate());
+            calendar.setEndDate(postData.getEndDate());
             calendar.setWeekendBegin(postData.getWeekendBegin());
             calendar.setWeekendEnd(postData.getWeekendEnd());
 
@@ -190,7 +192,7 @@ public class CalendarApi extends BaseApi {
 
         
         } else {
-            throw new BusinessApiException("invalid calendar type, possible values YEARLY, DAILY, PERIOD, INTERVAL, JOIN, Banking");
+            throw new BusinessApiException("invalid calendar type, possible values YEARLY, DAILY, PERIOD, INTERVAL, JOIN, BANKING");
         }
 
     }
@@ -289,6 +291,8 @@ public class CalendarApi extends BaseApi {
         } else if (calendar instanceof CalendarBanking) {
             
             CalendarBanking calendarBanking = (CalendarBanking) calendar;
+            calendarBanking.setStartDate(postData.getStartDate());
+            calendarBanking.setEndDate(postData.getEndDate());
             calendarBanking.setWeekendBegin(postData.getWeekendBegin());
             calendarBanking.setWeekendEnd(postData.getWeekendEnd());
             calendarBanking.getHolidays().clear();
