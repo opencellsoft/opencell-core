@@ -156,44 +156,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public void instantiateDiscountPlans() throws BusinessException {
 		if (discountPlanDM.getTarget() != null) {
 			entity = billingAccountService.refreshOrRetrieve(entity);
-			List<DiscountPlanInstance> toAdd = new ArrayList<>();
-			for (DiscountPlan dp : discountPlanDM.getTarget()) {
-				if (entity.getDiscountPlanInstances() == null || entity.getDiscountPlanInstances().isEmpty()) {
-					// add
-					DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
-					discountPlanInstance.setBillingAccount(entity);
-					discountPlanInstance.setDiscountPlan(dp);
-					discountPlanInstance.copyEffectivityDates(dp);
-					discountPlanInstanceService.create(discountPlanInstance);
-					entity.getDiscountPlanInstances().add(discountPlanInstance);
-				} else {
-					boolean found = false;
-					DiscountPlanInstance dpiMatched = null;
-					for (DiscountPlanInstance dpi : entity.getDiscountPlanInstances()) {
-						if (dp.equals(dpi.getDiscountPlan())) {
-							found = true;
-							dpiMatched = dpi;
-							break;
-						}
-					}
-					if (found && dpiMatched != null) {
-						// update effectivity dates
-						dpiMatched.copyEffectivityDates(dp);
-						discountPlanInstanceService.update(dpiMatched);
-					} else {
-						// add
-						DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
-						discountPlanInstance.setBillingAccount(entity);
-						discountPlanInstance.setDiscountPlan(dp);
-						discountPlanInstance.copyEffectivityDates(dp);
-						discountPlanInstanceService.create(discountPlanInstance);
-						toAdd.add(discountPlanInstance);
-					}
-				}
-			}
-			if (!toAdd.isEmpty()) {
-				entity.getDiscountPlanInstances().addAll(toAdd);
-			}
+			entity = billingAccountService.instantiateDiscountPlans(entity, discountPlanDM.getTarget());
 
 			discountPlanDM.getSource().addAll(discountPlanDM.getTarget());
 			discountPlanDM.setTarget(new ArrayList<>());
@@ -202,8 +165,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	
 	@ActionMethod
 	public void deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
-		discountPlanInstanceService.remove(dpi);
-		entity.getDiscountPlanInstances().remove(dpi);
+		billingAccountService.terminateDiscountPlan(entity, dpi);
 	}
 
     @Override

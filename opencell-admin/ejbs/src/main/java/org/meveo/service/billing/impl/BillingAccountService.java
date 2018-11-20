@@ -19,6 +19,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -42,12 +43,14 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanInstance;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.DiscountPlanInstanceService;
 
 /**
  * The Class BillingAccountService.
@@ -69,9 +72,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     @EJB
     private BillingRunService billingRunService;
 
-    /** The invoice sub category service. */
     @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
+    private DiscountPlanInstanceService discountPlanInstanceService;
 
     /**
      * Inits the billing account.
@@ -429,5 +431,69 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public List<Long> findBillingAccountIdsByBillingRun(Long billingRunId) {
         return getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRunId).getResultList();
     }
+    
+	public BillingAccount instantiateDiscountPlans(BillingAccount entity, List<DiscountPlan> discountPlans) throws BusinessException {
+		List<DiscountPlanInstance> toAdd = new ArrayList<>();
+		for (DiscountPlan dp : discountPlans) {
+			if (entity.getDiscountPlanInstances() == null || entity.getDiscountPlanInstances().isEmpty()) {
+				// add
+				entity.setDiscountPlanInstances(new ArrayList<>());
+				DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
+				discountPlanInstance.setBillingAccount(entity);
+				discountPlanInstance.setDiscountPlan(dp);
+				discountPlanInstance.copyEffectivityDates(dp);
+				discountPlanInstanceService.create(discountPlanInstance);
+				entity.getDiscountPlanInstances().add(discountPlanInstance);
+				
+			} else {
+				boolean found = false;
+				DiscountPlanInstance dpiMatched = null;
+				for (DiscountPlanInstance dpi : entity.getDiscountPlanInstances()) {
+					if (dp.equals(dpi.getDiscountPlan())) {
+						found = true;
+						dpiMatched = dpi;
+						break;
+					}
+				}
+				
+				if (found && dpiMatched != null) {
+					// update effectivity dates
+					dpiMatched.copyEffectivityDates(dp);
+					discountPlanInstanceService.update(dpiMatched);
+					
+				} else {
+					// add
+					DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
+					discountPlanInstance.setBillingAccount(entity);
+					discountPlanInstance.setDiscountPlan(dp);
+					discountPlanInstance.copyEffectivityDates(dp);
+					discountPlanInstanceService.create(discountPlanInstance);
+					toAdd.add(discountPlanInstance);
+				}
+			}
+		}
+		
+		if (!toAdd.isEmpty()) {
+			entity.getDiscountPlanInstances().addAll(toAdd);
+		}
+		
+		return entity;
+	}
+	
+	public void terminateDiscountPlans(BillingAccount entity, List<DiscountPlanInstance> dpis)
+			throws BusinessException {
+		if (dpis == null) {
+			return;
+		}
+
+		for (DiscountPlanInstance dpi : dpis) {
+			terminateDiscountPlan(entity, dpi);
+		}
+	}
+
+	public void terminateDiscountPlan(BillingAccount entity, DiscountPlanInstance dpi) throws BusinessException {
+		discountPlanInstanceService.remove(dpi);
+		entity.getDiscountPlanInstances().remove(dpi);
+	}
 
 }

@@ -107,7 +107,14 @@ public class AccountHierarchyDto implements Serializable {
     private String discountPlan;
     
     /** List of Discount Plans. */
+    @XmlElementWrapper(name = "discountPlans")
+	@XmlElement(name = "discountPlan")
     private List<String> discountPlans;
+    
+    /** List of discount plans to be disassociated in a BillingAccount */
+	@XmlElementWrapper(name = "discountPlansForTermination")
+	@XmlElement(name = "discountPlan")
+    private List<String> discountPlansForTermination;
 
     /** Custom Fiends. */
     private CustomFieldsDto customFields;
@@ -804,5 +811,13 @@ public class AccountHierarchyDto implements Serializable {
 
 	public void setDiscountPlans(List<String> discountPlans) {
 		this.discountPlans = discountPlans;
+	}
+
+	public List<String> getDiscountPlansForTermination() {
+		return discountPlansForTermination;
+	}
+
+	public void setDiscountPlansForTermination(List<String> discountPlansForTermination) {
+		this.discountPlansForTermination = discountPlansForTermination;
 	}    
 }

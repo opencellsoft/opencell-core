@@ -17,6 +17,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 
 @Stateless
@@ -77,17 +78,33 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
         discountPlan.setDescription(postData.getDescription());
         discountPlan.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        if (postData.getStartDate() != null) {
-        	discountPlan.setStartDate(postData.getStartDate());
+		if (postData.getStartDate() != null) {
+			discountPlan.setStartDate(postData.getStartDate());
+		} else {
+			if (StringUtils.isBlank(postData.getStartDate())) {
+				discountPlan.setStartDate(null);
+			}
 		}
 		if (postData.getEndDate() != null) {
 			discountPlan.setEndDate(postData.getEndDate());
+		} else {
+			if (StringUtils.isBlank(postData.getEndDate())) {
+				discountPlan.setEndDate(null);
+			}
 		}
 		if (postData.getDefaultDuration() != null) {
 			discountPlan.setDefaultDuration(postData.getDefaultDuration());
+		} else {
+			if (StringUtils.isBlank(postData.getDefaultDuration())) {
+				discountPlan.setDefaultDuration(null);
+			}
 		}
 		if (postData.getDurationUnit() != null) {
 			discountPlan.setDurationUnit(postData.getDurationUnit());
+		} else {
+			if (StringUtils.isBlank(postData.getDurationUnit())) {
+				discountPlan.setDurationUnit(DurationPeriodUnitEnum.DAY);
+			}
 		}
 		
 		// populate customFields

@@ -240,36 +240,67 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.expressionElSpark = expressionElSpark;
     }
 
+    /**
+     * Sets whether this entity is disabled or not.
+     */
     @Override
     public void setDisabled(Boolean disabled) {
         this.disabled = disabled;
     }
 
+    /**
+     * Whether this entity is disabled.
+     */
     @Override
     public Boolean isDisabled() {
         return disabled;
     }
 
+    /**
+     * Sets the discount plan item type.
+     * @return item type
+     */
 	public DiscountPlanItemTypeEnum getDiscountPlanItemType() {
 		return discountPlanItemType;
 	}
 
+
+    /**
+     * Gets the discount plan item type.
+     * @return item type
+     */
 	public void setDiscountPlanItemType(DiscountPlanItemTypeEnum discountPlanItemType) {
 		this.discountPlanItemType = discountPlanItemType;
 	}
 
+	/**
+	 * Gets the discount value. Can be either percentage or fixed. Depending on the item type.
+	 * @return the discount value
+	 */
 	public BigDecimal getDiscountValue() {
 		return discountValue;
 	}
 
+	/**
+	 * Sets the discount value. Can be either percentage or fixed. Depending on the item type.
+	 * @param discountValue the discount value
+	 */
 	public void setDiscountValue(BigDecimal discountValue) {
 		this.discountValue = discountValue;
 	}
 
+	/**
+	 * Gets the discount value el for spark.
+	 * @return
+	 */
 	public String getDiscountValueElSpark() {
 		return discountValueElSpark;
 	}
 
+	/**
+	 * Sets the discount value el for spark.
+	 * @param discountValueElSpark the discount value
+	 */
 	public void setDiscountValueElSpark(String discountValueElSpark) {
 		this.discountValueElSpark = discountValueElSpark;
 	}
@@ -284,18 +315,34 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 				+ discountValueElSpark + "]";
 	}
 
+	/**
+	 * Sets the discount value el.
+	 * @param discountValueEL el expression
+	 */
 	public void setDiscountValueEL(String discountValueEL) {
 		this.discountValueEL = discountValueEL;
 	}
 
+	/**
+	 * Gets the discount value el.
+	 * @return el expression
+	 */
 	public String getDiscountValueEL() {
 		return discountValueEL;
 	}
 
+	/**
+	 * Gets the custom fields.
+	 * @return custom fields associated with this entity
+	 */
 	public CustomFieldsDto getCustomFields() {
 		return customFields;
 	}
 
+	/**
+	 * Sets the custom fields.
+	 * @param customFields custom fields to be associated with this entity
+	 */
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}

@@ -9,12 +9,15 @@ import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.catalog.DiscountPlanInstanceDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.catalog.DiscountPlanInstance;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -130,9 +133,23 @@ public class BillingAccountDto extends AccountDto {
      */
     private UserAccountsDto userAccounts = new UserAccountsDto();
     
-    /** List of discount plans */
+    /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
+	@XmlElementWrapper(name = "discountPlans")
+	@XmlElement(name = "discountPlan")
     private List<String> discountPlans;
-
+    
+    /** List of discount plans to be disassociated in a BillingAccount */
+	@XmlElementWrapper(name = "discountPlansForTermination")
+	@XmlElement(name = "discountPlan")
+    private List<String> discountPlansForTermination;
+    
+    /**
+     * Use to return the active discount plans for this entity.
+     */
+	@XmlElementWrapper(name = "discountPlanInstances")
+	@XmlElement(name = "discountPlanInstance")
+    private List<DiscountPlanInstanceDto> discountPlanInstances;
+    
     /**
      * Instantiates a new billing account dto.
      */
@@ -197,10 +214,16 @@ public class BillingAccountDto extends AccountDto {
 
         // End compatibility with pre-4.6 versions
         
-        if(e.getDiscountPlans() != null) {
-			discountPlans = new ArrayList<>();
-			discountPlans = e.getDiscountPlans().stream().map(p -> p.getCode()).collect(Collectors.toList());
-		}
+//        if(e.getDiscountPlans() != null) {
+//			discountPlans = new ArrayList<>();
+//			discountPlans = e.getDiscountPlans().stream().map(p -> p.getCode()).collect(Collectors.toList());
+//		}
+        
+        if(e.getDiscountPlanInstances() != null) {
+        	discountPlanInstances = new ArrayList<>();
+			discountPlanInstances = e.getDiscountPlanInstances().stream().map(p -> new DiscountPlanInstanceDto(p))
+					.collect(Collectors.toList());
+        }
     }
 	
 	public void addDiscountPlan(String dp) {
@@ -632,11 +655,51 @@ public class BillingAccountDto extends AccountDto {
         this.minimumLabelElSpark = minimumLabelElSpark;
     }
     
+    /**
+     * Gets the code of discount plans.
+     * @return codes of discount plan
+     */
     public List<String> getDiscountPlans() {
 		return discountPlans;
 	}
 
+    /**
+     * Sets the code of the discount plans.
+     * @param discountPlans codes of the discount plans
+     */
 	public void setDiscountPlans(List<String> discountPlans) {
 		this.discountPlans = discountPlans;
+	}
+
+	/**
+	 * Gets the list of active discount plan instance.
+	 * @return list of active discount plan instance
+	 */
+	public List<DiscountPlanInstanceDto> getDiscountPlanInstances() {
+		return discountPlanInstances;
+	}
+
+	/**
+	 * Sets the list of active discount plan instance.
+	 * @param discountPlanInstances list of active discount plan instance
+	 */
+	public void setDiscountPlanInstances(List<DiscountPlanInstanceDto> discountPlanInstances) {
+		this.discountPlanInstances = discountPlanInstances;
+	}
+
+	/**
+	 * Gets the list of discount plan codes for termination.
+	 * @return discount plan codes
+	 */
+	public List<String> getDiscountPlansForTermination() {
+		return discountPlansForTermination;
+	}
+
+	/**
+	 * Sets the list of discount plan codes for termination.
+	 * @param discountPlansForTermination discount plan codes
+	 */
+	public void setDiscountPlansForTermination(List<String> discountPlansForTermination) {
+		this.discountPlansForTermination = discountPlansForTermination;
 	}
 }
