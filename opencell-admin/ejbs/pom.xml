@@ -615,6 +615,18 @@
 			<artifactId>opencsv</artifactId>
 			<version>4.2</version>
 		</dependency>
+
+	   <dependency>
+			   <groupId>org.apache.httpcomponents</groupId>
+			   <artifactId>httpasyncclient</artifactId>
+			   <version>4.0.2</version>
+			   <exclusions>
+					   <exclusion>
+							   <artifactId>commons-logging</artifactId>
+							   <groupId>commons-logging</groupId>
+					   </exclusion>
+			   </exclusions>
+	   </dependency>
 	</dependencies>
 
 	<profiles>
