@@ -58,6 +58,9 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
     @Inject
     private CountryService countryService;
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#create(org.meveo.api.dto.BusinessEntityDto)
+     */
     @Override
     public PaymentGateway create(PaymentGatewayDto paymentGatewayDto) throws MeveoApiException, BusinessException {
         String code = null;
@@ -141,6 +144,9 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         return paymentGateway;
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#update(org.meveo.api.dto.BusinessEntityDto)
+     */
     @Override
     public PaymentGateway update(PaymentGatewayDto paymentGatewayDto) throws BusinessException, MeveoApiException {
         String code = null;
@@ -237,6 +243,9 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         return paymentGateway;
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
     @Override
     public PaymentGatewayDto find(String paymentGatewayCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         if (StringUtils.isBlank(paymentGatewayCode)) {
