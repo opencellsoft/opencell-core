@@ -40,6 +40,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -221,6 +224,12 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
     @Transient
     private Long invoiceAdjustmentCurrentProviderNb;
+
+    /**
+     * Used to track if "invoiceNumber" field value has changed. Value is populated on postLoad, postPersist and postUpdate JPA events
+     */
+    @Transient
+    private String previousInvoiceNumber;
 
     public List<RatedTransaction> getRatedTransactions() {
         return ratedTransactions;
@@ -576,9 +585,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     }
 
     public void addInvoiceAggregate(InvoiceAgregate obj) {
-        if (!invoiceAgregates.contains(obj)) {
-            invoiceAgregates.add(obj);
-        }
+        invoiceAgregates.add(obj);
     }
 
     public List<SubCategoryInvoiceAgregate> getDiscountAgregates() {
@@ -696,5 +703,22 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         }
 
         setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
+    }
+
+    /**
+     * @return The previous invoice number
+     */
+    public String getPreviousInvoiceNumber() {
+        return previousInvoiceNumber;
+    }
+
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    /**
+     * Tracks what was the previous invoice number
+     */
+    private void trackPreviousValues() {
+        previousInvoiceNumber = invoiceNumber;
     }
 }

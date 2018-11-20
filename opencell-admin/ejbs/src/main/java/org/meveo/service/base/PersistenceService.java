@@ -155,7 +155,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     protected Event<BaseEntity> entityRemovedEventProducer;
 
     @EJB
-    private CustomFieldInstanceService customFieldInstanceService;
+    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     protected ParamBeanFactory paramBeanFactory;
@@ -449,6 +449,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             ((IAuditable) entity).updateAudit(currentUser);
         }
 
+        // Schedule end of period events
+        // Be carefull - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
+        if (entity instanceof ICustomFieldEntity) {
+            customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
+        }
+        
         getEntityManager().persist(entity);
 
         // Add entity to Elastic Search
@@ -461,12 +467,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityCreatedEventProducer.fire((BaseEntity) entity);
-        }
-
-        // Schedule end of period events
-        // Be carefull - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
-        if (entity instanceof ICustomFieldEntity) {
-            customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
         }
 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());

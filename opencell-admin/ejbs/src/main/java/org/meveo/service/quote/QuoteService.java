@@ -213,6 +213,7 @@ public class QuoteService extends BusinessService<Quote> {
                 }
             }
             invoiceService.create(invoice);
+            invoiceService.postCreate(invoice);
             invoices.add(invoice);
         }
         return invoices;

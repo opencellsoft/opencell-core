@@ -70,7 +70,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
-import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.exceptions.ConfigurationException;
@@ -79,6 +78,8 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -380,13 +381,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoiceDate date of invoice
      * @param firstTransactionDate date of first transaction
      * @param lastTransactionDate date of last transaction
+     * @param assignNumber Should a number be assigned to the invoice
      * @return created invoice
      * @throws BusinessException business exception
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice createAgregatesAndInvoice(Long billingAccountId, Long billingRunId, Filter ratedTransactionFilter, String orderNumber, Date invoiceDate,
-            Date firstTransactionDate, Date lastTransactionDate, List<RatedTransaction> minAmountTransactions) throws BusinessException {
+            Date firstTransactionDate, Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean assignNumber) throws BusinessException {
 
         long startDate = System.currentTimeMillis();
         log.debug("createAgregatesAndInvoice billingAccount={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
@@ -527,8 +529,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             invoice.assignTemporaryInvoiceNumber();
+            
 
-            invoice = update(invoice);
+            if (assignNumber) {
+                assignInvoiceNumber(invoice);
+            }
+
+            postCreate(invoice);            
             
             Long endDate = System.currentTimeMillis();
             log.info("createAgregatesAndInvoice BR_ID=" + (billingRun == null ? "null" : billingRun.getId()) + ", BA_ID=" + billingAccount.getId() + ", Time en ms="
@@ -1518,11 +1525,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         ratedTransactionService.createRatedTransaction(billingAccount.getId(), invoiceDate);
         billingAccount = billingAccountService.calculateInvoicing(billingAccount, firstTransactionDate, lastTransactionDate);
-        Invoice invoice = createAgregatesAndInvoice(billingAccount.getId(), null, ratedTxFilter, orderNumber, invoiceDate, firstTransactionDate, lastTransactionDate, billingAccount.getMinRatedTransactions());
-        if (!isDraft) {
-            assignInvoiceNumber(invoice);
-        }
-
+        Invoice invoice = createAgregatesAndInvoice(billingAccount.getId(), null, ratedTxFilter, orderNumber, invoiceDate, firstTransactionDate, lastTransactionDate, billingAccount.getMinRatedTransactions(), !isDraft);
+        
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
         commit();
 
@@ -1748,5 +1752,41 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.warn("error while getting user account list by billing account", e);
             return null;
         }
+    }
+    
+
+    /**
+     * A first part of invoiceService.create() method. Does not call PersistenceService.create(), Need to call InvoiceService.postCreate() separately
+     * 
+     * @param invoice Invoice entity
+     * @throws BusinessException General business exception
+     */
+    @Override
+    public void create(Invoice invoice) throws BusinessException {
+
+        invoice.updateAudit(currentUser);
+
+        // Schedule end of period events
+        // Be careful - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
+        if (invoice instanceof ICustomFieldEntity) {
+            customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) invoice);
+        }
+
+        getEntityManager().persist(invoice);
+
+        log.trace("end of create {}. entity id={}.", invoice.getClass().getSimpleName(), invoice.getId());
+    }
+
+    /**
+     * A second part of invoiceService.create() method.
+     * 
+     * @param invoice Invoice entity
+     * @throws BusinessException General business exception
+     */
+    public void postCreate(Invoice invoice) throws BusinessException {
+
+        entityCreatedEventProducer.fire((BaseEntity) invoice);
+
+        log.trace("end of post create {}. entity id={}.", invoice.getClass().getSimpleName(), invoice.getId());
     }
 }

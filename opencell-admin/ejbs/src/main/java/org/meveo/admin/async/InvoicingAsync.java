@@ -106,7 +106,7 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.createAgregatesAndInvoice(billingAccount.getId(), billingRunId, null, null, null, null, null, billingAccount.getMinRatedTransactions());
+                invoiceService.createAgregatesAndInvoice(billingAccount.getId(), billingRunId, null, null, null, null, null, billingAccount.getMinRatedTransactions(), false);
             } catch (Exception e) {
                 log.error("Error for BA=" + billingAccount.getId() + " : " + e);
             }
