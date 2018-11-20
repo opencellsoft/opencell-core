@@ -3,6 +3,7 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
@@ -329,6 +330,12 @@
 			
 			<h:panelGroup
 				rendered="#{calendarBean.entity['class'].simpleName eq 'CalendarBanking'}">
+				<o:validateMultiple components="startDate endDate" validator="#{calendarBean.validateDateRange}" message="#{messages['validator.dateRange.incorrectOrder']}" />
+				<hftl:formField label="#{messages['calendar.startDate']}" field="startDate" 
+				required="true" useConverter="false"
+				newLine="true" id="startDate"/>
+				<hftl:formField label="#{messages['calendar.endDate']}"
+				field="endDate" useConverter="false" id="endDate" />
 
 				<hftl:decorateFormField fieldId="weekendPeriod"
 					label="#{messages['calendar.weekendPeriod']}" newLine="true">

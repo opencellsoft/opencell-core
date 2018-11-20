@@ -1,6 +1,7 @@
 package org.meveo.api.dto;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -73,6 +74,12 @@ public class CalendarDto extends BusinessEntityDto {
     /** The weekend end. */
     private Integer weekendEnd;
     
+    /** The end date. */
+    private Date endDate;
+    
+    /** The start date. */
+    private Date startDate;
+    
     private List<CalendarHolidayDto> holidays;
 
     /**
@@ -131,6 +138,8 @@ public class CalendarDto extends BusinessEntityDto {
             joinCalendar2Code = calendar.getJoinCalendar2().getCode();
         } else if (calendarEntity instanceof CalendarBanking) {
             CalendarBanking calendar = (CalendarBanking) calendarEntity;
+            startDate = calendar.getStartDate();
+            endDate = calendar.getEndDate();
             weekendBegin = calendar.getWeekendBegin();
             weekendEnd = calendar.getWeekendEnd();
 
@@ -171,7 +180,7 @@ public class CalendarDto extends BusinessEntityDto {
                 + (days != null ? days.subList(0, Math.min(days.size(), maxLen)) : null) + ", hours=" + (hours != null ? hours.subList(0, Math.min(hours.size(), maxLen)) : null)
                 + ", periodLength=" + periodLength + ", periodUnit=" + periodUnit + ", nbPeriods=" + nbPeriods + ", joinCalendar1Code=" + joinCalendar1Code + ", joinCalendar2Code="
                 + joinCalendar2Code + ", intervalType=" + intervalType + ", intervals=" + (intervals != null ? intervals.subList(0, Math.min(intervals.size(), maxLen)) : null)
-                + ", weekendBegin=" + weekendBegin + ", weekendEnd=" + weekendEnd + ", holidays="
+                + ", startDate=" + startDate + ", endDate=" + endDate +", weekendBegin=" + weekendBegin + ", weekendEnd=" + weekendEnd + ", holidays="
                 + (holidays != null ? holidays.subList(0, Math.min(holidays.size(), maxLen)) : null) + "]";
     }
 
@@ -335,6 +344,42 @@ public class CalendarDto extends BusinessEntityDto {
      */
     public void setIntervals(List<CalendarDateIntervalDto> intervals) {
         this.intervals = intervals;
+    }
+    
+    /**
+     * Gets the end date.
+     *
+     * @return the end date
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * Sets the end date.
+     *
+     * @param endDate the new end date
+     */
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    /**
+     * Gets the start date.
+     *
+     * @return the start date
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * Sets the start date.
+     *
+     * @param startDate the new start date
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     /**
