@@ -590,6 +590,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	 * 
 	 */
 	@Override
+    @ActionMethod
 	public String saveOrUpdate(boolean killConversation){
         try{	
 			entity.setBillingAccount(getFreshBA());
@@ -617,24 +618,24 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 				subcat.setInvoice(entity);
 				subcat.updateAudit(currentUser);
 				entity.addInvoiceAggregate(subcat);
-				for (RatedTransaction rt : subcat.getRatedtransactions()) {
-					rt.setInvoice(entity);
-					rt.setStatus(RatedTransactionStatusEnum.BILLED);
-					if(rt.isTransient()){					
-						ratedTransactionService.create(rt);
-					}else{					
-						ratedTransactionService.update(rt);
-					}					
-				}
 			}
-			
-			super.saveOrUpdate(false);
-	
-			for (Invoice invoice : entity.getLinkedInvoices()) {
-				invoice.getLinkedInvoices().add(entity);
-				invoiceService.update(invoice);
-			}
-	            
+				            
+
+            super.saveOrUpdate(false);
+            
+            
+            for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
+                for (RatedTransaction rt : subcat.getRatedtransactions()) {
+                    rt.setInvoice(entity);
+                    rt.setStatus(RatedTransactionStatusEnum.BILLED);
+                    if(rt.isTransient()){                   
+                        ratedTransactionService.create(rt);
+                    }else{                  
+                        ratedTransactionService.update(rt);
+                    }                   
+                }
+            }
+            
 			try {
 				invoiceService.commit();
 				entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
