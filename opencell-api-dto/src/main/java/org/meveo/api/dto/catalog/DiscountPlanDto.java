@@ -1,16 +1,20 @@
 package org.meveo.api.dto.catalog;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
+import org.meveo.model.catalog.DiscountPlanItem;
 
 /**
  * The Class DiscountPlanDto.
@@ -43,6 +47,10 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	/** The custom fields. */
     @XmlElement(required = false)
     private CustomFieldsDto customFields;
+    
+	@XmlElementWrapper(name = "discountPlanItems")
+	@XmlElement(name = "discountPlanItem")
+	private List<DiscountPlanItemDto> discountPlanItems;
 
     /**
      * Instantiates a new DiscountPlanDto
@@ -56,9 +64,16 @@ public class DiscountPlanDto extends EnableBusinessDto {
      * 
      * @param discountPlan Entity to convert
      */
-    public DiscountPlanDto(DiscountPlan discountPlan) {
-        super(discountPlan);
-    }
+	public DiscountPlanDto(DiscountPlan discountPlan) {
+		super(discountPlan);
+
+		if (discountPlan.getDiscountPlanItems() != null && !discountPlan.getDiscountPlanItems().isEmpty()) {
+			discountPlanItems = new ArrayList<>();
+			for (DiscountPlanItem dpi : discountPlan.getDiscountPlanItems()) {
+				discountPlanItems.add(new DiscountPlanItemDto(dpi));
+			}
+		}
+	}
 
     @Override
 	public String toString() {
@@ -104,5 +119,13 @@ public class DiscountPlanDto extends EnableBusinessDto {
 
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	public List<DiscountPlanItemDto> getDiscountPlanItems() {
+		return discountPlanItems;
+	}
+
+	public void setDiscountPlanItems(List<DiscountPlanItemDto> discountPlanItems) {
+		this.discountPlanItems = discountPlanItems;
 	}
 }
