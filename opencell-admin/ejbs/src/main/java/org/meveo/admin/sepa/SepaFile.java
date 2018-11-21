@@ -160,7 +160,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
             }
             return outputDir + File.separator + fileName;
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(),e);
             throw new BusinessException(e.getMessage());
         }
     }
@@ -451,7 +451,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
                     generatedFilesNames.add(fileName);
                 }
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.error(e.getMessage(),e);
                 throw new BusinessException(e.getMessage());
             }
 
