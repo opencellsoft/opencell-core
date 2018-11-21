@@ -242,7 +242,7 @@
 												field="percent" converterParam="4digits" />
 											<hftl:column
 												label="#{messages['invoiceSubCategory.accountingCode']}"
-												field="accountingCode" />
+												field="accountingCode.code" />
 											<p:column width="50">
 												<f:facet name="header">
 													<h:outputText value="Actions" />
@@ -400,9 +400,8 @@
 											<hftl:column
 												label="#{messages['invoiceSubCategory.description']}"
 												field="description" />
-											<hftl:column
-												label="#{messages['invoiceSubCategory.accountingCode']}"
-												field="accountingCode.code" />
+                                            <hftl:column label="#{messages['invoiceSubCategory.accountingCode']}"
+                                                         field="accountingCode.code"/>
 											<p:column style="width:50px">
 												<f:facet name="header">
 													<h:outputText value="Actions" />
