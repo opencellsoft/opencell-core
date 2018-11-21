@@ -123,7 +123,7 @@ public class DDPaymentMethod extends PaymentMethod {
         DDPaymentMethod otherPaymentMethod = (DDPaymentMethod) paymentMethod;
         setAlias(otherPaymentMethod.getAlias());
         setPreferred(otherPaymentMethod.isPreferred());
-        otherPaymentMethod.setBankCoordinates(otherPaymentMethod.getBankCoordinates());
+        setBankCoordinates(otherPaymentMethod.getBankCoordinates());
     }
 
     @Override
