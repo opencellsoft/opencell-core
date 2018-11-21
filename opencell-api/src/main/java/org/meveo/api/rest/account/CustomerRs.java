@@ -30,6 +30,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
+ * @author khalid HORRI
  * @lastModifiedVersion 5.2
  **/
 @Path("/account/customer")
@@ -258,7 +259,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return status of the operation
 	 */
 	@PUT
-    @Path("customerNumberSequence")
+    @Path("/customerNumberSequence")
     ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData);
 
     /**
@@ -267,7 +268,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return next customer no value
 	 */
 	@POST
-    @Path("customerNumberSequence")
+    @Path("/customerNumberSequence")
     GenericSequenceValueResponseDto getNextCustomerNumber();
 
     /**
