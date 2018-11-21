@@ -48,6 +48,11 @@ public class InvoiceDto extends AuditableEntityDto {
     protected String billingAccountCode;
 
     /**
+     * Code of the Seller
+     */
+    protected String sellerCode;
+
+    /**
      * Code of the subscription
      */
     protected String subscriptionCode;
@@ -171,6 +176,9 @@ public class InvoiceDto extends AuditableEntityDto {
         }
         if (invoice.getOrder() != null) {
             this.orderNumber = invoice.getOrder().getOrderNumber();
+        }
+        if (invoice.getSeller() != null) {
+            this.sellerCode = invoice.getSeller().getCode();
         }
         this.setInvoiceDate(invoice.getInvoiceDate());
         this.setDueDate(invoice.getDueDate());
@@ -705,5 +713,19 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     public void setOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
+    }
+
+    /**
+     * @return Seller's code
+     */
+    public String getSellerCode() {
+        return sellerCode;
+    }
+
+    /**
+     * @param sellerCode Seller's code
+     */
+    public void setSellerCode(String sellerCode) {
+        this.sellerCode = sellerCode;
     }
 }

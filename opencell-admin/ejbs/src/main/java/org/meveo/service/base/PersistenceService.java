@@ -132,7 +132,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
 
-    static boolean accumulateCF = true;
+    protected static boolean accumulateCF = true;
 
     @PostConstruct
     private void init() {
@@ -144,7 +144,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     private EntityManagerWrapper emWrapper;
 
     @Inject
-    private ElasticClient elasticClient;
+    protected ElasticClient elasticClient;
 
     @Inject
     @Created
@@ -173,7 +173,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     protected ParamBeanFactory paramBeanFactory;
 
     @Inject
-    private CfValueAccumulator cfValueAccumulator;
+    protected CfValueAccumulator cfValueAccumulator;
 
     /**
      * Constructor.
@@ -423,7 +423,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         // Schedule end of period events
-        // Be carefull - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
+        // Be careful - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
         if (entity instanceof ICustomFieldEntity) {
             customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
         }
@@ -481,7 +481,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             ((IAuditable) entity).updateAudit(currentUser);
         }
         // Schedule end of period events
-        // Be carefull - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
+        // Be careful - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
         if (entity instanceof ICustomFieldEntity) {
             customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
         }

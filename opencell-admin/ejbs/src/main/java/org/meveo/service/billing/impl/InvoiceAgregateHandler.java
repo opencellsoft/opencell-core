@@ -197,11 +197,7 @@ public class InvoiceAgregateHandler {
 
         BigDecimal amountTax = BigDecimal.ZERO;
         BigDecimal amountWithTax = BigDecimal.ZERO;
-        Tax currentTax = getCurrentTax(invoiceSubCategory, userAccount, billingAccount);
-
-        if (currentTax == null) {
-            throw new BusinessException("Cant find tax for InvoiceSubCategory:" + invoiceSubCategory.getCode());
-        }
+        Tax currentTax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, billingAccount.getCustomerAccount().getCustomer().getSeller(), billingAccount, new Date(), false);
 
         if (amountWithoutTax == null) {
             throw new BusinessException("AmountWithoutTax is null");
@@ -317,24 +313,7 @@ public class InvoiceAgregateHandler {
         }
     }
 
-    /**
-     * 
-     * @param invoiceSubCategory invoice sub-category
-     * @param userAccount user account.
-     * @param billingAccount billing account
-     * @return current tax.
-     * @throws BusinessException business exception
-     */
-    private Tax getCurrentTax(InvoiceSubCategory invoiceSubCategory, UserAccount userAccount, BillingAccount billingAccount) throws BusinessException {
-        for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
-            if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
-                    && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, null)) {
-                Tax tax = invoiceSubCategoryCountryService.isInvoiceSubCategoryTaxValid(invoicesubcatCountry, userAccount, billingAccount, null, new Date());
-                return tax;
-            }
-                }
-        return null;
-    }
+
 
     /**
      * 

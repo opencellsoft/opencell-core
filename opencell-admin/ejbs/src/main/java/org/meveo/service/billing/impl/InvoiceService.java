@@ -67,7 +67,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
-import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.util.PdfWaterMark;
 import org.meveo.admin.util.ResourceBundle;
@@ -78,7 +77,9 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -108,8 +109,6 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.InvoiceCategoryService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
@@ -208,12 +207,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private UserAccountService userAccountService;
-
-    @Inject
-    private InvoiceCategoryService invoiceCategoryService;
-
-    @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
 
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
@@ -357,10 +350,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public void assignInvoiceNumber(Invoice invoice) throws BusinessException {
-        String cfName = invoiceTypeService.getCustomFieldCode(invoice.getInvoiceType());
+
+        InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
+        
+        String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
         Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
 
-        InvoiceType invoiceType = invoiceTypeService.findById(invoice.getInvoiceType().getId());
 
         Seller seller = invoice.getSeller();
         if (seller == null && cust.getSeller() != null) {
@@ -602,12 +597,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param firstTransactionDate date of first transaction
      * @param lastTransactionDate date of last transaction
      * @param minAmountTransactions Min amount rated transactions
+     * @param isDraft Is this a draft invoice
+     * @param assignNumber Should a number be assigned to the invoice
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<Invoice> createAgregatesAndInvoice(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate, Date firstTransactionDate,
-            Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean isDraft) throws BusinessException {
+            Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean isDraft, boolean assignNumber) throws BusinessException {
 
         log.debug("Will create invoice and aggregates for {}/{}", entity.getClass().getSimpleName(), entity.getId());
 
@@ -792,6 +789,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
 
                     invoice.assignTemporaryInvoiceNumber();
+
+                    if (assignNumber) {
+                        assignInvoiceNumber(invoice);
+                    }
+
+                    postCreate(invoice);
+
                     invoiceList.add(invoice);
                 }
             }
@@ -934,7 +938,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         File invoiceXmlFile = new File(invoiceXmlFileName);
         if (!invoiceXmlFile.exists()) {
-            throw new InvoiceXmlNotFoundException("The xml invoice file " + invoiceXmlFileName + " doesn't exist.");
+            produceInvoiceXmlNoUpdate(invoice);
         }
 
         BillingAccount billingAccount = invoice.getBillingAccount();
@@ -1773,17 +1777,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new BusinessException("The entity is already in an billing run with status " + entity.getBillingRun().getStatus());
         }
 
+        // Create missing rated transactions up to an invoice date
         ratedTransactionService.createRatedTransaction(entity, invoiceDate);
 
         ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entity, firstTransactionDate, lastTransactionDate);
         List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(),
-            isDraft);
-
-        // if (!isDraft) {
-        for (Invoice invoice : invoices) {
-            assignInvoiceNumber(invoice);
-        }
-        // }
+            isDraft, true);
 
         // TODO : delete this commit since generating PDF/XML and producing AOs are now outside this service !
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
@@ -1793,16 +1792,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Produce files and AO.
+     * Produce XML and PDF files and AO.
      *
-     * @param produceXml the produce xml
-     * @param producePdf the produce pdf
-     * @param generateAO the generate AO
-     * @param invoice the invoice
-     * @param isDraft is it a draft
-     * @throws BusinessException the business exception
-     * @throws InvoiceExistException the invoice exist exception
-     * @throws ImportInvoiceException the import invoice exception
+     * @param produceXml To produce xml invoice file
+     * @param producePdf To produce pdf invoice file
+     * @param generateAO To generate Account operations
+     * @param invoice Invoice to operate on
+     * @param isDraft Is it a draft invoice
+     * @throws BusinessException General business exception
+     * @throws InvoiceExistException Invoice already exist exception
+     * @throws ImportInvoiceException Import invoice exception
      */
     public void produceFilesAndAO(boolean produceXml, boolean producePdf, boolean generateAO, Invoice invoice, boolean isDraft)
             throws BusinessException, InvoiceExistException, ImportInvoiceException {
@@ -1815,7 +1814,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (generateAO && !isDraft) {
             recordedInvoiceService.generateRecordedInvoice(invoice);
         }
-        update(invoice);
+        invoice = update(invoice);
     }
 
     /**
@@ -2145,5 +2144,44 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public void nullifyInvoiceFileNames(BillingRun billingRun) {
         getEntityManager().createNamedQuery("Invoice.nullifyInvoiceFileNames").setParameter("billingRun", billingRun).executeUpdate();
+    }
+
+    /**
+     * A first part of invoiceService.create() method. Does not call PersistenceService.create(), Need to call InvoiceService.postCreate() separately
+     * 
+     * @param invoice Invoice entity
+     * @throws BusinessException General business exception
+     */
+    @Override
+    public void create(Invoice invoice) throws BusinessException {
+
+        invoice.updateAudit(currentUser);
+
+        // Schedule end of period events
+        // Be careful - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
+        if (invoice instanceof ICustomFieldEntity) {
+            customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) invoice);
+        }
+
+        getEntityManager().persist(invoice);
+
+        log.trace("end of create {}. entity id={}.", invoice.getClass().getSimpleName(), invoice.getId());
+    }
+
+    /**
+     * A second part of invoiceService.create() method.
+     * 
+     * @param invoice Invoice entity
+     * @throws BusinessException General business exception
+     */
+    public void postCreate(Invoice invoice) throws BusinessException {
+
+        entityCreatedEventProducer.fire((BaseEntity) invoice);
+
+        if (accumulateCF) {
+            cfValueAccumulator.entityCreated(invoice);
+        }
+
+        log.trace("end of post create {}. entity id={}.", invoice.getClass().getSimpleName(), invoice.getId());
     }
 }

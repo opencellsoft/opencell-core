@@ -18,13 +18,11 @@
  */
 package org.meveo.service.catalog.impl;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -34,8 +32,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.UserAccount;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
@@ -45,9 +41,6 @@ import org.meveo.service.base.ValueExpressionWrapper;
  */
 @Stateless
 public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategory> {
-
-    @Inject
-    private TaxService taxService;
 
     public int getNbInvSubCatNotAssociated() {
         return ((Long) getEntityManager().createNamedQuery("invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", Long.class).getSingleResult()).intValue();
@@ -92,52 +85,6 @@ public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategor
         } catch (Exception e) {
             throw new BusinessException("Expression " + expression + " do not evaluate to boolean but " + res);
         }
-        return result;
-    }
-
-    public Tax evaluateTaxCodeEL(String expression, UserAccount userAccount, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
-        Tax result = null;
-        if (StringUtils.isBlank(expression)) {
-            return result;
-        }
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
-
-        if (expression.indexOf("seller") >= 0) {
-            userMap.put("seller", billingAccount.getCustomerAccount().getCustomer().getSeller());
-        }
-        if (expression.indexOf("cust") >= 0) {
-            userMap.put("cust", billingAccount.getCustomerAccount().getCustomer());
-            userMap.put("c", billingAccount.getCustomerAccount().getCustomer());
-        }
-        if (expression.indexOf("ca") >= 0) {
-            userMap.put("ca", billingAccount.getCustomerAccount());
-        }
-        if (expression.indexOf("ba") >= 0) {
-            userMap.put("ba", billingAccount);
-        }
-        if (expression.indexOf("ua") >= 0) {
-            userMap.put("ua", userAccount);
-        }
-        if (expression.indexOf("iv") >= 0 || expression.indexOf("invoice") >= 0) {
-            userMap.put("iv", invoice);
-            userMap.put("invoice", invoice);
-        }
-        if (expression.indexOf("date") >= 0) {
-            userMap.put("date", invoice == null ? new Date() : invoice.getInvoiceDate());
-        }
-        String taxCode = null;
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
-        try {
-            taxCode = (String) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to String but " + res);
-        }
-        if (taxCode == null) {
-            throw new BusinessException("Expression " + expression + " evaluates to null  ");
-        } else {
-            result = taxService.findByCode(taxCode);
-        }
-
         return result;
     }
 

@@ -39,6 +39,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -82,7 +85,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL"),
         @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.seller.id, inv.invoiceDate"),
-        @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.billingAccount.customerAccount.customer.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
+        @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
         @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
         @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId") })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity {
@@ -360,6 +363,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
     @Transient
     private Long invoiceAdjustmentCurrentProviderNb;
+
+    /**
+     * Used to track if "invoiceNumber" field value has changed. Value is populated on postLoad, postPersist and postUpdate JPA events
+     */
+    @Transient
+    private String previousInvoiceNumber;
 
     /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
@@ -892,5 +901,22 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
      */
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    /**
+     * @return The previous invoice number
+     */
+    public String getPreviousInvoiceNumber() {
+        return previousInvoiceNumber;
+    }
+
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    /**
+     * Tracks what was the previous invoice number
+     */
+    private void trackPreviousValues() {
+        previousInvoiceNumber = invoiceNumber;
     }
 }

@@ -638,12 +638,13 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                     ratedTransactionService.create(rt);
                 }
             }
-            super.saveOrUpdate(false);
             if (billingAccountId != 0) {
                 BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
                 entity.setBillingAccount(billingAccount);
                 invoiceService.assignInvoiceNumber(entity);
             }
+
+            super.saveOrUpdate(false);
         }
         if (isDetailed()) {
             ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
@@ -655,7 +656,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             }
             entity = invoiceService.update(entity);
         }
-        entity = invoiceService.refreshOrRetrieve(entity);
+
         entity.getAdjustedInvoice().getLinkedInvoices().add(entity);
         invoiceService.update(entity.getAdjustedInvoice());
 

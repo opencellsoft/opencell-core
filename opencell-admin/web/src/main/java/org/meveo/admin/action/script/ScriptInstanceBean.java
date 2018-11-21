@@ -65,7 +65,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 
     @Inject
     private RoleService roleService;
-    
+
     @Inject
     private ScriptInstanceCategoryService scriptInstanceCategoryService;
 
@@ -206,6 +206,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         return result;
     }
 
+    @ActionMethod
     public String execute() {
         scriptInstanceService.test(entity.getCode(), null);
         return null;
@@ -240,17 +241,15 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
             messages.info(new BundleKey("messages", "scriptInstance.compilationSuccessfull"));
         }
     }
-    
 
-    
-	public LazyDataModel<ScriptInstance> getScriptInstanceByCategory(String catCode) {
-		ScriptInstanceCategory category = scriptInstanceCategoryService.findByCode(catCode);
-		if (category != null) {
-			filters.put("scriptInstanceCategory", category);
-			return getLazyDataModel();
-		}
-		
-		return null;
-	}
+    public LazyDataModel<ScriptInstance> getScriptInstanceByCategory(String catCode) {
+        ScriptInstanceCategory category = scriptInstanceCategoryService.findByCode(catCode);
+        if (category != null) {
+            filters.put("scriptInstanceCategory", category);
+            return getLazyDataModel();
+        }
+
+        return null;
+    }
 
 }

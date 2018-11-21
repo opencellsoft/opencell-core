@@ -137,12 +137,13 @@ public class DefaultObserver {
 
             Map<Object, Object> userMap = new HashMap<>();
             userMap.put("event", entityOrEvent);
-            context.put("entityOrEvent", entityOrEvent);
             userMap.put("manager", manager);
 
             for (Map.Entry<String, String> entry : params.entrySet()) {
                 context.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression(entry.getValue(), userMap, Object.class));
             }
+
+            context.put("entityOrEvent", entityOrEvent);
 
             scriptInstanceService.executeWInitAndFinalize(entityOrEvent, scriptInstance.getCode(), context);
 

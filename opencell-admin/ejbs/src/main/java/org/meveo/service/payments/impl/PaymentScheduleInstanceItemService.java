@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -190,9 +189,9 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             invoice.setAmountWithTax(amounts[2]);
             invoice.setNetToPay(amounts[2]);
 
-            invoiceService.create(invoice);
             invoiceService.assignInvoiceNumber(invoice);
-            invoice = invoiceService.update(invoice);
+            invoiceService.create(invoice);
+            invoiceService.postCreate(invoice);
 
             paymentScheduleInstanceItem.setInvoice(invoice);
         }
