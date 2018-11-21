@@ -126,6 +126,10 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
     public JobInstance update(JobInstanceDto postData) throws MeveoApiException, BusinessException {
 
         String jobInstanceCode = postData.getCode();
+        
+        if (StringUtils.isBlank(postData.getJobTemplate())) {
+            missingParameters.add("jobTemplate");
+        }
 
         if (StringUtils.isBlank(jobInstanceCode)) {
             missingParameters.add("code");
@@ -140,6 +144,11 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         }
 
         Job job = jobInstanceService.getJobByName(postData.getJobTemplate());
+        
+        if (job == null) {
+            throw new EntityDoesNotExistsException("JobTemplate with code '" + postData.getJobTemplate() + "' doesn't exist." );
+        }
+        
         JobCategoryEnum jobCategory = job.getJobCategory();
 
         jobInstance.setJobTemplate(postData.getJobTemplate());
