@@ -84,7 +84,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         super.create(subscription);
 
         // execute subscription script
-        OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
+        OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
         if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
             try {
                 offerModelScriptService.subscribe(subscription, offerTemplate.getBusinessOfferModel().getScript().getCode());

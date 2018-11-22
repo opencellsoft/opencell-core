@@ -15,6 +15,7 @@ import org.meveo.cache.CacheKeyStr;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.SubscriptionImportHisto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -187,7 +188,7 @@ public class AccountImportService extends ImportService {
 
         billingAccount.setAddress(address);
         billingAccount.setElectronicBilling("1".equalsIgnoreCase(billAccount.getElectronicBilling()));
-        
+
         billingAccount.getContactInformationNullSafe().setEmail(billAccount.getEmail());
         billingAccount.setExternalRef1(billAccount.getExternalRef1());
         billingAccount.setExternalRef2(billAccount.getExternalRef2());
@@ -331,7 +332,7 @@ public class AccountImportService extends ImportService {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public UserAccount importUserAccount(org.meveo.model.billing.BillingAccount billingAccount, org.meveo.model.jaxb.account.BillingAccount billAccount,
-            org.meveo.model.jaxb.account.UserAccount uAccount) throws BusinessException, ImportWarningException {
+            org.meveo.model.jaxb.account.UserAccount uAccount, Seller seller) throws BusinessException, ImportWarningException {
         userAccountCheckError(billAccount, uAccount);
         userAccountCheckWarning(billAccount, uAccount);
         UserAccount userAccount = new UserAccount();
@@ -401,6 +402,7 @@ public class AccountImportService extends ImportService {
                         continue;
                     }
                     checkSubscription.userAccount = userAccount;
+                    checkSubscription.seller = seller;
                     nbSubscriptionsCreated += subscriptionImportService.importSubscription(checkSubscription, jaxbSubscription, "", i);
                 } catch (ImportIgnoredException ie) {
 
