@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -18,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
@@ -152,8 +154,15 @@ public class CfValueAccumulator {
     @EJB
     private CfValueAccumulator cfValueAccumulator;
 
+    protected static boolean accumulateCF = true;
+
+    @PostConstruct
+    private void init() {
+        accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("accumulateCF", "false"));
+    }
+
     /**
-     * Load Custom field entity hierarchy constructing two lists/maps - where CF values are being accumulated from and where to cf values should be propagated to
+     * Load Custom field entity hierarchy constructing two lists/maps - where CF values are being accumulated FROM and where TO CF values should be propagated to
      */
     static {
 
@@ -214,6 +223,10 @@ public class CfValueAccumulator {
      */
     public void loadCfAccumulationRules() {
 
+        if (!accumulateCF) {
+            return;
+        }
+
         log.trace("Constructing CF accumulation rules");
         String providerPrefix = currentUser.getProviderCode() + "_";
 
@@ -241,6 +254,10 @@ public class CfValueAccumulator {
      */
     public boolean refreshCfAccumulationRules(CustomFieldTemplate cft) {
 
+        if (!accumulateCF) {
+            return false;
+        }
+
         // Entity class for which CFT applies to does not participate in custom field entity hierarchy
         if (!appliesToMap.containsKey(cft.getAppliesTo())) {
             return false;
@@ -258,6 +275,10 @@ public class CfValueAccumulator {
     @SuppressWarnings("unchecked")
     @Asynchronous
     public void cftCreated(CustomFieldTemplate cft) {
+
+        if (!accumulateCF) {
+            return;
+        }
 
         Class<?> entityClass = appliesToMap.get(cft.getAppliesTo());
         if (entityClass == null) {
@@ -282,22 +303,6 @@ public class CfValueAccumulator {
 
         List<ICustomFieldEntity> entitiesToAccumulateFor = query.getResultList();
         while (!entitiesToAccumulateFor.isEmpty()) {
-
-            // StringBuffer sb = new StringBuffer();
-            // long start = System.currentTimeMillis();
-            // for (ICustomFieldEntity entity : entitiesToAccumulateFor) {
-            // sb.append(((IEntity) entity).getId());
-            // }
-            // long end = System.currentTimeMillis();
-            // log.error("AKK external loop {}", end - start);
-            //
-            // StringBuffer sb2 = new StringBuffer();
-            // start = System.currentTimeMillis();
-            // entitiesToAccumulateFor.stream().forEach(entity -> {
-            // sb2.append(((IEntity) entity).getId());
-            // });
-            // end = System.currentTimeMillis();
-            // log.error("AKK internal loop {}", end - start);
 
             List<ICustomFieldEntity> entitiesToPropagateDown = new ArrayList<>();
 
@@ -352,6 +357,10 @@ public class CfValueAccumulator {
      */
     public void entityUpdated(ICustomFieldEntity entity, Set<String> cfsWithValueChanged, Set<String> cfsWithPeriodsChanged) {
 
+        if (!accumulateCF) {
+            return;
+        }
+
         log.trace("Entity {} has CF values changed {}, periods changed {} ", entity, cfsWithValueChanged, cfsWithPeriodsChanged);
         if (cfsWithValueChanged == null || cfsWithValueChanged.isEmpty()) {
             return;
@@ -386,6 +395,10 @@ public class CfValueAccumulator {
      */
     public void entityCreated(ICustomFieldEntity entity) {
 
+        if (!accumulateCF) {
+            return;
+        }
+
         Set<String> cfCodes = customFieldTemplateService.findByAppliesTo(entity).keySet();
 
         Map<String, Boolean> propagateDownCfs = new HashMap<>();
@@ -415,6 +428,10 @@ public class CfValueAccumulator {
      */
     @Asynchronous
     public void propagateCFValues(ICustomFieldEntity entity, Map<String, Boolean> cfCodes) {
+
+        if (!accumulateCF) {
+            return;
+        }
 
         for (Entry<String, Boolean> cfCodeInfo : cfCodes.entrySet()) {
             String cfCode = cfCodeInfo.getKey();

@@ -448,7 +448,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
-        if (accumulateCF && entity instanceof ICustomFieldEntity && dirtyCfValues != null && !dirtyCfValues.isEmpty()) {
+        if (dirtyCfValues != null && !dirtyCfValues.isEmpty()) {
             // CustomFieldValues cfValues = ((ICustomFieldEntity) entity).getCfValues();
             cfValueAccumulator.entityUpdated((ICustomFieldEntity) entity, dirtyCfValues, dirtyCfPeriods);
         }

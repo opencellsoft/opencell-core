@@ -352,10 +352,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void assignInvoiceNumber(Invoice invoice) throws BusinessException {
 
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
-        
+
         String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
         Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
-
 
         Seller seller = invoice.getSeller();
         if (seller == null && cust.getSeller() != null) {
@@ -2178,9 +2177,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         entityCreatedEventProducer.fire((BaseEntity) invoice);
 
-        if (accumulateCF) {
-            cfValueAccumulator.entityCreated(invoice);
-        }
+        cfValueAccumulator.entityCreated(invoice);
 
         log.trace("end of post create {}. entity id={}.", invoice.getClass().getSimpleName(), invoice.getId());
     }
