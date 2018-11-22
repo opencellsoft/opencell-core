@@ -32,7 +32,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  * Discount plan item/details
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.3
  **/
 @Entity
 @Cacheable

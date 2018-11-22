@@ -1,6 +1,5 @@
 package org.meveo.api.dto.catalog;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +13,6 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
-import org.meveo.model.catalog.DiscountPlanItem;
 
 /**
  * The Class DiscountPlanDto.
@@ -63,16 +61,12 @@ public class DiscountPlanDto extends EnableBusinessDto {
      * Convert DiscountPlan JPA entity to DTO
      * 
      * @param discountPlan Entity to convert
+     * @param customFieldsDto the custom fields
      */
-	public DiscountPlanDto(DiscountPlan discountPlan) {
+	public DiscountPlanDto(DiscountPlan discountPlan, CustomFieldsDto customFieldInstances) {
 		super(discountPlan);
-
-		if (discountPlan.getDiscountPlanItems() != null && !discountPlan.getDiscountPlanItems().isEmpty()) {
-			discountPlanItems = new ArrayList<>();
-			for (DiscountPlanItem dpi : discountPlan.getDiscountPlanItems()) {
-				discountPlanItems.add(new DiscountPlanItemDto(dpi));
-			}
-		}
+		
+		customFields = customFieldInstances;
 	}
 
     @Override

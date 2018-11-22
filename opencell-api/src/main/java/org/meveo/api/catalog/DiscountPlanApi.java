@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.catalog.DiscountPlansDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -17,7 +18,9 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 
 @Stateless
@@ -135,9 +138,18 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanCode);
         }
 
-        DiscountPlanDto discountPlanDto = new DiscountPlanDto(discountPlan);
-
-        return discountPlanDto;
+        DiscountPlanDto dpDto = new DiscountPlanDto(discountPlan, entityToDtoConverter.getCustomFieldsDTO(discountPlan, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+        
+		if (discountPlan.getDiscountPlanItems() != null && !discountPlan.getDiscountPlanItems().isEmpty()) {
+			List<DiscountPlanItemDto> discountPlanItemsDto = new ArrayList<>();
+			for (DiscountPlanItem dpi : discountPlan.getDiscountPlanItems()) {
+				discountPlanItemsDto.add(new DiscountPlanItemDto(dpi,
+						entityToDtoConverter.getCustomFieldsDTO(dpi, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+			}
+			dpDto.setDiscountPlanItems(discountPlanItemsDto);
+		}
+        
+        return dpDto;
     }
 
     /**
@@ -151,14 +163,26 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         DiscountPlansDto discountPlansDto = null;
         List<DiscountPlan> discountPlans = discountPlanService.list();
 
-        if (discountPlans != null && !discountPlans.isEmpty()) {
-            discountPlansDto = new DiscountPlansDto();
-            List<DiscountPlanDto> discountPlanDtos = new ArrayList<DiscountPlanDto>();
-            for (DiscountPlan dp : discountPlans) {
-                discountPlanDtos.add(new DiscountPlanDto(dp));
-            }
-            discountPlansDto.setDiscountPlan(discountPlanDtos);
-        }
+		if (discountPlans != null && !discountPlans.isEmpty()) {
+			discountPlansDto = new DiscountPlansDto();
+			List<DiscountPlanDto> discountPlanDtos = new ArrayList<>();
+			for (DiscountPlan discountPlan : discountPlans) {
+				DiscountPlanDto dpDto = new DiscountPlanDto(discountPlan, entityToDtoConverter
+						.getCustomFieldsDTO(discountPlan, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+
+				if (discountPlan.getDiscountPlanItems() != null && !discountPlan.getDiscountPlanItems().isEmpty()) {
+					List<DiscountPlanItemDto> discountPlanItemsDto = new ArrayList<>();
+					for (DiscountPlanItem dpi : discountPlan.getDiscountPlanItems()) {
+						discountPlanItemsDto.add(new DiscountPlanItemDto(dpi, entityToDtoConverter.getCustomFieldsDTO(dpi,
+								CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+					}
+					dpDto.setDiscountPlanItems(discountPlanItemsDto);
+				}
+
+				discountPlanDtos.add(dpDto);
+			}
+			discountPlansDto.setDiscountPlan(discountPlanDtos);
+		}
 
         return discountPlansDto;
     }

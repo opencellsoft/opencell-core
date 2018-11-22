@@ -29,6 +29,7 @@ import org.meveo.model.ObservableEntity;
  * 
  * @author Edward P. Legaspi
  * @author Andrius Karpavicius
+ * @lastModifiedVersion 5.3
  */
 @Entity
 @ObservableEntity

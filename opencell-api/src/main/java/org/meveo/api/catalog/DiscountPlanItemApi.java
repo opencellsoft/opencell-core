@@ -19,6 +19,7 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -148,7 +149,7 @@ public class DiscountPlanItemApi extends BaseApi {
             throw new EntityDoesNotExistsException(DiscountPlanItem.class, discountPlanItemCode);
         }
 
-        return new DiscountPlanItemDto(discountPlanItem);
+        return new DiscountPlanItemDto(discountPlanItem, entityToDtoConverter.getCustomFieldsDTO(discountPlanItem, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 
     /**
@@ -205,7 +206,7 @@ public class DiscountPlanItemApi extends BaseApi {
         if (discountPlanItems != null && !discountPlanItems.isEmpty()) {
             DiscountPlanItemDto dpid = null;
             for (DiscountPlanItem dpi : discountPlanItems) {
-                dpid = new DiscountPlanItemDto(dpi);
+                dpid = new DiscountPlanItemDto(dpi, entityToDtoConverter.getCustomFieldsDTO(dpi, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                 discountPlanItemDtos.add(dpid);
             }
         }

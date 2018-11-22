@@ -106,8 +106,9 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      * Convert discount plan item entity to DTO
      *
      * @param discountPlanItem Entity to convert
+     * @param customFieldsDto the custom fields
      */
-    public DiscountPlanItemDto(DiscountPlanItem discountPlanItem) {
+    public DiscountPlanItemDto(DiscountPlanItem discountPlanItem, CustomFieldsDto customFieldInstances) {
         this.code = discountPlanItem.getCode();
         this.discountPlanCode = discountPlanItem.getDiscountPlan().getCode();
         this.invoiceCategoryCode = discountPlanItem.getInvoiceCategory() != null ? discountPlanItem.getInvoiceCategory().getCode() : null;
@@ -120,6 +121,8 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 		this.discountValue = discountPlanItem.getDiscountValue();
 		this.discountValueEL = discountPlanItem.getDiscountValueEL();
 		this.discountValueElSpark = discountPlanItem.getDiscountValueElSpark();
+		
+		customFields = customFieldInstances;
     }
 
     /**
