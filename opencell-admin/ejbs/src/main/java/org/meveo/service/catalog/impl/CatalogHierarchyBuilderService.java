@@ -414,7 +414,7 @@ public class CatalogHierarchyBuilderService {
             newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
             try {
                 ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
-                String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceTemplate.getImagePath());
+                String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceConfiguration.getImagePath());
                 newServiceTemplate.setImagePath(newImagePath);
             } catch (IOException e1) {
                 log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());

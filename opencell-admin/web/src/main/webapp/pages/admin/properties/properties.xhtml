@@ -2,7 +2,8 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
+	xmlns:hftl="http://hftl.org">
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView" listener="#{paramActionBean.preRenderView()}" />
@@ -37,11 +38,29 @@
 						</p:cellEditor>
 					</p:column>
 				</p:dataTable>
-				<p:commandButton action="#{paramActionBean.save}"
-					value="#{messages['action.save']}" ajax="false">
-				</p:commandButton>
-				<p:commandButton action="#{paramActionBean.reset}"
-					value="#{messages['action.reset']}" ajax="false"></p:commandButton>
+				<p:panelGrid columns="3" layout="grid">
+
+						<hftl:formField backingBean="#{paramActionBean}"  label="#{messages['properties.key']}"
+										field="key" required="true" />
+						<hftl:formField backingBean="#{paramActionBean}"  label="#{messages['properties.value']}"
+										field="value" required="true" />
+						<hftl:formField backingBean="#{paramActionBean}"  label="#{messages['properties.category']}"
+									field="category" required="false" id="category"/>
+
+					<p:row>
+						<p:commandButton action="#{paramActionBean.add}" process="@form"
+										 value="#{messages['action.add']}" update="@form" icon="ui-icon-plus">
+						</p:commandButton>
+					<p:commandButton action="#{paramActionBean.save}"  update="@form" process="@this"
+									 value="#{messages['action.save']}"  icon="ui-icon-check">
+					</p:commandButton>
+					<p:commandButton action="#{paramActionBean.reset}" update="@form" process="@this"
+									 value="#{messages['action.reset']}" ></p:commandButton>
+					</p:row>
+				</p:panelGrid>
+
+
+
 			</h:form>
 		</p:panel>
 	</ui:define>
