@@ -197,16 +197,6 @@ public class BillingAccountApi extends AccountEntityApi {
 			billingAccount.setDiscountPlan(null);
 		}
         
-		if (postData.getDiscountPlans() != null && !postData.getDiscountPlans().isEmpty()) {
-			for (String discountPlanCode : postData.getDiscountPlans()) {
-				DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode);
-				if(discountPlan == null) {
-					throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanCode);
-				}
-				billingAccount.addDiscountPlanNullSafe(discountPlan);
-			}
-		}
-        
         if (postData.getElectronicBilling() == null) {
             billingAccount.setElectronicBilling(false);
         } else {
@@ -237,9 +227,9 @@ public class BillingAccountApi extends AccountEntityApi {
         billingAccountService.createBillingAccount(billingAccount);
         
         // instantiate the discounts
-		if (postData.getDiscountPlans() != null) {
+		if (postData.getDiscountPlansForInstantiation() != null) {
 			List<DiscountPlan> discountPlans = new ArrayList<>();
-			for (String dpCode : postData.getDiscountPlans()) {
+			for (String dpCode : postData.getDiscountPlansForInstantiation()) {
 				DiscountPlan dp = discountPlanService.findByCode(dpCode);
 				if (dp == null) {
 					throw new EntityDoesNotExistsException(DiscountPlan.class, dpCode);
@@ -376,16 +366,6 @@ public class BillingAccountApi extends AccountEntityApi {
         } else if (postData.getDiscountPlan() != null) {
             billingAccount.setDiscountPlan(null);
         }
-        
-		if (postData.getDiscountPlans() != null && !postData.getDiscountPlans().isEmpty()) {
-			for (String discountPlanCode : postData.getDiscountPlans()) {
-				DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode);
-				if(discountPlan == null) {
-					throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanCode);
-				}
-				billingAccount.addDiscountPlanNullSafe(discountPlan);
-			}
-		}
 
         if (businessAccountModel != null) {
             billingAccount.setBusinessAccountModel(businessAccountModel);
@@ -431,9 +411,9 @@ public class BillingAccountApi extends AccountEntityApi {
 		}
 
 		// instantiate the discounts
-		if (postData.getDiscountPlans() != null) {
+		if (postData.getDiscountPlansForInstantiation() != null) {
 			List<DiscountPlan> discountPlans = new ArrayList<>();
-			for (String dpCode : postData.getDiscountPlans()) {
+			for (String dpCode : postData.getDiscountPlansForInstantiation()) {
 				DiscountPlan dp = discountPlanService.findByCode(dpCode);
 				if (dp == null) {
 					throw new EntityDoesNotExistsException(DiscountPlan.class, dpCode);

@@ -377,7 +377,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         // Determine which discount plan items apply to this invoice
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
 
-        if (billingAccount.getDiscountPlans() != null && !billingAccount.getDiscountPlans().isEmpty()) {
+        if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
 			for (DiscountPlanInstance dpi : billingAccount.getDiscountPlanInstances()) {
 				if (!dpi.isEffective(invoice.getInvoiceDate())) {

@@ -21,7 +21,6 @@ package org.meveo.admin.action.billing;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.faces.event.ValueChangeEvent;
@@ -51,7 +50,6 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.catalog.impl.DiscountPlanInstanceService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.primefaces.model.DualListModel;
@@ -87,9 +85,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     
     @Inject
     private DiscountPlanService discountPlanService;
-    
-    @Inject
-    private DiscountPlanInstanceService discountPlanInstanceService;
 
     /** Selected billing account in exceptionelInvoicing page. */
     private ListItemsSelector<BillingAccount> itemSelector;
@@ -132,21 +127,13 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         if (entity.getContactInformation() == null) {
             entity.setContactInformation(new ContactInformation());
         }
-        if (entity.getDiscountPlans() == null) {
-			entity.setDiscountPlans(new HashSet<>());
-		}
 		if (entity.getDiscountPlanInstances() == null) {
 			entity.setDiscountPlanInstances(new ArrayList<>());
 		}
 		if (discountPlanDM == null) {
 			List<DiscountPlan> sourceDS = null;
 			sourceDS = discountPlanService.list();
-			List<DiscountPlan> targetDS = new ArrayList<>();
-			if (entity.getDiscountPlans() != null) {
-				targetDS.addAll(entity.getDiscountPlans());
-			}
-			sourceDS.removeAll(targetDS);
-			discountPlanDM = new DualListModel<>(sourceDS, targetDS);
+			discountPlanDM = new DualListModel<>(sourceDS, new ArrayList<>());
 		}
 
         return entity;

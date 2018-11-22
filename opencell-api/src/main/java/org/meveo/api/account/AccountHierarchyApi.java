@@ -366,7 +366,7 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
         billingAccountDto.setJobTitle(postData.getJobTitle());
-        billingAccountDto.setDiscountPlans(postData.getDiscountPlans());
+        billingAccountDto.setDiscountPlansForInstantiation(postData.getDiscountPlans());
 
         billingAccountApi.create(billingAccountDto);
 
@@ -568,7 +568,7 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
         billingAccountDto.setJobTitle(postData.getJobTitle());
-        billingAccountDto.setDiscountPlans(postData.getDiscountPlans());
+        billingAccountDto.setDiscountPlansForInstantiation(postData.getDiscountPlans());
 
         billingAccountApi.createOrUpdate(billingAccountDto);
 

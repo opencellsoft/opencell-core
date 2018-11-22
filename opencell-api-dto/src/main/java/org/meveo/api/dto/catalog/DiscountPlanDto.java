@@ -65,6 +65,11 @@ public class DiscountPlanDto extends EnableBusinessDto {
      */
 	public DiscountPlanDto(DiscountPlan discountPlan, CustomFieldsDto customFieldInstances) {
 		super(discountPlan);
+
+		startDate = discountPlan.getStartDate();
+		endDate = discountPlan.getEndDate();
+		defaultDuration = discountPlan.getDefaultDuration();
+		durationUnit = discountPlan.getDurationUnit();
 		
 		customFields = customFieldInstances;
 	}

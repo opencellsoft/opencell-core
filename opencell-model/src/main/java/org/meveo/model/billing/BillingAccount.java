@@ -223,8 +223,9 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions;
 
+    @Deprecated
     /**
-     * Applicable discount plan
+     * Applicable discount plan. Replaced by discountPlans.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_id")
@@ -286,14 +287,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Transient
     private BigDecimal totalInvoicingAmountWithoutTax;
 
-    @Deprecated
-	/** 
-	 * Discount plans. Instantiate the discountPlan instead. 
-	 */
-	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "billing_discount_plan", joinColumns = @JoinColumn(name = "billing_account_id"), inverseJoinColumns = @JoinColumn(name = "discount_plan_id"))
-    private Set<DiscountPlan> discountPlans = new HashSet<>();
-
     /**
      * Instance of discount plans. Once instantiated effectivity date is not affected when template is updated.
      */
@@ -311,6 +304,12 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
      */
     @Transient
     private BigDecimal totalInvoicingAmountTax;
+
+    /**
+     * Use only in GUI. Replaced by instance.
+     */
+    @Transient
+    private Set<DiscountPlan> discountPlans = new HashSet<>();
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;

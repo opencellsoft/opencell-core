@@ -489,7 +489,7 @@
     	<addNotNullConstraint tableName="cat_discount_plan" columnName="uuid"/>
     	<addNotNullConstraint tableName="cat_discount_plan_item" columnName="uuid"/>
     </changeSet>
-    <changeSet id="#3799_20181119 - Create discount plan instance table" author="EdwardPLegaspi">
+    <changeSet id="#3799_20181119 - Create discount plan instance table" author="EdwardPLegaspi">    
     	<createTable tableName="cat_discount_plan_instance">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_discount_plan_instance_pkey" />
@@ -509,6 +509,7 @@
 		<createSequence sequenceName="cat_discount_plan_instance_seq" />
 		<addForeignKeyConstraint constraintName="cat_discount_plan_instance_dp_fk" referencedTableName="cat_discount_plan" baseColumnNames="discount_plan_id" baseTableName="cat_discount_plan_instance" referencedColumnNames="id"/>
 		<addForeignKeyConstraint constraintName="cat_discount_plan_instance_ba_fk" referencedTableName="billing_billing_account" baseColumnNames="billing_account_id" baseTableName="cat_discount_plan_instance" referencedColumnNames="id"/>
+    	<dropTable tableName="billing_discount_plan"/>
     </changeSet>
 </databaseChangeLog> 
 

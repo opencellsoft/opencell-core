@@ -84,7 +84,8 @@ public class BillingAccountDto extends AccountDto {
     /** The invoicing threshold. */
     private BigDecimal invoicingThreshold;
 
-    /** The discount plan. */
+    @Deprecated
+    /** The discount plan. Replaced by discountPlans. */
     private String discountPlan;
 
     /** The phone. */
@@ -134,13 +135,13 @@ public class BillingAccountDto extends AccountDto {
     private UserAccountsDto userAccounts = new UserAccountsDto();
     
     /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
-	@XmlElementWrapper(name = "discountPlans")
-	@XmlElement(name = "discountPlan")
-    private List<String> discountPlans;
+	@XmlElementWrapper(name = "discountPlansForInstantiation")
+	@XmlElement(name = "discountPlanForInstantiation")
+    private List<String> discountPlansForInstantiation;
     
     /** List of discount plans to be disassociated in a BillingAccount */
 	@XmlElementWrapper(name = "discountPlansForTermination")
-	@XmlElement(name = "discountPlan")
+	@XmlElement(name = "discountPlanForTermination")
     private List<String> discountPlansForTermination;
     
     /**
@@ -227,11 +228,11 @@ public class BillingAccountDto extends AccountDto {
     }
 	
 	public void addDiscountPlan(String dp) {
-		if (discountPlans == null) {
-			discountPlans = new ArrayList<>();
+		if (discountPlansForInstantiation == null) {
+			discountPlansForInstantiation = new ArrayList<>();
 		}
 
-		discountPlans.add(dp);
+		discountPlansForInstantiation.add(dp);
 	}
 
     /**
@@ -659,16 +660,16 @@ public class BillingAccountDto extends AccountDto {
      * Gets the code of discount plans.
      * @return codes of discount plan
      */
-    public List<String> getDiscountPlans() {
-		return discountPlans;
+    public List<String> getDiscountPlansForInstantiation() {
+		return discountPlansForInstantiation;
 	}
 
     /**
      * Sets the code of the discount plans.
-     * @param discountPlans codes of the discount plans
+     * @param discountPlansForInstantiation codes of the discount plans
      */
-	public void setDiscountPlans(List<String> discountPlans) {
-		this.discountPlans = discountPlans;
+	public void setDiscountPlansForInstantiation(List<String> discountPlansForInstantiation) {
+		this.discountPlansForInstantiation = discountPlansForInstantiation;
 	}
 
 	/**
