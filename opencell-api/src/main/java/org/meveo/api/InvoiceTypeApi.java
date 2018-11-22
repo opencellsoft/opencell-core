@@ -224,29 +224,13 @@ public class InvoiceTypeApi extends BaseApi {
         invoiceType.setCode(StringUtils.isBlank(invoiceTypeDto.getUpdatedCode()) ? invoiceTypeDto.getCode() : invoiceTypeDto.getUpdatedCode());
         
         if (invoiceTypeDto.getSequenceDto() != null) {
-            InvoiceSequence invoiceSequence = invoiceType.getInvoiceSequence();
-            if(invoiceSequence != null) {
-                InvoiceSequence invoiceSequenceFromDto = invoiceTypeDto.getSequenceDto().fromDto();
-                
-                if (invoiceTypeDto.getSequenceDto() != null && invoiceSequenceFromDto.getCurrentInvoiceNb() != null) {
-                    if (invoiceSequenceFromDto.getCurrentInvoiceNb().longValue() < invoiceSequenceService.getMaxCurrentInvoiceNumber(invoiceSequence.getCode()).longValue()) {
-                        throw new MeveoApiException("Not able to update, check the current number");
-                    }
-                }
-                
-                invoiceSequence.setCurrentInvoiceNb(invoiceSequenceFromDto.getCurrentInvoiceNb());
-                invoiceSequence.setSequenceSize(invoiceSequenceFromDto.getSequenceSize());
-                invoiceSequence.setCode(invoiceType.getCode());
-                invoiceSequenceService.update(invoiceSequence);
-            } else {
-                InvoiceSequence newInvoiceSequence = invoiceTypeDto.getSequenceDto().fromDto();
-                newInvoiceSequence.setCode(invoiceType.getCode());
-                invoiceSequenceService.create(newInvoiceSequence);
+            InvoiceSequence invoiceSequence = invoiceSequenceService.findByCode(invoiceTypeDto.getSequenceDto().getInvoiceSequenceCode());
+            if (invoiceSequence == null) {
+                throw new EntityDoesNotExistsException(InvoiceSequence.class, invoiceTypeDto.getSequenceDto().getInvoiceSequenceCode());
             }
+            invoiceType.setInvoiceSequence(invoiceSequence);
             invoiceType.setPrefixEL(invoiceTypeDto.getSequenceDto().getPrefixEL());
         }
-        
-        
         
         OCCTemplate occTemplate = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateCode());
         if (occTemplate == null) {

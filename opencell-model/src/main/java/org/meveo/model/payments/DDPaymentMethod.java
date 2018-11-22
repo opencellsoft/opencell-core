@@ -124,6 +124,8 @@ public class DDPaymentMethod extends PaymentMethod {
         setAlias(otherPaymentMethod.getAlias());
         setPreferred(otherPaymentMethod.isPreferred());
         setBankCoordinates(otherPaymentMethod.getBankCoordinates());
+        setMandateDate(otherPaymentMethod.getMandateDate());
+        setMandateIdentification(otherPaymentMethod.getMandateIdentification());
     }
 
     @Override
