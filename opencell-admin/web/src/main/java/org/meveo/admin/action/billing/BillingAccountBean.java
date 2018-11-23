@@ -140,13 +140,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     }
 
     @ActionMethod
-	public void instantiateDiscountPlans() throws BusinessException {
-		if (discountPlanDM.getTarget() != null) {
+	public void instantiateDiscountPlan() throws BusinessException {
+		if (entity.getDiscountPlan() != null) {
+			DiscountPlan dp = entity.getDiscountPlan();
 			entity = billingAccountService.refreshOrRetrieve(entity);
-			entity = billingAccountService.instantiateDiscountPlans(entity, discountPlanDM.getTarget());
-
-			discountPlanDM.getSource().addAll(discountPlanDM.getTarget());
-			discountPlanDM.setTarget(new ArrayList<>());
+			entity = billingAccountService.instantiateDiscountPlan(entity, dp, null);
+			entity.setDiscountPlan(null);
 		}
 	}
 	

@@ -13,7 +13,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.model.catalog.DiscountPlanInstance;
 import org.meveo.model.crm.Customer;
 
 /**
@@ -106,10 +108,10 @@ public class AccountHierarchyDto implements Serializable {
     /** Discount Plan. */
     private String discountPlan;
     
-    /** List of Discount Plans. */
-    @XmlElementWrapper(name = "discountPlans")
-	@XmlElement(name = "discountPlan")
-    private List<String> discountPlans;
+    /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
+    @XmlElementWrapper(name = "discountPlansForInstantiation")
+	@XmlElement(name = "discountPlanForInstantiation")
+    private List<DiscountPlanDto> discountPlansForInstantiation;
     
     /** List of discount plans to be disassociated in a BillingAccount */
 	@XmlElementWrapper(name = "discountPlansForTermination")
@@ -805,19 +807,19 @@ public class AccountHierarchyDto implements Serializable {
                 + invoicingThreshold + ", discountPlan=" + discountPlan + "]";
     }
 
-	public List<String> getDiscountPlans() {
-		return discountPlans;
-	}
-
-	public void setDiscountPlans(List<String> discountPlans) {
-		this.discountPlans = discountPlans;
-	}
-
 	public List<String> getDiscountPlansForTermination() {
 		return discountPlansForTermination;
 	}
 
 	public void setDiscountPlansForTermination(List<String> discountPlansForTermination) {
 		this.discountPlansForTermination = discountPlansForTermination;
+	}
+
+	public List<DiscountPlanDto> getDiscountPlansForInstantiation() {
+		return discountPlansForInstantiation;
+	}
+
+	public void setDiscountPlansForInstantiation(List<DiscountPlanDto> discountPlansForInstantiation) {
+		this.discountPlansForInstantiation = discountPlansForInstantiation;
 	}    
 }

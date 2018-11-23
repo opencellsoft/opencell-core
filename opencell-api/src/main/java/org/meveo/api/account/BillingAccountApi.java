@@ -13,6 +13,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -191,12 +192,6 @@ public class BillingAccountApi extends AccountEntityApi {
         billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
         billingAccount.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
 
-		if (!StringUtils.isBlank(postData.getDiscountPlan())) {
-			postData.addDiscountPlan(postData.getDiscountPlan());
-		} else {
-			billingAccount.setDiscountPlan(null);
-		}
-        
         if (postData.getElectronicBilling() == null) {
             billingAccount.setElectronicBilling(false);
         } else {
@@ -229,10 +224,11 @@ public class BillingAccountApi extends AccountEntityApi {
         // instantiate the discounts
 		if (postData.getDiscountPlansForInstantiation() != null) {
 			List<DiscountPlan> discountPlans = new ArrayList<>();
-			for (String dpCode : postData.getDiscountPlansForInstantiation()) {
-				DiscountPlan dp = discountPlanService.findByCode(dpCode);
+			for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
+				DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
+				dp = copyFromDto(discountPlanDto, dp);
 				if (dp == null) {
-					throw new EntityDoesNotExistsException(DiscountPlan.class, dpCode);
+					throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
 				}
 				discountPlans.add(dp);
 			}
@@ -361,11 +357,6 @@ public class BillingAccountApi extends AccountEntityApi {
         if (postData.getMinimumLabelElSpark() != null) {
             billingAccount.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
-        if (!StringUtils.isBlank(postData.getDiscountPlan())) {
-			postData.addDiscountPlan(postData.getDiscountPlan());
-        } else if (postData.getDiscountPlan() != null) {
-            billingAccount.setDiscountPlan(null);
-        }
 
         if (businessAccountModel != null) {
             billingAccount.setBusinessAccountModel(businessAccountModel);
@@ -413,10 +404,11 @@ public class BillingAccountApi extends AccountEntityApi {
 		// instantiate the discounts
 		if (postData.getDiscountPlansForInstantiation() != null) {
 			List<DiscountPlan> discountPlans = new ArrayList<>();
-			for (String dpCode : postData.getDiscountPlansForInstantiation()) {
-				DiscountPlan dp = discountPlanService.findByCode(dpCode);
+			for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
+				DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
+				dp = copyFromDto(discountPlanDto, dp);
 				if (dp == null) {
-					throw new EntityDoesNotExistsException(DiscountPlan.class, dpCode);
+					throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
 				}
 				discountPlans.add(dp);
 			}
@@ -426,6 +418,23 @@ public class BillingAccountApi extends AccountEntityApi {
 
         return billingAccount;
     }
+    
+	public DiscountPlan copyFromDto(DiscountPlanDto source, DiscountPlan target) {
+		if (source.getStartDate() != null) {
+			target.setStartDate(source.getStartDate());
+		}
+		if (source.getEndDate() != null) {
+			target.setEndDate(source.getEndDate());
+		}
+		if (source.getDurationUnit() != null) {
+			target.setDurationUnit(source.getDurationUnit());
+		}
+		if (source.getDefaultDuration() != null) {
+			target.setDefaultDuration(source.getDefaultDuration());
+		}
+
+		return target;
+	}
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public BillingAccountDto find(String billingAccountCode) throws MeveoApiException {

@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.DiscountPlanInstanceDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.model.billing.AccountStatusEnum;
@@ -137,7 +138,7 @@ public class BillingAccountDto extends AccountDto {
     /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
 	@XmlElementWrapper(name = "discountPlansForInstantiation")
 	@XmlElement(name = "discountPlanForInstantiation")
-    private List<String> discountPlansForInstantiation;
+    private List<DiscountPlanDto> discountPlansForInstantiation;
     
     /** List of discount plans to be disassociated in a BillingAccount */
 	@XmlElementWrapper(name = "discountPlansForTermination")
@@ -199,10 +200,6 @@ public class BillingAccountDto extends AccountDto {
             setEmail(contactInfos.getEmail());
         }
 
-        if (e.getDiscountPlan() != null) {
-            setDiscountPlan(e.getDiscountPlan().getCode());
-        }
-
         // Start compatibility with pre-4.6 versions
 
         PaymentMethod paymentMethod = e.getCustomerAccount().getPreferredPaymentMethod();
@@ -227,7 +224,7 @@ public class BillingAccountDto extends AccountDto {
         }
     }
 	
-	public void addDiscountPlan(String dp) {
+	public void addDiscountPlan(DiscountPlanDto dp) {
 		if (discountPlansForInstantiation == null) {
 			discountPlansForInstantiation = new ArrayList<>();
 		}
@@ -660,7 +657,7 @@ public class BillingAccountDto extends AccountDto {
      * Gets the code of discount plans.
      * @return codes of discount plan
      */
-    public List<String> getDiscountPlansForInstantiation() {
+    public List<DiscountPlanDto> getDiscountPlansForInstantiation() {
 		return discountPlansForInstantiation;
 	}
 
@@ -668,7 +665,7 @@ public class BillingAccountDto extends AccountDto {
      * Sets the code of the discount plans.
      * @param discountPlansForInstantiation codes of the discount plans
      */
-	public void setDiscountPlansForInstantiation(List<String> discountPlansForInstantiation) {
+	public void setDiscountPlansForInstantiation(List<DiscountPlanDto> discountPlansForInstantiation) {
 		this.discountPlansForInstantiation = discountPlansForInstantiation;
 	}
 
