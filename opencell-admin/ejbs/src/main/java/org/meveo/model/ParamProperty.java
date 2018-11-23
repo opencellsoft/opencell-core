@@ -1,31 +1,15 @@
 package org.meveo.model;
 
-import org.slf4j.Logger;
-
-import java.io.Serializable;
-
-
-/**
- * @author Khalid HORRI
- * @lastModifiedVersion 5.2
- *
- */
-public class ParamProperty implements Comparable<ParamProperty>, IEntity{
-
-	public static final String PROPERTY_PATTERN = "^[a-zA-Z0-9_\\.]+$";
+public class ParamProperty implements Comparable<ParamProperty>{
 
 	private org.slf4j.Logger log;
 	
 	private String key;
 
 	private String value;
-
-
+	
 	private String category;
-
-	public ParamProperty(){
-
-	}
+	
 	public ParamProperty(org.slf4j.Logger log){
 		this.log=log;
 	}
@@ -35,8 +19,7 @@ public class ParamProperty implements Comparable<ParamProperty>, IEntity{
 	}
 
 	public void setKey(String key) {
-		if(log!=null)
-			log.debug("setKey :"+key);
+		log.debug("setKey :"+key);
 		this.key = key;
 	}
 
@@ -45,8 +28,7 @@ public class ParamProperty implements Comparable<ParamProperty>, IEntity{
 	}
 
 	public void setValue(String value) {
-		if(log!=null)
-			log.debug("setValue :"+key+" -> "+value);
+		log.debug("setValue :"+key+" -> "+value);
 		this.value = value;
 	}
 
@@ -64,24 +46,8 @@ public class ParamProperty implements Comparable<ParamProperty>, IEntity{
 	}
 
 	public void setCategory(String category) {
-		if(log != null)
-			log.debug("setCategory :"+key+" -> "+category);
+		log.debug("setCategory :"+key+" -> "+category);
 		this.category = category;
-	}
-
-
-	@Override
-	public Serializable getId() {
-		return null;
-	}
-
-	@Override
-	public void setId(Long id) {
-
-	}
-
-	@Override
-	public boolean isTransient() {
-		return false;
-	}
+	}	
+	
 }
