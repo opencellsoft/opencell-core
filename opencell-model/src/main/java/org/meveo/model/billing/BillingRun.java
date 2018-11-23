@@ -44,12 +44,11 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.*;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -60,13 +59,16 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  * @author Andrius Karpavicius
  */
 @Entity
+@ReferenceIdentifierQuery("BillingRun.findByIdAndBCCode")
 @CustomFieldEntity(cftCodePrefix = "BILLING_RUN")
 @Table(name = "billing_billing_run")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_billing_run_seq") })
 @NamedQueries({
-        @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') order by br.id asc") })
-public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
+        @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') order by br.id asc"),
+        @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code ") })
+
+public class BillingRun extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -629,4 +631,32 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
         }
         return true;
     }
+
+    public void setDescriptionOrCode(String description) {
+
+    }
+
+    public String getReferenceCode() {
+        return id + "/" + billingCycle.getCode();
+    }
+
+    public void setReferenceCode(Object value) {
+        String id = null;
+        if (value != null) {
+            id = value.toString().split("/")[0];
+            setId(Long.valueOf(id));
+            billingCycle = new BillingCycle();
+            billingCycle.setCode(getBillingCycleCode(value.toString(), id));
+        }
+    }
+
+    private String getBillingCycleCode(String value, String id) {
+        return value.substring(id.length() + 1, value.length());
+    }
+
+    public String getReferenceDescription() {
+        return billingCycle.getDescription();
+    }
+
+
 }
