@@ -2,16 +2,13 @@ package org.meveo.service.catalog.impl;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.poi.util.StringUtil;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
@@ -414,7 +411,7 @@ public class CatalogHierarchyBuilderService {
             newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
             try {
                 ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
-                String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceConfiguration.getImagePath());
+                String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, getImagePath(serviceTemplate, serviceConfiguration));
                 newServiceTemplate.setImagePath(newImagePath);
             } catch (IOException e1) {
                 log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());
@@ -453,6 +450,17 @@ public class CatalogHierarchyBuilderService {
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new BusinessException(e.getMessage());
         }
+    }
+
+    private String getImagePath(ServiceTemplate serviceTemplate, ServiceConfigurationDto serviceConfigurationDto) {
+        if (serviceConfigurationDto != null && serviceConfigurationDto.getImagePath() != null) {
+            return serviceConfigurationDto.getImagePath();
+        }
+        if (serviceTemplate != null && serviceTemplate.getImagePath() != null) {
+            return serviceTemplate.getImagePath();
+        }
+        return org.apache.commons.lang.StringUtils.EMPTY;
+
     }
 
     private void duplicatePrices(ServiceTemplate serviceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory)
