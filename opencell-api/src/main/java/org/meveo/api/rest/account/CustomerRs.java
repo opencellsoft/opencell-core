@@ -30,6 +30,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
+ * @author khalid HORRI
  * @lastModifiedVersion 5.2
  **/
 @Path("/account/customer")
@@ -258,29 +259,30 @@ public interface CustomerRs extends IBaseRs {
 	 * @return status of the operation
 	 */
 	@PUT
-	@Path("/customerNumberSequence")
-	ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData);
-	
+    @Path("/customerNumberSequence")
+    ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData);
+
     /**
 	 * Calculates and returns the next value of the mandate number.
 	 * 
 	 * @return next customer no value
 	 */
 	@POST
-	@Path("/customerNumberSequence")
-	GenericSequenceValueResponseDto getNextCustomerNumber();
-	
-	/**
-	 * Creates a new customer sequence.
-	 * @param postData customer sequence data
-	 * @return request status
-	 */
-	@POST
-	@Path("/sequence")
-	ActionStatus createCustomerSequence(CustomerSequenceDto postData);
-	
-	/**
-	 * Updates a new customer sequence with a given code.
+    @Path("/customerNumberSequence")
+    GenericSequenceValueResponseDto getNextCustomerNumber();
+
+    /**
+     * Creates a new customer sequence.
+     *
+     * @param postData customer sequence data
+     * @return request status
+     */
+    @POST
+    @Path("/sequence")
+    ActionStatus createCustomerSequence(CustomerSequenceDto postData);
+
+    /**
+     * Updates a new customer sequence with a given code.
 	 * @param postData customer sequence data
 	 * @return request status
 	 */
