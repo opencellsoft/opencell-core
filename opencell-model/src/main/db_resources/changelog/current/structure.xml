@@ -313,7 +313,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="#3705_20181019 - Create discount plan bridge table" author="EdwardPLegaspi" dbms="postgresql">
+    <changeSet id="#3705_20181019 - Create discount plan bridge table" author="EdwardPLegaspi">
         <dropUniqueConstraint tableName="cat_discount_plan_item" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn" />
         <addUniqueConstraint columnNames="discount_plan_id, code" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_discount_plan_item" />
 
