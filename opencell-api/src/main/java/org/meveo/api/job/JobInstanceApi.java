@@ -60,6 +60,11 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         }
 
         Job job = jobInstanceService.getJobByName(postData.getJobTemplate());
+
+        if (job == null) {
+            throw new EntityDoesNotExistsException("JobTemplate with code '" + postData.getJobTemplate() + "' doesn't exist.");
+        }
+
         JobCategoryEnum jobCategory = job.getJobCategory();
 
         JobInstance jobInstance = new JobInstance();
