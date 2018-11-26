@@ -12,8 +12,8 @@
             <column name="created" valueDate="2018-11-20 07:40:45.183" />
             <column name="code" value="FR_BANKING_CAL_2018" />
             <column name="description" value="France bank calendar 2018" />
-            <column name="start_date" value="01/01/2018"></column>
-            <column name="end_date" value="31/12/2018"></column>
+            <column name="start_date" value="2018-01-01"></column>
+            <column name="end_date" value="2018-12-31"></column>
             <column name="weekend_begin" value="6" />
             <column name="weekend_end" value="7" />
             
