@@ -522,6 +522,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         serviceConfigurationDto.setDescription(st.getDescription());
         serviceConfigurationDto.setMandatory(ost.isMandatory());
         serviceConfigurationDto.setInstantiatedFromBSM(st.isInstantiatedFromBSM());
+        serviceConfigurationDto.setImagePath(st.getImagePath());
         if (stCfValues != null) {
             serviceConfigurationDto.setCfValues(stCfValues);
         }
