@@ -2136,5 +2136,10 @@
         ]]>
         </sql>
     </changeSet>
-    
+    <changeSet id="#3823_20181125 - the invoice(s) that was paid when the payment are rejected" author="anasseh">
+    		<addColumn tableName="ar_account_operation">
+            <column name="rejected_payment_id" type="bigint" />
+        </addColumn>
+         <addForeignKeyConstraint constraintName="fk_ao_rejected_payment_id" referencedTableName="ar_account_operation" baseColumnNames="rejected_payment_id" baseTableName="ar_account_operation" referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>
