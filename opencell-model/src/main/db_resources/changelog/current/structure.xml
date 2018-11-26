@@ -466,5 +466,41 @@
     	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el" columnDataType="varchar(2000)"/>
     	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el_sp" newColumnName="discount_value_el_sp" columnDataType="varchar(2000)"/>    	
     </changeSet>
+    
+    <changeSet author="EdwardPLegaspi" id="20181126_3630 - RUM Sequence for PaymentGateway">
+        <createTable tableName="ar_payment_gateway_rum_sequence">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_gateway_rum_sequence" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="prefix" type="varchar(255)" />
+            <column name="sequence_size" type="bigint" />
+            <column name="current_sequence_nb" type="bigint" />
+            <column name="payment_gateway_id" type="bigint" />
+        </createTable>
+        <createSequence sequenceName="ar_payment_gateway_rum_sequence_seq" />
+        <addForeignKeyConstraint constraintName="fk_ar_payment_gateway_rum_sequence" referencedTableName="ar_payment_gateway" baseColumnNames="payment_gateway_id" baseTableName="ar_payment_gateway_rum_sequence" referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet author="EdwardPLegaspi" id="20181126_3630 - RUM Sequence for PaymentGateway - M" dbms="mysql">
+    	<createTable tableName="ar_payment_gateway_rum_sequence_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_gateway_rum_sequence_seq_pk" />
+            </column>
+        </createTable>
+	</changeSet>
+	
 </databaseChangeLog> 
 
