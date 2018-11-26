@@ -1,4 +1,66 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
+	<changeSet author="hznibar" id="#3699_20181120">
+		<insert tableName="cat_calendar">
+            <column name="cal_type" value="BANKING" />
+            <column name="id" valueNumeric="-4" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2018-11-20 07:40:45.183" />
+            <column name="code" value="FR_BANKING_CAL_2018" />
+            <column name="description" value="France bank calendar 2018" />
+            <column name="start_date" value="2018-01-01"></column>
+            <column name="end_date" value="2018-12-31"></column>
+            <column name="weekend_begin" value="6" />
+            <column name="weekend_end" value="7" />
+            
+            <column name="nb_periods" />
+            <column name="period_length" />
+            <column name="period_unit" />
+            <column name="calendar" />
+            <column name="join_type" />
+            <column name="interval_type" />
+
+            <column name="join_cal_1_id" />
+            <column name="join_cal_2_id" />
+        </insert>
+        <insert tableName="cat_calendar_holiday">
+        	<column name="id" valueNumeric="-1" />
+        	<column name="version" valueNumeric="0" />
+            <column name="calendar_id" valueNumeric="-4" />
+            <column name="holiday_begin" valueNumeric="101" />
+            <column name="holiday_end" valueNumeric="101" />
+        </insert>
+        <insert tableName="cat_calendar_holiday">
+        	<column name="id" valueNumeric="-2" />
+        	<column name="version" valueNumeric="0" />
+            <column name="calendar_id" valueNumeric="-4" />
+            <column name="holiday_begin" valueNumeric="330" />
+            <column name="holiday_end" valueNumeric="330" />
+        </insert>
+        <insert tableName="cat_calendar_holiday">
+        	<column name="id" valueNumeric="-3" />
+        	<column name="version" valueNumeric="0" />
+            <column name="calendar_id" valueNumeric="-4" />
+            <column name="holiday_begin" valueNumeric="402" />
+            <column name="holiday_end" valueNumeric="402" />
+        </insert>
+        <insert tableName="cat_calendar_holiday">
+        	<column name="id" valueNumeric="-4" />
+        	<column name="version" valueNumeric="0" />
+            <column name="calendar_id" valueNumeric="-4" />
+            <column name="holiday_begin" valueNumeric="501" />
+            <column name="holiday_end" valueNumeric="501" />
+        </insert>
+        <insert tableName="cat_calendar_holiday">
+        	<column name="id" valueNumeric="-5" />
+        	<column name="version" valueNumeric="0" />
+            <column name="calendar_id" valueNumeric="-4" />
+            <column name="holiday_begin" valueNumeric="1225" />
+            <column name="holiday_end" valueNumeric="1226" />
+        </insert>
+	</changeSet>
 </databaseChangeLog>

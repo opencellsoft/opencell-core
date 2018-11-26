@@ -1,5 +1,7 @@
 package org.meveo.api.rest.impl;
 
+import java.util.Date;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -9,6 +11,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.CalendarsDto;
+import org.meveo.api.dto.response.BankingDateStatusResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -100,6 +103,20 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
             calendarApi.createOrUpdate(postData);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public BankingDateStatusResponse getBankingDateStatus(Date date) {
+        
+        BankingDateStatusResponse result = new BankingDateStatusResponse();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        try {
+            result.setBankingDateStatus(calendarApi.getBankingDateStatus(date));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

@@ -62,6 +62,7 @@ import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.communication.MeveoInstanceDto;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelDto;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelsDto;
+import org.meveo.api.dto.response.BankingDateStatusResponse;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
@@ -883,6 +884,20 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setCalendar(calendarApi.find(calendarCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+    
+    @Override
+    public BankingDateStatusResponse getBankingDateStatus(Date date) {
+        
+        BankingDateStatusResponse result = new BankingDateStatusResponse();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        try {
+            result.setBankingDateStatus(calendarApi.getBankingDateStatus(date));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
