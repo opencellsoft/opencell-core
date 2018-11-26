@@ -59,8 +59,8 @@ import org.meveo.service.base.PersistenceService;
  * Payment service implementation.
  * 
  * @author Edward P. Legaspi
- *   @author anasseh
- *   @lastModifiedVersion 5.0
+ * @author anasseh
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class PaymentService extends PersistenceService<Payment> {
@@ -101,9 +101,7 @@ public class PaymentService extends PersistenceService<Payment> {
     @Inject
     private RefundService refundService;
 
-    /* (non-Javadoc)
-     * @see org.meveo.service.base.PersistenceService#create(org.meveo.model.IEntity)
-     */
+
     @MeveoAudit
     @Override
     public void create(Payment entity) throws BusinessException {
@@ -175,7 +173,7 @@ public class PaymentService extends PersistenceService<Payment> {
             PaymentGateway paymentGateway) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
         return doPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, null, null, null, null, null, true, PaymentMethodEnum.DIRECTDEBIT);
     }
-    
+
     /**
      * Refund by sepa.
      * 
@@ -371,9 +369,8 @@ public class PaymentService extends PersistenceService<Payment> {
                 log.warn("Payment with method id {} was rejected. Status: {}", preferredMethod.getId(), doPaymentResponseDto.getPaymentStatus());
             }
 
-            paymentHistoryService.addHistory(customerAccount, aoPaymentId == null ? null : findById(aoPaymentId), aoPaymentId == null ? null :  refundService.findById(aoPaymentId), ctsAmount, status, doPaymentResponseDto.getErrorCode(),
-                doPaymentResponseDto.getErrorMessage(), errorType, operationCat, paymentGateway.getCode(), preferredMethod);
-
+            paymentHistoryService.addHistory(customerAccount, aoPaymentId == null ? null : findById(aoPaymentId), aoPaymentId == null ? null : refundService.findById(aoPaymentId),
+                ctsAmount, status, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(), errorType, operationCat, paymentGateway.getCode(), preferredMethod);
 
         } catch (Exception e) {
             log.error("Error during payment AO:", e);
@@ -524,17 +521,18 @@ public class PaymentService extends PersistenceService<Payment> {
                     throw new BusinessException("Cannot find AO Template with code:" + occTemplateCode);
                 }
                 CustomerAccount ca = accountOperation.getCustomerAccount();
-                AccountOperation aoThatShouldePaid = getAccountOperationThatWasPaid(accountOperation);
+                List<AccountOperation> listAoThatSupposedPaid = getAccountOperationThatWasPaid(accountOperation);
+                
                 Long aoPaymentIdWasRejected = accountOperation.getId();
 
-                matchingCodeService.unmatchingByAOid(aoThatShouldePaid.getId());
+                matchingCodeService.unmatchingByAOid(aoPaymentIdWasRejected);
 
                 RejectedPayment rejectedPayment = new RejectedPayment();
                 rejectedPayment.setType("R");
                 rejectedPayment.setMatchingAmount(BigDecimal.ZERO);
                 rejectedPayment.setMatchingStatus(MatchingStatusEnum.O);
-                rejectedPayment.setUnMatchingAmount(aoThatShouldePaid.getUnMatchingAmount());
-                rejectedPayment.setAmount(aoThatShouldePaid.getUnMatchingAmount());
+                rejectedPayment.setUnMatchingAmount(accountOperation.getUnMatchingAmount());
+                rejectedPayment.setAmount(accountOperation.getUnMatchingAmount());
                 rejectedPayment.setReference("r_" + paymentId);
                 rejectedPayment.setCustomerAccount(ca);
                 rejectedPayment.setAccountingCode(occTemplate.getAccountingCode());
@@ -548,10 +546,15 @@ public class PaymentService extends PersistenceService<Payment> {
                 rejectedPayment.setOrderNumber(accountOperation.getOrderNumber());
                 rejectedPayment.setRejectedType(RejectedType.A);
                 rejectedPayment.setRejectedDate(new Date());
+                rejectedPayment.setTransactionDate(new Date());
                 rejectedPayment.setRejectedDescription(errorMessage);
                 rejectedPayment.setRejectedCode(errorCode);
+                rejectedPayment.setListAaccountOperationSupposedPaid(listAoThatSupposedPaid);
 
                 accountOperationService.create(rejectedPayment);
+                for(AccountOperation ao : listAoThatSupposedPaid) {
+                    ao.setRejectedPayment(rejectedPayment);
+                }
                 Long oARejectPaymentID = rejectedPayment.getId();
 
                 List<Long> aos = new ArrayList<>();
@@ -575,22 +578,30 @@ public class PaymentService extends PersistenceService<Payment> {
     }
 
     /**
-     * Retrieve the account Operation that was paid.
+     * Retrieve the list account Operation that was paid.
      * 
      * @param paymentOrRefund the payment or refund.
-     * @return the account Operation that was paid
+     * @return list of the account Operation that was paid
      * @throws BusinessException Business Exception
      */
-    public AccountOperation getAccountOperationThatWasPaid(AccountOperation paymentOrRefund) throws BusinessException {
+    public  List<AccountOperation> getAccountOperationThatWasPaid(AccountOperation paymentOrRefund) throws BusinessException {
+        if (paymentOrRefund.getMatchingStatus() != MatchingStatusEnum.L) {
+            return null;
+        }       
+        List<AccountOperation> listAoThatSupposedPaid = new ArrayList<AccountOperation>();
         List<MatchingAmount> matchingAmounts = paymentOrRefund.getMatchingAmounts();
         log.trace("matchingAmounts:" + matchingAmounts);
         for (MatchingAmount ma : paymentOrRefund.getMatchingAmounts().get(0).getMatchingCode().getMatchingAmounts()) {
             log.trace("ma.getAccountOperation() id:{} , occ code:{}", ma.getAccountOperation().toString(), ma.getAccountOperation().getOccCode());
             if (!(ma.getAccountOperation() instanceof Payment) && !(ma.getAccountOperation() instanceof Refund)) {
-                return ma.getAccountOperation();
+                listAoThatSupposedPaid.add(ma.getAccountOperation());
             }
         }
-        throw new BusinessException("Cant find invoice account operation to unmatching");
+        if (listAoThatSupposedPaid.isEmpty()) {
+            throw new BusinessException("Cant find invoice account operation to unmatching");
+        }
+        return listAoThatSupposedPaid;
+
     }
 
 }

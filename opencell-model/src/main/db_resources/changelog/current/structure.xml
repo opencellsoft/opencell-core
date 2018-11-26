@@ -459,12 +459,20 @@
     </changeSet>
     
     <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
-    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
-    	<dropColumn tableName="cat_discount_plan_item">
-    		<column name="discount_amount"></column>
-    	</dropColumn>
-    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el" columnDataType="varchar(2000)"/>
-    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el_sp" newColumnName="discount_value_el_sp" columnDataType="varchar(2000)"/>    	
+	    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
+	    	<dropColumn tableName="cat_discount_plan_item">
+	    		<column name="discount_amount"></column>
+	    	</dropColumn>
+	    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el" columnDataType="varchar(2000)"/>
+	    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el_sp" newColumnName="discount_value_el_sp" columnDataType="varchar(2000)"/>    	
     </changeSet>
-</databaseChangeLog> 
+
+
+    <changeSet id="#3823_20181125 - the invoice(s) that was paid when the payment are rejected" author="anasseh">
+    		<addColumn tableName="ar_account_operation">
+            <column name="rejected_payment_id" type="bigint" />
+        </addColumn>
+         <addForeignKeyConstraint constraintName="fk_ao_rejected_payment_id" referencedTableName="ar_account_operation" baseColumnNames="rejected_payment_id" baseTableName="ar_account_operation" referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>
 
