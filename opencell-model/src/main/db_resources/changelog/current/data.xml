@@ -29,30 +29,35 @@
         </insert>
         <insert tableName="cat_calendar_holiday">
         	<column name="id" valueNumeric="-1" />
+        	<column name="version" valueNumeric="0" />
             <column name="calendar_id" valueNumeric="-4" />
             <column name="holiday_begin" valueNumeric="101" />
             <column name="holiday_end" valueNumeric="101" />
         </insert>
         <insert tableName="cat_calendar_holiday">
         	<column name="id" valueNumeric="-2" />
+        	<column name="version" valueNumeric="0" />
             <column name="calendar_id" valueNumeric="-4" />
             <column name="holiday_begin" valueNumeric="330" />
             <column name="holiday_end" valueNumeric="330" />
         </insert>
         <insert tableName="cat_calendar_holiday">
         	<column name="id" valueNumeric="-3" />
+        	<column name="version" valueNumeric="0" />
             <column name="calendar_id" valueNumeric="-4" />
             <column name="holiday_begin" valueNumeric="402" />
             <column name="holiday_end" valueNumeric="402" />
         </insert>
         <insert tableName="cat_calendar_holiday">
         	<column name="id" valueNumeric="-4" />
+        	<column name="version" valueNumeric="0" />
             <column name="calendar_id" valueNumeric="-4" />
             <column name="holiday_begin" valueNumeric="501" />
             <column name="holiday_end" valueNumeric="501" />
         </insert>
         <insert tableName="cat_calendar_holiday">
         	<column name="id" valueNumeric="-5" />
+        	<column name="version" valueNumeric="0" />
             <column name="calendar_id" valueNumeric="-4" />
             <column name="holiday_begin" valueNumeric="1225" />
             <column name="holiday_end" valueNumeric="1226" />
