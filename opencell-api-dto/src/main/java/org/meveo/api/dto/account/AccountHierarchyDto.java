@@ -104,9 +104,6 @@ public class AccountHierarchyDto implements Serializable {
 
     /** Invoicing Threshold. */
     private BigDecimal invoicingThreshold;
-
-    /** Discount Plan. */
-    private String discountPlan;
     
     /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
     @XmlElementWrapper(name = "discountPlansForInstantiation")
@@ -115,7 +112,7 @@ public class AccountHierarchyDto implements Serializable {
     
     /** List of discount plans to be disassociated in a BillingAccount */
 	@XmlElementWrapper(name = "discountPlansForTermination")
-	@XmlElement(name = "discountPlan")
+	@XmlElement(name = "discountPlanForTermination")
     private List<String> discountPlansForTermination;
 
     /** Custom Fiends. */
@@ -690,24 +687,6 @@ public class AccountHierarchyDto implements Serializable {
     }
 
     /**
-     * Gets the discount plan.
-     *
-     * @return the discount plan
-     */
-    public String getDiscountPlan() {
-        return discountPlan;
-    }
-
-    /**
-     * Sets the discount plan.
-     *
-     * @param discountPlan the new discount plan
-     */
-    public void setDiscountPlan(String discountPlan) {
-        this.discountPlan = discountPlan;
-    }
-
-    /**
      * Gets the payment methods.
      *
      * @return the payment methods
@@ -803,8 +782,10 @@ public class AccountHierarchyDto implements Serializable {
                 + customerBrandCode + ", customerCategoryCode=" + customerCategoryCode + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode="
                 + languageCode + ", titleCode=" + titleCode + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate + ", phoneNumber=" + phoneNumber
                 + ", billingCycleCode=" + billingCycleCode + ", address1=" + address1 + ", address2=" + address2 + ", address3=" + address3 + ", zipCode=" + zipCode + ", state="
-                + state + ", city=" + city + ", customFields=" + customFields + ", limit=" + limit + ", sortField=" + sortField + ", index=" + index + ", invoicingThreshold="
-                + invoicingThreshold + ", discountPlan=" + discountPlan + "]";
+                + state + ", city=" + city + ", usePrefix=" + usePrefix + ", invoicingThreshold=" + invoicingThreshold + ", discountPlansForInstantiation="
+                + discountPlansForInstantiation + ", discountPlansForTermination=" + discountPlansForTermination + ", customFields=" + customFields + ", limit=" + limit
+                + ", sortField=" + sortField + ", index=" + index + ", paymentMethods=" + paymentMethods + ", paymentMethod=" + paymentMethod + ", jobTitle=" + jobTitle
+                + ", registrationNo=" + registrationNo + ", vatNo=" + vatNo + "]";
     }
 
 	public List<String> getDiscountPlansForTermination() {
