@@ -1,5 +1,8 @@
 package org.meveo.admin.job;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -19,6 +22,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.slf4j.Logger;
@@ -46,6 +50,12 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void updateSubscriptionStatus(JobExecutionResultImpl result, Long subscriptionId) throws BusinessException {
+		updateSubscriptionStatus(result, subscriptionId, null);
+	}
+
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void updateSubscriptionStatus(JobExecutionResultImpl result, Long subscriptionId, Date untillDate) throws BusinessException {
 		try {
 			Subscription subscription = subscriptionService.findById(subscriptionId);
 			// Handle subscription renewal or termination
@@ -55,8 +65,7 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 				if (subscription.getSubscriptionRenewal().isAutoRenew()) {
 					Calendar calendar = new GregorianCalendar();
 					calendar.setTime(subscription.getSubscribedTillDate());
-					calendar.add(subscription.getSubscriptionRenewal().getRenewForUnit().getCalendarField(),
-							subscription.getSubscriptionRenewal().getRenewFor());
+					calendar.add(subscription.getSubscriptionRenewal().getRenewForUnit().getCalendarField(), getNumberOfMonths(subscription, untillDate));
 					subscription.setSubscribedTillDate(calendar.getTime());
 					subscription.setRenewed(true);
 					subscription.setRenewalNotifiedDate(null);
@@ -95,6 +104,14 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 			log.error("Failed to process status of subscription {} ", subscriptionId, e);
 			result.registerError("Failed to process status of subscription " + subscriptionId + ":" + e.getMessage());
 		}
+	}
+
+	private int getNumberOfMonths(Subscription subscription, Date untillDate) {
+		if (untillDate == null) {
+			return subscription.getSubscriptionRenewal().getRenewFor();
+		}
+		int nbrMonths = DateUtils.monthsBetween(subscription.getSubscribedTillDate(), untillDate);
+		return nbrMonths + 1;
 	}
 
 	@JpaAmpNewTx

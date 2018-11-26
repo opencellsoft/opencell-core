@@ -57,7 +57,7 @@ public class SubscriptionStatusJob extends Job {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                     break;
                 }
-                subscriptionStatusJobBean.updateSubscriptionStatus(result, subscriptionId);
+                subscriptionStatusJobBean.updateSubscriptionStatus(result, subscriptionId, untilDate);
             }
 
         } catch (Exception e) {
