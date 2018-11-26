@@ -28,6 +28,7 @@ import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.CalendarBankingService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
@@ -53,6 +54,10 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
     /** The calendar service. */
     @Inject
     private CalendarService calendarService;
+    
+    /** The calendar service. */
+    @Inject
+    private CalendarBankingService calendarBankingService;
     
     @Inject
     private ScriptInstanceService scriptInstanceService;
@@ -233,11 +238,11 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         Calendar cal = paymentScheduleInstance.getCalendar();
         cal.setInitDate(paymentScheduleInstance.getStartDate());
         Date date = paymentScheduleInstance.getStartDate();
-        CustomerAccount customerAccount = subscription.getUserAccount().getBillingAccount().getCustomerAccount();
+        CustomerAccount customerAccount = subscription.getUserAccount().getBillingAccount().getCustomerAccount();        
         while (date.before(paymentScheduleInstance.getEndDate())) {
 
             PaymentScheduleInstanceItem paymentScheduleInstanceItem = new PaymentScheduleInstanceItem();
-            paymentScheduleInstanceItem.setDueDate(DateUtils.addDaysToDate(date, dueDateDelay));
+            paymentScheduleInstanceItem.setDueDate(calendarBankingService.getNextBankWorkingDate(DateUtils.addDaysToDate(date, dueDateDelay)));
             paymentScheduleInstanceItem.setPaymentScheduleInstance(paymentScheduleInstance);
             paymentScheduleInstanceItem.setRequestPaymentDate(computeRequestPaymentDate(customerAccount, paymentScheduleInstanceItem.getDueDate()));
             date = cal.nextCalendarDate(date);
@@ -251,6 +256,9 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         }
         return paymentScheduleInstance;
     }
+    
+
+    
 
     /**
      * Compute request payment date.
@@ -277,7 +285,7 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         }
 
         requestPaymentDate = DateUtils.addDaysToDate(dueDate, (-1 * ndDaysBeforeDueDate));
-        return requestPaymentDate;
+        return calendarBankingService.getPreviousBankWorkingDate(requestPaymentDate);
     }
 
     /**
