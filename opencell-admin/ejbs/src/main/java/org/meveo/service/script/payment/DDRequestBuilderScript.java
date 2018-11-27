@@ -68,6 +68,7 @@ public abstract class  DDRequestBuilderScript extends Script implements DDReques
         return null;
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public List<AccountOperation> findListAoToPay(Map<String, Object> methodContext) throws BusinessException {
         return (List<AccountOperation>) methodContext.get(DD_REQUEST_LIST_AO);

@@ -35,4 +35,11 @@ public interface ScriptInterface {
      * @throws BusinessException business exception.
      */
     void finalize(Map<String, Object> methodContext) throws BusinessException;
+
+    /**
+     * Get log messages related to script execution (test mode run only)
+     * 
+     * @return Log messages
+     */
+    String getLogMessages();
 }

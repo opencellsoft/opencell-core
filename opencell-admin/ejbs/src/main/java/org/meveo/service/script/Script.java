@@ -46,7 +46,6 @@ public abstract class Script implements ScriptInterface {
      */
     public static String CONTEXT_PARENT_ENTITY = "CONTEXT_PARENT_ENTITY";
 
-
     /**
      * Current user
      */
@@ -57,7 +56,6 @@ public abstract class Script implements ScriptInterface {
      */
     public static String CONTEXT_APP_PROVIDER = "CONTEXT_APP_PROVIDER";
 
-    
     /**
      * Entity custom action's code
      */
@@ -93,6 +91,11 @@ public abstract class Script implements ScriptInterface {
      */
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * A logger to replace with when running script in test mode (from GUI), so logs can be returned/visible to the end user
+     */
+    protected RunTimeLogger logTest = new RunTimeLogger(this.getClass());
+
     @Override
     public void init(Map<String, Object> methodContext) throws BusinessException {
 
@@ -116,5 +119,14 @@ public abstract class Script implements ScriptInterface {
      */
     protected Object getServiceInterface(String serviceInterfaceName) {
         return EjbUtils.getServiceInterface(serviceInterfaceName);
+    }
+
+    /**
+     * Get log messages related to script execution (test mode run only)
+     * 
+     * @return Log messages
+     */
+    public String getLogMessages() {
+        return logTest.getLog();
     }
 }

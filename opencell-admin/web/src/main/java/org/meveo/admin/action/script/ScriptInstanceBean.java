@@ -72,6 +72,8 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     private DualListModel<Role> execRolesDM;
     private DualListModel<Role> sourcRolesDM;
 
+    private String logMessages;
+
     public void initCompilationErrors() {
         if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
             return;
@@ -208,12 +210,13 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 
     @ActionMethod
     public String execute() {
-        scriptInstanceService.test(entity.getCode(), null);
+        logMessages = scriptInstanceService.test(entity.getCode(), null);
+        messages.info(new BundleKey("messages", "message.scriptInstance.executed"));
         return null;
     }
 
-    public List<String> getLogs() {
-        return scriptInstanceService.getLogs(entity.getCode());
+    public String getLogs() {
+        return logMessages;
     }
 
     public boolean isUserHasSourcingRole(ScriptInstance scriptInstance) {

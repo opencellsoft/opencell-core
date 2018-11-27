@@ -15,8 +15,6 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.finance.RevenueSchedule;
 import org.meveo.service.finance.RevenueScheduleService;
 import org.meveo.service.script.Script;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class RevenueRecognitionScript extends Script implements RevenueRecognitionScriptInterface{
 

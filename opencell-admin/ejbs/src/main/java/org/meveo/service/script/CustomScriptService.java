@@ -50,7 +50,6 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
-import org.meveo.model.IEntity;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
@@ -65,8 +64,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     private ClusterEventPublisher clusterEventPublisher;
 
     protected final Class<SI> scriptInterfaceClass;
-
-    private Map<CacheKeyStr, List<String>> allLogs = new HashMap<>();
 
     private Map<CacheKeyStr, Class<SI>> allScriptInterfaces = new HashMap<>();
 
@@ -517,45 +514,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Add a log line for a script
-     * 
-     * @param message message to be displayed
-     * @param scriptCode code of script.
-     */
-    public void addLog(String message, String scriptCode) {
-
-        if (!allLogs.containsKey(new CacheKeyStr(currentUser.getProviderCode(), scriptCode))) {
-            allLogs.put(new CacheKeyStr(currentUser.getProviderCode(), scriptCode), new ArrayList<String>());
-        }
-        allLogs.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode)).add(message);
-    }
-
-    /**
-     * Get logs for script
-     * 
-     * @param scriptCode code of script
-     * @return list logs.
-     */
-    public List<String> getLogs(String scriptCode) {
-
-        if (!allLogs.containsKey(new CacheKeyStr(currentUser.getProviderCode(), scriptCode))) {
-            return new ArrayList<String>();
-        }
-        return allLogs.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
-    }
-
-    /**
-     * Clear all logs for a script.
-     * 
-     * @param scriptCode script's code
-     */
-    public void clearLogs(String scriptCode) {
-        if (allLogs.containsKey(new CacheKeyStr(currentUser.getProviderCode(), scriptCode))) {
-            allLogs.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode)).clear();
-        }
-    }
-
-    /**
      * Find the package name in a source java text.
      * 
      * @param src Java source code
@@ -652,7 +610,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         Map<String, Object> result = executeWInitAndFinalize(scriptCode, context);
         return result;
     }
-    
+
     /**
      * Execute script. Does not call init() or finalize() methods of the script.
      * 
@@ -713,7 +671,33 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         return context;
     }
 
-    
+    /**
+     * Execute script. DOES call init() or finalize() methods of the script.
+     * 
+     * @param compiledScript Compiled script class
+     * @param context Method context
+     * 
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws BusinessException Any execution exception
+     */
+    public Map<String, Object> executeWInitAndFinalize(SI compiledScript, Map<String, Object> context) throws BusinessException {
+
+        if (context == null) {
+            context = new HashMap<String, Object>();
+        }
+        context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+        context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+
+        log.trace("Script {} to be executed with parameters {}", compiledScript.getClass(), context);
+
+        compiledScript.init(context);
+        compiledScript.execute(context);
+        compiledScript.finalize(context);
+
+        log.trace("Script {} executed with parameters {}", compiledScript.getClass(), context);
+        return context;
+    }
+
     /**
      * Execute a class that extends Script
      * 
@@ -732,7 +716,11 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
+        log.trace("Script {} to be executed with parameters {}", compiledScript.getClass(), context);
+
         compiledScript.execute(context);
+
+        log.trace("Script {} executed with parameters {}", compiledScript.getClass(), context);
 
         return context;
     }
@@ -770,6 +758,5 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     public void clearCompiledScripts(String scriptCode) {
         cachedScriptInstances.remove(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
         allScriptInterfaces.remove(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
-        allLogs.remove(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
     }
 }
