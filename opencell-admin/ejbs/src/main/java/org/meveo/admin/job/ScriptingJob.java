@@ -22,10 +22,13 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.job.Job;
-
+import org.meveo.service.script.Script;
 
 /**
  * The Class ScriptingJob execute the given script.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class ScriptingJob extends Job {
@@ -47,6 +50,7 @@ public class ScriptingJob extends Job {
             if (context == null) {
                 context = new HashMap<String, Object>();
             }
+            context.put(Script.CONTEXT_ENTITY, jobInstance);
             scriptingJobBean.init(result, scriptCode, context);
             scriptingJobBean.execute(result, scriptCode, context);
             scriptingJobBean.finalize(result, scriptCode, context);
@@ -57,10 +61,12 @@ public class ScriptingJob extends Job {
         }
     }
 
+
     @Override
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.MEDIATION;
     }
+
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
