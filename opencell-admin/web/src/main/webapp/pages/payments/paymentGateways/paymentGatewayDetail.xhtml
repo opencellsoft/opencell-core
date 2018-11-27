@@ -40,7 +40,7 @@
 				<p:tab  title="#{messages['commons.tab.information']}" >
 					<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
 					<hftl:formField label="#{messages['businessEntity.description']}" field="description" />	
-					<hftl:formField label="#{messages['businessEntity.description']}" field="type" listenerUpdate="impl_class_script" />		
+					<hftl:formField label="#{messages['paymentGateway.type']}" field="type" listenerUpdate="impl_class_script" />		
 					<h:panelGroup id="impl_class_script">
 						<hftl:formField  label="#{messages['paymentGateway.scriptInstance']}" field="scriptInstance" id="scriptSelectId" valueLabelField="code" popup="true" popupId="scriptInstancePopup"  required="true"
 						rendered="#{paymentGatewayBean.entity.type!=PaymentGatewayTypeEnum.NATIF}" />	
