@@ -35,6 +35,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
+		if (postData.getStartDate() != null && postData.getEndDate() == null && postData.getDefaultDuration() == null) {
+			missingParameters.add("defaultDuration");
+		}
         handleMissingParametersAndValidate(postData);
         if (discountPlanService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(DiscountPlan.class, postData.getCode());
@@ -49,7 +52,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 		discountPlan.setStartDate(postData.getStartDate());
 		discountPlan.setEndDate(postData.getEndDate());
 		discountPlan.setDefaultDuration(postData.getDefaultDuration());
-		discountPlan.setDurationUnit(postData.getDurationUnit());
+		if (postData.getDurationUnit() != null) {
+			discountPlan.setDurationUnit(postData.getDurationUnit());
+		}
 		
 		// populate customFields
         try {
@@ -72,6 +77,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
+        if (postData.getStartDate() != null && postData.getEndDate() == null && postData.getDefaultDuration() == null) {
+			missingParameters.add("defaultDuration");
+		}
         handleMissingParametersAndValidate(postData);
 
         DiscountPlan discountPlan = discountPlanService.findByCode(postData.getCode());

@@ -40,7 +40,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	private Integer defaultDuration;
 	
 	/** Unit of duration */
-	private DurationPeriodUnitEnum durationUnit;
+	private DurationPeriodUnitEnum durationUnit = DurationPeriodUnitEnum.DAY;
 	
 	/** The custom fields. */
     @XmlElement(required = false)

@@ -263,8 +263,6 @@
 		                                    	<hftl:column label="#{messages['discountPlan']}" field="discountPlan.code" />
 		                                    	<hftl:column label="#{messages['discountPlanItem.startDate']}" field="startDate" isDate="true" />
 		                                    	<hftl:column label="#{messages['discountPlanItem.endDate']}" field="endDate" isDate="true" />
-		                                    	<hftl:column label="#{messages['discountPlanItem.defaultDuration']}" field="defaultDuration" />
-		                                    	<hftl:column label="#{messages['discountPlanItem.durationUnit']}" field="durationUnit" />
 		                                    	<p:column style="width: 5%">
 		                                    		<p:commandButton icon="ui-icon-trash" update=":#{p:component('discountPanel')}" action="#{billingAccountBean.deleteDiscountPlanInstance(entity)}"></p:commandButton>
 		                                    	</p:column>
