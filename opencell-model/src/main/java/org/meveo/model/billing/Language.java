@@ -28,9 +28,12 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IReferenceEntity;
 
 /**
- * Language
+ * Language entity
+ * @author Khalid HORRI
+ * @lastModifiedVersion 5.3
  */
 @Entity
 @Cacheable
@@ -99,5 +102,9 @@ public class Language extends AuditableEntity {
     @Override
     public String toString() {
         return languageCode;
+    }
+
+    public String getDescription() {
+        return descriptionEn;
     }
 }
