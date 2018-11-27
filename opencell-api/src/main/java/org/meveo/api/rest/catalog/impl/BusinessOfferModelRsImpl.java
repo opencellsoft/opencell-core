@@ -4,6 +4,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
@@ -18,6 +19,8 @@ import org.meveo.api.rest.catalog.BusinessOfferModelRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.catalog.BusinessOfferModel;
 
+import java.util.Optional;
+
 /**
  * @author Edward P. Legaspi(edward.legaspi@manaty.net)
  **/
@@ -27,6 +30,9 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
 
     @Inject
     private MeveoModuleApi moduleApi;
+
+    @Inject
+    private OfferTemplateApi offerTemplateApi;
 
     @Override
     public ActionStatus create(BusinessOfferModelDto postData) {
@@ -91,7 +97,15 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.createOrUpdate(postData);
+            if (postData != null) {
+                if (postData.getOfferTemplate() != null) {
+                    if (offerTemplateApi.find(postData.getOfferTemplate().getCode(), null, null) != null) {
+                        moduleApi.createOrUpdate(postData);
+                    }
+                }
+            }
+
+
         } catch (Exception e) {
             processException(e, result);
         }
