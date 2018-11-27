@@ -457,7 +457,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			discountPlanInstance.setBillingAccount(entity);
 			discountPlanInstance.setDiscountPlan(dp);
 			discountPlanInstance.copyEffectivityDates(dp);
-			discountPlanInstanceService.create(discountPlanInstance);
+			discountPlanInstanceService.create(discountPlanInstance, dp);
 			entity.getDiscountPlanInstances().add(discountPlanInstance);
 			
 		} else {
@@ -474,7 +474,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			if (found && dpiMatched != null) {
 				// update effectivity dates
 				dpiMatched.copyEffectivityDates(dp);
-				discountPlanInstanceService.update(dpiMatched);
+				discountPlanInstanceService.update(dpiMatched, dp);
 				
 			} else {
 				// add
@@ -482,7 +482,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 				discountPlanInstance.setBillingAccount(entity);
 				discountPlanInstance.setDiscountPlan(dp);
 				discountPlanInstance.copyEffectivityDates(dp);
-				discountPlanInstanceService.create(discountPlanInstance);
+				discountPlanInstanceService.create(discountPlanInstance, dp);
 				if (toAdd != null) {
 					toAdd.add(discountPlanInstance);
 				} else {

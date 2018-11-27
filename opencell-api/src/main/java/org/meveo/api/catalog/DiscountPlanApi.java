@@ -84,16 +84,12 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 		if (postData.getStartDate() != null) {
 			discountPlan.setStartDate(postData.getStartDate());
 		} else {
-			if (StringUtils.isBlank(postData.getStartDate())) {
-				discountPlan.setStartDate(null);
-			}
+			discountPlan.setStartDate(null);
 		}
 		if (postData.getEndDate() != null) {
 			discountPlan.setEndDate(postData.getEndDate());
 		} else {
-			if (StringUtils.isBlank(postData.getEndDate())) {
-				discountPlan.setEndDate(null);
-			}
+			discountPlan.setEndDate(null);
 		}
 		if (postData.getDefaultDuration() != null) {
 			discountPlan.setDefaultDuration(postData.getDefaultDuration());

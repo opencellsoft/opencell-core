@@ -1,12 +1,9 @@
 package org.meveo.model.catalog;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -18,7 +15,6 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 
 /**
  * Instance of {@link DiscountPlan}. It basically just contains the effectivity
@@ -58,22 +54,6 @@ public class DiscountPlanInstance extends BaseEntity {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "end_date")
 	private Date endDate;
-	
-	/**
-	 * 
-	 * Length of effectivity. If start date is not null and end date is null, we use
-	 * the defaultDuration from the discount plan. If start date is null, and
-	 * defaultDuration is not null, defaultDuration is ignored.
-	 */
-	@Column(name = "default_duration")
-	private Integer defaultDuration;
-
-	/**
-	 * Unit of duration
-	 */
-	@Enumerated(EnumType.STRING)
-	@Column(name = "duration_unit", length = 50)
-	private DurationPeriodUnitEnum durationUnit = DurationPeriodUnitEnum.DAY;
 
 	public boolean isValid() {
 		return (startDate == null || endDate == null || startDate.before(endDate));
@@ -93,26 +73,12 @@ public class DiscountPlanInstance extends BaseEntity {
 			return true;
 		}
 
-		Date computedEndDate = endDate;
-		if (endDate == null && defaultDuration != null && durationUnit != null) {
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(startDate);
-			cal.add(durationUnit.calendarField, defaultDuration);
-			computedEndDate = cal.getTime();
-		}
-
-		if (computedEndDate == null && date.compareTo(startDate) > 0) {
-			return true;
-		}
-
-		return (date.compareTo(startDate) >= 0) && (date.before(computedEndDate));
+		return (date.compareTo(startDate) >= 0) && (date.before(endDate));
 	}
 	
 	public void copyEffectivityDates(DiscountPlan dp) {
 		setStartDate(dp.getStartDate());
 		setEndDate(dp.getEndDate());
-		setDurationUnit(dp.getDurationUnit());
-		setDefaultDuration(dp.getDefaultDuration());
 	}
 
 	public DiscountPlan getDiscountPlan() {
@@ -145,22 +111,6 @@ public class DiscountPlanInstance extends BaseEntity {
 
 	public void setBillingAccount(BillingAccount billingAccount) {
 		this.billingAccount = billingAccount;
-	}
-
-	public Integer getDefaultDuration() {
-		return defaultDuration;
-	}
-
-	public void setDefaultDuration(Integer defaultDuration) {
-		this.defaultDuration = defaultDuration;
-	}
-
-	public DurationPeriodUnitEnum getDurationUnit() {
-		return durationUnit;
-	}
-
-	public void setDurationUnit(DurationPeriodUnitEnum durationUnit) {
-		this.durationUnit = durationUnit;
 	}
 
 	@Override

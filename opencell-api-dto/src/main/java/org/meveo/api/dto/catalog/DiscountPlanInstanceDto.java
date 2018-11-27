@@ -3,7 +3,6 @@ package org.meveo.api.dto.catalog;
 import java.util.Date;
 
 import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanInstance;
 
 /**
@@ -35,19 +34,6 @@ public class DiscountPlanInstanceDto extends BaseEntityDto {
 	private Date endDate;
 
 	/**
-	 * 
-	 * Length of effectivity. If start date is not null and end date is null, we use
-	 * the defaultDuration from the discount plan. If start date is null, and
-	 * defaultDuration is not null, defaultDuration is ignored.
-	 */
-	private Integer defaultDuration;
-
-	/**
-	 * Unit of duration
-	 */
-	private DurationPeriodUnitEnum durationUnit = DurationPeriodUnitEnum.DAY;
-
-	/**
 	 * Default constructor.
 	 */
 	public DiscountPlanInstanceDto() {
@@ -63,8 +49,6 @@ public class DiscountPlanInstanceDto extends BaseEntityDto {
 		billingAccount = e.getBillingAccount().getCode();
 		startDate = e.getStartDate();
 		endDate = e.getEndDate();
-		defaultDuration = e.getDefaultDuration();
-		durationUnit = e.getDurationUnit();
 	}
 
 	/**
@@ -129,38 +113,6 @@ public class DiscountPlanInstanceDto extends BaseEntityDto {
 	 */
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
-	}
-
-	/**
-	 * Gets the default duration. Use in combination with durationUnit.
-	 * @return how long this discount is active
-	 */
-	public Integer getDefaultDuration() {
-		return defaultDuration;
-	}
-
-	/**
-	 * Sets the default duration. Use in combination with durationUnit.
-	 * @param defaultDuration how long this discount is active
-	 */
-	public void setDefaultDuration(Integer defaultDuration) {
-		this.defaultDuration = defaultDuration;
-	}
-
-	/**
-	 * Gets the period of duration.
-	 * @return unit of duration
-	 */
-	public DurationPeriodUnitEnum getDurationUnit() {
-		return durationUnit;
-	}
-
-	/**
-	 * Sets the period of duration.
-	 * @param durationUnit unit
-	 */
-	public void setDurationUnit(DurationPeriodUnitEnum durationUnit) {
-		this.durationUnit = durationUnit;
 	}
 
 }
