@@ -1,15 +1,8 @@
 package org.meveo.service.crm.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -29,11 +22,7 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEntity;
-import org.meveo.model.ReferenceIdentifierCode;
+import org.meveo.model.*;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
@@ -115,7 +104,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Find a list of entities of a given class and matching given code. In case classname points to CustomEntityTemplate, find CustomEntityInstances of a CustomEntityTemplate code
-     *
+     * <p>In case the ReferenceIdentifierCode annotation does not exists in the entity, It's possible to use ReferenceIdentifierQuery annotation with the entity to define the query used to retrieve the list of entities </p>
      * @param classNameAndCode Classname to match. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;:"
      * @param wildcode Filter by entity code
      * @return A list of entities
@@ -140,10 +129,20 @@ public class CustomFieldInstanceService extends BaseService {
 
         } else {
             ReferenceIdentifierCode referenceIdentifier = clazz.getAnnotation(ReferenceIdentifierCode.class);
-            String field = referenceIdentifier.value();
-            query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(e." + field + ") like :code");
+            if (referenceIdentifier != null) {
+                String field = referenceIdentifier.value();
+                query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(cast(e." + field + " as string) ) like :code");
+            }
+
+            ReferenceIdentifierQuery referenceIdentifierQuery = clazz.getAnnotation(ReferenceIdentifierQuery.class);
+            if (referenceIdentifierQuery != null) {
+                query = getEntityManager().createNamedQuery(referenceIdentifierQuery.value());
+            }
         }
 
+        if (query == null) {
+            return Collections.EMPTY_LIST;
+        }
         query.setParameter("code", "%" + wildcode.toLowerCase() + "%");
         List<BusinessEntity> entities = query.getResultList();
         return entities;

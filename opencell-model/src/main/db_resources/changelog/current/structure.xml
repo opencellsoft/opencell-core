@@ -313,7 +313,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="#3705_20181019 - Create discount plan bridge table" author="EdwardPLegaspi" dbms="postgresql">
+    <changeSet id="#3705_20181019 - Create discount plan bridge table" author="EdwardPLegaspi">
         <dropUniqueConstraint tableName="cat_discount_plan_item" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn" />
         <addUniqueConstraint columnNames="discount_plan_id, code" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_discount_plan_item" />
 
@@ -459,12 +459,52 @@
     </changeSet>
     
     <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
-    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value"/>
+	    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
     	<dropColumn tableName="cat_discount_plan_item">
     		<column name="discount_amount"></column>
     	</dropColumn>
-    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el"/>
-    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el_sp" newColumnName="discount_value_el_sp"/>    	
+	    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el" columnDataType="varchar(2000)"/>
+	    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el_sp" newColumnName="discount_value_el_sp" columnDataType="varchar(2000)"/>    	
+    </changeSet>
+
+
+    <changeSet id="#3823_20181125 - the invoice(s) that was paid when the payment are rejected" author="anasseh">
+    		<addColumn tableName="ar_account_operation">
+            <column name="rejected_payment_id" type="bigint" />
+        </addColumn>
+         <addForeignKeyConstraint constraintName="fk_ao_rejected_payment_id" referencedTableName="ar_account_operation" baseColumnNames="rejected_payment_id" baseTableName="ar_account_operation" referencedColumnNames="id"/>
+    </changeSet>
+	<changeSet author="hznibar" id="#3699_20181109_2" dbms="mysql">
+        <createTable tableName="cat_calendar_holiday_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_calendar_holiday_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}cat_calendar_holiday_seq values(1)</sql>
+    </changeSet>
+    <changeSet author="hznibar" id="#3699_20181109">
+    	<createSequence sequenceName="cat_calendar_holiday_seq" />
+        <createTable tableName="cat_calendar_holiday">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_calendar_holiday_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="holiday_begin" type="int4">
+                <constraints nullable="false" />
+            </column>
+            <column name="holiday_end" type="int4">
+                <constraints nullable="false" />
+            </column>
+            <column name="calendar_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addColumn tableName="cat_calendar">
+        	<column name="start_date" type="date" />
+            <column name="end_date" type="date" />     
+            <column name="weekend_begin" type="int4" />
+            <column name="weekend_end" type="int4" />
+        </addColumn>
     </changeSet>
     
     

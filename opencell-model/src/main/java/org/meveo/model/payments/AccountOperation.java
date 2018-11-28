@@ -57,6 +57,8 @@ import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
+
+
 /**
  * Account operation
  *
@@ -345,6 +347,12 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @ManyToOne(optional = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "ddrequest_item_id")
     private DDRequestItem ddRequestItem;
+
+   
+    @ManyToOne(optional = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "rejected_payment_id")
+    private RejectedPayment rejectedPayment;
+    
 
     public Date getDueDate() {
         return dueDate;
@@ -774,4 +782,17 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
         this.ddRequestItem = ddRequestItem;
     }
 
+    /**
+     * @return the rejectedPayment
+     */
+    public RejectedPayment getRejectedPayment() {
+        return rejectedPayment;
+    }
+
+    /**
+     * @param rejectedPayment the rejectedPayment to set
+     */
+    public void setRejectedPayment(RejectedPayment rejectedPayment) {
+        this.rejectedPayment = rejectedPayment;
+    }
 }

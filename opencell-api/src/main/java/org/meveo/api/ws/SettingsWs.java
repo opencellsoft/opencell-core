@@ -34,6 +34,7 @@ import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.communication.MeveoInstanceDto;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelDto;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelsDto;
+import org.meveo.api.dto.response.BankingDateStatusResponse;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
@@ -391,6 +392,9 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     GetCalendarResponse findCalendar(@WebParam(name = "calendarCode") String calendarCode);
+    
+    @WebMethod
+    BankingDateStatusResponse getBankingDateStatus(@WebParam(name = "date") Date date);
 
     @WebMethod
     ActionStatus removeCalendar(@WebParam(name = "calendarCode") String calendarCode);
