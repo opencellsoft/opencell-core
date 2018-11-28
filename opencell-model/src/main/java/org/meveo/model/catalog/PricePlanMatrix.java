@@ -194,28 +194,28 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     /**
      * Expression to calculate amount without tax
      */
-    @Column(name = "amount_without_tax_el", length = 2000)
+    @Column(name = "amount_without_tax_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String amountWithoutTaxEL;
 
     /**
      * Expression to calculate amount without tax - for Spark
      */
-    @Column(name = "amount_without_tax_el_sp", length = 2000)
+    @Column(name = "amount_without_tax_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String amountWithoutTaxELSpark;
 
     /**
      * Expression to calculate amount with tax
      */
-    @Column(name = "amount_with_tax_el", length = 2000)
+    @Column(name = "amount_with_tax_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String amountWithTaxEL;
 
     /**
      * Expression to calculate amount with tax - for Spark
      */
-    @Column(name = "amount_with_tax_el_sp", length = 2000)
+    @Column(name = "amount_with_tax_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String amountWithTaxELSpark;
 
@@ -273,25 +273,25 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
 
-    @Column(name = "wo_description_el", length = 2000)
+    @Column(name = "wo_description_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String woDescriptionEL;
 
-    @Column(name = "wo_description_el_sp", length = 2000)
+    @Column(name = "wo_description_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String woDescriptionELSpark;
 
     /**
      * Expression to calculate price with tax.
      */
-    @Column(name = "rating_el_with_tax", length = 2000)
+    @Column(name = "rating_el_with_tax", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String ratingWithTaxEL;
 
     /**
      * Expression to calculate price with tax - for Spark.
      */
-    @Column(name = "rating_el_with_tax_sp", length = 2000)
+    @Column(name = "rating_el_with_tax_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String ratingWithTaxELSpark;
 
@@ -305,27 +305,27 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     /**
      * Expression to calculate price without tax - for Spark.
      */
-    @Column(name = "rating_el_without_tax_sp", length = 2000)
+    @Column(name = "rating_el_without_tax_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String ratingWithoutTaxELSpark;
 
-    @Column(name = "minimum_amount_without_tax_el", length = 2000)
+    @Column(name = "minimum_amount_without_tax_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String minimumAmountWithoutTaxEl;
 
-    @Column(name = "minimum_amount_without_tax_el_sp", length = 2000)
+    @Column(name = "minimum_amount_without_tax_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String minimumAmountWithoutTaxELSpark;
 
-    @Column(name = "minimum_amount_with_tax_el", length = 2000)
+    @Column(name = "minimum_amount_with_tax_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String minimumAmountWithTaxEl;
 
-    @Column(name = "minimum_amount_with_tax_el_sp", length = 2000)
+    @Column(name = "minimum_amount_with_tax_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String minimumAmountWithTaxELSpark;
 
-    @Column(name = "invoice_subcategory_el", length = 2000)
+    @Column(name = "invoice_subcategory_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String invoiceSubCategoryEL;
 

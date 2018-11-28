@@ -59,7 +59,7 @@ public class AuditLog extends BaseEntity {
     /**
      * Action parameters
      */
-    @Column(name = "parameters", length = 2000, columnDefinition = "TEXT")
+    @Column(name = "parameters", columnDefinition = "TEXT")
     private String parameters;
 
     public Date getCreated() {

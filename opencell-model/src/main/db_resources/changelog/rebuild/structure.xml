@@ -223,6 +223,42 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}adm_permission_seq values(18)</sql>
+        <createTable tableName="crm_address_book_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_address_book_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}crm_address_book_seq values(1)</sql>
+        <createTable tableName="crm_customer_sequence_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_customer_sequence_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}crm_customer_sequence_seq values(1)</sql>
+        <createTable tableName="crm_additional_details_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_additional_details_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}crm_additional_details_seq values(1)</sql>
+        <createTable tableName="com_communication_entity_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_communication_entity_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}com_communication_entity_seq values(1)</sql>
+        <createTable tableName="ftp_transferred_file_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ftp_transferred_file_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}ftp_transferred_file_seq values(1)</sql>
+        <createTable tableName="bill_seq_invoice_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="bill_seq_invoice_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}bill_seq_invoice_seq values(1)</sql>
         <createTable tableName="adm_role_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_role_seq_pk" />
@@ -1222,7 +1258,7 @@
             <column name="inboundrequest_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="headers" type="text" />
+            <column name="headers" type="varchar(255)" />
             <column name="headers_key" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
@@ -1636,7 +1672,7 @@
             <column name="transaction_category" type="varchar(255)" />
             <column name="transaction_date" type="date" />
             <column name="un_matching_amount" type="numeric(23, 12)" />
-            <column name="bank_lot" type="${type.longText}" />
+            <column name="bank_lot" type="${type.text}" />
             <column name="bank_reference" type="varchar(255)" />
             <column name="rejected_code" type="varchar(255)" />
             <column name="rejected_date" type="datetime" />
@@ -1799,7 +1835,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="updated" type="datetime" />
-            <column name="file_name" type="${type.longText}" />
+            <column name="file_name" type="${type.text}" />
             <column name="invoice_amount" type="numeric(23, 12)" />
             <column name="invoice_number" type="int4" />
             <column name="is_payment_created" type="${type.boolean}" defaultValueNumeric="0">
@@ -3460,10 +3496,10 @@
             <column name="trading_country_id" type="bigint" />
             <column name="trading_currency_id" type="bigint" />
             <column name="valid_cal_id" type="bigint" />
-            <column name="amount_without_tax_el" type="varchar(2000)">
+            <column name="amount_without_tax_el" type="${type.text}">
                 <constraints nullable="true" />
             </column>
-            <column name="amount_with_tax_el" type="varchar(2000)">
+            <column name="amount_with_tax_el" type="${type.text}">
                 <constraints nullable="true" />
             </column>
             <column name="sequence" type="bigint" />
@@ -3473,16 +3509,16 @@
             <column name="script_instance_id" type="bigint" />
             <column name="cf_values" type="${type.json}" />
             <column name="description_i18n" type="${type.json}" />
-            <column name="wo_description_el" type="varchar(2000)" />
+            <column name="wo_description_el" type="${type.text}" />
             <column name="rating_el_without_tax" type="varchar(2000)" />
-            <column name="rating_el_with_tax" type="varchar(2000)" />
-            <column name="minimum_amount_without_tax_el" type="varchar(2000)">
+            <column name="rating_el_with_tax" type="${type.text}" />
+            <column name="minimum_amount_without_tax_el" type="${type.text}">
                 <constraints nullable="true" />
             </column>
-            <column name="minimum_amount_with_tax_el" type="varchar(2000)">
+            <column name="minimum_amount_with_tax_el" type="${type.text}">
                 <constraints nullable="true" />
             </column>
-            <column name="invoice_subcategory_el" type="varchar(2000)" />
+            <column name="invoice_subcategory_el" type="${type.text}" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-218">
@@ -3670,12 +3706,12 @@
             </column>
             <column name="description" type="varchar(255)" />
             <column name="condition_el" type="varchar(2000)" />
-            <column name="param_1_el" type="varchar(2000)" />
-            <column name="param_2_el" type="varchar(2000)" />
-            <column name="param_3_el" type="varchar(2000)" />
-            <column name="param_4_el" type="varchar(2000)" />
-            <column name="quantity_el" type="varchar(2000)" />
-            <column name="subscription_el" type="varchar(2000)" />
+            <column name="param_1_el" type="${type.text}" />
+            <column name="param_2_el" type="${type.text}" />
+            <column name="param_3_el" type="${type.text}" />
+            <column name="param_4_el" type="${type.text}" />
+            <column name="quantity_el" type="${type.text}" />
+            <column name="subscription_el" type="${type.text}" />
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -4489,7 +4525,7 @@
             </column>
             <column name="last_measure_date" type="datetime" />
             <column name="measurement_period" type="varchar(255)" />
-            <column name="sql_query" type="${type.longText}" />
+            <column name="sql_query" type="${type.text}" />
             <column name="theme" type="varchar(255)" />
 
             <column name="creator" type="varchar(100)" />
@@ -4630,7 +4666,7 @@
             <column name="parameter_3" type="varchar(255)" />
             <column name="parameter_4" type="varchar(255)" />
             <column name="quantity" type="numeric(23, 12)" />
-            <column name="reject_reason" type="${type.longText}" />
+            <column name="reject_reason" type="${type.text}" />
             <column name="status" type="varchar(255)" />
             <column name="subscription_id" type="bigint">
                 <constraints nullable="false" />
@@ -6248,7 +6284,7 @@
             <column name="filename_format" type="varchar(100)">
                 <constraints nullable="false" />
             </column>
-            <column name="sql_query" type="${type.longText}" />
+            <column name="sql_query" type="${type.text}" />
             <column name="script_instance_id" type="bigint" />
             <column name="result_type" type="varchar(10)" />
             <column name="style" type="text"></column>
@@ -8676,7 +8712,6 @@
         <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_batch, origin_record)</sql>
         <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
         <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
-        <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(UPPER(code))</sql>
         <sql>CREATE INDEX rating_edr_status ON ${db.schema.adapted}rating_edr(status)</sql>
         <sql>CREATE INDEX billing_wallet_operation_status ON ${db.schema.adapted}billing_wallet_operation(status)</sql>
         <sql>CREATE INDEX billing_invoice_agregate_category_inv_agg ON ${db.schema.adapted}billing_invoice_agregate(category_invoice_agregate)</sql>
@@ -8697,6 +8732,7 @@
         <sql>CREATE INDEX billing_subscription_code_index ON ${db.schema.adapted} billing_subscription(lower(code));</sql>
         <sql>CREATE INDEX billing_service_instance_code_index ON ${db.schema.adapted} billing_service_instance(lower(code));</sql>
         <sql>CREATE INDEX billing_charge_instance_code_index ON ${db.schema.adapted} billing_charge_instance(lower(code));</sql>
+        <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(UPPER(code))</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-998" dbms="mysql">
@@ -8712,6 +8748,7 @@
         <sql>CREATE INDEX billing_subscription_code_index ON ${db.schema.adapted} billing_subscription(code);</sql>
         <sql>CREATE INDEX billing_service_instance_code_index ON ${db.schema.adapted} billing_service_instance(code);</sql>
         <sql>CREATE INDEX billing_charge_instance_code_index ON ${db.schema.adapted} billing_charge_instance(code);</sql>
+        <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(code)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-func-999" dbms="postgresql">
