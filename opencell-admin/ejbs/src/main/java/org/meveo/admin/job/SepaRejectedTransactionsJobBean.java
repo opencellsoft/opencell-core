@@ -18,6 +18,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.payments.impl.DDRequestBuilderInterface;
 import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.slf4j.Logger;
@@ -64,7 +65,7 @@ public class SepaRejectedTransactionsJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance, File file, DDRequestBuilderInterface ddRequestBuilderInterface, String inputDir)
             throws BusinessException {
         File currentFile = null;
-        try {           
+        try {
             outputDir = inputDir + File.separator + "output";
             rejectDir = inputDir + File.separator + "reject";
             archiveDir = inputDir + File.separator + "archive";
@@ -88,8 +89,16 @@ public class SepaRejectedTransactionsJobBean {
             }
             fileName = file.getName();
             log.info(file.getName() + " in progress");
-            currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());            
-            DDRejectFileInfos ddRejectFileInfos = ddRequestBuilderInterface.processDDRejectedFile(currentFile);
+            currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
+            OperationCategoryEnum operationCategory = OperationCategoryEnum.CREDIT;
+            operationCategory = OperationCategoryEnum.valueOf(((String) jobInstance.getCfValue("RejectSepaJob_creditOrDebit")).toUpperCase());
+            DDRejectFileInfos ddRejectFileInfos = null;
+            if (operationCategory == OperationCategoryEnum.CREDIT) {
+                ddRejectFileInfos = ddRequestBuilderInterface.processSDDRejectedFile(currentFile);
+            } else {
+                ddRejectFileInfos = ddRequestBuilderInterface.processSCTRejectedFile(currentFile);
+            }
+
             ddRequestLotService.processRejectFile(ddRejectFileInfos);
 
             FileUtils.moveFile(archiveDir, currentFile, fileName);

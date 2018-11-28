@@ -28,6 +28,7 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.model.wf.WFAction;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.DDRequestLotOpService;
@@ -54,6 +55,15 @@ public class DdRequestLotOpBean extends BaseBean<DDRequestLotOp> {
 	public DdRequestLotOpBean() {
 		super(DDRequestLotOp.class);
 	}
+	
+	@Override
+    public DDRequestLotOp initEntity() {
+        super.initEntity();
+        if (entity.isTransient()) {
+            entity.setPaymentOrRefundEnum(PaymentOrRefundEnum.PAYMENT); 
+        }
+        return entity;
+    }
 
 	@Override
     @ActionMethod

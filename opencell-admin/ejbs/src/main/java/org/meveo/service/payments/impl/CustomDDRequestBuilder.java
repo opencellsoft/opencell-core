@@ -17,82 +17,66 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
- *  @author anasseh
- *  @author Said Ramli
- *  @lastModifiedVersion 5.2
+ * The Class CustomDDRequestBuilder.
+ *
+ * @author anasseh
+ * @author Said Ramli
+ * @lastModifiedVersion 5.3
  */
 
 public class CustomDDRequestBuilder extends AbstractDDRequestBuilder {
 
+    /** The log. */
     protected Logger log = LoggerFactory.getLogger(CustomDDRequestBuilder.class);
+
+    /** The dd request builder script interface. */
     private DDRequestBuilderScriptInterface ddRequestBuilderScriptInterface;
 
+    /**
+     * Instantiates a new custom DD request builder.
+     *
+     * @param ddRequestBuilderScriptInterface the dd request builder script interface
+     */
     public CustomDDRequestBuilder(DDRequestBuilderScriptInterface ddRequestBuilderScriptInterface) {
         this.ddRequestBuilderScriptInterface = ddRequestBuilderScriptInterface;
     }
 
-  
     @Override
-    public void generateDDRequestLotFile(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException {
+    public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
-        scriptContext.put(DDRequestBuilderScript.DD_REQUEST_LOT, ddRequestLot);    
-        scriptContext.put(DDRequestBuilderScript.PROVIDER, appProvider);    
-        ddRequestBuilderScriptInterface.generateDDRequestLotFile(scriptContext);        
+        scriptContext.put(DDRequestBuilderScript.DD_REQUEST_LOT, ddRequestLot);
+        scriptContext.put(DDRequestBuilderScript.PROVIDER, appProvider);
+        ddRequestBuilderScriptInterface.generateDDRequestLotFile(scriptContext);
     }
 
-  
     @Override
-    public String getDDFileName(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException {
+    public String getDDFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
-        scriptContext.put(DDRequestBuilderScript.DD_REQUEST_LOT, ddRequestLot);  
-        scriptContext.put(DDRequestBuilderScript.PROVIDER, appProvider); 
+        scriptContext.put(DDRequestBuilderScript.DD_REQUEST_LOT, ddRequestLot);
+        scriptContext.put(DDRequestBuilderScript.PROVIDER, appProvider);
         return ddRequestBuilderScriptInterface.getDDFileName(scriptContext);
-        
-    }
-    
-    @Override
-    public void generateSCTRequestLotFile(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException {
-        Map<String, Object> scriptContext = new HashMap<String, Object>();
-        scriptContext.put(DDRequestBuilderScript.DD_REQUEST_LOT, ddRequestLot);    
-        scriptContext.put(DDRequestBuilderScript.PROVIDER, appProvider);    
-        ddRequestBuilderScriptInterface.generateSCTRequestLotFile(scriptContext);        
+
     }
 
-  
-    @Override
-    public String getSCTFileName(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException {
-        Map<String, Object> scriptContext = new HashMap<String, Object>();
-        scriptContext.put(DDRequestBuilderScript.DD_REQUEST_LOT, ddRequestLot);  
-        scriptContext.put(DDRequestBuilderScript.PROVIDER, appProvider); 
-        return ddRequestBuilderScriptInterface.getSCTFileName(scriptContext);
-        
-    }
-
-    @Override
-    public String getDDRejectFilePrefix() throws BusinessException {
-        Map<String, Object> scriptContext = new HashMap<String, Object>();        
-        return ddRequestBuilderScriptInterface.getDDRejectFilePrefix(scriptContext);         
-    }
-
-    @Override
-    public String getDDRejectFileExtension() throws BusinessException {
-        Map<String, Object> scriptContext = new HashMap<String, Object>();        
-        return ddRequestBuilderScriptInterface.getDDRejectFileExtension(scriptContext);        
-    }
-
-    @Override
-    public DDRejectFileInfos processDDRejectedFile(File file) throws BusinessException {
-        Map<String, Object> scriptContext = new HashMap<String, Object>();
-        scriptContext.put(DDRequestBuilderScript.DD_REJECT_FILE, file);  
-        return ddRequestBuilderScriptInterface.processDDRejectedFile(scriptContext);  
-    }
-    
     @Override
     public List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(DDRequestBuilderScript.DD_REQUEST_LIST_AO, super.findListAoToPay(ddrequestLotOp));
         return ddRequestBuilderScriptInterface.findListAoToPay(scriptContext);
+    }
+
+    @Override
+    public DDRejectFileInfos processSCTRejectedFile(File file) throws BusinessException {
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(DDRequestBuilderScript.DD_REJECT_FILE, file);
+        return ddRequestBuilderScriptInterface.processSCTRejectedFile(scriptContext);
+    }
+
+    @Override
+    public DDRejectFileInfos processSDDRejectedFile(File file) throws BusinessException {
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(DDRequestBuilderScript.DD_REJECT_FILE, file);
+        return ddRequestBuilderScriptInterface.processSDDRejectedFile(scriptContext);
     }
 
 }

@@ -26,6 +26,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -86,6 +88,10 @@ public class DDRequestLOT extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ddrequest_builder_id")
     private DDRequestBuilder ddRequestBuilder;
+    
+    @Column(name = "payment_or_refund")
+    @Enumerated(EnumType.STRING)
+    private PaymentOrRefundEnum paymentOrRefundEnum;
 
 
     public String getFileName() {
@@ -182,5 +188,15 @@ public class DDRequestLOT extends AuditableEntity {
         this.ddRequestBuilder = ddRequestBuilder;
     }
 
-      
+	public PaymentOrRefundEnum getPaymentOrRefundEnum() {
+		return paymentOrRefundEnum;
+	}
+
+	public void setPaymentOrRefundEnum(PaymentOrRefundEnum paymentOrRefundEnum) {
+		this.paymentOrRefundEnum = paymentOrRefundEnum;
+	}
+
+  
+    
+ 
 }

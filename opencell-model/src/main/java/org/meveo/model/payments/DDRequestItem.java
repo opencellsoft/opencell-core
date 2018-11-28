@@ -105,6 +105,10 @@ public class DDRequestItem extends AuditableEntity {
     @OneToOne(optional = true)
     @JoinColumn(name = "payment_id")
     private AutomatedPayment automatedPayment;
+    
+    @OneToOne(optional = true)
+    @JoinColumn(name = "refund_id")
+    private Refund refund;
 
     public DDRequestItem() {
 
@@ -243,6 +247,22 @@ public class DDRequestItem extends AuditableEntity {
      */
     public void setAccountOperations(List<AccountOperation> accountOperations) {
         this.accountOperations = accountOperations;
+    }
+    
+    
+
+    /**
+     * @return the refund
+     */
+    public Refund getRefund() {
+        return refund;
+    }
+
+    /**
+     * @param refund the refund to set
+     */
+    public void setRefund(Refund refund) {
+        this.refund = refund;
     }
 
     @Transient
