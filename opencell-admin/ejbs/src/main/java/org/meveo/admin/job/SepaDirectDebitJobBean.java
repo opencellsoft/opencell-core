@@ -55,7 +55,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;;
  *
  * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class SepaDirectDebitJobBean extends BaseJobBean {
@@ -104,8 +104,6 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running for parameter={}", jobInstance.getParametres());
         try {
-            
-
             DDRequestBuilder ddRequestBuilder = null;
             String ddRequestBuilderCode = null;
             if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder") != null) {
@@ -141,7 +139,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                         this.updateOperationDateRange(ddrequestLotOp, dateRangeScript);
                     }
                     if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
-                        List<AccountOperation> listAoToPay = this.filterAoToPay( ddRequestBuilderInterface.findListAoToPay(ddrequestLotOp), jobInstance);
+                        List<AccountOperation> listAoToPay = this.filterAoToPay( ddRequestBuilderInterface.findListAoToPay(ddrequestLotOp), jobInstance,ddrequestLotOp.getOperationCategoryToProcess());
                         DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
                         if (ddRequestLOT != null) {
                             result.addReport(ddRequestLOT.getRejectedCause());
@@ -220,6 +218,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
     private void createNewDdrequestLotOp(DDRequestLotOp ddrequestLotOp) {
         try {
             DDRequestLotOp newDDRequestLotOp = new DDRequestLotOp();
+            newDDRequestLotOp.setOperationCategoryToProcess(ddrequestLotOp.getOperationCategoryToProcess());
             newDDRequestLotOp.setRecurrent(true);
             newDDRequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
             ScriptInstance dueDateRange = ddrequestLotOp.getScriptInstance();
@@ -243,9 +242,10 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
      *
      * @param listAoToPay the list ao to pay
      * @param jobInstance the job instance
-     * @return the list
+     * @param operationCategoryToProcess the operation category to process, DEBIT for payment, CREDIT for refund.
+     * @return the accountOperation list to process 
      */
-    private List<AccountOperation> filterAoToPay(List<AccountOperation> listAoToPay, JobInstance jobInstance) {
+    private List<AccountOperation> filterAoToPay(List<AccountOperation> listAoToPay, JobInstance jobInstance, OperationCategoryEnum operationCategoryToProcess) {
         AccountOperationFilterScript aoFilterScript = this.getAOScriptInstance(jobInstance);
         if (aoFilterScript != null) {
             Map<String, Object> methodContext = new HashMap<>();
@@ -255,7 +255,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
         if (CollectionUtils.isNotEmpty(listAoToPay)) {
             return listAoToPay.stream().filter( (ao) ->
                     ( ao.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT && 
-                      ao.getTransactionCategory() == OperationCategoryEnum.DEBIT  && 
+                      ao.getTransactionCategory() == operationCategoryToProcess  && 
                      (ao.getMatchingStatus() == MatchingStatusEnum.O || ao.getMatchingStatus() == MatchingStatusEnum.P)
                      ))
                 .collect(Collectors.toList());

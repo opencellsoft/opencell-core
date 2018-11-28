@@ -192,6 +192,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
             DDRequestLOT ddRequestLOT = new DDRequestLOT();
             ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
             ddRequestLOT.setSendDate(new Date());
+            ddRequestLOT.setOperationCategoryToProcess(ddrequestLotOp.getOperationCategoryToProcess());
             create(ddRequestLOT);
             int nbItemsKo = 0;
             int nbItemsOk = 0;

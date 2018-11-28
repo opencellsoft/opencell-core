@@ -15,7 +15,8 @@ import org.meveo.service.filter.FilterService;
 /**
  *  An abstract class to centralize some common methods such as getting the list of AOs to pay.
  *  @author Said Ramli
- *  @lastModifiedVersion 5.2
+ *  @author anasseh
+ *  @lastModifiedVersion 5.3
  */
 public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterface {
     
@@ -45,7 +46,7 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
             if (fromDueDate.after(toDueDate)) {
                 throw new BusinessEntityException("fromDueDate is after toDueDate");
             }
-            listAoToPay = accountOperationService.getAOsToPay(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate);
+            listAoToPay = accountOperationService.getAOsToPayOrRefund(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate,ddrequestLotOp.getOperationCategoryToProcess());
         } else {
             listAoToPay = (List<AccountOperation>) filterService.filteredListAsObjects(filter);
         }

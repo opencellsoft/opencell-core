@@ -40,9 +40,9 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
- * 
+ * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
 @Entity
 @Table(name = "ar_ddrequest_lot_op")
@@ -91,6 +91,10 @@ public class DDRequestLotOp extends AuditableEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "recurrent")
     private Boolean recurrent;
+    
+    @Column(name = "op_cat_to_process")
+    @Enumerated(EnumType.STRING)
+    OperationCategoryEnum operationCategoryToProcess;
 
     /**
      * @return the fromDueDate
@@ -226,6 +230,20 @@ public class DDRequestLotOp extends AuditableEntity {
      */
     public void setRecurrent(Boolean recurrent) {
         this.recurrent = recurrent;
+    }
+
+    /**
+     * @return the operationCategoryToProcess
+     */
+    public OperationCategoryEnum getOperationCategoryToProcess() {
+        return operationCategoryToProcess;
+    }
+
+    /**
+     * @param operationCategoryToProcess the operationCategoryToProcess to set
+     */
+    public void setOperationCategoryToProcess(OperationCategoryEnum operationCategoryToProcess) {
+        this.operationCategoryToProcess = operationCategoryToProcess;
     }
 
    

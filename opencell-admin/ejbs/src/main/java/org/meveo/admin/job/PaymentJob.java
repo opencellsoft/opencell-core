@@ -113,7 +113,7 @@ public class PaymentJob extends Job {
         payentGatewayCF.setCode("PaymentJob_paymentGateway");
         payentGatewayCF.setAppliesTo(APPLIES_TO_NAME);
         payentGatewayCF.setActive(true);
-        payentGatewayCF.setDescription("Payent gateway");
+        payentGatewayCF.setDescription("Payment gateway");
         payentGatewayCF.setFieldType(CustomFieldTypeEnum.ENTITY);
         payentGatewayCF.setEntityClazz(PaymentGateway.class.getName());
         payentGatewayCF.setValueRequired(false);

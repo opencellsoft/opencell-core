@@ -11,14 +11,16 @@ import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
 
 /**
  * The Class DDRequestLotOpDto.
  *
  * @author Tyshan Shi(tyshan@manaty.net)
+ * @author anasseh
  * @since Jul 11, 2016 7:15:09 PM
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
 @XmlRootElement(name = "DDRequestLotOp")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,6 +57,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     
     /** The recurrent flag : to decide if a new dd request lot operation will be created at end , or not. */
     private Boolean recurrent;
+    
+    private OperationCategoryEnum operationCategoryToProcess;
 
     /**
      * Instantiates a new DD request lot op dto.
@@ -77,6 +81,7 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
         this.errorCause = ddrequestLotOp.getErrorCause();
         this.ddRequestBuilderCode = ddrequestLotOp.getDdRequestBuilder() != null ? ddrequestLotOp.getDdRequestBuilder().getCode() : null;
         this.filterCode = ddrequestLotOp.getFilter() != null ? ddrequestLotOp.getFilter().getCode() : null;
+        this.operationCategoryToProcess = ddrequestLotOp.getOperationCategoryToProcess();
     }
 
     /**
@@ -232,5 +237,21 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     public void setRecurrent(Boolean recurrent) {
         this.recurrent = recurrent;
     }
+
+    /**
+     * @return the operationCategoryToProcess
+     */
+    public OperationCategoryEnum getOperationCategoryToProcess() {
+        return operationCategoryToProcess;
+    }
+
+    /**
+     * @param operationCategoryToProcess the operationCategoryToProcess to set
+     */
+    public void setOperationCategoryToProcess(OperationCategoryEnum operationCategoryToProcess) {
+        this.operationCategoryToProcess = operationCategoryToProcess;
+    }
+    
+    
 
 }

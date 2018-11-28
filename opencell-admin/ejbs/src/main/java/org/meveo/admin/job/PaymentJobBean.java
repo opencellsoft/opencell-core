@@ -87,7 +87,7 @@ public class PaymentJobBean extends BaseJobBean {
                 paymentGateway =  paymentGatewayService.findByCode(((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_paymentGateway")).getCode());
             }
             try {
-                operationCategory = OperationCategoryEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "PaymentJob_creditOrDebit")).toUpperCase());
+                operationCategory = OperationCategoryEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "SepaJob_creditOrDebit")).toUpperCase());
                 paymentMethodType = PaymentMethodEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "PaymentJob_cardOrDD")).toUpperCase());
                 nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
                 waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");

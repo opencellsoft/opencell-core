@@ -26,6 +26,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -86,6 +88,10 @@ public class DDRequestLOT extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ddrequest_builder_id")
     private DDRequestBuilder ddRequestBuilder;
+    
+    @Column(name = "op_cat_to_process")
+    @Enumerated(EnumType.STRING)
+    OperationCategoryEnum operationCategoryToProcess;
 
     public String getFileName() {
         return fileName;
@@ -180,5 +186,21 @@ public class DDRequestLOT extends AuditableEntity {
     public void setDdRequestBuilder(DDRequestBuilder ddRequestBuilder) {
         this.ddRequestBuilder = ddRequestBuilder;
     }
+
+    /**
+     * @return the operationCategoryToProcess
+     */
+    public OperationCategoryEnum getOperationCategoryToProcess() {
+        return operationCategoryToProcess;
+    }
+
+    /**
+     * @param operationCategoryToProcess the operationCategoryToProcess to set
+     */
+    public void setOperationCategoryToProcess(OperationCategoryEnum operationCategoryToProcess) {
+        this.operationCategoryToProcess = operationCategoryToProcess;
+    }
+    
+    
 
 }
