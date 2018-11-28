@@ -466,5 +466,11 @@
     	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el"/>
     	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el_sp" newColumnName="discount_value_el_sp"/>    	
     </changeSet>
+    
+    
+    <changeSet id="#3607_20181125" author="AndriusKarpavicius">
+        <modifyDataType tableName="crm_custom_field_tmpl" columnName="index_type" newDataType="varchar(17)"/>
+    </changeSet>
+    
 </databaseChangeLog> 
 
