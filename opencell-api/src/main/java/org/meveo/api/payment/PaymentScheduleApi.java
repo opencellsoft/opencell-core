@@ -44,7 +44,7 @@ import org.primefaces.model.SortOrder;
  * The Class PaymentScheduleApi.
  *
  * @author anasseh
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -102,8 +102,8 @@ public class PaymentScheduleApi extends BaseApi {
             missingParameters.add("serviceTemplateCode");
         }
 
-        if (StringUtils.isBlank(paymentScheduleTemplateDto.getDueDateDays())) {
-            missingParameters.add("dueDateDays");
+        if (StringUtils.isBlank(paymentScheduleTemplateDto.getPaymentDayInMonth())) {
+            missingParameters.add("paymentDayInMonth");
         }
         if (StringUtils.isBlank(paymentScheduleTemplateDto.getAmount())) {
             missingParameters.add("amount");
@@ -160,7 +160,7 @@ public class PaymentScheduleApi extends BaseApi {
         paymentScheduleTemplate.setDescription(paymentScheduleTemplateDto.getDescription());
         paymentScheduleTemplate.setCalendar(calendar);
         paymentScheduleTemplate.setServiceTemplate(serviceTemplate);
-        paymentScheduleTemplate.setDueDateDays(paymentScheduleTemplateDto.getDueDateDays());
+        paymentScheduleTemplate.setPaymentDayInMonth(paymentScheduleTemplateDto.getPaymentDayInMonth());
         paymentScheduleTemplate.setAmount(paymentScheduleTemplateDto.getAmount());
         paymentScheduleTemplate.setPaymentLabel(paymentScheduleTemplateDto.getPaymentLabel());
         paymentScheduleTemplate.setAdvancePaymentInvoiceType(invoiceType);
@@ -168,6 +168,8 @@ public class PaymentScheduleApi extends BaseApi {
         paymentScheduleTemplate.setGenerateAdvancePaymentInvoice(paymentScheduleTemplateDto.getGenerateAdvancePaymentInvoice().booleanValue());
         paymentScheduleTemplate.setDoPayment(paymentScheduleTemplateDto.getDoPayment().booleanValue());
         paymentScheduleTemplate.setApplyAgreement(paymentScheduleTemplateDto.isApplyAgreement());
+        paymentScheduleTemplate.setAmountEl(paymentScheduleTemplateDto.getAmountEl());
+        paymentScheduleTemplate.setFilterEl(paymentScheduleTemplateDto.getFilterEl());
         // populate customFields
         try {
             populateCustomFields(paymentScheduleTemplateDto.getCustomFields(), paymentScheduleTemplate, true);
@@ -247,8 +249,8 @@ public class PaymentScheduleApi extends BaseApi {
         if (serviceTemplate != null) {
             paymentScheduleTemplate.setServiceTemplate(serviceTemplate);
         }
-        if (!StringUtils.isBlank(paymentScheduleTemplateDto.getDueDateDays())) {
-            paymentScheduleTemplate.setDueDateDays(paymentScheduleTemplateDto.getDueDateDays());
+        if (!StringUtils.isBlank(paymentScheduleTemplateDto.getPaymentDayInMonth())) {
+            paymentScheduleTemplate.setPaymentDayInMonth(paymentScheduleTemplateDto.getPaymentDayInMonth());
         }
         if (!StringUtils.isBlank(paymentScheduleTemplateDto.getAmount())) {
             paymentScheduleTemplate.setAmount(paymentScheduleTemplateDto.getAmount());
@@ -270,10 +272,16 @@ public class PaymentScheduleApi extends BaseApi {
         if (paymentScheduleTemplateDto.isApplyAgreement() != null) {
             paymentScheduleTemplate.setApplyAgreement(paymentScheduleTemplateDto.isApplyAgreement());
         }
+        if (!StringUtils.isBlank(paymentScheduleTemplateDto.getAmountEl())) {
+            paymentScheduleTemplate.setAmountEl(paymentScheduleTemplateDto.getAmountEl());
+        }
+        if (!StringUtils.isBlank(paymentScheduleTemplateDto.getFilterEl())) {
+            paymentScheduleTemplate.setFilterEl(paymentScheduleTemplateDto.getFilterEl());
+        }
 
         // populate customFields
         try {
-            populateCustomFields(paymentScheduleTemplateDto.getCustomFields(), paymentScheduleTemplate, true);
+            populateCustomFields(paymentScheduleTemplateDto.getCustomFields(), paymentScheduleTemplate, false);
         } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -416,12 +424,11 @@ public class PaymentScheduleApi extends BaseApi {
      * Update payment schedule instance.
      *
      * @param paymentScheduleInstanceDto the payment schedule instance dto
-     * @throws MissingParameterException the missing parameter exception
-     * @throws EntityDoesNotExistsException the entity does not exists exception
      * @throws BusinessException the business exception
+     * @throws MeveoApiException 
      */
     public void updatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto)
-            throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+            throws BusinessException, MeveoApiException {
         if (StringUtils.isBlank(paymentScheduleInstanceDto.getStatus())) {
             missingParameters.add("status");
         }
@@ -440,8 +447,8 @@ public class PaymentScheduleApi extends BaseApi {
         if (!StringUtils.isBlank(paymentScheduleInstanceDto.getAmount())) {
             paymentScheduleInstance.setAmount(paymentScheduleInstanceDto.getAmount());
         }
-        if (!StringUtils.isBlank(paymentScheduleInstanceDto.getDueDateDays())) {
-            paymentScheduleInstance.setDueDateDays(paymentScheduleInstanceDto.getDueDateDays());
+        if (!StringUtils.isBlank(paymentScheduleInstanceDto.getPaymentDayInMonth())) {
+            paymentScheduleInstance.setPaymentDayInMonth(paymentScheduleInstanceDto.getPaymentDayInMonth());
         }
         if (!StringUtils.isBlank(paymentScheduleInstanceDto.getCalendarCode())) {
             Calendar calendar = calendarService.findByCode(paymentScheduleInstanceDto.getCalendarCode());
@@ -450,7 +457,16 @@ public class PaymentScheduleApi extends BaseApi {
             }
             paymentScheduleInstance.setCalendar(calendar);
         }
-
+     // populate customFields
+        try {
+            populateCustomFields(paymentScheduleInstanceDto.getCustomFields(), paymentScheduleInstance, true);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
         paymentScheduleInstanceService.update(paymentScheduleInstance);
     }
 

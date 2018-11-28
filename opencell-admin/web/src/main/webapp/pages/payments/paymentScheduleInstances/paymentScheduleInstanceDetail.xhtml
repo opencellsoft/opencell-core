@@ -39,7 +39,7 @@
 					<hftl:formField label="#{messages['paymentScheduleInstance.endDate']}" field="endDate" required="true"/>
 					<hftl:formField label="#{messages['paymentScheduleTemplate.amount']}" field="amount" required="true"/>				
 					<hftl:formField label="#{messages['paymentScheduleTemplate.status']}" field="status" required="true" disabled="true"/>
-					 <hftl:formField label="#{messages['paymentScheduleTemplate.dayInMonth']}" field="dueDateDays" /> 
+					 <hftl:formField label="#{messages['paymentScheduleTemplate.dayInMonth']}" field="paymentDayInMonth" /> 
 					
 					<hftl:dataList backingBean="#{paymentScheduleInstanceItemBean}" dataModel="#{paymentScheduleInstanceItemBean.getItemsForInstance(paymentScheduleInstanceBean.entity)}" 
 	                label="#{messages['paymentScheduleInstanceItem.title']}" sortBy="dueDate" exportButton="false" checkMany="false">														
@@ -48,7 +48,8 @@
 							<hftl:column label="#{messages['paymentScheduleInstanceItem.requestPaymentDate']}" field="requestPaymentDate" isDate="true"/>
 							<hftl:column label="#{messages['paymentScheduleInstanceItem.paymentStatus']}" field="paid" isMessage="true"/>														
 			        </hftl:dataList>										
-				</p:tab>				
+				</p:tab>		
+				<hftl:customFields backingBean="#{paymentScheduleInstanceBean}" messagesId=":formPaymentScheduleInstance:messages" />		
 			</p:tabView>		
 <ui:param name="buttons" value="true" />
 			<ui:define name="buttons">
