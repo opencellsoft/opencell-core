@@ -512,5 +512,11 @@
         <modifyDataType tableName="crm_custom_field_tmpl" columnName="index_type" newDataType="varchar(17)"/>
     </changeSet>
     
+    <changeSet id="#3790_20181128 - Subscription rating group" author="EdwardPLegaspi">
+    	<addColumn tableName="billing_subscription">
+    		<column name="rating_group" type="varchar(50)"></column>
+    	</addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 
 
