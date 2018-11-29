@@ -140,7 +140,10 @@ public class InvoiceSubCategory extends BusinessCFEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { invoiceCategory };
+        if (invoiceCategory != null) {
+            return new ICustomFieldEntity[] { invoiceCategory };
+        }
+        return null;
     }
 
     public Map<String, String> getDescriptionI18n() {

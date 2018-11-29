@@ -104,7 +104,11 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Find a list of entities of a given class and matching given code. In case classname points to CustomEntityTemplate, find CustomEntityInstances of a CustomEntityTemplate code
-     * <p>In case the ReferenceIdentifierCode annotation does not exists in the entity, It's possible to use ReferenceIdentifierQuery annotation with the entity to define the query used to retrieve the list of entities </p>
+     * <p>
+     * In case the ReferenceIdentifierCode annotation does not exists in the entity, It's possible to use ReferenceIdentifierQuery annotation with the entity to define the query
+     * used to retrieve the list of entities
+     * </p>
+     * 
      * @param classNameAndCode Classname to match. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;:"
      * @param wildcode Filter by entity code
      * @return A list of entities
@@ -925,6 +929,9 @@ public class CustomFieldInstanceService extends BaseService {
             ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
             if (parentCfEntities != null) {
                 for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
                     Object value = parentCfEntity.getCfAccumulatedValue(cfCode);
                     if (value != null) {
                         cfValues.add(value);

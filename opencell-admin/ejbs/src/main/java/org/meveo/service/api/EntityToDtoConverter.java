@@ -181,6 +181,9 @@ public class EntityToDtoConverter {
             ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
             if (parentEntities != null) {
                 for (ICustomFieldEntity parentEntity : parentEntities) {
+                    if (parentEntity == null) {
+                        continue;
+                    }
                     if (parentEntity instanceof Provider && ((Provider) parentEntity).getCode() == null) {
                         parentEntity = appProvider;
                     }

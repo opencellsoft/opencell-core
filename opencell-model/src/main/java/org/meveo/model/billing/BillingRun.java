@@ -590,7 +590,6 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        // TODO Auto-generated method stub
         return null;
     }
 

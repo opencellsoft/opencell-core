@@ -468,7 +468,10 @@ public class ServiceInstance extends BusinessCFEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { serviceTemplate };
+        if (serviceTemplate != null) {
+            return new ICustomFieldEntity[] { serviceTemplate };
+        }
+        return null;
     }
 
     @PostLoad

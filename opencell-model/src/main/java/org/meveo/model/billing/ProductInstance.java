@@ -240,7 +240,10 @@ public class ProductInstance extends BusinessCFEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { productTemplate };
+        if (productTemplate != null) {
+            return new ICustomFieldEntity[] { productTemplate };
+        }
+        return null;
     }
 
     public Seller getSeller() {

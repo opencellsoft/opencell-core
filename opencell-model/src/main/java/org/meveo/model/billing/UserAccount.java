@@ -240,7 +240,10 @@ public class UserAccount extends AccountEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { billingAccount };
+        if (billingAccount != null) {
+            return new ICustomFieldEntity[] { billingAccount };
+        }
+        return null;
     }
 
     @Override

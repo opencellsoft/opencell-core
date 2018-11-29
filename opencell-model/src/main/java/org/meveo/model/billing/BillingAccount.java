@@ -285,11 +285,11 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Transient
     private BigDecimal totalInvoicingAmountWithoutTax;
 
-	/** Discount plans */
-	@ManyToMany(fetch = FetchType.LAZY)
+    /** Discount plans */
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_discount_plan", joinColumns = @JoinColumn(name = "billing_account_id"), inverseJoinColumns = @JoinColumn(name = "discount_plan_id"))
     private Set<DiscountPlan> discountPlans = new HashSet<>();
-    
+
     /**
      * Total invoicing amount with tax
      */
@@ -495,7 +495,10 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { customerAccount };
+        if (customerAccount != null) {
+            return new ICustomFieldEntity[] { customerAccount };
+        }
+        return null;
     }
 
     @Override
@@ -581,7 +584,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Override
     public void anonymize(String code) {
         super.anonymize(code);
-		getContactInformationNullSafe().anonymize(code);
+        getContactInformationNullSafe().anonymize(code);
         if (getUsersAccounts() != null) {
             for (UserAccount ua : getUsersAccounts()) {
                 ua.anonymize(code);
@@ -621,20 +624,20 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
         this.totalInvoicingAmountTax = totalInvoicingAmountTax;
     }
 
-	public Set<DiscountPlan> getDiscountPlans() {
-		return discountPlans;
-	}
+    public Set<DiscountPlan> getDiscountPlans() {
+        return discountPlans;
+    }
 
-	public void setDiscountPlans(Set<DiscountPlan> discountPlans) {
-		this.discountPlans = discountPlans;
-	}
-	
-	public void addDiscountPlanNullSafe(DiscountPlan e) {
-		if (discountPlans == null) {
-			discountPlans = new HashSet<>();
-		}
+    public void setDiscountPlans(Set<DiscountPlan> discountPlans) {
+        this.discountPlans = discountPlans;
+    }
 
-		discountPlans.add(e);
-	}
-	
+    public void addDiscountPlanNullSafe(DiscountPlan e) {
+        if (discountPlans == null) {
+            discountPlans = new HashSet<>();
+        }
+
+        discountPlans.add(e);
+    }
+
 }

@@ -326,7 +326,10 @@ public class CustomerAccount extends AccountEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { customer };
+        if (customer != null) {
+            return new ICustomFieldEntity[] { customer };
+        }
+        return null;
     }
 
     @Override
@@ -579,7 +582,7 @@ public class CustomerAccount extends AccountEntity {
     @Override
     public void anonymize(String code) {
         super.anonymize(code);
-		getContactInformationNullSafe().anonymize(code);
+        getContactInformationNullSafe().anonymize(code);
         if (getBillingAccounts() != null) {
             for (BillingAccount ba : getBillingAccounts()) {
                 ba.anonymize(code);

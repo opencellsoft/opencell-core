@@ -724,7 +724,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { billingRun };
+        if (billingRun != null) {
+            return new ICustomFieldEntity[] { billingRun };
+        }
+        return null;
     }
 
     public Set<Invoice> getLinkedInvoices() {

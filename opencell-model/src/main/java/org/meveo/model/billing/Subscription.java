@@ -20,6 +20,7 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -389,7 +390,28 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { offer, seller, userAccount };
+
+        ICustomFieldEntity[] parents = new ICustomFieldEntity[3];
+        int count = 0;
+        if (offer != null) {
+            parents[count] = offer;
+            count++;
+        }
+        if (seller != null) {
+            parents[count] = seller;
+            count++;
+        }
+        if (userAccount != null) {
+            parents[count] = userAccount;
+            count++;
+        }
+        if (count == 0) {
+            return null;
+        } else if (count == 3) {
+            return parents;
+        } else {
+            return Arrays.copyOfRange(parents, 0, count);
+        }
     }
 
     /**
