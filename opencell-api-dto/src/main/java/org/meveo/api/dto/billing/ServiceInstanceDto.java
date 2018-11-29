@@ -87,6 +87,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     
     /** The due date days PS. */
     private Integer dueDateDaysPS;
+    
+    private Boolean autoEndOfEngagement;
 
     /**
      * Instantiates a new service instance dto.
@@ -398,5 +400,19 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     public String toString() {
         return "ServiceInstanceDto [code=" + code + ", description=" + description + ", status=" + status + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
                 + terminationDate + ", quantity=" + quantity + ", terminationReason=" + terminationReason + ", orderNumber=" + orderNumber + "]";
+    }
+
+    /**
+     * @return the autoEndOfEngagement
+     */
+    public Boolean getAutoEndOfEngagement() {
+        return autoEndOfEngagement;
+    }
+
+    /**
+     * @param autoEndOfEngagement the autoEndOfEngagement to set
+     */
+    public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
+        this.autoEndOfEngagement = autoEndOfEngagement;
     }
 }

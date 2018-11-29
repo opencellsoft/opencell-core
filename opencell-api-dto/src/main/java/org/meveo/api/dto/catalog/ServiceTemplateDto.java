@@ -74,6 +74,8 @@ public class ServiceTemplateDto extends EnableBusinessDto {
     /** The minimum label El. */   
     private String minimumLabelEl;
     
+    private Boolean autoEndOfEngagement;
+    
     /** The renewal rule. */
     @JsonInclude(Include.NON_NULL)
     private SubscriptionRenewalDto renewalRule;
@@ -451,4 +453,18 @@ public class ServiceTemplateDto extends EnableBusinessDto {
 	public void setRenewalRule(SubscriptionRenewalDto renewalRule) {
 		this.renewalRule = renewalRule;
 	}
+
+    /**
+     * @return the autoEndOfEngagement
+     */
+    public Boolean getAutoEndOfEngagement() {
+        return autoEndOfEngagement;
+    }
+
+    /**
+     * @param autoEndOfEngagement the autoEndOfEngagement to set
+     */
+    public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
+        this.autoEndOfEngagement = autoEndOfEngagement;
+    }
 }
