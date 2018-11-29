@@ -257,6 +257,12 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         }
 
         ServiceTemplate serviceTemplate = new ServiceTemplate();
+        
+        Boolean autoEndOfEngagement = postData.getAutoEndOfEngagement();
+        if (autoEndOfEngagement != null) {
+            serviceTemplate.setAutoEndOfEngagement(autoEndOfEngagement);
+        }
+        
         serviceTemplate.setBusinessServiceModel(businessService);
         serviceTemplate.setCode(postData.getCode());
         serviceTemplate.setDescription(postData.getDescription());
@@ -321,6 +327,12 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (serviceTemplate == null) {
             throw new EntityDoesNotExistsException(ServiceTemplateService.class, postData.getCode());
         }
+        
+        Boolean autoEndOfEngagement = postData.getAutoEndOfEngagement();
+        if (autoEndOfEngagement != null) {
+            serviceTemplate.setAutoEndOfEngagement(autoEndOfEngagement);
+        }
+        
         serviceTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         serviceTemplate.setDescription(postData.getDescription());
         serviceTemplate.setLongDescription(postData.getLongDescription());
