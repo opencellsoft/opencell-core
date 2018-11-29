@@ -424,7 +424,6 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
-<<<<<<< HEAD
      * Gets the minimum amount el.
      *
      * @return Expression to determine minimum amount value
