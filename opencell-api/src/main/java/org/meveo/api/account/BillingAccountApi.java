@@ -423,9 +423,7 @@ public class BillingAccountApi extends AccountEntityApi {
 		if (source.getStartDate() != null) {
 			target.setStartDate(source.getStartDate());
 		}
-		if (source.getEndDate() != null) {
-			target.setEndDate(source.getEndDate());
-		}
+		target.setEndDate(source.getEndDate());
 		if (source.getDurationUnit() != null) {
 			target.setDurationUnit(source.getDurationUnit());
 		}
