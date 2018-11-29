@@ -52,7 +52,6 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.DiscountPlanInstance;
 import org.meveo.model.payments.CustomerAccount;
 
 /**

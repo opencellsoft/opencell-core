@@ -18,7 +18,7 @@ import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.catalog.DiscountPlanInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;

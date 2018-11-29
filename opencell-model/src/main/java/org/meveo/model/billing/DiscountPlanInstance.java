@@ -1,4 +1,4 @@
-package org.meveo.model.catalog;
+package org.meveo.model.billing;
 
 import java.util.Date;
 
@@ -14,7 +14,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.catalog.DiscountPlan;
 
 /**
  * Instance of {@link DiscountPlan}. It basically just contains the effectivity
@@ -26,9 +26,9 @@ import org.meveo.model.billing.BillingAccount;
 
 @Entity
 @ObservableEntity
-@Table(name = "cat_discount_plan_instance")
+@Table(name = "billing_discount_plan_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-		@Parameter(name = "sequence_name", value = "cat_discount_plan_instance_seq"), })
+		@Parameter(name = "sequence_name", value = "billing_discount_plan_instance_seq"), })
 public class DiscountPlanInstance extends BaseEntity {
 
 	private static final long serialVersionUID = -3794502716655922498L;

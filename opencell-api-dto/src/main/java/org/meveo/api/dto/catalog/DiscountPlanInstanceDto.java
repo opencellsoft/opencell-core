@@ -3,7 +3,7 @@ package org.meveo.api.dto.catalog;
 import java.util.Date;
 
 import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.model.catalog.DiscountPlanInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 
 /**
  * @author Edward P. Legaspi

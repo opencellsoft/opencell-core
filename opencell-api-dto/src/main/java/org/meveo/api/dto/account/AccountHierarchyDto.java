@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.model.catalog.DiscountPlanInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.crm.Customer;
 
 /**

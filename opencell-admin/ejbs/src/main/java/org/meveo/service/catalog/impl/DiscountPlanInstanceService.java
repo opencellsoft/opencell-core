@@ -8,9 +8,9 @@ import javax.ejb.Stateless;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
-import org.meveo.model.catalog.DiscountPlanInstance;
 import org.meveo.service.base.PersistenceService;
 
 /**

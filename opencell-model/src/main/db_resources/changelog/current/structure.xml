@@ -490,9 +490,9 @@
     	<addNotNullConstraint tableName="cat_discount_plan_item" columnName="uuid"/>
     </changeSet>
     <changeSet id="#3799_20181119 - Create discount plan instance table" author="EdwardPLegaspi">    
-    	<createTable tableName="cat_discount_plan_instance">
+    	<createTable tableName="billing_discount_plan_instance">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_discount_plan_instance_pkey" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_discount_plan_instance_pkey" />
             </column>
             <column name="version" type="int4" />
             <column name="discount_plan_id" type="bigint">
@@ -504,9 +504,9 @@
             <column name="start_date" type="date" />
             <column name="end_date" type="date" />
 		</createTable>
-		<createSequence sequenceName="cat_discount_plan_instance_seq" />
-		<addForeignKeyConstraint constraintName="cat_discount_plan_instance_dp_fk" referencedTableName="cat_discount_plan" baseColumnNames="discount_plan_id" baseTableName="cat_discount_plan_instance" referencedColumnNames="id"/>
-		<addForeignKeyConstraint constraintName="cat_discount_plan_instance_ba_fk" referencedTableName="billing_billing_account" baseColumnNames="billing_account_id" baseTableName="cat_discount_plan_instance" referencedColumnNames="id"/>
+		<createSequence sequenceName="billing_discount_plan_instance_seq" />
+		<addForeignKeyConstraint constraintName="billing_discount_plan_instance_dp_fk" referencedTableName="cat_discount_plan" baseColumnNames="discount_plan_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id"/>
+		<addForeignKeyConstraint constraintName="billing_discount_plan_instance_ba_fk" referencedTableName="billing_billing_account" baseColumnNames="billing_account_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id"/>
     	<dropTable tableName="billing_discount_plan"/>
     	<dropColumn tableName="billing_billing_account">
     		<column name="discount_plan_id"></column>
