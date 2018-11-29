@@ -52,6 +52,7 @@ import org.meveo.util.ApplicationProvider;
  *
  * @author anasseh
  * @since 5.2
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class PaymentScheduleInstanceItemService extends PersistenceService<PaymentScheduleInstanceItem> {

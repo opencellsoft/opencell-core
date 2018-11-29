@@ -85,27 +85,20 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     /** The calendar PS code. */
     private String calendarPSCode;
     
-    /** The due date days PS. */
-    private Integer dueDateDaysPS;
 
-    /**
-     * Expression to determine minimum amount value
-     */
+    /** The payment day in month PS. */
+    private Integer paymentDayInMonthPS;
+
+    /** Expression to determine minimum amount value. */
     private String minimumAmountEl;
 
-    /**
-     * Expression to determine minimum amount value - for Spark
-     */
+    /** Expression to determine minimum amount value - for Spark. */
     private String minimumAmountElSpark;
 
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value
-     */
+    /** Expression to determine rated transaction description to reach minimum amount value. */
     private String minimumLabelEl;
 
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value - for Spark
-     */
+    /** Expression to determine rated transaction description to reach minimum amount value - for Spark. */
     private String minimumLabelElSpark;
 
     /**
@@ -397,22 +390,24 @@ public class ServiceInstanceDto extends BusinessEntityDto {
         this.calendarPSCode = calendarPSCode;
     }
 
-    /**
-     * Gets the due date days PS.
-     *
-     * @return the dueDateDaysPS
-     */
-    public Integer getDueDateDaysPS() {
-        return dueDateDaysPS;
-    }
 
     /**
-     * Sets the due date days PS.
+     * Gets the payment day in month PS.
      *
-     * @param dueDateDaysPS the dueDateDaysPS to set
+     * @return the payment day in month PS
      */
-    public void setDueDateDaysPS(Integer dueDateDaysPS) {
-        this.dueDateDaysPS = dueDateDaysPS;
+    public Integer getPaymentDayInMonthPS() {
+        return paymentDayInMonthPS;
+    }
+
+
+    /**
+     * Sets the payment day in month PS.
+     *
+     * @param paymentDayInMonthPS the new payment day in month PS
+     */
+    public void setPaymentDayInMonthPS(Integer paymentDayInMonthPS) {
+        this.paymentDayInMonthPS = paymentDayInMonthPS;
     }
 
     /* (non-Javadoc)
@@ -425,6 +420,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Gets the minimum amount el.
+     *
      * @return Expression to determine minimum amount value
      */
     public String getMinimumAmountEl() {
@@ -432,6 +429,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the minimum amount el.
+     *
      * @param minimumAmountEl Expression to determine minimum amount value
      */
     public void setMinimumAmountEl(String minimumAmountEl) {
@@ -439,6 +438,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Gets the minimum amount el spark.
+     *
      * @return Expression to determine minimum amount value - for Spark
      */
     public String getMinimumAmountElSpark() {
@@ -446,6 +447,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the minimum amount el spark.
+     *
      * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
      */
     public void setMinimumAmountElSpark(String minimumAmountElSpark) {
@@ -453,6 +456,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Gets the minimum label el.
+     *
      * @return Expression to determine rated transaction description to reach minimum amount value
      */
     public String getMinimumLabelEl() {
@@ -460,6 +465,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the minimum label el.
+     *
      * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
@@ -467,6 +474,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Gets the minimum label el spark.
+     *
      * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
     public String getMinimumLabelElSpark() {
@@ -474,6 +483,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the minimum label el spark.
+     *
      * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
     public void setMinimumLabelElSpark(String minimumLabelElSpark) {
