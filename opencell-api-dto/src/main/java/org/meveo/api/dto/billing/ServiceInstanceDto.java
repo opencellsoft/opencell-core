@@ -84,7 +84,6 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     
     /** The calendar PS code. */
     private String calendarPSCode;
-    
 
     /** The payment day in month PS. */
     private Integer paymentDayInMonthPS;
@@ -100,6 +99,11 @@ public class ServiceInstanceDto extends BusinessEntityDto {
 
     /** Expression to determine rated transaction description to reach minimum amount value - for Spark. */
     private String minimumLabelElSpark;
+
+    /** The due date days PS. */
+    private Integer dueDateDaysPS;
+    
+    private Boolean autoEndOfEngagement;
 
     /**
      * Instantiates a new service instance dto.
@@ -420,6 +424,7 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
+<<<<<<< HEAD
      * Gets the minimum amount el.
      *
      * @return Expression to determine minimum amount value
@@ -489,5 +494,21 @@ public class ServiceInstanceDto extends BusinessEntityDto {
      */
     public void setMinimumLabelElSpark(String minimumLabelElSpark) {
         this.minimumLabelElSpark = minimumLabelElSpark;
+    }
+
+    /**
+     * Gets the auto end of engagement.
+     *
+     * @return the auto end of engagement
+     */
+    public Boolean getAutoEndOfEngagement() {
+        return autoEndOfEngagement;
+    }
+
+    /**
+     * @param autoEndOfEngagement the autoEndOfEngagement to set
+     */
+    public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
+        this.autoEndOfEngagement = autoEndOfEngagement;
     }
 }
