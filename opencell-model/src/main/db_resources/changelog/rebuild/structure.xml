@@ -1258,7 +1258,7 @@
             <column name="inboundrequest_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="headers" type="varchar(255)" />
+            <column name="headers" type="text" />
             <column name="headers_key" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
@@ -1477,7 +1477,7 @@
             <column name="webhook_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="headers" type="varchar(255)" />
+            <column name="headers" type="text" />
             <column name="headers_key" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
