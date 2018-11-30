@@ -10810,7 +10810,7 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-data-payment-gateway">
 
 
-        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-10, 0, 0, now(), 'org.meveo.service.script.demo.CustomGatewayPaymentScript', 'CustomGatewayPaymentScript', 'JAVA', '
+        <sql dbms="postgresql"><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-10, 0, 0, now(), 'org.meveo.service.script.demo.CustomGatewayPaymentScript', 'CustomGatewayPaymentScript', 'JAVA', '
             package org.meveo.service.script.demo;
 
 import java.io.StringReader;
@@ -10912,6 +10912,108 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 }
         ');]]></sql>
 
+        <sql dbms="mysql"><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-10, 0, 0, now(), 'org.meveo.service.script.demo.CustomGatewayPaymentScript', 'CustomGatewayPaymentScript', 'JAVA', '
+            package org.meveo.service.script.demo;
+
+import java.io.StringReader;
+import java.util.Map;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.service.script.payment.PaymentScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+
+/**
+ *
+ * @author anasseh
+ *
+ */
+
+public class CustomGatewayPaymentScript extends PaymentScript{
+
+    private static final Logger log = LoggerFactory.getLogger(CustomGatewayPaymentScript.class);
+
+    @Override
+    public void createCardToken(Map<String, Object> methodContext) throws BusinessException {
+        methodContext.put(PaymentScript.RESULT_TOKEN, "7ced0000-3ab2-000d-6a50-08d4b8a6"+(int )(Math.random() * 1000 + 1));
+    }
+
+    @Override
+    public void doPaymentToken(Map<String, Object> methodContext) throws BusinessException {
+        doIt(methodContext, "PAL");
+    }
+
+    @Override
+    public void doRefundToken(Map<String, Object> methodContext) throws BusinessException {
+        doIt(methodContext, "RFD");
+    }
+
+
+
+    private void doIt(Map<String, Object> methodContext,String operationType) throws BusinessException {
+        try{
+            log.debug("EXECUTE  methodContext {} ", methodContext);
+            Long amountCts = (Long)methodContext.get(PaymentScript.CONTEXT_AMOUNT_CTS);
+            if(amountCts == null){
+                throw new BusinessException("amountCts is null");
+            }
+            CardPaymentMethod paymentToken = (CardPaymentMethod)methodContext.get(PaymentScript.CONTEXT_TOKEN);
+            if(paymentToken == null){
+                throw new BusinessException("paymentMethod is null");
+            }
+
+            String body  = "{";
+            body  += " \\"PSPID\\" : \\"PSPID\\" ,";
+            body  += " \\"USERID\\" : \\"USERID\\" ,";
+            body  += " \\"PSWD\\" : \\"PSWD\\" ,";
+            body  += " \\"REFKIND\\" :  \\"PSPID\\" ,";
+            body  += " \\"REFID\\" : \\"PSPID\\" ,";
+            body  += " \\"OPERATION\\" : \\""+operationType +"\\" ,";
+            body  += " \\"AMOUNT\\" : \\""+amountCts.longValue()+"\\" ,";
+            body  += " \\"CURRENCY\\" : \\""+paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode()+"\\" ,";
+            body  += " \\"TRANSACTIONID\\" : \\""+paymentToken.getTokenId()+"\\" ,";
+            body  += " \\"SHASIGN\\" : \\"SHASIGN\\" ,";
+            body  += " }";
+            log.debug("request body {} ", body);
+/*          invoke here the real webService.
+
+*/
+            String paymentResponse = "<root>";
+            paymentResponse += "<STATUS>92</STATUS>";
+            paymentResponse += "<PAYID>"+((int )(Math.random() * 100000 + 1))+"</PAYID>";
+            paymentResponse += "<TRANSACTIONID>92</TRANSACTIONID>";
+            paymentResponse += "<CRMTOKEN>clientSide</CRMTOKEN>";
+            paymentResponse += "<BRAND>VISA</BRAND>";
+            paymentResponse += "<ACCEPTENCE>bankRef</ACCEPTENCE>";
+            paymentResponse += "</root>";
+            methodContext.put(PaymentScript.RESULT_PAYMENT_STATUS, PaymentStatusEnum.PENDING);
+            methodContext.put(PaymentScript.RESULT_PAYMENT_ID, getValue(paymentResponse,"/root/PAYID"));
+            methodContext.put(PaymentScript.RESULT_TRANSACTION_ID, getValue(paymentResponse,"/root/TRANSACTIONID"));
+            methodContext.put(PaymentScript.RESULT_CODE_CLIENT_SIDE, getValue(paymentResponse,"/root/CRMTOKEN"));
+            methodContext.put(PaymentScript.RESULT_PAYMENT_BRAND, getValue(paymentResponse,"/root/BRAND"));
+            methodContext.put(PaymentScript.RESULT_BANK_REFERENCE, getValue(paymentResponse,"/root/ACCEPTENCE"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    private String getValue(String sourceXML,String expression) throws XPathExpressionException{
+        InputSource iSource = new InputSource(new StringReader(sourceXML));
+        XPathFactory xpathFactory = XPathFactory.newInstance();
+        XPath xpath = xpathFactory.newXPath();
+        return xpath.evaluate(expression, iSource);
+    }
+}
+        ');]]></sql>
+
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-11  , 0, 0, now(), 'org.meveo.service.script.demo.PaymentCallBackScript', 'PaymentCallBackScript', 'JAVA', '
             package org.meveo.service.script.smoove;
 
@@ -10961,7 +11063,7 @@ public class PaymentCallBackScript extends Script {
         ');]]></sql>
 
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}ar_payment_gateway VALUES (-10, 0, 0, now(), NULL, 'customGatewayDemo', 'A customGateway for Demo', 'CUSTOM', 'CARD', NULL, NULL, -10, NULL, NULL,
-          '3bb099a3-e72d-49ea-9d96-908e74569e02', 'opencell.admin', NULL, NULL, NULL, NULL, NULL, NULL);]]></sql>
+          '3bb099a3-e72d-49ea-9d96-908e74569e02', 'opencell.admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);]]></sql>
 
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}adm_notification VALUES (-10, 0, 0, now(), NULL, 'PaymentCallBack', NULL, 'org.meveo.model.notification.InboundRequest', 
           '#{event.pathInfo.startsWith("/DEMO/custom_payment-callback?")}', 'INBOUND_REQ', 'opencell.admin', NULL, NULL, NULL, -11, 0);]]></sql>
@@ -10991,7 +11093,7 @@ public class PaymentCallBackScript extends Script {
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-report-extracts">
 
-        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-1, 0, 0, now(), 'ACCOUNT_OPS', 'Export account operations', 'JAVA', '
+        <sql dbms="postgresql"><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-1, 0, 0, now(), 'ACCOUNT_OPS', 'Export account operations', 'JAVA', '
             package org.meveo.service.script.export;
 
 import java.io.File;
@@ -11097,7 +11199,112 @@ public class ExportAccountOperationScript extends ReportExtractScript {
     }
 }       
         ');]]></sql>
+        <sql dbms="mysql"><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-1, 0, 0, now(), 'ACCOUNT_OPS', 'Export account operations', 'JAVA', '
+            package org.meveo.service.script.export;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.finance.ReportExtractScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.Date;
+
+public class ExportAccountOperationScript extends ReportExtractScript {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExportAccountOperationScript.class);
+
+    private AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(AccountOperationService.class.getSimpleName());
+
+
+    @Override
+    public void execute(Map<String, Object> initContext) throws BusinessException {
+        try {
+            LOGGER.debug("#####################Starting of script ExportAccountOperationScript");
+
+            Date startDate = (Date) initContext.get(ReportExtractScript.START_DATE);
+            Date endDate = (Date) initContext.get(ReportExtractScript.END_DATE);
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
+            List<AccountOperation> accountOperations = accountOperationService.list();
+            initContext.put(ReportExtractScript.LINE_COUNT, accountOperations.size());
+
+            String exportDir = String.valueOf(initContext.get(ReportExtractScript.DIR));
+            File dir = new File(exportDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            CustomerAccount customerAccount = null;
+            StringBuilder sb =new StringBuilder();
+            sb.append("Transaction Date;Transaction Type;Amount;Due Date;Reference;Transaction Category;Invoice Date;"
+                    + "Customer Account Code;Customer Account Description\\n");
+            for (AccountOperation accountOperation : accountOperations) {
+                if(accountOperation.getTransactionDate().equals(startDate) || accountOperation.getTransactionDate().equals(endDate)
+                        || (accountOperation.getTransactionDate().after(startDate) && accountOperation.getTransactionDate().before(endDate))) {
+
+                    customerAccount = accountOperation.getCustomerAccount();
+                    sb.append(nil(accountOperation.getTransactionDate().toString())+ ";");
+                    sb.append(nil(accountOperation.getType()) + ";");
+                    sb.append(nil(accountOperation.getAmount().toString()) + ";");
+                    sb.append(isNull(accountOperation.getDueDate()) + ";");
+                    sb.append(nil(accountOperation.getReference()) + ";");
+                    sb.append(nil(accountOperation.getTransactionCategory().toString()) + ";");
+                    if(accountOperation instanceof RecordedInvoice) {
+                        RecordedInvoice invoice = (RecordedInvoice) accountOperation;
+                        sb.append(invoice.getInvoiceDate().toString() + ";");
+                    } else {
+                        sb.append(";");
+                    }
+                    sb.append(nil(customerAccount.getCode()) + ";");
+                    sb.append(nil(customerAccount.getDescriptionOrCode()) + ";\\n");
+
+
+                }
+            }
+            String strFilename = String.valueOf(initContext.get(ReportExtractScript.FILENAME));
+            LOGGER.debug("output={}", strFilename);
+            File file = new File(dir + File.separator + strFilename);
+            file.createNewFile();
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(sb.toString());
+            fileWriter.close();
+
+            LOGGER.debug("#####################Ending of script ExportAccountOperationScript");
+        } catch (Exception e) {
+            initContext.put(ReportExtractScript.ERROR_MESSAGE, e.getMessage());
+            LOGGER.error("Exception:", e);
+            throw new BusinessException(e.getMessage());
+        }
+
+    }
+
+  private String isNull(Object obj) {
+    if(obj == null) {
+      return "";
+    } else {
+      return obj.toString();
+    }
+  }
+
+    private String nil(String word) {
+        if (word == null || "null".equalsIgnoreCase(word)) {
+            return "";
+        } else {
+            return word;
+        }
+    }
+}
+        ');]]></sql>
 
         <insert tableName="dwh_report_extract">
             <column name="id" valueNumeric="-1" />
@@ -11113,20 +11320,20 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="uuid" value="SALES_JOURNAL_UUID"></column>
             <column name="sql_query"><![CDATA[
                 SELECT
-                TO_CHAR(ao.invoice_date,''MM'') AS "Mois",
-                TO_CHAR(ao.invoice_date,''DD/MM/YYYY'') AS "Date facture",
-                text(''HG'') AS "Code comptable",
-                ae.code AS "Client facturé",
+                TO_CHAR(ao.invoice_date,''MM'') AS 'Mois',
+                TO_CHAR(ao.invoice_date,''DD/MM/YYYY'') AS 'Date facture',
+                text(''HG'') AS 'Code comptable',
+                ae.code AS 'Client facturé',
                 text(''MAI'') AS
-                "Type article",
-                split_part(bac.code, '','', 6) AS "Famille statistique",
-                split_part(bac.code, '','', 2) AS "Article",
-                trim(TO_CHAR(ia.amount_without_tax,''9999990D00'')) AS "Montant HT",
-                trim(TO_CHAR(ia.quantity,''9999990'')) AS "Qté facturée",
-                ao.reference AS "No facture",
-                ao.occ_description AS "Catégorie facture",
-                ao.occ_code AS "Type de pièce",
-                text(''VEN'') AS "Journal"
+                'Type article',
+                split_part(bac.code, '','', 6) AS 'Famille statistique',
+                split_part(bac.code, '','', 2) AS 'Article',
+                trim(TO_CHAR(ia.amount_without_tax,''9999990D00'')) AS 'Montant HT',
+                trim(TO_CHAR(ia.quantity,''9999990'')) AS 'Qté facturée',
+                ao.reference AS 'No facture',
+                ao.occ_description AS 'Catégorie facture',
+                ao.occ_code AS 'Type de pièce',
+                text(''VEN'') AS 'Journal'
                 FROM
                 account_entity
                 ae
@@ -11202,22 +11409,22 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="FULL_HIERARCHY_UUID"></column>
             <column name="sql_query">
-                select s.code AS "Seller code"
-                , s.description AS "Seller description"
-                , coalesce(ce.code, '') AS "Customer code"
-                , coalesce(replace(ce.description, ',', ' '), '') AS "Customer description"
+                <![CDATA[select s.code AS 'Seller code'
+                , s.description AS 'Seller description'
+                , coalesce(ce.code, '') AS 'Customer code'
+                , coalesce(replace(ce.description, ',', ' '), '') AS 'Customer description'
                 ,
-                coalesce(cae.code, '') AS "Customer Account code"
-                , coalesce(replace(cae.description, ',', ' '), '') AS "Customer Account description"
-                , coalesce(bae.code, '') AS "Billing Account code"
+                coalesce(cae.code, '') AS 'Customer Account code'
+                , coalesce(replace(cae.description, ',', ' '), '') AS 'Customer Account description'
+                , coalesce(bae.code, '') AS 'Billing Account code'
                 ,
-                coalesce(replace(bae.description, ',', ' '), '') AS "Billing Account description"
-                , coalesce(uae.code, '') AS "User Account code"
-                , coalesce(replace(uae.description, ',', ' '), '') AS "User Account
-                description"
-                , coalesce(su.code, '') AS "Subscription code"
-                , coalesce(replace(su.description, ',', ' '), '') AS "Subscription description"
-                , coalesce(ap.acces_user_id, '') AS "Access Point id"
+                coalesce(replace(bae.description, ',', ' '), '') AS 'Billing Account description'
+                , coalesce(uae.code, '') AS 'User Account code'
+                , coalesce(replace(uae.description, ',', ' '), '') AS 'User Account
+                description'
+                , coalesce(su.code, '') AS 'Subscription code'
+                , coalesce(replace(su.description, ',', ' '), '') AS 'Subscription description'
+                , coalesce(ap.acces_user_id, '') AS 'Access Point id'
                 from
                 ${db.schema.adapted}crm_seller s left
                 OUTER JOIN ${db.schema.adapted}crm_customer c on c.seller_id = s.id left
@@ -11251,7 +11458,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 ,bae.code
                 ,uae.code
                 ,su.code
-                ,ap.acces_user_id
+                ,ap.acces_user_id]]>
             </column>
         </insert>
 
@@ -11274,10 +11481,10 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="CUSTOMERS_PER_SELLER_UUID"></column>
             <column name="sql_query">
-                select s.code AS "Seller code"
-                , s.description AS "Seller description"
-                , coalesce(ce.code, '') AS "Customer code"
-                , coalesce(replace(ce.description, ',', ' '), '') AS "Customer description"
+                <![CDATA[select s.code AS 'Seller code'
+                , s.description AS 'Seller description'
+                , coalesce(ce.code, '') AS 'Customer code'
+                , coalesce(replace(ce.description, ',', ' '), '') AS 'Customer description'
                 from ${db.schema.adapted}crm_seller s left
                 OUTER JOIN ${db.schema.adapted}crm_customer c on c.seller_id = s.id left
                 OUTER JOIN ${db.schema.adapted}account_entity ce on c.id = ce.id
@@ -11288,7 +11495,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 and ( s.code ilike
                 '%' || :SELLER || '%' or s.description ilike '%' || :SELLER || '%' )
                 order by s.code
-                ,ce.code
+                ,ce.code]]>
             </column>
         </insert>
 
@@ -11318,12 +11525,12 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="INVOICED_GLOBAL_UUID"></column>
             <column name="sql_query">
-                select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
-                , it.code AS "Invoice type code"
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS 'Month'
+                , it.code AS 'Invoice type code'
                 , it.description AS
-                "Invoice type description"
-                , trim(to_char(sum(i.amount_without_tax), '9999999990.00')) AS "Amount without tax"
-                , trim(to_char(sum(i.amount_with_tax), '9999999990.00')) AS "Amount with tax"
+                'Invoice type description'
+                , trim(to_char(sum(i.amount_without_tax), '9999999990.00')) AS 'Amount without tax'
+                , trim(to_char(sum(i.amount_with_tax), '9999999990.00')) AS 'Amount with tax'
                 from
                 ${db.schema.adapted}billing_invoice i
                 INNER JOIN ${db.schema.adapted}billing_invoice_type it on it.id = i.invoice_type_id
@@ -11332,7 +11539,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 group by date_trunc('month', i.invoice_date)
                 , it.code
                 , it.description order by date_trunc('month', i.invoice_date) DESC
-                , it.code DESC
+                , it.code DESC]]>
             </column>
         </insert>
 
@@ -11355,22 +11562,22 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="INVOICED_BA_HIERARCHY_UUID"></column>
             <column name="sql_query">
-                select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
-                , s.code AS "Seller code"
-                , s.description AS "Seller
-                description"
-                , ce.code AS "Customer code"
-                , ce.description AS "Customer description"
-                , cae.code AS "Customer Account code"
-                , cae.description AS "Customer Account description"
-                , bae.code AS "Billing Account
-                code"
-                , bae.description AS "Billing Account description"
-                , it.code AS "Invoice type code"
-                , it.description AS "Invoice type description"
-                , to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount
-                without tax"
-                , to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"
+                <![CDATA[
+                select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS 'Month'
+                , s.code AS 'Seller code'
+                , s.description AS 'Sellerdescription'
+                , ce.code AS 'Customer code'
+                , ce.description AS 'Customer description'
+                , cae.code AS 'Customer Account code'
+                , cae.description AS 'Customer Account description'
+                , bae.code AS 'Billing Account
+                code'
+                , bae.description AS 'Billing Account description'
+                , it.code AS 'Invoice type code'
+                , it.description AS 'Invoice type description'
+                , to_char(sum(i.amount_without_tax), '9999999990.00') AS 'Amount
+                without tax'
+                , to_char(sum(i.amount_with_tax), '9999999990.00') AS 'Amount with tax'
                 from ${db.schema.adapted}crm_seller s
                 INNER JOIN ${db.schema.adapted}crm_customer c on c.seller_id = s.id
                 INNER JOIN
@@ -11407,7 +11614,8 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 , s.code
                 , ce.code
                 , cae.code
-                , bae.code
+                , bae.code]]>
+
             </column>
         </insert>
 
@@ -11436,15 +11644,15 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="INVOICED_BA_UUID"></column>
             <column name="sql_query">
-                select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
-                , bae.code AS "Billing Account code"
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS 'Month'
+                , bae.code AS 'Billing Account code'
                 , bae.description
-                AS "Billing Account description"
-                , it.code AS "Invoice type code"
-                , it.description AS "Invoice type description"
-                , to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
+                AS 'Billing Account description'
+                , it.code AS 'Invoice type code'
+                , it.description AS 'Invoice type description'
+                , to_char(sum(i.amount_without_tax), '9999999990.00') AS 'Amount without tax'
                 ,
-                to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"
+                to_char(sum(i.amount_with_tax), '9999999990.00') AS 'Amount with tax'
                 from ${db.schema.adapted}crm_seller s
                 INNER JOIN ${db.schema.adapted}crm_customer c on c.seller_id = s.id
                 INNER JOIN
@@ -11464,7 +11672,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 , bae.code
                 , bae.description order by date_trunc('month', i.invoice_date) DESC
                 , it.code DESC
-                , bae.code
+                , bae.code]]>
             </column>
         </insert>
 
@@ -11493,15 +11701,15 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="INVOICED_CA_UUID"></column>
             <column name="sql_query">
-                select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
-                , cae.code AS "Customer Account code"
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS 'Month'
+                , cae.code AS 'Customer Account code'
                 , cae.description
-                AS "Customer Account description"
-                , it.code AS "Invoice type code"
-                , it.description AS "Invoice type description"
-                , to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
+                AS 'Customer Account description'
+                , it.code AS 'Invoice type code'
+                , it.description AS 'Invoice type description'
+                , to_char(sum(i.amount_without_tax), '9999999990.00') AS 'Amount without tax'
                 ,
-                to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"
+                to_char(sum(i.amount_with_tax), '9999999990.00') AS 'Amount with tax'
                 from ${db.schema.adapted}crm_seller s
                 INNER JOIN ${db.schema.adapted}crm_customer c on c.seller_id = s.id
                 INNER JOIN
@@ -11521,7 +11729,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 , cae.code
                 , cae.description order by date_trunc('month', i.invoice_date) DESC
                 , it.code DESC
-                , cae.code
+                , cae.code]]>
             </column>
         </insert>
 
@@ -11550,15 +11758,15 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="INVOICED_C_UUID"></column>
             <column name="sql_query">
-                select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
-                , ce.code AS "Customer code"
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS 'Month'
+                , ce.code AS 'Customer code'
                 , ce.description AS
-                "Customer description"
-                , it.code AS "Invoice type code"
-                , it.description AS "Invoice type description"
-                , to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
+                'Customer description'
+                , it.code AS 'Invoice type code'
+                , it.description AS 'Invoice type description'
+                , to_char(sum(i.amount_without_tax), '9999999990.00') AS 'Amount without tax'
                 ,
-                to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"
+                to_char(sum(i.amount_with_tax), '9999999990.00') AS 'Amount with tax'
                 from ${db.schema.adapted}crm_seller s
                 INNER JOIN ${db.schema.adapted}crm_customer c on c.seller_id = s.id
                 INNER JOIN
@@ -11578,7 +11786,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 , ce.code
                 , ce.description order by date_trunc('month', i.invoice_date) DESC
                 , it.code DESC
-                , ce.code
+                , ce.code]]>
             </column>
         </insert>
 
@@ -11607,15 +11815,15 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="INVOICED_S_UUID"></column>
             <column name="sql_query">
-                select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS Month
-                , s.code AS "Seller code"
-                , s.description AS "Seller
-                description"
-                , it.code AS "Invoice type code"
-                , it.description AS "Invoice type description"
-                , to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS Month
+                , s.code AS 'Seller code'
+                , s.description AS 'Seller
+                description'
+                , it.code AS 'Invoice type code'
+                , it.description AS 'Invoice type description'
+                , to_char(sum(i.amount_without_tax), '9999999990.00') AS 'Amount without tax'
                 , to_char(sum(i.amount_with_tax),
-                '9999999990.00') AS "Amount with tax"
+                '9999999990.00') AS 'Amount with tax'
                 from ${db.schema.adapted}crm_seller s
                 INNER JOIN ${db.schema.adapted}crm_customer c on c.seller_id = s.id
                 INNER JOIN ${db.schema.adapted}ar_customer_account ca on
@@ -11634,7 +11842,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 , s.description order by date_trunc('month',
                 i.invoice_date) DESC
                 , it.code DESC
-                , s.code
+                , s.code]]>
             </column>
         </insert>
 
@@ -11663,15 +11871,15 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="INVOICED_OF_UUID"></column>
             <column name="sql_query">
-                select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
-                , of.code AS "Offer code"
-                , of.description AS "Offer
-                description"
-                , it.code AS "Invoice type code"
-                , it.description AS "Invoice type description"
-                , to_char(sum(rt.amount_without_tax), '9999999990.00') AS "Amount without tax"
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS 'Month'
+                , of.code AS 'Offer code'
+                , of.description AS 'Offer
+                description'
+                , it.code AS 'Invoice type code'
+                , it.description AS 'Invoice type description'
+                , to_char(sum(rt.amount_without_tax), '9999999990.00') AS 'Amount without tax'
                 , to_char(sum(rt.amount_with_tax),
-                '9999999990.00') AS "Amount with tax"
+                '9999999990.00') AS 'Amount with tax'
                 from ${db.schema.adapted}cat_offer_template of
                 INNER JOIN ${db.schema.adapted}billing_wallet_operation wo on wo.offer_code = OF.code
                 INNER JOIN
@@ -11689,7 +11897,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 , of.description order by
                 date_trunc('month', i.invoice_date) DESC
                 , it.code DESC
-                , of.code
+                , of.code]]>
             </column>
         </insert>
 
@@ -11719,29 +11927,29 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="RECORDED_GLOBAL_UUID"></column>
             <column name="sql_query">
-                SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
+                <![CDATA[SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS 'Month'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category =
                 'DEBIT'
                 THEN ao.amount
                 ELSE 0
-                END), '99999999990.00') AS "Amount DEBIT"
+                END), '99999999990.00') AS 'Amount DEBIT'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'CREDIT'
                 THEN ao.amount
                 ELSE 0
-                END), '99999999990.00') AS "Amount CREDIT"
+                END), '99999999990.00') AS 'Amount CREDIT'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'DEBIT'
                 THEN ao.amount
                 ELSE - ao.amount
-                END), '99999999990.00') AS "Balance"
+                END), '99999999990.00') AS 'Balance'
                 FROM ${db.schema.adapted}ar_account_operation ao
                 WHERE ao.invoice_date IS NOT NULL
                 AND ao.invoice_date
                 > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
                 GROUP BY date_trunc('month', ao.invoice_date)
-                ORDER BY date_trunc('month', ao.invoice_date) DESC
+                ORDER BY date_trunc('month', ao.invoice_date) DESC]]>
             </column>
         </insert>
 
@@ -11764,33 +11972,33 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="RECORDED_BA_HIERARCHY_UUID"></column>
             <column name="sql_query">
-                SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
-                ,s.code AS "Seller code"
-                ,s.description AS "Seller
-                description"
-                ,ce.code AS "Customer code"
-                ,ce.description AS "Customer description"
-                ,cae.code AS "Customer Account code"
-                ,cae.description AS "Customer Account description"
-                ,bae.code AS "Billing Account code"
-                ,bae.description AS "Billing Account description"
+                <![CDATA[SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS 'Month'
+                ,s.code AS 'Seller code'
+                ,s.description AS 'Seller
+                description'
+                ,ce.code AS 'Customer code'
+                ,ce.description AS 'Customer description'
+                ,cae.code AS 'Customer Account code'
+                ,cae.description AS 'Customer Account description'
+                ,bae.code AS 'Billing Account code'
+                ,bae.description AS 'Billing Account description'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'DEBIT'
                 THEN ao.amount
                 ELSE 0
-                END), '99999999990.00') AS "Amount DEBIT"
+                END), '99999999990.00') AS 'Amount DEBIT'
                 ,to_char(sum(CASE
                 WHEN
                 ao.transaction_category = 'CREDIT'
                 THEN ao.amount
                 ELSE 0
-                END), '99999999990.00') AS "Amount CREDIT"
+                END), '99999999990.00') AS 'Amount CREDIT'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'DEBIT'
                 THEN ao.amount
                 ELSE - ao.amount
                 END), '99999999990.00')
-                AS "Balance"
+                AS 'Balance'
                 FROM ${db.schema.adapted}crm_seller s
                 INNER JOIN ${db.schema.adapted}crm_customer c ON c.seller_id = s.id
                 INNER JOIN ${db.schema.adapted}account_entity ce ON c.id = ce.id
@@ -11834,7 +12042,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 ,s.code
                 ,ce.code
                 ,cae.code
-                ,bae.code
+                ,bae.code]]>
             </column>
         </insert>
 
@@ -11863,25 +12071,25 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="RECORDED_BA_UUID"></column>
             <column name="sql_query">
-                SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
-                ,bae.code AS "Billing Account code"
+                <![CDATA[ SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS 'Month'
+                ,bae.code AS 'Billing Account code'
                 ,bae.description
-                AS "Billing Account description"
+                AS 'Billing Account description'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'DEBIT'
                 THEN ao.amount
                 ELSE 0
-                END), '99999999990.00') AS "Amount DEBIT"
+                END), '99999999990.00') AS 'Amount DEBIT'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'CREDIT'
                 THEN ao.amount
                 ELSE 0
-                END), '99999999990.00') AS "Amount CREDIT"
+                END), '99999999990.00') AS 'Amount CREDIT'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'DEBIT'
                 THEN ao.amount
                 ELSE - ao.amount
-                END), '99999999990.00') AS "Balance"
+                END), '99999999990.00') AS 'Balance'
                 FROM
                 ${db.schema.adapted}crm_seller s
                 INNER JOIN ${db.schema.adapted}crm_customer c ON c.seller_id = s.id
@@ -11907,7 +12115,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 ,bae.code
                 ,bae.description
                 ORDER BY date_trunc('month', ao.invoice_date) DESC
-                ,bae.code
+                ,bae.code]]>
             </column>
         </insert>
 
@@ -11936,26 +12144,26 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="RECORDED_CA_UUID"></column>
             <column name="sql_query">
-                SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
-                ,cae.code AS "Customer Account code"
-                ,cae.description AS "Customer Account description"
+                <![CDATA[ SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS 'Month'
+                ,cae.code AS 'Customer Account code'
+                ,cae.description AS 'Customer Account description'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'DEBIT'
                 THEN ao.amount
                 ELSE 0
-                END), '99999999990.00') AS "Amount DEBIT"
+                END), '99999999990.00') AS 'Amount DEBIT'
                 ,to_char(sum(CASE
                 WHEN
                 ao.transaction_category = 'CREDIT'
                 THEN ao.amount
                 ELSE 0
-                END), '99999999990.00') AS "Amount CREDIT"
+                END), '99999999990.00') AS 'Amount CREDIT'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'DEBIT'
                 THEN ao.amount
                 ELSE - ao.amount
                 END), '99999999990.00')
-                AS "Balance"
+                AS 'Balance'
                 FROM ${db.schema.adapted}crm_seller s
                 INNER JOIN ${db.schema.adapted}crm_customer c ON c.seller_id = s.id
                 INNER JOIN ${db.schema.adapted}ar_customer_account ca ON ca.customer_id = c.id
@@ -11974,7 +12182,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 ,cae.code
                 ,cae.description
                 ORDER BY date_trunc('month', ao.invoice_date) DESC
-                ,cae.code
+                ,cae.code ]]>
             </column>
         </insert>
 
@@ -12003,26 +12211,26 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="RECORDED_C_UUID"></column>
             <column name="sql_query">
-                SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
-                ,ce.code AS "Customer code"
+                <![CDATA[ SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS 'Month'
+                ,ce.code AS 'Customer code'
                 ,ce.description AS
-                "Customer description"
+                'Customer description'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'DEBIT'
                 THEN ao.amount
                 ELSE 0
-                END), '99999999990.00') AS "Amount DEBIT"
+                END), '99999999990.00') AS 'Amount DEBIT'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'CREDIT'
                 THEN
                 ao.amount
                 ELSE 0
-                END), '99999999990.00') AS "Amount CREDIT"
+                END), '99999999990.00') AS 'Amount CREDIT'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'DEBIT'
                 THEN ao.amount
                 ELSE - ao.amount
-                END), '99999999990.00') AS "Balance"
+                END), '99999999990.00') AS 'Balance'
                 FROM
                 ${db.schema.adapted}crm_seller s
                 INNER JOIN ${db.schema.adapted}crm_customer c ON c.seller_id = s.id
@@ -12042,7 +12250,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 ,ce.code
                 ,ce.description
                 ORDER BY date_trunc('month', ao.invoice_date) DESC
-                ,ce.code
+                ,ce.code]]>
             </column>
         </insert>
 
@@ -12071,25 +12279,25 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="RECORDED_S_UUID"></column>
             <column name="sql_query">
-                SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
-                ,s.code AS "Seller code"
-                ,s.description AS "Seller
-                description"
+                <![CDATA[SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS 'Month'
+                ,s.code AS 'Seller code'
+                ,s.description AS 'Seller
+                description'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'DEBIT'
                 THEN ao.amount
                 ELSE 0
-                END), '99999999990.00') AS "Amount DEBIT"
+                END), '99999999990.00') AS 'Amount DEBIT'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'CREDIT'
                 THEN ao.amount
                 ELSE 0
-                END), '99999999990.00') AS "Amount CREDIT"
+                END), '99999999990.00') AS 'Amount CREDIT'
                 ,to_char(sum(CASE
                 WHEN ao.transaction_category = 'DEBIT'
                 THEN ao.amount
                 ELSE - ao.amount
-                END), '99999999990.00') AS "Balance"
+                END), '99999999990.00') AS 'Balance'
                 FROM ${db.schema.adapted}crm_seller s
                 INNER JOIN ${db.schema.adapted}crm_customer c ON c.seller_id = s.id
                 INNER JOIN ${db.schema.adapted}ar_customer_account ca ON ca.customer_id = c.id
@@ -12106,7 +12314,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 ,s.code
                 ,s.description
                 ORDER BY date_trunc('month', ao.invoice_date) DESC
-                ,s.code
+                ,s.code]]>
             </column>
         </insert>
 
@@ -12136,22 +12344,22 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="UNBILLED_UA_HIERARCHY_UUID"></column>
             <column name="sql_query">
-                select s.code AS "Seller code"
-                , s.description AS "Seller description"
-                , ce.code AS "Customer code"
-                , ce.description AS "Customer description"
-                , cae.code AS "Customer Account code"
+                <![CDATA[select s.code AS 'Seller code'
+                , s.description AS 'Seller description'
+                , ce.code AS 'Customer code'
+                , ce.description AS 'Customer description'
+                , cae.code AS 'Customer Account code'
                 ,
-                cae.description AS "Customer Account description"
-                , bae.code AS "Billing Account code"
-                , bae.description AS "Billing Account description"
-                , uae.code AS "User Account code"
-                , uae.description AS "User Account
-                description"
-                , count(DISTINCT wo.id) AS "Transaction count"
-                , to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
-                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount
-                with tax"
+                cae.description AS 'Customer Account description'
+                , bae.code AS 'Billing Account code'
+                , bae.description AS 'Billing Account description'
+                , uae.code AS 'User Account code'
+                , uae.description AS 'User Account
+                description'
+                , count(DISTINCT wo.id) AS 'Transaction count'
+                , to_char(sum(wo.amount_without_tax), '99999999990.00') AS 'Amount without tax'
+                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS 'Amount
+                with tax'
                 from ${db.schema.adapted}billing_wallet_operation wo
                 INNER JOIN ${db.schema.adapted}billing_wallet wa on wa.id = wo.wallet_id
                 INNER JOIN ${db.schema.adapted}billing_user_account ua on ua.id =
@@ -12191,7 +12399,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 , ce.code
                 , cae.code
                 , bae.code
-                , uae.code
+                , uae.code]]>
             </column>
         </insert>
 
@@ -12214,12 +12422,12 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="UNBILLED_UA_UUID"></column>
             <column name="sql_query">
-                select uae.code AS "User Account code"
-                , uae.description AS "User Account description"
-                , count(DISTINCT wo.id) AS "Transaction count"
+                <![CDATA[select uae.code AS 'User Account code'
+                , uae.description AS 'User Account description'
+                , count(DISTINCT wo.id) AS 'Transaction count'
                 , to_char(sum(wo.amount_without_tax), '99999999990.00')
-                AS "Amount without tax"
-                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"
+                AS 'Amount without tax'
+                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS 'Amount with tax'
                 from ${db.schema.adapted}billing_wallet_operation wo
                 INNER JOIN ${db.schema.adapted}billing_wallet wa on
                 wa.id = wo.wallet_id
@@ -12237,7 +12445,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 and rt.STATUS = 'OPEN' ) ) ) and( uae.code ilike '%' || :SEARCH_CRITERION || '%' or uae.description ilike '%'
                 || :SEARCH_CRITERION || '%' )
                 group by uae.code
-                , uae.description order by uae.code
+                , uae.description order by uae.code]]>
             </column>
         </insert>
 
@@ -12260,12 +12468,12 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="UNBILLED_BA_UUID"></column>
             <column name="sql_query">
-                select bae.code AS "Billing Account code"
-                , bae.description AS "Billing Account description"
-                , count(DISTINCT wo.id) AS "Transaction count"
+                <![CDATA[select bae.code AS 'Billing Account code'
+                , bae.description AS 'Billing Account description'
+                , count(DISTINCT wo.id) AS 'Transaction count'
                 , to_char(sum(wo.amount_without_tax),
-                '99999999990.00') AS "Amount without tax"
-                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"
+                '99999999990.00') AS 'Amount without tax'
+                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS 'Amount with tax'
                 from ${db.schema.adapted}billing_wallet_operation wo
                 INNER JOIN
                 ${db.schema.adapted}billing_wallet wa on wa.id = wo.wallet_id
@@ -12281,7 +12489,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 and EXISTS ( select 1 from
                 billing_rated_transaction rt where rt.wallet_operation_id = wo.id and rt.STATUS = 'OPEN' ) ) )
                 and( bae.code ilike '%' || :SEARCH_CRITERION || '%' or bae.description ilike '%' || :SEARCH_CRITERION || '%' )
-                group by bae.code, bae.description order by bae.code
+                group by bae.code, bae.description order by bae.code]]>
             </column>
         </insert>
 
@@ -12304,28 +12512,28 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="UNBILLED_CA_UUID"></column>
             <column name="sql_query">
-                select cae.code AS "Customer Account code"
-                , cae.description AS "Customer Account description"
-                , count(DISTINCT wo.id) AS "Transaction count"
+                <![CDATA[select bae.code AS 'Billing Account code'
+                , bae.description AS 'Billing Account description'
+                , count(DISTINCT wo.id) AS 'Transaction count'
                 , to_char(sum(wo.amount_without_tax),
-                '99999999990.00') AS "Amount without tax"
-                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"
+                '99999999990.00') AS 'Amount without tax'
+                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS 'Amount with tax'
                 from ${db.schema.adapted}billing_wallet_operation wo
                 INNER JOIN
                 ${db.schema.adapted}billing_wallet wa on wa.id = wo.wallet_id
                 INNER JOIN ${db.schema.adapted}billing_user_account ua on ua.id = wa.user_account_id
                 INNER JOIN ${db.schema.adapted}billing_billing_account ba
                 on ba.id = ua.billing_account_id
+                INNER JOIN ${db.schema.adapted}account_entity bae on ba.id = bae.id
                 INNER JOIN ${db.schema.adapted}ar_customer_account ca on ca.id = ba.customer_account_id
-                INNER JOIN ${db.schema.adapted}account_entity cae on ca.id = cae.id
                 INNER JOIN
                 ${db.schema.adapted}crm_customer c on c.id = ca.customer_id
                 INNER JOIN ${db.schema.adapted}crm_seller s on s.id = c.seller_id
                 where ( wo.STATUS = 'OPEN' or ( wo.STATUS = 'TREATED'
                 and EXISTS ( select 1 from
                 billing_rated_transaction rt where rt.wallet_operation_id = wo.id and rt.STATUS = 'OPEN' ) ) )
-                and( cae.code ilike '%' || :SEARCH_CRITERION || '%' or cae.description ilike '%' || :SEARCH_CRITERION || '%' )
-                group by cae.code, cae.description order by cae.code
+                and( bae.code ilike '%' || :SEARCH_CRITERION || '%' or bae.description ilike '%' || :SEARCH_CRITERION || '%' )
+                group by bae.code, bae.description order by bae.code]]>
             </column>
         </insert>
 
@@ -12348,12 +12556,12 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="UNBILLED_C_UUID"></column>
             <column name="sql_query">
-                select ce.code AS "Customer code"
-                , ce.description AS "Customer description"
-                , count(DISTINCT wo.id) AS "Transaction count"
-                , to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount
-                without tax"
-                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"
+                <![CDATA[select ce.code AS 'Customer code'
+                , ce.description AS 'Customer description'
+                , count(DISTINCT wo.id) AS 'Transaction count'
+                , to_char(sum(wo.amount_without_tax), '99999999990.00') AS 'Amount
+                without tax'
+                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS 'Amount with tax'
                 from ${db.schema.adapted}billing_wallet_operation wo
                 INNER JOIN ${db.schema.adapted}billing_wallet wa on wa.id =
                 wo.wallet_id
@@ -12370,7 +12578,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 rt.wallet_operation_id = wo.id and rt.STATUS = 'OPEN' ) ) )
                 and( ce.code ilike '%' || :SEARCH_CRITERION || '%' or ce.description ilike '%' || :SEARCH_CRITERION || '%' )
                 group by ce.code, ce.description
-                order by ce.code
+                order by ce.code]]>
             </column>
         </insert>
 
@@ -12393,12 +12601,12 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="UNBILLED_S_UUID"></column>
             <column name="sql_query">
-                select s.code AS "Seller code"
-                , s.description AS "Seller description"
-                , count(DISTINCT wo.id) AS "Transaction count"
-                , to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount
-                without tax"
-                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"
+                <![CDATA[select s.code AS 'Seller code'
+                , s.description AS 'Seller description'
+                , count(DISTINCT wo.id) AS 'Transaction count'
+                , to_char(sum(wo.amount_without_tax), '99999999990.00') AS 'Amount
+                without tax'
+                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS 'Amount with tax'
                 from ${db.schema.adapted}billing_wallet_operation wo
                 INNER JOIN ${db.schema.adapted}billing_wallet wa on wa.id =
                 wo.wallet_id
@@ -12413,7 +12621,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 and EXISTS ( select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id and rt.STATUS = 'OPEN' ) ) )
                 and( s.code ilike
                 '%' || :SEARCH_CRITERION || '%' or s.description ilike '%' || :SEARCH_CRITERION || '%' )
-                group by s.code, s.description order by s.code
+                group by s.code, s.description order by s.code]]>
             </column>
         </insert>
 
@@ -12436,12 +12644,12 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="UNBILLED_OF_UUID"></column>
             <column name="sql_query">
-                select of.code AS "Offer code"
-                , of.description AS "Offer description"
-                , count(DISTINCT wo.id) AS "Transaction count"
-                , to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount
-                without tax"
-                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"
+                <![CDATA[select of.code AS 'Offer code'
+                , of.description AS 'Offer description'
+                , count(DISTINCT wo.id) AS 'Transaction count'
+                , to_char(sum(wo.amount_without_tax), '99999999990.00') AS 'Amount
+                without tax'
+                , to_char(sum(wo.amount_with_tax), '99999999990.00') AS 'Amount with tax'
                 from ${db.schema.adapted}cat_offer_template of
                 INNER JOIN ${db.schema.adapted}billing_wallet_operation wo on
                 wo.offer_code = OF.code
@@ -12449,7 +12657,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 and EXISTS ( select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id and rt.STATUS = 'OPEN' ) ) )
                 and(
                 of.code ilike '%' || :SEARCH_CRITERION || '%' or OF.description ilike '%' || :SEARCH_CRITERION || '%' )
-                group by of.code, of.description order by of.code
+                group by of.code, of.description order by of.code]]>
             </column>
         </insert>
 
@@ -12473,24 +12681,24 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="INVOICES_UUID"></column>
             <column name="sql_query">
-                select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
-                , to_char(i.invoice_date, 'YYYY-MM-DD') AS "Invoice
-                date"
-                , i.invoice_number AS "Invoice number"
-                , to_char(i.amount_without_tax, '9999999990.00') AS "Amount without tax"
-                , to_char(i.amount_with_tax, '9999999990.00') AS "Amount with tax"
-                , it.code AS "Invoice
-                type code"
-                , it.description AS "Invoice type description"
-                , s.code AS "Seller code"
-                , s.description AS "Seller description"
-                , ce.code AS "Customer code"
-                , ce.description AS "Customer description"
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS 'Month'
+                , to_char(i.invoice_date, 'YYYY-MM-DD') AS 'Invoice
+                date'
+                , i.invoice_number AS 'Invoice number'
+                , to_char(i.amount_without_tax, '9999999990.00') AS 'Amount without tax'
+                , to_char(i.amount_with_tax, '9999999990.00') AS 'Amount with tax'
+                , it.code AS 'Invoice
+                type code'
+                , it.description AS 'Invoice type description'
+                , s.code AS 'Seller code'
+                , s.description AS 'Seller description'
+                , ce.code AS 'Customer code'
+                , ce.description AS 'Customer description'
                 , cae.code AS
-                "Customer Account code"
-                , cae.description AS "Customer Account description"
-                , bae.code AS "Billing Account code"
-                , bae.description AS "Billing Account description"
+                'Customer Account code'
+                , cae.description AS 'Customer Account description'
+                , bae.code AS 'Billing Account code'
+                , bae.description AS 'Billing Account description'
                 from ${db.schema.adapted}crm_seller s
                 INNER
                 JOIN ${db.schema.adapted}crm_customer c on c.seller_id = s.id
@@ -12514,7 +12722,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 order by date_trunc('month', i.invoice_date) DESC
                 , i.invoice_date DESC
                 , it.code
-                , i.invoice_number
+                , i.invoice_number]]>
             </column>
         </insert>
 
@@ -12543,39 +12751,39 @@ public class ExportAccountOperationScript extends ReportExtractScript {
             <column name="result_type" value="CSV"></column>
             <column name="uuid" value="EDR_UUID"></column>
             <column name="sql_query">
-                SELECT edr.id AS "Id"
-                , edr.STATUS AS "Status"
-                , edr.reject_reason AS "Rejection reason"
-                , edr.access_code AS "Access code"
-                , su.code AS "Subscription code"
-                , of.code AS "Offer code"
+                <![CDATA[ SELECT edr.id AS 'Id'
+                , edr.STATUS AS 'Status'
+                , edr.reject_reason AS 'Rejection reason'
+                , edr.access_code AS 'Access code'
+                , su.code AS 'Subscription code'
+                , of.code AS 'Offer code'
                 ,
-                edr.event_date AS "Event date"
-                , edr.origin_batch AS "Origin batch"
-                , edr.origin_record AS "Origin record"
-                , edr.quantity AS "Quantity"
-                , edr.parameter_1 AS "Param S1"
-                , edr.parameter_2 AS "Param S2"
+                edr.event_date AS 'Event date'
+                , edr.origin_batch AS 'Origin batch'
+                , edr.origin_record AS 'Origin record'
+                , edr.quantity AS 'Quantity'
+                , edr.parameter_1 AS 'Param S1'
+                , edr.parameter_2 AS 'Param S2'
                 ,
-                edr.parameter_3 AS "Param S3"
-                , edr.parameter_4 AS "Param S4"
-                , edr.parameter_5 AS "Param S5"
-                , edr.parameter_6 AS "Param S6"
-                , edr.parameter_7 AS "Param S7"
-                , edr.parameter_8 AS "Param S8"
+                edr.parameter_3 AS 'Param S3'
+                , edr.parameter_4 AS 'Param S4'
+                , edr.parameter_5 AS 'Param S5'
+                , edr.parameter_6 AS 'Param S6'
+                , edr.parameter_7 AS 'Param S7'
+                , edr.parameter_8 AS 'Param S8'
                 , edr.parameter_9 AS
-                "Param S9"
-                , edr.date_parameter_1 AS "Param D1"
-                , edr.date_parameter_2 AS "Param D2"
-                , edr.date_parameter_3 AS "Param D3"
-                , edr.date_parameter_4 AS "Param D4"
-                , edr.date_parameter_5 AS "Param D5"
+                'Param S9'
+                , edr.date_parameter_1 AS 'Param D1'
+                , edr.date_parameter_2 AS 'Param D2'
+                , edr.date_parameter_3 AS 'Param D3'
+                , edr.date_parameter_4 AS 'Param D4'
+                , edr.date_parameter_5 AS 'Param D5'
                 ,
-                edr.decimal_parameter_1 AS "Param N1"
-                , edr.decimal_parameter_2 AS "Param N2"
-                , edr.decimal_parameter_3 AS "Param N3"
-                , edr.decimal_parameter_4 AS "Param N4"
-                , edr.decimal_parameter_5 AS "Param N5"
+                edr.decimal_parameter_1 AS 'Param N1'
+                , edr.decimal_parameter_2 AS 'Param N2'
+                , edr.decimal_parameter_3 AS 'Param N3'
+                , edr.decimal_parameter_4 AS 'Param N4'
+                , edr.decimal_parameter_5 AS 'Param N5'
                 from
                 ${db.schema.adapted}rating_edr edr
                 INNER JOIN ${db.schema.adapted}billing_subscription su on su.id = edr.subscription_id
@@ -12594,7 +12802,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
                 :SEARCH_CRITERION || '%' or edr.parameter_7 ilike '%' || :SEARCH_CRITERION || '%' or edr.parameter_8 ilike '%'
                 || :SEARCH_CRITERION || '%' or edr.parameter_9 ilike '%' || :SEARCH_CRITERION || '%')
                 order by
-                edr.STATUS, edr.id DESC
+                edr.STATUS, edr.id DESC]]>
             </column>
         </insert>
 

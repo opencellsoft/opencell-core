@@ -67,7 +67,7 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
-    @Column(name = "sql_query", columnDefinition = "TEXT")
+    @Column(name = "sql_query", columnDefinition = "text")
     private String sqlQuery;
 
     @ElementCollection(fetch = FetchType.EAGER)

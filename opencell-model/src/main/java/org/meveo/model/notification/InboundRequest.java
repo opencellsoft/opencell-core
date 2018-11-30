@@ -5,18 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.codec.binary.Base64;
@@ -122,6 +111,8 @@ public class InboundRequest extends BusinessEntity {
      */
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "adm_inbound_req_headers")
+    @Column(name = "headers", columnDefinition = "TEXT" )
+    @MapKeyColumn(name="headers_key")
     private Map<String, String> headers = new HashMap<String, String>();
 
     /**

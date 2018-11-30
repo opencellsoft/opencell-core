@@ -57,7 +57,7 @@ public class ReportExtractExecutionResult extends AuditableEntity {
     @Column(name = "origin")
     private ReportExtractExecutionOrigin origin;
 
-    @Column(name = "error_message")
+    @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
 
     @Column(name = "status")

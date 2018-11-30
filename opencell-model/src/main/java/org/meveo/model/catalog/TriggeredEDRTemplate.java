@@ -36,14 +36,14 @@ public class TriggeredEDRTemplate extends BusinessEntity {
     /**
      * Expression to determine subscription code
      */
-    @Column(name = "subscription_el", length = 2000)
+    @Column(name = "subscription_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String subscriptionEl;
 
     /**
      * Expression to determine subscription code - for Spark
      */
-    @Column(name = "subscription_el_sp", length = 2000)
+    @Column(name = "subscription_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String subscriptionElSpark;
 
@@ -57,84 +57,84 @@ public class TriggeredEDRTemplate extends BusinessEntity {
     /**
      * Expression to determine if EDR rule applies
      */
-    @Column(name = "condition_el", length = 2000)
+    @Column(name = "condition_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String conditionEl;
 
     /**
      * Expression to determine if EDR rule applies - for Spark
      */
-    @Column(name = "condition_el_sp", length = 2000)
+    @Column(name = "condition_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String conditionElSpark;
 
     /**
      * Expression to determine quantity of new EDR
      */
-    @Column(name = "quantity_el", length = 2000)
+    @Column(name = "quantity_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String quantityEl;
 
     /**
      * Expression to determine quantity of new EDR - for Spark
      */
-    @Column(name = "quantity_el_sp", length = 2000)
+    @Column(name = "quantity_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String quantityElSpark;
 
     /**
      * Expression to determine parameter 1 of new EDR
      */
-    @Column(name = "param_1_el", length = 2000)
+    @Column(name = "param_1_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String param1El;
 
     /**
      * Expression to determine parameter 1 of new EDR - for Spark
      */
-    @Column(name = "param_1_el_sp", length = 2000)
+    @Column(name = "param_1_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String param1ElSpark;
 
     /**
      * Expression to determine parameter 2 of new EDR
      */
-    @Column(name = "param_2_el", length = 2000)
+    @Column(name = "param_2_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String param2El;
 
     /**
      * Expression to determine parameter 2 of new EDR - for Spark
      */
-    @Column(name = "param_2_el_sp", length = 2000)
+    @Column(name = "param_2_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String param2ElSpark;
 
     /**
      * Expression to determine parameter 3 of new EDR
      */
-    @Column(name = "param_3_el", length = 2000)
+    @Column(name = "param_3_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String param3El;
 
     /**
      * Expression to determine parameter 3 of new EDR - for Spark
      */
-    @Column(name = "param_3_el_sp", length = 2000)
+    @Column(name = "param_3_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String param3ElSpark;
 
     /**
      * Expression to determine parameter 4 of new EDR
      */
-    @Column(name = "param_4_el", length = 2000)
+    @Column(name = "param_4_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String param4El;
 
     /**
      * Expression to determine parameter 4 of new EDR - for Spark
      */
-    @Column(name = "param_4_el_sp", length = 2000)
+    @Column(name = "param_4_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String param4ElSpark;
 
