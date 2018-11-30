@@ -509,7 +509,8 @@
     </changeSet>
     
     <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
-	    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
+        <sql>ALTER TABLE cat_discount_plan_item DROP CONSTRAINT cat_discount_plan_item_discount_percent_check;</sql>
+            <renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
     	<dropColumn tableName="cat_discount_plan_item">
     		<column name="discount_amount"></column>
     	</dropColumn>
