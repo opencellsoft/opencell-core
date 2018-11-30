@@ -1,17 +1,5 @@
 package org.meveo.service.notification;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.ftp.event.FileDelete;
@@ -20,9 +8,7 @@ import org.meveo.admin.ftp.event.FileRename;
 import org.meveo.admin.ftp.event.FileUpload;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.event.CFEndPeriodEvent;
-import org.meveo.event.CounterPeriodEvent;
-import org.meveo.event.IEvent;
+import org.meveo.event.*;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.event.logging.LoggedEvent;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
@@ -42,6 +28,7 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.audit.hibernate.AuditChangeType;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.EmailNotification;
@@ -65,11 +52,25 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Handles events associated with CDRUD operations on entities
  * 
- * @lastModifiedVersion willBeSetLater
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  */
 @Singleton
 @Startup
@@ -397,6 +398,26 @@ public class DefaultObserver {
     public void counterUpdated(@Observes CounterPeriodEvent event) throws BusinessException {
         log.debug("DefaultObserver.counterUpdated " + event);
         checkEvent(NotificationEventTypeEnum.COUNTER_DEDUCED, event);
+    }
+
+    private void statusUpdatedEvent(BaseEntity entity, FieldAudit field) throws BusinessException {
+        if (entity != null) {
+            log.debug("observe a dirty status of entity {} with id {}", entity.getClass().getName(), entity.getId());
+            checkEvent(NotificationEventTypeEnum.STATUS_UPDATED, field);
+        }
+    }
+
+    public void fieldsUpdated(@Observes Map<Object, List<FieldAudit>> event) throws BusinessException {
+        if (event != null && !event.isEmpty()) {
+            for (Map.Entry<Object, List<FieldAudit>> entry : event.entrySet()) {
+                List<FieldAudit> fields = entry.getValue();
+                for (FieldAudit field : fields) {
+                    if (field.getAuditType() == AuditChangeType.STATUS) {
+                        statusUpdatedEvent((BaseEntity) entry.getKey(), field);
+                    }
+                }
+            }
+        }
     }
 
 }

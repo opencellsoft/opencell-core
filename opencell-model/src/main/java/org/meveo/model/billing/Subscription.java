@@ -57,6 +57,9 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.audit.hibernate.AuditChangeType;
+import org.meveo.model.audit.hibernate.AuditTarget;
+import org.meveo.model.audit.hibernate.HibernateAuditable;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
@@ -66,7 +69,8 @@ import org.meveo.model.shared.DateUtils;
 /**
  * Subscription
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  */
 @Entity
 @ObservableEntity
@@ -80,7 +84,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
-public class Subscription extends BusinessCFEntity implements IBillableEntity {
+public class Subscription extends BusinessCFEntity implements IBillableEntity, HibernateAuditable {
 
     private static final long serialVersionUID = 1L;
 
@@ -90,6 +94,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
+    @AuditTarget(type = AuditChangeType.STATUS)
     private SubscriptionStatusEnum status = SubscriptionStatusEnum.CREATED;
 
     @Temporal(TemporalType.TIMESTAMP)

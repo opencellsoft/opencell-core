@@ -29,7 +29,9 @@ import org.meveo.model.rating.EDR;
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
  * @since Aug 11, 2016 11:02:44 AM
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
+ */
 public abstract class BaseNotificationBean<T extends Notification> extends UpdateMapTypeFieldBean<T> {
 
     private static final long serialVersionUID = 1L;
@@ -117,6 +119,7 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
             } else if (clazzStr.equals(CounterPeriod.class.getName())) {
                 events.add(NotificationEventTypeEnum.COUNTER_DEDUCED);
             } else if (clazzStr.equals(Subscription.class.getName()) || clazzStr.equals(ServiceInstance.class.getName())) {
+                events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.END_OF_TERM);
             }
         } else if (hasNotificableEntity(clazz)) {

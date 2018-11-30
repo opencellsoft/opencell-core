@@ -2,6 +2,7 @@ package org.meveo.service.notification;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -22,8 +23,9 @@ import org.meveo.service.base.BusinessService;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
- *
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
+ */
 @Stateless
 public class GenericNotificationService extends BusinessService<Notification> {
 
@@ -78,14 +80,7 @@ public class GenericNotificationService extends BusinessService<Notification> {
     @SuppressWarnings("unchecked")
     public List<Notification> getApplicableNotificationsNoCache(NotificationEventTypeEnum eventType, Object entityOrEvent) {
 
-        Object entity = null;
-        if (entityOrEvent instanceof IEntity) {
-            entity = (IEntity) entityOrEvent;
-        } else if (entityOrEvent instanceof IEvent) {
-            entity = (IEntity) ((IEvent) entityOrEvent).getEntity();
-        } else {
-            entity = entityOrEvent;
-        }
+        Object entity = notificationCacheContainerProvider.getEntity(entityOrEvent);
 
         @SuppressWarnings("rawtypes")
         Class entityClass = entity.getClass();

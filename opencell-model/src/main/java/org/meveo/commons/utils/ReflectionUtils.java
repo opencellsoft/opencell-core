@@ -51,7 +51,8 @@ import org.slf4j.LoggerFactory;
  * Utils class for java reflection api.
  * 
  * @author Ignas Lelys
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  */
 public class ReflectionUtils {
 
@@ -101,9 +102,11 @@ public class ReflectionUtils {
 
             ArrayList<Class> classList = new ArrayList<Class>();
 
-            for (Object clazz : classes) {
-                if (((Class) clazz).getName().startsWith(packageName)) {
-                    classList.add((Class) clazz);
+            synchronized(classes) {
+                for (Object clazz : classes) {
+                    if (((Class) clazz).getName().startsWith(packageName)) {
+                        classList.add((Class) clazz);
+                    }
                 }
             }
 

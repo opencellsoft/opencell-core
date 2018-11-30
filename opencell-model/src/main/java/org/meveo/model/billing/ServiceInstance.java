@@ -56,6 +56,9 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.audit.hibernate.AuditChangeType;
+import org.meveo.model.audit.hibernate.AuditTarget;
+import org.meveo.model.audit.hibernate.HibernateAuditable;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -67,7 +70,8 @@ import org.meveo.model.shared.DateUtils;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  */
 @Entity
 @ObservableEntity
@@ -79,7 +83,7 @@ import org.meveo.model.shared.DateUtils;
 @NamedQueries({
 		@NamedQuery(name = "ServiceInstance.getExpired", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
 		@NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)") })
-public class ServiceInstance extends BusinessCFEntity {
+public class ServiceInstance extends BusinessCFEntity implements HibernateAuditable {
 
     private static final long serialVersionUID = 1L;
 
@@ -97,6 +101,7 @@ public class ServiceInstance extends BusinessCFEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
+    @AuditTarget(type = AuditChangeType.STATUS)
     private InstanceStatusEnum status;
 
     @Temporal(TemporalType.TIMESTAMP)
