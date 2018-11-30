@@ -106,6 +106,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             invoiceDateDelay = billingCycleEntity.getInvoiceDateDelay();
             dueDateDelay = billingCycleEntity.getDueDateDelay();
             dueDateDelayEL = billingCycleEntity.getDueDateDelayEL();
+            dueDateDelayELSpark = billingCycleEntity.getDueDateDelayELSpark();
             invoiceDateProductionDelay = billingCycleEntity.getInvoiceDateProductionDelay();
             transactionDateDelay = billingCycleEntity.getTransactionDateDelay();
             invoicingThreshold = billingCycleEntity.getInvoicingThreshold();

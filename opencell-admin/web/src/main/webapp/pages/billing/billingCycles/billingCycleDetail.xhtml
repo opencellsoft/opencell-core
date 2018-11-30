@@ -34,28 +34,26 @@
                 <p:tab title="#{messages['customer.tab.information']}">
                     <hftl:formField label="#{messages['billingCycle.code']}" field="code" validateUnique="true" required="true" />
                     <hftl:formField label="#{messages['billingCycle.description']}" id="description" field="description" useConverter="false" size="50" />
+                    <hftl:formField label="#{messages['billingCycle.type']}" field="type" noSelectionLabel="false" disabled="false" />
+                    <hftl:formField label="#{messages['billingCycle.calendar']}" field="calendar" valueLabelField="code" required="true" listBean="#{calendarBean}" />
                     <hftl:formField label="#{messages['billingCycle.billingTemplateName']}" field="billingTemplateName" required="false" />
                     <hftl:formField label="#{messages['billingCycle.billingTemplateNameEL']}" field="billingTemplateNameEL" required="false" />
                     <hftl:formField label="#{messages['billingCycle.transactionDateDelay']}" field="transactionDateDelay" required="false" negativeValue="true" />
                     <hftl:formField label="#{messages['billingCycle.invoiceProductionDateDelay']}" field="invoiceDateProductionDelay" required="false" negativeValue="true" />
                     <hftl:formField label="#{messages['billingCycle.dueDateDelay']}" field="dueDateDelay" required="false" />
-                    <hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}" field="dueDateDelayEL" required="false" />
-                    <hftl:formField label="#{messages['billingCycle.dueDateDelayELSpark']}" field="dueDateDelayELSpark" required="false" />
+                    <hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}" field="dueDateDelayEL" required="false" textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
+                    <hftl:formField label="#{messages['billingCycle.dueDateDelayELSpark']}" field="dueDateDelayELSpark" required="false" textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
                     <hftl:formField label="#{messages['billingCycle.invoiceDateDelay']}" field="invoiceDateDelay" required="true" />
-                    <hftl:formField label="#{messages['billingCycle.calendar']}" field="calendar" valueLabelField="code" required="true" listBean="#{calendarBean}" />
                     <hftl:formField label="#{messages['billingCycle.invoicingThreshold']}" field="invoicingThreshold" required="false" />
 
-                    <div style="clear: both;">
+                    <hftl:formField id="scriptSelectId" label="#{messages['billingCycle.scriptCode']}" field="scriptInstance" valueLabelField="code" required="false" popup="true"
+                        popupId="billingCycleScriptPopup" showResetButton="true" />
+
                         <hftl:formField label="#{messages['invoiceType.name']}" id="invoiceTypeSelectedId" field="invoiceType" valueLabelField="code" popup="true" popupId="searchInvoiceTypePopup"
                             showResetButton="true" required="false" />
 
-                        <hftl:formField label="#{messages['billingCycle.invoiceTypeEL']}" field="invoiceTypeEl" textArea="true" rows="1" maxlength="2000" />
-
-                        <hftl:formField label="#{messages['billingCycle.type']}" field="type" noSelectionLabel="false" disabled="false" />
-
-                        <hftl:formField id="scriptSelectId" label="#{messages['billingCycle.scriptCode']}" field="scriptInstance" valueLabelField="code" required="false" popup="true"
-                            popupId="billingCycleScriptPopup" showResetButton="true" />
-                    </div>
+                        <hftl:formField label="#{messages['billingCycle.invoiceTypeEL']}" field="invoiceTypeEl" textArea="true" rows="1" maxlength="2000" newLine="true" />
+                        <hftl:formField label="#{messages['billingCycle.invoiceTypeELSpark']}" field="invoiceTypeElSpark" textArea="true" rows="1" maxlength="2000" />
 
                 </p:tab>
                 <hftl:customFields backingBean="#{billingCycleBean}" messagesId=":formBillingCycle:messages" />

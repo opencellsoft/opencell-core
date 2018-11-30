@@ -159,6 +159,9 @@ public class BillingCycleApi extends BaseApi {
         if (postData.getDueDateDelayELSpark() != null) {
             billingCycle.setDueDateDelayELSpark(postData.getDueDateDelayELSpark());
         }
+        if (postData.getInvoiceTypeEl() != null) {
+            billingCycle.setInvoiceTypeEl(postData.getInvoiceTypeEl());
+        }
         if (postData.getInvoiceTypeElSpark() != null) {
             billingCycle.setInvoiceTypeElSpark(postData.getInvoiceTypeElSpark());
         }
@@ -172,9 +175,6 @@ public class BillingCycleApi extends BaseApi {
             billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         }
 
-        if (postData.getInvoiceTypeEl() != null) {
-            billingCycle.setInvoiceTypeEl(postData.getInvoiceTypeEl());
-        }
 
         if (postData.getType() != null) {
             billingCycle.setType(postData.getType());

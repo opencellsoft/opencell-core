@@ -240,19 +240,13 @@
                                     </h:panelGroup>                                                
                                     
                                  	<hftl:formField label="#{messages['customer.jobTitle']}" field="jobTitle" />     
+                                 	                                 	
+                                 	<hftl:formField label="#{messages['billingAccount.minimumLabelEl']}" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />   
+                                 	<hftl:formField label="#{messages[appProvider.entreprise?'billingAccount.minimumAmountWithoutTaxEl':'billingAccount.minimumAmountWithTaxEl']}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                                 	<hftl:formField label="#{messages['billingAccount.minimumLabelElSpark']}" field="minimumLabelElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true"/>   
+                                 	<hftl:formField label="#{messages[appProvider.entreprise?'billingAccount.minimumAmountWithoutTaxElSpark':'billingAccount.minimumAmountWithTaxElSpark']}" field="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
                                  	
-                                 	<c:choose> 
-		                                <c:when test="${appProvider.entreprise}">
-									        <c:set var="minimumAmountLabel" value="#{messages['billingAccount.minimumAmountWithoutTax']} EL" />
-									    </c:when>
-									    <c:otherwise>
-									    	<c:set var="minimumAmountLabel" value="#{messages['billingAccount.minimumAmountWithTax']} EL" />
-									    </c:otherwise>
-									</c:choose>
-                                 	
-                                 	<hftl:formField label="#{messages['billingAccount.minimumLabel']} EL" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />   
-                                 	<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />
-                                 	<hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
+                                    <hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
 									<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
                                  	       
                                	    <hftl:formField rendered="#{billingAccountBean.edit}" label="#{messages['menu.discountPlans']}" field="discountPlans" listType="pickUpList" valueLabelField="code" required="false" dualListModel="#{billingAccountBean.discountPlanDM}" />

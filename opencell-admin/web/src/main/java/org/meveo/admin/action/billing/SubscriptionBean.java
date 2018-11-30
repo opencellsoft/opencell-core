@@ -58,7 +58,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -148,10 +147,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
-    
+
     @Inject
     private SellerService sellerService;
-
 
     @Inject
     private WalletTemplateService walletTemplateService;
@@ -195,7 +193,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private EntityListDataModelPF<UsageChargeInstance> usageChargeInstances = null;
     private EntityListDataModelPF<ProductChargeInstance> productChargeInstances = null;
     private EntityListDataModelPF<ProductInstance> productInstances = null;
-    
+
     public SubscriptionBean() {
         super(Subscription.class);
     }
@@ -261,7 +259,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                     }
                 }
             }
-            
+
             if (!alreadyInstanciated) {
                 serviceTemplate.setDescriptionOverride(serviceTemplate.getDescription());
                 serviceTemplates.add(serviceTemplate);
@@ -269,7 +267,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
         log.debug("servicetemplates initialized with {} templates ", serviceTemplates.getSize());
     }
-    
+
     public BillingCycle getBillingCycle() {
         return entity.getBillingCycle();
     }
@@ -279,7 +277,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             entity.setBillingCycle(billingCycle);
         }
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -305,7 +303,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             messages.error(new BundleKey("messages", "message.subscription.offerIsDisabled"));
             return null;
         }
-        
+
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
@@ -323,7 +321,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         selectedWalletTemplateCode = null;
     }
 
-    
     public void editOneShotChargeIns(OneShotChargeInstance oneShotChargeIns) {
         this.oneShotChargeInstance = oneShotChargeInstanceService.refreshOrRetrieve(oneShotChargeIns);
         selectedWalletTemplate = new WalletTemplate();
@@ -568,9 +565,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             log.error("error in SubscriptionBean.instanciateManyServices", e);
             messages.error(e.getMessage());
         }
-        
+
         keepCurrentTab();
-        
+
     }
 
     /**
@@ -869,7 +866,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         if (prepaidWalletTemplates == null && !entity.isTransient()) {
             prepaidWalletTemplates = walletTemplateService.findBySubscription(entity);
-                        }
+        }
 
         return prepaidWalletTemplates;
     }
@@ -1031,46 +1028,44 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         this.productInstance = null;
     }
 
-    public void onOfferSelected() {
-        if (entity.getOffer().isDisabled()) {
-            messages.error(new BundleKey("messages", "message.subscription.offerIsDisabled"));
-            return;
-        }
-    }
-
     /**
      * Update subscribedTillDate field in subscription
      */
     public void updateSubscribedTillDate() {
         entity.updateSubscribedTillAndRenewalNotifyDates();
     }
-    
+
     /**
      * Auto update end of engagement date.
      */
-    public void  autoUpdateEndOfEngagementDate() {
+    public void autoUpdateEndOfEngagementDate() {
         entity.autoUpdateEndOfEngagementDate();
     }
 
     /**
-     * Copy subscription renewal information from offer
+     * Copy subscription renewal and other information from offer
      */
-    public void copySubscriptionRenewalInfo() {
+    public void copyInfoFromOffer() {
         entity.setSubscriptionRenewal(entity.getOffer().getSubscriptionRenewal());
         updateSubscribedTillDate();
+        
+        entity.setMinimumAmountEl(entity.getOffer().getMinimumAmountEl());
+        entity.setMinimumLabelEl(entity.getOffer().getMinimumLabelEl());
+        entity.setMinimumAmountElSpark(entity.getOffer().getMinimumAmountElSpark());
+        entity.setMinimumLabelElSpark(entity.getOffer().getMinimumLabelElSpark());
     }
-    
+
     public boolean isServiceInstancesEmpty() {
-		if (entity.isTransient()) {
-			return true;
-		}
-		List<ServiceInstance> si = serviceInstanceService.findBySubscription(entity);
-		return (si == null || si.isEmpty()) ? true : false;
-	}
-    
+        if (entity.isTransient()) {
+            return true;
+        }
+        List<ServiceInstance> si = serviceInstanceService.findBySubscription(entity);
+        return (si == null || si.isEmpty()) ? true : false;
+    }
+
     public List<Seller> listProductSellers() {
-        if(productInstance != null && productInstance.getProductTemplate() != null) {
-            if(productInstance.getProductTemplate().getSellers().size() > 0) {
+        if (productInstance != null && productInstance.getProductTemplate() != null) {
+            if (productInstance.getProductTemplate().getSellers().size() > 0) {
                 return productInstance.getProductTemplate().getSellers();
             } else {
                 return sellerService.list();
@@ -1079,11 +1074,11 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             return new ArrayList<Seller>();
         }
     }
-    
+
     public List<Seller> listSellers() {
-        if(entity.getOffer() != null) {
+        if (entity.getOffer() != null) {
             offerTemplateService.retrieveIfNotManaged(entity.getOffer());
-            if(entity.getOffer().getSellers().size() > 0) {
+            if (entity.getOffer().getSellers().size() > 0) {
                 return entity.getOffer().getSellers();
             } else {
                 return sellerService.list();
@@ -1092,11 +1087,11 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             return new ArrayList<Seller>();
         }
     }
-    
+
     @ActionMethod
     public String cancelSubscriptionRenewal() throws BusinessException {
-    	subscriptionService.cancelSubscriptionRenewal(entity);
-    	RequestContext.getCurrentInstance().reset("subscriptionTab");
-    	return null;
+        subscriptionService.cancelSubscriptionRenewal(entity);
+        RequestContext.getCurrentInstance().reset("subscriptionTab");
+        return null;
     }
 }

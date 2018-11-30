@@ -538,5 +538,11 @@
      	<renameColumn newColumnName="payment_day_in_month_ps" oldColumnName="due_date_days_ps" tableName="billing_service_instance"/>
     </changeSet>
     
+    <changeSet id="#3577_20181128" author="AndriusKarpavicius">
+        <addColumn tableName="cat_offer_template">
+            <column name="minimum_amount_el_sp" type="varchar(2000)" />
+            <column name="minimum_label_el_sp" type="varchar(2000)" />    
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 
-

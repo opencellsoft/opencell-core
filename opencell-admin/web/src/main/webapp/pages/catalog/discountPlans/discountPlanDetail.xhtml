@@ -151,21 +151,17 @@
                             <hftl:formField
                                 label="#{messages['discountPlanItem.accountingCode']}"
                                 field="accountingCode" />
-                            <hftl:formField newLine="true" label="#{messages['discountPlanItem.type']}" field="discountPlanItemType" listenerUpdate="itemType invoiceSubCatPanel" />
-                            
-                            <h:panelGroup id="itemType" styleClass="formFieldGroup">
-	                            <hftl:formField id="discountValuePercentage" label="#{messages['discountPlanItem.discountValue']}"
-	                                field="discountValue" required="true" minValue="-100" maxValue="100" rendered="#{discountPlanBean.discountPlanItem.discountPlanItemType eq DiscountPlanItemTypeEnum.PERCENTAGE}" />
-	                            <hftl:formField id="discountValueFixed" label="#{messages['discountPlanItem.discountValue']}"
-	                                field="discountValue" required="true" rendered="#{discountPlanBean.discountPlanItem.discountPlanItemType eq DiscountPlanItemTypeEnum.FIXED}" />
+                            <hftl:formField newLine="true" label="#{messages['discountPlanItem.type']}" field="discountPlanItemType" listenerUpdate="discountValue invoiceSubCatPanel" />
+                            <h:panelGroup id="discountValue">
+                                <hftl:formField label="#{messages[discountPlanBean.discountPlanItem.discountPlanItemType eq DiscountPlanItemTypeEnum.PERCENTAGE?'discountPlanItem.discountPercent':'discountPlanItem.discountAmount']}"
+    	                            field="discountValue" required="true" minValue="-100" maxValue="100" />
                             </h:panelGroup>
-                                    
-                            <hftl:formField newLine="true" label="#{messages['discountPlanItem.expressionEl']}"
-                             field="expressionEl"  textArea="true" maxlength="2000" rows="1" />
-                                 
-                            <hftl:formField label="#{messages['discountPlanItem.percent']} EL"
-                             field="discountValueEL"  textArea="true" maxlength="2000" rows="1" />
-                            
+                            <hftl:formField newLine="true" label="#{messages['discountPlanItem.expressionEl']}" field="expressionEl" textArea="true" maxlength="2000" rows="1" />
+                            <hftl:formField label="#{messages['discountPlanItem.expressionElSpark']}" field="expressionElSpark" textArea="true" maxlength="2000" rows="1" />
+
+                            <hftl:formField label="#{messages['discountPlanItem.discountValueEl']}" field="discountValueEL" textArea="true" maxlength="2000" rows="1" />
+                            <hftl:formField label="#{messages['discountPlanItem.discountValueElSpark']}" field="discountValueElSpark" textArea="true" maxlength="2000" rows="1" />
+            
                             <hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate" />
                             <hftl:formField label="#{messages['discountPlanItem.endDate']}" field="endDate" />
                             

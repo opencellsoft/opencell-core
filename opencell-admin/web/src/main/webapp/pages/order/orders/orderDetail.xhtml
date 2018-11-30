@@ -69,7 +69,8 @@
                         <hftl:formField label="#{messages['order.orderDate']}" field="orderDate" doNotShowOnNew="true" allowEdit="false" />
                         <hftl:formField label="#{messages['order.priority']}" field="priority" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                         <hftl:formField label="#{messages['order.category']}" field="category" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
-                        <hftl:formField label="#{messages['order.dueDateDelayEL']}" field="dueDateDelayEL" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+                        <hftl:formField label="#{messages['order.dueDateDelayEL']}" field="dueDateDelayEL" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
+                        <hftl:formField label="#{messages['order.dueDateDelayELSpark']}" field="dueDateDelayELSpark" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
 					
 						<hftl:formField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
                             				popupId="billingCyclePopup" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
