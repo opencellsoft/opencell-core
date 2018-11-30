@@ -8762,7 +8762,7 @@
             $$ LANGUAGE plpgsql;
         ]]></sql>
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-func-1000" dbms="mysql">
+   <!-- <changeSet author="AndriusKarpavicius" id="rebuild-str-func-1000" dbms="mysql">
         <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
         <sql splitStatements="false" stripComments="false"><![CDATA[
             create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
@@ -8781,7 +8781,7 @@
             end;
         ]]></sql>
 
-    </changeSet>
+    </changeSet>-->
 
 
     <!-- keep this always as the last changeSet to remove all rebuild logs -->
