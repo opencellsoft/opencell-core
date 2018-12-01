@@ -72,6 +72,11 @@ public class PaymentGatewayDto extends EnableBusinessDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    /**
+     * The RUM sequence associated to this PaymentGateway.
+     */
+    private PaymentGatewayRumSequenceDto rumSequence;
 
     /**
      * Instantiates a new payment gateway dto.
@@ -104,7 +109,9 @@ public class PaymentGatewayDto extends EnableBusinessDto {
         this.webhooksKeyId = paymentGateway.getWebhooksKeyId();
         this.webhooksSecretKey = paymentGateway.getWebhooksSecretKey();
         this.profile = paymentGateway.getProfile();
-        
+		if (paymentGateway.getRumSequence() != null) {
+			rumSequence = new PaymentGatewayRumSequenceDto(paymentGateway.getRumSequence());
+		}
     }
 
     /**
@@ -366,5 +373,13 @@ public class PaymentGatewayDto extends EnableBusinessDto {
                 + paymentMethodType + ", scriptInstanceCode=" + scriptInstanceCode + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL
                 + ", countryCode=" + countryCode + ", tradingCurrencyCode=" + tradingCurrencyCode + ", cardType=" + cardType + ", marchandId="+marchandId+"]";
     }
+
+	public PaymentGatewayRumSequenceDto getRumSequence() {
+		return rumSequence;
+	}
+
+	public void setRumSequence(PaymentGatewayRumSequenceDto rumSequence) {
+		this.rumSequence = rumSequence;
+	}
 
 }
