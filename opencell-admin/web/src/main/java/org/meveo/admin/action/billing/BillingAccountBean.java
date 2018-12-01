@@ -21,7 +21,6 @@ package org.meveo.admin.action.billing;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.faces.event.ValueChangeEvent;
@@ -39,6 +38,7 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
@@ -127,32 +127,32 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         if (entity.getContactInformation() == null) {
             entity.setContactInformation(new ContactInformation());
         }
-        
-        if (entity.getDiscountPlans() == null) {
-			entity.setDiscountPlans(new HashSet<>());
+		if (entity.getDiscountPlanInstances() == null) {
+			entity.setDiscountPlanInstances(new ArrayList<>());
 		}
-
 		if (discountPlanDM == null) {
 			List<DiscountPlan> sourceDS = null;
 			sourceDS = discountPlanService.list();
-			List<DiscountPlan> targetDS = new ArrayList<>();
-			if (entity.getDiscountPlans() != null) {
-				targetDS.addAll(entity.getDiscountPlans());
-			}
-			sourceDS.removeAll(targetDS);
-			discountPlanDM = new DualListModel<>(sourceDS, targetDS);
+			discountPlanDM = new DualListModel<>(sourceDS, new ArrayList<>());
 		}
 
         return entity;
     }
 
-    public void setCustomerAccountId(Long customerAccountId) {
-        this.customerAccountId = customerAccountId;
-    }
-
-    public Long getCustomerAccountId() {
-        return customerAccountId;
-    }
+    @ActionMethod
+	public void instantiateDiscountPlan() throws BusinessException {
+		if (entity.getDiscountPlan() != null) {
+			DiscountPlan dp = entity.getDiscountPlan();
+			entity = billingAccountService.refreshOrRetrieve(entity);
+			entity = billingAccountService.instantiateDiscountPlan(entity, dp, null);
+			entity.setDiscountPlan(null);
+		}
+	}
+	
+	@ActionMethod
+	public void deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
+		billingAccountService.terminateDiscountPlan(entity, dpi);
+	}
 
     @Override
     @ActionMethod
@@ -166,7 +166,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
                 billingAccountService.initBillingAccount(entity);
             }
 
-			entity.setDiscountPlans(new HashSet<>(discountPlanService.refreshOrRetrieve(discountPlanDM.getTarget())));
+//			entity.setDiscountPlans(new HashSet<>(discountPlanService.refreshOrRetrieve(discountPlanDM.getTarget())));
 
             String outcome = super.saveOrUpdate(killConversation);
 
@@ -360,7 +360,15 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             entity.setPrimaryContact(customerAccount.getPrimaryContact());
         }
     }
+    
+    public void setCustomerAccountId(Long customerAccountId) {
+        this.customerAccountId = customerAccountId;
+    }
 
+    public Long getCustomerAccountId() {
+        return customerAccountId;
+    }
+    
     @Override
     protected String getDefaultSort() {
         return "code";

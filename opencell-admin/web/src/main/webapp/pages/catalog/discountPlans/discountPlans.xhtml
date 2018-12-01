@@ -42,6 +42,10 @@
 				-->
 			<hftl:column label="#{messages['discountPlanMatrix.planItems']}" field="discountPlanItems" isList="true" valueLabelField="code" valueIdField="id"
 				/>
+			<hftl:column label="#{messages['discountPlanItem.startDate']}"
+                field="startDate" isDate="true" />
+            <hftl:column label="#{messages['discountPlanItem.endDate']}"
+                field="endDate" isDate="true" />
             <hftl:column label="#{messages['enableEntity.active']}" field="active"
                 isMessage="true" />
 

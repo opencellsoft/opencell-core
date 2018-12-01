@@ -11,6 +11,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -18,7 +19,7 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
-import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -78,6 +79,18 @@ public class DiscountPlanItemApi extends BaseApi {
             throw new EntityAlreadyExistsException(DiscountPlanItem.class, postData.getCode());
         }
         discountPlanItem = toDiscountPlanItem(postData, null);
+        
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), discountPlanItem, true);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+        
         discountPlanItemService.create(discountPlanItem);
     }
 
@@ -102,8 +115,19 @@ public class DiscountPlanItemApi extends BaseApi {
             throw new EntityDoesNotExistsException(DiscountPlanItem.class, postData.getCode());
         }
         discountPlanItem = toDiscountPlanItem(postData, discountPlanItem);
+        
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), discountPlanItem, false);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
-        discountPlanItem = discountPlanItemService.update(discountPlanItem);
+        discountPlanItemService.update(discountPlanItem);
     }
 
     /**
@@ -125,7 +149,7 @@ public class DiscountPlanItemApi extends BaseApi {
             throw new EntityDoesNotExistsException(DiscountPlanItem.class, discountPlanItemCode);
         }
 
-        return new DiscountPlanItemDto(discountPlanItem);
+        return new DiscountPlanItemDto(discountPlanItem, entityToDtoConverter.getCustomFieldsDTO(discountPlanItem, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 
     /**
@@ -182,7 +206,7 @@ public class DiscountPlanItemApi extends BaseApi {
         if (discountPlanItems != null && !discountPlanItems.isEmpty()) {
             DiscountPlanItemDto dpid = null;
             for (DiscountPlanItem dpi : discountPlanItems) {
-                dpid = new DiscountPlanItemDto(dpi);
+                dpid = new DiscountPlanItemDto(dpi, entityToDtoConverter.getCustomFieldsDTO(dpi, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                 discountPlanItemDtos.add(dpid);
             }
         }
@@ -246,18 +270,6 @@ public class DiscountPlanItemApi extends BaseApi {
 		}
 		if (source.getDiscountPlanItemType() != null) {
 			discountPlanItem.setDiscountPlanItemType(source.getDiscountPlanItemType());
-		}
-		if (source.getStartDate() != null) {
-			discountPlanItem.setStartDate(source.getStartDate());
-		}
-		if (source.getEndDate() != null) {
-			discountPlanItem.setEndDate(source.getEndDate());
-		}
-		if (source.getDefaultDuration() != null) {
-			discountPlanItem.setDefaultDuration(source.getDefaultDuration());
-		}
-		if (source.getDurationUnit() != null) {
-			discountPlanItem.setDurationUnit(source.getDurationUnit());
 		}
 
         return discountPlanItem;

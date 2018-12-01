@@ -22,10 +22,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,8 +33,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
@@ -222,13 +218,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions;
 
-    /**
-     * Applicable discount plan
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "discount_plan_id")
-    private DiscountPlan discountPlan;
-
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     // key is the counter template code
@@ -285,10 +274,11 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Transient
     private BigDecimal totalInvoicingAmountWithoutTax;
 
-    /** Discount plans */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "billing_discount_plan", joinColumns = @JoinColumn(name = "billing_account_id"), inverseJoinColumns = @JoinColumn(name = "discount_plan_id"))
-    private Set<DiscountPlan> discountPlans = new HashSet<>();
+    /**
+     * Instance of discount plans. Once instantiated effectivity date is not affected when template is updated.
+     */
+	@OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<DiscountPlanInstance> discountPlanInstances;
 
     /**
      * Total invoicing amount with tax
@@ -301,6 +291,12 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
      */
     @Transient
     private BigDecimal totalInvoicingAmountTax;
+    
+    /**
+     * Applicable discount plan. Replaced by discountPlanInstances. Now used only in GUI.
+     */
+    @Transient
+    private DiscountPlan discountPlan;
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -477,14 +473,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
         this.ratedTransactions = ratedTransactions;
     }
 
-    public DiscountPlan getDiscountPlan() {
-        return discountPlan;
-    }
-
-    public void setDiscountPlan(DiscountPlan discountPlan) {
-        this.discountPlan = discountPlan;
-    }
-
     public Map<String, CounterInstance> getCounters() {
         return counters;
     }
@@ -623,21 +611,21 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
         this.totalInvoicingAmountTax = totalInvoicingAmountTax;
     }
+    
+	public List<DiscountPlanInstance> getDiscountPlanInstances() {
+		return discountPlanInstances;
+	}
+	
+	public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstances) {
+		this.discountPlanInstances = discountPlanInstances;
+	}
 
-    public Set<DiscountPlan> getDiscountPlans() {
-        return discountPlans;
-    }
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
 
-    public void setDiscountPlans(Set<DiscountPlan> discountPlans) {
-        this.discountPlans = discountPlans;
-    }
-
-    public void addDiscountPlanNullSafe(DiscountPlan e) {
-        if (discountPlans == null) {
-            discountPlans = new HashSet<>();
-        }
-
-        discountPlans.add(e);
-    }
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
 
 }

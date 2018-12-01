@@ -172,7 +172,7 @@ public class SubscriptionDto extends BusinessEntityDto {
         setMinimumLabelElSpark(e.getMinimumLabelElSpark());
         if(e.getSeller() != null) {
         	setSeller(e.getSeller().getCode());
-    }
+        }
     }
 
     /**

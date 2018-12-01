@@ -1,7 +1,6 @@
 package org.meveo.api.dto.catalog;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -11,10 +10,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEnableDto;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
-import org.meveo.model.catalog.DiscountPlanItem.DurationPeriodUnitEnum;
 
 /**
  * Discount plan item
@@ -74,26 +73,10 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
      */
     private Boolean disabled;
-    
-    /** Effective start date */
-    private Date startDate;
-    
-    /** Effective end date */
-	private Date endDate;
 	
 	/** Type of discount, whether absolute or percentage. */
 	private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
-	
-	/**
-	 * Length of effectivity. 
-	 * If start date is not null and end date is null, we use the defaultDuration from the discount plan.
-	 * If start date is null, and defaultDuration is not null, defaultDuration is ignored. 
-	 */
-	private Integer defaultDuration;
-	
-	/** Unit of duration */
-	private DurationPeriodUnitEnum durationUnit;
-	
+    
 	/**
      * The absolute or percentage discount amount.
      */
@@ -108,6 +91,10 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      * Expression to calculate discount percentage - for Spark
      */
 	private String discountValueElSpark;
+	
+	/** The custom fields. */
+    @XmlElement(required = false)
+    private CustomFieldsDto customFields;
 
     /**
      * Instantiates a new discount plan item dto.
@@ -119,8 +106,9 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      * Convert discount plan item entity to DTO
      *
      * @param discountPlanItem Entity to convert
+     * @param customFieldsDto the custom fields
      */
-    public DiscountPlanItemDto(DiscountPlanItem discountPlanItem) {
+    public DiscountPlanItemDto(DiscountPlanItem discountPlanItem, CustomFieldsDto customFieldInstances) {
         this.code = discountPlanItem.getCode();
         this.discountPlanCode = discountPlanItem.getDiscountPlan().getCode();
         this.invoiceCategoryCode = discountPlanItem.getInvoiceCategory() != null ? discountPlanItem.getInvoiceCategory().getCode() : null;
@@ -130,13 +118,11 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.expressionElSpark = discountPlanItem.getExpressionElSpark();
         this.disabled = discountPlanItem.isDisabled();
 		this.discountPlanItemType = discountPlanItem.getDiscountPlanItemType();
-		this.startDate = discountPlanItem.getStartDate();
-		this.endDate = discountPlanItem.getEndDate();
-		this.durationUnit = discountPlanItem.getDurationUnit();
-		this.defaultDuration = discountPlanItem.getDefaultDuration();
 		this.discountValue = discountPlanItem.getDiscountValue();
 		this.discountValueEL = discountPlanItem.getDiscountValueEL();
 		this.discountValueElSpark = discountPlanItem.getDiscountValueElSpark();
+		
+		customFields = customFieldInstances;
     }
 
     /**
@@ -257,68 +243,67 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.expressionElSpark = expressionElSpark;
     }
 
+    /**
+     * Sets whether this entity is disabled or not.
+     */
     @Override
     public void setDisabled(Boolean disabled) {
         this.disabled = disabled;
     }
 
+    /**
+     * Whether this entity is disabled.
+     */
     @Override
     public Boolean isDisabled() {
         return disabled;
     }
 
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-	public Integer getDefaultDuration() {
-		return defaultDuration;
-	}
-
-	public void setDefaultDuration(Integer defaultDuration) {
-		this.defaultDuration = defaultDuration;
-	}
-
-	public DurationPeriodUnitEnum getDurationUnit() {
-		return durationUnit;
-	}
-
-	public void setDurationUnit(DurationPeriodUnitEnum durationUnit) {
-		this.durationUnit = durationUnit;
-	}
-
+    /**
+     * Sets the discount plan item type.
+     * @return item type
+     */
 	public DiscountPlanItemTypeEnum getDiscountPlanItemType() {
 		return discountPlanItemType;
 	}
 
+
+    /**
+     * Gets the discount plan item type.
+     * @return item type
+     */
 	public void setDiscountPlanItemType(DiscountPlanItemTypeEnum discountPlanItemType) {
 		this.discountPlanItemType = discountPlanItemType;
 	}
 
+	/**
+	 * Gets the discount value. Can be either percentage or fixed. Depending on the item type.
+	 * @return the discount value
+	 */
 	public BigDecimal getDiscountValue() {
 		return discountValue;
 	}
 
+	/**
+	 * Sets the discount value. Can be either percentage or fixed. Depending on the item type.
+	 * @param discountValue the discount value
+	 */
 	public void setDiscountValue(BigDecimal discountValue) {
 		this.discountValue = discountValue;
 	}
 
+	/**
+	 * Gets the discount value el for spark.
+	 * @return
+	 */
 	public String getDiscountValueElSpark() {
 		return discountValueElSpark;
 	}
 
+	/**
+	 * Sets the discount value el for spark.
+	 * @param discountValueElSpark the discount value
+	 */
 	public void setDiscountValueElSpark(String discountValueElSpark) {
 		this.discountValueElSpark = discountValueElSpark;
 	}
@@ -328,17 +313,40 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 		return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode="
 				+ invoiceCategoryCode + ", invoiceSubCategoryCode=" + invoiceSubCategoryCode + ", accountingCode="
 				+ accountingCode + ", expressionEl=" + expressionEl + ", expressionElSpark=" + expressionElSpark
-				+ ", disabled=" + disabled + ", startDate=" + startDate + ", endDate=" + endDate
-				+ ", discountPlanItemType=" + discountPlanItemType + ", defaultDuration=" + defaultDuration
-				+ ", durationUnit=" + durationUnit + ", discountValue=" + discountValue + ", discountValueEL="
-				+ discountValueEL + ", discountValueElSpark=" + discountValueElSpark + "]";
+				+ ", disabled=" + disabled + ", discountPlanItemType=" + discountPlanItemType + ", discountValue="
+				+ discountValue + ", discountValueEL=" + discountValueEL + ", discountValueElSpark="
+				+ discountValueElSpark + "]";
 	}
 
+	/**
+	 * Sets the discount value el.
+	 * @param discountValueEL el expression
+	 */
 	public void setDiscountValueEL(String discountValueEL) {
 		this.discountValueEL = discountValueEL;
 	}
 
+	/**
+	 * Gets the discount value el.
+	 * @return el expression
+	 */
 	public String getDiscountValueEL() {
 		return discountValueEL;
+	}
+
+	/**
+	 * Gets the custom fields.
+	 * @return custom fields associated with this entity
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * Sets the custom fields.
+	 * @param customFields custom fields to be associated with this entity
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 }

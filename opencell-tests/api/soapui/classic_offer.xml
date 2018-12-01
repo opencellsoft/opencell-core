@@ -32801,7 +32801,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_USAGE</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>100</percent>
+			<discountValue>100</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -32847,7 +32847,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_RECURRING</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>100</percent>
+			<discountValue>100</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -32893,7 +32893,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_ONESHOT</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>100</percent>
+			<discountValue>100</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -32939,7 +32939,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_PRODUCTS</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>100</percent>
+			<discountValue>100</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -33025,7 +33025,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_USAGE</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>10</percent>
+			<discountValue>10</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -33071,7 +33071,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_RECURRING</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>10</percent>
+			<discountValue>10</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -33117,7 +33117,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_ONESHOT</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>10</percent>
+			<discountValue>10</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -33163,7 +33163,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_PRODUCTS</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>10</percent>
+			<discountValue>10</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>

@@ -483,10 +483,7 @@
     	<addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_invoice_agregate" constraintName="fk_icmfsev8m5n386ifttcgelv40" deferrable="false" initiallyDeferred="false"
             onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice" />
     </changeSet>
-
-    <changeSet id="#3767_20181112 - Discount fields refactor -" author="EdwardPLegaspi">
-    	<sql>UPDATE ${db.schema.adapted}cat_discount_plan_item SET discount_percent=discount_amount WHERE discount_percent is null;</sql>
-    </changeSet>
+    
     <changeSet author="SaidRamli" id="#3791_20181119">
         <modifyDataType columnName="sync_status"
                         newDataType="VARCHAR(255)"
@@ -507,17 +504,6 @@
                         newDataType="VARCHAR(255)"
                         tableName="ar_payment_history"/>
     </changeSet>
-    
-    <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
-        <sql>ALTER TABLE cat_discount_plan_item DROP CONSTRAINT cat_discount_plan_item_discount_percent_check;</sql>
-            <renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
-    	<dropColumn tableName="cat_discount_plan_item">
-    		<column name="discount_amount"></column>
-    	</dropColumn>
-	    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el" columnDataType="varchar(2000)"/>
-	    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el_sp" newColumnName="discount_value_el_sp" columnDataType="varchar(2000)"/>    	
-    </changeSet>
-
 
     <changeSet id="#3823_20181125 - the invoice(s) that was paid when the payment are rejected" author="anasseh">
     		<addColumn tableName="ar_account_operation">
@@ -594,6 +580,78 @@
             <column name="minimum_amount_el_sp" type="varchar(2000)" />
             <column name="minimum_label_el_sp" type="varchar(2000)" />
         </addColumn>
+    </changeSet>
+    
+    <changeSet id="#3767_20181112 - Discount fields refactor -" author="EdwardPLegaspi">
+    	<sql>UPDATE ${db.schema.adapted}cat_discount_plan_item SET discount_percent=discount_amount WHERE discount_percent is null;</sql>
+    </changeSet>
+    
+    <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
+        <sql>ALTER TABLE cat_discount_plan_item DROP CONSTRAINT cat_discount_plan_item_discount_percent_check;</sql>
+        <renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
+    	<dropColumn tableName="cat_discount_plan_item">
+    		<column name="discount_amount"></column>
+    	</dropColumn>
+	    <renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el" columnDataType="varchar(2000)"/>
+	    <renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el_sp" newColumnName="discount_value_el_sp" columnDataType="varchar(2000)"/>    	
+    </changeSet>
+    
+    <changeSet id="#3769_20181116 - Refactor discount effectivity dates" author="EdwardPLegaspi">
+    	<dropColumn tableName="cat_discount_plan_item">
+    		<column name="start_date"></column>
+    		<column name="end_date"></column>
+    		<column name="default_duration"></column>
+    		<column name="duration_unit"></column>
+    	</dropColumn>
+    	<addColumn tableName="cat_discount_plan">
+    		<column name="start_date" type="date" />
+            <column name="end_date" type="date" />
+            <column name="default_duration" type="int4" />
+            <column name="duration_unit" type="varchar(50)" />
+   		</addColumn>
+    </changeSet>
+    <changeSet id="#3792_20181116 - Convert discount tables to CF entity" author="EdwardPLegaspi">
+    	<addColumn tableName="cat_discount_plan">
+    		<column name="uuid" type="varchar(60)">
+			</column>
+			<column name="cf_values" type="${type.json}" />
+			<column name="cf_values_accum" type="${type.json}"></column>
+    	</addColumn>
+    	<addColumn tableName="cat_discount_plan_item">
+    		<column name="uuid" type="varchar(60)">
+			</column>
+			<column name="cf_values" type="${type.json}" />
+			<column name="cf_values_accum" type="${type.json}"></column>
+    	</addColumn>
+    </changeSet>
+    <changeSet id="#3792_20181116 - Convert discount tables to CF entity - add constraints" author="EdwardPLegaspi">
+    	<sql>UPDATE ${db.schema.adapted}cat_discount_plan SET uuid=concat(code, '_', id)</sql>
+    	<sql>UPDATE ${db.schema.adapted}cat_discount_plan_item SET uuid=concat(code, '_', id)</sql>
+    	<addNotNullConstraint tableName="cat_discount_plan" columnName="uuid"/>
+    	<addNotNullConstraint tableName="cat_discount_plan_item" columnName="uuid"/>
+    </changeSet>
+    <changeSet id="#3799_20181119 - Create discount plan instance table" author="EdwardPLegaspi">    
+    	<createTable tableName="billing_discount_plan_instance">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_discount_plan_instance_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="discount_plan_id" type="bigint">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="billing_account_id" type="bigint">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="date" />
+            <column name="end_date" type="date" />
+		</createTable>
+		<createSequence sequenceName="billing_discount_plan_instance_seq" />
+		<addForeignKeyConstraint constraintName="billing_discount_plan_instance_dp_fk" referencedTableName="cat_discount_plan" baseColumnNames="discount_plan_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id"/>
+		<addForeignKeyConstraint constraintName="billing_discount_plan_instance_ba_fk" referencedTableName="billing_billing_account" baseColumnNames="billing_account_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id"/>
+    	<dropTable tableName="billing_discount_plan"/>
+    	<dropColumn tableName="billing_billing_account">
+    		<column name="discount_plan_id"></column>
+    	</dropColumn>
     </changeSet>
 
 </databaseChangeLog>
