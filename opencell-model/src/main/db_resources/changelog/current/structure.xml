@@ -516,6 +516,9 @@
     	<addColumn tableName="billing_subscription">
     		<column name="rating_group" type="varchar(50)"></column>
     	</addColumn>
+    	<createIndex tableName="billing_subscription" indexName="idx_subscription_rating_group">
+    		<column name="rating_group"></column>
+    	</createIndex>
     </changeSet>
     
 </databaseChangeLog> 

@@ -128,6 +128,11 @@ public class SubscriptionDto extends BusinessEntityDto {
     
     /** The auto end of engagement. */
     private Boolean autoEndOfEngagement;
+    
+    /**
+     * String value matched in the usageRatingJob to group the EDRs for rating.
+     */
+    private String ratingGroup;
 
     /**
      * Instantiates a new subscription dto.
@@ -172,7 +177,8 @@ public class SubscriptionDto extends BusinessEntityDto {
         setMinimumLabelElSpark(e.getMinimumLabelElSpark());
         if(e.getSeller() != null) {
         	setSeller(e.getSeller().getCode());
-    }
+        }
+		setRatingGroup(e.getRatingGroup());
     }
 
     /**
@@ -610,4 +616,12 @@ public class SubscriptionDto extends BusinessEntityDto {
                 + terminationReason + ", orderNumber=" + orderNumber + ", subscribedTillDate=" + subscribedTillDate + ", renewed=" + renewed + ", renewalNotifiedDate="
                 + renewalNotifiedDate + ", renewalRule=" + renewalRule + "]";
     }
+
+	public String getRatingGroup() {
+		return ratingGroup;
+	}
+
+	public void setRatingGroup(String ratingGroup) {
+		this.ratingGroup = ratingGroup;
+	}
 }

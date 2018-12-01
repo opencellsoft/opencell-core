@@ -264,6 +264,9 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
     
+    /**
+     * String value matched in the usageRatingJob to group the EDRs for rating.
+     */
     @Column(name = "rating_group", length = 50)
     private String ratingGroup;
 
