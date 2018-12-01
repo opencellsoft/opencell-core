@@ -135,6 +135,8 @@ public class FlatFileProcessingJobBean {
                 }
                 currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
                 script = scriptInstanceService.getScriptInstance(scriptInstanceFlowCode);
+                context.put("outputDir", outputDir);
+                context.put(originFilename, fileName);
                 script.init(context);
                 FileParsers parserUsed = getParserType(mappingConf);
                 if (parserUsed == FileParsers.FLATWORM) {
