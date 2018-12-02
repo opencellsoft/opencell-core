@@ -13,81 +13,54 @@ import org.meveo.model.payments.DDRequestLotOp;
 /**
  * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  *
  */
 public interface DDRequestBuilderInterface {
-
-       
+    
+    /**
+     * Find list of Account operations to pay or refund according the current ddrequestLotOp .
+     *
+     * @param ddrequestLotOp the ddrequest lot op
+     * @return the list of account operation
+     * @throws BusinessException the business exception
+     */
+    public List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException;
+    
+         
    /**
-    * Generate the ddRequest file for a given DDRequestLot.
+    * Generate the  sdd or sct request file for a given DDRequestLot.
     * 
     * @param ddRequestLot The DDRequestLot to process.
     * @throws BusinessException the BusinessException.
     */
     public void generateDDRequestLotFile(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException;
+       
     
     /**
-     * Build the file name for a given DDRequestLot.
+     * Build the the  sdd or sct file name for a given DDRequestLot.
      * 
      * @param ddRequestLot The DDRequestLot to process.
      * @return The payment file name.
      * @throws BusinessException the BusinessException.
      */
     public String getDDFileName(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException;
+      
     
     /**
-     * Return the prefix for the DD reject file.
+     * Process the sdd reject file.
      * 
-     * @return The prefix.
+     * @param file The sdd reject file to process.
      * @throws BusinessException the BusinessException.
      */
-    public String getDDRejectFilePrefix() throws BusinessException;
+    public DDRejectFileInfos processSDDRejectedFile(File file) throws BusinessException;
     
     /**
-     * Return the extension for the DD reject file.
+     * Process the sct reject file.
      * 
-     * @return The extension.
+     * @param file The sct reject file to process.
      * @throws BusinessException the BusinessException.
      */
-    public String getDDRejectFileExtension() throws BusinessException;
-    
-    /**
-     * Process the dd reject file.
-     * 
-     * @param file The dd reject file to process.
-     * @throws BusinessException the BusinessException.
-     */
-    public DDRejectFileInfos processDDRejectedFile(File file) throws BusinessException;
-    
-    
-    /**
-     * Find list of Account operations to pay.
-     *
-     * @param ddrequestLotOp the ddrequest lot op
-     * @return the list
-     * @throws BusinessException the business exception
-     */
-    public List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException;
-
-    /**
-     * Generate the SCT Request file for a given DDRequestLot.
-     * 
-     * @param ddRequestLot The DDRequestLot to process.
-     * @param appProvider The provider
-     * @throws BusinessException the BusinessException.
-     */
-    void generateSCTRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException;
-
-    /**
-     * Build SCT request file name.
-     *
-     * @param ddRequestLot The DDRequestLot to process.
-     * @param appProvider The provider
-     * @return the SCT file name
-     * @throws BusinessException the business exception
-     */
-    String getSCTFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException;
-
-   
+    public DDRejectFileInfos processSCTRejectedFile(File file) throws BusinessException;
+          
 }

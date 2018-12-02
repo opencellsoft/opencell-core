@@ -36,7 +36,6 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
 
         List<AccountOperation> listAoToPay = null;
         if (filter == null) {
-//            log.info("createDDRquestLot fromDueDate: {}   toDueDate: {}", fromDueDate, toDueDate);
             if (fromDueDate == null) {
                 throw new BusinessEntityException("fromDuDate is empty");
             }
