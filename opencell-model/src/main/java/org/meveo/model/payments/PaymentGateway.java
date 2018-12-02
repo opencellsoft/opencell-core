@@ -3,6 +3,7 @@
  */
 package org.meveo.model.payments;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -154,6 +156,9 @@ public class PaymentGateway extends EnableBusinessCFEntity {
      */
     @Column(name = "profile")
     private String profile;
+    
+	@OneToOne(mappedBy = "paymentGateway", cascade = CascadeType.ALL, orphanRemoval = true)
+    private PaymentGatewayRumSequence rumSequence;
 
     /**
      * Instantiates a new payment gateway
@@ -476,4 +481,12 @@ public class PaymentGateway extends EnableBusinessCFEntity {
                 + ", Country=" + (country == null ? null : country.getCountryCode()) + ", tradingCurrency=" + (tradingCurrency == null ? null : tradingCurrency.getCurrencyCode())
                 + ", cardType=" + cardType + "]";
     }
+
+	public PaymentGatewayRumSequence getRumSequence() {
+		return rumSequence;
+	}
+
+	public void setRumSequence(PaymentGatewayRumSequence rumSequence) {
+		this.rumSequence = rumSequence;
+	}
 }

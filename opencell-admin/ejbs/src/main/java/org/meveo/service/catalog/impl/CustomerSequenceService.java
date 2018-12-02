@@ -19,7 +19,7 @@ public class CustomerSequenceService extends BusinessService<CustomerSequence> {
 	private ServiceSingleton serviceSingleton;
 	
 	public CustomerSequence getNextNumber(CustomerSequence customerSequence) {
-		return serviceSingleton.getNextCustomerSequenceNumber(customerSequence);
+		return serviceSingleton.getPaymentGatewayRumSequenceNumber(customerSequence);
 	}
 
 }
