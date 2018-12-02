@@ -587,7 +587,7 @@
     </changeSet>
     
     <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
-        <sql>ALTER TABLE cat_discount_plan_item DROP CONSTRAINT cat_discount_plan_item_discount_percent_check;</sql>
+        <sql><![CDATA[ALTER TABLE ${db.schema.adapted}cat_discount_plan_item DROP CONSTRAINT cat_discount_plan_item_discount_percent_check;]]></sql>
         <renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
     	<dropColumn tableName="cat_discount_plan_item">
     		<column name="discount_amount"></column>
@@ -627,8 +627,8 @@
     <changeSet id="#3792_20181116 - Convert discount tables to CF entity - add constraints" author="EdwardPLegaspi">
     	<sql>UPDATE ${db.schema.adapted}cat_discount_plan SET uuid=concat(code, '_', id)</sql>
     	<sql>UPDATE ${db.schema.adapted}cat_discount_plan_item SET uuid=concat(code, '_', id)</sql>
-    	<addNotNullConstraint tableName="cat_discount_plan" columnName="uuid"/>
-    	<addNotNullConstraint tableName="cat_discount_plan_item" columnName="uuid"/>
+    	<addNotNullConstraint tableName="cat_discount_plan" columnName="uuid" columnDataType="varchar(60)" />
+    	<addNotNullConstraint tableName="cat_discount_plan_item" columnName="uuid" columnDataType="varchar(60)" />
     </changeSet>
     <changeSet id="#3799_20181119 - Create discount plan instance table" author="EdwardPLegaspi">    
     	<createTable tableName="billing_discount_plan_instance">
@@ -649,6 +649,7 @@
 		<addForeignKeyConstraint constraintName="billing_discount_plan_instance_dp_fk" referencedTableName="cat_discount_plan" baseColumnNames="discount_plan_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id"/>
 		<addForeignKeyConstraint constraintName="billing_discount_plan_instance_ba_fk" referencedTableName="billing_billing_account" baseColumnNames="billing_account_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id"/>
     	<dropTable tableName="billing_discount_plan"/>
+    	<dropForeignKeyConstraint baseTableName="billing_billing_account" constraintName="fk_l94b1bb8vfvkotp95by0j2amg"/>
     	<dropColumn tableName="billing_billing_account">
     		<column name="discount_plan_id"></column>
     	</dropColumn>
