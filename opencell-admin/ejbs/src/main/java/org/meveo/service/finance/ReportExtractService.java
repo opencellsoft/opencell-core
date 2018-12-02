@@ -37,7 +37,7 @@ import org.meveo.service.script.finance.ReportExtractScript;
  * @author Abdellatif BARI
  * @version %I%, %G%
  * @since 5.0
- * @lastModifiedVersion 5.2.1
+ * @lastModifiedVersion 5.3
  **/
 @Stateless
 public class ReportExtractService extends BusinessService<ReportExtract> {
@@ -199,6 +199,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
                 imagePath = "data:image/" + imageExt + ";charset=utf-8;base64, " + strImage;
                 template = template.replace("#{REPORT_IMG_SRC}", imagePath);
+            } else {
+                template = template.replace("<div><img src=\"#{REPORT_IMG_SRC}\" /></div>", "");
             }
 
             template = template.replace("#{REPORT_TITLE}", entity.getCategory() != null ? entity.getCategory() : entity.getCode());
