@@ -300,8 +300,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public static String calculateAppliesToValue(ICustomFieldEntity entity) throws CustomFieldException {
         CustomFieldEntity cfeAnnotation = entity.getClass().getAnnotation(CustomFieldEntity.class);
 
-        String appliesTo = cfeAnnotation.cftCodePrefix();
-        if (cfeAnnotation.cftCodeFields().length > 0) {
+        String appliesTo = null;
+        if (cfeAnnotation != null && cfeAnnotation.cftCodeFields().length > 0) {
+            appliesTo = cfeAnnotation.cftCodePrefix();
             for (String fieldName : cfeAnnotation.cftCodeFields()) {
                 try {
                     Object fieldValue = FieldUtils.getField(entity.getClass(), fieldName, true).get(entity);
