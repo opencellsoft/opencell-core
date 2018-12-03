@@ -18,8 +18,8 @@ import org.meveo.model.payments.OperationCategoryEnum;
  *
  * @author Tyshan Shi(tyshan@manaty.net)
  * @author anasseh
- * @since Jul 11, 2016 7:15:09 PM
  * @author Said Ramli
+ * @since Jul 11, 2016 7:15:09 PM
  * @lastModifiedVersion 5.3
  */
 @XmlRootElement(name = "DDRequestLotOp")
@@ -58,7 +58,12 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     /** The recurrent flag : to decide if a new dd request lot operation will be created at end , or not. */
     private Boolean recurrent;
     
+    /** The operation category to process. */
     private OperationCategoryEnum operationCategoryToProcess;
+    
+
+    /** The payment gateway code. */
+    private String paymentGatewayCode;
 
     /**
      * Instantiates a new DD request lot op dto.
@@ -82,6 +87,7 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
         this.ddRequestBuilderCode = ddrequestLotOp.getDdRequestBuilder() != null ? ddrequestLotOp.getDdRequestBuilder().getCode() : null;
         this.filterCode = ddrequestLotOp.getFilter() != null ? ddrequestLotOp.getFilter().getCode() : null;
         this.operationCategoryToProcess = ddrequestLotOp.getOperationCategoryToProcess();
+        this.paymentGatewayCode = ddrequestLotOp.getPaymentGateway() != null ? ddrequestLotOp.getPaymentGateway().getCode() : null;
     }
 
     /**
@@ -211,6 +217,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the due date rage script code.
+     *
      * @return the dueDateRageScriptCode
      */
     public String getDueDateRageScriptCode() {
@@ -218,6 +226,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the recurrent.
+     *
      * @return the recurrent
      */
     public Boolean getRecurrent() {
@@ -225,6 +235,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     }
 
     /**
+     * Sets the due date rage script code.
+     *
      * @param dueDateRageScriptCode the dueDateRageScriptCode to set
      */
     public void setDueDateRageScriptCode(String dueDateRageScriptCode) {
@@ -232,6 +244,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     }
 
     /**
+     * Sets the recurrent.
+     *
      * @param recurrent the recurrent to set
      */
     public void setRecurrent(Boolean recurrent) {
@@ -239,6 +253,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the operation category to process.
+     *
      * @return the operationCategoryToProcess
      */
     public OperationCategoryEnum getOperationCategoryToProcess() {
@@ -246,10 +262,30 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     }
 
     /**
+     * Sets the operation category to process.
+     *
      * @param operationCategoryToProcess the operationCategoryToProcess to set
      */
     public void setOperationCategoryToProcess(OperationCategoryEnum operationCategoryToProcess) {
         this.operationCategoryToProcess = operationCategoryToProcess;
+    }
+
+    /**
+     * Gets the payment gateway code.
+     *
+     * @return the paymentGatewayCode
+     */
+    public String getPaymentGatewayCode() {
+        return paymentGatewayCode;
+    }
+
+    /**
+     * Sets the payment gateway code.
+     *
+     * @param paymentGatewayCode the paymentGatewayCode to set
+     */
+    public void setPaymentGatewayCode(String paymentGatewayCode) {
+        this.paymentGatewayCode = paymentGatewayCode;
     }
     
     

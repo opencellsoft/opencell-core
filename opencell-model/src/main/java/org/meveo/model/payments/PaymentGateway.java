@@ -5,6 +5,7 @@ package org.meveo.model.payments;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -22,6 +23,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ModuleItem;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.scripts.ScriptInstance;
@@ -35,7 +37,7 @@ import org.meveo.model.scripts.ScriptInstance;
  * @author anasseh
  * @author Mounir Bahije
  * @since Opencell 4.8
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
 
 @Entity
@@ -160,6 +162,14 @@ public class PaymentGateway extends EnableBusinessCFEntity {
 	@OneToOne(mappedBy = "paymentGateway", cascade = CascadeType.ALL, orphanRemoval = true)
     private PaymentGatewayRumSequence rumSequence;
 
+	
+    /**
+     * Bank coordinates
+     */
+    @Embedded
+    private BankCoordinates bankCoordinates = new BankCoordinates();
+    
+    
     /**
      * Instantiates a new payment gateway
      */
@@ -469,11 +479,7 @@ public class PaymentGateway extends EnableBusinessCFEntity {
         this.profile = profile;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.model.BusinessEntity#toString()
-     */
+
     @Override
     public String toString() {
         return "PaymentGateway [marchandId=" + marchandId + ", type=" + type + ", paymentMethodType=" + paymentMethodType + ", scriptInstance="
@@ -489,4 +495,20 @@ public class PaymentGateway extends EnableBusinessCFEntity {
 	public void setRumSequence(PaymentGatewayRumSequence rumSequence) {
 		this.rumSequence = rumSequence;
 	}
+
+    /**
+     * @return the bankCoordinates
+     */
+    public BankCoordinates getBankCoordinates() {
+        return bankCoordinates;
+    }
+
+    /**
+     * @param bankCoordinates the bankCoordinates to set
+     */
+    public void setBankCoordinates(BankCoordinates bankCoordinates) {
+        this.bankCoordinates = bankCoordinates;
+    }
+	
+	
 }

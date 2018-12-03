@@ -127,6 +127,15 @@
                     <hftl:formField label="#{messages['paymentGateway.webhooksSecretKey']}" field="webhooksSecretKey"  maxlength="255"/>
 					<hftl:formField label="#{messages['paymentGateway.profile']}" field="profile" maxlength="255" />
 				</p:tab>
+				<p:tab  title="#{messages['commons.bankCoordinates']}" >
+			           <hftl:formField label="#{messages['bankCoordinates.bic']}" field="bankCoordinates" childField="bic" size="15" newLine="true" />
+                       <hftl:formField label="#{messages['bankCoordinates.iban']}" field="bankCoordinates" childField="iban" size="41" />
+                       <hftl:formField label="#{messages['bankCoordinates.ics']}" field="bankCoordinates" childField="ics" size="42" />                       
+                       <hftl:formField label="#{messages['bankCoordinates.branchCode']}" field="bankCoordinates" childField="branchCode" size="5" />
+                       <hftl:formField label="#{messages['bankCoordinates.accountNumber']}" field="bankCoordinates" childField="accountNumber" size="11" />
+                       <hftl:formField label="#{messages['bankCoordinates.bankCode']}" field="bankCoordinates" childField="bankCode" size="5" />
+                       <hftl:formField label="#{messages['bankCoordinates.issuerName']}" field="bankCoordinates" childField="issuerName" size="50" />
+				</p:tab>
 				<hftl:customFields backingBean="#{paymentGatewayBean}" messagesId=":formPaymentGateway:messages" />
 			</p:tabView>								
 		</hftl:formPanel>

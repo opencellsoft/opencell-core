@@ -40,6 +40,8 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
+ * The Class DDRequestLotOp.
+ *
  * @author anasseh
  * @author Said Ramli
  * @lastModifiedVersion 5.3
@@ -50,53 +52,72 @@ import org.meveo.model.scripts.ScriptInstance;
         @Parameter(name = "sequence_name", value = "ar_ddrequest_lot_op_seq"), })
 public class DDRequestLotOp extends AuditableEntity {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /** The from due date. */
     @Column(name = "from_due_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fromDueDate;
 
+    /** The to due date. */
     @Column(name = "to_due_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date toDueDate;
 
+    /** The ddrequest op. */
     @Column(name = "ddrequest_op")
     @Enumerated(EnumType.STRING)
     private DDRequestOpEnum ddrequestOp;
 
+    /** The status. */
     @Column(name = "ddrequest_op_status")
     @Enumerated(EnumType.STRING)
     private DDRequestOpStatusEnum status;
 
+    /** The ddrequest LOT. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ddrequest_lot_id")
     private DDRequestLOT ddrequestLOT;
 
+    /** The error cause. */
     @Column(name = "error_cause", length = 255)
     @Size(max = 255)
     private String errorCause;
 
+    /** The dd request builder. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ddrequest_builder_id")
     private DDRequestBuilder ddRequestBuilder;
 
+    /** The filter. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "filter_id")
     private Filter filter;
 
+    /** The script instance. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
     
+    /** The recurrent. */
     @Type(type = "numeric_boolean")
     @Column(name = "recurrent")
     private Boolean recurrent;
     
+    /** The operation category to process. */
     @Column(name = "op_cat_to_process")
     @Enumerated(EnumType.STRING)
     OperationCategoryEnum operationCategoryToProcess;
+    
+    /** The payment gateway. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_gateway_id")
+    private PaymentGateway paymentGateway;
 
     /**
+     * Gets the from due date.
+     *
      * @return the fromDueDate
      */
     public Date getFromDueDate() {
@@ -104,6 +125,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Sets the from due date.
+     *
      * @param fromDueDate the fromDueDate to set
      */
     public void setFromDueDate(Date fromDueDate) {
@@ -111,6 +134,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Gets the to due date.
+     *
      * @return the toDueDate
      */
     public Date getToDueDate() {
@@ -118,6 +143,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Sets the to due date.
+     *
      * @param toDueDate the toDueDate to set
      */
     public void setToDueDate(Date toDueDate) {
@@ -125,6 +152,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Gets the ddrequest op.
+     *
      * @return the ddrequestOp
      */
     public DDRequestOpEnum getDdrequestOp() {
@@ -132,6 +161,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Sets the ddrequest op.
+     *
      * @param ddrequestOp the ddrequestOp to set
      */
     public void setDdrequestOp(DDRequestOpEnum ddrequestOp) {
@@ -139,6 +170,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Gets the status.
+     *
      * @return the status
      */
     public DDRequestOpStatusEnum getStatus() {
@@ -146,6 +179,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Sets the status.
+     *
      * @param status the status to set
      */
     public void setStatus(DDRequestOpStatusEnum status) {
@@ -153,6 +188,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Gets the ddrequest LOT.
+     *
      * @return the ddrequestLOT
      */
     public DDRequestLOT getDdrequestLOT() {
@@ -160,21 +197,35 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Sets the ddrequest LOT.
+     *
      * @param ddrequestLOT the ddrequestLOT to set
      */
     public void setDdrequestLOT(DDRequestLOT ddrequestLOT) {
         this.ddrequestLOT = ddrequestLOT;
     }
 
+    /**
+     * Sets the error cause.
+     *
+     * @param errorCause the new error cause
+     */
     public void setErrorCause(String errorCause) {
         this.errorCause = errorCause;
     }
 
+    /**
+     * Gets the error cause.
+     *
+     * @return the error cause
+     */
     public String getErrorCause() {
         return errorCause;
     }
 
     /**
+     * Gets the dd request builder.
+     *
      * @return the ddRequestBuilder
      */
     public DDRequestBuilder getDdRequestBuilder() {
@@ -182,6 +233,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Sets the dd request builder.
+     *
      * @param ddRequestBuilder the ddRequestBuilder to set
      */
     public void setDdRequestBuilder(DDRequestBuilder ddRequestBuilder) {
@@ -189,6 +242,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Gets the filter.
+     *
      * @return the filter
      */
     public Filter getFilter() {
@@ -196,6 +251,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Sets the filter.
+     *
      * @param filter the filter to set
      */
     public void setFilter(Filter filter) {
@@ -203,6 +260,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Gets the script instance.
+     *
      * @return the scriptInstance
      */
     public ScriptInstance getScriptInstance() {
@@ -211,6 +270,8 @@ public class DDRequestLotOp extends AuditableEntity {
 
 
     /**
+     * Sets the script instance.
+     *
      * @param scriptInstance the scriptInstance to set
      */
     public void setScriptInstance(ScriptInstance scriptInstance) {
@@ -219,6 +280,8 @@ public class DDRequestLotOp extends AuditableEntity {
 
 
     /**
+     * Gets the recurrent.
+     *
      * @return the recurrent
      */
     public Boolean getRecurrent() {
@@ -226,6 +289,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Sets the recurrent.
+     *
      * @param recurrent the recurrent to set
      */
     public void setRecurrent(Boolean recurrent) {
@@ -233,6 +298,8 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Gets the operation category to process.
+     *
      * @return the operationCategoryToProcess
      */
     public OperationCategoryEnum getOperationCategoryToProcess() {
@@ -240,12 +307,30 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
+     * Sets the operation category to process.
+     *
      * @param operationCategoryToProcess the operationCategoryToProcess to set
      */
     public void setOperationCategoryToProcess(OperationCategoryEnum operationCategoryToProcess) {
         this.operationCategoryToProcess = operationCategoryToProcess;
     }
 
-   
+    /**
+     * Gets the payment gateway.
+     *
+     * @return the paymentGateway
+     */
+    public PaymentGateway getPaymentGateway() {
+        return paymentGateway;
+    }
+
+    /**
+     * Sets the payment gateway.
+     *
+     * @param paymentGateway the paymentGateway to set
+     */
+    public void setPaymentGateway(PaymentGateway paymentGateway) {
+        this.paymentGateway = paymentGateway;
+    }
    
 }

@@ -554,7 +554,27 @@
             </column>
         </createTable>
 	</changeSet>
-	
+	<changeSet id="#3673_29112018" author="anasseh">
+	     <addColumn tableName="ar_ddrequest_lot_op"> 
+	      	<column name="payment_gateway_id" type="bigint" />
+         </addColumn>
+         <addForeignKeyConstraint constraintName="fk_dd_item_pay_gg_id" referencedTableName="ar_payment_gateway" baseColumnNames="payment_gateway_id" baseTableName="ar_ddrequest_lot_op" referencedColumnNames="id"/>     
+   
+        <addColumn tableName="ar_payment_gateway">            
+            <column name="account_number" type="varchar(11)" />
+            <column name="account_owner" type="varchar(50)" />
+            <column name="bank_code" type="varchar(5)" />
+            <column name="bank_id" type="varchar(50)" />
+            <column name="bank_name" type="varchar(50)" />
+            <column name="bic" type="varchar(11)" />
+            <column name="branch_code" type="varchar(5)" />
+            <column name="iban" type="varchar(34)" />
+            <column name="ics" type="varchar(35)" />
+            <column name="issuer_name" type="varchar(50)" />
+            <column name="issuer_number" type="varchar(50)" /> 
+            <column name="hash_key" type="varchar(2)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog> 
 
 
