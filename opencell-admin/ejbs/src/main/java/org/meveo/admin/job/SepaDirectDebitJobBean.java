@@ -34,6 +34,7 @@ import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
@@ -43,6 +44,7 @@ import org.meveo.service.payments.impl.DDRequestBuilderInterface;
 import org.meveo.service.payments.impl.DDRequestBuilderService;
 import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.meveo.service.payments.impl.DDRequestLotOpService;
+import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.script.payment.AccountOperationFilterScript;
@@ -83,6 +85,11 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
     /** The dd request builder factory. */
     @Inject
     private DDRequestBuilderFactory ddRequestBuilderFactory;
+    
+    @Inject
+    private PaymentGatewayService paymentGatewayService;    
+    
+    
 
     /** The app provider. */
     @Inject
@@ -105,7 +112,9 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
         log.debug("Running for parameter={}", jobInstance.getParametres());
         try {
             DDRequestBuilder ddRequestBuilder = null;
+            PaymentGateway paymentGateway = null;
             String ddRequestBuilderCode = null;
+            String paymentGatewayCode = null;
             if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder") != null) {
                 ddRequestBuilderCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder")).getCode();
                 ddRequestBuilder = ddRequestBuilderService.findByCode(ddRequestBuilderCode);
@@ -115,9 +124,13 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
             if (ddRequestBuilder == null) {
                 throw new BusinessException("Can't find ddRequestBuilder by code:" + ddRequestBuilderCode);
             }
+            if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_paymentGateway") != null) {
+                paymentGatewayCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_paymentGateway")).getCode();
+                paymentGateway = paymentGatewayService.findByCode(paymentGatewayCode);
+            }
 
             DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
-            List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder);
+            List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder,paymentGateway);
 
             if (ddrequestOps != null) {
                 log.info("ddrequestOps found:" + ddrequestOps.size());
