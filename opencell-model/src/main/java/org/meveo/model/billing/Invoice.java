@@ -371,6 +371,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private String previousInvoiceNumber;
 
     /**
+     * A flag to indicate if the invoice is a draft.
+     */
+    @Transient
+    private Boolean draft;
+
+    /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
      */
     @PrePersist
@@ -921,5 +927,21 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
      */
     private void trackPreviousValues() {
         previousInvoiceNumber = invoiceNumber;
+    }
+
+    /**
+     * @return true if the invoice is draft, false else.
+     */
+    public Boolean isDraft() {
+        return draft;
+    }
+
+    /**
+     * Set the draft flag
+     *
+     * @param draft the draft flag
+     */
+    public void setDraft(Boolean draft) {
+        this.draft = draft;
     }
 }
