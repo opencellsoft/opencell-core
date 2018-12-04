@@ -50,7 +50,6 @@ import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.DiscountPlanInstanceService;
 
 /**
  * The Class BillingAccountService.

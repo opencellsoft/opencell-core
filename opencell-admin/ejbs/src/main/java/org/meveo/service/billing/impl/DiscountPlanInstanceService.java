@@ -1,4 +1,4 @@
-package org.meveo.service.catalog.impl;
+package org.meveo.service.billing.impl;
 
 import java.util.Calendar;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package org.meveo.api.dto.catalog;
+package org.meveo.api.dto.billing;
 
 import java.util.Date;
 
