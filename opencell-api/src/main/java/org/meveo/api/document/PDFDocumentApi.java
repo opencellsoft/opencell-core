@@ -1,11 +1,15 @@
 package org.meveo.api.document;
 
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.document.PDFDocumentRequestDto;
@@ -32,7 +36,7 @@ public class PDFDocumentApi extends BaseApi {
         try {
             LOG.debug("[ Start checking common required & additional params ...");
             List<PDFTemplateDto> listTemplates = postData.getListTemplates();
-            if (CollectionUtils.isEmpty(listTemplates)) {
+            if (isEmpty(listTemplates)) {
                 throw new MeveoApiException("listTemplates cannot be empty !");
             }
            
@@ -46,14 +50,23 @@ public class PDFDocumentApi extends BaseApi {
             LOG.debug("End checking common required & additional params  ]");
             
             final String rootPath = this.paramBeanFactory.getChrootDir();
-         
+            
             // generating the PDF document & returning its file path
-            String absolutePdfFilePath = PDFDocumentHelper.generatePDF(postData, rootPath);
-            restul.setPdfFilePath(postData.isAbsolutePaths() ? absolutePdfFilePath : absolutePdfFilePath.substring(rootPath.length()));
-
-            // generating the PDF as byte[]
-            if (absolutePdfFilePath != null && postData.isReturnPdf()) {
-                restul.setPdfFile(PDFDocumentHelper.getPdfFileAsBytes(absolutePdfFilePath));
+            List<String> listPdfFilePaths = PDFDocumentHelper.generatePDF(postData, rootPath);
+            boolean isCombineFiles = postData.isCombineFiles();
+            if (isCombineFiles && isNotEmpty(listPdfFilePaths)) {
+                restul.setPdfFilePath(postData.isAbsolutePaths() ? listPdfFilePaths.get(0) : this.relativePaths(listPdfFilePaths, rootPath.length()).get(0) ); 
+            } else {
+                restul.setListPdfFilePaths(postData.isAbsolutePaths() ? listPdfFilePaths : this.relativePaths(listPdfFilePaths, rootPath.length())); 
+            }
+            if (isNotEmpty(listPdfFilePaths) && postData.isReturnPdf()) {
+                // generating the PDF as byte[]
+                List<byte[]>  pdfFiles = this.generatePDFsAsBytes(listPdfFilePaths);
+                if (isCombineFiles && isNotEmpty(pdfFiles)) {
+                    restul.setPdfFile(pdfFiles.get(0));
+                } else {
+                    restul.setPdfFiles(pdfFiles); 
+                }
             }
             return restul;
             
@@ -61,6 +74,24 @@ public class PDFDocumentApi extends BaseApi {
             throw new MeveoApiException(e);
         }
 
+    }
+
+    private List<byte[]> generatePDFsAsBytes(List<String> listPdfFilePaths) throws FileNotFoundException {
+        List<byte[]> listPDFsAsBytes = new ArrayList<>();
+        for (String path : listPdfFilePaths) {
+            if (path != null) {
+                listPDFsAsBytes.add(PDFDocumentHelper.getPdfFileAsBytes(path));
+            }
+        }
+        return listPDFsAsBytes;
+    }
+
+    private List<String> relativePaths(List<String> listPdfFilePaths, int index) {
+        List<String> result = new ArrayList<>();
+        for (String path : listPdfFilePaths) {
+            result.add(path.substring(index));
+        }
+        return result;
     }
 
     @SuppressWarnings("unchecked")
@@ -76,7 +107,7 @@ public class PDFDocumentApi extends BaseApi {
         templateDto.setTemplatePath(templatePath);
 
         List<String> listOfRequiredFields = (List<String>) this.customFieldInstanceService.getCFValue(this.appProvider, templateName + "_RequiredFields");
-        if (CollectionUtils.isNotEmpty(listOfRequiredFields)) {
+        if (isNotEmpty(listOfRequiredFields)) {
             Map<String, String> templateFields = templateDto.getTemplateFields();
             for (String fieldKey : listOfRequiredFields) {
                 if (!templateFields.containsKey(fieldKey)) {
