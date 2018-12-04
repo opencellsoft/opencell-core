@@ -2,6 +2,8 @@ package org.meveo.model.dwh;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -109,6 +111,13 @@ public class MeasurableQuantity extends EnableBusinessEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastMeasureDate;
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
+
     public String getTheme() {
         return theme;
     }
@@ -179,6 +188,17 @@ public class MeasurableQuantity extends EnableBusinessEntity {
 
     public void setLastMeasureDate(Date lastMeasureDate) {
         this.lastMeasureDate = lastMeasureDate;
+    }
+
+    public Map<String, String> getDescriptionI18nNullSafe() {
+        if (descriptionI18n == null) {
+            descriptionI18n = new HashMap<>();
+        }
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
     }
 
     public Date getPreviousDate(Date date) {

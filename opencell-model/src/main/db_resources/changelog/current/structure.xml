@@ -706,5 +706,10 @@
     		<column name="rating_group"></column>
     	</createIndex>
     </changeSet>
+    <changeSet id="20181204 - Add multilingual description field to measurable quantity entity" author="abdelkader.bouazza">
+        <addColumn tableName="dwh_measurable_quant">
+            <column name="description_i18n" type="${type.json}"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
