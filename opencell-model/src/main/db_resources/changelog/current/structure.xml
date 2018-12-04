@@ -654,6 +654,14 @@
     		<column name="discount_plan_id"></column>
     	</dropColumn>
     </changeSet>
+    <changeSet author="EdwardPLegaspi" id="#3799_20181119 - Sequence for mysql - M" dbms="mysql">
+    	<createTable tableName="billing_discount_plan_instance_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_discount_plan_instance_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}billing_discount_plan_instance_seq values(1)</sql>
+	</changeSet>
     
     <changeSet author="EdwardPLegaspi" id="20181126_3630 - RUM Sequence for PaymentGateway">
         <createTable tableName="ar_payment_gateway_rum_sequence">
@@ -688,6 +696,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_gateway_rum_sequence_seq_pk" />
             </column>
         </createTable>
+        <sql>insert into ${db.schema.adapted}ar_payment_gateway_rum_sequence_seq values(1)</sql>
 	</changeSet>
 
 </databaseChangeLog>
