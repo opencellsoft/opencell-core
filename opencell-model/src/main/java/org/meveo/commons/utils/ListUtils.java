@@ -78,4 +78,15 @@ public final class ListUtils {
         }
         return result;
     }
+
+    /**
+     * Get a an empty collection if null.
+     *
+     * @param <T> the generic type
+     * @param collection the collection
+     * @return the collection
+     */
+    public static <T> Collection<T> safe(Collection<T> collection) {
+        return collection == null ? Collections.EMPTY_LIST : collection;
+    }
 }

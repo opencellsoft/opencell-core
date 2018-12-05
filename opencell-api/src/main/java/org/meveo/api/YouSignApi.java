@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -340,25 +339,17 @@ public class YouSignApi extends BaseApi {
      *
      * @param filesToSign the files to sign
      * @param members the members
-     * @param withInternalMember the with internal member
+     * @param withInternalMember the with internal member (not used yet for the moment)
      * @throws MeveoApiException the meveo api exception
      */
     private void prepareMembers(List<SignFileRequestDto> filesToSign, List<SignMemberRequestDto> members, boolean withInternalMember) throws MeveoApiException {
-        
         for (SignMemberRequestDto member : members) {
            List<SignFileObjectRequestDto> fileObjects = new ArrayList<>();
            for (SignFileRequestDto fileToSign : filesToSign) {
-               
-               SignFileObjectRequestDto signFileObject = new SignFileObjectRequestDto(fileToSign.getId());
-               
-               if (BooleanUtils.isTrue(member.getInternal())) {
-                   signFileObject.setPosition(fileToSign.getInternalPosition());
-                   signFileObject.setPage(fileToSign.getInternalPage());
-               } else {
-                   signFileObject.setPosition(fileToSign.getExternalPosition());
-                   signFileObject.setPage(fileToSign.getExternalPage());
+               for (SignFileObjectRequestDto signFileObject : fileToSign.getListExternalPositions()) {
+                   signFileObject.setFile(fileToSign.getId());
+                   fileObjects.add(signFileObject);
                }
-               fileObjects.add(signFileObject);
            }
            member.setFileObjects(fileObjects);
         }
@@ -437,32 +428,30 @@ public class YouSignApi extends BaseApi {
         if (CollectionUtils.isEmpty(filesToSign)) { 
             throw new MeveoApiException(" filesToSign cannot be empty !"); 
         } 
+        int fileIndex = 0;
         for (SignFileRequestDto file : filesToSign) {
             
-            // internal position of the signature object is mandatory just if withInternalMember = true
-            if (withInternalMember) {
-                String internalPosition = file.getInternalPosition();
-                if (StringUtils.isEmpty(internalPosition)) {
-                    this.missingParameters.add("fileToSign -> internalPosition");
-                } else if (!SIGN_OBJECT_POSITION_PATTERN.matcher(internalPosition).matches()) {
-                    throw new MeveoApiException("fileToSign -> internalPosition : format invalid ! should be like '[0-9]+,[0-9]+,[0-9]+,[0-9]+' ");
+            List<SignFileObjectRequestDto> positions = file.getListExternalPositions();
+            if(CollectionUtils.isEmpty(positions)) {
+                throw new MeveoApiException("List of signature positions cannot be empty !");
+            }
+            
+            int posIndex = 0;
+            for (SignFileObjectRequestDto signObj : positions) {
+                String position = signObj.getPosition();
+                if (StringUtils.isEmpty(position)) {
+                    throw new MeveoApiException(String.format("filesToSign[%d] -> listExternalPositions[%d] : missing position", fileIndex, posIndex));
+                } else if (!SIGN_OBJECT_POSITION_PATTERN.matcher(position).matches()) {
+                    throw new MeveoApiException(String.format("filesToSign[%d] -> listExternalPositions[%d] : invalid position ! should be like '[0-9]+,[0-9]+,[0-9]+,[0-9]+'", fileIndex, posIndex));
                 }
+                posIndex++;
             }
-            
-            String externalPosition = file.getExternalPosition();
-            if (StringUtils.isEmpty(externalPosition)) {
-                this.missingParameters.add("fileToSign -> externalPosition");
-            } else if (!SIGN_OBJECT_POSITION_PATTERN.matcher(externalPosition).matches()) {
-                throw new MeveoApiException("fileToSign -> externalPosition : format invalid ! should be like '[0-9]+,[0-9]+,[0-9]+,[0-9]+' ");
-            }
-            
-            this.handleMissingParameters();
             
             byte [] fileContent =  file.getContent();
             String filePath = file.getFilePath();
             // Each file should have either fileContent or filePath !
             if (ArrayUtils.isEmpty(fileContent) && StringUtils.isEmpty(filePath)) {
-                throw new MeveoApiException(" .Each file should have either fileContent or filePath !"); 
+                throw new MeveoApiException(" Each file should have either fileContent or filePath !"); 
             }
             // Creating byte file content if empty :
             if (ArrayUtils.isEmpty(fileContent)) {
@@ -471,6 +460,7 @@ public class YouSignApi extends BaseApi {
                 }
                 file.setContent(getFileAsBytes(filePath)); 
             }
+            fileIndex++;
         }
     } 
     
