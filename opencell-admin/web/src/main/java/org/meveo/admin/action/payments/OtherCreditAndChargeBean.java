@@ -66,7 +66,7 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
      */
     @Inject
     private CustomerAccountService customerAccountService;
-
+    
     /**
      * Injected @{link OCCTemplateService} service. Extends {@link PersistenceService}.
      */
@@ -152,7 +152,9 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         entity.setUnMatchingAmount(entity.getAmount());
-        // entity.getCustomerAccount().getAccountOperations().add(entity);
+        // lazyloading fix
+        CustomerAccount customerAccount = customerAccountService.retrieveIfNotManaged(entity.getCustomerAccount());
+        entity.setCustomerAccount(customerAccount);
 
         String outcome = super.saveOrUpdate(killConversation);
         return outcome;
