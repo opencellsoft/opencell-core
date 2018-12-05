@@ -2142,4 +2142,119 @@
         </addColumn>
          <addForeignKeyConstraint constraintName="fk_ao_rejected_payment_id" referencedTableName="ar_account_operation" baseColumnNames="rejected_payment_id" baseTableName="ar_account_operation" referencedColumnNames="id"/>
     </changeSet>
+    
+    <changeSet id="#3705_20181019 - Create discount plan bridge table" author="EdwardPLegaspi">
+        <dropUniqueConstraint tableName="cat_discount_plan_item" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn" />
+        <addUniqueConstraint columnNames="discount_plan_id, code" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_discount_plan_item" />
+
+        <addColumn tableName="cat_discount_plan_item">
+            <column name="discount_plan_item_type" type="varchar(25)" />
+            <column name="discount_amount" type="numeric(23, 12)" />
+            <column name="start_date" type="date" />
+            <column name="end_date" type="date" />
+            <column name="default_duration" type="int4" />
+            <column name="duration_unit" type="varchar(50)" />
+        </addColumn>
+
+        <update tableName="cat_discount_plan_item">
+            <column name="discount_plan_item_type" value="PERCENTAGE"></column>
+        </update>
+
+        <createTable tableName="billing_discount_plan">
+            <column name="billing_account_id" type="bigint"></column>
+            <column name="discount_plan_id" type="bigint"></column>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_billing_discount_plan_ba" referencedTableName="billing_billing_account" baseColumnNames="billing_account_id" baseTableName="billing_discount_plan"
+            referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="fk_billing_discount_plan_dp" referencedTableName="cat_discount_plan" baseColumnNames="discount_plan_id" baseTableName="billing_discount_plan"
+            referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="#3705_20181019 - Migrate discount plan from ba to new table" author="EdwardPLegaspi" dbms="postgresql">
+        <sql>INSERT INTO billing_discount_plan (billing_account_id, discount_plan_id) SELECT id, discount_plan_id FROM billing_billing_account;</sql>
+    </changeSet>
+
+    <changeSet id="#3705_20181019 - Migrate discount plan from ba to new table" author="EdwardPLegaspi" dbms="mysql">
+        <sql>INSERT INTO ${db.schema.adapted}billing_discount_plan (billing_account_id, discount_plan_id) SELECT id, discount_plan_id FROM ${db.schema.adapted}billing_billing_account;</sql>
+    </changeSet>
+
+    <changeSet id="#3705_20181019 - Set the discount plan to null" author="EdwardPLegaspi">
+        <update tableName="billing_billing_account">
+            <column name="discount_plan_id"></column>
+        </update>
+    </changeSet>
+    
+    <changeSet id="#3767_20181112 - Discount fields refactor - M" author="EdwardPLegaspi" dbms="mysql">
+    	<sql>UPDATE ${db.schema.adapted}cat_discount_plan_item SET discount_percent=discount_amount WHERE discount_percent is null;</sql>
+    </changeSet>
+    
+    <changeSet id="#3767_20181112 - Discount fields refactor - P" author="EdwardPLegaspi" dbms="postgresql">
+    	<sql>UPDATE cat_discount_plan_item SET discount_percent=discount_amount WHERE discount_percent is null;</sql>  	
+    </changeSet>
+    
+    <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
+    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value"/>
+    	<dropColumn tableName="cat_discount_plan_item">
+    		<column name="discount_amount"></column>
+    	</dropColumn>
+    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el"/>    	
+    </changeSet>
+    
+    <changeSet id="#3769_20181116 - Refactor discount effectivity dates" author="EdwardPLegaspi">
+    	<dropColumn tableName="cat_discount_plan_item">
+    		<column name="start_date"></column>
+    		<column name="end_date"></column>
+    		<column name="default_duration"></column>
+    		<column name="duration_unit"></column>
+    	</dropColumn>
+    	<addColumn tableName="cat_discount_plan">
+    		<column name="start_date" type="date" />
+            <column name="end_date" type="date" />
+            <column name="default_duration" type="int4" />
+            <column name="duration_unit" type="varchar(50)" />
+   		</addColumn>
+    </changeSet>
+    <changeSet id="#3792_20181116 - Convert discount tables to CF entity" author="EdwardPLegaspi">
+    	<addColumn tableName="cat_discount_plan">
+    		<column name="uuid" type="varchar(60)">
+			</column>
+			<column name="cf_values" type="${type.json}" />
+			<column name="cf_values_accum" type="${type.json}"></column>
+    	</addColumn>
+    	<addColumn tableName="cat_discount_plan_item">
+    		<column name="uuid" type="varchar(60)">
+			</column>
+			<column name="cf_values" type="${type.json}" />
+    	</addColumn>
+    </changeSet>
+    <changeSet id="#3792_20181116 - Convert discount tables to CF entity - add constraints" author="EdwardPLegaspi">
+    	<sql>UPDATE ${db.schema.adapted}cat_discount_plan SET uuid=concat(code, '_', id)</sql>
+    	<sql>UPDATE ${db.schema.adapted}cat_discount_plan_item SET uuid=concat(code, '_', id)</sql>
+    	<addNotNullConstraint tableName="cat_discount_plan" columnName="uuid"/>
+    	<addNotNullConstraint tableName="cat_discount_plan_item" columnName="uuid"/>
+    </changeSet>
+    <changeSet id="#3799_20181119 - Create discount plan instance table" author="EdwardPLegaspi">    
+    	<createTable tableName="billing_discount_plan_instance">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_discount_plan_instance_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="discount_plan_id" type="bigint">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="billing_account_id" type="bigint">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="date" />
+            <column name="end_date" type="date" />
+		</createTable>
+		<createSequence sequenceName="billing_discount_plan_instance_seq" />
+		<addForeignKeyConstraint constraintName="billing_discount_plan_instance_dp_fk" referencedTableName="cat_discount_plan" baseColumnNames="discount_plan_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id"/>
+		<addForeignKeyConstraint constraintName="billing_discount_plan_instance_ba_fk" referencedTableName="billing_billing_account" baseColumnNames="billing_account_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id"/>
+    	<dropTable tableName="billing_discount_plan"/>
+    	<dropColumn tableName="billing_billing_account">
+    		<column name="discount_plan_id"></column>
+    	</dropColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -10,16 +10,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEnableDto;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 
 /**
  * Discount plan item
  *
  * @author Tyshan Shi(tyshan@manaty.net)
  * @author Edward P. Legaspi
- * @since Aug 1, 2016 9:34:34 PM
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.3
  */
 @XmlRootElement(name = "DiscountPlanItem")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -53,30 +54,37 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     private String invoiceSubCategoryCode;
 
     /**
-     * Discount percent
-     */
-    private BigDecimal percent;
-
-    /**
      * Accounting code
      */
     @Deprecated // until further analysis
     private String accountingCode;
 
     /**
-     * EL expression to determine if discount plan item applies
+     * Expression to determine if discount applies
      */
     private String expressionEl;
-
-    /**
-     * EL expression to determine discount percentage
-     */
-    private String discountPercentEl;
 
     /**
      * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
      */
     private Boolean disabled;
+	
+	/** Type of discount, whether absolute or percentage. */
+	private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
+    
+	/**
+     * The absolute or percentage discount amount.
+     */
+	private BigDecimal discountValue;
+	
+	/**
+     * The absolute or percentage discount amount EL.
+     */
+	private String discountValueEL;
+	
+	/** The custom fields. */
+    @XmlElement(required = false)
+    private CustomFieldsDto customFields;
 
     /**
      * Instantiates a new discount plan item dto.
@@ -88,17 +96,21 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      * Convert discount plan item entity to DTO
      *
      * @param discountPlanItem Entity to convert
+     * @param customFieldsDto the custom fields
      */
-    public DiscountPlanItemDto(DiscountPlanItem discountPlanItem) {
+    public DiscountPlanItemDto(DiscountPlanItem discountPlanItem, CustomFieldsDto customFieldInstances) {
         this.code = discountPlanItem.getCode();
         this.discountPlanCode = discountPlanItem.getDiscountPlan().getCode();
         this.invoiceCategoryCode = discountPlanItem.getInvoiceCategory() != null ? discountPlanItem.getInvoiceCategory().getCode() : null;
         this.invoiceSubCategoryCode = discountPlanItem.getInvoiceSubCategory() != null ? discountPlanItem.getInvoiceSubCategory().getCode() : null;
-        this.percent = discountPlanItem.getPercent();
         this.accountingCode = discountPlanItem.getAccountingCode();
         this.expressionEl = discountPlanItem.getExpressionEl();
-        this.discountPercentEl = discountPlanItem.getDiscountPercentEl();
         this.disabled = discountPlanItem.isDisabled();
+		this.discountPlanItemType = discountPlanItem.getDiscountPlanItemType();
+		this.discountValue = discountPlanItem.getDiscountValue();
+		this.discountValueEL = discountPlanItem.getDiscountValueEL();
+		
+		customFields = customFieldInstances;
     }
 
     /**
@@ -174,24 +186,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     }
 
     /**
-     * Gets the percent.
-     *
-     * @return the percent
-     */
-    public BigDecimal getPercent() {
-        return percent;
-    }
-
-    /**
-     * Sets the percent.
-     *
-     * @param percent the new percent
-     */
-    public void setPercent(BigDecimal percent) {
-        this.percent = percent;
-    }
-
-    /**
      * Gets the accounting code.
      *
      * @return the accounting code
@@ -210,54 +204,106 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     }
 
     /**
-     * Gets the expression el.
-     *
-     * @return the expression el
+     * @return Expression to determine if discount applies
      */
     public String getExpressionEl() {
         return expressionEl;
     }
 
     /**
-     * Sets the expression el.
-     *
-     * @param expressionEl the new expression el
+     * @param expressionEl Expression to determine if discount applies
      */
     public void setExpressionEl(String expressionEl) {
         this.expressionEl = expressionEl;
     }
-
+    
     /**
-     * Gets the discount percent el.
-     *
-     * @return the discount percent el
+     * Sets whether this entity is disabled or not.
      */
-    public String getDiscountPercentEl() {
-        return discountPercentEl;
-    }
-
-    /**
-     * Sets the discount percent el.
-     *
-     * @param discountPercentEl the new discount percent el
-     */
-    public void setDiscountPercentEl(String discountPercentEl) {
-        this.discountPercentEl = discountPercentEl;
-    }
-
     @Override
     public void setDisabled(Boolean disabled) {
         this.disabled = disabled;
     }
 
+    /**
+     * Whether this entity is disabled.
+     */
     @Override
     public Boolean isDisabled() {
         return disabled;
     }
 
-    @Override
-    public String toString() {
-        return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode=" + invoiceCategoryCode + ", invoiceSubCategoryCode="
-                + invoiceSubCategoryCode + ", percent=" + percent + ", accountingCode=" + accountingCode + ", expressionEl=" + expressionEl + "]";
-    }
+    /**
+     * Sets the discount plan item type.
+     * @return item type
+     */
+	public DiscountPlanItemTypeEnum getDiscountPlanItemType() {
+		return discountPlanItemType;
+	}
+
+
+    /**
+     * Gets the discount plan item type.
+     * @return item type
+     */
+	public void setDiscountPlanItemType(DiscountPlanItemTypeEnum discountPlanItemType) {
+		this.discountPlanItemType = discountPlanItemType;
+	}
+
+	/**
+	 * Gets the discount value. Can be either percentage or fixed. Depending on the item type.
+	 * @return the discount value
+	 */
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+
+	/**
+	 * Sets the discount value. Can be either percentage or fixed. Depending on the item type.
+	 * @param discountValue the discount value
+	 */
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
+	}
+
+	@Override
+	public String toString() {
+		return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode="
+				+ invoiceCategoryCode + ", invoiceSubCategoryCode=" + invoiceSubCategoryCode + ", accountingCode="
+				+ accountingCode + ", expressionEl=" + expressionEl + ", disabled=" + disabled
+				+ ", discountPlanItemType=" + discountPlanItemType + ", discountValue=" + discountValue
+				+ ", discountValueEL=" + discountValueEL + ", customFields=" + customFields + "]";
+	}
+
+	/**
+	 * Sets the discount value el.
+	 * @param discountValueEL el expression
+	 */
+	public void setDiscountValueEL(String discountValueEL) {
+		this.discountValueEL = discountValueEL;
+	}
+
+	/**
+	 * Gets the discount value el.
+	 * @return el expression
+	 */
+	public String getDiscountValueEL() {
+		return discountValueEL;
+	}
+
+	/**
+	 * Gets the custom fields.
+	 * @return custom fields associated with this entity
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * Sets the custom fields.
+	 * @param customFields custom fields to be associated with this entity
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
 }

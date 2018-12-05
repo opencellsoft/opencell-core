@@ -4,16 +4,21 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -79,9 +84,6 @@ public class BillingAccountDto extends AccountDto {
     /** The invoicing threshold. */
     private BigDecimal invoicingThreshold;
     
-    /** The discount plan. */
-    private String discountPlan;
-    
     /** The phone. */
     protected String phone;
     
@@ -113,6 +115,23 @@ public class BillingAccountDto extends AccountDto {
      * Use for GET / LIST only.
      */
     private UserAccountsDto userAccounts = new UserAccountsDto();
+    
+    /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
+	@XmlElementWrapper(name = "discountPlansForInstantiation")
+	@XmlElement(name = "discountPlanForInstantiation")
+    private List<DiscountPlanDto> discountPlansForInstantiation;
+    
+    /** List of discount plans to be disassociated in a BillingAccount */
+	@XmlElementWrapper(name = "discountPlansForTermination")
+	@XmlElement(name = "discountPlanForTermination")
+    private List<String> discountPlansForTermination;
+    
+    /**
+     * Use to return the active discount plans for this entity.
+     */
+	@XmlElementWrapper(name = "discountPlanInstances")
+	@XmlElement(name = "discountPlanInstance")
+    private List<DiscountPlanInstanceDto> discountPlanInstances;
 
     /**
      * Instantiates a new billing account dto.
@@ -160,10 +179,6 @@ public class BillingAccountDto extends AccountDto {
     		setEmail(contactInfos.getEmail());
 		}
 
-		if (e.getDiscountPlan() != null) {
-			setDiscountPlan(e.getDiscountPlan().getCode());
-		}
-
 		// Start compatibility with pre-4.6 versions
 
 		PaymentMethod paymentMethod = e.getCustomerAccount().getPreferredPaymentMethod();
@@ -175,6 +190,20 @@ public class BillingAccountDto extends AccountDto {
 		}
 
 		// End compatibility with pre-4.6 versions
+		
+		if(e.getDiscountPlanInstances() != null && !e.getDiscountPlanInstances().isEmpty()) {
+        	discountPlanInstances = new ArrayList<>();
+			discountPlanInstances = e.getDiscountPlanInstances().stream().map(p -> new DiscountPlanInstanceDto(p))
+					.collect(Collectors.toList());
+        }
+	}
+	
+	public void addDiscountPlan(DiscountPlanDto dp) {
+		if (discountPlansForInstantiation == null) {
+			discountPlansForInstantiation = new ArrayList<>();
+		}
+
+		discountPlansForInstantiation.add(dp);
 	}
 
     /**
@@ -448,24 +477,6 @@ public class BillingAccountDto extends AccountDto {
     }
 
     /**
-     * Gets the discount plan.
-     *
-     * @return the discount plan
-     */
-    public String getDiscountPlan() {
-        return discountPlan;
-    }
-
-    /**
-     * Sets the discount plan.
-     *
-     * @param discountPlan the new discount plan
-     */
-    public void setDiscountPlan(String discountPlan) {
-        this.discountPlan = discountPlan;
-    }
-
-    /**
      * Gets the payment method.
      *
      * @return the payment method
@@ -557,5 +568,53 @@ public class BillingAccountDto extends AccountDto {
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
+    
+    /**
+     * Gets the code of discount plans.
+     * @return codes of discount plan
+     */
+    public List<DiscountPlanDto> getDiscountPlansForInstantiation() {
+		return discountPlansForInstantiation;
+	}
+
+    /**
+     * Sets the code of the discount plans.
+     * @param discountPlansForInstantiation codes of the discount plans
+     */
+	public void setDiscountPlansForInstantiation(List<DiscountPlanDto> discountPlansForInstantiation) {
+		this.discountPlansForInstantiation = discountPlansForInstantiation;
+	}
+
+	/**
+	 * Gets the list of active discount plan instance.
+	 * @return list of active discount plan instance
+	 */
+	public List<DiscountPlanInstanceDto> getDiscountPlanInstances() {
+		return discountPlanInstances;
+	}
+
+	/**
+	 * Sets the list of active discount plan instance.
+	 * @param discountPlanInstances list of active discount plan instance
+	 */
+	public void setDiscountPlanInstances(List<DiscountPlanInstanceDto> discountPlanInstances) {
+		this.discountPlanInstances = discountPlanInstances;
+	}
+
+	/**
+	 * Gets the list of discount plan codes for termination.
+	 * @return discount plan codes
+	 */
+	public List<String> getDiscountPlansForTermination() {
+		return discountPlansForTermination;
+	}
+
+	/**
+	 * Sets the list of discount plan codes for termination.
+	 * @param discountPlansForTermination discount plan codes
+	 */
+	public void setDiscountPlansForTermination(List<String> discountPlansForTermination) {
+		this.discountPlansForTermination = discountPlansForTermination;
+	}
 
 }

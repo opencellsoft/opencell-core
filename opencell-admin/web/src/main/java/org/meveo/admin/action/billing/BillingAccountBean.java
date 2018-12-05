@@ -38,7 +38,9 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
@@ -118,6 +120,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         if (entity.getContactInformation() == null) {
             entity.setContactInformation(new ContactInformation());
         }
+		if (entity.getDiscountPlanInstances() == null) {
+			entity.setDiscountPlanInstances(new ArrayList<>());
+		}
 
         return entity;
     }
@@ -129,6 +134,21 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     public Long getCustomerAccountId() {
         return customerAccountId;
     }
+    
+    @ActionMethod
+	public void instantiateDiscountPlan() throws BusinessException {
+		if (entity.getDiscountPlan() != null) {
+			DiscountPlan dp = entity.getDiscountPlan();
+			entity = billingAccountService.refreshOrRetrieve(entity);
+			entity = billingAccountService.instantiateDiscountPlan(entity, dp, null);
+			entity.setDiscountPlan(null);
+		}
+	}
+	
+	@ActionMethod
+	public void deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
+		billingAccountService.terminateDiscountPlan(entity, dpi);
+	}
 
     @Override
     @ActionMethod

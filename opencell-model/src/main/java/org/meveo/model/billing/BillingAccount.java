@@ -154,10 +154,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "discount_plan_id")
-    private DiscountPlan discountPlan;
-
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
     @MapKey(name = "code")
     // TODO : Add orphanRemoval annotation.
@@ -176,6 +172,12 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Size(max = 2000)
     private String minimumLabelEl;
     
+    /**
+     * Instance of discount plans. Once instantiated effectivity date is not affected when template is updated.
+     */
+	@OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<DiscountPlanInstance> discountPlanInstances;
+    
     @Transient
     private List<RatedTransaction> minRatedTransactions;
     
@@ -187,6 +189,12 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     
     @Transient
 	private BigDecimal totalInvoicingAmountTax;
+    
+    /**
+     * Applicable discount plan. Replaced by discountPlanInstances. Now used only in GUI.
+     */
+    @Transient
+    private DiscountPlan discountPlan;
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -363,14 +371,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
         this.ratedTransactions = ratedTransactions;
     }
 
-    public DiscountPlan getDiscountPlan() {
-        return discountPlan;
-    }
-
-    public void setDiscountPlan(DiscountPlan discountPlan) {
-        this.discountPlan = discountPlan;
-    }
-
     public Map<String, CounterInstance> getCounters() {
         return counters;
     }
@@ -465,6 +465,22 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 
 	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
 		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+	}
+    
+	public List<DiscountPlanInstance> getDiscountPlanInstances() {
+		return discountPlanInstances;
+	}
+
+	public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstances) {
+		this.discountPlanInstances = discountPlanInstances;
+	}
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
 	}
 
 }

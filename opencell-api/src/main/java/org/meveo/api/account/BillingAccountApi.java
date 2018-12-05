@@ -13,6 +13,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -32,6 +33,7 @@ import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TradingCountry;
@@ -46,6 +48,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.TradingCountryService;
@@ -103,6 +106,9 @@ public class BillingAccountApi extends AccountEntityApi {
     
     @Inject
     private UserAccountApi userAccountApi;
+    
+    @Inject
+    private DiscountPlanInstanceService discountPlanInstanceService;
 
     public void create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -184,15 +190,6 @@ public class BillingAccountApi extends AccountEntityApi {
         billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
         billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
 
-        if (!StringUtils.isBlank(postData.getDiscountPlan())) {
-            DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
-            if (discountPlan == null) {
-                throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getDiscountPlan());
-            }
-            billingAccount.setDiscountPlan(discountPlan);
-        } else {
-            billingAccount.setDiscountPlan(null);
-        }
         if (postData.getElectronicBilling() == null) {
             billingAccount.setElectronicBilling(false);
         } else {
@@ -221,6 +218,21 @@ public class BillingAccountApi extends AccountEntityApi {
         }
 
         billingAccountService.createBillingAccount(billingAccount);
+        
+        // instantiate the discounts
+ 		if (postData.getDiscountPlansForInstantiation() != null) {
+ 			List<DiscountPlan> discountPlans = new ArrayList<>();
+ 			for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
+ 				DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
+ 				dp = copyFromDto(discountPlanDto, dp);
+ 				if (dp == null) {
+ 					throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
+ 				}
+ 				discountPlans.add(dp);
+ 			}
+
+ 			billingAccountService.instantiateDiscountPlans(billingAccount, discountPlans);
+ 		}
 
         return billingAccount;
     }
@@ -339,15 +351,6 @@ public class BillingAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getMinimumLabelEl())) {
             billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
         }
-        if (!StringUtils.isBlank(postData.getDiscountPlan())) {
-            DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
-            if (discountPlan == null) {
-                throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getDiscountPlan());
-            }
-            billingAccount.setDiscountPlan(discountPlan);
-        } else if (postData.getDiscountPlan() != null) {
-            billingAccount.setDiscountPlan(null);
-        }
 
         if (businessAccountModel != null) {
             billingAccount.setBusinessAccountModel(businessAccountModel);
@@ -373,9 +376,61 @@ public class BillingAccountApi extends AccountEntityApi {
         } catch (BusinessException e1) {
             throw new MeveoApiException(e1.getMessage());
         }
+        
+        // terminate discounts
+		if (postData.getDiscountPlansForTermination() != null) {
+			List<DiscountPlanInstance> dpis = new ArrayList<>();
+			for (String dpiCode : postData.getDiscountPlansForTermination()) {
+				DiscountPlanInstance dpi = discountPlanInstanceService.findByBillingAccountAndCode(billingAccount,
+						dpiCode);
+				if (dpi == null) {
+					throw new EntityDoesNotExistsException(DiscountPlanInstance.class, dpiCode);
+				}
+
+				dpis.add(dpi);
+			}
+
+			if (!dpis.isEmpty()) {
+				billingAccountService.terminateDiscountPlans(billingAccount, dpis);
+			}
+		}
+
+		// instantiate the discounts
+		if (postData.getDiscountPlansForInstantiation() != null) {
+			List<DiscountPlan> discountPlans = new ArrayList<>();
+			for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
+				DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
+				discountPlanService.detach(dp);
+				dp = copyFromDto(discountPlanDto, dp);
+
+				if (dp == null) {
+					throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
+				}
+				discountPlans.add(dp);
+			}
+
+			billingAccountService.instantiateDiscountPlans(billingAccount, discountPlans);
+		}
 
         return billingAccount;
     }
+    
+	public DiscountPlan copyFromDto(DiscountPlanDto source, DiscountPlan target) {
+		if (source.getStartDate() != null) {
+			target.setStartDate(source.getStartDate());
+		}
+		if (source.getEndDate() != null) {
+			target.setEndDate(source.getEndDate());
+		}		
+		if (source.getDurationUnit() != null) {
+			target.setDurationUnit(source.getDurationUnit());
+		}
+		if (source.getDefaultDuration() != null) {
+			target.setDefaultDuration(source.getDefaultDuration());
+		}
+
+		return target;
+	}
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public BillingAccountDto find(String billingAccountCode) throws MeveoApiException {

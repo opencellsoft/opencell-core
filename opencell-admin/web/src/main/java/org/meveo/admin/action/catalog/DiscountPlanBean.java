@@ -5,9 +5,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.service.base.local.IPersistenceService;
@@ -16,10 +17,11 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
  **/
 @Named
 @ViewScoped
-public class DiscountPlanBean extends BaseBean<DiscountPlan> {
+public class DiscountPlanBean extends CustomFieldBean<DiscountPlan> {
 
     private static final long serialVersionUID = -2345373648137067066L;
 
@@ -30,6 +32,8 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
     private DiscountPlanItemService discountPlanItemService;
 
     private DiscountPlanItem discountPlanItem = new DiscountPlanItem();
+	
+	private int activeDPITabIndex = 0;
 
     public DiscountPlanBean() {
         super(DiscountPlan.class);
@@ -65,57 +69,80 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
     }
 
     public DiscountPlanItem getDiscountPlanItem() {
-        return discountPlanItem;
-    }
+		return discountPlanItem;
+	}
 
-    public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
-        this.discountPlanItem = discountPlanItem;
-    }
+	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
+		customFieldDataEntryBean.refreshFieldsAndActions(discountPlanItem);
+		this.discountPlanItem = discountPlanItem;
+	}
 
-    public void saveOrUpdateDiscountPlanItem() throws BusinessException {
+	@ActionMethod
+	public void saveOrUpdateDiscountPlanItem() throws BusinessException {
 
-        if (discountPlanItem.getId() != null) {
-            discountPlanItem = discountPlanItemService.update(discountPlanItem);
-            messages.info(new BundleKey("messages", "update.successful"));
+		if (discountPlanItem.getId() != null) {
+			discountPlanItem = discountPlanItemService.update(discountPlanItem);
+			customFieldDataEntryBean.saveCustomFieldsToEntity((ICustomFieldEntity) discountPlanItem,
+					discountPlanItem.isTransient());
+			messages.info(new BundleKey("messages", "update.successful"));
 
-        } else {
+			entity = discountPlanService.findById(entity.getId());
+		} else {
 
-            discountPlanItem.setDiscountPlan(entity);
+			discountPlanItem.setDiscountPlan(entity);
 
-            try {
-                if (entity.getDiscountPlanItems().contains(discountPlanItem)) {
-                    messages.error(new BundleKey("messages", "discountPlan.discountPlanItem.unique"));
-                } else {
-                    discountPlanItemService.create(discountPlanItem);
-                    messages.info(new BundleKey("messages", "save.successful"));
-                }
+			try {
+				if (entity.getDiscountPlanItems().contains(discountPlanItem)) {
+					messages.error(new BundleKey("messages", "discountPlan.discountPlanItem.unique"));
+				} else {
+					customFieldDataEntryBean.saveCustomFieldsToEntity((ICustomFieldEntity) discountPlanItem,
+							discountPlanItem.isTransient());
+					discountPlanItemService.create(discountPlanItem);
 
-                entity = discountPlanService.findById(entity.getId());
+					messages.info(new BundleKey("messages", "save.successful"));
+				}
 
-            } catch (BusinessException e) {
-                log.error("failed to save or update discount plan", e);
-                messages.error(new BundleKey("messages", e.getMessage()));
-            }
+				entity = discountPlanService.findById(entity.getId());
 
-        }
+			} catch (BusinessException e) {
+				log.error("failed to save or update discount plan", e);
+				messages.error(new BundleKey("messages", e.getMessage()));
+			}
 
-        discountPlanItem = new DiscountPlanItem();
-        discountPlanItem.setAccountingCode(appProvider.getDiscountAccountingCode());
-    }
+		}
 
-    public void newDiscountPlanItem() {
-        discountPlanItem = new DiscountPlanItem();
-    }
+		activeDPITabIndex = 0;
+		discountPlanItem = new DiscountPlanItem();
+		discountPlanItem.setAccountingCode(appProvider.getDiscountAccountingCode());
+	}
 
-    @ActionMethod
-    public void deleteDiscountPlanItem(DiscountPlanItem discountPlanItem) {
-        try {
-            discountPlanItemService.remove(discountPlanItem.getId());
-            entity = discountPlanService.findById(entity.getId());
-            messages.info(new BundleKey("messages", "delete.successful"));
+	public void newDiscountPlanItem() {
+		discountPlanItem = new DiscountPlanItem();
+		activeDPITabIndex = 0;
+	}
 
-        } catch (Exception e) {
-            messages.error(new BundleKey("messages", "error.delete.unexpected"));
-        }
-    }
+	@ActionMethod
+	public void deleteDiscountPlanItem(DiscountPlanItem discountPlanItem) {
+		try {
+			discountPlanItemService.remove(discountPlanItem.getId());
+			entity = discountPlanService.findById(entity.getId());
+			messages.info(new BundleKey("messages", "delete.successful"));
+
+		} catch (Exception e) {
+			messages.error(new BundleKey("messages", "error.delete.unexpected"));
+		}
+		newDiscountPlanItem();
+	}
+
+	public void refreshEntity() {
+		entity = discountPlanService.findById(entity.getId());
+	}
+
+	public int getActiveDPITabIndex() {
+		return activeDPITabIndex;
+	}
+
+	public void setActiveDPITabIndex(int activeDPITabIndex) {
+		this.activeDPITabIndex = activeDPITabIndex;
+	}
 }
