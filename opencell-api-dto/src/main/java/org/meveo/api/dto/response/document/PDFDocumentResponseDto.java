@@ -16,7 +16,6 @@ public class PDFDocumentResponseDto extends BaseResponse {
     private List<String> listPdfFilePaths;
     
     /** The pdf file path. */
-    @Deprecated
     private String pdfFilePath;
     
     /** The pdf file. */

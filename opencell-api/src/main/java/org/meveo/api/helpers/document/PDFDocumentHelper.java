@@ -3,10 +3,13 @@ package org.meveo.api.helpers.document;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.meveo.api.dto.document.PDFDocumentRequestDto;
 import org.meveo.api.dto.document.PDFTemplateDto;
@@ -31,14 +34,7 @@ public class PDFDocumentHelper {
      * @return the string
      * @throws Exception the exception
      */
-    public static List<String> generatePDF(PDFDocumentRequestDto postData, String rootDir) throws Exception {
-
-        // directory where the pdf file will be generated :
-        String documentDir = getDocumentDirectoryAbsolutePath(postData, rootDir);
-        File documentDirFile = new File(documentDir);
-        if (!documentDirFile.exists()) {
-            documentDirFile.mkdirs();
-        }
+    public static List<String> generatePDF(PDFDocumentRequestDto postData, String rootDir, String documentDir) throws Exception {
 
         List<String> listPaths = new ArrayList<String>();
         String documentNamePrefix = StringUtils.defaultIfEmpty(postData.getDocumentNamePrefix(), "doc");
@@ -59,6 +55,7 @@ public class PDFDocumentHelper {
                 throw e;
             }
         } else { // create a pdf per template
+            
             for (PDFTemplateDto templateDto : postData.getListTemplates()) {
                 try (PDDocument mainTemplateDoc = new PDDocument()) {
                     PDFBuilder pdfBuilder = PDFBuilder.newInstance(documentDir, documentNamePrefix.concat("_").concat(templateDto.getTemplateName()), mainTemplateDoc);
@@ -74,6 +71,23 @@ public class PDFDocumentHelper {
         }
 
         return listPaths;
+    }
+
+    public static String combineFiles(String documentDir, List<String> listPaths, String documentNamePrefix)  {
+        String destinationPath = null;
+        try {
+            PDFMergerUtility pdfMerger = new PDFMergerUtility();
+            destinationPath = documentDir.concat(File.separator).concat(documentNamePrefix).concat(".pdf");
+            pdfMerger.setDestinationFileName(destinationPath);
+            for (String path: listPaths) {
+                pdfMerger.addSource(new File(path)); 
+            }
+            pdfMerger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+            return destinationPath;
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            return null;
+        }
     }
 
     private static void buildPDFFromTemplate(PDFDocumentRequestDto postData, String rootDir, PDFTemplateDto templateDto, PDFBuilder pdfBuilder) throws Exception {
@@ -94,7 +108,7 @@ public class PDFDocumentHelper {
      * @param rootDir the provider root directory
      * @return the absolute path where pdf file will be generated
      */
-    private static String getDocumentDirectoryAbsolutePath(PDFDocumentRequestDto postData, String rootDir) {
+    public static String getDocumentDirectoryAbsolutePath(PDFDocumentRequestDto postData, String rootDir) {
         String documentDir = postData.getDocumentDestinationDir();
         if (StringUtils.isEmpty(documentDir)) {
             return rootDir;
@@ -109,6 +123,10 @@ public class PDFDocumentHelper {
             } else {
                 documentDir = rootDir + documentDir;
             }
+        }
+        File documentDirFile = new File(documentDir);
+        if (!documentDirFile.exists()) {
+            documentDirFile.mkdirs();
         }
         return documentDir;
     }
