@@ -528,19 +528,24 @@
 			header="#{messages['discountPlan.instantiation']}"
 			widgetVar="dlg_instantiateDiscountPlanDialog" modal="true" appendTo="@(body)" closeOnEscape="true"
 			width="600">
-            <hftl:formPanel edit="true" backingBean="#{billingAccountBean}" entity="#{billingAccountBean.entity.discountPlan}" styleClass="formPanel" formId="instantiateDiscountPlanForm" showFormButtons="false">
-				<hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate" />
-				<hftl:formField label="#{messages['discountPlanItem.endDate']}" field="endDate" />
-				<hftl:formField label="#{messages['discountPlanItem.defaultDuration']}" field="defaultDuration" />
-                <hftl:formField label="#{messages['discountPlanItem.durationUnit']}" field="durationUnit" />
-				<p:panel styleClass="action-buttons">
-					<p:commandButton action="#{billingAccountBean.instantiateDiscountPlan()}"
-						value="#{messages['button.instanciateButton']}" update=":#{p:component('discountPanel')}"
-						oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_instantiateDiscountPlanDialog').hide()">
-					</p:commandButton>
-					<p:commandButton immediate="true" onclick="PF('dlg_instantiateDiscountPlanDialog').hide()" type="button" value="#{messages['management.close']}" />
-				</p:panel>
-			</hftl:formPanel>
+			<p:tabView>
+				<p:tab title="#{messages['commons.information']}">
+		            <hftl:formPanel  formId="formDPI" edit="true" backingBean="#{billingAccountBean}" entity="#{billingAccountBean.entity.discountPlan}" styleClass="formPanel" showFormButtons="false">
+						<hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate" />
+						<hftl:formField label="#{messages['discountPlanItem.endDate']}" field="endDate" />
+						<hftl:formField label="#{messages['discountPlanItem.defaultDuration']}" field="defaultDuration" />
+		                <hftl:formField label="#{messages['discountPlanItem.durationUnit']}" field="durationUnit" />
+						<p:panel styleClass="action-buttons">
+							<p:commandButton action="#{billingAccountBean.instantiateDiscountPlan()}"
+								value="#{messages['button.instanciateButton']}" update=":#{p:component('discountPanel')}"
+								oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_instantiateDiscountPlanDialog').hide()">
+							</p:commandButton>
+							<p:commandButton immediate="true" onclick="PF('dlg_instantiateDiscountPlanDialog').hide()" type="button" value="#{messages['management.close']}" />
+						</p:panel>
+					</hftl:formPanel>
+				</p:tab>
+				<hftl:customFields prefix="dpi" backingBean="#{discountPlanInstanceBean}" messagesId="formDPI:messages" />
+			</p:tabView>
 		</p:dialog>
 
 	</ui:define>

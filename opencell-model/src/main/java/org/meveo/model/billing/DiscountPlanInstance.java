@@ -1,6 +1,7 @@
 package org.meveo.model.billing;
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,12 +10,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
  * Instance of {@link DiscountPlan}. It basically just contains the effectivity
@@ -23,20 +30,20 @@ import org.meveo.model.catalog.DiscountPlan;
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.3
  */
-
 @Entity
 @ObservableEntity
 @Table(name = "billing_discount_plan_instance")
+@CustomFieldEntity(cftCodePrefix = "DISCOUNT_PLAN_INSTANCE", inheritCFValuesFrom = { "discountPlan" })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "billing_discount_plan_instance_seq"), })
-public class DiscountPlanInstance extends BaseEntity {
+public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = -3794502716655922498L;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "discount_plan_id", nullable = false, updatable = false)
 	private DiscountPlan discountPlan;
-	
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "billing_account_id", nullable = false, updatable = false)
 	private BillingAccount billingAccount;
@@ -54,6 +61,28 @@ public class DiscountPlanInstance extends BaseEntity {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "end_date")
 	private Date endDate;
+
+	/**
+	 * Unique identifier UUID
+	 */
+	@Column(name = "uuid", nullable = false, updatable = false, length = 60)
+	@Size(max = 60)
+	@NotNull
+	protected String uuid = UUID.randomUUID().toString();
+
+	/**
+	 * Custom field values in JSON format
+	 */
+	@Type(type = "cfjson")
+	@Column(name = "cf_values", columnDefinition = "text")
+	protected CustomFieldValues cfValues;
+
+	/**
+	 * Accumulated custom field values in JSON format
+	 */
+	@Type(type = "cfjson")
+	@Column(name = "cf_values_accum", columnDefinition = "text")
+	protected CustomFieldValues cfAccumulatedValues;
 
 	public boolean isValid() {
 		return (startDate == null || endDate == null || startDate.before(endDate));
@@ -75,7 +104,7 @@ public class DiscountPlanInstance extends BaseEntity {
 
 		return (date.compareTo(startDate) >= 0) && (date.before(endDate));
 	}
-	
+
 	public void copyEffectivityDates(DiscountPlan dp) {
 		setStartDate(dp.getStartDate());
 		setEndDate(dp.getEndDate());
@@ -140,6 +169,56 @@ public class DiscountPlanInstance extends BaseEntity {
 		} else if (!discountPlan.equals(other.discountPlan))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String getUuid() {
+		return uuid;
+	}
+
+	/**
+	 * @param uuid
+	 *            Unique identifier
+	 */
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	/**
+	 * Change UUID value. Return old value
+	 * 
+	 * @return Old UUID value
+	 */
+	@Override
+	public String clearUuid() {
+		String oldUuid = uuid;
+		uuid = UUID.randomUUID().toString();
+		return oldUuid;
+	}
+
+	@Override
+	public ICustomFieldEntity[] getParentCFEntities() {
+		return new ICustomFieldEntity[] { discountPlan };
+	}
+
+	@Override
+	public CustomFieldValues getCfValues() {
+		return cfValues;
+	}
+
+	@Override
+	public void setCfValues(CustomFieldValues cfValues) {
+		this.cfValues = cfValues;
+	}
+
+	@Override
+	public CustomFieldValues getCfAccumulatedValues() {
+		return cfAccumulatedValues;
+	}
+
+	@Override
+	public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+		this.cfAccumulatedValues = cfAccumulatedValues;
 	}
 
 }

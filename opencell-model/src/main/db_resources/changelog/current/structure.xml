@@ -698,5 +698,13 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}ar_payment_gateway_rum_sequence_seq values(1)</sql>
 	</changeSet>
+	<changeSet id="#3850_20181206" author="EdwardPLegaspi">
+		<addColumn tableName="billing_discount_plan_instance">
+    		<column name="uuid" type="varchar(60)">
+			</column>
+			<column name="cf_values" type="${type.json}" />
+			<column name="cf_values_accum" type="${type.json}"></column>
+    	</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
