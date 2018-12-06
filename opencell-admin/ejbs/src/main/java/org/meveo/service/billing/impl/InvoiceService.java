@@ -623,8 +623,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceDate = billingRun.getInvoiceDate();
         }
 
-        lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
-
         // Store RTs, to reach minimum amount per invoice, to DB
         if (minAmountTransactions != null) {
             for (RatedTransaction minRatedTransaction : minAmountTransactions) {
