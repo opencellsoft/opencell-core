@@ -415,8 +415,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceDate = billingRun.getInvoiceDate();
         }
         
-        lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
-
         if (minAmountTransactions != null) {
             for (RatedTransaction minRatedTransaction : minAmountTransactions) {
                 BillingAccount ba = billingAccountService.retrieveIfNotManaged(minRatedTransaction.getBillingAccount());
