@@ -512,8 +512,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceDate = billingRun.getInvoiceDate();
         }
 
-        lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
-
         List<Invoice> invoiceList = new ArrayList<Invoice>();
         EntityManager em = getEntityManager();
         try {
