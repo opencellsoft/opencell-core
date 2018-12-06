@@ -18,8 +18,6 @@ import org.meveo.api.dto.response.document.PDFDocumentResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.helpers.document.PDFDocumentHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by said on 7/9/18.
@@ -27,14 +25,12 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class PDFDocumentApi extends BaseApi {
     
-    private static final Logger LOG = LoggerFactory.getLogger(PDFDocumentApi.class);
-    
     public PDFDocumentResponseDto generatePDF(PDFDocumentRequestDto postData) throws MeveoApiException {
 
         PDFDocumentResponseDto restul = new PDFDocumentResponseDto();
         
         try {
-            LOG.debug("[ Start checking common required & additional params ...");
+            log.debug("[ Start checking common required & additional params ...");
             List<PDFTemplateDto> listTemplates = postData.getListTemplates();
             if (isEmpty(listTemplates)) {
                 throw new MeveoApiException("listTemplates cannot be empty !");
@@ -47,25 +43,34 @@ public class PDFDocumentApi extends BaseApi {
             for (PDFTemplateDto templateDto : listTemplates) {
                 this.checkTemplateDtoParams(templateDto);
             }
-            LOG.debug("End checking common required & additional params  ]");
+            log.debug("End checking common required & additional params  ]");
             
             final String rootPath = this.paramBeanFactory.getChrootDir();
-            
+            int rootPathLength = rootPath.length();
+             // directory where the pdf file will be generated :
+            String documentDir = PDFDocumentHelper.getDocumentDirectoryAbsolutePath(postData, rootPath);
             // generating the PDF document & returning its file path
-            List<String> listPdfFilePaths = PDFDocumentHelper.generatePDF(postData, rootPath);
-            boolean isCombineFiles = postData.isCombineFiles();
-            if (isCombineFiles && isNotEmpty(listPdfFilePaths)) {
-                restul.setPdfFilePath(postData.isAbsolutePaths() ? listPdfFilePaths.get(0) : this.relativePaths(listPdfFilePaths, rootPath.length()).get(0) ); 
-            } else {
-                restul.setListPdfFilePaths(postData.isAbsolutePaths() ? listPdfFilePaths : this.relativePaths(listPdfFilePaths, rootPath.length())); 
-            }
-            if (isNotEmpty(listPdfFilePaths) && postData.isReturnPdf()) {
-                // generating the PDF as byte[]
-                List<byte[]>  pdfFiles = this.generatePDFsAsBytes(listPdfFilePaths);
-                if (isCombineFiles && isNotEmpty(pdfFiles)) {
-                    restul.setPdfFile(pdfFiles.get(0));
+            List<String> listPdfFilePaths = PDFDocumentHelper.generatePDF(postData, rootPath, documentDir);
+            
+            if (isNotEmpty(listPdfFilePaths)) {
+                boolean isCombineFiles = postData.isCombineFiles();
+                if (isCombineFiles) {
+                    restul.setPdfFilePath(postData.isAbsolutePaths() ? listPdfFilePaths.get(0) : this.relativePaths(listPdfFilePaths, rootPathLength).get(0) ); 
                 } else {
-                    restul.setPdfFiles(pdfFiles); 
+                    restul.setListPdfFilePaths(postData.isAbsolutePaths() ? listPdfFilePaths : this.relativePaths(listPdfFilePaths, rootPathLength)); 
+                    String documentNamePrefix = StringUtils.defaultIfEmpty(postData.getDocumentNamePrefix(), "doc");
+                    String pdfFilePath = PDFDocumentHelper.combineFiles(documentDir, listPdfFilePaths, documentNamePrefix);
+                    log.debug(" pdfFilePath = {} ", pdfFilePath);
+                    restul.setPdfFilePath(pdfFilePath.substring(rootPathLength));
+                }
+                if (postData.isReturnPdf()) {
+                    // generating the PDF as byte[]
+                    List<byte[]>  pdfFiles = this.generatePDFsAsBytes(listPdfFilePaths);
+                    if (isCombineFiles && isNotEmpty(pdfFiles)) {
+                        restul.setPdfFile(pdfFiles.get(0));
+                    } else {
+                        restul.setPdfFiles(pdfFiles); 
+                    }
                 }
             }
             return restul;
