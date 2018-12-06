@@ -48,6 +48,7 @@ import org.meveo.admin.sepa.jaxb.pain008.PersonIdentificationSchemeName1Choice;
 import org.meveo.admin.sepa.jaxb.pain008.SequenceType1Code;
 import org.meveo.admin.sepa.jaxb.pain008.ServiceLevel8Choice;
 import org.meveo.admin.util.ArConfig;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BankCoordinates;
@@ -59,6 +60,7 @@ import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.catalog.impl.CalendarBankingService;
 import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
 import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
@@ -139,6 +141,8 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
     /** The Constant CATEGORY_PURPOSE_CODE. */
     private static final String CATEGORY_PURPOSE_CODE = "SUPP";
+
+    private CalendarBankingService calendarBankingService = (CalendarBankingService) EjbUtils.getServiceInterface(CalendarBankingService.class.getSimpleName());
 
     @Override
     public String getDDFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
@@ -287,7 +291,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
         localInstrument.setCd(paramBean.getProperty("sepa.LclInstrm", SEPA_LOCAL_INSTRUMENT_CODE));
         paymentTypeInformation.setSeqTp(SequenceType1Code.RCUR);
 
-        paymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(new Date())); // à revoir
+        paymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(calendarBankingService.getNextBankWorkingDate(new Date()))); // à revoir
 
         BankCoordinates providerBC = appProvider.getBankCoordinates();
         if (providerBC == null) {
@@ -488,7 +492,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
         paymentTypeInformation.setCtgyPurp(ctgyPurp);
         ctgyPurp.setCd(CATEGORY_PURPOSE_CODE);
 
-        paymentInformation.setReqdExctnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(new Date())); // TODO : define a configurable delay between payment and date of issue
+        paymentInformation.setReqdExctnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(calendarBankingService.getNextBankWorkingDate(new Date()))); 
 
         org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32 dbtr = new org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32();
         dbtr.setNm(appProvider.getDescription());
