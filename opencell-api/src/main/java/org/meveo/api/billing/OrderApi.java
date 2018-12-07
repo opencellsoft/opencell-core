@@ -23,6 +23,7 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.exception.ActionForbiddenException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -153,6 +154,14 @@ public class OrderApi extends BaseApi {
         if (quoteId != null) {
             order.setQuote(orderService.getEntityManager().getReference(Quote.class, quoteId));
         }
+        
+        if(!StringUtils.isBlank(productOrder.getExternalId())) {
+            List<Order> existingOrders = orderService.findByExternalId(productOrder.getExternalId());
+            if(existingOrders.size() > 0) {
+                throw new EntityAlreadyExistsException(Order.class, productOrder.getExternalId(), "externalId");
+            }
+        }
+        
         order.setCode(UUID.randomUUID().toString());
         order.setCategory(productOrder.getCategory());
         // order.setDeliveryInstructions("");
