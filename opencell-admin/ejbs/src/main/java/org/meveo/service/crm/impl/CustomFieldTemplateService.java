@@ -299,21 +299,22 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     public static String calculateAppliesToValue(ICustomFieldEntity entity) throws CustomFieldException {
         CustomFieldEntity cfeAnnotation = entity.getClass().getAnnotation(CustomFieldEntity.class);
-
         String appliesTo = null;
-        if (cfeAnnotation != null && cfeAnnotation.cftCodeFields().length > 0) {
+        if (cfeAnnotation != null){
             appliesTo = cfeAnnotation.cftCodePrefix();
-            for (String fieldName : cfeAnnotation.cftCodeFields()) {
-                try {
-                    Object fieldValue = FieldUtils.getField(entity.getClass(), fieldName, true).get(entity);
-                    if (fieldValue == null) {
-                        throw new CustomFieldException("Can not calculate AppliesTo value");
+            if (cfeAnnotation.cftCodeFields().length > 0) {
+                for (String fieldName : cfeAnnotation.cftCodeFields()) {
+                    try {
+                        Object fieldValue = FieldUtils.getField(entity.getClass(), fieldName, true).get(entity);
+                        if (fieldValue == null) {
+                            throw new CustomFieldException("Can not calculate AppliesTo value");
+                        }
+                        appliesTo = appliesTo + "_" + fieldValue;
+                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                        Logger log = LoggerFactory.getLogger(CustomFieldTemplateService.class);
+                        log.error("Unable to access field {}.{}", entity.getClass().getSimpleName(), fieldName);
+                        throw new RuntimeException("Unable to access field " + entity.getClass().getSimpleName() + "." + fieldName);
                     }
-                    appliesTo = appliesTo + "_" + fieldValue;
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    Logger log = LoggerFactory.getLogger(CustomFieldTemplateService.class);
-                    log.error("Unable to access field {}.{}", entity.getClass().getSimpleName(), fieldName);
-                    throw new RuntimeException("Unable to access field " + entity.getClass().getSimpleName() + "." + fieldName);
                 }
             }
         }
