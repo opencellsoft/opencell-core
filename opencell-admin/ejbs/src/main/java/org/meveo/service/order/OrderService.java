@@ -72,6 +72,13 @@ public class OrderService extends BusinessService<Order> {
         entity.setRoutedToUserGroup(userHierarchyLevel);
         return this.update(entity);
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<Order> findByExternalId(String externalId) throws BusinessException {
+        Query query = getEntityManager().createQuery("from " + Order.class.getName() + " where externalId = :code ");
+        query.setParameter("code", externalId);
+        return query.getResultList();
+    }
 
     public Order findByCodeOrExternalId(String codeOrExternalId) {
         Order order = null;
