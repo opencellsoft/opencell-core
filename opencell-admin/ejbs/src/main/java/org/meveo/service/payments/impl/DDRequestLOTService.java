@@ -67,6 +67,7 @@ import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.catalog.impl.CalendarBankingService;
 import org.meveo.service.script.payment.DateRangeScript;
 
 /**
@@ -100,6 +101,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
     /** The dd request item service. */
     @Inject
     private DDRequestItemService ddRequestItemService;
+    
+    @Inject
+    private CalendarBankingService calendarBankingService;
 
     /**
      * Creates the payment.
@@ -150,7 +154,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
         automatedPayment.setReference(reference);
         automatedPayment.setBankLot(bankLot);
         automatedPayment.setDepositDate(depositDate);
-        automatedPayment.setBankCollectionDate(bankCollectionDate);
+        automatedPayment.setBankCollectionDate(calendarBankingService.getNextBankWorkingDate(bankCollectionDate));
         automatedPayment.setDueDate(dueDate);
         automatedPayment.setTransactionDate(transactionDate);
         automatedPayment.setMatchingStatus(MatchingStatusEnum.O);

@@ -2,10 +2,7 @@ package org.meveo.api.dto.billing;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlElement;
-
 import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.DiscountPlanInstance;
 
 /**
@@ -35,10 +32,6 @@ public class DiscountPlanInstanceDto extends BaseEntityDto {
 	 * Effectivity end date
 	 */
 	private Date endDate;
-	
-	/** The custom fields. */
-    @XmlElement(required = false)
-    private CustomFieldsDto customFields;
 
 	/**
 	 * Default constructor.
@@ -120,14 +113,6 @@ public class DiscountPlanInstanceDto extends BaseEntityDto {
 	 */
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
-	}
-
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
-
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
 	}
 
 }

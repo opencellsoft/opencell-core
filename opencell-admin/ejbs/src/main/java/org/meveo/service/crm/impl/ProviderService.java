@@ -160,8 +160,9 @@ public class ProviderService extends PersistenceService<Provider> {
      * 
      * @param provider New provider data to refresh with
      */
-    private void refreshAppProvider(Provider provider) {
-
+    private void refreshAppProvider(Provider thisProvider) {
+    	Provider provider = findById(thisProvider.getId());    	
+    	
         try {
             BeanUtils.copyProperties(appProvider, provider);
         } catch (IllegalAccessException | InvocationTargetException e) {

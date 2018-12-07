@@ -198,7 +198,7 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
 
 	@Override
 	public ICustomFieldEntity[] getParentCFEntities() {
-		return new ICustomFieldEntity[] { discountPlan };
+		return discountPlan != null ? new ICustomFieldEntity[] { discountPlan } : null;
 	}
 
 	@Override

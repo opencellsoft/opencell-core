@@ -386,7 +386,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					List<DiscountPlanItem> discountPlanItems = dpi.getDiscountPlan().getDiscountPlanItems();
 					for (DiscountPlanItem discountPlanItem : discountPlanItems) {
 						if (discountPlanItem.isActive() && matchDiscountPlanItemExpression(
-								discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice)) {
+								discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice, dpi)) {
 							applicableDiscountPlanItems.add(discountPlanItem);
 						}
 					}
@@ -824,10 +824,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param customerAccount customer account
      * @param billingAccount billing account
      * @param invoice invoice
+     * @param dpi the discount plan instance
      * @return true/false
      * @throws BusinessException business exception.
      */
-    private boolean matchDiscountPlanItemExpression(String expression, CustomerAccount customerAccount, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
+	private boolean matchDiscountPlanItemExpression(String expression, CustomerAccount customerAccount,
+			BillingAccount billingAccount, Invoice invoice, DiscountPlanInstance dpi) throws BusinessException {
         Boolean result = true;
 
         if (StringUtils.isBlank(expression)) {
@@ -843,7 +845,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         if (expression.indexOf("iv") >= 0) {
             userMap.put("iv", invoice);
-
+        }
+        if (expression.indexOf("dpi") >= 0) {
+            userMap.put("dpi", dpi);
         }
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {

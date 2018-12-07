@@ -63,14 +63,18 @@ public class EdrService extends PersistenceService<EDR> {
      * Get a list of unprocessed EDRs to rate up to a given date. List is sorted by subscription and ID in ascending order
      * 
      * @param rateUntilDate date until we still rate
+     * @param string 
      * @return list of EDR'sId we can rate until a given date.
      */
-    public List<Long> getEDRidsToRate(Date rateUntilDate) {
+    public List<Long> getEDRidsToRate(Date rateUntilDate, String ratingGroup) {
         QueryBuilder qb = new QueryBuilder(EDR.class, "c");
         qb.addCriterion("c.status", "=", EDRStatusEnum.OPEN, true);
         if (rateUntilDate != null) {
             qb.addCriterion("c.eventDate", "<", rateUntilDate, false);
         }
+		if (ratingGroup != null) {
+			qb.addCriterion("subscription.ratingGroup", "=", ratingGroup, false);
+		}
         qb.addOrderMultiCriterion("c.subscription", true, "c.id", true);
 
         try {

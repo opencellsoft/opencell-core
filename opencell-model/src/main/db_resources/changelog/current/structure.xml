@@ -698,6 +698,14 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}ar_payment_gateway_rum_sequence_seq values(1)</sql>
 	</changeSet>
+    <changeSet id="#3790_20181128 - Subscription rating group" author="EdwardPLegaspi">
+    	<addColumn tableName="billing_subscription">
+    		<column name="rating_group" type="varchar(50)"></column>
+    	</addColumn>
+    	<createIndex tableName="billing_subscription" indexName="idx_subscription_rating_group">
+    		<column name="rating_group"></column>
+    	</createIndex>
+    </changeSet>
 	<changeSet id="#3850_20181206" author="EdwardPLegaspi">
 		<addColumn tableName="billing_discount_plan_instance">
     		<column name="uuid" type="varchar(60)">
