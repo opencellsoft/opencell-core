@@ -452,6 +452,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			discountPlanInstance.setBillingAccount(entity);
 			discountPlanInstance.setDiscountPlan(dp);
 			discountPlanInstance.copyEffectivityDates(dp);
+			discountPlanInstance.setCfValues(dp.getCfValues());
 			discountPlanInstanceService.create(discountPlanInstance, dp);
 			entity.getDiscountPlanInstances().add(discountPlanInstance);
 			
@@ -459,6 +460,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			boolean found = false;
 			DiscountPlanInstance dpiMatched = null;
 			for (DiscountPlanInstance dpi : entity.getDiscountPlanInstances()) {
+				dpi.setCfValues(dp.getCfValues());
 				if (dp.equals(dpi.getDiscountPlan())) {
 					found = true;
 					dpiMatched = dpi;
