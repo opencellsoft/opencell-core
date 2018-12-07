@@ -44,7 +44,6 @@ import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-import org.meveo.api.dto.response.RawResponseDto;
 import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -287,6 +286,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
         subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
         subscription.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
+        subscription.setRatingGroup(postData.getRatingGroup());
 
         // populate customFields
         try {
@@ -390,11 +390,13 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getMinimumLabelElSpark() != null) {
             subscription.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
-
         if (postData.getAutoEndOfEngagement() != null) {
             subscription.setAutoEndOfEngagement(postData.getAutoEndOfEngagement());
             subscription.updateSubscribedTillAndRenewalNotifyDates();
-        }
+		}
+		if (postData.getRatingGroup() != null) {
+			subscription.setRatingGroup(postData.getRatingGroup());
+		}
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, false);

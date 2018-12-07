@@ -264,6 +264,12 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
+    
+    /**
+     * String value matched in the usageRatingJob to group the EDRs for rating.
+     */
+    @Column(name = "rating_group", length = 50)
+    private String ratingGroup;
 
     /**
      * Extra Rated transactions to reach minimum invoice amount per subscription
@@ -695,5 +701,13 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
+
+	public String getRatingGroup() {
+		return ratingGroup;
+	}
+
+	public void setRatingGroup(String ratingGroup) {
+		this.ratingGroup = ratingGroup;
+	}
 
 }

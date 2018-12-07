@@ -452,6 +452,8 @@
 										<hftl:formField
 											label="#{messages['businessEntity.description']}"
 											field="description" size="80" />
+											
+										<hftl:formField label="#{messages['subscription.ratingGroup']}" field="ratingGroup" size="50" />
 										
                                         <h:panelGroup id="subscriptionAndRenewalDates">
                                         	<hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" required="true" newLine="true" listenerUpdate="offerPopup, subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}" actionListenerMethod="updateSubscribedTillDate" />
