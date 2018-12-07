@@ -25,6 +25,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.catalog.Calendar;
 
@@ -281,6 +282,14 @@ public class PaymentScheduleInstance extends EnableBusinessCFEntity {
      */
     public void setPaymentDayInMonth(Integer paymentDayInMonth) {
         this.paymentDayInMonth = paymentDayInMonth;
+    }
+    
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        if (paymentScheduleTemplate != null) {
+            return new ICustomFieldEntity[] { paymentScheduleTemplate };
+        }
+        return null;
     }
 
 }
