@@ -33099,7 +33099,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>+01:00</con:value>
+      <con:value>Z</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>

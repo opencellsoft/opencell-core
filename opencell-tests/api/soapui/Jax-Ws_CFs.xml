@@ -50011,7 +50011,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>+01:00</con:value>
+      <con:value>Z</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>
