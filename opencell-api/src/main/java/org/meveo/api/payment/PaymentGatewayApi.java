@@ -86,9 +86,12 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
             throw new EntityAlreadyExistsException(PaymentGateway.class, code);
         }
 
-        ScriptInstance scriptInstance = scriptInstanceService.findByCode(paymentGatewayDto.getScriptInstanceCode());
-        if (scriptInstance == null) {
-            throw new EntityDoesNotExistsException(ScriptInstance.class, paymentGatewayDto.getScriptInstanceCode());
+        ScriptInstance scriptInstance =  null;
+        if(paymentGatewayDto.getType() == PaymentGatewayTypeEnum.CUSTOM) {
+            scriptInstance = scriptInstanceService.findByCode(paymentGatewayDto.getScriptInstanceCode());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, paymentGatewayDto.getScriptInstanceCode());
+            }
         }
 
         TradingCurrency tradingCurrency = null;
