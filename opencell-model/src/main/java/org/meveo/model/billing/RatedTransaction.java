@@ -107,6 +107,13 @@ import org.meveo.model.rating.EDR;
                 + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " AND r.doNotTriggerInvoicing=false AND r.invoice is null AND r.billingAccount=:billingAccount AND r.walletOperationEntity.chargeInstance=:chargeInstance"
                 + " GROUP BY r.invoiceSubCategory.id"),
+
+        @NamedQuery(name = "RatedTransaction.sumByOneShotCharge", query =
+                "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax), r.invoiceSubCategory.id  FROM RatedTransaction r "
+                        + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+                        + " AND r.doNotTriggerInvoicing=false AND r.invoice is null AND r.billingAccount=:billingAccount AND r.subscription=:subscription "
+                        + " AND r.walletOperationEntity.chargeInstance in (SELECT o FROM OneShotChargeInstance o where o.subscriptionServiceInstance is null AND o.terminationServiceInstance is null)"
+                        + " GROUP BY r.invoiceSubCategory.id"),
         
         @NamedQuery(name = "RatedTransaction.updateInvoiced", query = "UPDATE RatedTransaction r "
                 + "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED " + "where r.invoice is null"
