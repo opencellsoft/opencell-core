@@ -36,6 +36,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.scripts.ScriptInstance;
 
@@ -110,10 +111,10 @@ public class DDRequestLotOp extends AuditableEntity {
     @Enumerated(EnumType.STRING)
     OperationCategoryEnum operationCategoryToProcess;
     
-    /** The payment gateway. */
+    /** The Seller. */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_gateway_id")
-    private PaymentGateway paymentGateway;
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
 
     /**
      * Gets the from due date.
@@ -316,21 +317,18 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
-     * Gets the payment gateway.
-     *
-     * @return the paymentGateway
+     * @return the seller
      */
-    public PaymentGateway getPaymentGateway() {
-        return paymentGateway;
+    public Seller getSeller() {
+        return seller;
     }
 
     /**
-     * Sets the payment gateway.
-     *
-     * @param paymentGateway the paymentGateway to set
+     * @param seller the seller to set
      */
-    public void setPaymentGateway(PaymentGateway paymentGateway) {
-        this.paymentGateway = paymentGateway;
+    public void setSeller(Seller seller) {
+        this.seller = seller;
     }
+
    
 }

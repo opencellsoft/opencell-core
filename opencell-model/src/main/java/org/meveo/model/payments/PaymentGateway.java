@@ -23,6 +23,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ModuleItem;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCurrency;
@@ -168,6 +169,11 @@ public class PaymentGateway extends EnableBusinessCFEntity {
      */
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
+
     
     
     /**
@@ -509,6 +515,19 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     public void setBankCoordinates(BankCoordinates bankCoordinates) {
         this.bankCoordinates = bankCoordinates;
     }
-	
+
+    /**
+     * @return the seller
+     */
+    public Seller getSeller() {
+        return seller;
+    }
+
+    /**
+     * @param seller the seller to set
+     */
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
 	
 }

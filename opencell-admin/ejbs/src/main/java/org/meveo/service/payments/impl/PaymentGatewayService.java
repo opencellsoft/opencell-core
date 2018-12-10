@@ -12,6 +12,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -63,7 +64,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
             }
             for (PaymentGateway pg : paymentGateways) {
                 log.info("get pg , current :" + pg.getCode());
-                if (matchExpression(pg.getApplicationEL(), customerAccount, paymentMethod, pg)) {
+                if (matchExpression(pg.getApplicationEL(), customerAccount, paymentMethod, pg, null)) {
                     return pg;
                 }
             }
@@ -74,7 +75,51 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
         return paymentGateway;
     }
 
-    private boolean matchExpression(String expression, CustomerAccount customerAccount, PaymentMethod paymentMethod, PaymentGateway paymentGateway) throws BusinessException {
+    /**
+     * Gets the payment gateway.
+     *
+     * @param seller the seller
+     * @param paymentMethodEnum the payment method enum
+     * @return the payment gateway
+     * @throws BusinessException the business exception
+     */
+    public PaymentGateway getPaymentGateway(Seller seller, PaymentMethodEnum paymentMethodEnum) throws BusinessException {
+        PaymentGateway paymentGateway = null;
+        try {
+            Query query = getEntityManager()
+                .createQuery("from " + PaymentGateway.class.getSimpleName() + " where paymentMethodType =:paymenTypeValueIN and disabled=false and seller =:sellerIN ")
+                .setParameter("paymenTypeValueIN", paymentMethodEnum).setParameter("sellerIN", seller);
+
+            List<PaymentGateway> paymentGateways = (List<PaymentGateway>) query.getResultList();
+            if (paymentGateways == null || paymentGateways.isEmpty()) {
+                return null;
+            }
+            for (PaymentGateway pg : paymentGateways) {
+                log.info("get pg , current :" + pg.getCode());
+                if (matchExpression(pg.getApplicationEL(), null, null, paymentGateway, seller)) {
+                    return pg;
+                }
+            }
+            paymentGateway = paymentGateways.get(0);
+        } catch (Exception e) {
+            log.error("Error on getPaymentGateway:", e);
+        }
+        return paymentGateway;
+    }
+
+    /**
+     * Match expression.
+     *
+     * @param expression the expression
+     * @param customerAccount the customer account
+     * @param paymentMethod the payment method
+     * @param paymentGateway the payment gateway
+     * @param seller the seller
+     * @return true, if successful
+     * @throws BusinessException the business exception
+     */
+    private boolean matchExpression(String expression, CustomerAccount customerAccount, PaymentMethod paymentMethod, PaymentGateway paymentGateway, Seller seller)
+            throws BusinessException {
         Boolean result = true;
         if (StringUtils.isBlank(expression)) {
             return result;
@@ -85,6 +130,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
         userMap.put("ca", customerAccount);
         userMap.put("paymentMethod", paymentMethod);
         userMap.put("paymentGateway", paymentGateway);
+        userMap.put("seller", seller);
 
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {

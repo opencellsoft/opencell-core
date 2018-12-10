@@ -30,17 +30,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
 @DiscriminatorValue(value = "I")
-@NamedQueries({
-        @NamedQuery(name = "RecordedInvoice.listRecordedInvoiceToPayByDate", query = "Select ri from RecordedInvoice as ri,PaymentMethod as pm  where ri.matchingStatus ='O' "
-                + "and  ri.customerAccount.excludedFromPayment = false and ri.dueDate >=:fromDueDate and ri.dueDate<=:toDueDate and ri.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ri.unMatchingAmount <> 0") })
 public class RecordedInvoice extends AccountOperation {
 
     private static final long serialVersionUID = 1L;

@@ -62,8 +62,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     private OperationCategoryEnum operationCategoryToProcess;
     
 
-    /** The payment gateway code. */
-    private String paymentGatewayCode;
+    /** The seller code. */
+    private String sellerCode;
 
     /**
      * Instantiates a new DD request lot op dto.
@@ -87,7 +87,7 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
         this.ddRequestBuilderCode = ddrequestLotOp.getDdRequestBuilder() != null ? ddrequestLotOp.getDdRequestBuilder().getCode() : null;
         this.filterCode = ddrequestLotOp.getFilter() != null ? ddrequestLotOp.getFilter().getCode() : null;
         this.operationCategoryToProcess = ddrequestLotOp.getOperationCategoryToProcess();
-        this.paymentGatewayCode = ddrequestLotOp.getPaymentGateway() != null ? ddrequestLotOp.getPaymentGateway().getCode() : null;
+        this.sellerCode = ddrequestLotOp.getSeller() != null ? ddrequestLotOp.getSeller().getCode() : null;
     }
 
     /**
@@ -273,19 +273,19 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     /**
      * Gets the payment gateway code.
      *
-     * @return the paymentGatewayCode
+     * @return the sellerCode
      */
-    public String getPaymentGatewayCode() {
-        return paymentGatewayCode;
+    public String getSellerCode() {
+        return sellerCode;
     }
 
     /**
      * Sets the payment gateway code.
      *
-     * @param paymentGatewayCode the paymentGatewayCode to set
+     * @param sellerCode the sellerCode to set
      */
-    public void setPaymentGatewayCode(String paymentGatewayCode) {
-        this.paymentGatewayCode = paymentGatewayCode;
+    public void setSellerCode(String sellerCode) {
+        this.sellerCode = sellerCode;
     }
     
     

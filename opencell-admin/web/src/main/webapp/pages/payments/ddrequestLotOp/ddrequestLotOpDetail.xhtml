@@ -35,15 +35,15 @@
 			updateField=":FormId:scriptSelectId :FormId:scriptSelectId_text">
 		</hftl:entityPopup>
 		
-		<hftl:entityPopup id="paymentGatewayPopup"
-			header="#{messages['paymentGateway.title']}"
-			backingBean="#{paymentGatewayBean}"
-			selection="#{ddRequestLotOpBean.entity.paymentGateway}"
+		<hftl:entityPopup id="sellerPopup"
+			header="#{messages['seller.title']}"
+			backingBean="#{sellerBean}"
+			selection="#{ddRequestLotOpBean.entity.seller}"
 			searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
 			column1Label="#{messages['businessEntity.code']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" 
-			updateField=":FormId:paymentGatewaySelectId :FormId:paymentGatewaySelectId_text">
+			updateField=":FormId:sellerSelectId :FormId:sellerSelectId_text">
 		</hftl:entityPopup>		
 		
 		<hftl:entityPopup id="dDRequestBuilderPopup" header="#{messages['dDRequestBuilder.title']}" backingBean="#{dDRequestBuilderBean}"
@@ -71,10 +71,10 @@
 				field="scriptInstance" valueLabelField="code" required="false"
 				popup="true" popupId="scriptPopup" showResetButton="true" />
 				
-			<hftl:formField id="paymentGatewaySelectId"
-				label="#{messages['ddrequestLotOp.paymentGateway']}"
-				field="paymentGateway" valueLabelField="code" required="false"
-				popup="true" popupId="paymentGatewayPopup" showResetButton="true" />				
+			<hftl:formField id="sellerSelectId"
+				label="#{messages['ddrequestLotOp.seller']}"
+				field="seller" valueLabelField="code" required="false"
+				popup="true" popupId="sellerPopup" showResetButton="true" />				
 
 			<hftl:formField label="#{messages['ddrequestLotOp.recurrent']}" field="recurrent" edit="true"/>
 			 

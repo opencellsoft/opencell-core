@@ -45,7 +45,7 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
             if (fromDueDate.after(toDueDate)) {
                 throw new BusinessEntityException("fromDueDate is after toDueDate");
             }
-            listAoToPay = accountOperationService.getAOsToPayOrRefund(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate,ddrequestLotOp.getOperationCategoryToProcess());
+            listAoToPay = accountOperationService.getAOsToPayOrRefund(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate,ddrequestLotOp.getOperationCategoryToProcess(),ddrequestLotOp.getSeller());
         } else {
             listAoToPay = (List<AccountOperation>) filterService.filteredListAsObjects(filter);
         }

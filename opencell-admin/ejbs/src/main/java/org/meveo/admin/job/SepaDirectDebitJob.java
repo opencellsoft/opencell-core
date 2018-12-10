@@ -68,13 +68,13 @@ public class SepaDirectDebitJob extends Job {
         result.put(cfAoFilterScriptCode, aoFilterScript);
         
         CustomFieldTemplate paymentGatewayCF = new CustomFieldTemplate();
-        final String paymentGatewayCFcode = "SepaJob_paymentGateway";
+        final String paymentGatewayCFcode = "SepaJob_seller";
         paymentGatewayCF.setCode(paymentGatewayCFcode);
         paymentGatewayCF.setAppliesTo(APPLIES_TO_NAME);
         paymentGatewayCF.setActive(true);
-        paymentGatewayCF.setDescription(resourceMessages.getString("paymentGateway.title"));
+        paymentGatewayCF.setDescription(resourceMessages.getString("seller.title"));
         paymentGatewayCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-        paymentGatewayCF.setEntityClazz("org.meveo.model.payments.PaymentGateway");
+        paymentGatewayCF.setEntityClazz("org.meveo.model.admin.Seller");
         paymentGatewayCF.setValueRequired(false);
         paymentGatewayCF.setDefaultValue("");
         result.put(paymentGatewayCFcode, paymentGatewayCF);

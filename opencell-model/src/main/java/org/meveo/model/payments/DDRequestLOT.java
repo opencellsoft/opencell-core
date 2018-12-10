@@ -41,7 +41,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.admin.Seller;
 
+/**
+ * 
+ * @author anasseh
+ *
+ */
 @Entity
 @Table(name = "ar_ddrequest_lot")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -92,6 +98,10 @@ public class DDRequestLOT extends AuditableEntity {
     @Column(name = "op_cat_to_process")
     @Enumerated(EnumType.STRING)
     OperationCategoryEnum operationCategoryToProcess;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
 
     public String getFileName() {
         return fileName;
@@ -199,6 +209,20 @@ public class DDRequestLOT extends AuditableEntity {
      */
     public void setOperationCategoryToProcess(OperationCategoryEnum operationCategoryToProcess) {
         this.operationCategoryToProcess = operationCategoryToProcess;
+    }
+
+    /**
+     * @return the seller
+     */
+    public Seller getSeller() {
+        return seller;
+    }
+
+    /**
+     * @param seller the seller to set
+     */
+    public void setSeller(Seller seller) {
+        this.seller = seller;
     }
     
     

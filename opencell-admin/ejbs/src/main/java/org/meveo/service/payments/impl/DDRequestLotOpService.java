@@ -27,26 +27,26 @@ import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
-import org.meveo.model.payments.PaymentGateway;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 
     @SuppressWarnings("unchecked")
-    public List<DDRequestLotOp> getDDRequestOps(DDRequestBuilder ddRequestBuilder, PaymentGateway paymentGateway) {
+    public List<DDRequestLotOp> getDDRequestOps(DDRequestBuilder ddRequestBuilder, Seller seller) {
         List<DDRequestLotOp> ddrequestOps = new ArrayList<DDRequestLotOp>();
 
         try {
             Query query = getEntityManager()
-                .createQuery("from " + DDRequestLotOp.class.getSimpleName() + " as p  left join fetch p.ddrequestLOT t where p.status=:status and "
-                        + "p.ddRequestBuilder=:builderIN " + (paymentGateway == null ? "" : " and  p.paymentGateway =:paymentGatewayIN"))
-                .setParameter("status", DDRequestOpStatusEnum.WAIT).setParameter("builderIN", ddRequestBuilder);
-            if (paymentGateway != null) {
-                query = query.setParameter("paymentGatewayIN", paymentGateway);
+                .createQuery("from " + DDRequestLotOp.class.getSimpleName() + " as p  left join fetch p.ddrequestLOT t where p.status=:statusIN and "
+                        + "p.ddRequestBuilder=:builderIN " + (seller == null ? "" : " and  p.seller =:sellerIN"))
+                .setParameter("statusIN", DDRequestOpStatusEnum.WAIT).setParameter("builderIN", ddRequestBuilder);
+            if (seller != null) {
+                query = query.setParameter("sellerIN", seller);
             }
 
             ddrequestOps = (List<DDRequestLotOp>) query.getResultList();

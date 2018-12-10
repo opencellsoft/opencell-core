@@ -58,9 +58,12 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
+import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,7 +137,6 @@ public class SepaFile extends AbstractDDRequestBuilder {
     /** The Constant CATEGORY_PURPOSE_CODE. */
     private static final String CATEGORY_PURPOSE_CODE = "SUPP";
 
-
     @Override
     public String getDDFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
         if (ddRequestLot.getOperationCategoryToProcess() == OperationCategoryEnum.DEBIT) {
@@ -144,7 +146,6 @@ public class SepaFile extends AbstractDDRequestBuilder {
         }
     }
 
-
     @Override
     public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
         if (ddRequestLot.getOperationCategoryToProcess() == OperationCategoryEnum.DEBIT) {
@@ -153,7 +154,6 @@ public class SepaFile extends AbstractDDRequestBuilder {
             generateDDRequestLotFileForSCT(ddRequestLot, appProvider);
         }
     }
-
 
     @Override
     public DDRejectFileInfos processSDDRejectedFile(File file) throws BusinessException {
@@ -195,7 +195,6 @@ public class SepaFile extends AbstractDDRequestBuilder {
         }
         return ddRejectFileInfos;
     }
-
 
     @Override
     public DDRejectFileInfos processSCTRejectedFile(File file) throws BusinessException {
@@ -385,9 +384,20 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
         paymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(new Date())); // à revoir
 
-        BankCoordinates providerBC = appProvider.getBankCoordinates();
+        BankCoordinates providerBC = null;
+        if (dDRequestItem.getDdRequestLOT().getSeller() != null) {
+            PaymentGatewayService paymentGatewayService = (PaymentGatewayService) getServiceInterface("PaymentGatewayService");
+            PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(dDRequestItem.getDdRequestLOT().getSeller(), PaymentMethodEnum.DIRECTDEBIT);
+            if (paymentGateway == null) {
+                throw new BusinessException("Cant find payment gateway for seller : " + dDRequestItem.getDdRequestLOT().getSeller());
+            }
+            providerBC = paymentGateway.getBankCoordinates();
+        } else {
+            providerBC = appProvider.getBankCoordinates();
+        }
+
         if (providerBC == null) {
-            throw new BusinessException("Missing bank information on provider");
+            throw new BusinessException("Missing bank information on provider or seller");
         }
         PartyIdentification32 creditor = new PartyIdentification32();
         creditor.setNm(appProvider.getDescription());

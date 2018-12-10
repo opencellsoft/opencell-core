@@ -15,18 +15,18 @@ import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.payments.impl.DDRequestBuilderService;
 import org.meveo.service.payments.impl.DDRequestLotOpService;
-import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
@@ -35,7 +35,7 @@ import org.meveo.service.script.ScriptInstanceService;
  * @author anasseh
  * @author Tyshan Shi(tyshan@manaty.net)
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class DDRequestLotOpApi extends BaseApi {
@@ -52,9 +52,9 @@ public class DDRequestLotOpApi extends BaseApi {
     @Inject
     private FilterService filterService;
     
-    /** The payment gateway service. */
+    /** The seller service. */
     @Inject
-    private PaymentGatewayService paymentGatewayService;    
+    private SellerService sellerService;    
     
     
     /** The script instance service. */
@@ -101,11 +101,11 @@ public class DDRequestLotOpApi extends BaseApi {
             }
         }
         
-        PaymentGateway paymentGateway = null;
-        if (!StringUtils.isBlank(dto.getPaymentGatewayCode())) {
-            paymentGateway = paymentGatewayService.findByCode(dto.getPaymentGatewayCode());
-            if (paymentGateway == null) {
-                throw new EntityDoesNotExistsException(PaymentGateway.class, dto.getPaymentGatewayCode());
+        Seller seller = null;
+        if (!StringUtils.isBlank(dto.getSellerCode())) {
+            seller = sellerService.findByCode(dto.getSellerCode());
+            if (seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, dto.getSellerCode());
             }
         }
 
@@ -125,7 +125,7 @@ public class DDRequestLotOpApi extends BaseApi {
         ddRequestLotOp.setDdRequestBuilder(ddRequestBuilder);
         ddRequestLotOp.setOperationCategoryToProcess(dto.getOperationCategoryToProcess());
         ddRequestLotOp.setFilter(filter);
-        ddRequestLotOp.setPaymentGateway(paymentGateway);
+        ddRequestLotOp.setSeller(seller);
         if (StringUtils.isBlank(dto.getDdrequestOp())) {
             ddRequestLotOp.setDdrequestOp(DDRequestOpEnum.CREATE);
         } else {
