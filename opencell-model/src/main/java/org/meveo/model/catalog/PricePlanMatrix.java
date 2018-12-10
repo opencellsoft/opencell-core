@@ -280,50 +280,36 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Column(name = "wo_description_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String woDescriptionELSpark;
-
+    
     /**
-     * Expression to calculate price with tax.
+     * Expression to calculate price with/without tax. It overrides quantity x unitPrice when set.
      */
-    @Column(name = "rating_el_with_tax", columnDefinition = "TEXT")
+    @Column(name = "total_amount_el", columnDefinition = "TEXT")
     @Size(max = 2000)
-    private String ratingWithTaxEL;
-
+    private String totalAmountEL;
+    
     /**
-     * Expression to calculate price with tax - for Spark.
+     * Expression to calculate price with/without tax, It overrides quantity x unitPrice when set - for Spark.
      */
-    @Column(name = "rating_el_with_tax_sp", columnDefinition = "TEXT")
+    @Column(name = "total_amount_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
-    private String ratingWithTaxELSpark;
-
+    private String totalAmountELSpark;
+    
     /**
-     * Expression to calculate price without tax
-     */
-    @Column(name = "rating_el_without_tax", length = 2000)
+	 * Minimum allowed amount for a walletOperation. If this amount is less than the
+	 * walletOperation this amount is save and the old value is save in rawAmount.
+	 */
+    @Column(name = "minimum_amount_el", columnDefinition = "TEXT")
     @Size(max = 2000)
-    private String ratingWithoutTaxEL;
-
+    private String minimumAmountEL;
+    
     /**
-     * Expression to calculate price without tax - for Spark.
-     */
-    @Column(name = "rating_el_without_tax_sp", columnDefinition = "TEXT")
+	 * Minimum allowed amount for a walletOperation. If this amount is less than the
+	 * walletOperation this amount is save and the old value is save in rawAmount - for Spark.
+	 */
+    @Column(name = "minimum_amount_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
-    private String ratingWithoutTaxELSpark;
-
-    @Column(name = "minimum_amount_without_tax_el", columnDefinition = "TEXT")
-    @Size(max = 2000)
-    private String minimumAmountWithoutTaxEl;
-
-    @Column(name = "minimum_amount_without_tax_el_sp", columnDefinition = "TEXT")
-    @Size(max = 2000)
-    private String minimumAmountWithoutTaxELSpark;
-
-    @Column(name = "minimum_amount_with_tax_el", columnDefinition = "TEXT")
-    @Size(max = 2000)
-    private String minimumAmountWithTaxEl;
-
-    @Column(name = "minimum_amount_with_tax_el_sp", columnDefinition = "TEXT")
-    @Size(max = 2000)
-    private String minimumAmountWithTaxELSpark;
+    private String minimumAmountELSpark;
 
     @Column(name = "invoice_subcategory_el", columnDefinition = "TEXT")
     @Size(max = 2000)
@@ -763,63 +749,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     public void setWoDescriptionELSpark(String woDescriptionELSpark) {
         this.woDescriptionELSpark = woDescriptionELSpark;
     }
-
-    /**
-     * @return Expression to calculate minimum amount without tax
-     */
-    public String getMinimumAmountWithoutTaxEl() {
-        return minimumAmountWithoutTaxEl;
-    }
-
-    /**
-     * @param minimumAmountWithoutTaxEl Expression to calculate minimum amount without tax
-     */
-    public void setMinimumAmountWithoutTaxEl(String minimumAmountWithoutTaxEl) {
-        this.minimumAmountWithoutTaxEl = minimumAmountWithoutTaxEl;
-    }
-
-    /**
-     * @return Expression to calculate minimum amount without tax - for Spark
-     */
-    public String getMinimumAmountWithoutTaxELSpark() {
-        return minimumAmountWithoutTaxELSpark;
-    }
-
-    /**
-     * @param minimumAmountWithoutTaxELSpark Expression to calculate minimum amount without tax - for Spark
-     */
-    public void setMinimumAmountWithoutTaxELSpark(String minimumAmountWithoutTaxELSpark) {
-        this.minimumAmountWithoutTaxELSpark = minimumAmountWithoutTaxELSpark;
-    }
-
-    /**
-     * @return Expression to calculate minimum amount with tax
-     */
-    public String getMinimumAmountWithTaxEl() {
-        return minimumAmountWithTaxEl;
-    }
-
-    /**
-     * @param minimumAmountWithTaxEl Expression to calculate minimum amount with tax
-     */
-    public void setMinimumAmountWithTaxEl(String minimumAmountWithTaxEl) {
-        this.minimumAmountWithTaxEl = minimumAmountWithTaxEl;
-    }
-
-    /**
-     * @return Expression to calculate minimum amount with tax - for Spark
-     */
-    public String getMinimumAmountWithTaxELSpark() {
-        return minimumAmountWithTaxELSpark;
-    }
-
-    /**
-     * @param minimumAmountWithTaxELSpark Expression to calculate minimum amount with taxL - for Spark
-     */
-    public void setMinimumAmountWithTaxELSpark(String minimumAmountWithTaxELSpark) {
-        this.minimumAmountWithTaxELSpark = minimumAmountWithTaxELSpark;
-    }
-
+   
     public String getInvoiceSubCategoryEL() {
         return invoiceSubCategoryEL;
     }
@@ -829,58 +759,66 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     }
 
     /**
-     * @return Expression to calculate price with tax
+     * Expression to get the total amount. Previously called ratingEL.
+     * @return total amount expression
      */
-    public String getRatingWithTaxEL() {
-        return ratingWithTaxEL;
-    }
+	public String getTotalAmountEL() {
+		return totalAmountEL;
+	}
 
-    /**
-     * @param ratingELWithTax Expression to calculate price with tax
-     */
-    public void setRatingWithTaxEL(String ratingELWithTax) {
-        this.ratingWithTaxEL = ratingELWithTax;
-    }
+	/**
+	 * Expression to get the total amount. Previously called ratingEL.
+	 * @param totalAmountEL EL expression
+	 */
+	public void setTotalAmountEL(String totalAmountEL) {
+		this.totalAmountEL = totalAmountEL;
+	}
 
-    /**
-     * @return Expression to calculate price with tax - for Spark
+	 /**
+     * Expression to get the total amount. Previously called ratingEL - Spark.
+     * @return total amount expression
      */
-    public String getRatingWithTaxELSpark() {
-        return ratingWithTaxELSpark;
-    }
+	public String getTotalAmountELSpark() {
+		return totalAmountELSpark;
+	}
 
-    /**
-     * @param ratingWithTaxELSpark Expression to calculate price with tax - for Spark
-     */
-    public void setRatingWithTaxELSpark(String ratingWithTaxELSpark) {
-        this.ratingWithTaxELSpark = ratingWithTaxELSpark;
-    }
+	/**
+	 * Expression to get the total amount. Previously called ratingEL.
+	 * @param totalAmountEL EL expression
+	 */
+	public void setTotalAmountELSpark(String totalAmountELSpark) {
+		this.totalAmountELSpark = totalAmountELSpark;
+	}
 
-    /**
-     * @return Expression to calculate price without tax
-     */
-    public String getRatingWithoutTaxEL() {
-        return ratingWithoutTaxEL;
-    }
+	/**
+	 * Expression to set the minimum allowed amount. 
+	 * @return EL expression
+	 */
+	public String getMinimumAmountEL() {
+		return minimumAmountEL;
+	}
 
-    /**
-     * @param ratingELWithoutTax Expression to calculate price without tax
-     */
-    public void setRatingWithoutTaxEL(String ratingELWithoutTax) {
-        this.ratingWithoutTaxEL = ratingELWithoutTax;
-    }
+	/**
+	 * Expression to set the minimum allowed amount. 
+	 * @param minimumAmountEL
+	 */
+	public void setMinimumAmountEL(String minimumAmountEL) {
+		this.minimumAmountEL = minimumAmountEL;
+	}
 
-    /**
-     * @return Expression to calculate price without tax - for Spark
-     */
-    public String getRatingWithoutTaxELSpark() {
-        return ratingWithoutTaxELSpark;
-    }
+	/**
+	 * Expression to set the minimum allowed amount - for Spark.
+	 * @return EL expression.
+	 */
+	public String getMinimumAmountELSpark() {
+		return minimumAmountELSpark;
+	}
 
-    /**
-     * @param ratingWithoutTaxELSpark Expression to calculate price without tax - for Spark
-     */
-    public void setRatingWithoutTaxELSpark(String ratingWithoutTaxELSpark) {
-        this.ratingWithoutTaxELSpark = ratingWithoutTaxELSpark;
-    }
+	/**
+	 * Expression to set the minimum allowed amount - for Spark.
+	 * @param minimumAmountELSpark
+	 */
+	public void setMinimumAmountELSpark(String minimumAmountELSpark) {
+		this.minimumAmountELSpark = minimumAmountELSpark;
+	}
 }

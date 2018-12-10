@@ -116,7 +116,7 @@ public class CatalogApi extends BaseApi {
                     WalletOperation wo = new WalletOperation();
                     wo.setQuantity(BigDecimal.ONE);
                     wo.setTaxPercent(price.getTaxRate());
-                    ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
+                    ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax(), pricePlans.get(0));
                     price.setDutyFreeAmount(price.getDutyFreeAmount().add(wo.getUnitAmountWithoutTax()));
                     price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(wo.getUnitAmountWithTax()));
                 }
@@ -163,7 +163,7 @@ public class CatalogApi extends BaseApi {
                     WalletOperation wo = new WalletOperation();
                     wo.setQuantity(BigDecimal.ONE);
                     wo.setTaxPercent(price.getTaxRate());
-                    ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
+                    ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax(), pricePlans.get(0));
                     price.setDutyFreeAmount(wo.getUnitAmountWithoutTax());
                     price.setTaxIncludedAmount(wo.getUnitAmountWithTax());    
                 }
@@ -215,7 +215,7 @@ public class CatalogApi extends BaseApi {
                     WalletOperation wo = new WalletOperation();
                     wo.setQuantity(BigDecimal.ONE);
                     wo.setTaxPercent(price.getTaxRate());
-                    ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
+                    ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax(), pricePlans.get(0));
                     price.setDutyFreeAmount(wo.getUnitAmountWithoutTax());
                     price.setTaxIncludedAmount(wo.getUnitAmountWithTax());                    
                 }
