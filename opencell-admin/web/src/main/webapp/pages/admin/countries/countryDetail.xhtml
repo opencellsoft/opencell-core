@@ -1,11 +1,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
-	template="/layout/template.xhtml">
+
+				xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+				xmlns:f="http://xmlns.jcp.org/jsf/core"
+				xmlns:h="http://xmlns.jcp.org/jsf/html"
+				xmlns:hftl="http://hftl.org"
+				xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+				xmlns:p="http://primefaces.org/ui"
+				template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -14,7 +15,14 @@
     </ui:define>
     
 	<ui:define name="body">
-	
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true"/>
+				<p:menuitem value="#{messages['menu.countries']}" outcome="countries"/>
+				<p:menuitem value="#{messages['commons.new']} #{messages['menu.country']}" disabled="true" rendered="#{countryBean.entity.transient}"/>
+				<p:menuitem value="#{messages['menu.country']} - #{countryBean.entity.code}" disabled="true" rendered="#{!countryBean.entity.transient}"/>
+			</p:breadCrumb>
+		</h:form>
 	   <hftl:entityPopup id="popupForCurrency" header="#{messages['currency.popup.header']}"
             updateField=":formCountry:currencySelectedId :formCountry:currencySelectedId_text" 
             selection="#{countryBean.entity.currency}"
