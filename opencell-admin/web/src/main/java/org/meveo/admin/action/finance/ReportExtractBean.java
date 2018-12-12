@@ -1,9 +1,6 @@
 package org.meveo.admin.action.finance;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -30,9 +27,10 @@ import org.primefaces.model.StreamedContent;
  * Controller to manage detail view of {@link ReportExtract}.
  * 
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
  * @version %I%, %G%
  * @since 5.0
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.3
  **/
 @Named
 @ViewScoped
@@ -80,9 +78,26 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
         return reportExtractService;
     }
 
+    private void addFileExtension() {
+        if (!StringUtils.isBlank(entity.getFilenameFormat()) && entity.getReportExtractResultType() != null) {
+            int pointLastIndex = entity.getFilenameFormat().lastIndexOf(".");
+            if (pointLastIndex > -1) {
+                String fileExtension = entity.getFilenameFormat().substring(pointLastIndex + 1);
+                if (!fileExtension.equalsIgnoreCase(entity.getReportExtractResultType().name())) {
+                    entity.setFilenameFormat(entity.getFilenameFormat().substring(0, pointLastIndex + 1) + entity.getReportExtractResultType().name().toLowerCase());
+                }
+            } else {
+                entity.setFilenameFormat(entity.getFilenameFormat() + "." + entity.getReportExtractResultType().name().toLowerCase());
+            }
+        }
+    }
+
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        addFileExtension();
+
         if (entity.getScriptType().equals(ReportExtractScriptTypeEnum.SQL)) {
             entity.setScriptInstance(null);
         } else {
@@ -130,16 +145,13 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
         try {
             String filePath = reportExtractService.getReporFile(entity);
             File file = new File(filePath);
-            byte[] data = new byte[(int) file.length()];
-            FileUtils.writeByteArrayToFile(new File(filePath), data);
-            stream = new ByteArrayInputStream(data); 
             
             String mimeType = "text/csv";
             if (!FilenameUtils.getExtension(filePath).equals("csv")) {
                 mimeType = "text/html";
             }
 
-            return new DefaultStreamedContent(stream, mimeType, filePath.substring(filePath.lastIndexOf(File.separator)));
+            return new DefaultStreamedContent(new FileInputStream(file), mimeType, filePath.substring(filePath.lastIndexOf(File.separator) + 1));
 
         } catch (BusinessException | IOException e) {
             log.error("Failed loading repor file={}", e.getMessage());
