@@ -26,6 +26,11 @@ public class PDFDocumentRequestDto extends BaseEntityDto {
     /** The return pdf. */
     private boolean returnPdf;
     
+    /** 
+     * A flag to leading the service generating pdf (/document/pdf) to combine all PDFs in one file , 
+     * or to create a PDF file per template. */
+    private boolean combineFiles;
+    
     /** The absolut paths. */
     private boolean absolutePaths;
     
@@ -117,5 +122,19 @@ public class PDFDocumentRequestDto extends BaseEntityDto {
      */
     public void setAbsolutePaths(boolean absolutPaths) {
         this.absolutePaths = absolutPaths;
+    }
+
+    /**
+     * @return the combineFiles
+     */
+    public boolean isCombineFiles() {
+        return combineFiles;
+    }
+
+    /**
+     * @param combineFiles the combineFiles to set
+     */
+    public void setCombineFiles(boolean combineFiles) {
+        this.combineFiles = combineFiles;
     }
 }
