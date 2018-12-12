@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.dto.catalog.BaseServiceChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateRecurringDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateSubscriptionDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateTerminationDto;
@@ -24,9 +25,10 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -51,8 +53,9 @@ import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
+ */
 @Stateless
 public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemplateDto> {
 
@@ -95,62 +98,89 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     @Inject
     private SubscriptionApi subscriptionApi;
 
+    
+
+    /**
+     * Sets the service charge template.
+     * 
+     * @param serviceTemplate the service template.
+     * @param serviceChargeTemplate the service charge template.
+     * @param serviceChargeTemplateDto the service charge template Dto.
+     * @param chargeTemplate the charge template
+     * @throws EntityDoesNotExistsException entity does not exists exception
+     */
+
+    @SuppressWarnings("unchecked")
+    private void setServiceChargeTemplate(ServiceTemplate serviceTemplate, @SuppressWarnings("rawtypes") ServiceChargeTemplate serviceChargeTemplate, 
+            BaseServiceChargeTemplateDto serviceChargeTemplateDto, ChargeTemplate chargeTemplate) throws MeveoApiException {
+        if (chargeTemplate == null) {
+            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, serviceChargeTemplateDto.getCode());
+        }
+
+        List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
+        for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
+            if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
+                WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode);
+                if (walletTemplate == null) {
+                    throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
+                }
+                wallets.add(walletTemplate);
+            }
+        }
+        serviceChargeTemplate.setChargeTemplate(chargeTemplate);
+        serviceChargeTemplate.setWalletTemplates(wallets);
+        serviceChargeTemplate.setServiceTemplate(serviceTemplate);
+        serviceChargeTemplate.setCounterTemplate(counterTemplateService.getCounterTemplate(serviceChargeTemplateDto.getCounterTemplate()));
+    }
+    
+    private void createServiceChargeTemplateRecurring(ServiceTemplate serviceTemplate, ServiceChargeTemplateRecurringDto serviceChargeTemplateDto) 
+            throws MeveoApiException, BusinessException  {
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
+        ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
+        setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, serviceChargeTemplateDto, chargeTemplate);
+        serviceChargeTemplateRecurringService.create(serviceChargeTemplate);
+    }
+
+    private void createServiceChargeTemplateSubscription(ServiceTemplate serviceTemplate, ServiceChargeTemplateSubscriptionDto serviceChargeTemplateDto) 
+            throws MeveoApiException, BusinessException  {
+        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
+        ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
+        setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, serviceChargeTemplateDto, chargeTemplate);
+        serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate);
+    }
+    
+    private void createServiceChargeTemplateTermination(ServiceTemplate serviceTemplate, ServiceChargeTemplateTerminationDto serviceChargeTemplateDto) 
+            throws MeveoApiException, BusinessException  {
+        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
+        ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
+        setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, serviceChargeTemplateDto, chargeTemplate);
+        serviceChargeTemplateTerminationService.create(serviceChargeTemplate);
+    }
+    
+    private void createServiceChargeTemplateUsage(ServiceTemplate serviceTemplate, ServiceUsageChargeTemplateDto serviceChargeTemplateDto) 
+            throws MeveoApiException, BusinessException  {
+        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
+        ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
+        setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, serviceChargeTemplateDto, chargeTemplate);
+        serviceUsageChargeTemplateService.create(serviceChargeTemplate);
+    }
+    
     private void createServiceChargeTemplateRecurring(ServiceTemplateDto postData, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
 
         if (postData.getServiceChargeTemplateRecurrings() != null) {
             for (ServiceChargeTemplateRecurringDto serviceChargeTemplateDto : postData.getServiceChargeTemplateRecurrings().getServiceChargeTemplateRecurring()) {
-                List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
-
-                RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
-                if (chargeTemplate == null) {
-                    throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, serviceChargeTemplateDto.getCode());
-                }
-
-                for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
-                    if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
-                        WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode);
-                        if (walletTemplate == null) {
-                            throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
-                        }
-                        wallets.add(walletTemplate);
-                    }
-                }
-
-                ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
-                serviceChargeTemplate.setChargeTemplate(chargeTemplate);
-                serviceChargeTemplate.setWalletTemplates(wallets);
-                serviceChargeTemplate.setServiceTemplate(serviceTemplate);
-                serviceChargeTemplateRecurringService.create(serviceChargeTemplate);
+                // Create service charge template.
+                createServiceChargeTemplateRecurring(serviceTemplate, serviceChargeTemplateDto);
             }
         }
     }
-
+    
     private void createServiceChargeTemplateSubscription(ServiceTemplateDto postData, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
 
         if (postData.getServiceChargeTemplateSubscriptions() != null) {
             for (ServiceChargeTemplateSubscriptionDto serviceChargeTemplateDto : postData.getServiceChargeTemplateSubscriptions().getServiceChargeTemplateSubscription()) {
-                List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
-
-                OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
-                if (chargeTemplate == null) {
-                    throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, serviceChargeTemplateDto.getCode());
-                }
-
-                for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
-                    if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
-                        WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode);
-                        if (walletTemplate == null) {
-                            throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
-                        }
-                        wallets.add(walletTemplate);
-                    }
-                }
-
-                ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
-                serviceChargeTemplate.setChargeTemplate(chargeTemplate);
-                serviceChargeTemplate.setWalletTemplates(wallets);
-                serviceChargeTemplate.setServiceTemplate(serviceTemplate);
-                serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate);
+                // Create service charge template.
+                createServiceChargeTemplateSubscription(serviceTemplate, serviceChargeTemplateDto);
             }
         }
     }
@@ -159,28 +189,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         if (postData.getServiceChargeTemplateTerminations() != null) {
             for (ServiceChargeTemplateTerminationDto serviceChargeTemplateDto : postData.getServiceChargeTemplateTerminations().getServiceChargeTemplateTermination()) {
-                List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
-
-                OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
-                if (chargeTemplate == null) {
-                    throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, serviceChargeTemplateDto.getCode());
-                }
-
-                for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
-                    if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
-                        WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode);
-                        if (walletTemplate == null) {
-                            throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
-                        }
-                        wallets.add(walletTemplate);
-                    }
-                }
-
-                ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
-                serviceChargeTemplate.setChargeTemplate(chargeTemplate);
-                serviceChargeTemplate.setWalletTemplates(wallets);
-                serviceChargeTemplate.setServiceTemplate(serviceTemplate);
-                serviceChargeTemplateTerminationService.create(serviceChargeTemplate);
+                // Create service charge template.
+                createServiceChargeTemplateTermination(serviceTemplate, serviceChargeTemplateDto);
             }
         }
     }
@@ -189,39 +199,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         if (postData.getServiceChargeTemplateUsages() != null) {
             for (ServiceUsageChargeTemplateDto serviceChargeTemplateDto : postData.getServiceChargeTemplateUsages().getServiceChargeTemplateUsage()) {
-                List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
-
-                UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
-                if (chargeTemplate == null) {
-                    throw new EntityDoesNotExistsException(UsageChargeTemplate.class, serviceChargeTemplateDto.getCode());
-                }
-
-                for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
-                    if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
-                        WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode);
-                        if (walletTemplate == null) {
-                            throw new EntityDoesNotExistsException(WalletTemplate.class, walletCode);
-                        }
-                        wallets.add(walletTemplate);
-                    }
-                }
-
-                ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
-
-                // search for counter
-                if (!StringUtils.isBlank(serviceChargeTemplateDto.getCounterTemplate())) {
-                    CounterTemplate counterTemplate = (CounterTemplate) counterTemplateService.findByCode(serviceChargeTemplateDto.getCounterTemplate());
-                    if (counterTemplate == null) {
-                        throw new EntityDoesNotExistsException(CounterTemplate.class, serviceChargeTemplateDto.getCounterTemplate());
-                    }
-
-                    serviceChargeTemplate.setCounterTemplate(counterTemplate);
-                }
-
-                serviceChargeTemplate.setChargeTemplate(chargeTemplate);
-                serviceChargeTemplate.setWalletTemplates(wallets);
-                serviceChargeTemplate.setServiceTemplate(serviceTemplate);
-                serviceUsageChargeTemplateService.create(serviceChargeTemplate);
+                // Create service charge template.
+                createServiceChargeTemplateUsage(serviceTemplate, serviceChargeTemplateDto);
             }
         }
     }

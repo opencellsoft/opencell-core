@@ -65,8 +65,11 @@ import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 /**
+ * UsageRatingService
+ * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class UsageRatingService implements Serializable {
@@ -278,11 +281,11 @@ public class UsageRatingService implements Serializable {
         // In case of virtual operation only instantiate a counter period, don't create it
         if (isVirtual) {
             counterPeriod = counterInstanceService.instantiateCounterPeriod(usageChargeInstance.getCounter().getCounterTemplate(), edr.getEventDate(),
-                usageChargeInstance.getServiceInstance().getSubscriptionDate(), usageChargeInstance);
+                usageChargeInstance.getServiceInstance().getSubscriptionDate(), usageChargeInstance, usageChargeInstance.getServiceInstance());
 
         } else {
             counterPeriod = counterInstanceService.getOrCreateCounterPeriod(usageChargeInstance.getCounter(), edr.getEventDate(),
-                usageChargeInstance.getServiceInstance().getSubscriptionDate(), usageChargeInstance);
+                usageChargeInstance.getServiceInstance().getSubscriptionDate(), usageChargeInstance, usageChargeInstance.getServiceInstance());
         }
         // CachedCounterPeriod cachedCounterPeriod = ratingCacheContainerProvider.getCounterPeriod(usageChargeInstance.getCounter().getId(), edr.getEventDate());
 

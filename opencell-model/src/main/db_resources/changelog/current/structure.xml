@@ -711,5 +711,18 @@
             <column name="description_i18n" type="${type.json}"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#3543_27092018" author="AbdellatifBari">
+        <addColumn tableName="cat_serv_rec_charge_template">
+            <column name="counter_template_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="billing_recurring_charge_inst">
+            <column name="counter_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cat_serv_rec_charge_template" constraintName="fk_serv_rec_charge_template_counter_template" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template" />
+        <addForeignKeyConstraint baseColumnNames="counter_id" baseTableName="billing_recurring_charge_inst" constraintName="fk_serv_rec_charge_template_billing_counter" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_counter" />
+     </changeSet>
 
 </databaseChangeLog>

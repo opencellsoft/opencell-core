@@ -33,7 +33,8 @@ import org.slf4j.Logger;
  * The Class RealtimeChargingService.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class RealtimeChargingService {
@@ -179,7 +180,11 @@ public class RealtimeChargingService {
         Date nextApplicationDate = walletOperationService.initChargeDateAndGetNextChargeDate(chargeInstance);
         WalletOperation op = walletOperationService.applyFirstRecurringCharge(chargeInstance, nextApplicationDate, true);
 
-        return priceWithoutTax ? op.getAmountWithoutTax() : op.getAmountWithTax();
+        BigDecimal firstRecurringPrice = BigDecimal.ZERO;
+        if(op != null) {
+            firstRecurringPrice = priceWithoutTax ? op.getAmountWithoutTax() : op.getAmountWithTax();
+        }
+        return firstRecurringPrice;
     }
 
     /**

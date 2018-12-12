@@ -50,6 +50,11 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.primefaces.model.DualListModel;
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
+ */
+
 @Named
 @ViewScoped
 public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
@@ -85,6 +90,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     private DualListModel<WalletTemplate> subscriptionWallets;
     private DualListModel<WalletTemplate> terminationWallets;
 
+    @Produces
+    @Named
     private ServiceChargeTemplateRecurring serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
 
     public ServiceChargeTemplateRecurring getServiceChargeTemplateRecurring() {
@@ -366,9 +373,11 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             if (serviceChargeTemplateRecurring == null) {
                 return;
             }
+
             for (ServiceChargeTemplateRecurring inc : entity.getServiceRecurringCharges()) {
                 if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getChargeTemplate().getCode())
-                        && !inc.getId().equals(serviceChargeTemplateRecurring.getId())) {
+                        && !inc.getId().equals(serviceChargeTemplateRecurring.getId()) && ((inc.getCounterTemplate() == null && serviceChargeTemplateRecurring.getCounterTemplate() == null)
+                        || inc.getCounterTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getCounterTemplate().getCode()))) {
                     throw new Exception();
                 }
             }

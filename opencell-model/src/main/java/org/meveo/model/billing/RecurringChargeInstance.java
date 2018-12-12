@@ -40,7 +40,10 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
  * One shot charge as part of subscribed service
  * 
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  */
+
 @Entity
 @Table(name = "billing_recurring_charge_inst")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -76,6 +79,10 @@ public class RecurringChargeInstance extends ChargeInstance {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "next_charge_date")
     protected Date nextChargeDate;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counter_id")
+    private CounterInstance counter;
 
     /**
      * Quantity subscribed
@@ -162,5 +169,13 @@ public class RecurringChargeInstance extends ChargeInstance {
 
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
+    }
+    
+    public CounterInstance getCounter() {
+        return counter;
+    }
+
+    public void setCounter(CounterInstance counter) {
+        this.counter = counter;
     }
 }

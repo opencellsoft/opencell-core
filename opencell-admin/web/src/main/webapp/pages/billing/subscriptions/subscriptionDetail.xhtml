@@ -458,8 +458,7 @@
                                         <h:panelGroup id="subscriptionAndRenewalDates">
                                         	<hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" required="true" newLine="true" listenerUpdate="offerPopup, subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}" actionListenerMethod="updateSubscribedTillDate" />
                                         	<hftl:formField label="#{messages['subscription.initialTermType']}" field="subscriptionRenewal" childField="initialTermType" listenerUpdate="termType"></hftl:formField>
-                                        	<hftl:formField
-												label="#{messages['subscription.autoEndOfEngagement']}"
+                                        	<hftl:formField label="#{messages['subscription.autoEndOfEngagement']}"
 												field="autoEndOfEngagement" actionListenerBean="#{subscriptionBean}" actionListenerMethod="autoUpdateEndOfEngagementDate"
 												listenerUpdate="subscriptionAndRenewalDates" newLine="true" />
                                         	<h:panelGroup id="termType">
@@ -572,7 +571,8 @@
 																<h:outputText value="#{entity.amountWithTax}"
 																	  converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
 															</p:column>
-
+															<hftl:column label="#{messages['counterTemplate.title']}"
+																		 field="counter.description" />
 															<p:column styleClass="actions-column">
 																<f:facet name="header">
 																	<h:outputText value="#{messages['commons.actions']}" />
@@ -826,6 +826,7 @@
                     <hftl:formField label="#{messages['recurringChargeInstance.criteria3']}" field="criteria3" />
                     <hftl:formField label="#{messages['oneShotChargeInstance.chargeDate']}" field="chargeDate" edit="false" newLine="true" />
                     <hftl:formField label="#{messages['recurringChargeInstance.nextChargeDate']}" field="nextChargeDate" edit="false" />
+					<hftl:formField label="#{messages['counterTemplate.title']}" field="counter" valueLabelField="descriptionOrCode" edit="false" />
 
                     <ui:param name="buttons" value="true" />
                     <ui:define name="buttons">

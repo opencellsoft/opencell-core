@@ -6,6 +6,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 import org.meveo.model.BaseEntity;
 
@@ -13,9 +14,11 @@ import org.meveo.model.BaseEntity;
  * Service template to charge template mapping
  * 
  * @author Andrius Karpavicius
- *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  * @param <T> Charge template type
  */
+
 @MappedSuperclass
 public abstract class ServiceChargeTemplate<T extends ChargeTemplate> extends BaseEntity {
 
@@ -35,6 +38,12 @@ public abstract class ServiceChargeTemplate<T extends ChargeTemplate> extends Ba
     @JoinColumn(name = "charge_template_id")
     protected T chargeTemplate;
 
+    /**
+     * Counter template
+     */
+    @Transient
+    private CounterTemplate counterTemplate;
+
     public ServiceTemplate getServiceTemplate() {
         return serviceTemplate;
     }
@@ -51,8 +60,15 @@ public abstract class ServiceChargeTemplate<T extends ChargeTemplate> extends Ba
         this.chargeTemplate = chargeTemplate;
     }
 
+    public CounterTemplate getCounterTemplate() {
+        return counterTemplate;
+    }
+
+    public void setCounterTemplate(CounterTemplate counterTemplate) {
+        this.counterTemplate = counterTemplate;
+    }
+
     public abstract List<WalletTemplate> getWalletTemplates();
 
     public abstract void setWalletTemplates(List<WalletTemplate> walletTemplates);
-
 }

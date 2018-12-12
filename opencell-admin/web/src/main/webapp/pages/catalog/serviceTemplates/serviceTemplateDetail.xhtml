@@ -33,6 +33,18 @@
 			column2="description">
 		</hftl:entityPopup>
 
+		<hftl:entityPopup id="searchRecurringCounterTemplatePopup"
+						  header="#{messages['counterTemplate.title']}"
+						  updateField=":tabView:formRecurringCharge:recurringCounterTemplateSelectedId :tabView:formRecurringCharge:recurringCounterTemplateSelectedId_text"
+						  selection="#{serviceChargeTemplateRecurring.counterTemplate}"
+						  backingBean="#{counterTemplateBean}"
+						  searchField1Label="#{messages['businessEntity.code']}"
+						  searchField1="code" column1Label="#{messages['businessEntity.code']}"
+						  column1="code"
+						  column2Label="#{messages['businessEntity.description']}"
+						  column2="description">
+		</hftl:entityPopup>
+
 		<hftl:entityPopup id="searchSubscriptionChargeTemplatePopup"
 			header="#{messages['serviceTemplate.subscriptionCharges']}"
 			updateField=":tabView:formSubscriptionCharge:subscriptionChargeTemplateSelectedId :tabView:formSubscriptionCharge:subscriptionChargeTemplateSelectedId_text"
@@ -212,6 +224,8 @@
 									entityView="recurringChargeTemplateDetail" />
 								<hftl:column label="#{messages['menu.wallets']}"
 									field="walletTemplates" valueLabelField="code" isList="true" />
+								<hftl:column label="#{messages['counterTemplate.title']}"
+									field="counterTemplate.code" />
 								<p:column styleClass="actions-column"
 									rendered="#{serviceTemplateBean.edit}">
 									<f:facet name="header">
@@ -244,6 +258,11 @@
 								listType="pickUpList" field="walletTemplates"
 								valueLabelField="code"
 								dualListModel="#{serviceTemplateBean.recurringDualListModel}" />
+							<hftl:formField id="recurringCounterTemplateSelectedId"
+											label="#{messages['counterTemplate.title']}"
+											field="counterTemplate" valueLabelField="code" popup="true"
+											popupId="searchRecurringCounterTemplatePopup" showResetButton="true"
+											required="false" />
 							<ui:param name="buttons" value="true" />
 							<ui:define name="buttons">
 								<p:commandButton
