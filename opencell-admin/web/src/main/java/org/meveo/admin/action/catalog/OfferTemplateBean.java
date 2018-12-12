@@ -76,7 +76,8 @@ import org.primefaces.model.DualListModel;
  * @author Edward P. Legaspi
  * @author Wassim Drira
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  * 
  */
 @Named
@@ -215,8 +216,23 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         return Arrays.asList("offerTemplateCategories", "channels", "businessAccountModels", "customerCategories");
     }
 
+    /**
+     * List active offer templates of a current type valid on a given date
+     *
+     * @param date Date to match validity
+     * @return A list of offer templates
+     */
     public List<OfferTemplate> listActiveByDate(Date date) {
-        return offerTemplateService.listActiveByDate(date);
+        List<OfferTemplate> result = new ArrayList<>();
+        List<OfferTemplate> listActiveOfferTemplates = listActive();
+
+        for (OfferTemplate offerTemplate : listActiveOfferTemplates) {
+            if (offerTemplate.getLifeCycleStatus() == LifeCycleStatusEnum.ACTIVE && (offerTemplate.getValidity() == null ||
+                    offerTemplate.getValidity().isCorrespondsToPeriod(date))) {
+                result.add(offerTemplate);
+            }
+        }
+        return result;
     }
 
     @Override

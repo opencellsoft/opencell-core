@@ -58,7 +58,7 @@ import org.meveo.model.shared.DateUtils;
  * 
  * @author Andrius Karpavicius
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2.1
+ * @lastModifiedVersion 5.3
  **/
 @Entity
 @ModuleItem
@@ -896,7 +896,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         boolean valueSet = false;
         StringBuilder valBuilder = new StringBuilder();
         for (CustomFieldMatrixColumn column : matrixValueColumns) {
-            valBuilder.append(valBuilder.length() == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
+            valBuilder.append(matrixValueColumns.indexOf(column) == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
             Object columnValue = mapValues.get(column.getCode());
             if (StringUtils.isBlank(columnValue)) {
                 continue;

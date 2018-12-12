@@ -81,7 +81,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
  * @author akadid abdelmounaim
  * @author Said Ramli
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
 @Named
 @ViewScoped
@@ -1254,7 +1254,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
                 StringBuilder keyBuilder = new StringBuilder();
                 for (String column : keyColumns) {
-                    keyBuilder.append(keyBuilder.length() == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
+                    keyBuilder.append(keyColumns.indexOf(column) == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
                     keyBuilder.append(mapItem.get(column));
                 }
 

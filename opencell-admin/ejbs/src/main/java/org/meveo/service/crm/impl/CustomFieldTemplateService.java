@@ -60,7 +60,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 /**
  * @author Wassim Drira
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  * 
  */
 @Stateless
@@ -594,7 +594,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         
                         StringBuilder keyBuilder = new StringBuilder();
                         for (String column : keyColumns) {
-                            keyBuilder.append(keyBuilder.length() == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
+                            keyBuilder.append(keyColumns.indexOf(column) == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
                             keyBuilder.append(csvLine.get(column));
                         }
                         mapValue.put(keyBuilder.toString(), value);
