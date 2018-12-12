@@ -140,6 +140,9 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
             invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry.getId());
             entity = invoiceSubCategoryService.refreshOrRetrieve(entity);
 
+            /* these two lines serve for nothing but to solve a tricky problem with JSF and object fields lazily-loaded (org.hibernate.LazyInitializationException)*/
+            entity.getInvoiceCategory().getInvoiceSubCategories().size();
+            entity.getAccountingCode().getNotes();
         } catch (Exception e) {
             messages.error(new BundleKey("messages", "error.delete.unexpected"));
         }
