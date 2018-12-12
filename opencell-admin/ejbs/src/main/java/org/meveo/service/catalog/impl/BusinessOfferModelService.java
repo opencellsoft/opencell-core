@@ -92,7 +92,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
             try {
                 offerScript = offerModelScriptService.beforeCreateOfferFromBOM(bomParams.getCustomFields(), bomParams.getBusinessOfferModel().getScript().getCode());
             } catch (BusinessException e) {
-                log.error("Failed to execute a script {}", bomParams.getBusinessOfferModel().getScript().getCode(), e);
+                log.error("Failed to execute script with code={}. {}", bomParams.getBusinessOfferModel().getScript().getCode(), e.getMessage());
             }
         }
 

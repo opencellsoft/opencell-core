@@ -617,13 +617,8 @@ public class CatalogHierarchyBuilderService {
             if (newChargeTemplate.getId() == null) {
                 recurringChargeTemplateService.create((RecurringChargeTemplate) newChargeTemplate);
             }
-        } else if (serviceChargeTemplate instanceof ServiceChargeTemplateSubscription) {
-            newChargeTemplate = new OneShotChargeTemplate();
-            newChargeTemplate = setChargeTemplate(chargeTemplate, newChargeTemplate, chargeTemplateInMemory, prefix);
-            if (newChargeTemplate.getId() == null) {
-                oneShotChargeTemplateService.create((OneShotChargeTemplate) newChargeTemplate);
-            }
-        } else if (serviceChargeTemplate instanceof ServiceChargeTemplateTermination) {
+		} else if (serviceChargeTemplate instanceof ServiceChargeTemplateSubscription
+				|| serviceChargeTemplate instanceof ServiceChargeTemplateTermination) {
             newChargeTemplate = new OneShotChargeTemplate();
             newChargeTemplate = setChargeTemplate(chargeTemplate, newChargeTemplate, chargeTemplateInMemory, prefix);
             if (newChargeTemplate.getId() == null) {
@@ -751,7 +746,9 @@ public class CatalogHierarchyBuilderService {
     private void copyEdrTemplates(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetChargeTemplate) {
         if (sourceChargeTemplate.getEdrTemplates() != null && !sourceChargeTemplate.getEdrTemplates().isEmpty()) {
             for (TriggeredEDRTemplate triggeredEDRTemplate : sourceChargeTemplate.getEdrTemplates()) {
-                targetChargeTemplate.getEdrTemplates().add(triggeredEDRTemplate);
+				if (!targetChargeTemplate.getEdrTemplates().contains(triggeredEDRTemplate)) {
+					targetChargeTemplate.getEdrTemplates().add(triggeredEDRTemplate);
+				}
             }
         }
     }
