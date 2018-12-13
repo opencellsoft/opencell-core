@@ -8,5 +8,6 @@
 	},
 	"use-resource-role-mappings": true,
 	"enable-basic-auth": "${opencell.keycloak.basic-auth:true}",
-	"principal-attribute": "preferred_username"
+	"principal-attribute": "preferred_username",
+	"proxy-url":"${opencell.keycloak.proxy-url:}"
 }
