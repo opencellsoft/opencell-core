@@ -52,7 +52,8 @@ import org.primefaces.model.SortOrder;
  * 
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  * 
  */
 @Named
@@ -171,7 +172,6 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
 
             entity.setStatus(BillingRunStatusEnum.NEW);
             entity.setProcessDate(new Date());
-            entity.setLastTransactionDate(DateUtils.setDateToEndOfDay(entity.getLastTransactionDate()));
 
             customFieldDataEntryBean.saveCustomFieldsToEntity((ICustomFieldEntity) entity, true);
             billingRunService.create(entity);
