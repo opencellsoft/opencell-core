@@ -1,5 +1,7 @@
 package org.meveo.api.pub.rest.document.impl;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -10,6 +12,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.document.sign.SignCallbackDto;
 import org.meveo.api.dto.document.sign.SignFileResponseDto;
 import org.meveo.api.dto.document.sign.YousignEventEnum;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.pub.rest.document.YousignCallbackRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -27,12 +30,11 @@ public class YousignCallbackRsImpl extends BaseRs implements YousignCallbackRs {
     @Override
     public ActionStatus youSignCallback(SignCallbackDto callbackDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        SignFileResponseDto fileResponseDto = callbackDto.getProcedure().getFiles().get(0); // Managing the case of many files is not yet required for the moment
         try {
             YousignEventEnum event = callbackDto.getEventName();
             switch (event) {
             case PROCEDURE_FINISHED:
-                youSignApi.downloadFileByIdAndSaveInServer(fileResponseDto.getId().substring(7), fileResponseDto.getName());
+                this.downloadFilesById(callbackDto.getProcedure().getFiles());
                 break;
             case PROCEDURE_STARTED: // Not yet needed
             default:
@@ -44,6 +46,12 @@ public class YousignCallbackRsImpl extends BaseRs implements YousignCallbackRs {
         }
 
         return result;
+    }
+
+    private void downloadFilesById(List<SignFileResponseDto> files) throws MeveoApiException {
+        for (SignFileResponseDto fileResponseDto :files) {
+            this.youSignApi.downloadFileByIdAndSaveInServer(fileResponseDto.getId().substring(7), fileResponseDto.getName());
+        }
     }
 
 }
