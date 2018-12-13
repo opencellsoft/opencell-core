@@ -71,7 +71,7 @@
                     <h:panelGroup id="invoiceTypeSellerSequenceServiceDetails">
 			        	 <p:panel header="#{messages['seller.newInvoiceTypeSellerSequence']}" rendered="#{sellerBean.selectedInvoiceTypeSellerSequence!=null}">
 			                <p:outputPanel styleClass="form-panel-fields #{sellerBean.edit ? '' : ' form-panel-fields-view'}">
-			                   	<hftl:formField label="#{messages['invoiceType.sequence.prefixEl']}" entity="#{sellerBean}" field="prefixEl" required="true" />
+			                   	<hftl:formField label="#{messages['invoiceType.sequence.prefixEl']}" textArea="true" size="2000" entity="#{sellerBean}" field="prefixEl" required="true" />
 			                   	<hftl:formField label="#{messages['invoiceTypeSellerSequence.invoiceSequence']}" id="invoiceSequenceSelectedId" entity="#{sellerBean}" field="invoiceSequence" valueLabelField="code" popup="true" popupId="searchInvoiceSequencePopup"
 			                required="true" />
 			                	<hftl:formField label="#{messages['invoiceTypeSellerSequence.invoiceType']}" id="invoiceTypeSelectedId" entity="#{sellerBean}" field="invoiceType" valueLabelField="code" popup="true" popupId="searchInvoiceTypePopup"
