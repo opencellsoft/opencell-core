@@ -738,5 +738,8 @@
             <column name="auto_renew_date" type="datetime"/>
         </addColumn>
     </changeSet>
-</databaseChangeLog>
 
+    <changeSet id="#3896_13122018" author="abdelkader.bouazza">
+        <renameColumn tableName="wf_workflow" oldColumnName="enable_hostory" newColumnName="enable_history" columnDataType="${type.boolean}"/>
+    </changeSet>
+</databaseChangeLog>
