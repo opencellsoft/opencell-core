@@ -137,7 +137,8 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
@@ -622,6 +623,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             lastTransactionDate = billingRun.getLastTransactionDate();
             invoiceDate = billingRun.getInvoiceDate();
         }
+
+        lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
 
         // Store RTs, to reach minimum amount per invoice, to DB
         if (minAmountTransactions != null) {
