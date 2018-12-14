@@ -1269,49 +1269,61 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return entity;
 	}
 	
+    public BillingAccount instantiateDiscountPlan(BillingAccount entity, DiscountPlan dp, List<DiscountPlanInstance> toAdd, Date startDate) throws BusinessException {
+        if (entity.getDiscountPlanInstances() == null || entity.getDiscountPlanInstances().isEmpty()) {
+            // add
+            entity.setDiscountPlanInstances(new ArrayList<>());
+            DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
+            discountPlanInstance.setBillingAccount(entity);
+            discountPlanInstance.setDiscountPlan(dp);
+            discountPlanInstance.copyEffectivityDates(dp);
+            if (startDate != null) {
+                discountPlanInstance.setStartDate(startDate);  
+            }
+            discountPlanInstanceService.create(discountPlanInstance, dp);
+            entity.getDiscountPlanInstances().add(discountPlanInstance);
+            
+        } else {
+            boolean found = false;
+            DiscountPlanInstance dpiMatched = null;
+            for (DiscountPlanInstance dpi : entity.getDiscountPlanInstances()) {
+                if (dp.equals(dpi.getDiscountPlan())) {
+                    found = true;
+                    dpiMatched = dpi;
+                    break;
+                }
+            }
+            
+            if (found && dpiMatched != null) {
+                // update effectivity dates
+                dpiMatched.copyEffectivityDates(dp);
+                if (startDate != null) {
+                    dpiMatched.setStartDate(startDate);  
+                }
+                discountPlanInstanceService.update(dpiMatched, dp);
+                
+            } else {
+                // add
+                DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
+                discountPlanInstance.setBillingAccount(entity);
+                discountPlanInstance.setDiscountPlan(dp);
+                discountPlanInstance.copyEffectivityDates(dp);
+                if (startDate != null) {
+                    discountPlanInstance.setStartDate(startDate);  
+                }
+                discountPlanInstanceService.create(discountPlanInstance, dp);
+                if (toAdd != null) {
+                    toAdd.add(discountPlanInstance);
+                } else {
+                    entity.getDiscountPlanInstances().add(discountPlanInstance);
+                }
+            }
+        }
+        return entity;
+    }
+    
 	public BillingAccount instantiateDiscountPlan(BillingAccount entity, DiscountPlan dp, List<DiscountPlanInstance> toAdd) throws BusinessException {
-		if (entity.getDiscountPlanInstances() == null || entity.getDiscountPlanInstances().isEmpty()) {
-			// add
-			entity.setDiscountPlanInstances(new ArrayList<>());
-			DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
-			discountPlanInstance.setBillingAccount(entity);
-			discountPlanInstance.setDiscountPlan(dp);
-			discountPlanInstance.copyEffectivityDates(dp);
-			discountPlanInstanceService.create(discountPlanInstance, dp);
-			entity.getDiscountPlanInstances().add(discountPlanInstance);
-			
-		} else {
-			boolean found = false;
-			DiscountPlanInstance dpiMatched = null;
-			for (DiscountPlanInstance dpi : entity.getDiscountPlanInstances()) {
-				if (dp.equals(dpi.getDiscountPlan())) {
-					found = true;
-					dpiMatched = dpi;
-					break;
-				}
-			}
-			
-			if (found && dpiMatched != null) {
-				// update effectivity dates
-				dpiMatched.copyEffectivityDates(dp);
-				discountPlanInstanceService.update(dpiMatched, dp);
-				
-			} else {
-				// add
-				DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
-				discountPlanInstance.setBillingAccount(entity);
-				discountPlanInstance.setDiscountPlan(dp);
-				discountPlanInstance.copyEffectivityDates(dp);
-				discountPlanInstanceService.create(discountPlanInstance, dp);
-				if (toAdd != null) {
-					toAdd.add(discountPlanInstance);
-				} else {
-					entity.getDiscountPlanInstances().add(discountPlanInstance);
-				}
-			}
-		}
-		
-		return entity;
+	    return instantiateDiscountPlan(entity, dp, toAdd, null);
 	}
 	
 	public void terminateDiscountPlans(BillingAccount entity, List<DiscountPlanInstance> dpis)
