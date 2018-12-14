@@ -724,5 +724,19 @@
         <addForeignKeyConstraint baseColumnNames="counter_id" baseTableName="billing_recurring_charge_inst" constraintName="fk_serv_rec_charge_template_billing_counter" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_counter" />
      </changeSet>
-
+    <changeSet id="#3898_20181214 - auto_renew_date" author="MounirBahije">
+        <addColumn tableName="cat_service_template">
+            <column name="auto_renew_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_service_instance">
+            <column name="auto_renew_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_subscription">
+            <column name="auto_renew_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="auto_renew_date" type="datetime"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
+

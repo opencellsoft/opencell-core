@@ -56,6 +56,7 @@ import org.primefaces.model.SortOrder;
 /**
  * @author Edward P. Legaspi
  * @author khalid HORRI
+ * @author Mounir BAHIJE
  * @lastModifiedVersion 5.3
  */
 @Stateless
@@ -82,6 +83,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         subscription.updateSubscribedTillAndRenewalNotifyDates();
 
+        subscription.createAutoRenewDate();
+
         super.create(subscription);
 
         // execute subscription script
@@ -100,6 +103,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public Subscription update(Subscription subscription) throws BusinessException {
 
         subscription.updateSubscribedTillAndRenewalNotifyDates();
+
+        Subscription subscriptionOld = this.findByCode(subscription.getCode());
+        subscription.updateAutoRenewDate(subscriptionOld);
 
         return super.update(subscription);
     }

@@ -2,14 +2,9 @@ package org.meveo.model.billing;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Type;
 
@@ -17,7 +12,9 @@ import org.hibernate.annotations.Type;
  * Embeddable set of renewal fields. Use in ServiceTemplate and Subscription.
  * 
  * @author Andrius Karpavicius
- * @lastModifiedVersion 5.1
+ * @author Edward P. Legaspi
+ * @author Mounir BAHIJE
+ * @lastModifiedVersion 5.3
  */
 @Embeddable
 public class SubscriptionRenewal implements Serializable {
@@ -94,6 +91,13 @@ public class SubscriptionRenewal implements Serializable {
     @Column(name = "auto_renew")
     private boolean autoRenew;
 
+    /**
+     * Linked to auto_renew
+     *
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "auto_renew_date")
+    private Date autoRenewDate;
     /**
      * Number of days before the end of term to trigger notification event
      */
@@ -247,4 +251,11 @@ public class SubscriptionRenewal implements Serializable {
         this.initialTermType = initialTermType;
     }
 
+    public Date getAutoRenewDate() {
+        return autoRenewDate;
+    }
+
+    public void setAutoRenewDate(Date autoRenewDate) {
+        this.autoRenewDate = autoRenewDate;
+    }
 }
