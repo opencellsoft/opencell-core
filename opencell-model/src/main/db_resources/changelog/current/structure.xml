@@ -2257,4 +2257,18 @@
     		<column name="discount_plan_id"></column>
     	</dropColumn>
     </changeSet>
+    <changeSet id="#3898_20181214 - auto_renew_date" author="MounirBahije">
+        <addColumn tableName="cat_service_template">
+            <column name="auto_renew_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_service_instance">
+            <column name="auto_renew_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_subscription">
+            <column name="auto_renew_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="auto_renew_date" type="datetime"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

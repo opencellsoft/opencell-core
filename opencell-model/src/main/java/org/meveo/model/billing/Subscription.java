@@ -70,6 +70,7 @@ import org.meveo.model.shared.DateUtils;
  * Subscription
  * @author Said Ramli
  * @author Abdellatif BARI
+ * @author Mounir BAHIJE
  * @lastModifiedVersion 5.3
  */
 @Entity
@@ -482,6 +483,26 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, H
         }
 
     }
+
+    public void createAutoRenewDate(){
+        SubscriptionRenewal subscriptionRenewal = this.getSubscriptionRenewal();
+        if (subscriptionRenewal != null) {
+                subscriptionRenewal.setAutoRenewDate(new Date());
+        }
+	}
+
+    public void updateAutoRenewDate(Subscription subscriptionOld){
+        SubscriptionRenewal subscriptionRenewalOld = subscriptionOld.getSubscriptionRenewal();
+        SubscriptionRenewal subscriptionRenewalNew = this.getSubscriptionRenewal();
+        boolean autoRenewOld = subscriptionRenewalOld.isAutoRenew();
+        boolean autoRenewNew = subscriptionRenewalNew.isAutoRenew();
+        if (autoRenewOld != autoRenewNew) {
+        if (subscriptionRenewalNew != null) {
+                subscriptionRenewalNew.setAutoRenewDate(new Date());
+            }
+        }
+    }
+
     
     public BillingRun getBillingRun() {
         return billingRun;
