@@ -155,6 +155,11 @@ public class InvoiceDto extends AuditableEntityDto {
     protected BigDecimal dueBalance;
 
     /**
+     * A flag to generate a draft invoice
+     */
+    protected Boolean isDraft;
+
+    /**
      * Instantiates a new invoice dto.
      */
     public InvoiceDto() {
@@ -727,5 +732,16 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     public void setSellerCode(String sellerCode) {
         this.sellerCode = sellerCode;
+    }
+
+    public Boolean isDraft() {
+        if (isDraft == null) {
+            isDraft = Boolean.FALSE;
+        }
+        return isDraft;
+    }
+
+    public void setDraft(Boolean draft) {
+        this.isDraft = draft;
     }
 }
