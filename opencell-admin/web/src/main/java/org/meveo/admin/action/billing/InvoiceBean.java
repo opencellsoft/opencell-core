@@ -47,6 +47,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -76,7 +77,8 @@ import org.primefaces.model.LazyDataModel;
  * edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author Khalid HORRI
+ * @lastModifiedVersion 5.3
  */
 @Named
 @ViewScoped
@@ -744,5 +746,32 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     public void setSelectedInvoices(boolean isSelectedInvoices) {
         this.isSelectedInvoices = isSelectedInvoices;
     }
+
+    /**
+     * Activate/deactivate the generating PDF button
+     *
+     * @return
+     */
+    public boolean getGeneratePdfBtnActive() {
+        String value = ParamBean.getInstance().getProperty("billing.activateGenaratePdfBtn", "true");
+        if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
+            return Boolean.valueOf(value);
+        }
+        return true;
+    }
+
+    /**
+     * Activate/deactivate the generating XML button
+     *
+     * @return
+     */
+    public boolean getGenerateXmlBtnActive() {
+        String value = ParamBean.getInstance().getProperty("billing.activateGenarateXmlBtn", "true");
+        if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
+            return Boolean.valueOf(value);
+        }
+        return true;
+    }
+
 
 }
