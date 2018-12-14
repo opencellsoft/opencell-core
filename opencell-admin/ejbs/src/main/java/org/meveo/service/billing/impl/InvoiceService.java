@@ -1055,7 +1055,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename);
             if ("true".equals(paramBeanFactory.getInstance().getProperty("invoice.pdf.addWaterMark", "true"))) {
-                if (invoice.getInvoiceType().getCode().equals(paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT")) || invoice.isDraft()) {
+                if (invoice.getInvoiceType().getCode().equals(paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT")) || (invoice.isDraft() != null
+                        && invoice.isDraft())) {
                     PdfWaterMark.add(pdfFullFilename, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
                 }
             }
