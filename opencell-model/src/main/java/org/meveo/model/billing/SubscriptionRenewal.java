@@ -98,6 +98,7 @@ public class SubscriptionRenewal implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "auto_renew_date")
     private Date autoRenewDate;
+    
     /**
      * Number of days before the end of term to trigger notification event
      */
@@ -251,10 +252,18 @@ public class SubscriptionRenewal implements Serializable {
         this.initialTermType = initialTermType;
     }
 
+    /**
+     * AutoRenewDate getter
+     * @return
+     */
     public Date getAutoRenewDate() {
         return autoRenewDate;
     }
 
+    /**
+     * AutoRenewDate setter
+     * @param autoRenewDate
+     */
     public void setAutoRenewDate(Date autoRenewDate) {
         this.autoRenewDate = autoRenewDate;
     }

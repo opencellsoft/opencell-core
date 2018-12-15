@@ -633,6 +633,9 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     }
 
+    /**
+     * create AutoRenewDate
+     */
     public void createAutoRenewDate(){
         SubscriptionRenewal subscriptionRenewal = this.getSubscriptionRenewal();
         if (subscriptionRenewal != null) {
@@ -640,6 +643,10 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         }
 	}
 
+    /**
+     * update AutoRenewDate when AutoRenew change
+     * @param subscriptionOld
+     */
     public void updateAutoRenewDate(Subscription subscriptionOld){
         SubscriptionRenewal subscriptionRenewalOld = subscriptionOld.getSubscriptionRenewal();
         SubscriptionRenewal subscriptionRenewalNew = this.getSubscriptionRenewal();
