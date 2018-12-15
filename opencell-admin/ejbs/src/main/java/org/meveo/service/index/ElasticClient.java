@@ -412,7 +412,7 @@ public class ElasticClient {
         }
 
         // Add sorting if requested
-        if (sortFields.length > 0) {
+        if (sortFields != null && sortFields.length > 0) {
             for (int i = 0; i < sortFields.length; i++) {
                 SortOrder sortOrder = null;
                 if (sortOrders.length <= i) {
@@ -575,7 +575,7 @@ public class ElasticClient {
         }
 
         // Add sorting if requested
-        if (sortFields.length > 0) {
+        if (sortFields != null && sortFields.length > 0) {
             for (int i = 0; i < sortFields.length; i++) {
                 SortOrder sortOrder = null;
                 if (sortOrders.length <= i) {
