@@ -33,8 +33,8 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 	 * startDate is not null and endDate is null, endDate is computed from the given
 	 * duration.
 	 * 
-	 * @param date
-	 *            the given date
+	 * @param startDate starting date of this discount's effectivity
+	 * @param endDate ending date of this discount's effectivity
 	 * @return returns true if this DiscountItem is to be applied
 	 */
 	public Date computeEndDate(Date startDate, Date endDate, Integer defaultDuration,

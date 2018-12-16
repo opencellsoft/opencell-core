@@ -109,7 +109,7 @@ public class DiscountPlanInstanceDto extends BaseEntityDto {
 
 	/**
 	 * Sets the effective end date.
-	 * @param startDate date
+	 * @param endDate end date
 	 */
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
