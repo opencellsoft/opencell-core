@@ -38,9 +38,23 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
      * @param cardType card type
      * @return the payment gateway
      * @throws BusinessException the business exception
+     */    
+    public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType) throws BusinessException {
+       return getPaymentGateway(customerAccount, paymentMethod, cardType,null);
+    }
+
+    /**
+     * Gets the payment gateway.
+     *
+     * @param customerAccount the customer account
+     * @param paymentMethod the payment method
+     * @param cardType the card type
+     * @param seller the seller
+     * @return the payment gateway
+     * @throws BusinessException the business exception
      */
     @SuppressWarnings("unchecked")
-    public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType) throws BusinessException {
+    public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType,Seller seller) throws BusinessException {
         PaymentGateway paymentGateway = null;
         try {
             CreditCardTypeEnum cardTypeToCheck = null;
@@ -49,22 +63,28 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
             } else if (paymentMethod instanceof CardPaymentMethod) {
                 cardTypeToCheck = ((CardPaymentMethod) paymentMethod).getCardType();
             }
+            
+            String queryStr = "from " + PaymentGateway.class.getSimpleName()
+                    + " where paymentMethodType =:paymenTypeValueIN and disabled=false and (country is null or country =:countryValueIN) and "
+                    + " (tradingCurrency is null or tradingCurrency =:tradingCurrencyValueIN)  and  (cardType is null or cardType =:cardTypeValueIN) and "
+                    + " (seller is null or seller =:sellerIN)";
 
             Query query = getEntityManager()
-                .createQuery("from " + PaymentGateway.class.getSimpleName()
-                        + " where paymentMethodType =:paymenTypeValueIN and disabled=false and (country is null or country =:countryValueIN) and "
-                        + " (tradingCurrency is null or tradingCurrency =:tradingCurrencyValueIN)  and  (cardType is null or cardType =:cardTypeValueIN) ")
+                .createQuery(queryStr)
                 .setParameter("paymenTypeValueIN", paymentMethod == null ? PaymentMethodEnum.CARD : paymentMethod.getPaymentType())
                 .setParameter("countryValueIN", customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry())
-                .setParameter("tradingCurrencyValueIN", customerAccount.getTradingCurrency()).setParameter("cardTypeValueIN", cardTypeToCheck);
-
+                .setParameter("tradingCurrencyValueIN", customerAccount.getTradingCurrency()).setParameter("cardTypeValueIN", cardTypeToCheck)
+                .setParameter("sellerIN", seller);
+                 
             List<PaymentGateway> paymentGateways = (List<PaymentGateway>) query.getResultList();
             if (paymentGateways == null || paymentGateways.isEmpty()) {
                 return null;
             }
             for (PaymentGateway pg : paymentGateways) {
                 log.info("get pg , current :" + pg.getCode());
-                if (matchExpression(pg.getApplicationEL(), customerAccount, paymentMethod, pg, null)) {
+
+                if (matchExpression(pg.getApplicationEL(), customerAccount, paymentMethod, pg,seller)) {
+
                     return pg;
                 }
             }
@@ -74,6 +94,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
         }
         return paymentGateway;
     }
+
 
     /**
      * Gets the payment gateway.
@@ -107,6 +128,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
         return paymentGateway;
     }
 
+    
     /**
      * Match expression.
      *
@@ -118,8 +140,8 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
      * @return true, if successful
      * @throws BusinessException the business exception
      */
-    private boolean matchExpression(String expression, CustomerAccount customerAccount, PaymentMethod paymentMethod, PaymentGateway paymentGateway, Seller seller)
-            throws BusinessException {
+    private boolean matchExpression(String expression, CustomerAccount customerAccount, PaymentMethod paymentMethod, PaymentGateway paymentGateway,Seller seller) throws BusinessException {
+
         Boolean result = true;
         if (StringUtils.isBlank(expression)) {
             return result;

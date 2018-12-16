@@ -57,6 +57,7 @@ import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentLevelEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -97,6 +98,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
     /** The dd request item service. */
     @Inject
     private DDRequestItemService ddRequestItemService;
+    
+    @Inject
+    private PaymentGatewayService paymentGatewayService;
 
     /**
      * Creates the payment.
@@ -131,7 +135,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
         ParamBean paramBean = paramBeanFactory.getInstance();
         String occTemplateCode = null;
         T automatedPayment = null;
-        if(ddRequestItem.getDdRequestLOT().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
+        if(ddRequestItem.getDdRequestLOT().getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
             occTemplateCode = paramBean.getProperty("occ.refund.dd", "REF_DDT");
             automatedPayment = (T) new AutomatedRefund();
         }else {
@@ -205,7 +209,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
             DDRequestLOT ddRequestLOT = new DDRequestLOT();
             ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
             ddRequestLOT.setSendDate(new Date());
-            ddRequestLOT.setOperationCategoryToProcess(ddrequestLotOp.getOperationCategoryToProcess());
+            ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
             ddRequestLOT.setSeller(ddrequestLotOp.getSeller());
             create(ddRequestLOT);
             int nbItemsKo = 0;
@@ -214,7 +218,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
             DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
             if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.AO) {
                 for (AccountOperation ao : listAoToPay) {
-                    String errorMsg = getMissingField(ao);
+                    String errorMsg = getMissingField(ao,ddRequestLOT);
                     Name caName = ao.getCustomerAccount().getName();
                     String caFullName = this.getCaFullName(caName);
                     ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
@@ -243,7 +247,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
                     CustomerAccount ca = entry.getKey();
                     String caFullName = this.getCaFullName(ca.getName());
                     for (AccountOperation ao : entry.getValue()) {
-                        String errorMsg = getMissingField(ao);
+                        String errorMsg = getMissingField(ao,ddRequestLOT);
                         if (errorMsg != null) {
                             allErrorsByItem += errorMsg + " ; ";
                         } else {
@@ -341,8 +345,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
      *
      * @param accountOperation the account operation
      * @return the missing field
+     * @throws BusinessException 
      */
-    public String getMissingField(AccountOperation accountOperation) {
+    public String getMissingField(AccountOperation accountOperation,DDRequestLOT ddRequestLOT) throws BusinessException {
         String prefix = "AO.id:" + accountOperation.getId() + " : ";
         CustomerAccount ca = accountOperation.getCustomerAccount();
         if (ca == null) {
@@ -369,21 +374,32 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
         if (StringUtils.isBlank(appProvider.getDescription())) {
             return prefix + "provider.description";
         }
-        BankCoordinates providerBC = appProvider.getBankCoordinates();
-        if (providerBC == null) {
-            return prefix + "provider.bankCoordinates";
+        BankCoordinates bankCoordinates = null;
+        if (ddRequestLOT.getSeller() != null) {
+             
+            PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(ddRequestLOT.getSeller(), PaymentMethodEnum.DIRECTDEBIT);
+            if (paymentGateway == null) {
+                throw new BusinessException("Cant find payment gateway for seller : " + ddRequestLOT.getSeller());
+            }
+            bankCoordinates =  paymentGateway.getBankCoordinates();
+        } else {
+            bankCoordinates =  appProvider.getBankCoordinates();
+        }       
+               
+        if (bankCoordinates == null) {
+            return prefix + "provider or seller bankCoordinates";
         }
-        if (providerBC.getIban() == null) {
-            return prefix + "provider.iban";
+        if (bankCoordinates.getIban() == null) {
+            return prefix + "bankCoordinates.iban";
         }
-        if (providerBC.getBic() == null) {
-            return prefix + "provider.bic";
+        if (bankCoordinates.getBic() == null) {
+            return prefix + "bankCoordinates.bic";
         }
-        if (providerBC.getIcs() == null) {
-            return prefix + "provider.ics";
+        if (bankCoordinates.getIcs() == null) {
+            return prefix + "bankCoordinates.ics";
         }
         if (accountOperation.getReference() == null) {
-            return prefix + "recordedInvoice.reference";
+            return prefix + "accountOperation.reference";
         }
         if (ca.getDescription() == null) {
             return prefix + "ca.description";

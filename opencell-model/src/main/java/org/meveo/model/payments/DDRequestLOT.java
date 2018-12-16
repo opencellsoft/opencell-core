@@ -95,9 +95,10 @@ public class DDRequestLOT extends AuditableEntity {
     @JoinColumn(name = "ddrequest_builder_id")
     private DDRequestBuilder ddRequestBuilder;
     
-    @Column(name = "op_cat_to_process")
+    /** The Payment Or Refund Enum. */
+    @Column(name = "payment_or_refund")
     @Enumerated(EnumType.STRING)
-    OperationCategoryEnum operationCategoryToProcess;
+    PaymentOrRefundEnum paymentOrRefundEnum;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
@@ -197,18 +198,20 @@ public class DDRequestLOT extends AuditableEntity {
         this.ddRequestBuilder = ddRequestBuilder;
     }
 
+  
+
     /**
-     * @return the operationCategoryToProcess
+     * @return the paymentOrRefundEnum
      */
-    public OperationCategoryEnum getOperationCategoryToProcess() {
-        return operationCategoryToProcess;
+    public PaymentOrRefundEnum getPaymentOrRefundEnum() {
+        return paymentOrRefundEnum;
     }
 
     /**
-     * @param operationCategoryToProcess the operationCategoryToProcess to set
+     * @param paymentOrRefundEnum the paymentOrRefundEnum to set
      */
-    public void setOperationCategoryToProcess(OperationCategoryEnum operationCategoryToProcess) {
-        this.operationCategoryToProcess = operationCategoryToProcess;
+    public void setPaymentOrRefundEnum(PaymentOrRefundEnum paymentOrRefundEnum) {
+        this.paymentOrRefundEnum = paymentOrRefundEnum;
     }
 
     /**

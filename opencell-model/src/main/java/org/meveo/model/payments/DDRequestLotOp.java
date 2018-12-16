@@ -106,10 +106,10 @@ public class DDRequestLotOp extends AuditableEntity {
     @Column(name = "recurrent")
     private Boolean recurrent;
     
-    /** The operation category to process. */
-    @Column(name = "op_cat_to_process")
+    /** The Payment Or Refund Enum. */
+    @Column(name = "payment_or_refund")
     @Enumerated(EnumType.STRING)
-    OperationCategoryEnum operationCategoryToProcess;
+    PaymentOrRefundEnum paymentOrRefundEnum;
     
     /** The Seller. */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -297,25 +297,7 @@ public class DDRequestLotOp extends AuditableEntity {
     public void setRecurrent(Boolean recurrent) {
         this.recurrent = recurrent;
     }
-
-    /**
-     * Gets the operation category to process.
-     *
-     * @return the operationCategoryToProcess
-     */
-    public OperationCategoryEnum getOperationCategoryToProcess() {
-        return operationCategoryToProcess;
-    }
-
-    /**
-     * Sets the operation category to process.
-     *
-     * @param operationCategoryToProcess the operationCategoryToProcess to set
-     */
-    public void setOperationCategoryToProcess(OperationCategoryEnum operationCategoryToProcess) {
-        this.operationCategoryToProcess = operationCategoryToProcess;
-    }
-
+   
     /**
      * @return the seller
      */
@@ -328,6 +310,20 @@ public class DDRequestLotOp extends AuditableEntity {
      */
     public void setSeller(Seller seller) {
         this.seller = seller;
+    }
+
+    /**
+     * @return the paymentOrRefundEnum
+     */
+    public PaymentOrRefundEnum getPaymentOrRefundEnum() {
+        return paymentOrRefundEnum;
+    }
+
+    /**
+     * @param paymentOrRefundEnum the paymentOrRefundEnum to set
+     */
+    public void setPaymentOrRefundEnum(PaymentOrRefundEnum paymentOrRefundEnum) {
+        this.paymentOrRefundEnum = paymentOrRefundEnum;
     }
 
    

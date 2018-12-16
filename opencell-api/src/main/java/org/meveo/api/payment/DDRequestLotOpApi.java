@@ -21,7 +21,7 @@ import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
-import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.filter.FilterService;
@@ -83,8 +83,8 @@ public class DDRequestLotOpApi extends BaseApi {
             }
         }
         this.handleMissingParameters();
-        if(dto.getOperationCategoryToProcess() == null) {
-            dto.setOperationCategoryToProcess(OperationCategoryEnum.DEBIT); 
+        if(dto.getPaymentOrRefundEnum() == null) {
+            dto.setPaymentOrRefundEnum(PaymentOrRefundEnum.PAYMENT); 
         }
 
         DDRequestBuilder ddRequestBuilder = ddRequestBuilderService.findByCode(dto.getDdRequestBuilderCode());
@@ -123,7 +123,7 @@ public class DDRequestLotOpApi extends BaseApi {
         ddRequestLotOp.setFromDueDate(dto.getFromDueDate());
         ddRequestLotOp.setToDueDate(dto.getToDueDate());
         ddRequestLotOp.setDdRequestBuilder(ddRequestBuilder);
-        ddRequestLotOp.setOperationCategoryToProcess(dto.getOperationCategoryToProcess());
+        ddRequestLotOp.setPaymentOrRefundEnum(dto.getPaymentOrRefundEnum());
         ddRequestLotOp.setFilter(filter);
         ddRequestLotOp.setSeller(seller);
         if (StringUtils.isBlank(dto.getDdrequestOp())) {

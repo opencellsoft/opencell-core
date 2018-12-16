@@ -11,7 +11,7 @@ import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
-import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentOrRefundEnum;
 
 /**
  * The Class DDRequestLotOpDto.
@@ -58,8 +58,7 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     /** The recurrent flag : to decide if a new dd request lot operation will be created at end , or not. */
     private Boolean recurrent;
     
-    /** The operation category to process. */
-    private OperationCategoryEnum operationCategoryToProcess;
+    private PaymentOrRefundEnum paymentOrRefundEnum;
     
 
     /** The seller code. */
@@ -86,7 +85,7 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
         this.errorCause = ddrequestLotOp.getErrorCause();
         this.ddRequestBuilderCode = ddrequestLotOp.getDdRequestBuilder() != null ? ddrequestLotOp.getDdRequestBuilder().getCode() : null;
         this.filterCode = ddrequestLotOp.getFilter() != null ? ddrequestLotOp.getFilter().getCode() : null;
-        this.operationCategoryToProcess = ddrequestLotOp.getOperationCategoryToProcess();
+        this.paymentOrRefundEnum = ddrequestLotOp.getPaymentOrRefundEnum();
         this.sellerCode = ddrequestLotOp.getSeller() != null ? ddrequestLotOp.getSeller().getCode() : null;
     }
 
@@ -252,22 +251,20 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
         this.recurrent = recurrent;
     }
 
+   
+
     /**
-     * Gets the operation category to process.
-     *
-     * @return the operationCategoryToProcess
+     * @return the paymentOrRefundEnum
      */
-    public OperationCategoryEnum getOperationCategoryToProcess() {
-        return operationCategoryToProcess;
+    public PaymentOrRefundEnum getPaymentOrRefundEnum() {
+        return paymentOrRefundEnum;
     }
 
     /**
-     * Sets the operation category to process.
-     *
-     * @param operationCategoryToProcess the operationCategoryToProcess to set
+     * @param paymentOrRefundEnum the paymentOrRefundEnum to set
      */
-    public void setOperationCategoryToProcess(OperationCategoryEnum operationCategoryToProcess) {
-        this.operationCategoryToProcess = operationCategoryToProcess;
+    public void setPaymentOrRefundEnum(PaymentOrRefundEnum paymentOrRefundEnum) {
+        this.paymentOrRefundEnum = paymentOrRefundEnum;
     }
 
     /**

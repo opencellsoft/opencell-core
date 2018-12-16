@@ -170,7 +170,8 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
     
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "seller_id")
     private Seller seller;
 

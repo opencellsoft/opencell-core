@@ -507,13 +507,13 @@
     </changeSet>
     <changeSet id="#3652_26112018" author="anasseh">
         <addColumn tableName="ar_ddrequest_lot_op">
-            <column name="op_cat_to_process" type="varchar(30)" />
+            <column name="payment_or_refund" type="varchar(30)" />
         </addColumn>
-        <sql>update ${db.schema.adapted}ar_ddrequest_lot_op set op_cat_to_process='DEBIT'</sql>
+        <sql>update ${db.schema.adapted}ar_ddrequest_lot_op set payment_or_refund='PAYMENT'</sql>
         <addColumn tableName="ar_ddrequest_lot">
-            <column name="op_cat_to_process" type="varchar(30)" />
+            <column name="payment_or_refund" type="varchar(30)" />
         </addColumn>
-        <sql>update ${db.schema.adapted}ar_ddrequest_lot set op_cat_to_process='DEBIT'</sql>   
+        <sql>update ${db.schema.adapted}ar_ddrequest_lot set payment_or_refund='PAYMENT'</sql>   
         <addColumn tableName="ar_ddrequest_item">
             <column name="refund_id" type="bigint" />
         </addColumn>

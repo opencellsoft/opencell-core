@@ -47,7 +47,6 @@ import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
 /**
  * The Class BillingAccountService.
@@ -68,10 +67,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     /** The billing run service. */
     @EJB
     private BillingRunService billingRunService;
-
-    /** The invoice sub category service. */
-    @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
 
     /**
      * Inits the billing account.
@@ -257,18 +252,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         } catch (NoResultException ex) {
             log.debug("invoice search returns no result for reference={}.", invoiceReference);
         }
-        return null;
-    }
-
-    /**
-     * Invoice sub category detail.
-     *
-     * @param invoiceReference the invoice reference
-     * @param invoiceSubCategoryCode the invoice sub category code
-     * @return the invoice sub category
-     */
-    public InvoiceSubCategory invoiceSubCategoryDetail(String invoiceReference, String invoiceSubCategoryCode) {
-        // TODO : need to be more clarified
         return null;
     }
 

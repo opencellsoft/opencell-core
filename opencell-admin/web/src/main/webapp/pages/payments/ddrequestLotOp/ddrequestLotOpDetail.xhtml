@@ -58,7 +58,7 @@
 		</hftl:entityPopup>		
 		
 		<hftl:formPanel formId="FormId"  label="#{messages['menu.ddrequestLotOp']}" backingBean="#{ddRequestLotOpBean}">
-		    <hftl:formField label="#{messages['ddrequestLotOp.opCatToProcess']}"  field="operationCategoryToProcess"  required="true"/>
+		    <hftl:formField label="#{messages['jobExecution.paymentOrRefund']}"  field="paymentOrRefundEnum"  required="true"/>
 			<hftl:formField label="#{messages['ddrequestLotOp.fromDueDate']}"  field="fromDueDate"  isMessage="true"/>
 			<hftl:formField label="#{messages['ddrequestLotOp.toDueDate']}"  field="toDueDate"  isMessage="true"/> 
 			<hftl:formField label="#{messages['dDRequestBuilder.title']}"  field="ddRequestBuilder" required="true" id="builderSelectId" valueLabelField="code" popup="true" popupId="dDRequestBuilderPopup" /> 

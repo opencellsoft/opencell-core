@@ -31,20 +31,22 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 
     @SuppressWarnings("unchecked")
-    public List<DDRequestLotOp> getDDRequestOps(DDRequestBuilder ddRequestBuilder, Seller seller) {
+    public List<DDRequestLotOp> getDDRequestOps(DDRequestBuilder ddRequestBuilder, Seller seller,PaymentOrRefundEnum paymentOrRefundEnum) {
         List<DDRequestLotOp> ddrequestOps = new ArrayList<DDRequestLotOp>();
 
         try {
             Query query = getEntityManager()
                 .createQuery("from " + DDRequestLotOp.class.getSimpleName() + " as p  left join fetch p.ddrequestLOT t where p.status=:statusIN and "
-                        + "p.ddRequestBuilder=:builderIN " + (seller == null ? "" : " and  p.seller =:sellerIN"))
-                .setParameter("statusIN", DDRequestOpStatusEnum.WAIT).setParameter("builderIN", ddRequestBuilder);
+                        + "p.ddRequestBuilder=:builderIN and p.paymentOrRefundEnum=:paymentOrRefundEnumIN " + (seller == null ? "" : " and  p.seller =:sellerIN"))
+                .setParameter("statusIN", DDRequestOpStatusEnum.WAIT).setParameter("builderIN", ddRequestBuilder)
+                .setParameter("paymentOrRefundEnumIN", paymentOrRefundEnum);
             if (seller != null) {
                 query = query.setParameter("sellerIN", seller);
             }

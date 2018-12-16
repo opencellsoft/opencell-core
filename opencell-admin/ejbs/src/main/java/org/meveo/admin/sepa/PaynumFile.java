@@ -39,7 +39,7 @@ public class PaynumFile extends AbstractDDRequestBuilder {
 
     @Override
     public String getDDFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
-        if(ddRequestLot.getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
+        if(ddRequestLot.getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
             throw new UnsupportedOperationException("Refund Sepa not implimented for Paynum");
         }
         ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
@@ -64,7 +64,7 @@ public class PaynumFile extends AbstractDDRequestBuilder {
 
     @Override
     public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
-        if(ddRequestLot.getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
+        if(ddRequestLot.getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
             throw new UnsupportedOperationException("Refund Sepa not implimented for Paynum");
         }
         try {
