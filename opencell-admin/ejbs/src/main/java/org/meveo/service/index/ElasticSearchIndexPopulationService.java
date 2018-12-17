@@ -280,7 +280,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         }
 
         // Set custom field values if applicable
-        if (entity instanceof ICustomFieldEntity && ((ICustomFieldEntity) entity).getCfValues() != null) {
+		if (entity instanceof ICustomFieldEntity && ((ICustomFieldEntity) entity).getCfValues() != null
+				&& ((ICustomFieldEntity) entity).getCfValuesAsValues() != null) {
 
             ICustomFieldEntity cfEntity = (ICustomFieldEntity) entity;
 
