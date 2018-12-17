@@ -1129,12 +1129,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if (billableEntity instanceof BillingAccount) {
                 billingAccount = (BillingAccount) billableEntity;
                 for (UserAccount userAccount : ((BillingAccount) billableEntity).getUsersAccounts()) {
-                    if (userAccount.getStatus().equals(AccountStatusEnum.ACTIVE)) {
-                        for (Subscription subscription : userAccount.getSubscriptions()) {
-                            if (subscription.getStatus().equals(SubscriptionStatusEnum.ACTIVE)) {
-                                subscriptionsToProcess.add(subscription);
-                            }
-                        }
+                    for (Subscription subscription : userAccount.getSubscriptions()) {
+                        subscriptionsToProcess.add(subscription);
                     }
                 }
             }
