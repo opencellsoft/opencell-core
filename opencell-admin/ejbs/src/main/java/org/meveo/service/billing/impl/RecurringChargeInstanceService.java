@@ -276,7 +276,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
     public RatingStatus applyRecurringCharge(Long chargeInstanceId, Date maxDate, boolean isStrictlyBeforeMaxDate) throws BusinessException {
 
-        int MaxRecurringRatingHistory = Integer.parseInt(paramBeanFactory.getInstance().getProperty("rating.recurringMaxRetry", "100"));
+        int maxRecurringRatingHistory = Integer.parseInt(paramBeanFactory.getInstance().getProperty("rating.recurringMaxRetry", "100"));
         RatingStatus ratingStatus = new RatingStatus();
 
         try {
@@ -286,7 +286,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
             if (!walletOperationService.isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
                 log.debug("not rating chargeInstance with code={}, filter expression  evaluated to false", activeRecurringChargeInstance.getCode());
-                while (applyChargeFromDate != null && ratingStatus.getNbRating() < MaxRecurringRatingHistory && (
+                while (applyChargeFromDate != null && ratingStatus.getNbRating() < maxRecurringRatingHistory && (
                         (applyChargeFromDate.getTime() <= maxDate.getTime() && !isStrictlyBeforeMaxDate) || (applyChargeFromDate.getTime() < maxDate.getTime()
                                 && isStrictlyBeforeMaxDate))) {
                     walletOperationService.updateChargeDate(activeRecurringChargeInstance);
@@ -326,7 +326,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             log.info("Will apply recurring charge {} for missing periods {} - {} {}", activeRecurringChargeInstance.getId(), applyChargeFromDate, maxDate,
                     isStrictlyBeforeMaxDate ? "exclusive" : "inclusive");
 
-            while (applyChargeFromDate != null && ratingStatus.getNbRating() < MaxRecurringRatingHistory && (
+            while (applyChargeFromDate != null && ratingStatus.getNbRating() < maxRecurringRatingHistory && (
                     (applyChargeFromDate.getTime() <= maxDate.getTime() && !isStrictlyBeforeMaxDate) || (applyChargeFromDate.getTime() < maxDate.getTime()
                             && isStrictlyBeforeMaxDate))) {
 
@@ -399,8 +399,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
     }
 
     public RatingStatus applyRecurringCharge(Long chargeInstanceId, Date maxDate) throws BusinessException {
-        RecurringChargeInstance recurringChargeInstance = findById(chargeInstanceId);
-        return applyRecurringChargeInstance(recurringChargeInstance, maxDate, false);
+        //RecurringChargeInstance recurringChargeInstance = findById(chargeInstanceId);
+        return applyRecurringCharge(chargeInstanceId, maxDate, false);
     }
 
     /**
