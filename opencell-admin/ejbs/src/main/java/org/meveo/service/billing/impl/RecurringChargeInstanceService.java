@@ -258,8 +258,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         try {
             RecurringChargeInstance activeRecurringChargeInstance = findById(chargeInstanceId);
-            Date applyChargeFromDate = null;
-            applyChargeFromDate = activeRecurringChargeInstance.getNextChargeDate();
+            Date applyChargeFromDate = activeRecurringChargeInstance.getNextChargeDate();
 
             if (!walletOperationService.isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
                 log.debug("not rating chargeInstance with code={}, filter expression  evaluated to false", activeRecurringChargeInstance.getCode());
