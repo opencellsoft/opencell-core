@@ -54,7 +54,7 @@ import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
 
 /**
  * RecurringChargeInstanceService
- * 
+ *
  * @author Wassim Drira
  * @author Abdellatif BARI
  * @lastModifiedVersion 5.3
@@ -281,9 +281,16 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         RatingStatus ratingStatus = new RatingStatus();
 
         try {
+            Date applyChargeFromDate = activeRecurringChargeInstance.getNextChargeDate();
+
             if (!walletOperationService.isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
-                log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", activeRecurringChargeInstance.getCode());
-                walletOperationService.updateChargeDate(activeRecurringChargeInstance);
+                log.debug("not rating chargeInstance with code={}, filter expression  evaluated to false", activeRecurringChargeInstance.getCode());
+                while (applyChargeFromDate != null && ratingStatus.getNbRating() < MaxRecurringRatingHistory && (
+                        (applyChargeFromDate.getTime() <= maxDate.getTime() && !isStrictlyBeforeMaxDate) || (applyChargeFromDate.getTime() < maxDate.getTime()
+                                && isStrictlyBeforeMaxDate))) {
+                    walletOperationService.updateChargeDate(activeRecurringChargeInstance);
+                    applyChargeFromDate = activeRecurringChargeInstance.getNextChargeDate();
+                }
                 ratingStatus.setStatus(RatingStatusEnum.NOT_RATED_FALSE_FILTER);
                 return ratingStatus;
             }
@@ -296,7 +303,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 throw new BusinessException("Recurring charge template has no calendar: code=" + recurringChargeTemplate.getCode());
             }
 
-            Date applyChargeFromDate = null;
             // if (recurringChargeTemplate.getApplyInAdvance()) {
             applyChargeFromDate = activeRecurringChargeInstance.getNextChargeDate();
             // } else {
@@ -398,7 +404,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
     /**
      * Apply recurring charges between given dates to a user account for a Virtual operation. Does not create/update/persist any entity.
-     * 
+     *
      * @param chargeInstance Recurring charge instance
      * @param fromDate Recurring charge application start
      * @param toDate Recurring charge application end
