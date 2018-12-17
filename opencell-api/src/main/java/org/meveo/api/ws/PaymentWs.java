@@ -345,7 +345,7 @@ public interface PaymentWs extends IBaseWs {
     
     /**
      * Creates a RUM sequence associated to the given payment gateway.
-     * @param postData the RUM sequence details
+     * @param paymentGatewayRumSequence the RUM sequence details
      * @return Request processing status
      */
     @WebMethod
@@ -354,7 +354,7 @@ public interface PaymentWs extends IBaseWs {
     
     /**
      * Updates a RUM sequence associated to the given payment gateway.
-     * @param postData the RUM sequence details
+     * @param paymentGatewayRumSequence the RUM sequence details
      * @return Request processing status
      */
     @WebMethod

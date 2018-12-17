@@ -34,6 +34,7 @@ import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.RatedTransactionGroup;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -63,7 +64,7 @@ public class EdrService extends PersistenceService<EDR> {
      * Get a list of unprocessed EDRs to rate up to a given date. List is sorted by subscription and ID in ascending order
      * 
      * @param rateUntilDate date until we still rate
-     * @param string 
+     * @param ratingGroup group of ratedTransaction. {@link RatedTransactionGroup}
      * @return list of EDR'sId we can rate until a given date.
      */
     public List<Long> getEDRidsToRate(Date rateUntilDate, String ratingGroup) {

@@ -61,7 +61,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
      * Convert DiscountPlan JPA entity to DTO
      * 
      * @param discountPlan Entity to convert
-     * @param customFieldsDto the custom fields
+     * @param customFieldInstances the custom fields
      */
 	public DiscountPlanDto(DiscountPlan discountPlan, CustomFieldsDto customFieldInstances) {
 		super(discountPlan);

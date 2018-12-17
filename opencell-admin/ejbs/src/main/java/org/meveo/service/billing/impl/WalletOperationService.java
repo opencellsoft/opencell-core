@@ -1457,7 +1457,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * apply first recurring charge and the counter will be decremented by charge quantity if it's not equal to 0.
      * 
      * @param recurringChargeInstance the recurring charge instance
-     * @param maxDate the next charge date
+     * @param nextChargeDate the next charge date
      * @param preRateOnly Pre-rate only
      * @return Created wallet operation
      * @throws BusinessException the business exception
