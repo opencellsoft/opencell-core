@@ -392,7 +392,11 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     }
 
     public void setMatchingAmount(BigDecimal matchingAmount) {
-        this.matchingAmount = matchingAmount;
+        if(matchingAmount == null) {
+            this.matchingAmount =BigDecimal.ZERO;
+        }else {
+            this.matchingAmount = matchingAmount;
+        }
     }
 
     public Date getTransactionDate() {
@@ -408,7 +412,11 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     }
 
     public void setUnMatchingAmount(BigDecimal unMatchingAmount) {
-        this.unMatchingAmount = unMatchingAmount;
+       if(unMatchingAmount == null) {
+           this.unMatchingAmount = BigDecimal.ZERO;
+       }else {
+           this.unMatchingAmount = unMatchingAmount;
+       }
     }
 
     public CustomerAccount getCustomerAccount() {

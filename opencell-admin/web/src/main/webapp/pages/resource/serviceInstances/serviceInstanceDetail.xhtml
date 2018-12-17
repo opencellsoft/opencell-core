@@ -163,14 +163,11 @@
 			<ui:define name="buttons">
 				<h:panelGroup
 					rendered="#{not empty serviceInstanceBean.entity.id and serviceInstanceBean.canUserUpdateEntity()}">
-					<p:commandButton action="#{serviceInstanceBean.activateService}"
-						value="#{messages['serviceInstance.activateButton']}" ajax="false"
+					<p:commandButton action="#{serviceInstanceBean.reactiveService}"
+						value="#{messages['button.reactivateButton']}" ajax="false"
 						onclick="if(confirm('#{messages['confirmationMessage.confirmActivation']}')){return true;}else{return false;}"
-						disabled="#{serviceInstanceBean.entity.status.toString() == 'ACTIVE' or serviceInstanceBean.entity.status.toString() == 'TERMINATED'}" />
-					<p:commandButton action="#{serviceInstanceBean.cancelService}"
-						value="#{messages['serviceInstance.cancelButton']}" ajax="false"
-						onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
-						disabled="#{serviceInstanceBean.entity.status.toString() != 'ACTIVE'}" />
+						disabled="#{serviceInstanceBean.entity.status.toString() != 'SUSPENDED'}" />
+					
 					<p:commandButton action="#{serviceInstanceBean.suspendService}"
 						value="#{messages['serviceInstance.suspendButton']}" ajax="false"
 						onclick="if(confirm('#{messages['confirmationMessage.confirmSuspension']}')){return true;}else{return false;}"

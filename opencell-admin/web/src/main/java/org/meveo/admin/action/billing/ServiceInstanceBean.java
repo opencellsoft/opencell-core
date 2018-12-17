@@ -152,23 +152,26 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
         return null;
     }
 
-    public String cancelService() {
-        log.info("cancelService serviceInstanceId:" + entity.getId());
+    public String reactiveService() {
+        log.info("reactiveService serviceInstanceId:" + entity.getId());
 
         try {
-            entity.setStatus(InstanceStatusEnum.CANCELED);
-            serviceInstanceService.update(entity);
-            messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+            entity = serviceInstanceService.refreshOrRetrieve(entity);
+            serviceInstanceService.serviceReactivation(entity, new Date());
+            messages.info(new BundleKey("messages", "activation.activateSuccessful"));
 
+        } catch (BusinessException e) {
+            log.error("failed to reactive service", e);
+            messages.error(e.getMessage());
         } catch (Exception e) {
-            log.error("failed to cancel service ", e);
+            log.error("error generated in reactive service ", e);
             messages.error(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
         }
         return null;
     }
-
+    
     public String suspendService() {
-        log.info("closeAccount serviceInstanceId:" + entity.getId());
+        log.info("suspendService serviceInstanceId:" + entity.getId());
 
         try {
             entity = serviceInstanceService.refreshOrRetrieve(entity);
