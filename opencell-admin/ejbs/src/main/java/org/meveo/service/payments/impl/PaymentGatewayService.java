@@ -49,6 +49,10 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
                 cardTypeToCheck = ((CardPaymentMethod) paymentMethod).getCardType();
             }
 
+            if (customerAccount == null) {
+                throw new BusinessException("CustomerAccount is null in getPaymentGateway");
+            }
+
             Query query = getEntityManager()
                 .createQuery("from " + PaymentGateway.class.getSimpleName()
                         + " where paymentMethodType =:paymenTypeValueIN and disabled=false and (country is null or country =:countryValueIN) and "
