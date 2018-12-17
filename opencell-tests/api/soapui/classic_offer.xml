@@ -44509,11 +44509,11 @@ public class ForgotPassword extends ModuleScript{
       <con:properties>
         <con:property>
           <con:name>unduePaymentId</con:name>
-          <con:value>6</con:value>
+          <con:value>59</con:value>
         </con:property>
         <con:property>
           <con:name>undueRefundId</con:name>
-          <con:value>7</con:value>
+          <con:value>60</con:value>
         </con:property>
       </con:properties>
     </con:testCase>
@@ -51210,7 +51210,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoice>
-      	<invoiceNumber>000000001</invoiceNumber>
+      	<invoiceNumber>COM_000000020</invoiceNumber>
       </ws:findXMLInvoice>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -51252,7 +51252,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findPdfInvoice>
-      	<invoiceNumber>000000001</invoiceNumber>
+      	<invoiceNumber>COM_000000020</invoiceNumber>
 	 </ws:findPdfInvoice>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -61702,7 +61702,7 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>mainOfferId</con:name>
-      <con:value>5</con:value>
+      <con:value>81</con:value>
     </con:property>
     <con:property>
       <con:name>templateCode</con:name>
@@ -61714,11 +61714,11 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>partnerOfferId</con:name>
-      <con:value>4</con:value>
+      <con:value>80</con:value>
     </con:property>
     <con:property>
       <con:name>recOfferId</con:name>
-      <con:value>6</con:value>
+      <con:value>82</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
