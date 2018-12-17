@@ -10,7 +10,8 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  * An entity that contains custom fields
  * 
  * @author Andrius Karpavicius
- * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.3
  */
 public interface ICustomFieldEntity {
 
@@ -138,7 +139,7 @@ public interface ICustomFieldEntity {
      */
     public default Map<String, Object> getCfValuesAsValues() {
         CustomFieldValues cfValues = getCfValues();
-        if (cfValues != null) {
+		if (cfValues != null && cfValues.getValuesByCode() != null) {
             return cfValues.getValues();
         }
         return null;
