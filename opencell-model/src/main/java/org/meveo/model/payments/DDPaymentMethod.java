@@ -16,123 +16,125 @@ import org.meveo.model.billing.BankCoordinates;
  * Payment by Direct debit method
  * 
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
  */
 @Entity
 @DiscriminatorValue(value = "DIRECTDEBIT")
 public class DDPaymentMethod extends PaymentMethod {
 
-    private static final long serialVersionUID = 8578954294545445527L;
+	private static final long serialVersionUID = 8578954294545445527L;
 
-    /**
-     * Bank information
-     */
-    @Embedded
-    private BankCoordinates bankCoordinates = new BankCoordinates();
+	/**
+	 * Bank information
+	 */
+	@Embedded
+	private BankCoordinates bankCoordinates = new BankCoordinates();
 
-    /**
-     * Order identification
-     */
-    @Column(name = "mandate_identification", length = 255)
-    @Size(max = 255)
-    private String mandateIdentification = "";
+	/**
+	 * Order identification
+	 */
+	@Column(name = "mandate_identification", length = 255)
+	@Size(max = 255)
+	private String mandateIdentification = "";
 
-    /**
-     * Order date
-     */
-    @Column(name = "mandate_date")
-    @Temporal(TemporalType.DATE)
-    private Date mandateDate;
+	/**
+	 * Order date
+	 */
+	@Column(name = "mandate_date")
+	@Temporal(TemporalType.DATE)
+	private Date mandateDate;
 
-    public DDPaymentMethod() {
-        this.paymentType = PaymentMethodEnum.DIRECTDEBIT;
-    }
+	public DDPaymentMethod() {
+		this.paymentType = PaymentMethodEnum.DIRECTDEBIT;
+	}
 
-    public DDPaymentMethod(String alias, boolean preferred) {
-        super();
-        this.paymentType = PaymentMethodEnum.DIRECTDEBIT;
-        this.alias = alias;
-        this.preferred = preferred;
-    }
+	public DDPaymentMethod(String alias, boolean preferred) {
+		super();
+		this.paymentType = PaymentMethodEnum.DIRECTDEBIT;
+		this.alias = alias;
+		this.preferred = preferred;
+	}
 
-    public DDPaymentMethod(CustomerAccount customerAccount, boolean isDisabled, String alias, boolean preferred, Date mandateDate, String mandateIdentification,
-            BankCoordinates bankCoordinates) {
-        super();
-        setPaymentType(PaymentMethodEnum.CARD);
-        setAlias(alias);
-        setDisabled(isDisabled);
-        setPreferred(preferred);
-        this.customerAccount = customerAccount;
-        this.mandateDate = mandateDate;
-        this.mandateIdentification = mandateIdentification;
-        this.bankCoordinates = bankCoordinates;
-    }
+	public DDPaymentMethod(CustomerAccount customerAccount, boolean isDisabled, String alias, boolean preferred,
+			Date mandateDate, String mandateIdentification, BankCoordinates bankCoordinates) {
+		super();
+		setPaymentType(PaymentMethodEnum.CARD);
+		setAlias(alias);
+		setDisabled(isDisabled);
+		setPreferred(preferred);
+		this.customerAccount = customerAccount;
+		this.mandateDate = mandateDate;
+		this.mandateIdentification = mandateIdentification;
+		this.bankCoordinates = bankCoordinates;
+	}
 
-    public BankCoordinates getBankCoordinates() {
-        return bankCoordinates;
-    }
+	public BankCoordinates getBankCoordinates() {
+		return bankCoordinates;
+	}
 
-    public void setBankCoordinates(BankCoordinates bankCoordinates) {
-        this.bankCoordinates = bankCoordinates;
-    }
+	public void setBankCoordinates(BankCoordinates bankCoordinates) {
+		this.bankCoordinates = bankCoordinates;
+	}
 
-    public String getMandateIdentification() {
-        return mandateIdentification;
-    }
+	public String getMandateIdentification() {
+		return mandateIdentification;
+	}
 
-    public void setMandateIdentification(String mandateIdentification) {
-        this.mandateIdentification = mandateIdentification;
-    }
+	public void setMandateIdentification(String mandateIdentification) {
+		this.mandateIdentification = mandateIdentification;
+	}
 
-    public Date getMandateDate() {
-        return mandateDate;
-    }
+	public Date getMandateDate() {
+		return mandateDate;
+	}
 
-    public void setMandateDate(Date mandateDate) {
-        this.mandateDate = mandateDate;
-    }
+	public void setMandateDate(Date mandateDate) {
+		this.mandateDate = mandateDate;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof DDPaymentMethod)) {
-            return false;
-        }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (obj == null) {
+			return false;
+		} else if (!(obj instanceof DDPaymentMethod)) {
+			return false;
+		}
 
-        DDPaymentMethod other = (DDPaymentMethod) obj;
+		DDPaymentMethod other = (DDPaymentMethod) obj;
 
-        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            return true;
-        }
+		if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+			return true;
+		}
 
-        if (getMandateIdentification() != null && getMandateIdentification().equals(other.getMandateIdentification())) {
-            return true;
-        }
+		if (getMandateIdentification() != null && getMandateIdentification().equals(other.getMandateIdentification())) {
+			return true;
+		}
 
-        if (bankCoordinates != null) {
-            return bankCoordinates.equals(other.getBankCoordinates());
-        }
-        return false;
-    }
+		if (bankCoordinates != null) {
+			return bankCoordinates.equals(other.getBankCoordinates());
+		}
+		return false;
+	}
 
-    @Override
-    public void updateWith(PaymentMethod paymentMethod) {
+	@Override
+	public void updateWith(PaymentMethod paymentMethod) {
 
-        DDPaymentMethod otherPaymentMethod = (DDPaymentMethod) paymentMethod;
-        setAlias(otherPaymentMethod.getAlias());
-        setPreferred(otherPaymentMethod.isPreferred());
-        setBankCoordinates(otherPaymentMethod.getBankCoordinates());
-        setMandateDate(otherPaymentMethod.getMandateDate());
-        setMandateIdentification(otherPaymentMethod.getMandateIdentification());
-    }
+		DDPaymentMethod otherPaymentMethod = (DDPaymentMethod) paymentMethod;
+		setAlias(otherPaymentMethod.getAlias());
+		setPreferred(otherPaymentMethod.isPreferred());
+		setBankCoordinates(otherPaymentMethod.getBankCoordinates());
+		setMandateDate(otherPaymentMethod.getMandateDate());
+		setMandateIdentification(otherPaymentMethod.getMandateIdentification());
+	}
 
-    @Override
-    public String toString() {
-        return "DDPaymentMethod [ alias = " + getAlias() + ", account_owner = " + bankCoordinates.getAccountOwner() + ",  bank_name = " + bankCoordinates.getBankName() + ","
-                + " bic = " + bankCoordinates.getBic() + ", iban = " + bankCoordinates.getIban() + ",  mandateIdentification=" + getMandateIdentification() + ", mandateDate="
-                + getMandateDate() + "]";
-    }
+	@Override
+	public String toString() {
+		BankCoordinates bc = bankCoordinates == null ? new BankCoordinates() : bankCoordinates;
+		return "DDPaymentMethod [ alias = " + getAlias() + ", account_owner = " + bc.getAccountOwner()
+				+ ",  bank_name = " + bc.getBankName() + "," + " bic = " + bc.getBic() + ", iban = " + bc.getIban()
+				+ ",  mandateIdentification=" + getMandateIdentification() + ", mandateDate=" + getMandateDate() + "]";
+	}
 
 }
