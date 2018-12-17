@@ -73,7 +73,7 @@ public class Workflow extends EnableBusinessEntity {
      * Should worklfow history be tracked
      */
     @Type(type = "numeric_boolean")
-    @Column(name = "enable_hostory")
+    @Column(name = "enable_history")
     private boolean enableHistory;
 
     /**
