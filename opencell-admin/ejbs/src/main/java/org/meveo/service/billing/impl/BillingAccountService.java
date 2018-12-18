@@ -860,10 +860,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         Map<InvoiceSubCategory, Map<String, BigDecimal>> billingAccountAmountMap = new HashMap<InvoiceSubCategory, Map<String, BigDecimal>>();
 
         for (UserAccount userAccount : billingAccount.getUsersAccounts()) {
-            if (userAccount.getStatus().equals(AccountStatusEnum.ACTIVE)) {
 
                 for (Subscription subscription : userAccount.getSubscriptions()) {
-                    if (subscription.getStatus().equals(SubscriptionStatusEnum.ACTIVE)) {
 
                         Map<InvoiceSubCategory, Map<String, BigDecimal>> subscriptionAmountMap = new HashMap<InvoiceSubCategory, Map<String, BigDecimal>>();
 
@@ -1153,9 +1151,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                 billingAccountAmountMap.put(invoiceSubCategory, billingAccountAmount);
                             }
 
-                        }
                     }
-                }
             }
         }
 
