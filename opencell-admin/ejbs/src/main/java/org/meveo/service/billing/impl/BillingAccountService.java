@@ -759,12 +759,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         Map<InvoiceSubCategory, Map<String, BigDecimal>> billingAccountAmountMap = new HashMap<InvoiceSubCategory, Map<String, BigDecimal>>();
         List<Subscription> subscriptionsToProcess = new ArrayList<Subscription>();
         for (UserAccount userAccount : billingAccount.getUsersAccounts()) {
-            if (userAccount.getStatus().equals(AccountStatusEnum.ACTIVE)) {
-                for (Subscription subscription : userAccount.getSubscriptions()) {
-                    if (subscription.getStatus().equals(SubscriptionStatusEnum.ACTIVE)) {
-                        subscriptionsToProcess.add(subscription);
-                    }
-                }
+            for (Subscription subscription : userAccount.getSubscriptions()) {
+                 subscriptionsToProcess.add(subscription);
             }
         }
         
