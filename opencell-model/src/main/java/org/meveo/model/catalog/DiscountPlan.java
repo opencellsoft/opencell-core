@@ -158,11 +158,9 @@ public class DiscountPlan extends EnableBusinessCFEntity {
 
 	@Override
 	public String toString() {
-		final int maxLen = 10;
-		return String.format("DiscountPlan [%s, minDuration=%s, maxDuration=%s, discountPlanItems=%s]",
-				super.toString(), minDuration, maxDuration,
-				discountPlanItems != null ? discountPlanItems.subList(0, Math.min(discountPlanItems.size(), maxLen))
-						: null);
+		return "DiscountPlan [minDuration=" + minDuration + ", maxDuration=" + maxDuration + ", startDate=" + startDate
+				+ ", endDate=" + endDate + ", defaultDuration=" + defaultDuration + ", durationUnit=" + durationUnit
+				+ "]";
 	}
 
 	public Date getStartDate() {
