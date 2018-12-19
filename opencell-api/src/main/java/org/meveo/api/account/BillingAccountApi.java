@@ -3,6 +3,7 @@ package org.meveo.api.account;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -13,6 +14,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
+import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
@@ -226,10 +228,24 @@ public class BillingAccountApi extends AccountEntityApi {
 			List<DiscountPlan> discountPlans = new ArrayList<>();
 			for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
 				DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
-				dp = copyFromDto(discountPlanDto, dp);
 				if (dp == null) {
 					throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
 				}
+				
+				discountPlanService.detach(dp);
+				dp = copyFromDto(discountPlanDto, dp);
+				
+				// populate customFields
+	            try {
+	                populateCustomFields(discountPlanDto.getCustomFields(), dp, true);
+	            } catch (MissingParameterException | InvalidParameterException e) {
+	                log.error("Failed to associate custom field instance to an entity: {} {}", discountPlanDto.getCode(), e.getMessage());
+	                throw e;
+	            } catch (Exception e) {
+	                log.error("Failed to associate custom field instance to an entity {}", discountPlanDto.getCode(), e);
+	                throw new MeveoApiException("Failed to associate custom field instance to an entity " + discountPlanDto.getCode());
+	            }
+				
 				discountPlans.add(dp);
 			}
 
@@ -406,12 +422,24 @@ public class BillingAccountApi extends AccountEntityApi {
 			List<DiscountPlan> discountPlans = new ArrayList<>();
 			for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
 				DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
-				discountPlanService.detach(dp);
-				dp = copyFromDto(discountPlanDto, dp);
-				
 				if (dp == null) {
 					throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
 				}
+				
+				discountPlanService.detach(dp);
+				dp = copyFromDto(discountPlanDto, dp);
+				
+				// populate customFields
+	            try {
+	                populateCustomFields(discountPlanDto.getCustomFields(), dp, false);
+	            } catch (MissingParameterException | InvalidParameterException e) {
+	                log.error("Failed to associate custom field instance to an entity: {} {}", discountPlanDto.getCode(), e.getMessage());
+	                throw e;
+	            } catch (Exception e) {
+	                log.error("Failed to associate custom field instance to an entity {}", discountPlanDto.getCode(), e);
+	                throw new MeveoApiException("Failed to associate custom field instance to an entity " + discountPlanDto.getCode());
+	            }
+				
 				discountPlans.add(dp);
 			}
 
@@ -454,7 +482,16 @@ public class BillingAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
         }
 
-        return accountHierarchyApi.billingAccountToDto(billingAccount, inheritCF);
+        BillingAccountDto billingAccountDto = accountHierarchyApi.billingAccountToDto(billingAccount, inheritCF);
+        
+		if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
+			billingAccountDto.setDiscountPlanInstances(billingAccount.getDiscountPlanInstances().stream()
+					.map(p -> new DiscountPlanInstanceDto(p,
+							entityToDtoConverter.getCustomFieldsDTO(p, CustomFieldInheritanceEnum.INHERIT_NONE)))
+					.collect(Collectors.toList()));
+		}
+        
+        return billingAccountDto;
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))

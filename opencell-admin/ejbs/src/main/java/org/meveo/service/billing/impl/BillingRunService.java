@@ -880,7 +880,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	        if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 	            log.info("Total billable entities:" + billableEntities.size());
 	            billingRunExtensionService.updateBRAmounts(billingRun.getId(), billableEntities);
-	            billingRunExtensionService.updateBillingRun(billingRun.getId(), entities.size(), billableEntities.size(), BillingRunStatusEnum.PREINVOICED, new Date());
+                Integer entitiesSize = entities != null ? entities.size() : null;
+                billingRunExtensionService.updateBillingRun(billingRun.getId(), entitiesSize, billableEntities.size(), BillingRunStatusEnum.PREINVOICED, new Date());
 	        }
         }
 

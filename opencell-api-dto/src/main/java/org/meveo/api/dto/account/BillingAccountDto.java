@@ -207,17 +207,6 @@ public class BillingAccountDto extends AccountDto {
         }
 
         // End compatibility with pre-4.6 versions
-        
-//        if(e.getDiscountPlans() != null) {
-//			discountPlans = new ArrayList<>();
-//			discountPlans = e.getDiscountPlans().stream().map(p -> p.getCode()).collect(Collectors.toList());
-//		}
-        
-		if (e.getDiscountPlanInstances() != null && !e.getDiscountPlanInstances().isEmpty()) {
-			discountPlanInstances = new ArrayList<>();
-			discountPlanInstances = e.getDiscountPlanInstances().stream().map(p -> new DiscountPlanInstanceDto(p))
-					.collect(Collectors.toList());
-		}
     }
 	
 	public void addDiscountPlan(DiscountPlanDto dp) {

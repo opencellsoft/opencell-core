@@ -247,9 +247,9 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = invoiceSubCategoryCountryService.listByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory,
             sellersCountry, buyersCountry, Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"), null, null);
 
-        if (invoiceSubcategoryCountries == null) {
+        if (invoiceSubcategoryCountries.isEmpty()) {
             throw new EntityDoesNotExistsException(
-                "InvoiceSubCategoryCountry with invoiceSubCategory=" + invoiceSubCategoryCode + ", tradingCountry=" + buyersCountryCode + " does not exists.");
+                "InvoiceSubCategoryCountry with invoiceSubCategory=" + invoiceSubCategoryCode +  ", sellersCountry=" + sellersCountryCode + " and tradingCountry=" + buyersCountryCode + " does not exists.");
         } else {
             for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubcategoryCountries) {
                 invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);

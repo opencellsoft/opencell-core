@@ -34343,7 +34343,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>67</con:value>
+        <con:value>77</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36819,6 +36819,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="delay" name="d1" id="83b3d6fe-2012-4e3d-8cd9-b4ec32b6f89a">
+        <con:settings/>
+        <con:config>
+          <delay>5000</delay>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="43276789-8061-4428-8321-37de4423685e" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="update with cf" searchProperties="true">
@@ -36969,7 +36975,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>106</con:value>
+        <con:value>117</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38518,7 +38524,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>72</con:value>
+        <con:value>79</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39741,7 +39747,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>62</con:value>
+        <con:value>69</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -49963,7 +49969,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>53</con:value>
+        <con:value>60</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
