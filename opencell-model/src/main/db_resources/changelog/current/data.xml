@@ -122,5 +122,9 @@
             <column name="holiday_begin" valueNumeric="1225" />
             <column name="holiday_end" valueNumeric="1226" />
         </insert>
+    </changeSet>
+	<changeSet author="anasseh" id="#3652_20181128">
+	<sql>update ${db.schema.adapted}ar_ddrequest_builder set payment_level ='AO'</sql>
+
 	</changeSet>
 </databaseChangeLog>

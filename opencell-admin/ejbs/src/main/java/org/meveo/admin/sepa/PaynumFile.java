@@ -16,35 +16,41 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
-import org.meveo.service.payments.impl.DDRequestBuilderInterface;
 import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The Class PaynumFile.
+ *
  * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.2
- *
+ * @lastModifiedVersion 5.3
  */
 @DDRequestBuilderClass
 public class PaynumFile extends AbstractDDRequestBuilder {
+    
+    /** The log. */
     Logger log = LoggerFactory.getLogger(PaynumFile.class);
+
 
     @Override
     public String getDDFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
+        if(ddRequestLot.getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
+            throw new UnsupportedOperationException("Refund Sepa not implimented for Paynum");
+        }
         ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
         String fileName = null;
         String codeCreancier_paramKey = "paynum.codeCreancier";
         String codeCreancier = paramBean.getProperty(codeCreancier_paramKey, null);
-        fileName = DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd")
-                + "_" + (ddRequestLot.getNbItemsOk() - ddRequestLot.getNbItemsKo()) + "_" + (ddRequestLot.getTotalAmount()
-                    .setScale(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).multiply(new BigDecimal(100)).longValue())
+        fileName = DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd") + "_" + (ddRequestLot.getNbItemsOk() - ddRequestLot.getNbItemsKo()) + "_"
+                + (ddRequestLot.getTotalAmount().setScale(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).multiply(new BigDecimal(100)).longValue())
                 + "_ppf_factures_" + codeCreancier + ".csv";
 
-        String outputDir =  ArConfig.getDDRequestOutputDirectory();
+        String outputDir = ArConfig.getDDRequestOutputDirectory();
         outputDir = outputDir.replaceAll("\\..", "");
 
         log.info("DDRequest output directory=" + outputDir);
@@ -55,8 +61,12 @@ public class PaynumFile extends AbstractDDRequestBuilder {
         return outputDir + File.separator + fileName;
     }
 
+
     @Override
     public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
+        if(ddRequestLot.getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
+            throw new UnsupportedOperationException("Refund Sepa not implimented for Paynum");
+        }
         try {
             CsvBuilder csvBuilder = new CsvBuilder(";", false);
             for (DDRequestItem ddrequestItem : ddRequestLot.getDdrequestItems()) {
@@ -73,18 +83,9 @@ public class PaynumFile extends AbstractDDRequestBuilder {
         }
     }
 
-    @Override
-    public String getDDRejectFilePrefix() throws BusinessException {
-        return "*";
-    }
 
     @Override
-    public String getDDRejectFileExtension() throws BusinessException {
-        return "csv";
-    }
-
-    @Override
-    public DDRejectFileInfos processDDRejectedFile(File file) throws BusinessException {
+    public DDRejectFileInfos processSDDRejectedFile(File file) throws BusinessException {
         DDRejectFileInfos ddRejectFileInfos = new DDRejectFileInfos();
         try {
             ddRejectFileInfos.setFileName(file.getName());
@@ -98,12 +99,19 @@ public class PaynumFile extends AbstractDDRequestBuilder {
                 ddRejectFileInfos.setDdRequestLotId(new Long(ddRequestLotId));
                 ddRejectFileInfos.getListInvoiceRefsRejected().put(new Long(codeFacture), causeRejet);
             }
-        } catch (Exception e) {            
+        } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
         return ddRejectFileInfos;
     }
 
+    /**
+     * Dd request item to record.
+     *
+     * @param ddrequestItem the ddrequest item
+     * @return the string[]
+     * @throws Exception the exception
+     */
     private String[] ddRequestItemToRecord(DDRequestItem ddrequestItem) throws Exception {
         String[] lineAsArray = new String[14];
         // code débiteur (optionnel)
@@ -117,12 +125,11 @@ public class PaynumFile extends AbstractDDRequestBuilder {
         // email débiteur (optionnel)
         lineAsArray[4] = "";
         // code facture
-        lineAsArray[5] = ""+ddrequestItem.getId();
+        lineAsArray[5] = "" + ddrequestItem.getId();
         // code facture secondaire (optionnel)
         lineAsArray[6] = ddrequestItem.getReference();
         // montant en centimes
-        lineAsArray[7] = "" + (ddrequestItem.getAmount().setScale(2, RoundingMode.HALF_UP)
-            .multiply(new BigDecimal(100)).longValue());
+        lineAsArray[7] = "" + (ddrequestItem.getAmount().setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).longValue());
         // devise (code ISO sur 3 caractères, exemples: "EUR", "USD")
         lineAsArray[8] = ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getTradingCurrency().getCurrencyCode();
         // date émission (optionnel)
@@ -139,6 +146,13 @@ public class PaynumFile extends AbstractDDRequestBuilder {
         return lineAsArray;
     }
 
+    /**
+     * Gets the secret code.
+     *
+     * @param customerAccount the customer account
+     * @return the secret code
+     * @throws Exception the exception
+     */
     private static String getSecretCode(CustomerAccount customerAccount) throws Exception {
         String code = customerAccount.getContactInformationNullSafe().getEmail();
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -146,16 +160,9 @@ public class PaynumFile extends AbstractDDRequestBuilder {
         return Base64.encodeBase64URLSafeString(hash);
     }
 
-    @Override
-    public void generateSCTRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
-        // TODO : Request the need to implement in case of SCT paynum file
-        generateDDRequestLotFile(ddRequestLot, appProvider);
-        
-    }
 
     @Override
-    public String getSCTFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {        
-        // TODO : Request the need to implement in case of SCT paynum file
-        return getDDFileName(ddRequestLot, appProvider);
+    public DDRejectFileInfos processSCTRejectedFile(File file) throws BusinessException {
+            throw new UnsupportedOperationException("Refund Sepa not implimented for Paynum");        
     }
 }

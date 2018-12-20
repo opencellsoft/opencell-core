@@ -40,7 +40,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
@@ -258,18 +257,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         } catch (NoResultException ex) {
             log.debug("invoice search returns no result for reference={}.", invoiceReference);
         }
-        return null;
-    }
-
-    /**
-     * Invoice sub category detail.
-     *
-     * @param invoiceReference the invoice reference
-     * @param invoiceSubCategoryCode the invoice sub category code
-     * @return the invoice sub category
-     */
-    public InvoiceSubCategory invoiceSubCategoryDetail(String invoiceReference, String invoiceSubCategoryCode) {
-        // TODO : need to be more clarified
         return null;
     }
 

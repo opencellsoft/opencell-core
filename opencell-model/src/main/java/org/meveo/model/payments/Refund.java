@@ -23,7 +23,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue(value = "RF")
-public class Refund extends AccountOperation {
+public class Refund extends Payment {
 
     private static final long serialVersionUID = 1L;
 
