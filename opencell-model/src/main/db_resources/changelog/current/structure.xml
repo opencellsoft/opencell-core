@@ -509,27 +509,6 @@
     	<sql>UPDATE cat_discount_plan_item SET discount_percent=discount_amount WHERE discount_percent is null;</sql>  	
     </changeSet>
     
-    <changeSet id="#3791_20181119" author="SaidRamli">
-         <sql><![CDATA[
-			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN sync_status TYPE VARCHAR(255);
-			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN async_status TYPE VARCHAR(255);
-			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN error_type TYPE VARCHAR(255);
-			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN operation_category TYPE VARCHAR(255);
-			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN payment_method_type TYPE VARCHAR(255);
-			ALTER TABLE ${db.schema.adapted}ar_payment_history ALTER COLUMN payment_method_name TYPE VARCHAR(255);
-        ]]>
-        </sql>
-    </changeSet>
-    
-    <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
-	    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
-	    	<dropColumn tableName="cat_discount_plan_item">
-	    		<column name="discount_amount"></column>
-	    	</dropColumn>
-	    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el" columnDataType="varchar(2000)"/>
-	    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el_sp" newColumnName="discount_value_el_sp" columnDataType="varchar(2000)"/>    	
-    </changeSet>
-
     <changeSet id="#3823_20181125 - the invoice(s) that was paid when the payment are rejected" author="anasseh">
     		<addColumn tableName="ar_account_operation">
             <column name="rejected_payment_id" type="bigint" />
