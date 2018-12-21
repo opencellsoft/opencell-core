@@ -389,10 +389,17 @@
         </addColumn>
         <renameTable oldTableName="ftp_imported_file" newTableName="ftp_transferred_file" />
         <sql><![CDATA[
-            ALTER INDEX ftp_imported_file_pkey RENAME TO ftp_transferred_file_pkey;
-            ALTER SEQUENCE ftp_imported_file_seq RENAME TO ftp_transferred_file_seq;
+            ALTER INDEX IF EXISTSftp_imported_file_pkey RENAME TO ftp_transferred_file_pkey;
+            ALTER SEQUENCE IF EXISTS ftp_imported_file_seq RENAME TO ftp_transferred_file_seq;
         ]]>
         </sql>
+        
+        <sql><![CDATA[
+            DELETE FROM crm_custom_field_tmpl_val where customfieldtemplate_id IN (SELECT ID FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND
+                code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'))
+        ]]>
+        </sql>
+        
         <delete tableName="crm_custom_field_tmpl">
             <where>applies_to='JOB_FtpAdapterJob' AND
                 code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory')
@@ -690,7 +697,7 @@
         <createSequence sequenceName="ar_payment_gateway_rum_sequence_seq" />
         <addForeignKeyConstraint constraintName="fk_ar_payment_gateway_rum_sequence" referencedTableName="ar_payment_gateway" baseColumnNames="payment_gateway_id" baseTableName="ar_payment_gateway_rum_sequence" referencedColumnNames="id"/>
     </changeSet>
-    <changeSet author="EdwardPLegaspi" id="20181126_3630 - RUM Sequence for PaymentGateway - M" dbms="mysql">
+    <changeSet author="EdwardPLegaspi" id="#20181126_3630 - RUM Sequence for PaymentGateway in case Mysql" dbms="mysql">
     	<createTable tableName="ar_payment_gateway_rum_sequence_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_gateway_rum_sequence_seq_pk" />
