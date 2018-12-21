@@ -1,6 +1,82 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
+        <changeSet id="#3680 - Extend FtpAdapterJob to support file export and SFTP-P" author="mboukayoua" dbms="postgresql">
+        <update tableName="meveo_job_instance">
+            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_localDirectory')" />
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_removeOriginalFile')" />
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_ftpInputDirectory', 'FtpAdapterJob_remoteDirectory')" />
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="cf_values" valueComputed="replace(cf_values, '}]}', '}],&quot;FtpAdapterJob_operation&quot;:[{&quot;string&quot;:&quot;IMPORT&quot;}]}')" />
+        </update>
+        <renameColumn tableName="ftp_imported_file" oldColumnName="import_date" newColumnName="transfer_date" columnDataType="datetime"/>
+        <addColumn tableName="ftp_imported_file">
+            <column name="operation" type="varchar(100)" value="IMPORT" defaultValue="IMPORT" />
+        </addColumn>
+        <renameTable oldTableName="ftp_imported_file" newTableName="ftp_transferred_file" />
+        <sql><![CDATA[
+            ALTER INDEX IF EXISTS ftp_imported_file_pkey RENAME TO ftp_transferred_file_pkey;
+            ALTER SEQUENCE IF EXISTS ftp_imported_file_seq RENAME TO ftp_transferred_file_seq;
+        ]]>
+        </sql>
+        <sql><![CDATA[
+            DELETE FROM crm_custom_field_tmpl_val where customfieldtemplate_id IN (SELECT ID FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
+            DELETE FROM crm_custom_field_tmpl_val WHERE customfieldtemplate_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
+			DELETE FROM crm_custom_field_tmpl_mcols WHERE cft_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
+			DELETE FROM crm_custom_field_tmpl_val_pos WHERE customfieldtemplate_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
+        ]]>
+        </sql>
+        
+        
+        <delete tableName="crm_custom_field_tmpl">
+            <where>applies_to='JOB_FtpAdapterJob' AND
+                code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory')
+            </where>
+        </delete>
+    </changeSet>
+
+    <changeSet id="#3680 - Extend FtpAdapterJob to support file export and SFTP-M" author="mboukayoua" dbms="mysql">
+        <update tableName="meveo_job_instance">
+            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_localDirectory')" />
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_removeOriginalFile')" />
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_ftpInputDirectory', 'FtpAdapterJob_remoteDirectory')" />
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="cf_values" valueComputed="replace(cf_values, '}]}', '}],&quot;FtpAdapterJob_operation&quot;:[{&quot;string&quot;:&quot;IMPORT&quot;}]}')" />
+        </update>
+        <renameColumn tableName="ftp_imported_file" oldColumnName="import_date" newColumnName="transfer_date" columnDataType="datetime"/>
+        <addColumn tableName="ftp_imported_file">
+            <column name="operation" type="varchar(100)" value="IMPORT" defaultValue="IMPORT" />
+        </addColumn>
+        <renameTable oldTableName="ftp_imported_file" newTableName="ftp_transferred_file" />
+        <createIndex tableName="ftp_transferred_file" indexName="ftp_transferred_file_pkey">
+            <column name="id" type="bigint"/>
+        </createIndex>
+        <createSequence sequenceName="ftp_transferred_file_seq" startValue="1"/>
+        <dropSequence sequenceName="ftp_imported_file_seq"/>
+        <sql><![CDATA[
+            DELETE FROM crm_custom_field_tmpl_val where customfieldtemplate_id IN (SELECT ID FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
+            DELETE FROM crm_custom_field_tmpl_val WHERE customfieldtemplate_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
+			DELETE FROM crm_custom_field_tmpl_mcols WHERE cft_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
+			DELETE FROM crm_custom_field_tmpl_val_pos WHERE customfieldtemplate_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
+        ]]>
+        </sql>
+        <delete tableName="crm_custom_field_tmpl">
+            <where>applies_to='JOB_FtpAdapterJob' AND
+                code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory')
+            </where>
+        </delete>
+    </changeSet>
+
     <changeSet id="#3644_04102018" author="AbdellatifBari">
         <addColumn tableName="crm_custom_field_tmpl">
             <column name="display_format" type="varchar(80)" />
@@ -370,72 +446,7 @@
         </update>
     </changeSet>
 
-    <changeSet id="#3680 - Extend FtpAdapterJob to support file export and SFTP-P" author="mboukayoua" dbms="postgresql">
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_localDirectory')" />
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_removeOriginalFile')" />
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_ftpInputDirectory', 'FtpAdapterJob_remoteDirectory')" />
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, '}]}', '}],&quot;FtpAdapterJob_operation&quot;:[{&quot;string&quot;:&quot;IMPORT&quot;}]}')" />
-        </update>
-        <renameColumn tableName="ftp_imported_file" oldColumnName="import_date" newColumnName="transfer_date" columnDataType="datetime"/>
-        <addColumn tableName="ftp_imported_file">
-            <column name="operation" type="varchar(100)" value="IMPORT" defaultValue="IMPORT" />
-        </addColumn>
-        <renameTable oldTableName="ftp_imported_file" newTableName="ftp_transferred_file" />
-        <sql><![CDATA[
-            ALTER INDEX IF EXISTSftp_imported_file_pkey RENAME TO ftp_transferred_file_pkey;
-            ALTER SEQUENCE IF EXISTS ftp_imported_file_seq RENAME TO ftp_transferred_file_seq;
-        ]]>
-        </sql>
-        
-        <sql><![CDATA[
-            DELETE FROM crm_custom_field_tmpl_val where customfieldtemplate_id IN (SELECT ID FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND
-                code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'))
-        ]]>
-        </sql>
-        
-        <delete tableName="crm_custom_field_tmpl">
-            <where>applies_to='JOB_FtpAdapterJob' AND
-                code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory')
-            </where>
-        </delete>
-    </changeSet>
 
-    <changeSet id="#3680 - Extend FtpAdapterJob to support file export and SFTP-M" author="mboukayoua" dbms="mysql">
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_localDirectory')" />
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_removeOriginalFile')" />
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_ftpInputDirectory', 'FtpAdapterJob_remoteDirectory')" />
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, '}]}', '}],&quot;FtpAdapterJob_operation&quot;:[{&quot;string&quot;:&quot;IMPORT&quot;}]}')" />
-        </update>
-        <renameColumn tableName="ftp_imported_file" oldColumnName="import_date" newColumnName="transfer_date" columnDataType="datetime"/>
-        <addColumn tableName="ftp_imported_file">
-            <column name="operation" type="varchar(100)" value="IMPORT" defaultValue="IMPORT" />
-        </addColumn>
-        <renameTable oldTableName="ftp_imported_file" newTableName="ftp_transferred_file" />
-        <createIndex tableName="ftp_transferred_file" indexName="ftp_transferred_file_pkey">
-            <column name="id" type="bigint"/>
-        </createIndex>
-        <createSequence sequenceName="ftp_transferred_file_seq" startValue="1"/>
-        <dropSequence sequenceName="ftp_imported_file_seq"/>
-        <delete tableName="crm_custom_field_tmpl">
-            <where>applies_to='JOB_FtpAdapterJob' AND
-                code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory')
-            </where>
-        </delete>
-    </changeSet>
     <changeSet id="#3765_20181106" author="AndriusKarpavicius">
         <addColumn tableName="crm_provider">
             <column name="invoice_config_id" type="bigint" />
@@ -511,11 +522,7 @@
                         newDataType="VARCHAR(255)"
                         tableName="ar_payment_history"/>
     </changeSet>
-   
-    <changeSet id="#3767_20181112 - Discount fields refactor - P" author="EdwardPLegaspi" dbms="postgresql">
-    	<sql>UPDATE cat_discount_plan_item SET discount_percent=discount_amount WHERE discount_percent is null;</sql>  	
-    </changeSet>
-    
+
     <changeSet id="#3823_20181125 - the invoice(s) that was paid when the payment are rejected" author="anasseh">
     		<addColumn tableName="ar_account_operation">
             <column name="rejected_payment_id" type="bigint" />
@@ -554,6 +561,7 @@
             <column name="weekend_end" type="int4" />
         </addColumn>
     </changeSet>
+    
     
     <changeSet id="#3607_20181125" author="AndriusKarpavicius">
         <modifyDataType tableName="crm_custom_field_tmpl" columnName="index_type" newDataType="varchar(17)"/>
@@ -748,92 +756,7 @@
             <column name="auto_renew_date" type="datetime"/>
         </addColumn>
     </changeSet>
-    
-    <changeSet id="#3652_26112018" author="anasseh">
-        <addColumn tableName="ar_ddrequest_lot_op">
-            <column name="payment_or_refund" type="varchar(30)" />
-        </addColumn>
-        <sql>update ${db.schema.adapted}ar_ddrequest_lot_op set payment_or_refund='PAYMENT'</sql>
-        <addColumn tableName="ar_ddrequest_lot">
-            <column name="payment_or_refund" type="varchar(30)" />
-        </addColumn>
-        <sql>update ${db.schema.adapted}ar_ddrequest_lot set payment_or_refund='PAYMENT'</sql>   
-        <addColumn tableName="ar_ddrequest_item">
-            <column name="refund_id" type="bigint" />
-        </addColumn>
-         <addForeignKeyConstraint constraintName="fk_dd_item_refund_id" referencedTableName="ar_account_operation" baseColumnNames="refund_id" baseTableName="ar_ddrequest_item" referencedColumnNames="id"/>     
-    </changeSet>
-    
-    <changeSet author="EdwardPLegaspi" id="20181126_3630 - RUM Sequence for PaymentGateway">
-        <createTable tableName="ar_payment_gateway_rum_sequence">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_gateway_rum_sequence" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="varchar(255)" />
-            <column name="prefix" type="varchar(255)" />
-            <column name="sequence_size" type="bigint" />
-            <column name="current_sequence_nb" type="bigint" />
-            <column name="payment_gateway_id" type="bigint" />
-        </createTable>
-        <createSequence sequenceName="ar_payment_gateway_rum_sequence_seq" />
-        <addForeignKeyConstraint constraintName="fk_ar_payment_gateway_rum_sequence" referencedTableName="ar_payment_gateway" baseColumnNames="payment_gateway_id" baseTableName="ar_payment_gateway_rum_sequence" referencedColumnNames="id"/>
-    </changeSet>
-    <changeSet author="EdwardPLegaspi" id="20181126_3630 - RUM Sequence for PaymentGateway - M" dbms="mysql">
-    	<createTable tableName="ar_payment_gateway_rum_sequence_seq">
-            <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_gateway_rum_sequence_seq_pk" />
-            </column>
-        </createTable>
-	</changeSet>
-	<changeSet id="#3673_29112018" author="anasseh">
-	     <addColumn tableName="ar_ddrequest_lot_op"> 
-	      	<column name="seller_id" type="bigint" />
-         </addColumn>
-         <addForeignKeyConstraint constraintName="fk_dd_item_sell_id" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="ar_ddrequest_lot_op" referencedColumnNames="id"/>     
-   
-        <addColumn tableName="ar_payment_gateway">            
-            <column name="account_number" type="varchar(11)" />
-            <column name="account_owner" type="varchar(50)" />
-            <column name="bank_code" type="varchar(5)" />
-            <column name="bank_id" type="varchar(50)" />
-            <column name="bank_name" type="varchar(50)" />
-            <column name="bic" type="varchar(11)" />
-            <column name="branch_code" type="varchar(5)" />
-            <column name="iban" type="varchar(34)" />
-            <column name="ics" type="varchar(35)" />
-            <column name="issuer_name" type="varchar(50)" />
-            <column name="issuer_number" type="varchar(50)" /> 
-            <column name="hash_key" type="varchar(2)" />
-        </addColumn>
-        	<addColumn tableName="ar_payment_gateway"> 
-	      	<column name="seller_id" type="bigint" />
-         </addColumn>
-         <addForeignKeyConstraint constraintName="fk_sell_id_pg" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="ar_payment_gateway" referencedColumnNames="id"/>     
-      	<addColumn tableName="ar_account_operation"> 
-	      	<column name="seller_id" type="bigint" />
-         </addColumn>
-         <addForeignKeyConstraint constraintName="fk_sell_id_ao" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="ar_account_operation" referencedColumnNames="id"/>     
-   <addColumn tableName="ar_ddrequest_lot"> 
-	      	<column name="seller_id" type="bigint" />
-         </addColumn>
-         <addForeignKeyConstraint constraintName="fk_sell_id_dd_lot" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="ar_ddrequest_lot" referencedColumnNames="id"/>     
-   
-   
-   
-    </changeSet>
+
     <changeSet id="#3896_13122018" author="abdelkader.bouazza">
         <renameColumn tableName="wf_workflow" oldColumnName="enable_hostory" newColumnName="enable_history" columnDataType="${type.boolean}"/>
     </changeSet>
