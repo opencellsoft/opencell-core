@@ -225,6 +225,13 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         return qb.getQuery(getEntityManager()).getResultList();
     }
 
+    public void terminateOneShotChargeInstance(OneShotChargeInstance oneShotChargeInstance) throws BusinessException {
+        oneShotChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
+        oneShotChargeInstance.setTerminationDate(new Date());
+        update(oneShotChargeInstance);
+    }
+
+
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void matchPrepaidWallet(WalletInstance wallet, String matchingChargeCode) throws BusinessException {

@@ -36,7 +36,10 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.service.billing.impl.WalletOperationService;
 
 /**
  * @author Edward P. Legaspi
@@ -403,6 +406,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
+        return result;
+    }
+
+    @Override
+    public ActionStatus terminateOneShotCharge(String subscriptionCode, String oneshotChargeCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.terminateOneShotCharge(oneshotChargeCode, subscriptionCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
         return result;
     }
 

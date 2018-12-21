@@ -3,6 +3,7 @@ package org.meveo.api.rest.billing;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -169,6 +170,13 @@ public interface SubscriptionRs extends IBaseRs {
     GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode,
             @Deprecated @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+
+
+
+    @DELETE
+    @Path("/oneShotCharge/{subscriptionCode}/{oneshotChargeCode}")
+    ActionStatus terminateOneShotCharge(@PathParam("subscriptionCode") String subscriptionCode, @PathParam("oneshotChargeCode") String oneshotChargeCode);
+
 
     /**
      * Search for a subscription with a given code.
