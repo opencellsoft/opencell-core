@@ -27,6 +27,5 @@ import org.meveo.service.base.PersistenceService;
  * AutomatedPayment service implementation.
  */
 @Stateless
-public class AutomatedPaymentService extends
-		PersistenceService<AutomatedPayment> {
+public class AutomatedPaymentService extends PersistenceService<AutomatedPayment> {
 }

@@ -18,11 +18,12 @@
  */
 package org.meveocrm.admin.action.reporting;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -35,16 +36,19 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.dwh.BarChart;
 import org.meveo.model.dwh.Chart;
 import org.meveo.model.dwh.LineChart;
+import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.PieChart;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.chart.ChartModel;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
-
 import com.google.gson.Gson;
 
+/**
+ * @author Youssef IZEM
+ * @lastModifiedVersion 5.2
+ */
 @Named
 @ViewScoped
 public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityModel<Chart, ChartModel>> {
@@ -54,15 +58,27 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
 
     private static final long serialVersionUID = 2585685452044860823L;
 
+    private static final String MQ_MRR_REC_PER_MONTH_PER_OFFER = "MQ_MRR_REC_PER_MONTH_PER_OFFER";
+    private static final String MQ_MRR_REC_PER_MONTH_SUBS = "MQ_MRR_REC_PER_MONTH_SUBS";
+    private static final String MQ_CHURN_SUB_PER_MONTH = "MQ_CHURN_SUB_PER_MONTH";
+    private static final String MQ_ORDERS_BY_STATUS = "MQ_ORDERS_BY_STATUS";
+    private static final String DIMENSION_1 = "dimension1";
+    private static final String DIMENSION_2 = "dimension2";
+    private static final String DIMENSION_3 = "dimension3";
+    private static final String DIMENSION_4 = "dimension4";
+    private static final String OTHERS = "others";
+    private static final String TREND = "trend";
+    private static final String TOTAL = "total";
+
     public ChartBean() {
         super(Chart.class);
     }
 
-    public ChartBean(Class<Chart> clazz) {
+    public ChartBean(final Class<Chart> clazz) {
         super(clazz);
     }
 
-    public String getEditView(Chart chart) {
+    public final String getEditView(Chart chart) {
 
         if (chart instanceof BarChart) {
             return "/pages/reporting/dwh/barChartDetail.xhtml";
@@ -76,88 +92,133 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
         return "/pages/reporting/dwh/barChartDetail.xhtml";
     }
 
-    public String getMrrOnSubscriptionsValues() throws BusinessException {
+    public final String getMrrOnSubscriptionsValues() throws BusinessException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
-        List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, "MQ_MRR_REC_PER_MONTH_SUBS");
-        ChartJsModel jsModel = new ChartJsModel();
-        jsModel.getDatasets().put("regular", new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put("new", new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put("upsell", new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put("cancelled", new ArrayList<BigDecimal>());
+        List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, MQ_MRR_REC_PER_MONTH_SUBS);
+        ChartJsModel jsModel = initChartJsModel(MQ_MRR_REC_PER_MONTH_SUBS);
 
         for (MeasuredValue value : measuredValues) {
             jsModel.getChartLabels().add(format.format(value.getDate()));
-            jsModel.getDatasets().get("regular").add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension1(), "0")));
-            jsModel.getDatasets().get("new").add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension2(), "0")));
-            jsModel.getDatasets().get("upsell").add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension3(), "0")));
-            jsModel.getDatasets().get("cancelled").add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension4(), "0")).multiply(BigDecimal.ONE.negate()));
+            jsModel.getDatasets().get(DIMENSION_1).add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension1(), "0")));
+            jsModel.getDatasets().get(DIMENSION_2).add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension2(), "0")));
+            jsModel.getDatasets().get(DIMENSION_3).add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension3(), "0")));
+            jsModel.getDatasets().get(DIMENSION_4).add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension4(), "0")).multiply(BigDecimal.ONE.negate()));
         }
         Gson gson = new Gson();
         return gson.toJson(jsModel);
     }
 
-    public String getChurnValues() throws BusinessException {
+    public final String getChurnValues() throws BusinessException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
-        List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, "MQ_CHURN_SUB_PER_MONTH");
-        ChartJsModel jsModel = new ChartJsModel();
-        jsModel.getDatasets().put("subscriptions", new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put("terminations", new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put("trend", new ArrayList<BigDecimal>());
+        List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, MQ_CHURN_SUB_PER_MONTH);
+        ChartJsModel jsModel = initChartJsModel(MQ_CHURN_SUB_PER_MONTH);
 
         for (MeasuredValue value : measuredValues) {
             jsModel.getChartLabels().add(format.format(value.getDate()));
-            jsModel.getDatasets().get("subscriptions").add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension1(), "0")));
-            jsModel.getDatasets().get("terminations").add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension2(), "0")).multiply(BigDecimal.ONE.negate()));
-            jsModel.getDatasets().get("trend").add(value.getValue());
+            jsModel.getDatasets().get(DIMENSION_1).add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension1(), "0")));
+            jsModel.getDatasets().get(DIMENSION_2).add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension2(), "0")).multiply(BigDecimal.ONE.negate()));
+            jsModel.getDatasets().get(DIMENSION_3).add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension2(), "0")));
+            jsModel.getDatasets().get(DIMENSION_4).add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension2(), "0")));
+            jsModel.getDatasets().get(TREND).add(value.getValue());
         }
 
-        jsModel.setTrendValue(computeAverageTrend(jsModel.getDatasets().get("trend")));
+        jsModel.setTrendValue(computeAverageTrend(jsModel.getDatasets().get(TREND)));
 
         Gson gson = new Gson();
         return gson.toJson(jsModel);
     }
 
-    public String getMrrOnOffers() throws BusinessException {
+    public final String getMrrOnOffers() throws BusinessException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
-        List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, "MQ_MRR_REC_PER_MONTH_PER_OFFER");
-        ChartJsModel jsModel = new ChartJsModel();
-        jsModel.getDatasets().put("offer1", new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put("offer2", new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put("offer3", new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put("offer4", new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put("others", new ArrayList<BigDecimal>());
-        jsModel.getDatasets().put("total", new ArrayList<BigDecimal>());
-        BigDecimal offer1;
-        BigDecimal offer2;
-        BigDecimal offer3;
-        BigDecimal offer4;
-        BigDecimal others;
-        BigDecimal total;
+        List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, MQ_MRR_REC_PER_MONTH_PER_OFFER);
+        ChartJsModel jsModel = initChartJsModel(MQ_MRR_REC_PER_MONTH_PER_OFFER);
 
         for (MeasuredValue value : measuredValues) {
             jsModel.getChartLabels().add(format.format(value.getDate()));
-            offer1 = new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension1(), "0"));
-            offer2 = new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension2(), "0"));
-            offer3 = new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension3(), "0"));
-            offer4 = new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension4(), "0"));
-            others = value.getValue();
-            total = offer1.add(offer2).add(offer3).add(offer4).add(others);
-            jsModel.getDatasets().get("offer1").add(offer1);
-            jsModel.getDatasets().get("offer2").add(offer2);
-            jsModel.getDatasets().get("offer3").add(offer3);
-            jsModel.getDatasets().get("offer4").add(offer4);
-            jsModel.getDatasets().get("others").add(others);
-            jsModel.getDatasets().get("total").add(total);
+            BigDecimal offer1 = new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension1(), "0"));
+            BigDecimal offer2 = new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension2(), "0"));
+            BigDecimal offer3 = new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension3(), "0"));
+            BigDecimal offer4 = new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension4(), "0"));
+            BigDecimal others = value.getValue();
+            BigDecimal total = offer1.add(offer2).add(offer3).add(offer4).add(others);
+            jsModel.getDatasets().get(DIMENSION_1).add(offer1);
+            jsModel.getDatasets().get(DIMENSION_2).add(offer2);
+            jsModel.getDatasets().get(DIMENSION_3).add(offer3);
+            jsModel.getDatasets().get(DIMENSION_4).add(offer4);
+            jsModel.getDatasets().get(OTHERS).add(others);
+            jsModel.getDatasets().get(TOTAL).add(total);
         }
 
-        String labelsValue = (String)cfiService.getCFValue(appProvider, "CF_MQ_MRR_OFFER_LABELS");
+        String labelsValue = (String) cfiService.getCFValue(appProvider, "CF_MQ_MRR_OFFER_LABELS");
         if (!StringUtils.isBlank(labelsValue)) {
             for (String label : labelsValue.split(",")) {
                 jsModel.getLegendLabels().add(label);
             }
         }
 
-        jsModel.setTrendValue(computeCompoundGrowthRate(jsModel.getDatasets().get("total")));
+        jsModel.setTrendValue(computeCompoundGrowthRate(jsModel.getDatasets().get(TOTAL)));
+
+        Gson gson = new Gson();
+        return gson.toJson(jsModel);
+    }
+
+    public final String getOrdersByStatus() throws BusinessException {
+        List<MeasuredValue> measuredValues = getMeasuredValues(null, MQ_ORDERS_BY_STATUS, -31, Calendar.DAY_OF_MONTH);
+        ChartJsModel jsModel = new ChartJsModel();
+
+        MeasurableQuantity mq = mqService.findByCode(MQ_ORDERS_BY_STATUS);
+        boolean hasDimension1 = false;
+        boolean hasDimension2 = false;
+        boolean hasDimension3 = false;
+        boolean hasDimension4 = false;
+        String dimension1 = null;
+        String dimension2 = null;
+        String dimension3 = null;
+        String dimension4 = null;
+
+        if (mq != null) {
+            dimension1 = mq.getDimension1();
+            dimension2 = mq.getDimension2();
+            dimension3 = mq.getDimension3();
+            dimension4 = mq.getDimension4();
+            if (dimension1 != null && !"null".equals(dimension1)) {
+                hasDimension1 = true; 
+            }
+            if (dimension2 != null && !"null".equals(dimension2)) {
+                hasDimension2 = true;
+            }
+            if (dimension3 != null && !"null".equals(dimension3)) {
+                hasDimension3 = true;
+            }
+            if (dimension4 != null && !"null".equals(dimension4)) {
+                hasDimension4 = true;
+            }
+            jsModel.setTitle(mq.getDescription());
+        }
+
+        List<BigDecimal> data = new ArrayList<>();
+        List<String> legendLabels = jsModel.getLegendLabels();
+        if (measuredValues != null && measuredValues.size() > 0) {
+            MeasuredValue latestValue = measuredValues.get(measuredValues.size() - 1);
+            data.add(latestValue.getValue());
+            if (hasDimension1) {
+                legendLabels.add(dimension1);
+            }
+            if (hasDimension2) {
+                legendLabels.add(dimension2);
+                data.add(new BigDecimal(this.defaultIfEmptyOrNull(latestValue.getDimension1(), "0")));
+            }
+            if (hasDimension3) {
+                legendLabels.add(dimension3);
+                data.add(new BigDecimal(this.defaultIfEmptyOrNull(latestValue.getDimension2(), "0")));
+            }
+            if (hasDimension4) {
+                legendLabels.add(dimension4);
+                data.add(new BigDecimal(this.defaultIfEmptyOrNull(latestValue.getDimension3(), "0")));
+            }
+        }
+        jsModel.getDatasets().put("data", data);
+        jsModel.setTrendValue(computeMeasuredValuesAverage(measuredValues));
 
         Gson gson = new Gson();
         return gson.toJson(jsModel);
@@ -170,30 +231,8 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
         return defaultIfEmpty(source, defaultStr);
     }
 
-    public String getOrdersByStatus() throws BusinessException {       
-        List<MeasuredValue> measuredValues = getMeasuredValues(null, "MQ_ORDERS_BY_STATUS", -31, Calendar.DAY_OF_MONTH);
-        ChartJsModel jsModel = new ChartJsModel();
-
-        jsModel.getLegendLabels().addAll(Arrays.asList("New", "Pending", "Validated", "Cancelled"));
-
-        List<BigDecimal> data = new ArrayList<>();
-        if(measuredValues != null && measuredValues.size() > 0){
-	        MeasuredValue latestValue = measuredValues.get(measuredValues.size() - 1);
-	        data.add(latestValue.getValue());
-	        data.add(new BigDecimal(latestValue.getDimension1()));
-	        data.add(new BigDecimal(latestValue.getDimension2()));
-	        data.add(new BigDecimal(latestValue.getDimension3()));
-        }
-        jsModel.getDatasets().put("data", data);
-
-        jsModel.setTrendValue(computeMeasuredValuesAverage(measuredValues));
-
-        Gson gson = new Gson();
-        return gson.toJson(jsModel);
-    }
-
     @Override
-    public LazyDataModel<Chart> getLazyDataModel() {
+    public final LazyDataModel<Chart> getLazyDataModel() {
         getFilters();
         if (filters.containsKey("user")) {
             filters.put("auditable.creator", filters.get("user"));
@@ -215,35 +254,36 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     }
 
     private BigDecimal computeAverageTrend(List<BigDecimal> trendList) {
-    	if(trendList != null && trendList.size()>=10){    	
-	        BigDecimal firstAverage = computeAverage(trendList.subList(0, 9));
-	        BigDecimal lastAverage = computeAverage(trendList.subList(9, trendList.size()));
-	        BigDecimal averageTrend = (firstAverage == null || firstAverage.compareTo(BigDecimal.ZERO) == 0) ?  BigDecimal.ZERO : lastAverage.divide(firstAverage, 15, RoundingMode.HALF_UP);
-	        averageTrend = averageTrend.subtract(BigDecimal.ONE);
-	        averageTrend = averageTrend.multiply(new BigDecimal(100));
-	        return averageTrend.setScale(1, RoundingMode.HALF_UP);    	
-    	}
-    	return null;
+        if (trendList != null && trendList.size() >= 10) {
+            BigDecimal firstAverage = computeAverage(trendList.subList(0, 9));
+            BigDecimal lastAverage = computeAverage(trendList.subList(9, trendList.size()));
+            BigDecimal averageTrend = (firstAverage == null || firstAverage.compareTo(BigDecimal.ZERO) == 0) ? BigDecimal.ZERO
+                    : lastAverage.divide(firstAverage, 15, RoundingMode.HALF_UP);
+            averageTrend = averageTrend.subtract(BigDecimal.ONE);
+            averageTrend = averageTrend.multiply(new BigDecimal(100));
+            return averageTrend.setScale(1, RoundingMode.HALF_UP);
+        }
+        return null;
     }
 
-	private BigDecimal computeCompoundGrowthRate(List<BigDecimal> totals) {
-		if (totals.size() > 0) {
-			int count = totals.size();
-			double first = totals.get(0).doubleValue();
-			double last = totals.get(count - 1).doubleValue();
-			double growthRate = Math.pow(last / first, 1.0d / count);
-			if (Double.isNaN(growthRate) || Double.isInfinite(growthRate)) {
-				return BigDecimal.ZERO;
-			} else {
+    private BigDecimal computeCompoundGrowthRate(List<BigDecimal> totals) {
+        if (totals.size() > 0) {
+            int count = totals.size();
+            double first = totals.get(0).doubleValue();
+            double last = totals.get(count - 1).doubleValue();
+            double growthRate = Math.pow(last / first, 1.0d / count);
+            if (Double.isNaN(growthRate) || Double.isInfinite(growthRate)) {
+                return BigDecimal.ZERO;
+            } else {
 
-				growthRate -= 1;
-				growthRate *= 100;
-				return BigDecimal.valueOf(growthRate).setScale(1, RoundingMode.HALF_UP);
-			}
-		}
+                growthRate -= 1;
+                growthRate *= 100;
+                return BigDecimal.valueOf(growthRate).setScale(1, RoundingMode.HALF_UP);
+            }
+        }
 
-		return BigDecimal.ZERO;
-	}
+        return BigDecimal.ZERO;
+    }
 
     private BigDecimal computeMeasuredValuesAverage(List<MeasuredValue> measuredValues) {
         BigDecimal average = BigDecimal.ZERO;
@@ -264,5 +304,32 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
             }
         }
         return average;
+    }
+
+    private ChartJsModel initChartJsModel(String mqCode) {
+        ChartJsModel jsModel = new ChartJsModel();
+        MeasurableQuantity mq = mqService.findByCode(mqCode);
+
+        if (mq != null) {
+            String dimension1 = mq.getDimension1();
+            String dimension2 = mq.getDimension2();
+            String dimension3 = mq.getDimension3();
+            String dimension4 = mq.getDimension4();
+            jsModel.getDimensions().put(DIMENSION_1, "null".equals(dimension1) ? null : dimension1);
+            jsModel.getDimensions().put(DIMENSION_2, "null".equals(dimension2) ? null : dimension2);
+            jsModel.getDimensions().put(DIMENSION_3, "null".equals(dimension3) ? null : dimension3);
+            jsModel.getDimensions().put(DIMENSION_4, "null".equals(dimension4) ? null : dimension4);
+            jsModel.setTitle(mq.getDescription());
+        }
+
+        jsModel.getDatasets().put(DIMENSION_1, new ArrayList<BigDecimal>());
+        jsModel.getDatasets().put(DIMENSION_2, new ArrayList<BigDecimal>());
+        jsModel.getDatasets().put(DIMENSION_3, new ArrayList<BigDecimal>());
+        jsModel.getDatasets().put(DIMENSION_4, new ArrayList<BigDecimal>());
+        jsModel.getDatasets().put(OTHERS, new ArrayList<BigDecimal>());
+        jsModel.getDatasets().put(TREND, new ArrayList<BigDecimal>());
+        jsModel.getDatasets().put(TOTAL, new ArrayList<BigDecimal>());
+
+        return jsModel;
     }
 }

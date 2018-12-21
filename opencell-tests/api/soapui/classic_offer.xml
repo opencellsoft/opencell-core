@@ -44486,6 +44486,7 @@ public class ForgotPassword extends ModuleScript{
 		</matchOperationRequest>
       </ws:matchOperations>
    </soapenv:Body>
+<<<<<<< HEAD
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="90d6be5a-c28e-4471-8add-46b553e9f065"/>
             <con:assertion type="Simple Contains" id="c20bc35a-d8d3-4ba7-9db1-6e41fb250a89" name="Contains">
@@ -44596,6 +44597,118 @@ public class ForgotPassword extends ModuleScript{
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+=======
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="90d6be5a-c28e-4471-8add-46b553e9f065"/>
+            <con:assertion type="Simple Contains" id="c20bc35a-d8d3-4ba7-9db1-6e41fb250a89" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties>
+        <con:property>
+          <con:name>unduePaymentId</con:name>
+          <con:value>6</con:value>
+        </con:property>
+        <con:property>
+          <con:name>undueRefundId</con:name>
+          <con:value>7</con:value>
+        </con:property>
+      </con:properties>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>CUST</con:name>
+        <con:value>ben.ohara</con:value>
+      </con:property>
+      <con:property>
+        <con:name>FIRST_MONTH</con:name>
+        <con:value>2017-12</con:value>
+      </con:property>
+      <con:property>
+        <con:name>LAST_MONTH</con:name>
+        <con:value>2018-01</con:value>
+      </con:property>
+      <con:property>
+        <con:name>THIS_MONTH</con:name>
+        <con:value>2018-02</con:value>
+      </con:property>
+      <con:property>
+        <con:name>SUBSCRIPTION_DATE</con:name>
+        <con:value>${#TestSuite#FIRST_MONTH}-15</con:value>
+      </con:property>
+      <con:property>
+        <con:name>firstname</con:name>
+        <con:value>Ben</con:value>
+      </con:property>
+      <con:property>
+        <con:name>lastname</con:name>
+        <con:value>Ohara</con:value>
+        <con:property>
+          <con:name>offerCode</con:name>
+          <con:value>OF_${#Project#templateCode}_SUPER</con:value>
+        </con:property>
+        <con:property>
+          <con:name>billingCycle</con:name>
+          <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+        </con:property>
+      </con:property>
+      <con:property>
+        <con:name>offerCode</con:name>
+        <con:value>OF_${#Project#templateCode}_MAIN</con:value>
+      </con:property>
+      <con:property>
+        <con:name>billingCycle</con:name>
+        <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+      </con:property>
+      <con:property>
+        <con:name>invoice1_number</con:name>
+        <con:value>INV-CLASSIC-000000003</con:value>
+      </con:property>
+      <con:property>
+        <con:name>invoice1_amount</con:name>
+        <con:value>59</con:value>
+      </con:property>
+      <con:property>
+        <con:name>invoice2_number</con:name>
+        <con:value>INV-CLASSIC-000000004</con:value>
+      </con:property>
+      <con:property>
+        <con:name>invoice2_amount</con:name>
+        <con:value>14</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:testSuite id="6091610d-8538-494f-a4a7-d44004b1b57f" name="Customer Job Bonvi">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="3bba98de-d4bd-404d-8381-4b1929e3d60f">
+      <con:settings/>
+      <con:testStep type="request" name="Create Customer" id="5216ce07-5ed0-4db4-8861-bf9700082f31">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateCRMAccountHierarchy</con:operation>
+          <con:request name="Create Customer" id="8c4e9d0d-5ff4-4cbf-b510-5fa8c4aa37df">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+>>>>>>> refs/remotes/origin/ticket_3652_3673_refundSepaFile-ibanBicIcs
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
