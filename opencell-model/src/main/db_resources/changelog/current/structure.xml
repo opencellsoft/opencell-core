@@ -25,13 +25,9 @@
         ]]>
         </sql>
         <sql><![CDATA[
-            DELETE FROM crm_custom_field_tmpl_val where customfieldtemplate_id IN (SELECT ID FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
             DELETE FROM crm_custom_field_tmpl_val WHERE customfieldtemplate_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
-			DELETE FROM crm_custom_field_tmpl_mcols WHERE cft_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
-			DELETE FROM crm_custom_field_tmpl_val_pos WHERE customfieldtemplate_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
         ]]>
         </sql>
-        
         
         <delete tableName="crm_custom_field_tmpl">
             <where>applies_to='JOB_FtpAdapterJob' AND
@@ -64,10 +60,7 @@
         <createSequence sequenceName="ftp_transferred_file_seq" startValue="1"/>
         <dropSequence sequenceName="ftp_imported_file_seq"/>
         <sql><![CDATA[
-            DELETE FROM crm_custom_field_tmpl_val where customfieldtemplate_id IN (SELECT ID FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
             DELETE FROM crm_custom_field_tmpl_val WHERE customfieldtemplate_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
-			DELETE FROM crm_custom_field_tmpl_mcols WHERE cft_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
-			DELETE FROM crm_custom_field_tmpl_val_pos WHERE customfieldtemplate_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
         ]]>
         </sql>
         <delete tableName="crm_custom_field_tmpl">
