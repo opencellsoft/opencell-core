@@ -171,9 +171,18 @@
 
         </hftl:formPanel>
 
-        <p:panel header="#{messages['postInvoicingReport.billableBA']}" id="billableBA">        
-            <hftl:dataList  id="dataListInvoicess" dataModel="#{invoiceBean.getBillingRunInvoices(billingRunBean.entity)}"   backingBean="#{invoiceBean}">
-            <p:ajax event="rowSelectCheckbox"     update=":excludeBa" />
+        <p:panel header="#{messages['postInvoicingReport.billableBA']}" id="billableBA">
+            <hftl:searchPanel backingBean="#{invoiceBean}"
+                              label="#{messages['seller.search']}" renderNewButton="false">
+                <hftl:searchField id="code" multiSelect="true" listElements="#{invoiceBean.getBillingAccounts(billingRunBean.entity)}"
+                                  label="#{messages['BusinessEntity.code']}" field="billingAccount" valueLabelField="code"/>
+
+            </hftl:searchPanel>
+            <hftl:dataList id="dataListInvoicess"
+                           dataModel="#{invoiceBean.getBillingRunInvoices(billingRunBean.entity)}"
+                           backingBean="#{invoiceBean}">
+
+                <p:ajax event="rowSelectCheckbox" update=":excludeBa"/>
             <p:ajax event="rowUnselectCheckbox"   update=":excludeBa"  /> 
             <p:ajax event="toggleSelect" update=":excludeBa"/>
     

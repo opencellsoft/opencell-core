@@ -24,21 +24,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -173,11 +167,33 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             log.warn("billingRun is null");
         } else {
             filters.put("billingRun", br);
+            if (filters.containsKey("billingAccount")) {
+                Object billingAccounts = filters.get("billingAccount");
+                if (billingAccounts == null) {
+                    filters.remove("billingAccount");
+                } else {
+                    filters.put("billingAccount", Arrays.asList(billingAccounts));
+                }
+
+            }
             return getLazyDataModel();
         }
 
         return null;
     }
+
+    public List<BillingAccount> getBillingAccounts(BillingRun br) {
+        return br.getBillableBillingAccounts();
+    }
+
+    public void changeListener() {
+        System.out.println(filters);
+    }
+
+    public void toggleListener() {
+        System.out.println(filters);
+    }
+
 
     @Override
     protected IPersistenceService<Invoice> getPersistenceService() {
