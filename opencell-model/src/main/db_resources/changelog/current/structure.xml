@@ -761,4 +761,56 @@
 			<column name="cf_values_accum" type="${type.json}"></column>
     	</addColumn>
 	</changeSet>
+	
+	<changeSet id="#3652_26112018" author="anasseh">
+        <addColumn tableName="ar_ddrequest_lot_op">
+            <column name="payment_or_refund" type="varchar(30)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}ar_ddrequest_lot_op set payment_or_refund='PAYMENT'</sql>
+        <addColumn tableName="ar_ddrequest_lot">
+            <column name="payment_or_refund" type="varchar(30)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}ar_ddrequest_lot set payment_or_refund='PAYMENT'</sql>   
+        <addColumn tableName="ar_ddrequest_item">
+            <column name="refund_id" type="bigint" />
+        </addColumn>
+         <addForeignKeyConstraint constraintName="fk_dd_item_refund_id" referencedTableName="ar_account_operation" baseColumnNames="refund_id" baseTableName="ar_ddrequest_item" referencedColumnNames="id"/>     
+    </changeSet>
+  
+	<changeSet id="#3673_29112018" author="anasseh">
+	     <addColumn tableName="ar_ddrequest_lot_op"> 
+	      	<column name="seller_id" type="bigint" />
+         </addColumn>
+         <addForeignKeyConstraint constraintName="fk_dd_item_sell_id" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="ar_ddrequest_lot_op" referencedColumnNames="id"/>     
+   
+        <addColumn tableName="ar_payment_gateway">            
+            <column name="account_number" type="varchar(11)" />
+            <column name="account_owner" type="varchar(50)" />
+            <column name="bank_code" type="varchar(5)" />
+            <column name="bank_id" type="varchar(50)" />
+            <column name="bank_name" type="varchar(50)" />
+            <column name="bic" type="varchar(11)" />
+            <column name="branch_code" type="varchar(5)" />
+            <column name="iban" type="varchar(34)" />
+            <column name="ics" type="varchar(35)" />
+            <column name="issuer_name" type="varchar(50)" />
+            <column name="issuer_number" type="varchar(50)" /> 
+            <column name="hash_key" type="varchar(2)" />
+        </addColumn>
+        	<addColumn tableName="ar_payment_gateway"> 
+	      	<column name="seller_id" type="bigint" />
+         </addColumn>
+         <addForeignKeyConstraint constraintName="fk_sell_id_pg" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="ar_payment_gateway" referencedColumnNames="id"/>     
+      	<addColumn tableName="ar_account_operation"> 
+	      	<column name="seller_id" type="bigint" />
+         </addColumn>
+         <addForeignKeyConstraint constraintName="fk_sell_id_ao" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="ar_account_operation" referencedColumnNames="id"/>     
+   <addColumn tableName="ar_ddrequest_lot"> 
+	      	<column name="seller_id" type="bigint" />
+         </addColumn>
+         <addForeignKeyConstraint constraintName="fk_sell_id_dd_lot" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="ar_ddrequest_lot" referencedColumnNames="id"/>     
+   
+   
+   
+    </changeSet>
 </databaseChangeLog>
