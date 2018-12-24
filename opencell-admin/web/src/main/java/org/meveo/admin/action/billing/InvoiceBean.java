@@ -18,7 +18,6 @@
  */
 package org.meveo.admin.action.billing;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,14 +26,12 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -170,7 +167,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             log.warn("billingRun is null");
         } else {
             filters.put("billingRun", br);
-            addOrRemoveBAFilter();
+            configureFilters();
             return getLazyDataModel();
         }
 
@@ -178,9 +175,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     /**
-     * Remove the Billing accounts from filters if is null or empty, if not convert the billing acoounts to list and add it to filters
+     * Configure filters
      */
-    private void addOrRemoveBAFilter() {
+    private void configureFilters() {
         if (filters.containsKey("billingAccount")) {
             Object billingAccounts = filters.get("billingAccount");
             if (isNullOrEmpty(billingAccounts)) {
