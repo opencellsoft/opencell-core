@@ -30,6 +30,9 @@
             <c:if test="#{listElements!=null}">
                 <c:set var="elements" value="#{listElements}" />
             </c:if>
+            <c:if test="#{!filterMatchMode}">
+                <c:set var="filterMatchMode" value="startsWith"/>
+            </c:if>
 
 
             <c:if test="#{!multiSelect}">
@@ -40,8 +43,8 @@
                 </p:selectOneMenu>
             </c:if>
             <c:if test="#{multiSelect}">
-                <p:selectCheckboxMenu id="#{id}" value="#{backingBean.filters[field]}" multiple="true"
-                                      filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                <p:selectCheckboxMenu style="width:#{100}%" id="#{id}" value="#{backingBean.filters[field]}" multiple="true"
+                                      filter="true" filterMatchMode="#{filterMatchMode}" panelStyle="width:250px">
                     <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}"/>
                     <hftl:objectConverter/>
                     <p:ajax event="toggleSelect" listener="#{backingBean.toggleListener}"/>
