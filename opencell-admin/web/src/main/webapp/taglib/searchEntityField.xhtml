@@ -47,8 +47,6 @@
                                       filter="true" filterMatchMode="#{filterMatchMode}" panelStyle="width:250px">
                     <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}"/>
                     <hftl:objectConverter/>
-                    <p:ajax event="toggleSelect" listener="#{backingBean.toggleListener}"/>
-                    <p:ajax event="change" listener="#{backingBean.changeListener}"/>
                 </p:selectCheckboxMenu>
             </c:if>
         </c:if>
