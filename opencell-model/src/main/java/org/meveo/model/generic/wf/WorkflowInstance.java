@@ -40,6 +40,9 @@ public class WorkflowInstance extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Generic Workflow
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "generic_wf_id")
     private GenericWorkflow genericWorkflow;

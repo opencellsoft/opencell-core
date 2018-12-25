@@ -1,0 +1,125 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:e="http://primefaces.org/extension"
+	xmlns:o="http://omnifaces.org/ui">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="genericWorkflowId"
+				value="#{genericWorkflowBean.objectId}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="genericWorkflows"
+					value="#{messages['menu.generic.workflows']}" />
+				<p:menuitem value="#{messages['generic.wf.new']}" disabled="true"
+					rendered="#{genericWorkflowBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['generic.wf.editView']} - #{genericWorkflowBean.entity.descriptionOrCode}"
+					disabled="true" rendered="#{!genericWorkflowBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<p:panel>
+			<p:tabView id="tabView"
+				activeIndex="#{genericWorkflowBean.activeTab}">
+				<p:tab title="#{messages['generic.wf.title']}">
+					<hftl:formPanel formId="genericWFFormId"
+						backingBean="#{genericWorkflowBean}"
+						showEnableDisableButton="true">
+						<hftl:formField label="#{messages['businessEntity.code']}"
+							field="code" allowEdit="false" required="true"
+							validateUnique="true" />
+
+						<hftl:formField label="#{messages['businessEntity.description']}"
+							field="description" useConverter="false" size="50" />
+
+						<hftl:formField
+							label="#{messages['generic.wf.targetEntityClass']}"
+							field="targetEntityClass" allowEdit="false" required="true"
+							size="60" autocompleteBean="#{genericWorkflowBean}"
+							autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
+
+						<hftl:formField label="#{messages['workflow.enableHistory']}"
+							field="enableHistory" />
+
+						<hftl:formField label="#{messages['enableEntity.disabled']}"
+							doNotShowOnNew="true" allowEdit="false" field="disabled"
+							isMessage="true" newLine="true" />
+
+						<h:panelGroup>
+							<p:dataTable id="wfStatusTable"
+								value="#{genericWorkflowBean.entity.statuses}" var="wfStatus"
+								paginator="false" resizableColumns="true">
+								<f:facet name="header">#{messages['wfStatus.list']}</f:facet>
+								<p:column headerText="#{messages['businessEntity.code']}">
+									<h:outputText value="#{wfStatus.code}" />
+								</p:column>
+								<p:column headerText="#{messages['businessEntity.description']}">
+									<h:outputText value="#{wfStatus.description}" />
+								</p:column>
+								<p:column width="60px;"
+									headerText="#{messages['commons.actions']}">
+									<p:commandButton
+										action="#{genericWorkflowBean.selectWFStatus(wfStatus)}"
+										update=":tabView:genericWFFormId:wfStatusDetails"
+										icon="ui-icon-document" immediate="true" />
+									<p:commandButton
+										action="#{genericWorkflowBean.deleteWFStatus(wfStatus)}"
+										icon="ui-icon-trash" update="@form" />
+								</p:column>
+							</p:dataTable>
+							<p:commandButton value="#{messages['commons.addNew']}"
+								update=":tabView:genericWFFormId:wfStatusDetails"
+								action="#{genericWorkflowBean.newWFStatus}">
+							</p:commandButton>
+						</h:panelGroup>
+						<h:panelGroup id="wfStatusDetails">
+							<p:panel header="#{messages['wfStatus']}"
+								rendered="#{genericWorkflowBean.selectedWFStatus != null}">
+								<p:outputPanel
+									styleClass="form-panel-fields #{genericWorkflowBean.edit ? '' : ' form-panel-fields-view'}">
+									<hftl:decorateFormField
+										label="#{messages['businessEntity.code']}" fieldId="stCode">
+										<p:inputText id="stCode"
+											value="#{genericWorkflowBean.selectedWFStatus.code}">
+										</p:inputText>
+									</hftl:decorateFormField>
+									<hftl:decorateFormField
+										label="#{messages['businessEntity.description']}"
+										fieldId="stDescription">
+										<p:inputText id="stDescription"
+											value="#{genericWorkflowBean.selectedWFStatus.description}">
+										</p:inputText>
+									</hftl:decorateFormField>
+								</p:outputPanel>
+								<h:panelGroup layout="block" styleClass="form-panel-actions">
+									<p:commandButton
+										action="#{genericWorkflowBean.saveOrUpdateWFStatus}"
+										value="#{messages['action.save']}"
+										update="@form :tabView:genericWFFormId:wfStatusTable" />
+									<p:commandButton action="#{genericWorkflowBean.resetWFStatus}"
+										value="#{messages['action.cancel']}"
+										update="@form :tabView:genericWFFormId:wfStatusTable"
+										immediate="true" />
+								</h:panelGroup>
+							</p:panel>
+						</h:panelGroup>
+
+					</hftl:formPanel>
+				</p:tab>
+			</p:tabView>
+		</p:panel>
+	</ui:define>
+
+</ui:composition>

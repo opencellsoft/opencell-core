@@ -788,14 +788,20 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wf_status_pk" />
             </column>
             <column name="version" type="int4" />
-            <column name="uuid" type="varchar(60)">
+            <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
             <column name="code" type="varchar(255)" />
-            <column name="value" type="varchar(255)" />
-            <column name="wf_generic_workflow_id" type="bigint" />
+            <column name="description" type="varchar(255)" />
+            <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="generic_wf_id" type="bigint" />
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="wf_generic_workflow_id" baseTableName="wf_status" constraintName="fk_wf_generic_workflow" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_status" constraintName="fk_generic_wf" deferrable="false" initiallyDeferred="false"
             onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
         
         <createSequence sequenceName="wf_instance_seq" />

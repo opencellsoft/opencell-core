@@ -22,6 +22,9 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -29,7 +32,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
@@ -40,7 +43,7 @@ import org.meveo.model.ExportIdentifier;
 @Table(name = "wf_status", uniqueConstraints = @UniqueConstraint(columnNames = { "uuid" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "wf_status_seq"), })
-public class WFStatus extends BaseEntity {
+public class WFStatus extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -52,9 +55,12 @@ public class WFStatus extends BaseEntity {
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    private String code;
-
-    private String value;
+    /**
+     * Generic workflow
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "generic_wf_id")
+    private GenericWorkflow genericWorkflow;
 
     public String getUuid() {
         return uuid;
@@ -64,19 +70,36 @@ public class WFStatus extends BaseEntity {
         this.uuid = uuid;
     }
 
-    public String getCode() {
-        return code;
+    public GenericWorkflow getGenericWorkflow() {
+        return genericWorkflow;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setGenericWorkflow(GenericWorkflow genericWorkflow) {
+        this.genericWorkflow = genericWorkflow;
     }
 
-    public String getValue() {
-        return value;
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((genericWorkflow == null) ? 0 : genericWorkflow.hashCode());
+        return result;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        WFStatus other = (WFStatus) obj;
+        if (genericWorkflow == null) {
+            if (other.genericWorkflow != null)
+                return false;
+        } else if (!genericWorkflow.equals(other.genericWorkflow))
+            return false;
+        return true;
     }
 }

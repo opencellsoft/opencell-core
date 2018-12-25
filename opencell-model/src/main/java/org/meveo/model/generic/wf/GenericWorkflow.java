@@ -64,8 +64,7 @@ public class GenericWorkflow extends EnableBusinessEntity {
     /**
      * A list of workflow statuses
      */
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "wf_generic_workflow_id")
+    @OneToMany(mappedBy = "genericWorkflow", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WFStatus> statuses = new ArrayList<>();
 
     /**
