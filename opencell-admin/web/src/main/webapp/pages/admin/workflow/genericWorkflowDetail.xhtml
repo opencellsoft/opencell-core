@@ -30,6 +30,18 @@
 			</p:breadCrumb>
 		</h:form>
 
+		<hftl:entityPopup id="transitionScriptPopup"
+			header="#{messages['scriptInstance.title']}"
+			backingBean="#{scriptInstanceBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code"
+			selection="#{genericWorkflowBean.entity.transitionScript}"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			updateField=":tabView:genericWFFormId:scriptSelectId :tabView:genericWFFormId:scriptSelectId_text">
+		</hftl:entityPopup>
+
 		<p:panel>
 			<p:tabView id="tabView"
 				activeIndex="#{genericWorkflowBean.activeTab}">
@@ -49,6 +61,11 @@
 							field="targetEntityClass" allowEdit="false" required="true"
 							size="60" autocompleteBean="#{genericWorkflowBean}"
 							autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
+
+						<hftl:formField label="#{messages['generic.wf.transitionScript']}"
+							field="transitionScript" id="scriptSelectId"
+							valueLabelField="code" popup="true"
+							popupId="transitionScriptPopup" required="true" />
 
 						<hftl:formField label="#{messages['workflow.enableHistory']}"
 							field="enableHistory" />
