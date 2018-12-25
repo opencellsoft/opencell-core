@@ -38,13 +38,11 @@ public class OfferScript extends ModuleScript implements OfferScriptInterface {
 
 	@Override
 	public void beforeCreateOfferFromBOM(Map<String, Object> methodContext) throws BusinessException {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void afterCreateOfferFromBOM(Map<String, Object> methodContext) throws BusinessException {
-		// TODO Auto-generated method stub
 		
 	}
 }

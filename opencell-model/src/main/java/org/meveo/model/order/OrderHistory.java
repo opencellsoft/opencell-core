@@ -20,6 +20,8 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.ServiceInstance;
 
 /**
+ * Order action history
+ * 
  * @author Edward P. Legaspi
  * @version 12 Mar 2018
  * @lastModifiedVersion 5.0
@@ -32,22 +34,37 @@ public class OrderHistory extends BaseEntity {
 
     private static final long serialVersionUID = -12431741574625844L;
 
+    /**
+     * Order item
+     */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "order_item_id", nullable = false)
     private OrderItem orderItem;
 
+    /**
+     * Service instance affected
+     */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "service_instance_id", nullable = false)
     private ServiceInstance serviceInstance;
 
+    /**
+     * Order number
+     */
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
 
+    /**
+     * Action requested
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "action", length = 25, nullable = false)
     private OrderItemActionEnum action;
 
+    /**
+     * Action event
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "event_date", nullable = false)
     private Date eventDate;

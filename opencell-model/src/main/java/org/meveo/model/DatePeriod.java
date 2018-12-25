@@ -33,8 +33,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
- * @author Ignas
+ * A period of dates
  * 
+ * @author Ignas
  */
 @Embeddable
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -42,11 +43,17 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * From date
+     */
     @JsonSerialize(using = CustomDateSerializer.class)
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date")
     private Date from;
 
+    /**
+     * To date
+     */
     @JsonSerialize(using = CustomDateSerializer.class)
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_date")
@@ -94,7 +101,7 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
      * @return True/false
      */
     public boolean isCorrespondsToPeriod(Date date) {
-        return (from == null || (date != null &&  date.compareTo(from) >= 0)) && (to == null || (date != null && date.before(to)));
+        return (from == null || (date != null && date.compareTo(from) >= 0)) && (to == null || (date != null && date.before(to)));
     }
 
     /**
@@ -173,7 +180,7 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
         } else if (this.from != null) {
             return this.from.compareTo(other.getFrom());
         }
-        
+
         return 0;
     }
 

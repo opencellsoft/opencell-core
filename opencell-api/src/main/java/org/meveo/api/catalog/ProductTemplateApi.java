@@ -34,6 +34,7 @@ import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -80,7 +81,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
     private ProductTemplateDto convertProductTemplateToDto(ProductTemplate productTemplate) {
 
-        ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false, true);
+        ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false, true);
         processProductChargeTemplateToDto(productTemplate, productTemplateDto);
         return productTemplateDto;
     }

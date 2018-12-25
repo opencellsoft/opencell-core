@@ -47,6 +47,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -76,7 +77,8 @@ import org.primefaces.model.LazyDataModel;
  * edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author Khalid HORRI
+ * @lastModifiedVersion 5.3
  */
 @Named
 @ViewScoped
@@ -438,7 +440,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             log.debug("excludeBillingAccounts getSelectedEntities=" + getSelectedEntities().size());
             if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
                 for (Invoice invoice : getSelectedEntities()) {
-                    invoiceService.deleteInvoice(invoice);
+                    invoiceService.cancelInvoice(invoice);
                     billingrun.getInvoices().remove(invoice);
                 }
                 messages.info(new BundleKey("messages", "info.invoicing.billingAccountExcluded"));
@@ -638,15 +640,16 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                     ratedTransactionService.create(rt);
                 }
             }
-            super.saveOrUpdate(false);
             if (billingAccountId != 0) {
                 BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
                 entity.setBillingAccount(billingAccount);
                 invoiceService.assignInvoiceNumber(entity);
             }
+
+            super.saveOrUpdate(false);
         }
         if (isDetailed()) {
-            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, null, new Date());
+            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
             entity = invoiceService.update(entity);
 
         } else {
@@ -655,7 +658,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             }
             entity = invoiceService.update(entity);
         }
-        entity = invoiceService.refreshOrRetrieve(entity);
+
         entity.getAdjustedInvoice().getLinkedInvoices().add(entity);
         invoiceService.update(entity.getAdjustedInvoice());
 
@@ -743,5 +746,32 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     public void setSelectedInvoices(boolean isSelectedInvoices) {
         this.isSelectedInvoices = isSelectedInvoices;
     }
+
+    /**
+     * Activate/deactivate the generating PDF button
+     *
+     * @return
+     */
+    public boolean getGeneratePdfBtnActive() {
+        String value = ParamBean.getInstance().getProperty("billing.activateGenaratePdfBtn", "true");
+        if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
+            return Boolean.valueOf(value);
+        }
+        return true;
+    }
+
+    /**
+     * Activate/deactivate the generating XML button
+     *
+     * @return
+     */
+    public boolean getGenerateXmlBtnActive() {
+        String value = ParamBean.getInstance().getProperty("billing.activateGenarateXmlBtn", "true");
+        if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
+            return Boolean.valueOf(value);
+        }
+        return true;
+    }
+
 
 }

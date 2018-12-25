@@ -92,7 +92,6 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         
         if (entity.getId() != null && entity.getInvoiceConfiguration() == null) {
             InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
-            invoiceConfiguration.setProvider(entity);
             entity.setInvoiceConfiguration(invoiceConfiguration);
         }
 
@@ -102,7 +101,6 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         
         if(entity.getGdprConfiguration() == null) {
         	GdprConfiguration gdprConfiguration = new GdprConfiguration();
-        	gdprConfiguration.setProvider(entity);
         	entity.setGdprConfiguration(gdprConfiguration);
         }
         
@@ -114,22 +112,6 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 			entity.setCustomerNoSequence(new GenericSequence());
 		}
 
-        return entity;
-    }
-
-    /**
-     * Save or update provider.
-     * 
-     * @param entity Provider to save.
-     * @throws BusinessException General business exception
-     */
-    @Override
-    protected Provider saveOrUpdate(Provider entity) throws BusinessException {
-        boolean isNew = entity.isTransient();
-        if (isNew) {
-            entity.getInvoiceConfiguration().setProvider(entity);
-        }
-        entity = super.saveOrUpdate(entity);
         return entity;
     }
 

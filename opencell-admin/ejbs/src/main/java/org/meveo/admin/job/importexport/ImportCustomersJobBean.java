@@ -484,7 +484,7 @@ public class ImportCustomersJobBean {
 
                     for (org.meveo.model.jaxb.account.UserAccount uAccount : billingAccountJaxb.getUserAccounts().getUserAccount()) {
                         try {
-                            accountImportService.importUserAccount(billingAccount, billingAccountJaxb, uAccount);
+                            accountImportService.importUserAccount(billingAccount, billingAccountJaxb, uAccount, seller);
                         } catch (ImportWarningException e) {
                             log.error("Error when importing User Account", e);
                         }

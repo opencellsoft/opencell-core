@@ -10,232 +10,279 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 
+/**
+ * Bar type chart
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "dwh_chart_bar")
 public class BarChart extends Chart {
 
-	private static final long serialVersionUID = -3247705449113663454L;
+    private static final long serialVersionUID = -3247705449113663454L;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name="legend_position")
-	private LegendPositionEnum legendPosition;
-	
+    /**
+     * Legend position
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "legend_position")
+    private LegendPositionEnum legendPosition;
 
-	@Column(name="barpadding")
-	@NotNull
-	private int barPadding = 8;
-
-	@Column(name="barmargin")
+    /**
+     * Bar padding
+     */
+    @Column(name = "barpadding")
     @NotNull
-	private int barMargin = 10;
+    private int barPadding = 8;
 
-	@Column(name="orientation")
-	private OrientationEnum orientation;
+    /**
+     * Bar margin
+     */
+    @Column(name = "barmargin")
+    @NotNull
+    private int barMargin = 10;
 
-	//Enables stacked display of bars
-	@Type(type="numeric_boolean")
-    @Column(name="stacked")
-	private boolean stacked;
-	
-	//Minimum boundary value.
-	@Column(name="min")
-	private Double min;
-	
-	//Minimum boundary value.
-	@Column(name="max")
-	private Double max;
+    /**
+     * Bar orientation
+     */
+    @Column(name = "orientation")
+    @Enumerated(EnumType.ORDINAL)
+    private OrientationEnum orientation;
 
-	//Whether line segments should be broken at null
-	//value, fall will join point on either side of line.
-	@Type(type="numeric_boolean")
-    @Column(name="break_on_null")
-	private boolean breakOnNull;
+    /**
+     * Enables stacked display of bars
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "stacked")
+    private boolean stacked;
 
+    /**
+     * Minimum boundary value
+     */
+    @Column(name = "min")
+    private Double min;
 
-	@Column(name="x_axis_label", length = 255)
-	@Size(max = 255)
-	private String xaxisLabel;
+    /**
+     * Minimum boundary value
+     */
+    @Column(name = "max")
+    private Double max;
 
-	@Column(name="y_axis_label", length = 255)
+    /**
+     * Whether line segments should be broken at null value, fall will join point on either side of line.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "break_on_null")
+    private boolean breakOnNull;
+
+    /**
+     * X-axis label
+     */
+    @Column(name = "x_axis_label", length = 255)
     @Size(max = 255)
-	private String yaxisLabel;
-	
-	//Angle of the x-axis ticks
-	@Column(name="x_axis_angle")
-	private Integer xaxisAngle;
+    private String xaxisLabel;
 
-	@Column(name="y_axis_angle")
-	private Integer yaxisAngle;
-	
-
-	@Column(name="legend_cols")
-	private int legendCols;
-
-	@Column(name="legend_rows")
-	private int legendRows;
-
-	//Enables plot zooming.
-	@Type(type="numeric_boolean")
-    @Column(name="zoom")
-	private boolean zoom;
-	
-	//Enables animation on plot rendering
-	@Type(type="numeric_boolean")
-    @Column(name="animate")
-	private boolean animate;
-	
-	//Defines visibility of datatip.
-	@Type(type="numeric_boolean")
-    @Column(name="show_data_tip")
-	private boolean showDataTip=true;
-	
-	//Template string for datatips.
-	@Column(name="data_tip_format", length = 255)
+    /**
+     * Y-axis label
+     */
+    @Column(name = "y_axis_label", length = 255)
     @Size(max = 255)
-	private String datatipFormat;
+    private String yaxisLabel;
 
-	public LegendPositionEnum getLegendPosition() {
-		return legendPosition;
-	}
+    /**
+     * Angle of the x-axis ticks
+     */
+    @Column(name = "x_axis_angle")
+    private Integer xaxisAngle;
 
-	public void setLegendPosition(LegendPositionEnum legendPosition) {
-		this.legendPosition = legendPosition;
-	}
+    /**
+     * Angle of y-axis ticks
+     */
+    @Column(name = "y_axis_angle")
+    private Integer yaxisAngle;
 
-	public int getBarPadding() {
-		return barPadding;
-	}
+    /**
+     * Legend number of columns
+     */
+    @Column(name = "legend_cols")
+    private int legendCols;
 
-	public void setBarPadding(int barPadding) {
-		this.barPadding = barPadding;
-	}
+    /**
+     * Legend number of rows
+     */
+    @Column(name = "legend_rows")
+    private int legendRows;
 
-	public int getBarMargin() {
-		return barMargin;
-	}
+    /**
+     * Enables plot zooming
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "zoom")
+    private boolean zoom;
 
-	public void setBarMargin(int barMargin) {
-		this.barMargin = barMargin;
-	}
+    /**
+     * Enables animation on plot rendering
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "animate")
+    private boolean animate;
 
-	public OrientationEnum getOrientation() {
-		return orientation;
-	}
+    /**
+     * Defines visibility of datatip
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "show_data_tip")
+    private boolean showDataTip = true;
 
-	public void setOrientation(OrientationEnum orientation) {
-		this.orientation = orientation;
-	}
+    /**
+     * Template string for datatips
+     */
+    @Column(name = "data_tip_format", length = 255)
+    @Size(max = 255)
+    private String datatipFormat;
 
-	public boolean isStacked() {
-		return stacked;
-	}
+    public LegendPositionEnum getLegendPosition() {
+        return legendPosition;
+    }
 
-	public void setStacked(boolean stacked) {
-		this.stacked = stacked;
-	}
+    public void setLegendPosition(LegendPositionEnum legendPosition) {
+        this.legendPosition = legendPosition;
+    }
 
-	public Double getMin() {
-		return min;
-	}
+    public int getBarPadding() {
+        return barPadding;
+    }
 
-	public void setMin(Double min) {
-		this.min = min;
-	}
+    public void setBarPadding(int barPadding) {
+        this.barPadding = barPadding;
+    }
 
-	public Double getMax() {
-		return max;
-	}
+    public int getBarMargin() {
+        return barMargin;
+    }
 
-	public void setMax(Double max) {
-		this.max = max;
-	}
+    public void setBarMargin(int barMargin) {
+        this.barMargin = barMargin;
+    }
 
-	public boolean isBreakOnNull() {
-		return breakOnNull;
-	}
+    public OrientationEnum getOrientation() {
+        return orientation;
+    }
 
-	public void setBreakOnNull(boolean breakOnNull) {
-		this.breakOnNull = breakOnNull;
-	}
+    public void setOrientation(OrientationEnum orientation) {
+        this.orientation = orientation;
+    }
 
-	public String getXaxisLabel() {
-		return xaxisLabel;
-	}
+    public boolean isStacked() {
+        return stacked;
+    }
 
-	public void setXaxisLabel(String xaxisLabel) {
-		this.xaxisLabel = xaxisLabel;
-	}
+    public void setStacked(boolean stacked) {
+        this.stacked = stacked;
+    }
 
-	public String getYaxisLabel() {
-		return yaxisLabel;
-	}
+    public Double getMin() {
+        return min;
+    }
 
-	public void setYaxisLabel(String yaxisLabel) {
-		this.yaxisLabel = yaxisLabel;
-	}
+    public void setMin(Double min) {
+        this.min = min;
+    }
 
-	public Integer getXaxisAngle() {
-		return xaxisAngle;
-	}
+    public Double getMax() {
+        return max;
+    }
 
-	public void setXaxisAngle(Integer xaxisAngle) {
-		this.xaxisAngle = xaxisAngle;
-	}
+    public void setMax(Double max) {
+        this.max = max;
+    }
 
-	public Integer getYaxisAngle() {
-		return yaxisAngle;
-	}
+    public boolean isBreakOnNull() {
+        return breakOnNull;
+    }
 
-	public void setYaxisAngle(Integer yaxisAngle) {
-		this.yaxisAngle = yaxisAngle;
-	}
+    public void setBreakOnNull(boolean breakOnNull) {
+        this.breakOnNull = breakOnNull;
+    }
 
-	public int getLegendCols() {
-		return legendCols;
-	}
+    public String getXaxisLabel() {
+        return xaxisLabel;
+    }
 
-	public void setLegendCols(int legendCols) {
-		this.legendCols = legendCols;
-	}
+    public void setXaxisLabel(String xaxisLabel) {
+        this.xaxisLabel = xaxisLabel;
+    }
 
-	public int getLegendRows() {
-		return legendRows;
-	}
+    public String getYaxisLabel() {
+        return yaxisLabel;
+    }
 
-	public void setLegendRows(int legendRows) {
-		this.legendRows = legendRows;
-	}
+    public void setYaxisLabel(String yaxisLabel) {
+        this.yaxisLabel = yaxisLabel;
+    }
 
-	public boolean isZoom() {
-		return zoom;
-	}
+    public Integer getXaxisAngle() {
+        return xaxisAngle;
+    }
 
-	public void setZoom(boolean zoom) {
-		this.zoom = zoom;
-	}
+    public void setXaxisAngle(Integer xaxisAngle) {
+        this.xaxisAngle = xaxisAngle;
+    }
 
-	public boolean isAnimate() {
-		return animate;
-	}
+    public Integer getYaxisAngle() {
+        return yaxisAngle;
+    }
 
-	public void setAnimate(boolean animate) {
-		this.animate = animate;
-	}
+    public void setYaxisAngle(Integer yaxisAngle) {
+        this.yaxisAngle = yaxisAngle;
+    }
 
-	public boolean isShowDataTip() {
-		return showDataTip;
-	}
+    public int getLegendCols() {
+        return legendCols;
+    }
 
-	public void setShowDataTip(boolean showDataTip) {
-		this.showDataTip = showDataTip;
-	}
+    public void setLegendCols(int legendCols) {
+        this.legendCols = legendCols;
+    }
 
-	public String getDatatipFormat() {
-		return datatipFormat;
-	}
+    public int getLegendRows() {
+        return legendRows;
+    }
 
-	public void setDatatipFormat(String datatipFormat) {
-		this.datatipFormat = datatipFormat;
-	}
+    public void setLegendRows(int legendRows) {
+        this.legendRows = legendRows;
+    }
+
+    public boolean isZoom() {
+        return zoom;
+    }
+
+    public void setZoom(boolean zoom) {
+        this.zoom = zoom;
+    }
+
+    public boolean isAnimate() {
+        return animate;
+    }
+
+    public void setAnimate(boolean animate) {
+        this.animate = animate;
+    }
+
+    public boolean isShowDataTip() {
+        return showDataTip;
+    }
+
+    public void setShowDataTip(boolean showDataTip) {
+        this.showDataTip = showDataTip;
+    }
+
+    public String getDatatipFormat() {
+        return datatipFormat;
+    }
+
+    public void setDatatipFormat(String datatipFormat) {
+        this.datatipFormat = datatipFormat;
+    }
 
 }

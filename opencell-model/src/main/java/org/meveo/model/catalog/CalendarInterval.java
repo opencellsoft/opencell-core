@@ -31,10 +31,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
-import org.meveo.model.shared.DateUtils;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.meveo.model.shared.DateUtils;
 
 /**
  * Represents a time inverval(s) based calendar. Time interval specifies a begin and end times, which can be expressed in the following units: weekdays, month/day and hour/minute.
@@ -559,6 +558,6 @@ public class CalendarInterval extends Calendar {
             return DateUtils.setTimeToZero(dateToTruncate);
         } else {
             return dateToTruncate;
-    }
+        }
     }
 }

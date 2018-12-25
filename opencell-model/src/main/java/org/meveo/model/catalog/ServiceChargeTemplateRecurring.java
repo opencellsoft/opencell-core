@@ -26,12 +26,21 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.ExportIdentifier;
+
+/**
+ * Service template to recurring charge template mapping
+ * 
+ * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
+ */
 
 @Entity
 @Cacheable
@@ -42,11 +51,26 @@ import org.meveo.model.ExportIdentifier;
 public class ServiceChargeTemplateRecurring extends ServiceChargeTemplate<RecurringChargeTemplate> {
 
     private static final long serialVersionUID = -5599952620149127436L;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counter_template_id")
+    private CounterTemplate counterTemplate;
 
+    /**
+     * Prepaid wallet templates to charge on
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_serv_rec_wallet_template", joinColumns = @JoinColumn(name = "service_rec_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
     @OrderColumn(name = "INDX")
     private List<WalletTemplate> walletTemplates;
+    
+    public CounterTemplate getCounterTemplate() {
+        return counterTemplate;
+    }
+
+    public void setCounterTemplate(CounterTemplate counterTemplate) {
+        this.counterTemplate = counterTemplate;
+    }
 
     public List<WalletTemplate> getWalletTemplates() {
         return walletTemplates;

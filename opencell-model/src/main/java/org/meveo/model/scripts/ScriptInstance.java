@@ -38,26 +38,41 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.security.Role;
 
+/**
+ * Custom script
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ModuleItem
 @Cacheable
-@Table(name = "meveo_script_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_script_instance_seq"), })
+@Table(name = "meveo_script_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "meveo_script_instance_seq"), })
 @NamedQueries({ @NamedQuery(name = "CustomScript.countScriptInstanceOnError", query = "select count (*) from ScriptInstance o where o.error=:isError "),
-    @NamedQuery(name = "CustomScript.getScriptInstanceOnError", query = "from ScriptInstance o where o.error=:isError "),
-    @NamedQuery(name = "CustomScript.getScriptInstanceByTypeActive", query = "from ScriptInstance o where o.sourceTypeEnum=:sourceTypeEnum and o.disabled = false")})
+        @NamedQuery(name = "CustomScript.getScriptInstanceOnError", query = "from ScriptInstance o where o.error=:isError "),
+        @NamedQuery(name = "CustomScript.getScriptInstanceByTypeActive", query = "from ScriptInstance o where o.sourceTypeEnum=:sourceTypeEnum and o.disabled = false") })
 public class ScriptInstance extends CustomScript {
 
     private static final long serialVersionUID = -7691357496569390167L;
-    
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "script_instance_cat_id")
-	private ScriptInstanceCategory scriptInstanceCategory;
 
+    /**
+     * Script category
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "script_instance_cat_id")
+    private ScriptInstanceCategory scriptInstanceCategory;
+
+    /**
+     * A list of roles that can execute a script
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "adm_script_exec_role", joinColumns = @JoinColumn(name = "script_instance_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> executionRoles = new HashSet<Role>();
 
+    /**
+     * A list of roles that can view/modify the script
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "adm_script_sourc_role", joinColumns = @JoinColumn(name = "script_instance_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> sourcingRoles = new HashSet<Role>();
@@ -94,11 +109,11 @@ public class ScriptInstance extends CustomScript {
         this.sourcingRoles = sourcingRoles;
     }
 
-	public ScriptInstanceCategory getScriptInstanceCategory() {
-		return scriptInstanceCategory;
-	}
+    public ScriptInstanceCategory getScriptInstanceCategory() {
+        return scriptInstanceCategory;
+    }
 
-	public void setScriptInstanceCategory(ScriptInstanceCategory scriptInstanceCategory) {
-		this.scriptInstanceCategory = scriptInstanceCategory;
-	}
+    public void setScriptInstanceCategory(ScriptInstanceCategory scriptInstanceCategory) {
+        this.scriptInstanceCategory = scriptInstanceCategory;
+    }
 }

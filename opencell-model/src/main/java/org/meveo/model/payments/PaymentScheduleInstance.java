@@ -23,21 +23,25 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableBusinessEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.catalog.Calendar;
 
 /**
- * @author anasseh
+ * The Class PaymentScheduleInstance.
  *
+ * @author anasseh
  * @since Opencell 5.2
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "PAYMENT_SCH_INSTANCE", inheritCFValuesFrom = "paymentScheduleTemplate")
 @Table(name = "ar_payment_schedule_inst")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_payment_schedule_inst_seq"), })
-public class PaymentScheduleInstance extends EnableBusinessEntity {
+public class PaymentScheduleInstance extends EnableBusinessCFEntity {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 322388141736383861L;
@@ -47,53 +51,60 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     @Enumerated(EnumType.STRING)
     @NotNull
     private PaymentScheduleStatusEnum status;
-    
-    @Column(name = "status_date")  
+
+    /** The status date. */
+    @Column(name = "status_date")
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
     private Date statusDate;
-    
+
+    /** The payment schedule template. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_schedule_tmpl_id")
     @NotNull
     private PaymentScheduleTemplate paymentScheduleTemplate;
-    
-    @Column(name = "start_date")  
+
+    /** The start date. */
+    @Column(name = "start_date")
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
     private Date startDate;
-    
-    @Column(name = "end_date")  
+
+    /** The end date. */
+    @Column(name = "end_date")
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
     private Date endDate;
-    
+
+    /** The service instance. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_instance_id")
     @NotNull
     private ServiceInstance serviceInstance;
-    
+
+    /** The amount. */
     @Column(name = "amount")
     @NotNull
     private BigDecimal amount;
-    
+
+    /** The calendar. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendar_id")
     @NotNull
     private Calendar calendar;
-    
-    @Column(name = "due_date_days")
+
+    /** The payment day in month. */
+    @Column(name = "payment_day_in_month")
     @NotNull
-    private Integer dueDateDays;
-    
-    
-    
-  
-    
-    @OneToMany(mappedBy = "paymentScheduleInstance", cascade = CascadeType.ALL)   
+    private Integer paymentDayInMonth;
+
+    /** The payment schedule instance items. */
+    @OneToMany(mappedBy = "paymentScheduleInstance", cascade = CascadeType.ALL)
     private List<PaymentScheduleInstanceItem> paymentScheduleInstanceItems;
 
     /**
+     * Gets the status.
+     *
      * @return the status
      */
     public PaymentScheduleStatusEnum getStatus() {
@@ -101,6 +112,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Sets the status.
+     *
      * @param status the status to set
      */
     public void setStatus(PaymentScheduleStatusEnum status) {
@@ -108,6 +121,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Gets the payment schedule template.
+     *
      * @return the paymentScheduleTemplate
      */
     public PaymentScheduleTemplate getPaymentScheduleTemplate() {
@@ -115,6 +130,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Sets the payment schedule template.
+     *
      * @param paymentScheduleTemplate the paymentScheduleTemplate to set
      */
     public void setPaymentScheduleTemplate(PaymentScheduleTemplate paymentScheduleTemplate) {
@@ -122,6 +139,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Gets the service instance.
+     *
      * @return the serviceInstance
      */
     public ServiceInstance getServiceInstance() {
@@ -129,6 +148,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Sets the service instance.
+     *
      * @param serviceInstance the serviceInstance to set
      */
     public void setServiceInstance(ServiceInstance serviceInstance) {
@@ -136,6 +157,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Gets the payment schedule instance items.
+     *
      * @return the paymentScheduleInstanceItems
      */
     public List<PaymentScheduleInstanceItem> getPaymentScheduleInstanceItems() {
@@ -143,6 +166,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Sets the payment schedule instance items.
+     *
      * @param paymentScheduleInstanceItems the paymentScheduleInstanceItems to set
      */
     public void setPaymentScheduleInstanceItems(List<PaymentScheduleInstanceItem> paymentScheduleInstanceItems) {
@@ -150,6 +175,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Gets the status date.
+     *
      * @return the statusDate
      */
     public Date getStatusDate() {
@@ -157,6 +184,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Sets the status date.
+     *
      * @param statusDate the statusDate to set
      */
     public void setStatusDate(Date statusDate) {
@@ -164,6 +193,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Gets the start date.
+     *
      * @return the startDate
      */
     public Date getStartDate() {
@@ -171,6 +202,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Sets the start date.
+     *
      * @param startDate the startDate to set
      */
     public void setStartDate(Date startDate) {
@@ -178,6 +211,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Gets the amount.
+     *
      * @return the amount
      */
     public BigDecimal getAmount() {
@@ -185,6 +220,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Sets the amount.
+     *
      * @param amount the amount to set
      */
     public void setAmount(BigDecimal amount) {
@@ -192,6 +229,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Gets the calendar.
+     *
      * @return the calendar
      */
     public Calendar getCalendar() {
@@ -199,6 +238,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Sets the calendar.
+     *
      * @param calendar the calendar to set
      */
     public void setCalendar(Calendar calendar) {
@@ -206,6 +247,8 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Gets the end date.
+     *
      * @return the endDate
      */
     public Date getEndDate() {
@@ -213,25 +256,40 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     }
 
     /**
+     * Sets the end date.
+     *
      * @param endDate the endDate to set
      */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
-    /**
-     * @return the dueDateDays
-     */
-    public Integer getDueDateDays() {
-        return dueDateDays;
-    }
 
     /**
-     * @param dueDateDays the dueDateDays to set
+     * Gets the payment day in month.
+     *
+     * @return the payment day in month
      */
-    public void setDueDateDays(Integer dueDateDays) {
-        this.dueDateDays = dueDateDays;
+    public Integer getPaymentDayInMonth() {
+        return paymentDayInMonth;
     }
 
-      
+
+    /**
+     * Sets the payment day in month.
+     *
+     * @param paymentDayInMonth the new payment day in month
+     */
+    public void setPaymentDayInMonth(Integer paymentDayInMonth) {
+        this.paymentDayInMonth = paymentDayInMonth;
+    }
+    
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        if (paymentScheduleTemplate != null) {
+            return new ICustomFieldEntity[] { paymentScheduleTemplate };
+        }
+        return null;
+    }
+
 }

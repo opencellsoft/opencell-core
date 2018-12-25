@@ -280,10 +280,9 @@ public class GroupedCustomField implements Serializable {
                     if ((!cft.isDisabled() || (cft.isDisabled() && !cfValueHolder.isAnyFieldEmptyForGui(cft))) && (!newEntity || (newEntity && !cft.isHideOnNew()))
                             && ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity)) {
                         hasVisibleCustomFields = true;
+                        return hasVisibleCustomFields;
                     }
-                } catch (BusinessException e) {
-                    continue;
-                }
+                } catch (BusinessException e) { }
             } else if (cfFieldOrOrg.getType().equals(GroupedCustomFieldTreeItemType.fieldGroup)) {
                 for (GroupedCustomField cfField : cfFieldOrOrg.getChildren()) {
                     CustomFieldTemplate cft = (CustomFieldTemplate) cfField.getData();
@@ -293,9 +292,7 @@ public class GroupedCustomField implements Serializable {
                             hasVisibleCustomFields = true;
                             return hasVisibleCustomFields;
                         }
-                    } catch (BusinessException e) {
-                        continue;
-                    }
+                    } catch (BusinessException e) { }
                 }
             }
         }

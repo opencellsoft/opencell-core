@@ -60,19 +60,17 @@
                      <hftl:formField label="#{messages['serviceInstance.rateUntilDate']}" field="rateUntilDate" /> 
                     <hftl:formField label="#{messages['subscription.autoEndOfEngagement']}" listenerUpdate="endAgreementDateId" newLine="true"
 								field="autoEndOfEngagement" actionListenerBean="#{serviceInstanceBean}" actionListenerMethod="autoUpdateEndOfEngagementDate" />
-                    <hftl:formField label="#{messages['serviceTemplate.minimumLabel']} EL" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="25"  />  
-                    <c:choose> 
-	                    <c:when test="${appProvider.entreprise}">
-					        <c:set var="minimumAmountLabel" value="#{messages['serviceTemplate.minimumAmountWithoutTax']} EL" />
-					    </c:when>
-					    <c:otherwise>
-					    	<c:set var="minimumAmountLabel" value="#{messages['serviceTemplate.minimumAmountWithTax']} EL" />
-					    </c:otherwise>
-					</c:choose>
-					<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />  
-                         <hftl:formField label="#{messages['serviceInstance.amountPS']}" field="amountPS" /> 
+
+                    <hftl:formField label="#{messages['serviceTemplate.minimumLabelEl']}" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />
+                    <hftl:formField label="#{messages[appProvider.entreprise?'serviceTemplate.minimumAmountWithoutTaxEl':'serviceTemplate.minimumAmountWithTaxEl']}" field="minimumAmountEl"
+                        textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                    <hftl:formField label="#{messages['serviceTemplate.minimumLabelElSpark']}" field="minimumLabelElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />
+                    <hftl:formField label="#{messages[appProvider.entreprise?'serviceTemplate.minimumAmountWithoutTaxElSpark':'serviceTemplate.minimumAmountWithTaxElSpark']}"
+                        field="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+
+                    <hftl:formField label="#{messages['serviceInstance.amountPS']}" field="amountPS" /> 
                           <hftl:formField label="#{messages['serviceInstance.calendarPS']}" field="calendarPS" valueLabelField="code" listBean="#{calendarBean}" id="calendarPsId" /> 
-                         <hftl:formField label="#{messages['paymentScheduleTemplate.dayInMonth']}" field="dueDateDaysPS" /> 
+                         <hftl:formField label="#{messages['paymentScheduleTemplate.dayInMonth']}" field="paymentDayInMonthPS" /> 
                     <p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
 	                    <h:panelGroup id="serviceRenewal">
 
@@ -165,14 +163,11 @@
 			<ui:define name="buttons">
 				<h:panelGroup
 					rendered="#{not empty serviceInstanceBean.entity.id and serviceInstanceBean.canUserUpdateEntity()}">
-					<p:commandButton action="#{serviceInstanceBean.activateService}"
-						value="#{messages['serviceInstance.activateButton']}" ajax="false"
+					<p:commandButton action="#{serviceInstanceBean.reactiveService}"
+						value="#{messages['button.reactivateButton']}" ajax="false"
 						onclick="if(confirm('#{messages['confirmationMessage.confirmActivation']}')){return true;}else{return false;}"
-						disabled="#{serviceInstanceBean.entity.status.toString() == 'ACTIVE' or serviceInstanceBean.entity.status.toString() == 'TERMINATED'}" />
-					<p:commandButton action="#{serviceInstanceBean.cancelService}"
-						value="#{messages['serviceInstance.cancelButton']}" ajax="false"
-						onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
-						disabled="#{serviceInstanceBean.entity.status.toString() != 'ACTIVE'}" />
+						disabled="#{serviceInstanceBean.entity.status.toString() != 'SUSPENDED'}" />
+					
 					<p:commandButton action="#{serviceInstanceBean.suspendService}"
 						value="#{messages['serviceInstance.suspendButton']}" ajax="false"
 						onclick="if(confirm('#{messages['confirmationMessage.confirmSuspension']}')){return true;}else{return false;}"

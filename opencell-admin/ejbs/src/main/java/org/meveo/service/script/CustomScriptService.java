@@ -50,7 +50,6 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
-import org.meveo.model.IEntity;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
@@ -65,8 +64,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     private ClusterEventPublisher clusterEventPublisher;
 
     protected final Class<SI> scriptInterfaceClass;
-
-    private Map<CacheKeyStr, List<String>> allLogs = new HashMap<>();
 
     private Map<CacheKeyStr, Class<SI>> allScriptInterfaces = new HashMap<>();
 
@@ -517,45 +514,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Add a log line for a script
-     * 
-     * @param message message to be displayed
-     * @param scriptCode code of script.
-     */
-    public void addLog(String message, String scriptCode) {
-
-        if (!allLogs.containsKey(new CacheKeyStr(currentUser.getProviderCode(), scriptCode))) {
-            allLogs.put(new CacheKeyStr(currentUser.getProviderCode(), scriptCode), new ArrayList<String>());
-        }
-        allLogs.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode)).add(message);
-    }
-
-    /**
-     * Get logs for script
-     * 
-     * @param scriptCode code of script
-     * @return list logs.
-     */
-    public List<String> getLogs(String scriptCode) {
-
-        if (!allLogs.containsKey(new CacheKeyStr(currentUser.getProviderCode(), scriptCode))) {
-            return new ArrayList<String>();
-        }
-        return allLogs.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
-    }
-
-    /**
-     * Clear all logs for a script.
-     * 
-     * @param scriptCode script's code
-     */
-    public void clearLogs(String scriptCode) {
-        if (allLogs.containsKey(new CacheKeyStr(currentUser.getProviderCode(), scriptCode))) {
-            allLogs.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode)).clear();
-        }
-    }
-
-    /**
      * Find the package name in a source java text.
      * 
      * @param src Java source code
@@ -592,9 +550,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Execute action on an entity.
+     * Execute action on an entity/event. Does not call init() or finalize() methods of the script.
      * 
-     * @param entity Entity to execute action on
+     * @param entityOrEvent Entity or event to execute action on
      * @param scriptCode Script to execute, identified by a code
      * @param encodedParameters Additional parameters encoded in URL like style param=value&amp;param=value
      * @return Context parameters. Will not be null even if "context" parameter is null.
@@ -602,15 +560,15 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws ElementNotFoundException Script not found
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters) throws BusinessException {
+    public Map<String, Object> execute(Object entityOrEvent, String scriptCode, String encodedParameters) throws BusinessException {
 
-        return execute(entity, scriptCode, CustomScriptService.parseParameters(encodedParameters));
+        return execute(entityOrEvent, scriptCode, CustomScriptService.parseParameters(encodedParameters));
     }
 
     /**
-     * Execute action on an entity.
+     * Execute action on an entity/event. Does not call init() or finalize() methods of the script.
      * 
-     * @param entity Entity to execute action on
+     * @param entityOrEvent Entity or event to execute action on
      * @param scriptCode Script to execute, identified by a code
      * @param context Additional parameters
      * @return Context parameters. Will not be null even if "context" parameter is null.
@@ -619,20 +577,42 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context)
-            throws BusinessException {
+    public Map<String, Object> execute(Object entityOrEvent, String scriptCode, Map<String, Object> context) throws BusinessException {
 
         if (context == null) {
             context = new HashMap<>();
         }
-        context.put(Script.CONTEXT_ENTITY, entity);
+        context.put(Script.CONTEXT_ENTITY, entityOrEvent);
         context.put(Script.CONTEXT_ACTION, scriptCode);
         Map<String, Object> result = execute(scriptCode, context);
         return result;
     }
 
     /**
-     * Execute action on an entity.
+     * Execute action on an entity/event. Does not call init() or finalize() methods of the script.
+     * 
+     * @param entityOrEvent Entity or event to execute action on
+     * @param scriptCode Script to execute, identified by a code
+     * @param context Additional parameters
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws BusinessException Any execution exception
+     */
+    public Map<String, Object> executeWInitAndFinalize(Object entityOrEvent, String scriptCode, Map<String, Object> context) throws BusinessException {
+
+        if (context == null) {
+            context = new HashMap<>();
+        }
+        context.put(Script.CONTEXT_ENTITY, entityOrEvent);
+        context.put(Script.CONTEXT_ACTION, scriptCode);
+        Map<String, Object> result = executeWInitAndFinalize(scriptCode, context);
+        return result;
+    }
+
+    /**
+     * Execute script. Does not call init() or finalize() methods of the script.
      * 
      * @param scriptCode Script to execute, identified by a code
      * @param context Method context
@@ -643,15 +623,78 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(String scriptCode, Map<String, Object> context)
-            throws BusinessException {
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context) throws BusinessException {
 
         log.trace("Script {} to be executed with parameters {}", scriptCode, context);
+
+        if (context == null) {
+            context = new HashMap<String, Object>();
+        }
+        context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+        context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
         SI classInstance = getScriptInstance(scriptCode);
         classInstance.execute(context);
 
         log.trace("Script {} executed with parameters {}", scriptCode, context);
+        return context;
+    }
+
+    /**
+     * Execute script. DOES call init() or finalize() methods of the script.
+     * 
+     * @param scriptCode Script to execute, identified by a code
+     * @param context Method context
+     * 
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws BusinessException Any execution exception
+     */
+    public Map<String, Object> executeWInitAndFinalize(String scriptCode, Map<String, Object> context) throws BusinessException {
+
+        log.trace("Script {} to be executed with parameters {}", scriptCode, context);
+
+        if (context == null) {
+            context = new HashMap<String, Object>();
+        }
+        context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+        context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+
+        SI classInstance = getScriptInstance(scriptCode);
+        classInstance.init(context);
+        classInstance.execute(context);
+        classInstance.finalize(context);
+
+        log.trace("Script {} executed with parameters {}", scriptCode, context);
+        return context;
+    }
+
+    /**
+     * Execute script. DOES call init() or finalize() methods of the script.
+     * 
+     * @param compiledScript Compiled script class
+     * @param context Method context
+     * 
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws BusinessException Any execution exception
+     */
+    public Map<String, Object> executeWInitAndFinalize(SI compiledScript, Map<String, Object> context) throws BusinessException {
+
+        if (context == null) {
+            context = new HashMap<String, Object>();
+        }
+        context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+        context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+
+        log.trace("Script {} to be executed with parameters {}", compiledScript.getClass(), context);
+
+        compiledScript.init(context);
+        compiledScript.execute(context);
+        compiledScript.finalize(context);
+
+        log.trace("Script {} executed with parameters {}", compiledScript.getClass(), context);
         return context;
     }
 
@@ -665,11 +708,20 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws BusinessException Any execution exception
      */
     protected Map<String, Object> execute(SI compiledScript, Map<String, Object> context) throws BusinessException {
+
         if (context == null) {
             context = new HashMap<String, Object>();
         }
 
+        context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+        context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+
+        log.trace("Script {} to be executed with parameters {}", compiledScript.getClass(), context);
+
         compiledScript.execute(context);
+
+        log.trace("Script {} executed with parameters {}", compiledScript.getClass(), context);
+
         return context;
     }
 
@@ -706,6 +758,5 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     public void clearCompiledScripts(String scriptCode) {
         cachedScriptInstances.remove(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
         allScriptInterfaces.remove(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
-        allLogs.remove(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
     }
 }

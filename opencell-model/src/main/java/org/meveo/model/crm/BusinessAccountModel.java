@@ -10,6 +10,8 @@ import javax.validation.constraints.NotNull;
 import org.meveo.model.module.MeveoModule;
 
 /**
+ * Business account model used for account creation customization
+ * 
  * @author Edward P. Legaspi
  **/
 @Entity
@@ -18,17 +20,20 @@ public class BusinessAccountModel extends MeveoModule {
 
     private static final long serialVersionUID = 8664266331861722097L;
 
+    /**
+     * Account hierarchy levels to create
+     */
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "hierarchy_type", length = 20)
     private AccountHierarchyTypeEnum hierarchyType;
 
-	public AccountHierarchyTypeEnum getHierarchyType() {
-		return hierarchyType;
-	}
+    public AccountHierarchyTypeEnum getHierarchyType() {
+        return hierarchyType;
+    }
 
-	public void setHierarchyType(AccountHierarchyTypeEnum hierarchyType) {
-		this.hierarchyType = hierarchyType;
-	}
+    public void setHierarchyType(AccountHierarchyTypeEnum hierarchyType) {
+        this.hierarchyType = hierarchyType;
+    }
 
 }

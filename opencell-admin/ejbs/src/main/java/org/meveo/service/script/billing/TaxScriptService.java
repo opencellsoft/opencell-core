@@ -5,12 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Tax;
@@ -19,50 +17,75 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
+ * Takes care of tax related script method invocation
+ * 
  * @author Edward P. Legaspi
  */
-@Singleton
-@Startup
+@Stateless
 public class TaxScriptService implements Serializable {
 
-	private static final long serialVersionUID = 8771932761605219308L;
+    private static final long serialVersionUID = 8771932761605219308L;
 
-	@Inject
-	private ScriptInstanceService scriptInstanceService;
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
-	public boolean isApplicable(String scriptCode, UserAccount userAccount, Invoice invoice,
-			InvoiceSubCategory invoiceSubCategory) throws BusinessException {
-		TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
+    /**
+     * Determine if external tax calculation applies to the given parameters
+     * 
+     * @param scriptCode Tax script code
+     * @param userAccount User account
+     * @param invoice Invoice
+     * @param invoiceSubCategory Invoice subcategory
+     * @return True if tax should be calculated externally
+     * @throws BusinessException General business exception
+     */
+    public boolean isApplicable(String scriptCode, UserAccount userAccount, Invoice invoice, InvoiceSubCategory invoiceSubCategory) throws BusinessException {
+        TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 
-		Map<String, Object> scriptContext = new HashMap<>();
-		scriptContext.put(TaxScript.TAX_USER_ACCOUNT, userAccount);
-		scriptContext.put(TaxScript.TAX_INVOICE, invoice);
-		scriptContext.put(TaxScript.TAX_INVOICE_SUB_CAT, invoiceSubCategory);
+        Map<String, Object> scriptContext = new HashMap<>();
+        scriptContext.put(TaxScript.TAX_USER_ACCOUNT, userAccount);
+        scriptContext.put(TaxScript.TAX_INVOICE, invoice);
+        scriptContext.put(TaxScript.TAX_INVOICE_SUB_CAT, invoiceSubCategory);
 
-		return scriptInterface.isApplicable(scriptContext);
-	}
+        return scriptInterface.isApplicable(scriptContext);
+    }
 
-	public List<Tax> computeTaxes(String scriptCode, UserAccount userAccount, Invoice invoice,
-			InvoiceSubCategory invoiceSubCategory) throws BusinessException {
-		TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
+    /**
+     * Determines applicable taxes from an external web service
+     * 
+     * @param scriptCode Tax script code
+     * @param userAccount User account
+     * @param invoice Invoice
+     * @param invoiceSubCategory Invoice subcategory
+     * @return A list of tax entities
+     * @throws BusinessException General business exception
+     */
+    public List<Tax> computeTaxes(String scriptCode, UserAccount userAccount, Invoice invoice, InvoiceSubCategory invoiceSubCategory) throws BusinessException {
+        TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 
-		Map<String, Object> scriptContext = new HashMap<>();
-		scriptContext.put(TaxScript.TAX_USER_ACCOUNT, userAccount);
-		scriptContext.put(TaxScript.TAX_INVOICE, invoice);
-		scriptContext.put(TaxScript.TAX_INVOICE_SUB_CAT, invoiceSubCategory);
+        Map<String, Object> scriptContext = new HashMap<>();
+        scriptContext.put(TaxScript.TAX_USER_ACCOUNT, userAccount);
+        scriptContext.put(TaxScript.TAX_INVOICE, invoice);
+        scriptContext.put(TaxScript.TAX_INVOICE_SUB_CAT, invoiceSubCategory);
 
-		return scriptInterface.computeTaxes(scriptContext);
-	}
+        return scriptInterface.computeTaxes(scriptContext);
+    }
 
-	public Map<String, TaxInvoiceAgregate> computeTaxAggregateMap(String scriptCode, Invoice invoice,
-			Map<Long, CategoryInvoiceAgregate> catInvoiceAgregateMap) throws BusinessException {
-		TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
+    /**
+     * Creates tax aggregates. Script should also update the tax amounts in all aggregates.
+     * 
+     * @param scriptCode Tax script code
+     * @param invoice Invoice
+     * @return A map of tax aggregates with Tax code as a key
+     * @throws BusinessException General business exception
+     */
+    public Map<String, TaxInvoiceAgregate> createTaxAggregates(String scriptCode, Invoice invoice) throws BusinessException {
 
-		Map<String, Object> scriptContext = new HashMap<>();
-		scriptContext.put(TaxScript.TAX_INVOICE, invoice);
-		scriptContext.put(TaxScript.TAX_CAT_INV_AGGREGATE_MAP, catInvoiceAgregateMap);
+        TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 
-		return scriptInterface.computeTaxAggregateMap(scriptContext);
-	}
+        Map<String, Object> scriptContext = new HashMap<>();
+        scriptContext.put(TaxScript.TAX_INVOICE, invoice);
 
+        return scriptInterface.createTaxAggregates(scriptContext);
+    }
 }

@@ -35,24 +35,25 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.MediaEnum;
 
 @Entity
-@ExportIdentifier({ "code"})
-@Table(name = "com_contact_coords", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@ExportIdentifier({ "code" })
+@Table(name = "com_contact_coords", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @DiscriminatorColumn(name = "media")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_contact_coords_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "com_contact_coords_seq"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class ContactCoordinates extends BusinessEntity {
-	private static final long serialVersionUID = 5212396734631312511L;
+    private static final long serialVersionUID = 5212396734631312511L;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "media", insertable = false, updatable = false)
-	private MediaEnum media;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "media", insertable = false, updatable = false)
+    private MediaEnum media;
 
-	public MediaEnum getMedia() {
-		return media;
-	}
+    public MediaEnum getMedia() {
+        return media;
+    }
 
-	public void setMedia(MediaEnum media) {
-		this.media = media;
-	}
+    public void setMedia(MediaEnum media) {
+        this.media = media;
+    }
 
 }

@@ -24,11 +24,16 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.PersistenceService;
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
+ */
 @Stateless
 public class ServiceChargeTemplateRecurringService extends PersistenceService<ServiceChargeTemplateRecurring> {
 
@@ -50,4 +55,17 @@ public class ServiceChargeTemplateRecurringService extends PersistenceService<Se
     // refreshOrRetrieve(e);
     // super.remove(e);
     // }
+    
+    /**
+     * Gets the list service charge template recurring of from counterTemplate.
+     * 
+     * @param counterTemplate the counter template
+     * @return list service charge template recurring
+     */
+    @SuppressWarnings("unchecked")
+    public List<ServiceChargeTemplateRecurring> findByCounterTemplate(CounterTemplate counterTemplate){
+        QueryBuilder qb=new QueryBuilder(ServiceChargeTemplateRecurring.class,"r");
+        qb.addCriterionEntity("counterTemplate", counterTemplate);
+        return qb.find(getEntityManager());
+    }
 }

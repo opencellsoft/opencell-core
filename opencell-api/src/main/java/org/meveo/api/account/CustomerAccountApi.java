@@ -168,6 +168,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         customerAccount.setExternalRef1(postData.getExternalRef1());
         customerAccount.setExternalRef2(postData.getExternalRef2());
         customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
+        customerAccount.setDueDateDelayELSpark(postData.getDueDateDelayELSpark());
 
         if (postData.getPaymentMethods() != null) {
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
@@ -273,8 +274,11 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getExternalRef2())) {
             customerAccount.setExternalRef2(postData.getExternalRef2());
         }
-        if (!StringUtils.isBlank(postData.getDueDateDelayEL())) {
+        if (postData.getDueDateDelayEL()!=null) {
             customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
+        }
+        if (postData.getDueDateDelayELSpark()!=null) {
+            customerAccount.setDueDateDelayELSpark(postData.getDueDateDelayELSpark());
         }
 
         if (!StringUtils.isBlank(postData.isExcludedFromPayment())) {

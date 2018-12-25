@@ -1,5 +1,7 @@
 package org.meveo.api.dto.document.sign;
 
+import java.util.List;
+
 import org.meveo.api.dto.BaseEntityDto;
 
 /**
@@ -20,12 +22,15 @@ public class SignFileRequestDto  extends BaseEntityDto {
     private String filePath;
     
     /** The internal position. */
+    @Deprecated
     private String internalPosition;
     
     /** The external position. */
+    @Deprecated
     private String externalPosition;
     
     /** The internal page. */
+    @Deprecated
     private int internalPage;
     
     /** The external page. */
@@ -33,6 +38,12 @@ public class SignFileRequestDto  extends BaseEntityDto {
     
     /** The content. */
     private byte[] content;
+    
+    /** 
+     * The list external positions.
+     * List of SignFileObjectRequestDto items , encapsulating positions and pages for each file on which the signature will be put
+     *  */
+    private List<SignFileObjectRequestDto> listExternalPositions;
     
     /**
      * Gets the name.
@@ -109,13 +120,16 @@ public class SignFileRequestDto  extends BaseEntityDto {
     /**
      * @return the internalPosition
      */
+    @Deprecated
     public String getInternalPosition() {
         return internalPosition;
     }
 
     /**
      * @return the externalPosition
+     * Should be removed for the upcoming versions , and to be replaced by listExternalPositions
      */
+    @Deprecated
     public String getExternalPosition() {
         return externalPosition;
     }
@@ -161,4 +175,19 @@ public class SignFileRequestDto  extends BaseEntityDto {
     public void setExternalPage(int externalPage) {
         this.externalPage = externalPage;
     }
+
+    /**
+     * @return the listExternalPositions
+     */
+    public List<SignFileObjectRequestDto> getListExternalPositions() {
+        return listExternalPositions;
+    }
+
+    /**
+     * @param listExternalPositions the listExternalPositions to set
+     */
+    public void setListExternalPositions(List<SignFileObjectRequestDto> listExternalPositions) {
+        this.listExternalPositions = listExternalPositions;
+    }
+
 }

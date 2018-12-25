@@ -33,35 +33,36 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "code"})
-@Table(name = "com_msg_var_value", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_msg_var_val_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "com_msg_var_value", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "com_msg_var_val_seq"), })
 public class MessageVariableValue extends BusinessEntity {
 
-	private static final long serialVersionUID = 3887656885680541231L;
+    private static final long serialVersionUID = 3887656885680541231L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "message")
-	private Message message;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "message")
+    private Message message;
 
-	@Column(name = "value", length = 255)
+    @Column(name = "value", length = 255)
     @Size(max = 255)
-	private String value;
+    private String value;
 
-	public Message getMessage() {
-		return message;
-	}
+    public Message getMessage() {
+        return message;
+    }
 
-	public void setMessage(Message message) {
-		this.message = message;
-	}
+    public void setMessage(Message message) {
+        this.message = message;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
 }

@@ -20,40 +20,39 @@ package org.meveo.model.billing;
 
 public enum ApplicationTypeEnum {
 
-	PUNCTUAL(1, "ApplicationTypeEnum.ponctual"), 
-	PRORATA_SUBSCRIPTION(2, "ApplicationTypeEnum.prorataSubscription"), 
-	PRORATA_TERMINATION(3, "ApplicationTypeEnum.prorataTermination"), 
-	RECURRENT(4, "ApplicationTypeEnum.recurrent");
+    PUNCTUAL(1, "ApplicationTypeEnum.ponctual"), PRORATA_SUBSCRIPTION(2, "ApplicationTypeEnum.prorataSubscription"), PRORATA_TERMINATION(3,
+            "ApplicationTypeEnum.prorataTermination"), RECURRENT(4, "ApplicationTypeEnum.recurrent");
 
-	private Integer id;
-	private String label;
+    private Integer id;
+    private String label;
 
-	ApplicationTypeEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
-	}
+    ApplicationTypeEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	/**
-	 * Gets enum by its id.
-	 * @param id id of application type 
-	 * @return application type enum/
-	 */
-	public static ApplicationTypeEnum getValue(Integer id) {
-		if (id != null) {
-			for (ApplicationTypeEnum status : values()) {
-				if (id.equals(status.getId())) {
-					return status;
-				}
-			}
-		}
-		return null;
-	}
+    /**
+     * Gets enum by its id.
+     * 
+     * @param id id of application type
+     * @return application type enum/
+     */
+    public static ApplicationTypeEnum getValue(Integer id) {
+        if (id != null) {
+            for (ApplicationTypeEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
 }

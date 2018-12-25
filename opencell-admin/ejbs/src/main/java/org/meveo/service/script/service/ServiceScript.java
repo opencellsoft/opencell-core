@@ -43,13 +43,11 @@ public class ServiceScript extends ModuleScript implements ServiceScriptInterfac
 
 	@Override
 	public void beforeCreateServiceFromBSM(Map<String, Object> methodContext) throws BusinessException {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void afterCreateServiceFromBSM(Map<String, Object> methodContext) throws BusinessException {
-		// TODO Auto-generated method stub
 		
 	}
 }

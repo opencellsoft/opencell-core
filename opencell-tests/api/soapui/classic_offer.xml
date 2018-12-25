@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -27888,19 +27888,19 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_CH_REC_FLAT_REBATE_1" description="PP Recurring flat rebate">
-            <eventCode>CH_REC_FLAT_REBATE_1</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{-1*mv:getInheritedCFValue(serviceInstance,"CF_REBATE_PRICE_REC")}</amountWithoutTaxEL>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_CH_REC_FLAT_REBATE_1" description="PP Recurring flat rebate">\r
+            <eventCode>CH_REC_FLAT_REBATE_1</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{-1*mv:getInheritedCFValue(serviceInstance,"CF_REBATE_PRICE_REC")}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>-1*mv.getInheritedCFValue(ciRow, "si","CF_REBATE_PRICE_REC")</amountWithoutTaxELSpark>\r
+            <priority>1</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -27932,19 +27932,19 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_CH_REC_FLAT_REBATE_2" description="PP Recurring flat rebate">
-            <eventCode>CH_REC_FLAT_REBATE_2</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{-1*mv:getInheritedCFValue(serviceInstance,"CF_REBATE_PRICE_REC")}</amountWithoutTaxEL>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_CH_REC_FLAT_REBATE_2" description="PP Recurring flat rebate">\r
+            <eventCode>CH_REC_FLAT_REBATE_2</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{-1*mv:getInheritedCFValue(serviceInstance,"CF_REBATE_PRICE_REC")}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>-1*mv.getInheritedCFValue(ciRow, "si","CF_REBATE_PRICE_REC")</amountWithoutTaxELSpark>\r
+            <priority>1</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -27985,6 +27985,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
             <eventCode>CH_REC_FLAT_REBATE_3</eventCode>
             <amountWithoutTax>0</amountWithoutTax>
             <amountWithoutTaxEL>#{-1*mv:getInheritedCFValue(serviceInstance,"CF_REBATE_PRICE_REC")}</amountWithoutTaxEL>
+            <amountWithoutTaxELSpark>-1*mv.getInheritedCFValue(ciRow, "si","CF_REBATE_PRICE_REC")</amountWithoutTaxELSpark>
             <priority>1</priority>
          </pricePlan>
       </ws:createOrUpdatePricePlan>
@@ -28020,19 +28021,19 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_CH_REC_FLAT_REBATE_6" description="PP Recurring flat rebate">
-            <eventCode>CH_REC_FLAT_REBATE_6</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{-1*mv:getInheritedCFValue(serviceInstance,"CF_REBATE_PRICE_REC")}</amountWithoutTaxEL>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_CH_REC_FLAT_REBATE_6" description="PP Recurring flat rebate">\r
+            <eventCode>CH_REC_FLAT_REBATE_6</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{-1*mv:getInheritedCFValue(serviceInstance,"CF_REBATE_PRICE_REC")}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>-1*mv.getInheritedCFValue(ciRow, "si","CF_REBATE_PRICE_REC")</amountWithoutTaxELSpark>
+            <priority>1</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -29877,10 +29878,15 @@ RU5ErkJggg==
 -->
 			<conditionEl>#{ false }</conditionEl>
                <subscriptionEl>#{ mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_COMMISSION_PARTNER") }</subscriptionEl>
+               <subscriptionElSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_COMMISSION_PARTNER")</subscriptionElSpark>
                <quantityEl>#{ op.amountWithoutTax }</quantityEl>
+               <quantityElSpark>op.getAmount_without_tax(</quantityElSpark>
                <param1El>COMMISSION</param1El>
+               <param1ElSpark>COMMISSION</param1ElSpark>
                <param2El>#{ ba.code }</param2El>
+               <param2ElSpark>ciRow.getString(ciRow.fieldIndex("acet__code"))</param2ElSpark>
                <param3El>#{ mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_COMMISSION_RATE") }</param3El>
+               <param3ElSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_COMMISSION_RATE")</param3ElSpark>
 		  </triggeredEdrTemplate>
       </ws:createOrUpdateTriggeredEdr>
    </soapenv:Body>
@@ -31730,19 +31736,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_REC_FLAT" description="PP Recurring flat">
-            <eventCode>CH_${#Project#templateCode}_REC_FLAT</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_PRICE_REC")}</amountWithoutTaxEL>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_REC_FLAT" description="PP Recurring flat">\r
+            <eventCode>CH_${#Project#templateCode}_REC_FLAT</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_PRICE_REC")}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_PRICE_REC")</amountWithoutTaxELSpark>\r
+            <priority>1</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -31774,19 +31780,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_REC_NO_PRORATA" description="PP Recurring flat, no prorata">
-            <eventCode>CH_${#Project#templateCode}_REC_NO_PRORATA</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_PRICE_REC")}</amountWithoutTaxEL>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_REC_NO_PRORATA" description="PP Recurring flat, no prorata">\r
+            <eventCode>CH_${#Project#templateCode}_REC_NO_PRORATA</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_PRICE_REC")}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_PRICE_REC")</amountWithoutTaxELSpark>\r
+            <priority>1</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -31818,19 +31824,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_REC_VOLUME" description="PP Recurring volume based">
-            <eventCode>CH_${#Project#templateCode}_REC_VOLUME</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValueByRangeOfNumbers(serviceInstance,"CF_${#Project#templateCode}_VOLUME_PRICE_REC", op.quantity)}</amountWithoutTaxEL>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_REC_VOLUME" description="PP Recurring volume based">\r
+            <eventCode>CH_${#Project#templateCode}_REC_VOLUME</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValueByRangeOfNumbers(serviceInstance,"CF_${#Project#templateCode}_VOLUME_PRICE_REC", op.quantity)}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValueByKey(ciRow, "si","CF_${#Project#templateCode}_VOLUME_PRICE_REC", op.quantity)</amountWithoutTaxELSpark>\r
+            <priority>1</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -31871,6 +31877,7 @@ RU5ErkJggg==
             <eventCode>CH_${#Project#templateCode}_PRD_DEFAULT</eventCode>
             <amountWithoutTax>111</amountWithoutTax>
             <amountWithoutTaxEL>#{mv:getInheritedCFValue(productInstance,"CF_${#Project#templateCode}_PRICE_PRD")}</amountWithoutTaxEL>
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_PRICE_PRD")</amountWithoutTaxELSpark>
             <priority>1</priority>
          </pricePlan>
       </ws:createOrUpdatePricePlan>
@@ -31915,6 +31922,7 @@ RU5ErkJggg==
             <eventCode>CH_${#Project#templateCode}_OSS_UNIT</eventCode>
             <amountWithoutTax>0</amountWithoutTax>
             <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_PRICE_OS")}</amountWithoutTaxEL>
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_PRICE_OS")</amountWithoutTaxELSpark>
             <priority>1</priority>
          </pricePlan>
       </ws:createOrUpdatePricePlan>
@@ -31950,19 +31958,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_OSS_VOLUME" description="PP One time volume based">
-            <eventCode>CH_${#Project#templateCode}_OSS_VOLUME</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValueByRangeOfNumbers(serviceInstance,"CF_${#Project#templateCode}_VOLUME_PRICE_OS", op.quantity)}</amountWithoutTaxEL>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_OSS_VOLUME" description="PP One time volume based">\r
+            <eventCode>CH_${#Project#templateCode}_OSS_VOLUME</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValueByRangeOfNumbers(serviceInstance,"CF_${#Project#templateCode}_VOLUME_PRICE_OS", op.quantity)}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValueByKey(ciRow, "si","CF_${#Project#templateCode}_VOLUME_PRICE_OS", op.quantity)</amountWithoutTaxELSpark>\r
+            <priority>1</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -31994,19 +32002,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_OST_TERMINATION" description="PP OST TERMINATION">
-            <eventCode>CH_${#Project#templateCode}_OST_TERMINATION</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_PRICE_OS")}</amountWithoutTaxEL>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_OST_TERMINATION" description="PP OST TERMINATION">\r
+            <eventCode>CH_${#Project#templateCode}_OST_TERMINATION</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_PRICE_OS")}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_PRICE_OS")</amountWithoutTaxELSpark>\r
+            <priority>1</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32046,6 +32054,7 @@ RU5ErkJggg==
             <eventCode>CH_${#Project#templateCode}_OSO_ONESHOT</eventCode>
             <amountWithoutTax>99.99</amountWithoutTax>
             <!--amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceTemplate,"CF_${#Project#templateCode}_PRICE_OS")}</amountWithoutTaxEL-->
+            <!--<amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_PRICE_OS")</amountWithoutTaxELSpark>-->
             <priority>1</priority>
          </pricePlan>
       </ws:createOrUpdatePricePlan>
@@ -32081,19 +32090,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_UNIT" description="PP Usage Unit">
-            <eventCode>CH_${#Project#templateCode}_USG_UNIT</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_PRICE_USG")}</amountWithoutTaxEL>
-            <priority>99</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_UNIT" description="PP Usage Unit">\r
+            <eventCode>CH_${#Project#templateCode}_USG_UNIT</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_PRICE_USG")}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_PRICE_USG")</amountWithoutTaxELSpark>\r
+            <priority>99</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32125,19 +32134,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_VOLUME_EVENT" description="PP Usage event volume based">
-            <eventCode>CH_${#Project#templateCode}_USG_VOLUME_EVENT</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValueByRangeOfNumbers(serviceInstance,"CF_${#Project#templateCode}_VOLUME_PRICE_USG", op.quantity)}</amountWithoutTaxEL>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_VOLUME_EVENT" description="PP Usage event volume based">\r
+            <eventCode>CH_${#Project#templateCode}_USG_VOLUME_EVENT</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValueByRangeOfNumbers(serviceInstance,"CF_${#Project#templateCode}_VOLUME_PRICE_USG", op.quantity)}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValueByKey(ciRow, "si","CF_${#Project#templateCode}_VOLUME_PRICE_USG", op.quantity)</amountWithoutTaxELSpark>\r
+            <priority>1</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32169,18 +32178,17 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_PLAN_IN" description="PP Usage Plan included">
-            <eventCode>CH_${#Project#templateCode}_USG_PLAN_IN</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <priority>99</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_PLAN_IN" description="PP Usage Plan included">\r
+            <eventCode>CH_${#Project#templateCode}_USG_PLAN_IN</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <priority>99</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32212,19 +32220,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_PLAN_OUT" description="PP Usage Plan not included">
-            <eventCode>CH_${#Project#templateCode}_USG_PLAN_OUT</eventCode>
-            <amountWithoutTax>1</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_PRICE_USG")}</amountWithoutTaxEL>
-            <priority>99</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_PLAN_OUT" description="PP Usage Plan not included">\r
+            <eventCode>CH_${#Project#templateCode}_USG_PLAN_OUT</eventCode>\r
+            <amountWithoutTax>1</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_PRICE_USG")}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_PRICE_USG")</amountWithoutTaxELSpark>\r
+            <priority>99</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32256,19 +32264,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_0" description="PP Usage tier 0">
-            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_0</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER0"]}</amountWithoutTaxEL>
-            <priority>0</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_0" description="PP Usage tier 0">\r
+            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_0</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER0"]}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER0"])</amountWithoutTaxELSpark>\r
+            <priority>0</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32300,19 +32308,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_1" description="PP Usage tier 1">
-            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_1</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER1"]}</amountWithoutTaxEL>
-            <priority>0</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_1" description="PP Usage tier 1">\r
+            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_1</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER1"]}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER1"])</amountWithoutTaxELSpark>\r
+            <priority>0</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32344,19 +32352,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_2" description="PP Usage tier 2">
-            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_2</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER2"]}</amountWithoutTaxEL>
-            <priority>0</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_2" description="PP Usage tier 2">\r
+            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_2</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER2"]}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER2"])</amountWithoutTaxELSpark>\r
+            <priority>0</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32388,19 +32396,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_3" description="PP Usage tier 3">
-            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_3</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER3"]}</amountWithoutTaxEL>
-            <priority>0</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_3" description="PP Usage tier 3">\r
+            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_3</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER3"]}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER3"])</amountWithoutTaxELSpark>\r
+            <priority>0</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32432,19 +32440,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_4" description="PP Usage tier 4">
-            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_4</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER4"]}</amountWithoutTaxEL>
-            <priority>0</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_4" description="PP Usage tier 4">\r
+            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_4</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER4"]}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER4"])</amountWithoutTaxELSpark>\r
+            <priority>0</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32476,19 +32484,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_5" description="PP Usage tier 5">
-            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_5</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER5"]}</amountWithoutTaxEL>
-            <priority>0</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_5" description="PP Usage tier 5">\r
+            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_5</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER5"]}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER5"])</amountWithoutTaxELSpark>\r
+            <priority>0</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32520,19 +32528,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_6" description="PP Usage tier 6">
-            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_6</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER6"]}</amountWithoutTaxEL>
-            <priority>0</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_6" description="PP Usage tier 6">\r
+            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_6</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER6"]}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER6"])</amountWithoutTaxELSpark>\r
+            <priority>0</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32564,19 +32572,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_7" description="PP Usage tier 7">
-            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_7</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER7"]}</amountWithoutTaxEL>
-            <priority>0</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_7" description="PP Usage tier 7">\r
+            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_7</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER7"]}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER7"])</amountWithoutTaxELSpark>\r
+            <priority>0</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32608,19 +32616,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_8" description="PP Usage tier 8">
-            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_8</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER8"]}</amountWithoutTaxEL>
-            <priority>0</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_8" description="PP Usage tier 8">\r
+            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_8</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER8"]}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER8"])</amountWithoutTaxELSpark>\r
+            <priority>0</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32652,19 +32660,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_9" description="PP Usage last tier">
-            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_9</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER9"]}</amountWithoutTaxEL>
-            <priority>0</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_10TIERS_9" description="PP Usage last tier">\r
+            <eventCode>CH_${#Project#templateCode}_USG_10TIERS_9</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(serviceInstance,"CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER9"]}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>mv.getInheritedCFValue(ciRow, "si","CF_${#Project#templateCode}_10TIERS_PRICE_USG")["TIER9"])</amountWithoutTaxELSpark>\r
+            <priority>0</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32696,19 +32704,19 @@ RU5ErkJggg==
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdatePricePlan>
-         
-         <pricePlan code="PP_${#Project#templateCode}_CH_USG_COMMISSION" description="PP Usage Commission">
-            <eventCode>CH_${#Project#templateCode}_USG_COMMISSION</eventCode>
-            <amountWithoutTax>0</amountWithoutTax>
-            <amountWithoutTaxEL>#{op.parameter3/100}</amountWithoutTaxEL>
-            <priority>99</priority>
-         </pricePlan>
-      </ws:createOrUpdatePricePlan>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <pricePlan code="PP_${#Project#templateCode}_CH_USG_COMMISSION" description="PP Usage Commission">\r
+            <eventCode>CH_${#Project#templateCode}_USG_COMMISSION</eventCode>\r
+            <amountWithoutTax>0</amountWithoutTax>\r
+            <amountWithoutTaxEL>#{op.parameter3/100}</amountWithoutTaxEL>\r
+            <amountWithoutTaxELSpark>op.parameter_3/100</amountWithoutTaxELSpark>\r
+            <priority>99</priority>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/>
             <con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains">
@@ -32793,7 +32801,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_USAGE</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>100</percent>
+			<discountValue>100</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -32839,7 +32847,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_RECURRING</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>100</percent>
+			<discountValue>100</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -32885,7 +32893,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_ONESHOT</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>100</percent>
+			<discountValue>100</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -32931,7 +32939,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_PRODUCTS</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>100</percent>
+			<discountValue>100</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -33017,7 +33025,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_USAGE</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>10</percent>
+			<discountValue>10</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -33063,7 +33071,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_RECURRING</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>10</percent>
+			<discountValue>10</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -33109,7 +33117,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_ONESHOT</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>10</percent>
+			<discountValue>10</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -33155,7 +33163,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_PRODUCTS</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>10</percent>
+			<discountValue>10</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -44478,6 +44486,7 @@ public class ForgotPassword extends ModuleScript{
 		</matchOperationRequest>
       </ws:matchOperations>
    </soapenv:Body>
+<<<<<<< HEAD
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="90d6be5a-c28e-4471-8add-46b553e9f065"/>
             <con:assertion type="Simple Contains" id="c20bc35a-d8d3-4ba7-9db1-6e41fb250a89" name="Contains">
@@ -44501,11 +44510,11 @@ public class ForgotPassword extends ModuleScript{
       <con:properties>
         <con:property>
           <con:name>unduePaymentId</con:name>
-          <con:value>56</con:value>
+          <con:value>6</con:value>
         </con:property>
         <con:property>
           <con:name>undueRefundId</con:name>
-          <con:value>57</con:value>
+          <con:value>7</con:value>
         </con:property>
       </con:properties>
     </con:testCase>
@@ -44560,7 +44569,7 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
       <con:property>
         <con:name>invoice1_amount</con:name>
-        <con:value>113.30</con:value>
+        <con:value>47</con:value>
       </con:property>
       <con:property>
         <con:name>invoice2_number</con:name>
@@ -44568,7 +44577,7 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
       <con:property>
         <con:name>invoice2_amount</con:name>
-        <con:value>26.40</con:value>
+        <con:value>14</con:value>
       </con:property>
     </con:properties>
   </con:testSuite>
@@ -44588,6 +44597,118 @@ public class ForgotPassword extends ModuleScript{
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+=======
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="90d6be5a-c28e-4471-8add-46b553e9f065"/>
+            <con:assertion type="Simple Contains" id="c20bc35a-d8d3-4ba7-9db1-6e41fb250a89" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties>
+        <con:property>
+          <con:name>unduePaymentId</con:name>
+          <con:value>6</con:value>
+        </con:property>
+        <con:property>
+          <con:name>undueRefundId</con:name>
+          <con:value>7</con:value>
+        </con:property>
+      </con:properties>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>CUST</con:name>
+        <con:value>ben.ohara</con:value>
+      </con:property>
+      <con:property>
+        <con:name>FIRST_MONTH</con:name>
+        <con:value>2017-12</con:value>
+      </con:property>
+      <con:property>
+        <con:name>LAST_MONTH</con:name>
+        <con:value>2018-01</con:value>
+      </con:property>
+      <con:property>
+        <con:name>THIS_MONTH</con:name>
+        <con:value>2018-02</con:value>
+      </con:property>
+      <con:property>
+        <con:name>SUBSCRIPTION_DATE</con:name>
+        <con:value>${#TestSuite#FIRST_MONTH}-15</con:value>
+      </con:property>
+      <con:property>
+        <con:name>firstname</con:name>
+        <con:value>Ben</con:value>
+      </con:property>
+      <con:property>
+        <con:name>lastname</con:name>
+        <con:value>Ohara</con:value>
+        <con:property>
+          <con:name>offerCode</con:name>
+          <con:value>OF_${#Project#templateCode}_SUPER</con:value>
+        </con:property>
+        <con:property>
+          <con:name>billingCycle</con:name>
+          <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+        </con:property>
+      </con:property>
+      <con:property>
+        <con:name>offerCode</con:name>
+        <con:value>OF_${#Project#templateCode}_MAIN</con:value>
+      </con:property>
+      <con:property>
+        <con:name>billingCycle</con:name>
+        <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+      </con:property>
+      <con:property>
+        <con:name>invoice1_number</con:name>
+        <con:value>INV-CLASSIC-000000003</con:value>
+      </con:property>
+      <con:property>
+        <con:name>invoice1_amount</con:name>
+        <con:value>59</con:value>
+      </con:property>
+      <con:property>
+        <con:name>invoice2_number</con:name>
+        <con:value>INV-CLASSIC-000000004</con:value>
+      </con:property>
+      <con:property>
+        <con:name>invoice2_amount</con:name>
+        <con:value>14</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:testSuite id="6091610d-8538-494f-a4a7-d44004b1b57f" name="Customer Job Bonvi">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="3bba98de-d4bd-404d-8381-4b1929e3d60f">
+      <con:settings/>
+      <con:testStep type="request" name="Create Customer" id="5216ce07-5ed0-4db4-8861-bf9700082f31">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateCRMAccountHierarchy</con:operation>
+          <con:request name="Create Customer" id="8c4e9d0d-5ff4-4cbf-b510-5fa8c4aa37df">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+>>>>>>> refs/remotes/origin/ticket_3652_3673_refundSepaFile-ibanBicIcs
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -51202,7 +51323,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoice>
-      	<invoiceNumber>COM_000000017</invoiceNumber>
+      	<invoiceNumber>000000001</invoiceNumber>
       </ws:findXMLInvoice>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -51244,7 +51365,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findPdfInvoice>
-      	<invoiceNumber>COM_000000017</invoiceNumber>
+      	<invoiceNumber>000000001</invoiceNumber>
 	 </ws:findPdfInvoice>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -61694,7 +61815,7 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>mainOfferId</con:name>
-      <con:value>77</con:value>
+      <con:value>5</con:value>
     </con:property>
     <con:property>
       <con:name>templateCode</con:name>
@@ -61706,11 +61827,11 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>partnerOfferId</con:name>
-      <con:value>76</con:value>
+      <con:value>4</con:value>
     </con:property>
     <con:property>
       <con:name>recOfferId</con:name>
-      <con:value>78</con:value>
+      <con:value>6</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>

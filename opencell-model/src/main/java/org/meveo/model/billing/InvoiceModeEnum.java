@@ -20,39 +20,39 @@ package org.meveo.model.billing;
 
 public enum InvoiceModeEnum {
 
-	AGGREGATED(1, "invoiceMode.aggregated"), 
-	DETAILLED(2, "invoiceMode.detailled");
+    AGGREGATED(1, "invoiceMode.aggregated"), DETAILLED(2, "invoiceMode.detailled");
 
-	private Integer id;
-	private String label;
+    private Integer id;
+    private String label;
 
-	InvoiceModeEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
+    InvoiceModeEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
 
-	}
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	/**
-	 * Gets enum by its id.
-	 * @param id id of invoice code enum
-	 * @return invoice mode.
-	 */
-	public static InvoiceModeEnum getValue(Integer id) {
-		if (id != null) {
-			for (InvoiceModeEnum status : values()) {
-				if (id.equals(status.getId())) {
-					return status;
-				}
-			}
-		}
-		return null;
-	}
+    /**
+     * Gets enum by its id.
+     * 
+     * @param id id of invoice code enum
+     * @return invoice mode.
+     */
+    public static InvoiceModeEnum getValue(Integer id) {
+        if (id != null) {
+            for (InvoiceModeEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
 }

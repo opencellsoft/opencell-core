@@ -20,7 +20,8 @@ import org.meveo.model.payments.OperationCategoryEnum;
  * The Class AccountOperationDto.
  *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author anasseh
+ * @lastModifiedVersion 5.3
  */
 @XmlRootElement(name = "AccountOperation")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -31,177 +32,194 @@ public class AccountOperationDto extends AuditableEntityDto {
 
     /** The id. */
     private Long id;
-    
+
     /** The due date. */
     private Date dueDate;
-    
+
     /** The type. */
     private String type;
-    
+
     /** The transaction date. */
     private Date transactionDate;
-    
+
     /** The transaction category. */
     private OperationCategoryEnum transactionCategory;
-    
+
     /** The reference. */
     private String reference;
-    
+
     /** The account code. */
     @Deprecated
     private String accountCode;
-    
+
     /** The accounting code. */
     private String accountingCode;
-    
+
     /** The account code client side. */
     @Deprecated
     private String accountCodeClientSide;
-    
+
     /** The amount. */
     private BigDecimal amount;
-    
+
     /** The amount without tax. */
     private BigDecimal amountWithoutTax;
-    
+
     /** The tax amount. */
     private BigDecimal taxAmount;
-    
+
     /** The matching amount. */
-    private BigDecimal matchingAmount = BigDecimal.ZERO;
-    
+    private BigDecimal matchingAmount;
+
     /** The un matching amount. */
-    private BigDecimal unMatchingAmount = BigDecimal.ZERO;
-    
+    private BigDecimal unMatchingAmount;
+
     /** The matching status. */
     private MatchingStatusEnum matchingStatus;
-    
+
     /** The occ code. */
     private String occCode;
-    
+
     /** The occ description. */
     private String occDescription;
-    
+
     /** The customer account. */
     private String customerAccount;
-    
+
     /** The excluded from dunning. */
     private Boolean excludedFromDunning;
-    
+
     /** The order number. */
     // order number, '|' is used as seperator if many orders
     private String orderNumber;
 
     /** The matching amounts. */
     private MatchingAmountsDto matchingAmounts;
-    
+
     /** The other credit and charge. */
     private OtherCreditAndChargeDto otherCreditAndCharge;
-    
+
     /** The recorded invoice. */
     private RecordedInvoiceDto recordedInvoice;
-    
+
     /** The rejected payment. */
     private RejectedPaymentDto rejectedPayment;
 
     /** The bank lot. */
     private String bankLot;
-    
+
     /** The bank reference. */
     private String bankReference;
-    
+
     /** The bank collection date. */
     private Date bankCollectionDate;
-    
+
     /** The deposit date. */
     private Date depositDate;
-    
+
     /** The payment method. */
     private String paymentMethod;
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
-    
+
     /** The payment info. */
     private String paymentInfo;// IBAN for direct debit
-    
+
     /** The payment info 1. */
     private String paymentInfo1;// bank code
-    
+
     /** The payment info 2. */
     private String paymentInfo2;// code guichet
-    
+
     /** The payment info 3. */
     private String paymentInfo3;// Num compte
-    
+
     /** The payment info 4. */
     private String paymentInfo4;// RIB
-    
+
     /** The payment info 5. */
     private String paymentInfo5;// bankName
-    
+
     /** The payment info 6. */
     private String paymentInfo6;// bic
-    
+
     /** The billing account name. */
     private String billingAccountName;
 
-	public AccountOperationDto() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	public AccountOperationDto(AccountOperation ao) {
-		this(ao, null);
-	}
+    /**
+     * Instantiates a new account operation dto.
+     */
+    public AccountOperationDto() {
+        // TODO Auto-generated constructor stub
+    }
 
+    /**
+     * Instantiates a new account operation dto.
+     *
+     * @param ao the ao
+     */
+    public AccountOperationDto(AccountOperation ao) {
+        this(ao, null);
+    }
+
+    /**
+     * Instantiates a new account operation dto.
+     *
+     * @param accountOp the account op
+     * @param customFieldsDto the custom fields dto
+     */
     public AccountOperationDto(AccountOperation accountOp, CustomFieldsDto customFieldsDto) {
-    	setId(accountOp.getId());
-    	setDueDate(accountOp.getDueDate());
-    	setType(accountOp.getType());
-    	setTransactionDate(accountOp.getTransactionDate());
-    	setTransactionCategory(accountOp.getTransactionCategory());
-    	setReference(accountOp.getReference());
-    	if(accountOp.getAccountingCode() != null) {
-    		setAccountingCode(accountOp.getAccountingCode().getCode());
-    		setAccountCode(accountOp.getAccountingCode().getCode());
-    	}
-    	setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
-    	setAmount(accountOp.getAmount());
-    	setMatchingAmount(accountOp.getMatchingAmount());
-    	setUnMatchingAmount(accountOp.getUnMatchingAmount());
-    	setMatchingStatus(accountOp.getMatchingStatus());
-    	setOccCode(accountOp.getOccCode());
-    	setOccDescription(accountOp.getOccDescription());
-    	setBankLot(accountOp.getBankLot());
-    	setBankReference(accountOp.getBankReference());
-    	setDepositDate(accountOp.getDepositDate());
-    	setBankCollectionDate(accountOp.getBankCollectionDate());
-    	setTaxAmount(accountOp.getTaxAmount());
-    	setAmountWithoutTax(accountOp.getAmountWithoutTax());
-    	setOrderNumber(accountOp.getOrderNumber());
-    	setPaymentMethod(accountOp.getPaymentMethod() != null ? accountOp.getPaymentMethod().name() : null );
-    	setExcludedFromDunning(accountOp.getMatchingStatus() == MatchingStatusEnum.I);
-    	List<MatchingAmount> tempMatchingAmounts = accountOp.getMatchingAmounts();
-    	if (tempMatchingAmounts != null && !tempMatchingAmounts.isEmpty()) {
-    		MatchingAmountDto matchingAmountDto = null;
-    		MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
-    		matchingAmountsDto.setMatchingAmount(new ArrayList<>());
-    		for (MatchingAmount tempMatchingAmount : tempMatchingAmounts) {
-    			matchingAmountDto = new MatchingAmountDto();
-    			matchingAmountDto.setAuditable(tempMatchingAmount);
-    			if (tempMatchingAmount.getMatchingCode() != null) {
-    				matchingAmountDto.setMatchingCode(tempMatchingAmount.getMatchingCode().getCode());
-    			}
-    			matchingAmountDto.setMatchingAmount(tempMatchingAmount.getMatchingAmount());
-    			matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
-    		}
-    		setMatchingAmounts(matchingAmountsDto);
-    	}
-    	
-    	setCustomFields(customFieldsDto);
-	}
+        setId(accountOp.getId());
+        setDueDate(accountOp.getDueDate());
+        setType(accountOp.getType());
+        setTransactionDate(accountOp.getTransactionDate());
+        setTransactionCategory(accountOp.getTransactionCategory());
+        setReference(accountOp.getReference());
+        if (accountOp.getAccountingCode() != null) {
+            setAccountingCode(accountOp.getAccountingCode().getCode());
+            setAccountCode(accountOp.getAccountingCode().getCode());
+        }
+        setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
+        setAmount(accountOp.getAmount());
+        setMatchingAmount(accountOp.getMatchingAmount());
+        setUnMatchingAmount(accountOp.getUnMatchingAmount());
+        setMatchingStatus(accountOp.getMatchingStatus());
+        setOccCode(accountOp.getOccCode());
+        setOccDescription(accountOp.getOccDescription());
+        setBankLot(accountOp.getBankLot());
+        setBankReference(accountOp.getBankReference());
+        setDepositDate(accountOp.getDepositDate());
+        setBankCollectionDate(accountOp.getBankCollectionDate());
+        setTaxAmount(accountOp.getTaxAmount());
+        setAmountWithoutTax(accountOp.getAmountWithoutTax());
+        setOrderNumber(accountOp.getOrderNumber());
+        setPaymentMethod(accountOp.getPaymentMethod() != null ? accountOp.getPaymentMethod().name() : null);
+        setExcludedFromDunning(accountOp.getMatchingStatus() == MatchingStatusEnum.I);
+        List<MatchingAmount> tempMatchingAmounts = accountOp.getMatchingAmounts();
+        if (tempMatchingAmounts != null && !tempMatchingAmounts.isEmpty()) {
+            MatchingAmountDto matchingAmountDto = null;
+            MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
+            matchingAmountsDto.setMatchingAmount(new ArrayList<>());
+            for (MatchingAmount tempMatchingAmount : tempMatchingAmounts) {
+                matchingAmountDto = new MatchingAmountDto();
+                matchingAmountDto.setAuditable(tempMatchingAmount);
+                if (tempMatchingAmount.getMatchingCode() != null) {
+                    matchingAmountDto.setMatchingCode(tempMatchingAmount.getMatchingCode().getCode());
+                }
+                matchingAmountDto.setMatchingAmount(tempMatchingAmount.getMatchingAmount());
+                matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
+            }
+            setMatchingAmounts(matchingAmountsDto);
+        }
+        if (accountOp.getRejectedPayment() != null) {
+            setRejectedPayment(new RejectedPaymentDto(accountOp.getRejectedPayment()));
+        }
 
-	/**
+        setCustomFields(customFieldsDto);
+    }
+
+    /**
      * Gets the custom fields.
      *
      * @return the customFields
@@ -742,6 +760,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the payment info.
+     *
      * @return the paymentInfo
      */
     public String getPaymentInfo() {
@@ -749,6 +769,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Sets the payment info.
+     *
      * @param paymentInfo the paymentInfo to set
      */
     public void setPaymentInfo(String paymentInfo) {
@@ -756,6 +778,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the payment info 1.
+     *
      * @return the paymentInfo1
      */
     public String getPaymentInfo1() {
@@ -763,6 +787,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Sets the payment info 1.
+     *
      * @param paymentInfo1 the paymentInfo1 to set
      */
     public void setPaymentInfo1(String paymentInfo1) {
@@ -770,6 +796,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the payment info 2.
+     *
      * @return the paymentInfo2
      */
     public String getPaymentInfo2() {
@@ -777,6 +805,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Sets the payment info 2.
+     *
      * @param paymentInfo2 the paymentInfo2 to set
      */
     public void setPaymentInfo2(String paymentInfo2) {
@@ -784,6 +814,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the payment info 3.
+     *
      * @return the paymentInfo3
      */
     public String getPaymentInfo3() {
@@ -791,6 +823,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Sets the payment info 3.
+     *
      * @param paymentInfo3 the paymentInfo3 to set
      */
     public void setPaymentInfo3(String paymentInfo3) {
@@ -798,6 +832,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the payment info 4.
+     *
      * @return the paymentInfo4
      */
     public String getPaymentInfo4() {
@@ -805,6 +841,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Sets the payment info 4.
+     *
      * @param paymentInfo4 the paymentInfo4 to set
      */
     public void setPaymentInfo4(String paymentInfo4) {
@@ -812,6 +850,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the payment info 5.
+     *
      * @return the paymentInfo5
      */
     public String getPaymentInfo5() {
@@ -819,6 +859,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Sets the payment info 5.
+     *
      * @param paymentInfo5 the paymentInfo5 to set
      */
     public void setPaymentInfo5(String paymentInfo5) {
@@ -826,6 +868,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the payment info 6.
+     *
      * @return the paymentInfo6
      */
     public String getPaymentInfo6() {
@@ -833,6 +877,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Sets the payment info 6.
+     *
      * @param paymentInfo6 the paymentInfo6 to set
      */
     public void setPaymentInfo6(String paymentInfo6) {
@@ -840,6 +886,8 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the billing account name.
+     *
      * @return the billingAccountName
      */
     public String getBillingAccountName() {
@@ -847,12 +895,12 @@ public class AccountOperationDto extends AuditableEntityDto {
     }
 
     /**
+     * Sets the billing account name.
+     *
      * @param billingAccountName the billingAccountName to set
      */
     public void setBillingAccountName(String billingAccountName) {
         this.billingAccountName = billingAccountName;
     }
-    
-    
 
 }

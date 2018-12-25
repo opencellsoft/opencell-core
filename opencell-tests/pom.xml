@@ -4,7 +4,7 @@
 	<groupId>info.opencell.tests</groupId>
 	<artifactId>opencelltests</artifactId>
 	<name>Opencell tests</name>
-	<version>5.2.4</version>
+	<version>5.3.0</version>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>eviwarePluginRepository</id>

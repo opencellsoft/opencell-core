@@ -11,7 +11,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * @author Tyshan　Shi(tyshan@manaty.net)
+ * @author Tyshan Shi(tyshan@manaty.net)
  **/
 public class XStreamCDATAConverter implements Converter {
 

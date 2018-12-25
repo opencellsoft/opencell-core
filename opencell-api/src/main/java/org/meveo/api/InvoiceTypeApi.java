@@ -22,6 +22,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
@@ -386,7 +387,7 @@ public class InvoiceTypeApi extends BaseApi {
         if (invoiceType == null) {
             throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
         }
-        result = new InvoiceTypeDto(invoiceType, entityToDtoConverter.getCustomFieldsDTO(invoiceType, true));
+        result = new InvoiceTypeDto(invoiceType, entityToDtoConverter.getCustomFieldsDTO(invoiceType, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
         return result;
     }
 
@@ -441,7 +442,7 @@ public class InvoiceTypeApi extends BaseApi {
         List<InvoiceType> invoiceTypees = invoiceTypeService.list();
         if (invoiceTypees != null && !invoiceTypees.isEmpty()) {
             for (InvoiceType t : invoiceTypees) {
-                InvoiceTypeDto invoiceTypeDto = new InvoiceTypeDto(t, entityToDtoConverter.getCustomFieldsDTO(t, true));
+                InvoiceTypeDto invoiceTypeDto = new InvoiceTypeDto(t, entityToDtoConverter.getCustomFieldsDTO(t, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                 invoiceTypeesDto.getInvoiceTypes().add(invoiceTypeDto);
             }
         }

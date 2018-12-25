@@ -36,5 +36,4 @@ public class AccountScript extends ModuleScript implements AccountScriptInterfac
     public void closeAccount(Map<String, Object> methodContext) throws BusinessException {
 
     }
-
 }

@@ -23,41 +23,39 @@ package org.meveo.model.billing;
  */
 public enum InvoiceStatusEnum {
 
-	PROCESSING(1, "invoiceStatusEnum.processing"), 
-	OPEN(2, "invoiceStatusEnum.open"), 
-	CANCELLED(3, "invoiceStatusEnum.cancelled"), 
-	PAID(4, "invoiceStatusEnum.paid");
+    PROCESSING(1, "invoiceStatusEnum.processing"), OPEN(2, "invoiceStatusEnum.open"), CANCELLED(3, "invoiceStatusEnum.cancelled"), PAID(4, "invoiceStatusEnum.paid");
 
-	private Integer id;
-	private String label;
+    private Integer id;
+    private String label;
 
-	InvoiceStatusEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
+    InvoiceStatusEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
 
-	}
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	/**
-	 * Gets enum by its id.
-	 * @param id of invoice status
-	 * @return invoice status enum
-	 */
-	public static InvoiceStatusEnum getValue(Integer id) {
-		if (id != null) {
-			for (InvoiceStatusEnum status : values()) {
-				if (id.equals(status.getId())) {
-					return status;
-				}
-			}
-		}
-		return null;
-	}
+    /**
+     * Gets enum by its id.
+     * 
+     * @param id of invoice status
+     * @return invoice status enum
+     */
+    public static InvoiceStatusEnum getValue(Integer id) {
+        if (id != null) {
+            for (InvoiceStatusEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
 }

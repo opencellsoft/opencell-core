@@ -54,19 +54,38 @@ import com.google.gson.reflect.TypeToken;
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CustomFieldValue implements Serializable {
+public class CustomFieldValue implements Serializable, Cloneable {
 
     private static final long serialVersionUID = -9038541899269528670L;
 
+    /**
+     * In a deserialized matrix, represents a map key name to hold the names of matrix keys In Map/matrix value management for GUI (a list of maps), represents a map key name to
+     * hold key value
+     */
     public static String MAP_KEY = "key";
+
+    /**
+     * In Map/matrix value management for GUI (a list of maps), represents a map key name to hold a value
+     */
     public static String MAP_VALUE = "value";
 
+    /**
+     * A separator for matrix column names
+     */
     public static String MATRIX_COLUMN_NAME_SEPARATOR = "/";
+
+    /**
+     * A separator for matrix keys
+     */
     public static String MATRIX_KEY_SEPARATOR = "|";
+
+    /**
+     * A separator for values in a range of numbers
+     */
     public static String RON_VALUE_SEPARATOR = "<";
 
     private static String SERIALIZATION_SEPARATOR = "|";
-    
+
     public static String WILDCARD_MATCH_ALL = "*";
 
     /**
@@ -76,7 +95,7 @@ public class CustomFieldValue implements Serializable {
     private DatePeriod period;
 
     /**
-     * Value priority if periods overlapp. The higher the number, the higher the priority is.
+     * Value priority if periods overlap. The higher the number, the higher the priority is.
      */
     private Integer priority;
 
@@ -174,6 +193,12 @@ public class CustomFieldValue implements Serializable {
     private Map<String, EntityReferenceWrapper> mapEntityValue = null;
 
     /**
+     * Source entity/accumulation path that value came from
+     */
+    @JsonProperty("source")
+    private String source = null;
+
+    /**
      * Contains mapValue adapted for GUI data entry in the following way:
      * 
      * List item corresponds to an entry in a mapValue with the following list's map values: MAP_KEY=mapValue.entry.key and MAP_VALUE=mapValue.entry.value
@@ -210,13 +235,28 @@ public class CustomFieldValue implements Serializable {
     @JsonIgnore
     protected boolean isNewPeriod = false;
 
+    /**
+     * Custom field value instance
+     */
     public CustomFieldValue() {
     }
 
+    /**
+     * Instantiate Custom field value with a given value
+     * 
+     * @param value Value to assign
+     */
     public CustomFieldValue(Object value) {
         setValue(value);
     }
 
+    /**
+     * Instantiate Custom field value with a given value and a period
+     * 
+     * @param period Value validity period
+     * @param priority Priority to assign
+     * @param value Value to assign
+     */
     public CustomFieldValue(DatePeriod period, Integer priority, Object value) {
         this.period = period;
         this.priority = priority;
@@ -224,54 +264,94 @@ public class CustomFieldValue implements Serializable {
         this.isNewPeriod = true;
     }
 
+    /**
+     * @return String type value
+     */
     public String getStringValue() {
         return stringValue;
     }
 
+    /**
+     * @param stringValue String type value
+     */
     public void setStringValue(String stringValue) {
         this.stringValue = stringValue;
     }
 
+    /**
+     * @return Date type value
+     */
     public Date getDateValue() {
         return dateValue;
     }
 
+    /**
+     * @param dateValue Date type value
+     */
     public void setDateValue(Date dateValue) {
         this.dateValue = dateValue;
     }
 
+    /**
+     * @return Long type value
+     */
     public Long getLongValue() {
         return longValue;
     }
 
+    /**
+     * @param longValue Long type value
+     */
     public void setLongValue(Long longValue) {
         this.longValue = longValue;
     }
 
+    /**
+     * @return Double type value
+     */
     public Double getDoubleValue() {
         return doubleValue;
     }
 
+    /**
+     * @param doubleValue Double type value
+     */
     public void setDoubleValue(Double doubleValue) {
         this.doubleValue = doubleValue;
     }
 
+    /**
+     * @param mapValuesForGUI Map type values when entered from GUI
+     */
     public void setMapValuesForGUI(List<Map<String, Object>> mapValuesForGUI) {
         this.mapValuesForGUI = mapValuesForGUI;
     }
 
+    /**
+     * @return Map type values when displayed in GUI
+     */
     public List<Map<String, Object>> getMapValuesForGUI() {
         return mapValuesForGUI;
     }
 
+    /**
+     * @return Matrix/Map type values when displayed in GUI
+     */
     public List<Map<String, Object>> getMatrixValuesForGUI() {
         return matrixValuesForGUI;
     }
 
+    /**
+     * 
+     * @param matrixValuesForGUI Matrix/map type values when entered from GUI
+     */
     public void setMatrixValuesForGUI(List<Map<String, Object>> matrixValuesForGUI) {
         this.matrixValuesForGUI = matrixValuesForGUI;
     }
 
+    /**
+     * @return Entity reference value
+     */
     public EntityReferenceWrapper getEntityReferenceValue() {
         return entityReferenceValue;
     }
@@ -287,6 +367,9 @@ public class CustomFieldValue implements Serializable {
         this.entityReferenceValue = entityReferenceValue;
     }
 
+    /**
+     * @return List type value
+     */
     @SuppressWarnings("rawtypes")
     public List getListValue() {
         if (listStringValue != null) {
@@ -355,6 +438,9 @@ public class CustomFieldValue implements Serializable {
         }
     }
 
+    /**
+     * @return Map type value
+     */
     @SuppressWarnings("rawtypes")
     public Map getMapValue() {
         if (mapStringValue != null && !mapStringValue.isEmpty()) {
@@ -447,30 +533,82 @@ public class CustomFieldValue implements Serializable {
         }
     }
 
+    /**
+     * @return Source entity/accumulation path that value came from
+     */
+    public String getSource() {
+        return source;
+    }
+
+    /**
+     * @param source Source entity/accumulation path that value came from
+     */
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    /**
+     * Append source entity/accumulation path that value came from
+     * 
+     * @param sourceToAdd Source entity/accumulation path that value came from
+     */
+    public void addSource(String sourceToAdd) {
+        if (sourceToAdd == null) {
+            return;
+        }
+        if (this.source == null) {
+            this.source = sourceToAdd;
+        } else if (!this.source.contains(sourceToAdd)) { // TODO this could be potentially a problem when path are similar e.g. customer.ca and customer.ca.ba and search is by
+                                                         // "customer.ca", but right now - unlikely.
+            this.source = this.source + "," + sourceToAdd;
+        }
+    }
+
+    /**
+     * @param businessEntity Business entity value when set from GUI
+     */
     public void setEntityReferenceValueForGUI(IReferenceEntity businessEntity) {
         this.entityReferenceValueForGUI = businessEntity;
     }
 
+    /**
+     * @return Business entity value when used in GUI
+     */
     public IReferenceEntity getEntityReferenceValueForGUI() {
         return entityReferenceValueForGUI;
     }
 
+    /**
+     * @return Child entity values when used in GUI
+     */
     public List<CustomFieldValueHolder> getChildEntityValuesForGUI() {
         return childEntityValuesForGUI;
     }
 
+    /**
+     * @param childEntityValuesForGUI Child entity values when set in GUI
+     */
     public void setChildEntityValuesForGUI(List<CustomFieldValueHolder> childEntityValuesForGUI) {
         this.childEntityValuesForGUI = childEntityValuesForGUI;
     }
 
+    /**
+     * @return Period to which value applies to
+     */
     public DatePeriod getPeriod() {
         return period;
     }
 
+    /**
+     * @param period Period to which value applies to
+     */
     public void setPeriod(DatePeriod period) {
         this.period = period;
     }
 
+    /**
+     * @return Value priority if periods overlap. The higher the number, the higher the priority is.
+     */
     public int getPriority() {
         if (priority == null) {
             return 0;
@@ -479,6 +617,9 @@ public class CustomFieldValue implements Serializable {
         }
     }
 
+    /**
+     * @param priority Value priority if periods overlap. The higher the number, the higher the priority is.
+     */
     public void setPriority(int priority) {
         this.priority = priority;
     }
@@ -540,6 +681,12 @@ public class CustomFieldValue implements Serializable {
         }
     }
 
+    /**
+     * Convert value to a string. List and map values are converted to string with usual JAVA list.toSting() and map.toString() means.
+     * 
+     * @param sdf Date format if applicable
+     * @return Value as string
+     */
     @SuppressWarnings("rawtypes")
     public String toXmlText(SimpleDateFormat sdf) {
 
@@ -564,6 +711,12 @@ public class CustomFieldValue implements Serializable {
         return "";
     }
 
+    /**
+     * Convert simple value (string, date, long, double) to a string
+     * 
+     * @param sdf Date format if applicable
+     * @return Value as string
+     */
     public String getValueAsString(SimpleDateFormat sdf) {
 
         if (stringValue != null) {
@@ -1100,6 +1253,9 @@ public class CustomFieldValue implements Serializable {
         return deserializedValue;
     }
 
+    /**
+     * @return Custom field value
+     */
     public Object getValue() {
         if (mapStringValue != null && !mapStringValue.isEmpty()) {
             return mapStringValue;
@@ -1195,8 +1351,8 @@ public class CustomFieldValue implements Serializable {
     public String toString() {
         final int maxLen = 10;
         return String.format(
-            "CustomFieldValue [stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, matrixValuesForGUI=%s, childEntityValuesForGUI=%s, entityReferenceValueForGUI=%s]",
-            stringValue, dateValue, longValue, doubleValue, entityReferenceValue, getListValue() != null ? toString(getListValue(), maxLen) : null,
+            "CustomFieldValue [source=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, matrixValuesForGUI=%s, childEntityValuesForGUI=%s, entityReferenceValueForGUI=%s]",
+            source, stringValue, dateValue, longValue, doubleValue, entityReferenceValue, getListValue() != null ? toString(getListValue(), maxLen) : null,
             getMapValue() != null ? toString(getMapValue().entrySet(), maxLen) : null, mapValuesForGUI != null ? toString(mapValuesForGUI, maxLen) : null,
             matrixValuesForGUI != null ? toString(matrixValuesForGUI, maxLen) : null, childEntityValuesForGUI != null ? toString(childEntityValuesForGUI, maxLen) : null,
             entityReferenceValueForGUI);
@@ -1319,6 +1475,31 @@ public class CustomFieldValue implements Serializable {
             Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
             log.error("Failed to convert {} to String for CFT {}", valueToConvert, cft, e);
             return null;
+        }
+    }
+
+    @Override
+    public CustomFieldValue clone() {
+        try {
+            CustomFieldValue cloned = (CustomFieldValue) super.clone();
+            if (mapStringValue != null) {
+                cloned.mapStringValue = new LinkedHashMap<>(mapStringValue);
+            } else if (mapDateValue != null) {
+                cloned.mapDateValue = new LinkedHashMap<>(mapDateValue);
+            } else if (mapDoubleValue != null) {
+                cloned.mapDoubleValue = new LinkedHashMap<>(mapDoubleValue);
+            } else if (mapLongValue != null) {
+                cloned.mapLongValue = new LinkedHashMap<>(mapLongValue);
+            } else if (mapEntityValue != null) {
+                cloned.mapEntityValue = new LinkedHashMap<>(mapEntityValue);
+            }
+
+            return cloned;
+
+        } catch (CloneNotSupportedException e) {
+            Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
+            log.error("Failed to clone", e);
+            return this;
         }
     }
 }

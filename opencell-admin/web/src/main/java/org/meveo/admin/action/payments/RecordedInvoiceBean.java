@@ -80,8 +80,8 @@ public class RecordedInvoiceBean extends CustomFieldBean<RecordedInvoice> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		entity.getCustomerAccount().getAccountOperations().add(entity);
-
-		return super.saveOrUpdate(killConversation);
+		super.saveOrUpdate(killConversation);
+		return null;
 	}
 
 	/**

@@ -6,7 +6,6 @@ import org.meveo.service.script.Script;
  * Parent class for ReportExtract java script. This class contains the available variables for the script.
  *
  * @author Edward P. Legaspi
- * @version %I%, %G%
  * @since 5.0
  * @lastModifiedVersion 5.1
  **/

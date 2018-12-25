@@ -34,6 +34,7 @@ import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.communication.MeveoInstanceDto;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelDto;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelsDto;
+import org.meveo.api.dto.response.BankingDateStatusResponse;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
@@ -75,6 +76,7 @@ import org.meveo.api.dto.response.communication.EmailTemplateResponseDto;
 import org.meveo.api.dto.response.communication.EmailTemplatesResponseDto;
 import org.meveo.api.dto.response.communication.MeveoInstanceResponseDto;
 import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -137,23 +139,25 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     ActionStatus createOrUpdateUser(@WebParam(name = "user") UserDto postData);
-    
+
     /**
      * Creates a user in keycloak and core.
+     * 
      * @param postData The user dto
      * @return ActionStatus
      */
     @WebMethod
     ActionStatus createExternalUser(@WebParam(name = "user") UserDto postData);
-    
+
     /**
      * Updates a user in keycloak and core given a username.
+     * 
      * @param postData The user dto
      * @return ActionStatus
      */
     @WebMethod
     ActionStatus updateExternalUser(@WebParam(name = "user") UserDto postData);
-    
+
     /**
      * Deletes a user in keycloak and core given a username.
      * 
@@ -180,8 +184,15 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     ActionStatus updateSeller(@WebParam(name = "seller") SellerDto postData);
 
+    /**
+     * Find seller by its code
+     * 
+     * @param sellerCode Seller code
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @return Seller information
+     */
     @WebMethod
-    GetSellerResponse findSeller(@WebParam(name = "sellerCode") String sellerCode);
+    GetSellerResponse findSeller(@WebParam(name = "sellerCode") String sellerCode, @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     @WebMethod
     ActionStatus removeSeller(@WebParam(name = "sellerCode") String sellerCode);
@@ -367,7 +378,7 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     ActionStatus removeInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode, @WebParam(name = "sellersCountry") String sellersCountry,
             @WebParam(name = "country") String country);
-    
+
     @WebMethod
     ActionStatus createOrUpdateInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
 
@@ -381,6 +392,9 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     GetCalendarResponse findCalendar(@WebParam(name = "calendarCode") String calendarCode);
+    
+    @WebMethod
+    BankingDateStatusResponse getBankingDateStatus(@WebParam(name = "date") Date date);
 
     @WebMethod
     ActionStatus removeCalendar(@WebParam(name = "calendarCode") String calendarCode);
@@ -510,7 +524,7 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     RolesDto listRoles(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
-    
+
     /**
      * List external source such as from keycloak.
      * 
@@ -676,7 +690,7 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     GetInvoiceTypesResponse listInvoiceTypes();
-    
+
     // InvoiceSequence
     @WebMethod
     ActionStatus createInvoiceSequence(@WebParam(name = "invoiceSequence") InvoiceSequenceDto invoiceSequenceDto);
@@ -933,9 +947,10 @@ public interface SettingsWs extends IBaseWs {
 
     /**
      * Returns the system properties as json string.
+     * 
      * @return system properties
      */
     @WebMethod
-	ActionStatus getSystemProperties();
+    ActionStatus getSystemProperties();
 
 }

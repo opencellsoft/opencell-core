@@ -39,6 +39,11 @@ import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 
+/**
+ * Job execution schedule. Similar to Unix schedule format.
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ModuleItem
 @ExportIdentifier({ "code" })
@@ -49,49 +54,79 @@ public class TimerEntity extends EnableBusinessEntity {
 
     private static final long serialVersionUID = -3764934334462355788L;
 
+    /**
+     * Year
+     */
     @Column(name = "sc_year", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String year = "*";
 
+    /**
+     * Month
+     */
     @Column(name = "sc_month", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String month = "*";
 
+    /**
+     * Day of month
+     */
     @Column(name = "sc_d_o_month", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String dayOfMonth = "*";
 
+    /**
+     * Day of the week
+     */
     @Column(name = "sc_d_o_week", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String dayOfWeek = "*";
 
+    /**
+     * Hour
+     */
     @Column(name = "sc_hour", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String hour = "*";
 
+    /**
+     * Minute
+     */
     @Column(name = "sc_min", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String minute = "0";
 
+    /**
+     * Second
+     */
     @Column(name = "sc_sec", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String second = "0";
 
+    /**
+     * Start date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "sc_start", nullable = true)
     private Date start;
 
+    /**
+     * End date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "sc_end", nullable = true)
     private Date end;
 
+    /**
+     * Job instances using this schedule
+     */
     @OneToMany(mappedBy = "timerEntity", fetch = FetchType.LAZY)
     private List<JobInstance> jobInstances = new ArrayList<JobInstance>();
 

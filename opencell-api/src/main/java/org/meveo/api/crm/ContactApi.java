@@ -71,23 +71,7 @@ public class ContactApi extends AccountEntityApi {
 
 
 	public Contact create(ContactDto postData) throws MeveoApiException, BusinessException {
-		if (StringUtils.isBlank(postData.getName().getFirstName())) {
-			missingParameters.add("firstName");
-		}
-
-		if (StringUtils.isBlank(postData.getName().getLastName())) {
-			missingParameters.add("lastName");
-		}
-
-		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("email");
-			missingParameters.add("code");
-		}
-		else if(StringUtils.isBlank(postData.getEmail())) {
-			missingParameters.add("email");
-		}
-
-		handleMissingParameters();
+		checkAndHandleMissingParameters(postData);
 
 		Contact contact = new Contact();
 		populate(postData, contact);
@@ -135,21 +119,32 @@ public class ContactApi extends AccountEntityApi {
 		return contact;
 	}
 
-	public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {
-		if (StringUtils.isBlank(postData.getName().getFirstName())) {
-			missingParameters.add("firstName");
-		}
+	private void checkAndHandleMissingParameters(ContactDto postData) throws MissingParameterException {
+		if (postData.getName() == null) {
+			missingParameters.add("name");
+		}else {
+			if (StringUtils.isBlank(postData.getName().getFirstName())) {
+				missingParameters.add("firstName");
+			}
 
-		if (StringUtils.isBlank(postData.getName().getLastName())) {
-			missingParameters.add("lastName");
+			if (StringUtils.isBlank(postData.getName().getLastName())) {
+				missingParameters.add("lastName");
+			}
 		}
 
 		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("email");
 			missingParameters.add("code");
 		}
+		else if(StringUtils.isBlank(postData.getEmail())) {
+			missingParameters.add("email");
+		}
 
 		handleMissingParameters();
+	}
+
+	public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {
+		checkAndHandleMissingParameters(postData);
 		
 		String code = null;
 		if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
@@ -245,20 +240,7 @@ public class ContactApi extends AccountEntityApi {
 	}
 
 	public Contact createOrUpdate(ContactDto postData) throws MeveoApiException, BusinessException {
-		if (StringUtils.isBlank(postData.getName().getFirstName())) {
-			missingParameters.add("firstName");
-		}
-
-		if (StringUtils.isBlank(postData.getName().getLastName())) {
-			missingParameters.add("lastName");
-		}
-
-		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("email");
-			missingParameters.add("code");
-		}
-
-		handleMissingParameters();
+		checkAndHandleMissingParameters(postData);
 
 		String code = null;
 		if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {

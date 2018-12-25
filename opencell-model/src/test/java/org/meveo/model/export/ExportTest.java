@@ -39,10 +39,15 @@ public class ExportTest {
                 transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
                 transformer.transform(new StreamSource(this.getClass().getResourceAsStream("/export/data_" + version + ".xml")), new StreamResult(writer));
 
-                String converted = writer.toString().replaceAll(" />", "/>");
-                String expected = IOUtils.toString(this.getClass().getResourceAsStream("/export/data_" + version + "_expected.xml")).replaceAll(" />", "/>");
+                String converted = writer.toString().replaceAll(" />", "/>").replaceAll("\\r", "");
+                String expected = IOUtils.toString(this.getClass().getResourceAsStream("/export/data_" + version + "_expected.xml")).replaceAll(" />", "/>").replaceAll("\\r", "");
 
-               // Assert.assertEquals(expected, converted);
+                if (!converted.equals(expected)) {
+                    System.out.println("Failed to compare");
+                    System.out.println(expected.replaceAll("\\n", "").replaceAll("\\r", ""));
+                    System.out.println(converted.replaceAll("\\n", "").replaceAll("\\r", ""));
+                }
+                Assert.assertEquals(changesetFile, expected, converted);
 
             } catch (Exception e) {
                 log.error("Failed to convert file {}", version, e);

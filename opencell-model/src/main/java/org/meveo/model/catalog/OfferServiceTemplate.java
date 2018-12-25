@@ -11,6 +11,7 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,6 +31,11 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 
+/**
+ * Offer template to service template, included in the offer, mapping
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "offerTemplate.code", "offerTemplate.validity.from", "offerTemplate.validity.to", "serviceTemplate.code" })
@@ -38,36 +44,52 @@ import org.meveo.model.IEntity;
         @Parameter(name = "sequence_name", value = "cat_offer_serv_templt_seq"), })
 public class OfferServiceTemplate implements IEntity, Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 3932032300922665293L;
 
+    /**
+     * Identifier
+     */
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
     @Column(name = "id")
     @Access(AccessType.PROPERTY)
     protected Long id;
 
+    /**
+     * Offer template
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "offer_template_id")
     @NotNull
     private OfferTemplate offerTemplate;
 
+    /**
+     * Service template
+     */
     @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.REFRESH }, optional = false)
     @JoinColumn(name = "service_template_id")
     @NotNull
     private ServiceTemplate serviceTemplate;
 
+    /**
+     * Is service mandatory
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "mandatory")
     private boolean mandatory;
 
+    /**
+     * A list of incompatible services with a given service
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_offer_serv_incomp", joinColumns = @JoinColumn(name = "offer_service_template_id"), inverseJoinColumns = @JoinColumn(name = "service_template_id"))
     private List<ServiceTemplate> incompatibleServices = new ArrayList<>();
 
-    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
+    /**
+     * Service inclusion validity period
+     */
+    @Embedded
+    @AttributeOverrides(value = { @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity = new DatePeriod();
 
     public OfferTemplate getOfferTemplate() {

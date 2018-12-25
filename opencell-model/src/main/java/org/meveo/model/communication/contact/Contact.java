@@ -45,243 +45,297 @@ import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
 import org.meveo.model.intcrm.AddressBook;
 
+/**
+ * Contact information
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ExportIdentifier({ "code" })
 @Table(name = "com_contact")
 @DiscriminatorValue(value = "ACCT_CTACT")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-		@Parameter(name = "sequence_name", value = "com_contact_seq"), })
+        @Parameter(name = "sequence_name", value = "com_contact_seq"), })
 public class Contact extends AccountEntity {
 
-	private static final long serialVersionUID = 3772773449495155646L;
-	
-	 public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Contact.class.getAnnotation(DiscriminatorValue.class)).value();
+    private static final long serialVersionUID = 3772773449495155646L;
 
-	@Column(name = "email", length = 255)
-	@Size(max = 255)
-	private String email;
+    public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Contact.class.getAnnotation(DiscriminatorValue.class)).value();
 
-	@Column(name = "assistant_name", length = 50)
-	@Size(max = 50)
-	private String assistantName;
+    /**
+     * Email address
+     */
+    @Column(name = "email", length = 255)
+    @Size(max = 255)
+    private String email;
 
-	@Column(name = "assistant_phone", length = 15)
-	@Size(max = 15)
-	private String assistantPhone;
+    /**
+     * Assistant's name
+     */
+    @Column(name = "assistant_name", length = 50)
+    @Size(max = 50)
+    private String assistantName;
 
-	@Column(name = "position", length = 200)
-	@Size(max = 200)
-	private String position;
-	
-	@Column(name = "company", length = 200)
-	@Size(max = 200)
-	private String company;
-	
-	@Column(name = "mobile", length = 15)
-	@Size(max = 15)
-	private String mobile;
-	
-	@Column(name = "phone", length = 15)
-	@Size(max = 15)
-	private String phone;
-		
-	@Column(name = "website_url", length = 255)
-	@Size(max = 255)
-	private String websiteUrl;
+    /**
+     * Assistant's phone
+     */
+    @Column(name = "assistant_phone", length = 15)
+    @Size(max = 15)
+    private String assistantPhone;
 
-	@Column(name = "imported_from", length = 50)
-	@Size(max = 50)
-	private String importedFrom;
+    /**
+     * Position
+     */
+    @Column(name = "position", length = 200)
+    @Size(max = 200)
+    private String position;
 
-	@Column(name = "imported_by", length = 50)
-	@Size(max = 50)
-	private String importedBy;
+    /**
+     * Company
+     */
+    @Column(name = "company", length = 200)
+    @Size(max = 200)
+    private String company;
 
-	@Column(name = "social_identifier", length = 2000)
-	@Size(max = 2000)
-	private String socialIdentifier;
+    /**
+     * Mobile phone number
+     */
+    @Column(name = "mobile", length = 15)
+    @Size(max = 15)
+    private String mobile;
 
-	@Type(type = "numeric_boolean")
-	@Column(name = "is_vip", columnDefinition = "tinyint default false")
-	private boolean isVip;
+    /**
+     * Phone number
+     */
+    @Column(name = "phone", length = 15)
+    @Size(max = 15)
+    private String phone;
 
-	@Type(type = "numeric_boolean")
-	@Column(name = "is_prospect", columnDefinition = "tinyint default yes")
-	private boolean isProspect;
+    /**
+     * Website URL
+     */
+    @Column(name = "website_url", length = 255)
+    @Size(max = 255)
+    private String websiteUrl;
 
-	@Type(type = "numeric_boolean")
-	@Column(name = "agreed_ua", columnDefinition = "tinyint default false")
-	private boolean agreedToUA;
+    /**
+     * Where contact was imported form
+     */
+    @Column(name = "imported_from", length = 50)
+    @Size(max = 50)
+    private String importedFrom;
 
+    /**
+     * User that imported the contact
+     */
+    @Column(name = "imported_by", length = 50)
+    @Size(max = 50)
+    private String importedBy;
 
-	@Embedded
-	private CommunicationPolicy contactPolicy;
+    /**
+     * Social site identifier
+     */
+    @Column(name = "social_identifier", length = 2000)
+    @Size(max = 2000)
+    private String socialIdentifier;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "contact", cascade = CascadeType.ALL)
-	private List<Message> messages;
+    /**
+     * Is it VIP contact
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_vip", columnDefinition = "tinyint default false")
+    private boolean isVip;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "address_book_id")
-	private AddressBook addressBook;
-	
-	
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "com_contact_tag", joinColumns =
-	@JoinColumn(name = "contact_id"))
-	@Column(name = "tag")
-	private Set<String> tags = new HashSet<String>();
-	
-	public Contact() {
-		accountType = ACCOUNT_TYPE;
-	}
+    /**
+     * Is it a prospect
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_prospect", columnDefinition = "tinyint default yes")
+    private boolean isProspect;
 
-	public String getEmail() {
-		return email;
-	}
+    /**
+     * Was user agreement accepted
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "agreed_ua", columnDefinition = "tinyint default false")
+    private boolean agreedToUA;
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    /**
+     * Contact policy
+     */
+    @Embedded
+    private CommunicationPolicy contactPolicy;
 
-	public String getAssistantName() {
-		return assistantName;
-	}
+    /**
+     * Messages send
+     */
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "contact", cascade = CascadeType.ALL)
+    private List<Message> messages;
 
-	public void setAssistantName(String assistantName) {
-		this.assistantName = assistantName;
-	}
+    /**
+     * Address book
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_book_id")
+    private AddressBook addressBook;
 
-	public String getAssistantPhone() {
-		return assistantPhone;
-	}
+    /**
+     * Tags
+     */
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "com_contact_tag", joinColumns = @JoinColumn(name = "contact_id"))
+    @Column(name = "tag")
+    private Set<String> tags = new HashSet<String>();
 
-	public void setAssistantPhone(String assistantPhone) {
-		this.assistantPhone = assistantPhone;
-	}
+    public Contact() {
+        accountType = ACCOUNT_TYPE;
+    }
 
-	public String getPosition() {
-		return position;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setPosition(String position) {
-		this.position = position;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	
-	public String getCompany() {
-		return company;
-	}
+    public String getAssistantName() {
+        return assistantName;
+    }
 
-	public void setCompany(String company) {
-		this.company = company;
-	}
+    public void setAssistantName(String assistantName) {
+        this.assistantName = assistantName;
+    }
 
-	public String getMobile() {
-		return mobile;
-	}
+    public String getAssistantPhone() {
+        return assistantPhone;
+    }
 
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
+    public void setAssistantPhone(String assistantPhone) {
+        this.assistantPhone = assistantPhone;
+    }
 
-	public String getPhone() {
-		return phone;
-	}
+    public String getPosition() {
+        return position;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
-	public String getWebsiteUrl() {
-		return websiteUrl;
-	}
+    public String getCompany() {
+        return company;
+    }
 
-	public void setWebsiteUrl(String websiteUrl) {
-		this.websiteUrl = websiteUrl;
-	}
+    public void setCompany(String company) {
+        this.company = company;
+    }
 
-	public String getImportedFrom() {
-		return importedFrom;
-	}
+    public String getMobile() {
+        return mobile;
+    }
 
-	public void setImportedFrom(String importedFrom) {
-		this.importedFrom = importedFrom;
-	}
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
-	public String getImportedBy() {
-		return importedBy;
-	}
+    public String getPhone() {
+        return phone;
+    }
 
-	public void setImportedBy(String importedBy) {
-		this.importedBy = importedBy;
-	}
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-	public String getSocialIdentifier() {
-		return socialIdentifier;
-	}
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
 
-	public void setSocialIdentifier(String socialIdentifier) {
-		this.socialIdentifier = socialIdentifier;
-	}
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl;
+    }
 
-	public boolean isVip() {
-		return isVip;
-	}
+    public String getImportedFrom() {
+        return importedFrom;
+    }
 
-	public void setVip(boolean isVip) {
-		this.isVip = isVip;
-	}
+    public void setImportedFrom(String importedFrom) {
+        this.importedFrom = importedFrom;
+    }
 
-	public boolean isProspect() {
-		return isProspect;
-	}
+    public String getImportedBy() {
+        return importedBy;
+    }
 
-	public void setProspect(boolean isProspect) {
-		this.isProspect = isProspect;
-	}
+    public void setImportedBy(String importedBy) {
+        this.importedBy = importedBy;
+    }
 
-	public boolean isAgreedToUA() {
-		return agreedToUA;
-	}
+    public String getSocialIdentifier() {
+        return socialIdentifier;
+    }
 
-	public void setAgreedToUA(boolean agreedToUA) {
-		this.agreedToUA = agreedToUA;
-	}
+    public void setSocialIdentifier(String socialIdentifier) {
+        this.socialIdentifier = socialIdentifier;
+    }
 
-	public CommunicationPolicy getContactPolicy() {
-		return contactPolicy;
-	}
+    public boolean isVip() {
+        return isVip;
+    }
 
-	public void setContactPolicy(CommunicationPolicy contactPolicy) {
-		this.contactPolicy = contactPolicy;
-	}
+    public void setVip(boolean isVip) {
+        this.isVip = isVip;
+    }
 
-	public List<Message> getMessages() {
-		return messages;
-	}
+    public boolean isProspect() {
+        return isProspect;
+    }
 
-	public void setMessages(List<Message> messages) {
-		this.messages = messages;
-	}
+    public void setProspect(boolean isProspect) {
+        this.isProspect = isProspect;
+    }
 
-	public AddressBook getAddressBook() {
-		return addressBook;
-	}
+    public boolean isAgreedToUA() {
+        return agreedToUA;
+    }
 
-	public void setAddressBook(AddressBook addressBook) {
-		this.addressBook = addressBook;
-	}
+    public void setAgreedToUA(boolean agreedToUA) {
+        this.agreedToUA = agreedToUA;
+    }
 
-	
-	public Set<String> getTags() {
-		return tags;
-	}
+    public CommunicationPolicy getContactPolicy() {
+        return contactPolicy;
+    }
 
-	public void setTags(Set<String> tags) {
-		this.tags = tags;
-	}
+    public void setContactPolicy(CommunicationPolicy contactPolicy) {
+        this.contactPolicy = contactPolicy;
+    }
 
-	public String toString() {
-		return this.getName().toString() + " code:" + this.getCode();
-	}
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    public AddressBook getAddressBook() {
+        return addressBook;
+    }
+
+    public void setAddressBook(AddressBook addressBook) {
+        this.addressBook = addressBook;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
+
+    public String toString() {
+        return this.getName().toString() + " code:" + this.getCode();
+    }
 }

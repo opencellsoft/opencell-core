@@ -54,6 +54,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValueHolder;
 import org.meveo.service.api.EntityToDtoConverter;
@@ -75,7 +76,8 @@ import org.primefaces.model.DualListModel;
  * @author Edward P. Legaspi
  * @author Wassim Drira
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  * 
  */
 @Named
@@ -110,7 +112,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @Inject
     private ProductTemplateService productTemplateService;
-    
+
     private Long bomId;
 
     private boolean newVersion;
@@ -214,8 +216,23 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         return Arrays.asList("offerTemplateCategories", "channels", "businessAccountModels", "customerCategories");
     }
 
+    /**
+     * List active offer templates of a current type valid on a given date
+     *
+     * @param date Date to match validity
+     * @return A list of offer templates
+     */
     public List<OfferTemplate> listActiveByDate(Date date) {
-        return offerTemplateService.listActiveByDate(date);
+        List<OfferTemplate> result = new ArrayList<>();
+        List<OfferTemplate> listActiveOfferTemplates = listActive();
+
+        for (OfferTemplate offerTemplate : listActiveOfferTemplates) {
+            if (offerTemplate.getLifeCycleStatus() == LifeCycleStatusEnum.ACTIVE && (offerTemplate.getValidity() == null ||
+                    offerTemplate.getValidity().isCorrespondsToPeriod(date))) {
+                result.add(offerTemplate);
+            }
+        }
+        return result;
     }
 
     @Override
@@ -410,7 +427,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         // template that was duplicated in initEntity() method
         if (instantiatedFromBom) {
             Map<String, List<CustomFieldValue>> offerCfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValuesByCode();
-            CustomFieldsDto offerCfs = entityToDtoConverter.getCustomFieldsDTO(entity, offerCfValues, false, false);
+            CustomFieldsDto offerCfs = entityToDtoConverter.getCustomFieldsDTO(entity, offerCfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
 
             List<ServiceConfigurationDto> servicesConfigurations = new ArrayList<>();
             // process the services
@@ -421,8 +438,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                     ServiceConfigurationDto serviceConfigurationDto = toServiceConfigurationDto(ost, st);
                     serviceConfigurationDto.setItemIndex(itemIndex++);
                     servicesConfigurations.add(serviceConfigurationDto);
+                    }
                 }
-            }
 
             List<ServiceConfigurationDto> productsConfigurations = new ArrayList<>();
             // process products
@@ -498,13 +515,13 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                         CustomFieldValueHolder cfValueHolder = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid());
                         if (cfValueHolder != null) {
                             Map<String, List<CustomFieldValue>> stCustomFieldInstances = cfValueHolder.getValuesByCode();
-                            if (stCustomFieldInstances != null) {
-                                // populate offer cf
-                                customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), true, false, false);
-                                serviceTemplate = serviceTemplateService.update(serviceTemplate);
-                            }
+                        if (stCustomFieldInstances != null) {
+                            // populate offer cf
+                            customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), true, false, false);
+                            serviceTemplate = serviceTemplateService.update(serviceTemplate);
                         }
                     }
+                }
                 }
 
                 return (isNewEntity && !outcome.equals("mm_offers")) ? getEditViewName() : outcome;
@@ -517,11 +534,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     private ServiceConfigurationDto toServiceConfigurationDto(OfferServiceTemplate ost, ServiceTemplate st) throws BusinessException {
         ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
         
-        Map<String, List<CustomFieldValue>> stCfValues = customFieldDataEntryBean.saveCustomFieldsToEntity(null, st.getUuid(), false, true);
+        Map<String, List<CustomFieldValue>> stCfValues = customFieldDataEntryBean.saveCustomFieldsToEntity(null, st.getUuid(), false, true, false);
         serviceConfigurationDto.setCode(st.getCode());
         serviceConfigurationDto.setDescription(st.getDescription());
         serviceConfigurationDto.setMandatory(ost.isMandatory());
         serviceConfigurationDto.setInstantiatedFromBSM(st.isInstantiatedFromBSM());
+        serviceConfigurationDto.setImagePath(st.getImagePath());
         if (stCfValues != null) {
             serviceConfigurationDto.setCfValues(stCfValues);
         }

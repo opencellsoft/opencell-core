@@ -30,6 +30,7 @@ import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidPermissionException;
@@ -86,8 +87,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      */
     @Override
     @Lock(LockType.READ)
-    public Map<String, Object> execute(String scriptCode, Map<String, Object> context)
-            throws BusinessException {
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context) throws BusinessException {
 
         ScriptInstance scriptInstance = findByCode(scriptCode);
         // Check access to the script
@@ -100,20 +100,24 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      *
      * @param scriptCode code of script
      * @param context context used in execution of script.
+     * @return Log messages
      */
-    public void test(String scriptCode, Map<String, Object> context) {
+    public String test(String scriptCode, Map<String, Object> context) {
         try {
-            clearLogs(scriptCode);
             ScriptInstance scriptInstance = findByCode(scriptCode);
             isUserHasExecutionRole(scriptInstance);
             String javaSrc = scriptInstance.getScript();
-            javaSrc = javaSrc.replaceAll("LoggerFactory.getLogger", "new org.meveo.service.script.RunTimeLogger(" + getClassName(javaSrc) + ".class,\"" + appProvider.getCode()
-                    + "\",\"" + scriptCode + "\",\"ScriptInstanceService\");//");
+            javaSrc = javaSrc.replaceAll("log.", "logTest.");
             Class<ScriptInterface> compiledScript = compileJavaSource(javaSrc);
-            execute(compiledScript.newInstance(), context);
+            ScriptInterface scriptClassInstance = compiledScript.newInstance();
+            executeWInitAndFinalize(scriptClassInstance, context);
+
+            String logMessages = scriptClassInstance.getLogMessages();
+            return logMessages;
 
         } catch (Exception e) {
             log.error("Script test failed", e);
+            return ExceptionUtils.getStackTrace(e);
         }
     }
 

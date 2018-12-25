@@ -19,5 +19,5 @@
 package org.meveo.model.datawarehouse;
 
 public enum JournalEntryTypeEnum {
-	P, T, I; // Product, Tax, Invoice
+    P, T, I; // Product, Tax, Invoice
 }

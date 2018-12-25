@@ -20,8 +20,7 @@ package org.meveo.model.bi;
 
 public enum JobNameEnum {
 
-    REPORTING(1, "jobNameEnum.reporting"),
-    RECURRING_CHARGES_APPLICATION(2, "jobNameEnum.recurringChargeApplication");
+    REPORTING(1, "jobNameEnum.reporting"), RECURRING_CHARGES_APPLICATION(2, "jobNameEnum.recurringChargeApplication");
 
     private Integer id;
     private String label;

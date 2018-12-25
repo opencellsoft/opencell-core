@@ -34,87 +34,87 @@ import org.meveo.model.shared.Address;
 @DiscriminatorValue("POSTAL_MAIL")
 public class PostalMailSenderConfig extends MessageSenderConfig {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Embedded
-	private Address undeliveredReturnAddress;
+    @Embedded
+    private Address undeliveredReturnAddress;
 
-	@Enumerated(EnumType.STRING)
-	private EnvelopeFormatEnum envelopFormat;
+    @Enumerated(EnumType.STRING)
+    private EnvelopeFormatEnum envelopFormat;
 
-	@Enumerated(EnumType.STRING)
-	private EnvelopeWindowType windowType;
+    @Enumerated(EnumType.STRING)
+    private EnvelopeWindowType windowType;
 
-	@Type(type="numeric_boolean")
-	@Column()
-	private boolean printRectoVerso;
+    @Type(type = "numeric_boolean")
+    @Column(name = "printrectoverso")
+    private boolean printRectoVerso;
 
-	@Type(type="numeric_boolean")
-	@Column()
-	private boolean useColor;
+    @Type(type = "numeric_boolean")
+    @Column(name = "usecolor")
+    private boolean useColor;
 
-	@Type(type="numeric_boolean")
-	@Column()
-	private boolean addAddressFrontPage;
+    @Type(type = "numeric_boolean")
+    @Column(name = "addaddressfrontpage")
+    private boolean addAddressFrontPage;
 
-	@Column(name = "stamptype", length = 255)
+    @Column(name = "stamptype", length = 255)
     @Size(max = 255)
-	private String STAMPtype;
+    private String STAMPtype;
 
-	public Address getUndeliveredReturnAddress() {
-		return undeliveredReturnAddress;
-	}
+    public Address getUndeliveredReturnAddress() {
+        return undeliveredReturnAddress;
+    }
 
-	public void setUndeliveredReturnAddress(Address undeliveredReturnAddress) {
-		this.undeliveredReturnAddress = undeliveredReturnAddress;
-	}
+    public void setUndeliveredReturnAddress(Address undeliveredReturnAddress) {
+        this.undeliveredReturnAddress = undeliveredReturnAddress;
+    }
 
-	public EnvelopeFormatEnum getEnvelopFormat() {
-		return envelopFormat;
-	}
+    public EnvelopeFormatEnum getEnvelopFormat() {
+        return envelopFormat;
+    }
 
-	public void setEnvelopFormat(EnvelopeFormatEnum envelopFormat) {
-		this.envelopFormat = envelopFormat;
-	}
+    public void setEnvelopFormat(EnvelopeFormatEnum envelopFormat) {
+        this.envelopFormat = envelopFormat;
+    }
 
-	public EnvelopeWindowType getWindowType() {
-		return windowType;
-	}
+    public EnvelopeWindowType getWindowType() {
+        return windowType;
+    }
 
-	public void setWindowType(EnvelopeWindowType windowType) {
-		this.windowType = windowType;
-	}
+    public void setWindowType(EnvelopeWindowType windowType) {
+        this.windowType = windowType;
+    }
 
-	public boolean isPrintRectoVerso() {
-		return printRectoVerso;
-	}
+    public boolean isPrintRectoVerso() {
+        return printRectoVerso;
+    }
 
-	public void setPrintRectoVerso(boolean printRectoVerso) {
-		this.printRectoVerso = printRectoVerso;
-	}
+    public void setPrintRectoVerso(boolean printRectoVerso) {
+        this.printRectoVerso = printRectoVerso;
+    }
 
-	public boolean isUseColor() {
-		return useColor;
-	}
+    public boolean isUseColor() {
+        return useColor;
+    }
 
-	public void setUseColor(boolean useColor) {
-		this.useColor = useColor;
-	}
+    public void setUseColor(boolean useColor) {
+        this.useColor = useColor;
+    }
 
-	public boolean isAddAddressFrontPage() {
-		return addAddressFrontPage;
-	}
+    public boolean isAddAddressFrontPage() {
+        return addAddressFrontPage;
+    }
 
-	public void setAddAddressFrontPage(boolean addAddressFrontPage) {
-		this.addAddressFrontPage = addAddressFrontPage;
-	}
+    public void setAddAddressFrontPage(boolean addAddressFrontPage) {
+        this.addAddressFrontPage = addAddressFrontPage;
+    }
 
-	public String getSTAMPtype() {
-		return STAMPtype;
-	}
+    public String getSTAMPtype() {
+        return STAMPtype;
+    }
 
-	public void setSTAMPtype(String sTAMPtype) {
-		STAMPtype = sTAMPtype;
-	}
+    public void setSTAMPtype(String sTAMPtype) {
+        STAMPtype = sTAMPtype;
+    }
 
 }

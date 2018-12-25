@@ -72,11 +72,9 @@ public class FullTextSearchApi extends BaseApi {
     /**
      *
      * @param query string term to be searched
-     * @param category  search by category that is directly taken from the name of the entity found in entityMapping.
-     *                 property of elasticSearchConfiguration.json.
-     *                 e.g. Customer, CustomerAccount, AccountOperation, etc.
-     *                 See elasticSearchConfiguration.json entityMapping keys for a list of categories.
-     * @param from  number the index where search results will start from, used in pagination
+     * @param category search by category that is directly taken from the name of the entity found in entityMapping. property of elasticSearchConfiguration.json. e.g. Customer,
+     *        CustomerAccount, AccountOperation, etc. See elasticSearchConfiguration.json entityMapping keys for a list of categories.
+     * @param from number the index where search results will start from, used in pagination
      * @param size number the maximum number of results to return
      * @param sortField string field used to sort the results
      * @param sortOrder ASC or DESC to indicate the order in which results will be returned
@@ -96,6 +94,7 @@ public class FullTextSearchApi extends BaseApi {
 
         handleMissingParameters();
 
-        return elasticClient.search(query, category, from, size, sortField, sortOrder, null, null);
+        return elasticClient.search(query, category, from, size, sortField != null ? new String[] { sortField } : null, sortOrder != null ? new SortOrder[] { sortOrder } : null,
+            null, null);
     }
 }

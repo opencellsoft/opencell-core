@@ -19,9 +19,7 @@
 package org.meveo.model.billing;
 
 public enum ChargeApplicationModeEnum {
-    SUBSCRIPTION,
-    AGREEMENT,
-    REIMBURSMENT;
+    SUBSCRIPTION, AGREEMENT, REIMBURSMENT;
 
     public String toString() {
         return this.getClass().getSimpleName() + "." + this.name();

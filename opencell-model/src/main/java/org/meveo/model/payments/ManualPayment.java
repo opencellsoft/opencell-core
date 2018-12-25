@@ -25,6 +25,6 @@ import javax.persistence.Entity;
 // "ar_manual_payment_seq"), })
 public class ManualPayment extends Payment {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 }

@@ -20,39 +20,39 @@ package org.meveo.model.billing;
 
 public enum BillingProcessTypesEnum {
 
-	AUTOMATIC(1, "BillingRunStatusEnum.automatic"), 
-	MANUAL(2, "BillingRunStatusEnum.manual");
+    AUTOMATIC(1, "BillingRunStatusEnum.automatic"), MANUAL(2, "BillingRunStatusEnum.manual");
 
-	private Integer id;
-	private String label;
+    private Integer id;
+    private String label;
 
-	BillingProcessTypesEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
+    BillingProcessTypesEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
 
-	}
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	/**
-	 * Gets enum by its id.
-	 * @param id if of billing process type
-	 * @return billing process type.
-	 */
-	public static BillingProcessTypesEnum getValue(Integer id) {
-		if (id != null) {
-			for (BillingProcessTypesEnum status : values()) {
-				if (id.equals(status.getId())) {
-					return status;
-				}
-			}
-		}
-		return null;
-	}
+    /**
+     * Gets enum by its id.
+     * 
+     * @param id if of billing process type
+     * @return billing process type.
+     */
+    public static BillingProcessTypesEnum getValue(Integer id) {
+        if (id != null) {
+            for (BillingProcessTypesEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
 }

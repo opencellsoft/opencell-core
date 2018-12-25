@@ -33,6 +33,17 @@
             selection="#{paymentGatewayBean.entity.scriptInstance}" column2Label="#{messages['BusinessEntity.description']}" column2="description"
 			updateField=":formPaymentGateway:tabView:scriptSelectId :formPaymentGateway:tabView:scriptSelectId_text">
 		</hftl:entityPopup>
+		
+		<hftl:entityPopup id="sellerPopup"
+			header="#{messages['seller.title']}"
+			backingBean="#{sellerBean}"
+			selection="#{paymentGatewayBean.entity.seller}"
+			searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" 
+			updateField=":FormId:sellerSelectId :FormId:sellerSelectId_text">
+		</hftl:entityPopup>	
 													
 				
 		<hftl:formPanel label="#{messages['paymentGateway.title']}" backingBean="#{paymentGatewayBean}"  formId="formPaymentGateway" showEnableDisableButton="true" >
@@ -40,7 +51,7 @@
 				<p:tab  title="#{messages['commons.tab.information']}" >
 					<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
 					<hftl:formField label="#{messages['businessEntity.description']}" field="description" />	
-					<hftl:formField label="#{messages['businessEntity.description']}" field="type" listenerUpdate="impl_class_script" />		
+					<hftl:formField label="#{messages['paymentGateway.type']}" field="type" listenerUpdate="impl_class_script" />		
 					<h:panelGroup id="impl_class_script">
 						<hftl:formField  label="#{messages['paymentGateway.scriptInstance']}" field="scriptInstance" id="scriptSelectId" valueLabelField="code" popup="true" popupId="scriptInstancePopup"  required="true"
 						rendered="#{paymentGatewayBean.entity.type!=PaymentGatewayTypeEnum.NATIF}" />	
@@ -54,18 +65,92 @@
 						<hftl:formField label="#{messages['paymentGateway.cardType']}" field="cardType" rendered="#{paymentGatewayBean.entity.paymentMethodType==PaymentMethodEnum.CARD}"  />
 					</h:panelGroup>
 					<hftl:formField label="#{messages['paymentGateway.application_el']}" field="applicationEL" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />
-					<!-- <p:fieldset legend="#{messages['paymentGateway.retry']}">
+							<hftl:formField id="sellerSelectId"
+				label="#{messages['paymentGateway.seller']}"
+				field="seller" valueLabelField="code" required="true"
+				popup="true" popupId="sellerPopup" showResetButton="true" />	
+					<!-- TODO: waiting paymentRun feature 
+					    <p:fieldset legend="#{messages['paymentGateway.retry']}">
 						<hftl:formField label="#{messages['paymentGateway.nbTries']}" field="nbTries" />
 						<hftl:formField label="#{messages['paymentGateway.replayCause']}" field="replayCause" />
 						<hftl:formField label="#{messages['paymentGateway.errorsToReplay']}" field="errorsToReplay" />
 					</p:fieldset> -->
+					<h:panelGroup>
+                        <p:dataTable id="rumSequenceTable" value="#{paymentGatewayBean.singleListRumSequences}"
+                            var="pgRumSeq" paginator="false" resizableColumns="true">
+                            <f:facet name="header">#{messages['paymentGateway.paymentGatewaySequences']}</f:facet>
+                            <p:column headerText="#{messages['businessEntity.code']}">
+                                <h:outputText value="#{pgRumSeq.code}" />
+                            </p:column>
+                            <p:column headerText="#{messages['businessEntity.description']}">
+                                <h:outputText value="#{pgRumSeq.description}" />
+                            </p:column>
+                            <p:column headerText="#{messages['customerSequence.prefix']}">
+                                <h:outputText value="#{pgRumSeq.genericSequence.prefix}" />
+                            </p:column>
+                            <p:column headerText="#{messages['customerSequence.sequenceSize']}">
+                                <h:outputText value="#{pgRumSeq.genericSequence.sequenceSize}" />
+                            </p:column>
+                            <p:column headerText="#{messages['customerSequence.currentSequenceNb']}">
+                                <h:outputText value="#{pgRumSeq.genericSequence.currentSequenceNb}" />
+                            </p:column>
+                            <p:column width="60px;" headerText="#{messages['commons.actions']}">
+                                <p:commandButton action="#{paymentGatewayBean.selectRumSequence(pgRumSeq)}" update=":formPaymentGateway:tabView:rumSequenceDetails" icon="ui-icon-document" immediate="true" />
+                                <p:commandButton action="#{paymentGatewayBean.deleteRumSequence(pgRumSeq)}" icon="ui-icon-trash" update="@form" />
+                            </p:column>
+                        </p:dataTable>
+                        <p:commandButton rendered="#{paymentGatewayBean.entity.rumSequence == null}" value="#{messages['commons.addNew']}" update=":formPaymentGateway:tabView:rumSequenceDetails" action="#{paymentGatewayBean.newRumSequence}">
+                        </p:commandButton>
+                    </h:panelGroup>
+                    
+                    <h:panelGroup id="rumSequenceDetails">
+			        	 <p:panel header="#{messages['paymentGateway.sequence']}" rendered="#{paymentGatewayBean.selectedRumSequence != null}">
+			                <p:outputPanel styleClass="form-panel-fields #{paymentGatewayBean.edit ? '' : ' form-panel-fields-view'}">
+			                	<hftl:decorateFormField label="#{messages['businessEntity.code']}" fieldId="pgCode">
+									<p:inputText id="pgCode" value="#{paymentGatewayBean.selectedRumSequence.code}">
+									</p:inputText>
+								</hftl:decorateFormField>
+								<hftl:decorateFormField label="#{messages['businessEntity.description']}" fieldId="pgDescription">
+									<p:inputText id="pgDescription" value="#{paymentGatewayBean.selectedRumSequence.description}">
+									</p:inputText>
+								</hftl:decorateFormField>
+								<hftl:decorateFormField label="#{messages['paymentGateway.sequence.prefix']}" fieldId="pgPrefix">
+									<p:inputText id="pgPrefix" value="#{paymentGatewayBean.selectedRumSequence.genericSequence.prefix}">
+									</p:inputText>
+								</hftl:decorateFormField>
+								<hftl:decorateFormField label="#{messages['paymentGateway.sequence.sequenceSize']}" fieldId="pgSequenceSize">
+									<p:spinner id="pgSequenceSize" value="#{paymentGatewayBean.selectedRumSequence.genericSequence.sequenceSize}">
+									</p:spinner>
+								</hftl:decorateFormField>
+								<hftl:decorateFormField label="#{messages['paymentGateway.sequence.currentSequenceNb']}" fieldId="pgCurrentSequenceNb">
+									<p:inputText readonly="true" id="pgCurrentSequenceNb" value="#{paymentGatewayBean.selectedRumSequence.genericSequence.currentSequenceNb}">
+									</p:inputText>
+								</hftl:decorateFormField>
+			                </p:outputPanel>
+			                <h:panelGroup layout="block" styleClass="form-panel-actions">
+			                    <p:commandButton action="#{paymentGatewayBean.saveOrUpdateRumSequence}" value="#{messages['action.save']}" update="@form :formPaymentGateway:tabView:rumSequenceTable :formPaymentGateway:messages" />
+			                	<p:commandButton action="#{paymentGatewayBean.resetRumSequence}" value="#{messages['action.cancel']}" update="@form :formPaymentGateway:tabView:rumSequenceTable" immediate="true" />
+			                </h:panelGroup>
+			        	</p:panel>
+			        </h:panelGroup>
+			        
 				</p:tab>
 				<p:tab  title="#{messages['paymentGateway.account']}" >
 					<hftl:formField label="#{messages['paymentGateway.marchandId']}" field="marchandId" maxlength="255" />
 					<hftl:formField label="#{messages['paymentGateway.secretKey']}" field="secretKey" maxlength="255" />
 					<hftl:formField label="#{messages['paymentGateway.apiKey']}" field="apiKey"  maxlength="255"/>
+                    <hftl:formField label="#{messages['paymentGateway.webhooksKeyId']}" field="webhooksKeyId"  maxlength="255"/>
+                    <hftl:formField label="#{messages['paymentGateway.webhooksSecretKey']}" field="webhooksSecretKey"  maxlength="255"/>
 					<hftl:formField label="#{messages['paymentGateway.profile']}" field="profile" maxlength="255" />
-					
+				</p:tab>
+				<p:tab  title="#{messages['commons.bankCoordinates']}" >
+			           <hftl:formField label="#{messages['bankCoordinates.bic']}" field="bankCoordinates" childField="bic" size="15" newLine="true" />
+                       <hftl:formField label="#{messages['bankCoordinates.iban']}" field="bankCoordinates" childField="iban" size="41" />
+                       <hftl:formField label="#{messages['bankCoordinates.ics']}" field="bankCoordinates" childField="ics" size="42" />                       
+                       <hftl:formField label="#{messages['bankCoordinates.branchCode']}" field="bankCoordinates" childField="branchCode" size="5" />
+                       <hftl:formField label="#{messages['bankCoordinates.accountNumber']}" field="bankCoordinates" childField="accountNumber" size="11" />
+                       <hftl:formField label="#{messages['bankCoordinates.bankCode']}" field="bankCoordinates" childField="bankCode" size="5" />
+                       <hftl:formField label="#{messages['bankCoordinates.issuerName']}" field="bankCoordinates" childField="issuerName" size="50" />
 				</p:tab>
 				<hftl:customFields backingBean="#{paymentGatewayBean}" messagesId=":formPaymentGateway:messages" />
 			</p:tabView>								

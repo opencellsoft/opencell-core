@@ -13,7 +13,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.crm.Customer;
 
 /**
@@ -102,9 +104,16 @@ public class AccountHierarchyDto implements Serializable {
 
     /** Invoicing Threshold. */
     private BigDecimal invoicingThreshold;
-
-    /** Discount Plan. */
-    private String discountPlan;
+    
+    /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
+    @XmlElementWrapper(name = "discountPlansForInstantiation")
+	@XmlElement(name = "discountPlanForInstantiation")
+    private List<DiscountPlanDto> discountPlansForInstantiation;
+    
+    /** List of discount plans to be disassociated in a BillingAccount */
+	@XmlElementWrapper(name = "discountPlansForTermination")
+	@XmlElement(name = "discountPlanForTermination")
+    private List<String> discountPlansForTermination;
 
     /** Custom Fiends. */
     private CustomFieldsDto customFields;
@@ -678,24 +687,6 @@ public class AccountHierarchyDto implements Serializable {
     }
 
     /**
-     * Gets the discount plan.
-     *
-     * @return the discount plan
-     */
-    public String getDiscountPlan() {
-        return discountPlan;
-    }
-
-    /**
-     * Sets the discount plan.
-     *
-     * @param discountPlan the new discount plan
-     */
-    public void setDiscountPlan(String discountPlan) {
-        this.discountPlan = discountPlan;
-    }
-
-    /**
      * Gets the payment methods.
      *
      * @return the payment methods
@@ -791,7 +782,41 @@ public class AccountHierarchyDto implements Serializable {
                 + customerBrandCode + ", customerCategoryCode=" + customerCategoryCode + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode="
                 + languageCode + ", titleCode=" + titleCode + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate + ", phoneNumber=" + phoneNumber
                 + ", billingCycleCode=" + billingCycleCode + ", address1=" + address1 + ", address2=" + address2 + ", address3=" + address3 + ", zipCode=" + zipCode + ", state="
-                + state + ", city=" + city + ", customFields=" + customFields + ", limit=" + limit + ", sortField=" + sortField + ", index=" + index + ", invoicingThreshold="
-                + invoicingThreshold + ", discountPlan=" + discountPlan + "]";
-    }    
+                + state + ", city=" + city + ", usePrefix=" + usePrefix + ", invoicingThreshold=" + invoicingThreshold + ", discountPlansForInstantiation="
+                + discountPlansForInstantiation + ", discountPlansForTermination=" + discountPlansForTermination + ", customFields=" + customFields + ", limit=" + limit
+                + ", sortField=" + sortField + ", index=" + index + ", paymentMethods=" + paymentMethods + ", paymentMethod=" + paymentMethod + ", jobTitle=" + jobTitle
+                + ", registrationNo=" + registrationNo + ", vatNo=" + vatNo + "]";
+    }
+
+    /**
+     * Gets a list of discount plans for termination.
+     * @return List of discount plan code.
+     */
+	public List<String> getDiscountPlansForTermination() {
+		return discountPlansForTermination;
+	}
+
+	/**
+	 * Sets a list of discount plan code for termination.
+	 * @param discountPlansForTermination list of discount plan code
+	 */
+	public void setDiscountPlansForTermination(List<String> discountPlansForTermination) {
+		this.discountPlansForTermination = discountPlansForTermination;
+	}
+
+	/**
+	 * Gets a list of discount plan dto for instantiation.
+	 * @return list of discount plan dto
+	 */
+	public List<DiscountPlanDto> getDiscountPlansForInstantiation() {
+		return discountPlansForInstantiation;
+	}
+
+	/**
+	 * Sets a list of discount plan dto for instantiation.
+	 * @param discountPlansForInstantiation list of discount plan dto
+	 */
+	public void setDiscountPlansForInstantiation(List<DiscountPlanDto> discountPlansForInstantiation) {
+		this.discountPlansForInstantiation = discountPlansForInstantiation;
+	}
 }

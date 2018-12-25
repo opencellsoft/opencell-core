@@ -85,11 +85,25 @@ public class SubscriptionDto extends BusinessEntityDto {
     /** The order number. */
     private String orderNumber;
 
-    @XmlElement
+    /**
+     * Expression to determine minimum amount value
+     */
     private String minimumAmountEl;
 
-    @XmlElement
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
     private String minimumLabelEl;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    private String minimumLabelElSpark;
 
     /**
      * A date till which subscription is subscribed. After this date it will either be extended or terminated
@@ -104,16 +118,21 @@ public class SubscriptionDto extends BusinessEntityDto {
 
     /** The renewal rule. */
     private SubscriptionRenewalDto renewalRule;
-    
+
     /** The billing cycle. */
     @XmlElement(required = true)
     private String billingCycle;
-    
+
     /** The seller. */
     private String seller;
     
     /** The auto end of engagement. */
     private Boolean autoEndOfEngagement;
+    
+    /**
+     * String value matched in the usageRatingJob to group the EDRs for rating.
+     */
+    private String ratingGroup;
 
     /**
      * Instantiates a new subscription dto.
@@ -121,7 +140,7 @@ public class SubscriptionDto extends BusinessEntityDto {
     public SubscriptionDto() {
         super();
     }
-    
+
     /**
      * Instantiates a new subscription dto.
      * 
@@ -129,7 +148,7 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     public SubscriptionDto(Subscription e) {
         super(e);
-        
+
         setStatus(e.getStatus());
         setStatusDate(e.getStatusDate());
         setOrderNumber(e.getOrderNumber());
@@ -141,7 +160,7 @@ public class SubscriptionDto extends BusinessEntityDto {
         if (e.getOffer() != null) {
             setOfferTemplate(e.getOffer().getCode());
         }
-        
+
         setSubscriptionDate(e.getSubscriptionDate());
         setTerminationDate(e.getTerminationDate());
         if (e.getSubscriptionTerminationReason() != null) {
@@ -152,9 +171,14 @@ public class SubscriptionDto extends BusinessEntityDto {
         setRenewed(e.isRenewed());
         setRenewalNotifiedDate(e.getRenewalNotifiedDate());
         setRenewalRule(new SubscriptionRenewalDto(e.getSubscriptionRenewal()));
+        setMinimumAmountEl(e.getMinimumAmountEl());
+        setMinimumAmountElSpark(e.getMinimumAmountElSpark());
+        setMinimumLabelEl(e.getMinimumLabelEl());
+        setMinimumLabelElSpark(e.getMinimumLabelElSpark());
         if(e.getSeller() != null) {
         	setSeller(e.getSeller().getCode());
         }
+		setRatingGroup(e.getRatingGroup());
     }
 
     /**
@@ -482,41 +506,61 @@ public class SubscriptionDto extends BusinessEntityDto {
     }
 
     /**
-     * Gets minimum amount El.
-     *
-     * @return the minimum amount El.
+     * @return Expression to determine minimum amount value
      */
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
 
     /**
-     * Sets minimum amount El.
-     *
-     * @param minimumAmountEl the new product instances
+     * @param minimumAmountEl Expression to determine minimum amount value
      */
     public void setMinimumAmountEl(String minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
 
     /**
-     * Gets minimum label El.
-     *
-     * @return the minimum label El
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value
      */
     public String getMinimumLabelEl() {
         return minimumLabelEl;
     }
 
     /**
-     * Sets minimum label El.
-     *
-     * @param minimumLabelEl minimum label El
+     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
-    
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
+
+    /**
+     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
+    }
+
     /**
      * Gets the billing cycle.
      *
@@ -534,7 +578,6 @@ public class SubscriptionDto extends BusinessEntityDto {
     public void setBillingCycle(String billingCycle) {
         this.billingCycle = billingCycle;
     }
-    
 
     /**
      * @return the autoEndOfEngagement
@@ -549,7 +592,7 @@ public class SubscriptionDto extends BusinessEntityDto {
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
-    
+
     
     /**
 	 * @return the seller
@@ -565,7 +608,7 @@ public class SubscriptionDto extends BusinessEntityDto {
 		this.seller = seller;
 	}
 
-	@Override
+    @Override
     public String toString() {
         return "SubscriptionDto [userAccount=" + userAccount + ", offerTemplate=" + offerTemplate + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
                 + terminationDate + ", endAgreementDate=" + endAgreementDate + ", status=" + status + ", statusDate=" + statusDate + ", customFields=" + customFields
@@ -573,4 +616,12 @@ public class SubscriptionDto extends BusinessEntityDto {
                 + terminationReason + ", orderNumber=" + orderNumber + ", subscribedTillDate=" + subscribedTillDate + ", renewed=" + renewed + ", renewalNotifiedDate="
                 + renewalNotifiedDate + ", renewalRule=" + renewalRule + "]";
     }
+
+	public String getRatingGroup() {
+		return ratingGroup;
+	}
+
+	public void setRatingGroup(String ratingGroup) {
+		this.ratingGroup = ratingGroup;
+	}
 }

@@ -53,6 +53,11 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.scripts.ScriptInstance;
 
+/**
+ * Price plan
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ModuleItem
 @ObservableEntity
@@ -68,81 +73,162 @@ import org.meveo.model.scripts.ScriptInstance;
 public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparable<PricePlanMatrix> {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Charge code
+     */
     @Column(name = "event_code", length = 255, nullable = false)
     @Size(min = 1, max = 255)
     @NotNull
     private String eventCode;
 
+    /**
+     * Filtering criteria - Offer template
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
+    /**
+     * Filtering criteria - subscription date range - start date
+     */
     @Column(name = "start_subscription_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startSubscriptionDate;
 
+    /**
+     * Filtering criteria - subscription date range - end date
+     */
     @Column(name = "end_subscription_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date endSubscriptionDate;
 
+    /**
+     * Filtering criteria - operation date range - start date
+     */
     @Column(name = "start_rating_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startRatingDate;
 
+    /**
+     * Filtering criteria - operation date range - end date
+     */
     @Column(name = "end_rating_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date endRatingDate;
 
+    /**
+     * Filtering criteria - quantity range - min value
+     */
     @Column(name = "min_quantity")
     @Digits(integer = 23, fraction = 12)
     private BigDecimal minQuantity;
 
+    /**
+     * Filtering criteria - quantity range - max value
+     */
     @Column(name = "max_quantity")
     @Digits(integer = 23, fraction = 12)
     private BigDecimal maxQuantity;
 
+    /**
+     * Filtering criteria - subscription age range in month - min value
+     */
     @Column(name = "min_subscr_age")
     private Long minSubscriptionAgeInMonth;
 
+    /**
+     * Filtering criteria - subscription age range in month - max value
+     */
     @Column(name = "max_subscr_age")
     private Long maxSubscriptionAgeInMonth;
 
+    /**
+     * Filtering criteria - criteria value
+     */
     @Column(name = "criteria_1", length = 255)
     @Size(max = 255)
     private String criteria1Value;
 
+    /**
+     * Filtering criteria - criteria value
+     */
     @Column(name = "criteria_2", length = 255)
     @Size(max = 255)
     private String criteria2Value;
 
+    /**
+     * Filtering criteria - criteria value
+     */
     @Column(name = "criteria_3", length = 255)
     @Size(max = 255)
     private String criteria3Value;
 
+    /**
+     * Filtering criteria - expression to calculate criteria value
+     */
     @Column(name = "criteria_el", length = 2000)
     @Size(max = 2000)
     private String criteriaEL;
 
+    /**
+     * Filtering criteria - expression to calculate criteria value for Spark
+     */
+    @Column(name = "criteria_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String criteriaELSpark;
+
+    /**
+     * Amount without tax
+     */
     @Column(name = "amount_without_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal amountWithoutTax;
 
+    /**
+     * Amount with tax
+     */
     @Column(name = "amount_with_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal amountWithTax;
 
-    @Column(name = "amount_without_tax_el", length = 2000)
+    /**
+     * Expression to calculate amount without tax
+     */
+    @Column(name = "amount_without_tax_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String amountWithoutTaxEL;
 
-    @Column(name = "amount_with_tax_el", length = 2000)
+    /**
+     * Expression to calculate amount without tax - for Spark
+     */
+    @Column(name = "amount_without_tax_el_sp", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String amountWithoutTaxELSpark;
+
+    /**
+     * Expression to calculate amount with tax
+     */
+    @Column(name = "amount_with_tax_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String amountWithTaxEL;
 
+    /**
+     * Expression to calculate amount with tax - for Spark
+     */
+    @Column(name = "amount_with_tax_el_sp", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String amountWithTaxELSpark;
+
+    /**
+     * Filtering criteria - currency
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
     private TradingCurrency tradingCurrency;
 
+    /**
+     * Filtering criteria - country
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country_id")
     private TradingCountry tradingCountry;
@@ -153,52 +239,93 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Column(name = "priority", columnDefinition = "int DEFAULT 1")
     private int priority = 1;
 
+    /**
+     * Filtering criteria - seller
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private Seller seller;
 
+    /**
+     * Validity calendar
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "valid_cal_id")
     private Calendar validityCalendar;
 
+    /**
+     * Ordering sequence
+     */
     @Column(name = "sequence")
     private Long sequence;
 
+    /**
+     * Script to run to determine the amounts
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
 
-    @Column(name = "wo_description_el", length = 2000)
+    @Column(name = "wo_description_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String woDescriptionEL;
 
-    /**
-     * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
-     */
-    @Column(name = "rating_el_with_tax", length = 2000)
+    @Column(name = "wo_description_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
-    private String ratingELWithTax;
-    
+    private String woDescriptionELSpark;
+
     /**
-     * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
+     * Expression to calculate price with tax.
+     */
+    @Column(name = "rating_el_with_tax", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String ratingWithTaxEL;
+
+    /**
+     * Expression to calculate price with tax - for Spark.
+     */
+    @Column(name = "rating_el_with_tax_sp", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String ratingWithTaxELSpark;
+
+    /**
+     * Expression to calculate price without tax
      */
     @Column(name = "rating_el_without_tax", length = 2000)
     @Size(max = 2000)
-    private String ratingELWithoutTax;
+    private String ratingWithoutTaxEL;
 
-    @Column(name = "minimum_amount_without_tax_el", length = 2000)
+    /**
+     * Expression to calculate price without tax - for Spark.
+     */
+    @Column(name = "rating_el_without_tax_sp", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String ratingWithoutTaxELSpark;
+
+    @Column(name = "minimum_amount_without_tax_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String minimumAmountWithoutTaxEl;
 
-    @Column(name = "minimum_amount_with_tax_el", length = 2000)
+    @Column(name = "minimum_amount_without_tax_el_sp", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String minimumAmountWithoutTaxELSpark;
+
+    @Column(name = "minimum_amount_with_tax_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String minimumAmountWithTaxEl;
-    
-    @Column(name = "invoice_subcategory_el", length = 2000)
+
+    @Column(name = "minimum_amount_with_tax_el_sp", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String minimumAmountWithTaxELSpark;
+
+    @Column(name = "invoice_subcategory_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String invoiceSubCategoryEL;
 
@@ -306,12 +433,32 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
         this.criteria3Value = criteria3Value;
     }
 
+    /**
+     * @return Expression to determine if Price plan applies
+     */
     public String getCriteriaEL() {
         return criteriaEL;
     }
 
+    /**
+     * @param criteriaEL Expression to determine if Price plan applies
+     */
     public void setCriteriaEL(String criteriaEL) {
         this.criteriaEL = criteriaEL;
+    }
+
+    /**
+     * @return Expression to determine if Price plan applies - for Spark
+     */
+    public String getCriteriaELSpark() {
+        return criteriaELSpark;
+    }
+
+    /**
+     * @param criteriaELSpark Expression to determine if Price plan applies - for Spark
+     */
+    public void setCriteriaELSpark(String criteriaELSpark) {
+        this.criteriaELSpark = criteriaELSpark;
     }
 
     public BigDecimal getAmountWithoutTax() {
@@ -330,20 +477,60 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
         this.amountWithTax = amountWithTax;
     }
 
+    /**
+     * @return Expression to calculate the amount without tax
+     */
     public String getAmountWithoutTaxEL() {
         return amountWithoutTaxEL;
     }
 
+    /**
+     * @param amountWithoutTaxEL Expression to calculate the amount without tax
+     */
     public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
         this.amountWithoutTaxEL = amountWithoutTaxEL;
     }
 
+    /**
+     * @return Expression to calculate the amount without tax - for Spark
+     */
+    public String getAmountWithoutTaxELSpark() {
+        return amountWithoutTaxELSpark;
+    }
+
+    /**
+     * @param amountWithoutTaxELSpark Expression to calculate the amount without tax - for Spark
+     */
+    public void setAmountWithoutTaxELSpark(String amountWithoutTaxELSpark) {
+        this.amountWithoutTaxELSpark = amountWithoutTaxELSpark;
+    }
+
+    /**
+     * @return Expression to calculate the amount with tax
+     */
     public String getAmountWithTaxEL() {
         return amountWithTaxEL;
     }
 
+    /**
+     * @param amountWithTaxEL Expression to calculate the amount with tax
+     */
     public void setAmountWithTaxEL(String amountWithTaxEL) {
         this.amountWithTaxEL = amountWithTaxEL;
+    }
+
+    /**
+     * @return Expression to calculate the amount with tax - for Spark
+     */
+    public String getAmountWithTaxELSpark() {
+        return amountWithTaxELSpark;
+    }
+
+    /**
+     * @param amountWithTaxELSpark Expression to calculate the amount with tax - for Spark
+     */
+    public void setAmountWithTaxELSpark(String amountWithTaxELSpark) {
+        this.amountWithTaxELSpark = amountWithTaxELSpark;
     }
 
     public TradingCurrency getTradingCurrency() {
@@ -549,28 +736,88 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
         return descriptionI18n;
     }
 
+    /**
+     * @return Expression to determine Wallet operation description
+     */
     public String getWoDescriptionEL() {
         return woDescriptionEL;
     }
 
+    /**
+     * @param woDescriptionEL Expression to determine Wallet operation description
+     */
     public void setWoDescriptionEL(String woDescriptionEL) {
         this.woDescriptionEL = woDescriptionEL;
     }
 
+    /**
+     * @return Expression to determine Wallet operation description - for Spark
+     */
+    public String getWoDescriptionELSpark() {
+        return woDescriptionELSpark;
+    }
+
+    /**
+     * @param woDescriptionELSpark Expression to determine Wallet operation description - for Spark
+     */
+    public void setWoDescriptionELSpark(String woDescriptionELSpark) {
+        this.woDescriptionELSpark = woDescriptionELSpark;
+    }
+
+    /**
+     * @return Expression to calculate minimum amount without tax
+     */
     public String getMinimumAmountWithoutTaxEl() {
         return minimumAmountWithoutTaxEl;
     }
 
+    /**
+     * @param minimumAmountWithoutTaxEl Expression to calculate minimum amount without tax
+     */
     public void setMinimumAmountWithoutTaxEl(String minimumAmountWithoutTaxEl) {
         this.minimumAmountWithoutTaxEl = minimumAmountWithoutTaxEl;
     }
 
+    /**
+     * @return Expression to calculate minimum amount without tax - for Spark
+     */
+    public String getMinimumAmountWithoutTaxELSpark() {
+        return minimumAmountWithoutTaxELSpark;
+    }
+
+    /**
+     * @param minimumAmountWithoutTaxELSpark Expression to calculate minimum amount without tax - for Spark
+     */
+    public void setMinimumAmountWithoutTaxELSpark(String minimumAmountWithoutTaxELSpark) {
+        this.minimumAmountWithoutTaxELSpark = minimumAmountWithoutTaxELSpark;
+    }
+
+    /**
+     * @return Expression to calculate minimum amount with tax
+     */
     public String getMinimumAmountWithTaxEl() {
         return minimumAmountWithTaxEl;
     }
 
+    /**
+     * @param minimumAmountWithTaxEl Expression to calculate minimum amount with tax
+     */
     public void setMinimumAmountWithTaxEl(String minimumAmountWithTaxEl) {
         this.minimumAmountWithTaxEl = minimumAmountWithTaxEl;
+    }
+
+    /**
+     * @return Expression to calculate minimum amount with tax - for Spark
+     */
+    public String getMinimumAmountWithTaxELSpark() {
+        return minimumAmountWithTaxELSpark;
+    }
+
+    /**
+     * @param minimumAmountWithTaxELSpark Expression to calculate minimum amount with taxL - for Spark
+     */
+    public void setMinimumAmountWithTaxELSpark(String minimumAmountWithTaxELSpark) {
+        this.minimumAmountWithTaxELSpark = minimumAmountWithTaxELSpark;
     }
 
     public String getInvoiceSubCategoryEL() {
@@ -581,21 +828,59 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
         this.invoiceSubCategoryEL = invoiceSubCategoryEL;
     }
 
-	public String getRatingELWithTax() {
-		return ratingELWithTax;
-	}
+    /**
+     * @return Expression to calculate price with tax
+     */
+    public String getRatingWithTaxEL() {
+        return ratingWithTaxEL;
+    }
 
-	public void setRatingELWithTax(String ratingELWithTax) {
-		this.ratingELWithTax = ratingELWithTax;
-	}
+    /**
+     * @param ratingELWithTax Expression to calculate price with tax
+     */
+    public void setRatingWithTaxEL(String ratingELWithTax) {
+        this.ratingWithTaxEL = ratingELWithTax;
+    }
 
-	public String getRatingELWithoutTax() {
-		return ratingELWithoutTax;
-	}
+    /**
+     * @return Expression to calculate price with tax - for Spark
+     */
+    public String getRatingWithTaxELSpark() {
+        return ratingWithTaxELSpark;
+    }
 
-	public void setRatingELWithoutTax(String ratingELWithoutTax) {
-		this.ratingELWithoutTax = ratingELWithoutTax;
-	}
- 
+    /**
+     * @param ratingWithTaxELSpark Expression to calculate price with tax - for Spark
+     */
+    public void setRatingWithTaxELSpark(String ratingWithTaxELSpark) {
+        this.ratingWithTaxELSpark = ratingWithTaxELSpark;
+    }
 
+    /**
+     * @return Expression to calculate price without tax
+     */
+    public String getRatingWithoutTaxEL() {
+        return ratingWithoutTaxEL;
+    }
+
+    /**
+     * @param ratingELWithoutTax Expression to calculate price without tax
+     */
+    public void setRatingWithoutTaxEL(String ratingELWithoutTax) {
+        this.ratingWithoutTaxEL = ratingELWithoutTax;
+    }
+
+    /**
+     * @return Expression to calculate price without tax - for Spark
+     */
+    public String getRatingWithoutTaxELSpark() {
+        return ratingWithoutTaxELSpark;
+    }
+
+    /**
+     * @param ratingWithoutTaxELSpark Expression to calculate price without tax - for Spark
+     */
+    public void setRatingWithoutTaxELSpark(String ratingWithoutTaxELSpark) {
+        this.ratingWithoutTaxELSpark = ratingWithoutTaxELSpark;
+    }
 }

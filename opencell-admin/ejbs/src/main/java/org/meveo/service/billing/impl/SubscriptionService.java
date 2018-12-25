@@ -55,7 +55,9 @@ import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author khalid HORRI
+ * @author Mounir BAHIJE
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class SubscriptionService extends BusinessService<Subscription> {
@@ -81,10 +83,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         subscription.updateSubscribedTillAndRenewalNotifyDates();
 
+        subscription.createAutoRenewDate();
+
         super.create(subscription);
 
         // execute subscription script
-        OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
+        OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
         if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
             try {
                 offerModelScriptService.subscribe(subscription, offerTemplate.getBusinessOfferModel().getScript().getCode());
@@ -99,6 +103,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public Subscription update(Subscription subscription) throws BusinessException {
 
         subscription.updateSubscribedTillAndRenewalNotifyDates();
+
+        Subscription subscriptionOld = this.findByCode(subscription.getCode());
+        subscription.updateAutoRenewDate(subscriptionOld);
 
         return super.update(subscription);
     }
@@ -308,14 +315,23 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Get a list of subscription ids that are about to expire or have expired already
-     * 
      * @return A list of subscription ids
      */
     public List<Long> getSubscriptionsToRenewOrNotify() {
 
-        List<Long> ids = getEntityManager().createNamedQuery("Subscription.getExpired", Long.class).setParameter("date", new Date())
+        return getSubscriptionsToRenewOrNotify(new Date());
+    }
+
+    /**
+     * Get a list of subscription ids that are about to expire or have expired already
+     * @param untillDate the subscription till date
+     * @return A list of subscription ids
+     */
+    public List<Long> getSubscriptionsToRenewOrNotify(Date untillDate) {
+
+        List<Long> ids = getEntityManager().createNamedQuery("Subscription.getExpired", Long.class).setParameter("date", untillDate)
             .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList();
-        ids.addAll(getEntityManager().createNamedQuery("Subscription.getToNotifyExpiration", Long.class).setParameter("date", new Date())
+        ids.addAll(getEntityManager().createNamedQuery("Subscription.getToNotifyExpiration", Long.class).setParameter("date", untillDate)
             .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList());
 
         return ids;

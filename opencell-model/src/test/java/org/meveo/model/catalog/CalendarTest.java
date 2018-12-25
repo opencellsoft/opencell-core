@@ -27,6 +27,8 @@ import org.junit.Test;
 import org.meveo.model.catalog.CalendarJoin.CalendarJoinTypeEnum;
 import org.meveo.model.shared.DateUtils;
 
+import com.google.common.collect.Lists;
+
 public class CalendarTest {
 
     @Test
@@ -1681,5 +1683,136 @@ public class CalendarTest {
         prevDate = calendar.previousPeriodEndDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 10, 0, 0)); // monday 10:00
         Assert.assertEquals(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 29, 15, 0, 0), prevDate);
 
+    }
+    
+    @Test()
+    public void testSimpleWeekendBankingCalendar() {
+
+        CalendarBanking calendar = new CalendarBanking();
+        calendar.setWeekendBegin(6);//Saturday
+        calendar.setWeekendEnd(7);//Sunday
+        
+        Date dateToTest = DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 10, 0, 0, 0); // 2018/11/10
+        Date nextDate = calendar.nextCalendarDate(dateToTest); 
+        Date prevDate = calendar.previousCalendarDate(dateToTest);
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 12, 0, 0, 0), nextDate); //2018/11/12
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 9, 0, 0, 0), prevDate); //2018/11/09
+        
+        dateToTest = DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 11, 0, 0, 0); // 2018/11/11
+        nextDate = calendar.nextCalendarDate(dateToTest); 
+        prevDate = calendar.previousCalendarDate(dateToTest);
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 12, 0, 0, 0), nextDate); //2018/11/12
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 9, 0, 0, 0), prevDate); //2018/11/09
+        
+        dateToTest = DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 8, 0, 0, 0); // 2018/11/08
+        nextDate = calendar.nextCalendarDate(dateToTest); 
+        prevDate = calendar.previousCalendarDate(dateToTest);
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 8, 0, 0, 0), nextDate); //2018/11/08
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 8, 0, 0, 0), prevDate); //2018/11/08
+    }
+    
+    @Test()
+    public void testCrossWeekendBankingCalendar() {
+
+        CalendarBanking calendar = new CalendarBanking();
+        calendar.setWeekendBegin(6);//Saturday
+        calendar.setWeekendEnd(1);//Monday
+        
+        Date dateToTest = DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 10, 0, 0, 0); // 2018/11/10
+        Date nextDate = calendar.nextCalendarDate(dateToTest); 
+        Date prevDate = calendar.previousCalendarDate(dateToTest);
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 13, 0, 0, 0), nextDate); //2018/11/13
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 9, 0, 0, 0), prevDate); //2018/11/09
+        
+        dateToTest = DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 11, 0, 0, 0); // 2018/11/11
+        nextDate = calendar.nextCalendarDate(dateToTest); 
+        prevDate = calendar.previousCalendarDate(dateToTest);
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 13, 0, 0, 0), nextDate); //2018/11/13
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 9, 0, 0, 0), prevDate); //2018/11/09
+        
+        dateToTest = DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 8, 0, 0, 0); // 2018/11/08
+        nextDate = calendar.nextCalendarDate(dateToTest); 
+        prevDate = calendar.previousCalendarDate(dateToTest);
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 8, 0, 0, 0), nextDate); //2018/11/08
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 8, 0, 0, 0), prevDate); //2018/11/08
+    }
+    
+    @Test()
+    public void testMiddleEastWeekendBankingCalendar() {
+
+        CalendarBanking calendar = new CalendarBanking();
+        calendar.setWeekendBegin(4);//Thursday
+        calendar.setWeekendEnd(5);//Friday
+        
+        Date dateToTest = DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 9, 0, 0, 0); // 2018/11/9 : Friday
+        Date nextDate = calendar.nextCalendarDate(dateToTest); 
+        Date prevDate = calendar.previousCalendarDate(dateToTest);
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 10, 0, 0, 0), nextDate); //2018/11/10 :Saturday
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 7, 0, 0, 0), prevDate); //2018/11/07 : Wednesday
+        
+        dateToTest = DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 8, 0, 0, 0); // 2018/11/8 : Thursday
+        nextDate = calendar.nextCalendarDate(dateToTest); 
+        prevDate = calendar.previousCalendarDate(dateToTest);
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 10, 0, 0, 0), nextDate); //2018/11/10
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 7, 0, 0, 0), prevDate); //2018/11/07
+        
+        dateToTest = DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 7, 0, 0, 0); // 2018/11/07 : Wednesday
+        nextDate = calendar.nextCalendarDate(dateToTest); 
+        prevDate = calendar.previousCalendarDate(dateToTest);
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 7, 0, 0, 0), nextDate); //2018/11/07 : Wednesday
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 7, 0, 0, 0), prevDate); //2018/11/07 Wednesday
+    }
+    
+    @Test()
+    public void testWeekendAndHolidaysBankingCalendar() {
+
+        CalendarBanking calendar = new CalendarBanking();
+        calendar.setWeekendBegin(6);//Saturday
+        calendar.setWeekendEnd(7);//Sunday
+        
+        CalendarHoliday h = new CalendarHoliday();
+        h.setHolidayBegin(1112); // 11/12
+        h.setHolidayEnd(1130); // 1130
+        CalendarHoliday h2 = new CalendarHoliday();
+        h2.setHolidayBegin(101);//  01/01
+        h2.setHolidayEnd(105);//   01/05
+        calendar.setHolidays(Lists.newArrayList(h,h2));
+        
+        Date dateToTest = DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 10, 0, 0, 0); // 2018/11/10 : Saturday
+        Date nextDate = calendar.nextCalendarDate(dateToTest); 
+        Date prevDate = calendar.previousCalendarDate(dateToTest);
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.DECEMBER, 03, 0, 0, 0), nextDate); //2018/12/03
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.NOVEMBER, 9, 0, 0, 0), prevDate); //2018/11/09
+        
+        dateToTest = DateUtils.newDate(2019, java.util.Calendar.JANUARY, 1, 0, 0, 0); // 2019/01/01
+        nextDate = calendar.nextCalendarDate(dateToTest); 
+        prevDate = calendar.previousCalendarDate(dateToTest);
+        Assert.assertEquals(DateUtils.newDate(2019, java.util.Calendar.JANUARY, 7, 0, 0, 0), nextDate); //2019/01/07
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.DECEMBER, 31, 0, 0, 0), prevDate); //2018/12/31
+    }
+    
+    @Test()
+    public void testWeekendAndCrossHolidaysBankingCalendar() {
+
+        CalendarBanking calendar = new CalendarBanking();
+        calendar.setWeekendBegin(6);//Saturday
+        calendar.setWeekendEnd(7);//Sunday
+        
+        CalendarHoliday h = new CalendarHoliday();
+        h.setHolidayBegin(1225); // 12/25
+        h.setHolidayEnd(105); // 0105
+        calendar.setHolidays(Lists.newArrayList(h));
+        
+        Date dateToTest = DateUtils.newDate(2018, java.util.Calendar.DECEMBER, 26, 0, 0, 0); // 2018/12/26 
+        Date nextDate = calendar.nextCalendarDate(dateToTest); 
+        Date prevDate = calendar.previousCalendarDate(dateToTest);
+        Assert.assertEquals(DateUtils.newDate(2019, java.util.Calendar.JANUARY, 7, 0, 0, 0), nextDate); //2019/01/07
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.DECEMBER, 24, 0, 0, 0), prevDate); //2018/12/24
+        
+        dateToTest = DateUtils.newDate(2019, java.util.Calendar.JANUARY, 1, 0, 0, 0); // 2019/01/01
+        nextDate = calendar.nextCalendarDate(dateToTest); 
+        prevDate = calendar.previousCalendarDate(dateToTest);
+        Assert.assertEquals(DateUtils.newDate(2019, java.util.Calendar.JANUARY, 7, 0, 0, 0), nextDate); //2019/01/07
+        Assert.assertEquals(DateUtils.newDate(2018, java.util.Calendar.DECEMBER, 24, 0, 0, 0), prevDate); //2018/12/24
     }
 }

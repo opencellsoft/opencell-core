@@ -25,88 +25,102 @@ import javax.persistence.Embeddable;
 import javax.validation.constraints.Size;
 
 /**
+ * Contact information
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
  */
 @Embeddable
 public class ContactInformation implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "email", length = 100)
-	// @Pattern(regexp = ".+@.+\\..{2,4}")
-	@Size(max = 100)
-	protected String email;
+    // @Pattern(regexp = ".+@.+\\..{2,4}")
+    /**
+     * Email
+     */
+    @Column(name = "email", length = 100)
+    @Size(max = 100)
+    protected String email;
 
-	@Column(name = "phone", length = 50)
-	@Size(max = 50)
-	protected String phone;
+    /**
+     * Phone number
+     */
+    @Column(name = "phone", length = 50)
+    @Size(max = 50)
+    protected String phone;
 
-	@Column(name = "mobile", length = 50)
-	@Size(max = 50)
-	protected String mobile;
+    /**
+     * Mobile phone number
+     */
+    @Column(name = "mobile", length = 50)
+    @Size(max = 50)
+    protected String mobile;
 
-	@Column(name = "fax", length = 50)
-	@Size(max = 50)
-	protected String fax;
+    /**
+     * Fax number
+     */
+    @Column(name = "fax", length = 50)
+    @Size(max = 50)
+    protected String fax;
 
-	public ContactInformation() {
-	}
+    public ContactInformation() {
+    }
 
-	public ContactInformation(ContactInformation contactInformation) {
-		this(contactInformation.email, contactInformation.phone, contactInformation.mobile, contactInformation.fax);
-	}
+    public ContactInformation(ContactInformation contactInformation) {
+        this(contactInformation.email, contactInformation.phone, contactInformation.mobile, contactInformation.fax);
+    }
 
-	public ContactInformation(String email, String phone, String mobile, String fax) {
-		super();
-		this.email = email;
-		this.phone = phone;
-		this.mobile = mobile;
-		this.fax = fax;
-	}
+    public ContactInformation(String email, String phone, String mobile, String fax) {
+        super();
+        this.email = email;
+        this.phone = phone;
+        this.mobile = mobile;
+        this.fax = fax;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getPhone() {
-		return phone;
-	}
+    public String getPhone() {
+        return phone;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-	public String getMobile() {
-		return mobile;
-	}
+    public String getMobile() {
+        return mobile;
+    }
 
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
-	public String getFax() {
-		return fax;
-	}
+    public String getFax() {
+        return fax;
+    }
 
-	public void setFax(String fax) {
-		this.fax = fax;
-	}
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
-	public void anonymize(String code) {
-		setEmail(code + "@opencellsoft.com");
-		setFax(code);
-		setMobile(code);
-		setPhone(code);
-	}
+    public void anonymize(String code) {
+        setEmail(code + "@opencellsoft.com");
+        setFax(code);
+        setMobile(code);
+        setPhone(code);
+    }
 
 }

@@ -15,8 +15,10 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -174,9 +176,6 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     
     /** The invoicing threshold. */
     private BigDecimal invoicingThreshold;
-    
-    /** The discount plan. */
-    private String discountPlan;
 
     /** The ua status. */
     // user account
@@ -190,6 +189,16 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
+    @XmlElementWrapper(name = "discountPlansForInstantiation")
+	@XmlElement(name = "discountPlanForInstantiation")
+    private List<DiscountPlanDto> discountPlansForInstantiation;
+    
+    /** List of discount plans to be disassociated in a BillingAccount */
+	@XmlElementWrapper(name = "discountPlansForTermination")
+	@XmlElement(name = "discountPlanForTermination")
+    private List<String> discountPlansForTermination;
 
     /**
      * Gets the crm account type.
@@ -834,24 +843,6 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     }
 
     /**
-     * Gets the discount plan.
-     *
-     * @return the discount plan
-     */
-    public String getDiscountPlan() {
-        return discountPlan;
-    }
-
-    /**
-     * Sets the discount plan.
-     *
-     * @param discountPlan the new discount plan
-     */
-    public void setDiscountPlan(String discountPlan) {
-        this.discountPlan = discountPlan;
-    }
-
-    /**
      * Gets the payment methods.
      *
      * @return the payment methods
@@ -969,5 +960,37 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
                 + ", dateDunningLevel=" + dateDunningLevel + ", dunningLevel=" + dunningLevel + ", billingCycle=" + billingCycle + ", country=" + country + ", nextInvoiceDate="
                 + nextInvoiceDate + ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email=" + email + ", uaStatus=" + uaStatus + ",customFields="
                 + customFields + ", invoicingThreshold=" + invoicingThreshold + ", invoicingThreshold=" + invoicingThreshold + "]";
-    }    
+    }
+
+    /**
+     * Gets a list of discount plans for termination.
+     * @return List of discount plan code.
+     */
+	public List<String> getDiscountPlansForTermination() {
+		return discountPlansForTermination;
+	}
+
+	/**
+	 * Sets a list of discount plan code for termination.
+	 * @param discountPlansForTermination list of discount plan code
+	 */
+	public void setDiscountPlansForTermination(List<String> discountPlansForTermination) {
+		this.discountPlansForTermination = discountPlansForTermination;
+	}
+
+	/**
+	 * Gets a list of discount plan dto for instantiation.
+	 * @return list of discount plan dto
+	 */
+	public List<DiscountPlanDto> getDiscountPlansForInstantiation() {
+		return discountPlansForInstantiation;
+	}
+
+	/**
+	 * Sets a list of discount plan dto for instantiation.
+	 * @param discountPlansForInstantiation list of discount plan dto
+	 */
+	public void setDiscountPlansForInstantiation(List<DiscountPlanDto> discountPlansForInstantiation) {
+		this.discountPlansForInstantiation = discountPlansForInstantiation;
+	}
 }

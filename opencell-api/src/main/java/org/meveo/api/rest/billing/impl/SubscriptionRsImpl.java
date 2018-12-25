@@ -189,11 +189,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public GetSubscriptionResponseDto findSubscription(String subscriptionCode, boolean mergedCF, CustomFieldInheritanceEnum inheritCF) {
+    public GetSubscriptionResponseDto findSubscription(String subscriptionCode, CustomFieldInheritanceEnum inheritCF) {
         GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
 
         try {
-            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, mergedCF, inheritCF));
+            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, inheritCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

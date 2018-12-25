@@ -19,9 +19,5 @@
 package org.meveo.model.communication;
 
 public enum CampaignStatusEnum {
-	SCHEDULED,
-	RUNNING,
-	PAUSED,
-	CANCELED,
-	TERMINATED;
+    SCHEDULED, RUNNING, PAUSED, CANCELED, TERMINATED;
 }

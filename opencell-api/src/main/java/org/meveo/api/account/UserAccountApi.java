@@ -433,8 +433,7 @@ public class UserAccountApi extends AccountEntityApi {
 
         try {
             ProductInstance productInstance = new ProductInstance(userAccount, null, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
-                postData.getDescription(), null);
-            productInstance.setSeller(seller);
+                postData.getDescription(), null, seller);
 
             // Validate and populate customFields
             try {

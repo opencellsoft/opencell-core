@@ -37,6 +37,11 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.Currency;
 
+/**
+ * Country information
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
 @ExportIdentifier("countryCode")
@@ -46,22 +51,37 @@ import org.meveo.model.admin.Currency;
 public class Country extends AuditableEntity {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Country code
+     */
     @Column(name = "country_code", length = 10)
     @Size(max = 10)
     private String countryCode;
 
+    /**
+     * Description
+     */
     @Column(name = "description", length = 100)
     @Size(max = 100)
     private String description;
 
+    /**
+     * Corresponding Currency
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id")
     private Currency currency;
 
+    /**
+     * Corresponding language
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "language_id")
     private Language language;
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;

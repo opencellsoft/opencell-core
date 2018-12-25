@@ -27,9 +27,9 @@ import org.meveo.model.bi.JobHistory;
 @DiscriminatorValue(value = "TIP_IMPORT")
 public class TIPImportHisto extends JobHistory {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public TIPImportHisto() {
+    public TIPImportHisto() {
 
-	}
+    }
 }

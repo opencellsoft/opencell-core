@@ -32,43 +32,63 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
- * meveo module has CETs, CFTs, filters, scripts, jobs, notifications
+ * Opencell data/configuration deployment module contains Custom entity, Custom field, Charge, Counter, Service templates, Offer template categories, Product offerings, Price
+ * plans, Custom entity actions, Charts, Scripts, Filters, Jobs, Notifications, Timers, Workflow and others.
+ * 
+ * Module can be exported to another Opencell instance.
  * 
  * @author Tyshan Shi(tyshanchn@manaty.net)
- * 
  */
-
 @Entity
 @ObservableEntity
 @Cacheable
 @ModuleItem
-@ExportIdentifier({ "code"})
-@Table(name = "meveo_module", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_module_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "meveo_module", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "meveo_module_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class MeveoModule extends EnableBusinessEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Module items making up the module
+     */
     @OneToMany(mappedBy = "meveoModule", cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<MeveoModuleItem> moduleItems = new ArrayList<MeveoModuleItem>();
 
+    /**
+     * Licensing terms
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "module_license", nullable = false)
     @NotNull
     private ModuleLicenseEnum license = ModuleLicenseEnum.GPL;
 
+    /**
+     * Module image/logo
+     */
     @Column(name = "logo_picture", length = 255)
     @Size(max = 255)
     private String logoPicture;
 
-    @Type(type="numeric_boolean")
+    /**
+     * Is module installed
+     */
+    @Type(type = "numeric_boolean")
     @Column(name = "installed")
     private boolean installed;
 
+    /**
+     * Module source in serialized XML fromat
+     */
     @Column(name = "module_source", nullable = false, columnDefinition = "TEXT")
     private String moduleSource;
 
+    /**
+     * Script of type ModuleScript to execute at module installation or deinstallation
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance script;

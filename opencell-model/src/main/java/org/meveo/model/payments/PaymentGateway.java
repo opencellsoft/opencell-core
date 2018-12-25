@@ -3,13 +3,16 @@
  */
 package org.meveo.model.payments;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -20,6 +23,8 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ModuleItem;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.scripts.ScriptInstance;
@@ -31,8 +36,9 @@ import org.meveo.model.scripts.ScriptInstance;
  *
  *
  * @author anasseh
+ * @author Mounir Bahije
  * @since Opencell 4.8
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
 
 @Entity
@@ -46,78 +52,133 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 697688141736383814L;
 
-    /** The type. */
+    /**
+     * The type
+     */
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     @NotNull
     private PaymentGatewayTypeEnum type;
 
-    /** Payment method allowed on the payment gateway. */
+    /**
+     * Payment method allowed on the payment gateway
+     */
     @Column(name = "payment_method", nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum paymentMethodType;
 
-    /** The script instance. */
+    /**
+     * The script instance
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
-    /** The implementation class name. */
+    /**
+     * The implementation class name
+     */
     @Column(name = "implementation_class_name", length = 255)
     @Size(max = 255)
     private String implementationClassName;
 
-    /** The application EL. */
+    /**
+     * The application EL
+     */
     @Column(name = "application_el", length = 2000)
     @Size(max = 2000)
     private String applicationEL;
 
-    /** The trading country. */
+    /**
+     * The trading country
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
     private Country country;
 
-    /** The trading currency. */
+    /**
+     * The trading currency
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
     private TradingCurrency tradingCurrency;
 
-    /** The card type. */
+    /**
+     * The card type
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "card_type")
     private CreditCardTypeEnum cardType;
 
-    /** The nb tries. */
+    /**
+     * The nb tries
+     */
     @Column(name = "nb_tries")
     private Integer nbTries;
 
-    /** The replay cause. */
+    /**
+     * The replay cause
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "replay_cause")
     private PaymentReplayCauseEnum replayCause;
 
-    /** The errors to replay. */
+    /**
+     * The errors to replay
+     */
     @Column(name = "errors_to_replay")
     private String errorsToReplay;
-    
-    /** The marchand id. */
+
+    /**
+     * The marchand id
+     */
     @Column(name = "marchand_id")
     private String marchandId;
-    
-    /** The secret key. */
+
+    /**
+     * The secret key
+     */
     @Column(name = "secret_key")
     private String secretKey;
-    
-    /** The api key. */
+
+    /**
+     * The api key
+     */
     @Column(name = "api_key")
     private String apiKey;
-    
-    /** The profile. */
+
+    /** The webhooks key id. */
+    @Column(name = "webhooks_key_id")
+    private String webhooksKeyId;
+
+    /** The webhooks secret key. */
+    @Column(name = "webhooks_secret_key")
+    private String webhooksSecretKey;
+
+    /**
+     * The profile
+     */
     @Column(name = "profile")
     private String profile;
     
+	@OneToOne(mappedBy = "paymentGateway", cascade = CascadeType.ALL, orphanRemoval = true)
+    private PaymentGatewayRumSequence rumSequence;
+
+	
     /**
-     * Instantiates a new payment gateway.
+     * Bank coordinates
+     */
+    @Embedded
+    private BankCoordinates bankCoordinates = new BankCoordinates();
+    
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
+
+    
+    
+    /**
+     * Instantiates a new payment gateway
      */
     public PaymentGateway() {
 
@@ -320,10 +381,7 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     public void setErrorsToReplay(String errorsToReplay) {
         this.errorsToReplay = errorsToReplay;
     }
-    
-    
 
-    
     /**
      * Gets the marchand id.
      *
@@ -379,6 +437,38 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     }
 
     /**
+      * Gets  Webhooks Key Id
+      * @return the webhooksKeyId
+      */
+    public String getWebhooksKeyId() {
+        return webhooksKeyId;
+    }
+
+    /**
+      * Sets the Webhooks Key Id.
+      * @param webhooksKeyId
+      */
+    public void setWebhooksKeyId(String webhooksKeyId) {
+        this.webhooksKeyId = webhooksKeyId;
+    }
+
+    /**
+     * Gets the Webhooks Secret Key.
+     * @return the webhooksSecretKey
+     */
+    public String getWebhooksSecretKey() {
+        return webhooksSecretKey;
+    }
+
+    /**
+     * Sets the Webhooks Secret Key.
+     * @param webhooksSecretKey
+     */
+    public void setWebhooksSecretKey(String webhooksSecretKey) {
+        this.webhooksSecretKey = webhooksSecretKey;
+    }
+
+    /**
      * Gets the profile.
      *
      * @return the profile
@@ -396,13 +486,49 @@ public class PaymentGateway extends EnableBusinessCFEntity {
         this.profile = profile;
     }
 
-    /* (non-Javadoc)
-     * @see org.meveo.model.BusinessEntity#toString()
-     */
+
     @Override
     public String toString() {
-        return "PaymentGateway [marchandId="+marchandId+", type=" + type + ", paymentMethodType=" + paymentMethodType + ", scriptInstance=" + (scriptInstance == null ? null : scriptInstance.getCode())
-                + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL + ", Country=" + (country == null ? null : country.getCountryCode())
-                + ", tradingCurrency=" + (tradingCurrency == null ? null : tradingCurrency.getCurrencyCode()) + ", cardType=" + cardType + "]";
+        return "PaymentGateway [marchandId=" + marchandId + ", type=" + type + ", paymentMethodType=" + paymentMethodType + ", scriptInstance="
+                + (scriptInstance == null ? null : scriptInstance.getCode()) + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL
+                + ", Country=" + (country == null ? null : country.getCountryCode()) + ", tradingCurrency=" + (tradingCurrency == null ? null : tradingCurrency.getCurrencyCode())
+                + ", cardType=" + cardType + "]";
     }
+
+	public PaymentGatewayRumSequence getRumSequence() {
+		return rumSequence;
+	}
+
+	public void setRumSequence(PaymentGatewayRumSequence rumSequence) {
+		this.rumSequence = rumSequence;
+	}
+
+    /**
+     * @return the bankCoordinates
+     */
+    public BankCoordinates getBankCoordinates() {
+        return bankCoordinates;
+    }
+
+    /**
+     * @param bankCoordinates the bankCoordinates to set
+     */
+    public void setBankCoordinates(BankCoordinates bankCoordinates) {
+        this.bankCoordinates = bankCoordinates;
+    }
+
+    /**
+     * @return the seller
+     */
+    public Seller getSeller() {
+        return seller;
+    }
+
+    /**
+     * @param seller the seller to set
+     */
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+	
 }

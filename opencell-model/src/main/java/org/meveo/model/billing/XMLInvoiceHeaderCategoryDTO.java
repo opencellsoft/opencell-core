@@ -26,77 +26,77 @@ import java.util.Map;
 
 public class XMLInvoiceHeaderCategoryDTO {
 
-	private String description;
-	private String code;
-	private BigDecimal amountWithoutTax = BigDecimal.ZERO;
-	private BigDecimal amountWithTax = BigDecimal.ZERO;
+    private String description;
+    private String code;
+    private BigDecimal amountWithoutTax = BigDecimal.ZERO;
+    private BigDecimal amountWithTax = BigDecimal.ZERO;
 
-	private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>();
+    private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>();
 
-	private Map<Long, RatedTransaction> ratedtransactions = new HashMap<Long, RatedTransaction>();
+    private Map<Long, RatedTransaction> ratedtransactions = new HashMap<Long, RatedTransaction>();
 
-	public Map<Long, RatedTransaction> getRatedtransactions() {
-		return ratedtransactions;
-	}
+    public Map<Long, RatedTransaction> getRatedtransactions() {
+        return ratedtransactions;
+    }
 
-	public void setRatedtransactions(Map<Long, RatedTransaction> ratedtransactions) {
-		this.ratedtransactions = ratedtransactions;
-	}
+    public void setRatedtransactions(Map<Long, RatedTransaction> ratedtransactions) {
+        this.ratedtransactions = ratedtransactions;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public BigDecimal getAmountWithTax() {
-		return amountWithTax;
-	}
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
-	public void setAmountWithTax(BigDecimal amountWithTax) {
-		this.amountWithTax = amountWithTax;
-	}
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
 
-	public void addAmountWithTax(BigDecimal amountToAdd) {
-		if (amountToAdd != null) {
-			if (amountWithTax == null) {
-				amountWithTax = new BigDecimal("0");
-			}
-			amountWithTax = amountWithTax.add(amountToAdd);
-		}
-	}
+    public void addAmountWithTax(BigDecimal amountToAdd) {
+        if (amountToAdd != null) {
+            if (amountWithTax == null) {
+                amountWithTax = new BigDecimal("0");
+            }
+            amountWithTax = amountWithTax.add(amountToAdd);
+        }
+    }
 
-	public void addAmountWithoutTax(BigDecimal amountToAdd) {
-		if (amountWithoutTax == null) {
-			amountWithoutTax = new BigDecimal("0");
-		}
-		amountWithoutTax = amountWithoutTax.add(amountToAdd);
-	}
+    public void addAmountWithoutTax(BigDecimal amountToAdd) {
+        if (amountWithoutTax == null) {
+            amountWithoutTax = new BigDecimal("0");
+        }
+        amountWithoutTax = amountWithoutTax.add(amountToAdd);
+    }
 
-	public List<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregates() {
-		return subCategoryInvoiceAgregates;
-	}
+    public List<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregates() {
+        return subCategoryInvoiceAgregates;
+    }
 
-	public void setSubCategoryInvoiceAgregates(List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) {
-		this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
-	}
+    public void setSubCategoryInvoiceAgregates(List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) {
+        this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
+    }
 
 }

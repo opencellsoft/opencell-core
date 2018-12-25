@@ -34,9 +34,10 @@ import org.meveo.service.script.finance.ReportExtractScript;
  * Service for managing ReportExtract entity.
  * 
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
  * @version %I%, %G%
  * @since 5.0
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.3
  **/
 @Stateless
 public class ReportExtractService extends BusinessService<ReportExtract> {
@@ -124,11 +125,10 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 log.debug("{} record/s found", resultList.size());
                 if (entity.getReportExtractResultType().equals(ReportExtractResultTypeEnum.CSV)) {
                     writeAsFile(filename, reportDir, resultList);
-                    reportExtractExecutionResult.setLineCount(resultList.size());
-
                 } else {
                     writeAsHtml(filename, reportDir, resultList, entity);
                 }
+                reportExtractExecutionResult.setLineCount(resultList.size());
             }
 
         } else {
@@ -199,6 +199,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
                 imagePath = "data:image/" + imageExt + ";charset=utf-8;base64, " + strImage;
                 template = template.replace("#{REPORT_IMG_SRC}", imagePath);
+            } else {
+                template = template.replace("<div><img src=\"#{REPORT_IMG_SRC}\" /></div>", "");
             }
 
             template = template.replace("#{REPORT_TITLE}", entity.getCategory() != null ? entity.getCategory() : entity.getCode());
@@ -273,25 +275,16 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     }
 
     private String evaluateStringExpression(String expression, ReportExtract re) throws BusinessException {
-        if (!expression.startsWith("#{")) {
-            return expression;
-        }
-
-        String result = null;
+        
         if (StringUtils.isBlank(expression)) {
-            return result;
+            return null;
         }
 
         Map<Object, Object> userMap = new HashMap<>();
         userMap.put("re", re);
 
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
-        try {
-            result = (String) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to String but " + res);
-        }
-        return result;
+        return ValueExpressionWrapper.evaluateToStringMultiVariable(expression, "re", re);
+        
     }
 
     public String getReporFile(ReportExtract entity) throws BusinessException {

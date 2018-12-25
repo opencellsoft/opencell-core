@@ -20,41 +20,40 @@ package org.meveo.model.billing;
 
 public enum ApplicationChgStatusEnum {
 
-	WAITING(1, "ApplicationChgStatusEnum.waiting"), 
-	TREATED(2, "ApplicationChgStatusEnum.treated"), 
-	REJECTED(3, "ApplicationChgStatusEnum.rejected"), 
-	CANCELED(4, "ApplicationChgStatusEnum.canceled");
+    WAITING(1, "ApplicationChgStatusEnum.waiting"), TREATED(2, "ApplicationChgStatusEnum.treated"), REJECTED(3, "ApplicationChgStatusEnum.rejected"), CANCELED(4,
+            "ApplicationChgStatusEnum.canceled");
 
-	private Integer id;
-	private String label;
+    private Integer id;
+    private String label;
 
-	ApplicationChgStatusEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
+    ApplicationChgStatusEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
 
-	}
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	/**
-	 * Gets enum by its id.
-	 * @param id id of application charge status.
-	 * @return application change status enum
-	 */
-	public static ApplicationChgStatusEnum getValue(Integer id) {
-		if (id != null) {
-			for (ApplicationChgStatusEnum status : values()) {
-				if (id.equals(status.getId())) {
-					return status;
-				}
-			}
-		}
-		return null;
-	}
+    /**
+     * Gets enum by its id.
+     * 
+     * @param id id of application charge status.
+     * @return application change status enum
+     */
+    public static ApplicationChgStatusEnum getValue(Integer id) {
+        if (id != null) {
+            for (ApplicationChgStatusEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
 }

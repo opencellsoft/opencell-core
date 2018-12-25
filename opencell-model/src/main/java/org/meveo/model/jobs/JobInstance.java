@@ -47,6 +47,7 @@ import org.meveo.model.ModuleItem;
 
 /**
  * The Class JobInstance.
+ * 
  * @author Said Ramli
  * @lastModifiedVersion 5.1
  */
@@ -59,35 +60,46 @@ import org.meveo.model.ModuleItem;
         @Parameter(name = "sequence_name", value = "meveo_job_instance_seq"), })
 public class JobInstance extends EnableBusinessCFEntity {
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -5517252645289726288L;
 
-    /** The job template. */
+    /**
+     * The job template classname
+     */
     @Column(name = "job_template", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String jobTemplate;
 
-    /** The parametres. */
+    /**
+     * Execution parametres
+     */
     @Column(name = "parametres", length = 255)
     @Size(max = 255)
     private String parametres;
 
-    /** The job category enum. */
+    /**
+     * Job category
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "job_category")
     private JobCategoryEnum jobCategoryEnum;
 
-    /** The execution results. */
+    /**
+     * The execution results
+     */
     @OneToMany(mappedBy = "jobInstance", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<JobExecutionResultImpl> executionResults = new ArrayList<JobExecutionResultImpl>();
 
-    /** The timer entity. */
+    /**
+     * Job schedule
+     */
     @JoinColumn(name = "timerentity_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private TimerEntity timerEntity;
 
-    /** The following job. */
+    /**
+     * Following job to execute once job is completely finished
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "following_job_id")
     private JobInstance followingJob;
@@ -115,11 +127,10 @@ public class JobInstance extends EnableBusinessCFEntity {
     /** Code of provider, that job belongs to. */
     @Transient
     private String providerCode;
-    
+
     /** The run time values. */
     @Transient
     private Map<String, Object> runTimeValues;
-
 
     /**
      * Gets the job template.
@@ -148,7 +159,7 @@ public class JobInstance extends EnableBusinessCFEntity {
         Object value = this.getParamValue("parameters");
         return value != null ? String.valueOf(value) : parametres;
     }
-    
+
     /**
      * @return the parametres
      */
@@ -275,7 +286,9 @@ public class JobInstance extends EnableBusinessCFEntity {
         this.limitToSingleNode = limitToSingleNode;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.model.BusinessEntity#equals(java.lang.Object)
      */
     @Override
@@ -304,9 +317,9 @@ public class JobInstance extends EnableBusinessCFEntity {
      * @return True if either current cluster node is unknown (non-clustered mode), runOnNodes is not specified or current cluster node matches any node in a list of nodes
      */
     public boolean isRunnableOnNode(String currentNode) {
-        
+
         String runOnNodesValue = this.getRunOnNodes();
-        
+
         if (currentNode == null || runOnNodesValue == null) {
             return true;
         }
@@ -320,7 +333,9 @@ public class JobInstance extends EnableBusinessCFEntity {
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.model.BusinessEntity#toString()
      */
     @Override
@@ -360,14 +375,14 @@ public class JobInstance extends EnableBusinessCFEntity {
     public void setExcludeInvoicesWithoutAmount(Boolean excludeInvoicesWithoutAmount) {
         this.excludeInvoicesWithoutAmount = excludeInvoicesWithoutAmount;
     }
-    
+
     /**
      * @param runTimeValues the runTimeValues to set
      */
     public void setRunTimeValues(Map<String, Object> runTimeValues) {
         this.runTimeValues = runTimeValues;
     }
-    
+
     /**
      * @return the runTimeValues
      */
@@ -382,7 +397,7 @@ public class JobInstance extends EnableBusinessCFEntity {
      * @return the runtime value
      */
     public Object getParamValue(String key) {
-        if (this.runTimeValues == null ) {
+        if (this.runTimeValues == null) {
             return null;
         }
         return this.runTimeValues.get(key);

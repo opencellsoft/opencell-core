@@ -28,6 +28,8 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
 
 /**
+ * Name
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
  */
@@ -36,14 +38,23 @@ public class Name implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    /**
+     * Title
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "title_id")
     private Title title;
 
+    /**
+     * First name or company name
+     */
     @Column(name = "firstname", length = 50)
     @Size(max = 50)
     protected String firstName;
 
+    /**
+     * Last name
+     */
     @Column(name = "lastname", length = 50)
     @Size(max = 50)
     protected String lastName;
@@ -83,8 +94,8 @@ public class Name implements Serializable, Cloneable {
 
     @Override
     public String toString() {
-        return (title != null ? ((title.getDescription() != null ? title.getDescription() : title.getCode()) + " " + (firstName != null ? firstName : "") + (lastName != null ? " "
-                + lastName : "")) : "");
+        return (title != null ? ((title.getDescription() != null ? title.getDescription() : title.getCode()) + " " + (firstName != null ? firstName : "")
+                + (lastName != null ? " " + lastName : "")) : "");
     }
 
     @Override
@@ -96,9 +107,9 @@ public class Name implements Serializable, Cloneable {
         return (title != null ? (title.getDescription() != null ? title.getDescription() : title.getCode()) + " " : "") + (firstName != null ? firstName + " " : "")
                 + (lastName != null ? lastName : "");
     }
-    
+
     public void anonymize(String code) {
-    	setFirstName(code);
-    	setLastName(code);
+        setFirstName(code);
+        setLastName(code);
     }
 }

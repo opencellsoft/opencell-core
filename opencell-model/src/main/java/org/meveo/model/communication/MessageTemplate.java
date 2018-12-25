@@ -41,85 +41,86 @@ import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "code"})
-@Table(name = "com_message_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@ExportIdentifier({ "code" })
+@Table(name = "com_message_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @DiscriminatorColumn(name = "media")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_msg_tmpl_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "com_msg_tmpl_seq"), })
 public abstract class MessageTemplate extends BusinessEntity {
 
-	private static final long serialVersionUID = 5835960109145222442L;
+    private static final long serialVersionUID = 5835960109145222442L;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "media", insertable = false, updatable = false)
-	private MediaEnum media;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "media", insertable = false, updatable = false)
+    private MediaEnum media;
 
-	@Column(name = "tag_start", length = 255)
+    @Column(name = "tag_start", length = 255)
     @Size(max = 255)
-	private String tagStartDelimiter = "#{";
+    private String tagStartDelimiter = "#{";
 
-	@Column(name = "tag_end", length = 255)
+    @Column(name = "tag_end", length = 255)
     @Size(max = 255)
-	private String tagEndDelimiter = "}";
+    private String tagEndDelimiter = "}";
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "start_date")
-	private Date startDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "start_date")
+    private Date startDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "end_date")
-	private Date endDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "end_date")
+    private Date endDate;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "type")
-	private MessageTemplateTypeEnum type;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private MessageTemplateTypeEnum type;
 
-	public MediaEnum getMedia() {
-		return media;
-	}
+    public MediaEnum getMedia() {
+        return media;
+    }
 
-	public void setMedia(MediaEnum media) {
-		this.media = media;
-	}
+    public void setMedia(MediaEnum media) {
+        this.media = media;
+    }
 
-	public String getTagStartDelimiter() {
-		return tagStartDelimiter;
-	}
+    public String getTagStartDelimiter() {
+        return tagStartDelimiter;
+    }
 
-	public void setTagStartDelimiter(String tagStartDelimiter) {
-		this.tagStartDelimiter = tagStartDelimiter;
-	}
+    public void setTagStartDelimiter(String tagStartDelimiter) {
+        this.tagStartDelimiter = tagStartDelimiter;
+    }
 
-	public String getTagEndDelimiter() {
-		return tagEndDelimiter;
-	}
+    public String getTagEndDelimiter() {
+        return tagEndDelimiter;
+    }
 
-	public void setTagEndDelimiter(String tagEndDelimiter) {
-		this.tagEndDelimiter = tagEndDelimiter;
-	}
+    public void setTagEndDelimiter(String tagEndDelimiter) {
+        this.tagEndDelimiter = tagEndDelimiter;
+    }
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	public MessageTemplateTypeEnum getType() {
-		return type;
-	}
+    public MessageTemplateTypeEnum getType() {
+        return type;
+    }
 
-	public void setType(MessageTemplateTypeEnum type) {
-		this.type = type;
-	}
+    public void setType(MessageTemplateTypeEnum type) {
+        this.type = type;
+    }
 
 }

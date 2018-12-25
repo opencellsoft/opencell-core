@@ -51,10 +51,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A service that duplicate a hierarchy such as {@link OfferTemplate} and {@link ServiceTemplate}.
- * 
+ *
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2
  **/
 @Stateless
 public class CatalogHierarchyBuilderService {
@@ -100,7 +101,7 @@ public class CatalogHierarchyBuilderService {
 
     @Inject
     private ProductChargeTemplateService productChargeTemplateService;
-    
+
     @Inject
     ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
@@ -146,13 +147,13 @@ public class CatalogHierarchyBuilderService {
     }
 
     public OfferProductTemplate duplicateProduct(OfferProductTemplate offerProductTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory,
-            List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
+                                                 List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
         return duplicateOfferProductTemplate(offerProductTemplate, prefix, null, pricePlansInMemory, chargeTemplateInMemory);
     }
 
     /**
      * Duplicate product, product charge template and prices.
-     * 
+     *
      * @param offerProductTemplate offer product template
      * @param chargeTemplateInMemory list of charge template
      * @param pricePlansInMemory list o price plan matrix
@@ -162,7 +163,7 @@ public class CatalogHierarchyBuilderService {
      * @throws BusinessException business exception.
      */
     public OfferProductTemplate duplicateOfferProductTemplate(OfferProductTemplate offerProductTemplate, String prefix, ServiceConfigurationDto serviceConfiguration,
-            List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
+                                                              List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
 
         OfferProductTemplate newOfferProductTemplate = new OfferProductTemplate();
 
@@ -177,14 +178,14 @@ public class CatalogHierarchyBuilderService {
         ProductTemplate newProductTemplate = new ProductTemplate();
 
         duplicateProductTemplate(prefix, serviceConfiguration != null ? serviceConfiguration.getDescription() : "", productTemplate, newProductTemplate, pricePlansInMemory,
-            chargeTemplateInMemory, serviceConfiguration != null ? serviceConfiguration.getCfValues() : null);
+                chargeTemplateInMemory, serviceConfiguration != null ? serviceConfiguration.getCfValues() : null);
         newOfferProductTemplate.setProductTemplate(newProductTemplate);
 
         return newOfferProductTemplate;
     }
 
     public ProductTemplate duplicateProductTemplate(String prefix, String description, ProductTemplate productTemplate, ProductTemplate newProductTemplate,
-            List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory, Map<String, List<CustomFieldValue>> customFieldValues) throws BusinessException {
+                                                    List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory, Map<String, List<CustomFieldValue>> customFieldValues) throws BusinessException {
         try {
             BeanUtils.copyProperties(newProductTemplate, productTemplate);
             if (description != null) {
@@ -258,7 +259,7 @@ public class CatalogHierarchyBuilderService {
     }
 
     public void duplicateProductCharges(ProductTemplate productTemplate, ProductTemplate newProductTemplate, String prefix, List<ChargeTemplate> chargeTemplateInMemory)
-            throws BusinessException, IllegalAccessException, InvocationTargetException {
+            throws BusinessException {
         if (productTemplate.getProductChargeTemplates() != null && !productTemplate.getProductChargeTemplates().isEmpty()) {
             for (ProductChargeTemplate productCharge : productTemplate.getProductChargeTemplates()) {
                 ProductChargeTemplate newChargeTemplate = new ProductChargeTemplate();
@@ -355,12 +356,12 @@ public class CatalogHierarchyBuilderService {
     }
 
     public OfferServiceTemplate duplicateService(OfferServiceTemplate offerServiceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory,
-            List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
+                                                 List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
         return duplicateService(offerServiceTemplate, null, prefix, pricePlansInMemory, chargeTemplateInMemory);
     }
 
     public OfferServiceTemplate duplicateService(OfferServiceTemplate offerServiceTemplate, ServiceConfigurationDto serviceConfiguration, String prefix,
-            List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
+                                                 List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
         OfferServiceTemplate newOfferServiceTemplate = new OfferServiceTemplate();
 
         if (serviceConfiguration != null) {
@@ -375,13 +376,13 @@ public class CatalogHierarchyBuilderService {
         newOfferServiceTemplate.setValidity(offerServiceTemplate.getValidity());
 
         newOfferServiceTemplate.setServiceTemplate(
-            duplicateServiceTemplate(offerServiceTemplate.getServiceTemplate().getCode(), prefix, serviceConfiguration, pricePlansInMemory, chargeTemplateInMemory));
+                duplicateServiceTemplate(offerServiceTemplate.getServiceTemplate().getCode(), prefix, serviceConfiguration, pricePlansInMemory, chargeTemplateInMemory));
         return newOfferServiceTemplate;
 
     }
 
     public ServiceTemplate duplicateServiceTemplate(String serviceTemplateSourceCode, String prefix, ServiceConfigurationDto serviceConfiguration,
-            List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
+                                                    List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
 
         ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateSourceCode);
         serviceTemplate.getServiceRecurringCharges().size();
@@ -394,7 +395,7 @@ public class CatalogHierarchyBuilderService {
         try {
             BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);
             boolean instantiatedFromBOM = serviceConfiguration != null && serviceConfiguration.isInstantiatedFromBSM();
-            
+
             if (instantiatedFromBOM) {
                 // append a unique id
                 newCode = newCode + "-" + UUID.randomUUID();
@@ -437,15 +438,15 @@ public class CatalogHierarchyBuilderService {
             // update code if duplicate
             if (instantiatedFromBOM) {
                 Integer serviceConfItemIndex = serviceConfiguration.getItemIndex();
-                if(serviceConfItemIndex != null) {
+                if (serviceConfItemIndex != null) {
                     prefix = prefix + serviceConfItemIndex + "_";
                 } else {
-                    prefix = prefix + newServiceTemplate.getId() + "_";                    
+                    prefix = prefix + newServiceTemplate.getId() + "_";
                 }
                 newServiceTemplate.setCode(prefix + serviceTemplate.getCode());
                 newServiceTemplate = serviceTemplateService.update(newServiceTemplate);
             }
-            
+
             duplicatePrices(serviceTemplate, prefix, pricePlansInMemory);
             duplicateCharges(serviceTemplate, newServiceTemplate, prefix, chargeTemplateInMemory);
 
@@ -455,16 +456,16 @@ public class CatalogHierarchyBuilderService {
         }
     }
 
-    private void duplicatePrices(ServiceTemplate serviceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory)
-            throws BusinessException, IllegalAccessException, InvocationTargetException {
-        // create price plans
-        if (serviceTemplate.getServiceRecurringCharges() != null && !serviceTemplate.getServiceRecurringCharges().isEmpty()) {
-            for (ServiceChargeTemplateRecurring serviceCharge : serviceTemplate.getServiceRecurringCharges()) {
-                // create price plan
-                String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
-                if (pricePlanMatrixes != null) {
-                    try {
+    private void duplicatePrices(ServiceTemplate serviceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory) throws BusinessException {
+
+        try {
+            // create price plans
+            if (serviceTemplate.getServiceRecurringCharges() != null && !serviceTemplate.getServiceRecurringCharges().isEmpty()) {
+                for (ServiceChargeTemplateRecurring serviceCharge : serviceTemplate.getServiceRecurringCharges()) {
+                    // create price plan
+                    String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
+                    List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+                    if (pricePlanMatrixes != null) {
                         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
                             String ppCode = prefix + pricePlanMatrix.getCode();
                             PricePlanMatrix ppMatrix = pricePlanMatrixService.findByCode(ppCode);
@@ -489,20 +490,16 @@ public class CatalogHierarchyBuilderService {
 
                             pricePlanMatrixService.create(newPriceplanmaMatrix);
                         }
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        throw new BusinessException(e.getMessage());
                     }
                 }
             }
-        }
 
-        if (serviceTemplate.getServiceSubscriptionCharges() != null && !serviceTemplate.getServiceSubscriptionCharges().isEmpty()) {
-            for (ServiceChargeTemplateSubscription serviceCharge : serviceTemplate.getServiceSubscriptionCharges()) {
-                // create price plan
-                String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
-                if (pricePlanMatrixes != null) {
-                    try {
+            if (serviceTemplate.getServiceSubscriptionCharges() != null && !serviceTemplate.getServiceSubscriptionCharges().isEmpty()) {
+                for (ServiceChargeTemplateSubscription serviceCharge : serviceTemplate.getServiceSubscriptionCharges()) {
+                    // create price plan
+                    String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
+                    List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+                    if (pricePlanMatrixes != null) {
                         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
                             String ppCode = prefix + pricePlanMatrix.getCode();
                             if (pricePlanMatrixService.findByCode(ppCode) != null) {
@@ -526,20 +523,16 @@ public class CatalogHierarchyBuilderService {
 
                             pricePlanMatrixService.create(newPriceplanmaMatrix);
                         }
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        throw new BusinessException(e.getMessage());
                     }
                 }
             }
-        }
 
-        if (serviceTemplate.getServiceTerminationCharges() != null && !serviceTemplate.getServiceTerminationCharges().isEmpty()) {
-            for (ServiceChargeTemplateTermination serviceCharge : serviceTemplate.getServiceTerminationCharges()) {
-                // create price plan
-                String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
-                if (pricePlanMatrixes != null) {
-                    try {
+            if (serviceTemplate.getServiceTerminationCharges() != null && !serviceTemplate.getServiceTerminationCharges().isEmpty()) {
+                for (ServiceChargeTemplateTermination serviceCharge : serviceTemplate.getServiceTerminationCharges()) {
+                    // create price plan
+                    String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
+                    List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+                    if (pricePlanMatrixes != null) {
                         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
                             String ppCode = prefix + pricePlanMatrix.getCode();
                             if (pricePlanMatrixService.findByCode(ppCode) != null) {
@@ -563,184 +556,158 @@ public class CatalogHierarchyBuilderService {
 
                             pricePlanMatrixService.create(newPriceplanmaMatrix);
                         }
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        throw new BusinessException(e.getMessage());
                     }
                 }
             }
-        }
 
-        if (serviceTemplate.getServiceUsageCharges() != null && !serviceTemplate.getServiceUsageCharges().isEmpty()) {
-            for (ServiceChargeTemplateUsage serviceCharge : serviceTemplate.getServiceUsageCharges()) {
-                String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
-                if (pricePlanMatrixes != null) {
-                    for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-                        String ppCode = prefix + pricePlanMatrix.getCode();
-                        if (pricePlanMatrixService.findByCode(ppCode) != null) {
-                            continue;
+            if (serviceTemplate.getServiceUsageCharges() != null && !serviceTemplate.getServiceUsageCharges().isEmpty()) {
+                for (ServiceChargeTemplateUsage serviceCharge : serviceTemplate.getServiceUsageCharges()) {
+                    String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
+                    List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+                    if (pricePlanMatrixes != null) {
+                        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+                            String ppCode = prefix + pricePlanMatrix.getCode();
+                            if (pricePlanMatrixService.findByCode(ppCode) != null) {
+                                continue;
+                            }
+
+                            PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
+                            BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
+                            newPriceplanmaMatrix.setAuditable(null);
+                            newPriceplanmaMatrix.setId(null);
+                            newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
+                            newPriceplanmaMatrix.setCode(ppCode);
+                            newPriceplanmaMatrix.setVersion(0);
+                            newPriceplanmaMatrix.setOfferTemplate(null);
+
+                            if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
+                                continue;
+                            } else {
+                                pricePlansInMemory.add(newPriceplanmaMatrix);
+                            }
+
+                            pricePlanMatrixService.create(newPriceplanmaMatrix);
                         }
-
-                        PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-                        BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-                        newPriceplanmaMatrix.setAuditable(null);
-                        newPriceplanmaMatrix.setId(null);
-                        newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-                        newPriceplanmaMatrix.setCode(ppCode);
-                        newPriceplanmaMatrix.setVersion(0);
-                        newPriceplanmaMatrix.setOfferTemplate(null);
-
-                        if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-                            continue;
-                        } else {
-                            pricePlansInMemory.add(newPriceplanmaMatrix);
-                        }
-
-                        pricePlanMatrixService.create(newPriceplanmaMatrix);
                     }
                 }
             }
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new BusinessException(e.getMessage());
         }
     }
 
+    private ChargeTemplate setChargeTemplate(ChargeTemplate chargeTemplate, ChargeTemplate newChargeTemplate, List<ChargeTemplate> chargeTemplateInMemory, String prefix)
+            throws BusinessException {
+        newChargeTemplate = copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
+        if (chargeTemplateInMemory.contains(newChargeTemplate)) {
+            newChargeTemplate = chargeTemplateInMemory.get(chargeTemplateInMemory.indexOf(newChargeTemplate));
+        } else {
+            chargeTemplateInMemory.add(newChargeTemplate);
+        }
+        return newChargeTemplate;
+    }
+
+    private ChargeTemplate getChargeTemplate(@SuppressWarnings("rawtypes") ServiceChargeTemplate serviceChargeTemplate, List<ChargeTemplate> chargeTemplateInMemory, String prefix)
+            throws BusinessException {
+        ChargeTemplate chargeTemplate = serviceChargeTemplate.getChargeTemplate();
+        ChargeTemplate newChargeTemplate = null;
+        if (serviceChargeTemplate instanceof ServiceChargeTemplateRecurring) {
+            newChargeTemplate = new RecurringChargeTemplate();
+            newChargeTemplate = setChargeTemplate(chargeTemplate, newChargeTemplate, chargeTemplateInMemory, prefix);
+            if (newChargeTemplate.getId() == null) {
+                recurringChargeTemplateService.create((RecurringChargeTemplate) newChargeTemplate);
+            }
+		} else if (serviceChargeTemplate instanceof ServiceChargeTemplateSubscription
+				|| serviceChargeTemplate instanceof ServiceChargeTemplateTermination) {
+            newChargeTemplate = new OneShotChargeTemplate();
+            newChargeTemplate = setChargeTemplate(chargeTemplate, newChargeTemplate, chargeTemplateInMemory, prefix);
+            if (newChargeTemplate.getId() == null) {
+                oneShotChargeTemplateService.create((OneShotChargeTemplate) newChargeTemplate);
+            }
+        } else if (serviceChargeTemplate instanceof ServiceChargeTemplateUsage) {
+            newChargeTemplate = new UsageChargeTemplate();
+            newChargeTemplate = setChargeTemplate(chargeTemplate, newChargeTemplate, chargeTemplateInMemory, prefix);
+            if (newChargeTemplate.getId() == null) {
+                usageChargeTemplateService.create((UsageChargeTemplate) newChargeTemplate);
+            }
+        }
+
+        if (newChargeTemplate != null) {
+            copyEdrTemplates(chargeTemplate, newChargeTemplate);
+        }
+        return newChargeTemplate;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setServiceChargeTemplate(ServiceTemplate newServiceTemplate, @SuppressWarnings("rawtypes") ServiceChargeTemplate serviceChargeTemplate,
+                                          @SuppressWarnings("rawtypes") ServiceChargeTemplate newServiceChargeTemplate, List<ChargeTemplate> chargeTemplateInMemory, String prefix) throws BusinessException {
+
+        ChargeTemplate newChargeTemplate = getChargeTemplate(serviceChargeTemplate, chargeTemplateInMemory, prefix);
+        newServiceChargeTemplate.setChargeTemplate(newChargeTemplate);
+        newServiceChargeTemplate.setServiceTemplate(newServiceTemplate);
+        newServiceChargeTemplate.setCounterTemplate(counterTemplateService.getCounterTemplate(serviceChargeTemplate, prefix));
+        if (serviceChargeTemplate.getWalletTemplates() != null) {
+            newServiceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
+            newServiceChargeTemplate.getWalletTemplates().addAll(serviceChargeTemplate.getWalletTemplates());
+        }
+    }
+
+    private void createServiceChargeTemplateRecurring(ServiceTemplate serviceTemplate, ServiceChargeTemplateRecurring serviceChargeTemplate,
+                                                      List<ChargeTemplate> chargeTemplateInMemory, String prefix) throws BusinessException {
+        ServiceChargeTemplateRecurring newServiceChargeTemplate = new ServiceChargeTemplateRecurring();
+        setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, newServiceChargeTemplate, chargeTemplateInMemory, prefix);
+        serviceChargeTemplateRecurringService.create(newServiceChargeTemplate);
+        serviceTemplate.getServiceRecurringCharges().add(newServiceChargeTemplate);
+    }
+
+    private void createServiceChargeTemplateSubscription(ServiceTemplate serviceTemplate, ServiceChargeTemplateSubscription serviceChargeTemplate,
+                                                         List<ChargeTemplate> chargeTemplateInMemory, String prefix) throws BusinessException {
+        ServiceChargeTemplateSubscription newServiceChargeTemplate = new ServiceChargeTemplateSubscription();
+        setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, newServiceChargeTemplate, chargeTemplateInMemory, prefix);
+        serviceChargeTemplateSubscriptionService.create(newServiceChargeTemplate);
+        serviceTemplate.getServiceSubscriptionCharges().add(newServiceChargeTemplate);
+    }
+
+    private void createServiceChargeTemplateTermination(ServiceTemplate serviceTemplate, ServiceChargeTemplateTermination serviceChargeTemplate,
+                                                        List<ChargeTemplate> chargeTemplateInMemory, String prefix) throws BusinessException {
+        ServiceChargeTemplateTermination newServiceChargeTemplate = new ServiceChargeTemplateTermination();
+        setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, newServiceChargeTemplate, chargeTemplateInMemory, prefix);
+        serviceChargeTemplateTerminationService.create(newServiceChargeTemplate);
+        serviceTemplate.getServiceTerminationCharges().add(newServiceChargeTemplate);
+    }
+
+    private void createServiceChargeTemplateUsage(ServiceTemplate serviceTemplate, ServiceChargeTemplateUsage serviceChargeTemplate, List<ChargeTemplate> chargeTemplateInMemory,
+                                                  String prefix) throws BusinessException {
+        ServiceChargeTemplateUsage newServiceChargeTemplate = new ServiceChargeTemplateUsage();
+        setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, newServiceChargeTemplate, chargeTemplateInMemory, prefix);
+        serviceChargeTemplateUsageService.create(newServiceChargeTemplate);
+        serviceTemplate.getServiceUsageCharges().add(newServiceChargeTemplate);
+    }
+
     private void duplicateCharges(ServiceTemplate serviceTemplate, ServiceTemplate newServiceTemplate, String prefix, List<ChargeTemplate> chargeTemplateInMemory)
-            throws BusinessException, IllegalAccessException, InvocationTargetException {
-        // get charges
+            throws BusinessException {
+
         if (serviceTemplate.getServiceRecurringCharges() != null && !serviceTemplate.getServiceRecurringCharges().isEmpty()) {
-            for (ServiceChargeTemplateRecurring serviceCharge : serviceTemplate.getServiceRecurringCharges()) {
-                RecurringChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
-                RecurringChargeTemplate newChargeTemplate = new RecurringChargeTemplate();
-
-                newChargeTemplate = (RecurringChargeTemplate) copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
-
-                if (chargeTemplateInMemory.contains(newChargeTemplate)) {
-                    newChargeTemplate = (RecurringChargeTemplate) chargeTemplateInMemory.get(chargeTemplateInMemory.indexOf(newChargeTemplate));
-                } else {
-                    chargeTemplateInMemory.add(newChargeTemplate);
-                    if (newChargeTemplate.getId() == null) {
-                        recurringChargeTemplateService.create(newChargeTemplate);
-                        copyEdrTemplates(chargeTemplate, newChargeTemplate);
-                    }
-                }
-
-                ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
-                serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
-                serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
-                if (serviceCharge.getWalletTemplates() != null) {
-                    serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
-                    serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
-                }
-                serviceChargeTemplateRecurringService.create(serviceChargeTemplate);
-
-                newServiceTemplate.getServiceRecurringCharges().add(serviceChargeTemplate);
+            for (ServiceChargeTemplateRecurring serviceChargeTemplate : serviceTemplate.getServiceRecurringCharges()) {
+                createServiceChargeTemplateRecurring(newServiceTemplate, serviceChargeTemplate, chargeTemplateInMemory, prefix);
             }
         }
 
         if (serviceTemplate.getServiceSubscriptionCharges() != null && !serviceTemplate.getServiceSubscriptionCharges().isEmpty()) {
-            for (ServiceChargeTemplateSubscription serviceCharge : serviceTemplate.getServiceSubscriptionCharges()) {
-                OneShotChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
-                OneShotChargeTemplate newChargeTemplate = new OneShotChargeTemplate();
-
-                newChargeTemplate = (OneShotChargeTemplate) copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
-
-                if (chargeTemplateInMemory.contains(newChargeTemplate)) {
-                    newChargeTemplate = (OneShotChargeTemplate) chargeTemplateInMemory.get(chargeTemplateInMemory.indexOf(newChargeTemplate));
-                } else {
-                    chargeTemplateInMemory.add(newChargeTemplate);
-                    if (newChargeTemplate.getId() == null) {
-                        oneShotChargeTemplateService.create(newChargeTemplate);
-                        copyEdrTemplates(chargeTemplate, newChargeTemplate);
-                    }
-                }
-
-                ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
-                serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
-                serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
-                if (serviceCharge.getWalletTemplates() != null) {
-                    serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
-                    serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
-                }
-                serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate);
-
-                newServiceTemplate.getServiceSubscriptionCharges().add(serviceChargeTemplate);
+            for (ServiceChargeTemplateSubscription serviceChargeTemplate : serviceTemplate.getServiceSubscriptionCharges()) {
+                createServiceChargeTemplateSubscription(newServiceTemplate, serviceChargeTemplate, chargeTemplateInMemory, prefix);
             }
         }
 
         if (serviceTemplate.getServiceTerminationCharges() != null && !serviceTemplate.getServiceTerminationCharges().isEmpty()) {
-            for (ServiceChargeTemplateTermination serviceCharge : serviceTemplate.getServiceTerminationCharges()) {
-                OneShotChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
-                OneShotChargeTemplate newChargeTemplate = new OneShotChargeTemplate();
-
-                newChargeTemplate = (OneShotChargeTemplate) copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
-
-                if (chargeTemplateInMemory.contains(newChargeTemplate)) {
-                    newChargeTemplate = (OneShotChargeTemplate) chargeTemplateInMemory.get(chargeTemplateInMemory.indexOf(newChargeTemplate));
-                } else {
-                    chargeTemplateInMemory.add(newChargeTemplate);
-                    if (newChargeTemplate.getId() == null) {
-                        oneShotChargeTemplateService.create(newChargeTemplate);
-                        copyEdrTemplates(chargeTemplate, newChargeTemplate);
-                    }
-                }
-
-                ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
-                serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
-                serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
-                if (serviceCharge.getWalletTemplates() != null) {
-                    serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
-                    serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
-                }
-                serviceChargeTemplateTerminationService.create(serviceChargeTemplate);
-
-                newServiceTemplate.getServiceTerminationCharges().add(serviceChargeTemplate);
+            for (ServiceChargeTemplateTermination serviceChargeTemplate : serviceTemplate.getServiceTerminationCharges()) {
+                createServiceChargeTemplateTermination(newServiceTemplate, serviceChargeTemplate, chargeTemplateInMemory, prefix);
             }
         }
 
         if (serviceTemplate.getServiceUsageCharges() != null && !serviceTemplate.getServiceUsageCharges().isEmpty()) {
-            for (ServiceChargeTemplateUsage serviceCharge : serviceTemplate.getServiceUsageCharges()) {
-                UsageChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
-                UsageChargeTemplate newChargeTemplate = new UsageChargeTemplate();
-
-                newChargeTemplate = (UsageChargeTemplate) copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
-
-                if (chargeTemplateInMemory.contains(newChargeTemplate)) {
-                    newChargeTemplate = (UsageChargeTemplate) chargeTemplateInMemory.get(chargeTemplateInMemory.indexOf(newChargeTemplate));
-                } else {
-                    chargeTemplateInMemory.add(newChargeTemplate);
-                    if (newChargeTemplate.getId() == null) {
-                        usageChargeTemplateService.create(newChargeTemplate);
-                        copyEdrTemplates(chargeTemplate, newChargeTemplate);
-                    }
-                }
-
-                ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
-                serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
-                serviceChargeTemplate.setServiceTemplate(newServiceTemplate);
-                if (serviceCharge.getWalletTemplates() != null) {
-                    serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
-                    serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
-                }
-
-                CounterTemplate newCounterTemplate = null;
-                if (serviceCharge.getCounterTemplate() != null) {
-                    // check if counter code already exists
-                    String newCounterCode = prefix + serviceCharge.getCounterTemplate().getCode();
-                    newCounterTemplate = counterTemplateService.findByCode(newCounterCode);
-
-                    if (newCounterTemplate == null) {
-                        newCounterTemplate = new CounterTemplate();
-                        BeanUtils.copyProperties(newCounterTemplate, serviceCharge.getCounterTemplate());
-                        newCounterTemplate.setCode(newCounterCode);
-                        newCounterTemplate.setAuditable(null);
-                        newCounterTemplate.setId(null);
-                        counterTemplateService.create(newCounterTemplate);
-                    }
-
-                    serviceChargeTemplate.setCounterTemplate(newCounterTemplate);
-                }
-                serviceChargeTemplateUsageService.create(serviceChargeTemplate);
-
-                newServiceTemplate.getServiceUsageCharges().add(serviceChargeTemplate);
+            for (ServiceChargeTemplateUsage serviceChargeTemplate : serviceTemplate.getServiceUsageCharges()) {
+                createServiceChargeTemplateUsage(newServiceTemplate, serviceChargeTemplate, chargeTemplateInMemory, prefix);
             }
         }
     }
@@ -752,17 +719,20 @@ public class CatalogHierarchyBuilderService {
      * @param targetTemplate the target template
      * @param prefix the prefix
      * @return the charge template
-     * @throws IllegalAccessException the illegal access exception
-     * @throws InvocationTargetException the invocation target exception
+     * @throws BusinessException the business exception
      */
-    private ChargeTemplate copyChargeTemplate(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetTemplate, String prefix) throws IllegalAccessException, InvocationTargetException {
-        
+    private ChargeTemplate copyChargeTemplate(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetTemplate, String prefix) throws BusinessException {
+
         String newChargeCode = prefix + sourceChargeTemplate.getCode();
         ChargeTemplate existingChargeTemplate = chargeTemplateService.findByCode(newChargeCode);
         if (existingChargeTemplate != null) {
             return existingChargeTemplate;
         } else {
-            BeanUtils.copyProperties(targetTemplate, sourceChargeTemplate);
+            try {
+                BeanUtils.copyProperties(targetTemplate, sourceChargeTemplate);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new BusinessException(e.getMessage());
+            }
             targetTemplate.setId(null);
             targetTemplate.setAuditable(null);
             targetTemplate.setCode(newChargeCode);
@@ -776,7 +746,9 @@ public class CatalogHierarchyBuilderService {
     private void copyEdrTemplates(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetChargeTemplate) {
         if (sourceChargeTemplate.getEdrTemplates() != null && !sourceChargeTemplate.getEdrTemplates().isEmpty()) {
             for (TriggeredEDRTemplate triggeredEDRTemplate : sourceChargeTemplate.getEdrTemplates()) {
-                targetChargeTemplate.getEdrTemplates().add(triggeredEDRTemplate);
+				if (!targetChargeTemplate.getEdrTemplates().contains(triggeredEDRTemplate)) {
+					targetChargeTemplate.getEdrTemplates().add(triggeredEDRTemplate);
+				}
             }
         }
     }
@@ -784,7 +756,7 @@ public class CatalogHierarchyBuilderService {
     /**
      * we will delete offer with the following principles : 1. offer/service/charges deletion when not subscribed 2. offer deletion only if services are used in an other offer 3.
      * offer/services deletion only if charges are used in an other service
-     * 
+     *
      * @param entity instance of Offer Template which contains entities to delete.
      * @throws BusinessException exception when deletion causes some errors
      */
@@ -819,6 +791,57 @@ public class CatalogHierarchyBuilderService {
         }
     }
 
+    private void deleteUsageChargeTemplate(Map<String, List<ServiceChargeTemplateUsage>> usageCounterChargeMap,
+                                           @SuppressWarnings("rawtypes") ServiceChargeTemplate serviceChargeTemplate) throws BusinessException {
+        Long chargeId = serviceChargeTemplate.getChargeTemplate().getId();
+        String chargeTemplateCode = serviceChargeTemplate.getChargeTemplate().getCode();
+        List<Long> linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeUsage(chargeId);
+        if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
+            this.usageChargeTemplateService.remove(chargeId);
+            // Delete counter.
+            CounterTemplate counterTemplate = serviceChargeTemplate.getCounterTemplate();
+            if (counterTemplate != null) {
+                List<ServiceChargeTemplateUsage> serviceChargeTemplateUsageList = usageCounterChargeMap.get(counterTemplate.getCode());
+                if (serviceChargeTemplateUsageList != null && serviceChargeTemplateUsageList.size() == 1
+                        && chargeTemplateCode.equals(serviceChargeTemplateUsageList.get(0).getChargeTemplate().getCode())) {
+                    // It means this counter is related to only current charge
+                    this.counterTemplateService.remove(counterTemplate);
+                }
+            }
+
+            List<PricePlanMatrix> pricePlanMatrixes = this.pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+            if (pricePlanMatrixes != null) {
+                for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+                    if (pricePlanMatrix == null) {
+                        continue;
+                    }
+                    this.pricePlanMatrixService.remove(pricePlanMatrix);
+                }
+
+            }
+        }
+    }
+
+    private void deleteRecurringChargeTemplate(Map<String, List<ServiceChargeTemplateRecurring>> recurringCounterChargeMap,
+                                               @SuppressWarnings("rawtypes") ServiceChargeTemplate serviceChargeTemplate) throws BusinessException {
+        Long chargeId = serviceChargeTemplate.getChargeTemplate().getId();
+        String chargeTemplateCode = serviceChargeTemplate.getChargeTemplate().getCode();
+        List<Long> linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeRecurring(chargeId);
+        if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
+            this.recurringChargeTemplateService.remove(chargeId);
+            // Delete counter.
+            CounterTemplate counterTemplate = serviceChargeTemplate.getCounterTemplate();
+            if (counterTemplate != null) {
+                List<ServiceChargeTemplateRecurring> serviceChargeTemplateList = recurringCounterChargeMap.get(counterTemplate.getCode());
+                if (serviceChargeTemplateList != null && serviceChargeTemplateList.size() == 1
+                        && chargeTemplateCode.equals(serviceChargeTemplateList.get(0).getChargeTemplate().getCode())) {
+                    // It means this counter is related to only current charge
+                    this.counterTemplateService.remove(counterTemplate);
+                }
+            }
+        }
+    }
+
     /**
      * @param serviceTemplate service template.
      * @throws BusinessException business exception.
@@ -830,19 +853,25 @@ public class CatalogHierarchyBuilderService {
         List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = serviceTemplate.getServiceSubscriptionCharges();
         List<ServiceChargeTemplateRecurring> serviceRecurringCharges = serviceTemplate.getServiceRecurringCharges();
         List<ServiceChargeTemplateUsage> serviceUsageCharges = serviceTemplate.getServiceUsageCharges();
-        List<ServiceChargeTemplate> serviceCharges = new ArrayList<>();
-        serviceCharges.addAll(serviceSubscriptionCharges);
-        serviceCharges.addAll(serviceRecurringCharges);
-        serviceCharges.addAll(serviceUsageCharges);
-        serviceCharges.addAll(serviceTerminationCharges);
+        List<ServiceChargeTemplate> serviceChargeTemplateList = new ArrayList<>();
+        serviceChargeTemplateList.addAll(serviceSubscriptionCharges);
+        serviceChargeTemplateList.addAll(serviceRecurringCharges);
+        serviceChargeTemplateList.addAll(serviceUsageCharges);
+        serviceChargeTemplateList.addAll(serviceTerminationCharges);
 
-        Map<String, List<ServiceChargeTemplateUsage>> counterChargeMap = new HashMap<>();
-
+        Map<String, List<ServiceChargeTemplateUsage>> usageCounterChargeMap = new HashMap<>();
         for (ServiceChargeTemplate serviceChargeTemplateUsage : serviceUsageCharges) {
-            CounterTemplate counterTemplate = ((ServiceChargeTemplateUsage) serviceChargeTemplateUsage).getCounterTemplate();
+            CounterTemplate counterTemplate = serviceChargeTemplateUsage.getCounterTemplate();
             if (counterTemplate != null) {
-                List<ServiceChargeTemplateUsage> serviceChargeTemplateList = this.serviceChargeTemplateUsageService.findByCounterTemplate(counterTemplate);
-                counterChargeMap.put(counterTemplate.getCode(), serviceChargeTemplateList);
+                usageCounterChargeMap.put(counterTemplate.getCode(), this.serviceChargeTemplateUsageService.findByCounterTemplate(counterTemplate));
+            }
+        }
+
+        Map<String, List<ServiceChargeTemplateRecurring>> recurringCounterChargeMap = new HashMap<>();
+        for (ServiceChargeTemplate serviceChargeTemplateRecurring : serviceRecurringCharges) {
+            CounterTemplate counterTemplate = serviceChargeTemplateRecurring.getCounterTemplate();
+            if (counterTemplate != null) {
+                recurringCounterChargeMap.put(counterTemplate.getCode(), this.serviceChargeTemplateRecurringService.findByCounterTemplate(counterTemplate));
             }
         }
 
@@ -852,56 +881,29 @@ public class CatalogHierarchyBuilderService {
             throw exception;
         }
 
-        for (ServiceChargeTemplate serviceChargeTemplateUsage : serviceCharges) {
-            if (serviceChargeTemplateUsage == null) {
+        for (ServiceChargeTemplate serviceChargeTemplate : serviceChargeTemplateList) {
+            if (serviceChargeTemplate == null) {
                 continue;
             }
 
-            String chargeTemplateCode = serviceChargeTemplateUsage.getChargeTemplate().getCode();
+            String chargeTemplateCode = serviceChargeTemplate.getChargeTemplate().getCode();
 
             if (chargeTemplateCode == null) {
                 continue;
             }
 
             List<Long> linkedServiceIds = null;
-            Long chargeId = serviceChargeTemplateUsage.getChargeTemplate().getId();
-            if (serviceChargeTemplateUsage instanceof ServiceChargeTemplateUsage) {
-                linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeUsage(chargeId);
-                if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
-                    this.usageChargeTemplateService.remove(chargeId);
-                    // Delete counter.
-                    CounterTemplate counterTemplate = ((ServiceChargeTemplateUsage) serviceChargeTemplateUsage).getCounterTemplate();
-                    if (counterTemplate != null) {
-                        List<ServiceChargeTemplateUsage> serviceChargeTemplateList = counterChargeMap.get(counterTemplate.getCode());
-                        if (serviceChargeTemplateList != null && serviceChargeTemplateList.size() == 1
-                                && chargeTemplateCode.equals(serviceChargeTemplateList.get(0).getChargeTemplate().getCode())) {
-                            // It means this counter is related to only current charge
-                            this.counterTemplateService.remove(counterTemplate);
-                        }
-                    }
-
-                    List<PricePlanMatrix> pricePlanMatrixes = this.pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
-                    if (pricePlanMatrixes != null) {
-                        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-                            if (pricePlanMatrix == null) {
-                                continue;
-                            }
-                            this.pricePlanMatrixService.remove(pricePlanMatrix);
-                        }
-
-                    }
-                }
-            } else if (serviceChargeTemplateUsage instanceof ServiceChargeTemplateRecurring) {
-                linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeRecurring(chargeId);
-                if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
-                    this.recurringChargeTemplateService.remove(chargeId);
-                }
-            } else if (serviceChargeTemplateUsage instanceof ServiceChargeTemplateSubscription) {
+            Long chargeId = serviceChargeTemplate.getChargeTemplate().getId();
+            if (serviceChargeTemplate instanceof ServiceChargeTemplateUsage) {
+                deleteUsageChargeTemplate(usageCounterChargeMap, serviceChargeTemplate);
+            } else if (serviceChargeTemplate instanceof ServiceChargeTemplateRecurring) {
+                deleteRecurringChargeTemplate(recurringCounterChargeMap, serviceChargeTemplate);
+            } else if (serviceChargeTemplate instanceof ServiceChargeTemplateSubscription) {
                 linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeSubscription(chargeId);
                 if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
                     this.oneShotChargeTemplateService.remove(chargeId);
                 }
-            } else if (serviceChargeTemplateUsage instanceof ServiceChargeTemplateTermination) {
+            } else if (serviceChargeTemplate instanceof ServiceChargeTemplateTermination) {
                 linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeTermination(chargeId);
                 if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
                     this.oneShotChargeTemplateService.remove(chargeId);
@@ -911,5 +913,5 @@ public class CatalogHierarchyBuilderService {
         }
 
     }
-
 }
+

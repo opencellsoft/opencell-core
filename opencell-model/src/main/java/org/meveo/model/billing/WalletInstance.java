@@ -44,7 +44,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.WalletTemplate;
 
 /**
- * Wallet instance
+ * Prepaid or postpaid Wallet instance
  * 
  * @author Andrius Karpavicius
  */
@@ -61,18 +61,32 @@ public class WalletInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Wallet template/definition
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cat_wallet_template_id")
     private WalletTemplate walletTemplate;
 
+    /**
+     * User account wallet is associated to
+     */
     @ManyToOne
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "expiry_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date creditExpiryDate;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "next_matching_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date nextMatchingDate;
@@ -89,9 +103,15 @@ public class WalletInstance extends BusinessEntity {
     @Column(name = "reject_level", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal rejectLevel;
 
+    /**
+     * Operations against this wallet
+     */
     @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<WalletOperation> operations;
 
+    /**
+     * Rated transactions against this wallet
+     */
     @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<RatedTransaction> ratedTransactions;
 

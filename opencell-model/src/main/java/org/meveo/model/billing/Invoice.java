@@ -28,7 +28,6 @@ import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -40,6 +39,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -61,11 +63,12 @@ import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.DateUtils;
 
 /**
+ * Invoice
+ * 
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @lastModifiedVersion 5.2
@@ -82,127 +85,244 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL"),
         @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.seller.id, inv.invoiceDate"),
-        @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.billingAccount.customerAccount.customer.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
+        @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
         @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
         @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId") })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Billing account that invoice was issued to
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id")
     private BillingAccount billingAccount;
 
+    /**
+     * Billing run that produced the invoice
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run_id")
     private BillingRun billingRun;
 
+    /**
+     * Recorded invoice
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recorded_invoice_id")
     private RecordedInvoice recordedInvoice;
 
+    /**
+     * Invoice aggregates
+     */
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
+    /**
+     * Invoice number
+     */
     @Column(name = "invoice_number", length = 50)
     @Size(max = 50)
     private String invoiceNumber;
 
+    /**
+     * Temporary invoice number
+     */
     @Column(name = "temporary_invoice_number", length = 60, unique = true)
     @Size(max = 60)
     private String temporaryInvoiceNumber;
 
+    /**
+     * Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "product_date")
     private Date productDate;
 
+    /**
+     * Invoice issue date
+     */
     @Column(name = "invoice_date")
     private Date invoiceDate;
 
+    /**
+     * Payment due date
+     */
     @Column(name = "due_date")
     private Date dueDate;
 
+    /**
+     * Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amount;
 
+    /**
+     * Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "discount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discount;
 
+    /**
+     * Invoiced amount without tax
+     */
     @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithoutTax;
 
+    /**
+     * Invoiced tax amount
+     */
     @Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountTax;
 
+    /**
+     * Invoiced amount with tax
+     */
     @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithTax;
 
+    /**
+     * Total amount to pay - amountWith/withoutTax + balanceDue
+     */
     @Column(name = "net_to_pay", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal netToPay;
 
+    /**
+     * Expected payment method
+     */
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum paymentMethodType;
 
+    /**
+     * IBAN number. Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "iban", length = 255)
     @Size(max = 255)
     private String iban;
 
+    /**
+     * Alias
+     */
     @Column(name = "alias", length = 255)
     @Size(max = 255)
     private String alias;
 
+    /**
+     * Amount currency
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
     private TradingCurrency tradingCurrency;
 
+    /**
+     * Country that invoice was applied to (for tax purpose)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country_id")
     private TradingCountry tradingCountry;
 
+    /**
+     * Language invoice is in
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
 
+    /**
+     * Rated transactions that were included in invoice
+     */
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions = new ArrayList<>();
 
+    /**
+     * Comment
+     */
     @Column(name = "comment", length = 1200)
     @Size(max = 1200)
     private String comment;
 
+    /**
+     * Is this a detailed invoice
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "detailed_invoice")
     private boolean isDetailedInvoice = true;
 
+    /**
+     * Adjusted invoice
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice adjustedInvoice;
 
+    /**
+     * Invoice type
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_type_id")
     private InvoiceType invoiceType;
 
+    /**
+     * Unique identifier - UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    // @Type(type = "json")
-    @Convert(converter = CustomFieldValuesConverter.class)
+    /**
+     * Custom field values in JSON format
+     */
+    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
+    /**
+     * Accumulated custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
+    /**
+     * Linked invoices
+     */
     @ManyToMany
     @JoinTable(name = "billing_linked_invoices", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns = { @JoinColumn(name = "linked_invoice_id") })
     private Set<Invoice> linkedInvoices = new HashSet<>();
 
+    /**
+     * Orders that produced rated transactions that were included in the invoice
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
     private List<Order> orders = new ArrayList<>();
 
+    /**
+     * Quote that invoice was produced for
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id")
     private Quote quote;
+
+    /**
+     * Subscription that invoice was produced for
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
+
+    /**
+     * Order that invoice was produced for
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     /**
      * XML file name. Might contain subdirectories relative to directory where all XML files are located.
@@ -218,36 +338,52 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @Size(max = 255)
     private String pdfFilename;
 
+    /**
+     * Payment method
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
-    
+
+    /**
+     * Balance due
+     */
     @Column(name = "due_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal dueBalance;
-    
+
+    /**
+     * Seller that invoice was issued to
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subscription_id")
-    private Subscription subscription;
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
 
     @Transient
     private Long invoiceAdjustmentCurrentProviderNb;
-    
-    
+
+    /**
+     * Used to track if "invoiceNumber" field value has changed. Value is populated on postLoad, postPersist and postUpdate JPA events
+     */
+    @Transient
+    private String previousInvoiceNumber;
+
+    /**
+     * A flag to indicate if the invoice is a draft.
+     */
+    @Transient
+    private Boolean draft;
+
     /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
      */
     @PrePersist
     @PreUpdate
     public void prePersistOrUpdate() {
-        this.dueDate =  DateUtils.truncateTime(this.dueDate);
-        this.invoiceDate =  DateUtils.truncateTime(this.invoiceDate);
+        this.dueDate = DateUtils.truncateTime(this.dueDate);
+        this.invoiceDate = DateUtils.truncateTime(this.invoiceDate);
     }
 
     public List<RatedTransaction> getRatedTransactions() {
@@ -558,6 +694,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         return uuid;
     }
 
+    /**
+     * @param uuid Unique identifier
+     */
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
@@ -573,15 +712,28 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     }
 
     @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
+    }
+
+    @Override
     public String clearUuid() {
         String oldUuid = uuid;
         uuid = UUID.randomUUID().toString();
         return oldUuid;
     }
-    
+
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { billingRun };
+        if (billingRun != null) {
+            return new ICustomFieldEntity[] { billingRun };
+        }
+        return null;
     }
 
     public Set<Invoice> getLinkedInvoices() {
@@ -593,16 +745,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     }
 
     public void addInvoiceAggregate(InvoiceAgregate obj) {
-        if (!invoiceAgregates.contains(obj)) {
-            invoiceAgregates.add(obj);
-        }
+        invoiceAgregates.add(obj);
     }
 
     public List<SubCategoryInvoiceAgregate> getDiscountAgregates() {
         List<SubCategoryInvoiceAgregate> aggregates = new ArrayList<>();
 
         for (InvoiceAgregate invoiceAggregate : invoiceAgregates) {
-            if (invoiceAggregate instanceof SubCategoryInvoiceAgregate && invoiceAggregate.isDiscountAggregate()) {
+            if (invoiceAggregate instanceof SubCategoryInvoiceAgregate && ((SubCategoryInvoiceAgregate) invoiceAggregate).isDiscountAggregate()) {
                 aggregates.add((SubCategoryInvoiceAgregate) invoiceAggregate);
             }
         }
@@ -624,28 +774,29 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     }
 
     /**
-     * @return the quote
+     * @return Quote that invoice was produced for
      */
     public Quote getQuote() {
         return quote;
     }
 
     /**
-     * @param quote the quote to set
+     * @param quote Quote that invoice was produced for
      */
     public void setQuote(Quote quote) {
         this.quote = quote;
     }
 
     /**
-     * Return a PDF filename. Including any subdirectories it might contain. E.g. for "a/b/c.pdf", this method will return "a/b/c.pdf"
-     * 
-     * @return PDF file name
+     * @return PDF filename. Including any subdirectories it might contain. E.g. for "a/b/c.pdf", this method will return "a/b/c.pdf"
      */
     public String getPdfFilename() {
         return pdfFilename;
     }
 
+    /**
+     * @param pdfFilename PDF filename. Including any subdirectories it might contain. E.g. for "a/b/c.pdf", this method will return "a/b/c.pdf"
+     */
     public void setPdfFilename(String pdfFilename) {
         this.pdfFilename = pdfFilename;
     }
@@ -666,14 +817,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     }
 
     /**
-     * Return a XML filename. Including any subdirectories it might contain. E.g. for "a/b/c.xml", this method will return "a/b/c.xml"
-     * 
-     * @return XML file name
+     * @return XML filename. Including any subdirectories it might contain. E.g. for "a/b/c.xml", this method will return "a/b/c.xml"
      */
     public String getXmlFilename() {
         return xmlFilename;
     }
 
+    /**
+     * @param xmlFilename XML filename. Including any subdirectories it might contain. E.g. for "a/b/c.xml", this method will return "a/b/c.xml"
+     */
     public void setXmlFilename(String xmlFilename) {
         this.xmlFilename = xmlFilename;
     }
@@ -715,13 +867,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
     }
 
-	public BigDecimal getDueBalance() {
-		return dueBalance;
-	}
+    public BigDecimal getDueBalance() {
+        return dueBalance;
+    }
 
-	public void setDueBalance(BigDecimal dueBalance) {
-		this.dueBalance = dueBalance;
-	}
+    public void setDueBalance(BigDecimal dueBalance) {
+        this.dueBalance = dueBalance;
+    }
 
     public Seller getSeller() {
         return seller;
@@ -730,13 +882,66 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     public void setSeller(Seller seller) {
         this.seller = seller;
     }
-	
 
+    /**
+     * @return Subscription that invoice was produced for
+     */
     public Subscription getSubscription() {
         return subscription;
     }
 
+    /**
+     * @param subscription Subscription that invoice was produced for
+     */
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
+    }
+
+    /**
+     * 
+     * @return Order that invoice was produced for
+     */
+    public Order getOrder() {
+        return order;
+    }
+
+    /**
+     * @param order Order that invoice was produced for
+     */
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    /**
+     * @return The previous invoice number
+     */
+    public String getPreviousInvoiceNumber() {
+        return previousInvoiceNumber;
+    }
+
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    /**
+     * Tracks what was the previous invoice number
+     */
+    private void trackPreviousValues() {
+        previousInvoiceNumber = invoiceNumber;
+    }
+
+    /**
+     * @return true if the invoice is draft, false else.
+     */
+    public Boolean isDraft() {
+        return draft;
+    }
+
+    /**
+     * Set the draft flag
+     *
+     * @param draft the draft flag
+     */
+    public void setDraft(Boolean draft) {
+        this.draft = draft;
     }
 }

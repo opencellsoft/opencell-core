@@ -42,7 +42,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The occ template code EL. */
     private String occTemplateCodeEl;
-    
+
     /** The occ template negative code EL. */
     private String occTemplateNegativeCodeEl;
 
@@ -78,7 +78,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The billing template name EL. */
     private String billingTemplateNameEL;
-    
+
     private CustomFieldsDto customFields;
 
     /** The use Self Sequence . */
@@ -92,9 +92,10 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     }
 
     /**
-     * Instantiates a new invoice type dto.
+     * Instantiates a new invoice type dto
      *
-     * @param invoiceType the invoice type
+     * @param invoiceType Invoice type
+     * @param customFieldInstances Custom field values DTO
      */
     public InvoiceTypeDto(InvoiceType invoiceType, CustomFieldsDto customFieldInstances) {
         super(invoiceType);
@@ -118,7 +119,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.pdfFilenameEL = invoiceType.getPdfFilenameEL();
         this.xmlFilenameEL = invoiceType.getXmlFilenameEL();
         this.billingTemplateNameEL = invoiceType.getBillingTemplateNameEL();
-        
+
         customFields = customFieldInstances;
         this.useSelfSequence = invoiceType.isUseSelfSequence();
     }
@@ -324,7 +325,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     public void setUseSelfSequence(boolean useSelfSequence) {
         this.useSelfSequence = useSelfSequence;
     }
-    
+
     /**
      * Gets the occ template code EL.
      *
@@ -379,10 +380,10 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.customInvoiceXmlScriptInstanceCode = customInvoiceXmlScriptInstanceCode;
     }
 
-	@Override
+    @Override
     public String toString() {
         return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode="
-                + occTemplateNegativeCode + ", customInvoiceXmlScriptInstanceCode=" + customInvoiceXmlScriptInstanceCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto
-                + ", useSelfSequence=" + useSelfSequence + "]";
+                + occTemplateNegativeCode + ", customInvoiceXmlScriptInstanceCode=" + customInvoiceXmlScriptInstanceCode + ", sequenceDto=" + sequenceDto + ", sellerSequences="
+                + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto + ", useSelfSequence=" + useSelfSequence + "]";
     }
 }

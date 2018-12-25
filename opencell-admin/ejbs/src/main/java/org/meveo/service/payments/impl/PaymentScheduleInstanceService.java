@@ -5,7 +5,9 @@ package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -13,6 +15,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Calendar;
@@ -23,15 +26,21 @@ import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.PaymentScheduleStatusEnum;
 import org.meveo.model.payments.PaymentScheduleTemplate;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.CalendarBankingService;
 import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
 
 /**
  * The Class PaymentScheduleInstanceService.
  *
  * @author anasseh
  * @since 5.2
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class PaymentScheduleInstanceService extends BusinessService<PaymentScheduleInstance> {
@@ -48,6 +57,14 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
     @Inject
     private CalendarService calendarService;
     
+    /** The calendar service. */
+    @Inject
+    private CalendarBankingService calendarBankingService;
+    
+    /** The script instance service. */
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
+
     /**
      * Terminate when the linked service are terminated.
      *
@@ -56,14 +73,14 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
      * @throws BusinessException the business exception
      */
     public void terminate(ServiceInstance serviceInstance, Date terminationDate) throws BusinessException {
-        for(PaymentScheduleInstance paymentScheduleInstance : serviceInstance.getPsInstances()){
-            if(paymentScheduleInstance.getStatus() == PaymentScheduleStatusEnum.IN_PROGRESS) {
+        for (PaymentScheduleInstance paymentScheduleInstance : serviceInstance.getPsInstances()) {
+            if (paymentScheduleInstance.getStatus() == PaymentScheduleStatusEnum.IN_PROGRESS) {
                 terminate(paymentScheduleInstance, terminationDate);
                 return;
             }
-        } 
+        }
     }
-    
+
     /**
      * Terminate paymentScheduleInstance.
      *
@@ -71,18 +88,18 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
      * @param terminationDate the termination date
      * @throws BusinessException the business exception
      */
-    public void terminate(PaymentScheduleInstance paymentScheduleInstance,Date terminationDate) throws BusinessException {
-        if(terminationDate == null) {
+    public void terminate(PaymentScheduleInstance paymentScheduleInstance, Date terminationDate) throws BusinessException {
+        if (terminationDate == null) {
             terminationDate = paymentScheduleInstance.getEndDate();
         }
-        PaymentScheduleTemplate  paymentScheduleTemplate = paymentScheduleTemplateService.refreshOrRetrieve(paymentScheduleInstance.getPaymentScheduleTemplate());
-        
-        if(paymentScheduleTemplate.isApplyAgreement()) {
+        PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.refreshOrRetrieve(paymentScheduleInstance.getPaymentScheduleTemplate());
+
+        if (paymentScheduleTemplate.isApplyAgreement()) {
             paymentScheduleInstance = refreshOrRetrieve(paymentScheduleInstance);
-            for(PaymentScheduleInstanceItem paymentScheduleInstanceItem : paymentScheduleInstance.getPaymentScheduleInstanceItems()) {
-               if(paymentScheduleInstanceItem.getRecordedInvoice() == null) {
-                   paymentScheduleInstanceItemService.processItem(paymentScheduleInstanceItem);
-               }
+            for (PaymentScheduleInstanceItem paymentScheduleInstanceItem : paymentScheduleInstance.getPaymentScheduleInstanceItems()) {
+                if (paymentScheduleInstanceItem.getRecordedInvoice() == null) {
+                    paymentScheduleInstanceItemService.processItem(paymentScheduleInstanceItem);
+                }
             }
         }
         paymentScheduleInstance.setEndDate(terminationDate);
@@ -90,7 +107,7 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         paymentScheduleInstance.setStatusDate(terminationDate);
         super.update(paymentScheduleInstance);
     }
-    
+
     /**
      * Cancel paymentScheduleInstance.
      *
@@ -98,15 +115,18 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
      * @throws BusinessException the business exception
      */
     public void cancel(PaymentScheduleInstance paymentScheduleInstance) throws BusinessException {
-        if(paymentScheduleInstance.getPaymentScheduleTemplate().isApplyAgreement()) {
-            throw new BusinessException("Can't cancel a PaymentSchedule when is applyAgreement");            
+        PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.refreshOrRetrieve(paymentScheduleInstance.getPaymentScheduleTemplate());
+        if (paymentScheduleTemplate.isApplyAgreement()) {
+            throw new BusinessException("Can't cancel a PaymentSchedule when is applyAgreement");
         }
         paymentScheduleInstance.setStatus(PaymentScheduleStatusEnum.CANCELLED);
         paymentScheduleInstance.setStatusDate(new Date());
         super.update(paymentScheduleInstance);
     }
 
-
+    /* (non-Javadoc)
+     * @see org.meveo.service.base.PersistenceService#update(org.meveo.model.IEntity)
+     */
     @Override
     public PaymentScheduleInstance update(PaymentScheduleInstance paymentScheduleInstance) throws BusinessException {
         PaymentScheduleInstance oldPaymentScheduleInstance = findById(paymentScheduleInstance.getId());
@@ -117,7 +137,7 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
             oldPaymentScheduleInstance.setStatus(PaymentScheduleStatusEnum.OBSOLETE);
             oldPaymentScheduleInstance.setStatusDate(new Date());
             super.update(oldPaymentScheduleInstance);
-            return instanciateFromInstance(paymentScheduleInstance.getPaymentScheduleTemplate(), paymentScheduleInstance);
+            return instanciateFromPsInstance(paymentScheduleInstance.getPaymentScheduleTemplate(), paymentScheduleInstance);
         } else {
             return super.update(paymentScheduleInstance);
         }
@@ -133,25 +153,31 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
      * @throws BusinessException the business exception
      */
     public PaymentScheduleInstance instanciateFromService(PaymentScheduleTemplate paymentScheduleTemplate, ServiceInstance serviceInstance) throws BusinessException {
-        return instanciate(paymentScheduleTemplate, serviceInstance, serviceInstance.getAmountPS() == null ? paymentScheduleTemplate.getAmount() : serviceInstance.getAmountPS(),
+        BigDecimal amount = paymentScheduleTemplate.getAmount();
+        if (!StringUtils.isBlank(paymentScheduleTemplate.getAmountEl())) {
+            amount = paymentScheduleTemplateService.evaluateAmountExpression(paymentScheduleTemplate.getAmountEl(), serviceInstance);
+        }
+        amount = serviceInstance.getAmountPS() == null ? amount : serviceInstance.getAmountPS();
+
+        return instanciate(paymentScheduleTemplate, serviceInstance, amount,
             serviceInstance.getCalendarPS() == null ? paymentScheduleTemplate.getCalendar() : serviceInstance.getCalendarPS(), serviceInstance.getSubscriptionDate(),
             serviceInstance.getEndAgreementDate() == null ? serviceInstance.getSubscription().getEndAgreementDate() : serviceInstance.getEndAgreementDate(),
-            serviceInstance.getDueDateDaysPS() == null ? paymentScheduleTemplate.getDueDateDays() : serviceInstance.getDueDateDaysPS());
+            serviceInstance.getPaymentDayInMonthPS() == null ? paymentScheduleTemplate.getPaymentDayInMonth() : serviceInstance.getPaymentDayInMonthPS());
 
     }
 
     /**
-     * Instanciate from instance.
+     * Instanciate from PS instance.
      *
      * @param paymentScheduleTemplate the payment schedule template
      * @param paymentScheduleInstance the payment schedule instance
      * @return the payment schedule instance
      * @throws BusinessException the business exception
      */
-    public PaymentScheduleInstance instanciateFromInstance(PaymentScheduleTemplate paymentScheduleTemplate, PaymentScheduleInstance paymentScheduleInstance)
+    public PaymentScheduleInstance instanciateFromPsInstance(PaymentScheduleTemplate paymentScheduleTemplate, PaymentScheduleInstance paymentScheduleInstance)
             throws BusinessException {
         return instanciate(paymentScheduleTemplate, paymentScheduleInstance.getServiceInstance(), paymentScheduleInstance.getAmount(), paymentScheduleInstance.getCalendar(),
-            paymentScheduleInstance.getStartDate(), paymentScheduleInstance.getEndDate(), paymentScheduleInstance.getDueDateDays());
+            paymentScheduleInstance.getStartDate(), paymentScheduleInstance.getEndDate(), paymentScheduleInstance.getPaymentDayInMonth());
     }
 
     /**
@@ -170,7 +196,7 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
     private PaymentScheduleInstance instanciate(PaymentScheduleTemplate paymentScheduleTemplate, ServiceInstance serviceInstance, BigDecimal amount, Calendar calendar,
             Date startDate, Date endDate, int dueDateDelay) throws BusinessException {
 
-        if(endDate == null) {
+        if (endDate == null) {
             throw new BusinessException("Can't instanciate PaymentSchedule when EndAgreementDate is null on subscription and serviceInstance");
         }
         paymentScheduleTemplate = paymentScheduleTemplateService.refreshOrRetrieve(paymentScheduleTemplate);
@@ -187,19 +213,49 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         paymentScheduleInstance.setCode(paymentScheduleTemplate.getCode());
         paymentScheduleInstance.setDescription(paymentScheduleTemplate.getDescription());
         paymentScheduleInstance.setServiceInstance(serviceInstance);
-        paymentScheduleInstance.setDueDateDays(dueDateDelay);
+        paymentScheduleInstance.setPaymentDayInMonth(dueDateDelay);
         create(paymentScheduleInstance);
+
+        // Evol #3770
+        ScriptInstance scriptInstance = paymentScheduleTemplate.getScriptInstance();
+        if (scriptInstance != null) {
+            String scriptCode = scriptInstance.getCode();
+            ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
+            Map<String, Object> methodContext = new HashMap<String, Object>();
+            methodContext.put(Script.CONTEXT_ENTITY, paymentScheduleInstance);
+            methodContext.put(Script.CONTEXT_ACTION, scriptCode);
+            methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+            methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+            if (script == null) {
+                log.error("Script is null");
+                throw new BusinessException("script is null");
+            }
+
+            script.execute(methodContext);
+            List<PaymentScheduleInstanceItem> paymentScheduleInstanceItems = (List<PaymentScheduleInstanceItem>) methodContext.get(Script.RESULT_VALUE);
+
+            if (paymentScheduleInstanceItems == null) {
+                log.error("Script value is null");
+                throw new BusinessException("Script value is null");
+            }
+            for (PaymentScheduleInstanceItem paymentScheduleInstanceItem : paymentScheduleInstanceItems) {
+                paymentScheduleInstanceItem.setPaymentScheduleInstance(paymentScheduleInstance);
+                paymentScheduleInstanceItemService.create(paymentScheduleInstanceItem);
+            }
+
+            return paymentScheduleInstance;
+        }
 
         Calendar cal = paymentScheduleInstance.getCalendar();
         cal.setInitDate(paymentScheduleInstance.getStartDate());
         Date date = paymentScheduleInstance.getStartDate();
-        CustomerAccount customerAccount = subscription.getUserAccount().getBillingAccount().getCustomerAccount();
+        CustomerAccount customerAccount = subscription.getUserAccount().getBillingAccount().getCustomerAccount();        
         while (date.before(paymentScheduleInstance.getEndDate())) {
-
             PaymentScheduleInstanceItem paymentScheduleInstanceItem = new PaymentScheduleInstanceItem();
-            paymentScheduleInstanceItem.setDueDate(DateUtils.addDaysToDate(date, dueDateDelay));
+            paymentScheduleInstanceItem.setDueDate(calendarBankingService.getNextBankWorkingDate(DateUtils.addDaysToDate(date, dueDateDelay)));
             paymentScheduleInstanceItem.setPaymentScheduleInstance(paymentScheduleInstance);
-            paymentScheduleInstanceItem.setRequestPaymentDate(computeRequestPaymentDate(customerAccount, paymentScheduleInstanceItem.getDueDate()));
+            paymentScheduleInstanceItem.setRequestPaymentDate(computeRequestPaymentDate(customerAccount, date, dueDateDelay));
+            paymentScheduleInstanceItem.setDueDate(computeDueDate(customerAccount, paymentScheduleInstanceItem.getRequestPaymentDate()));
             date = cal.nextCalendarDate(date);
             if (!date.before(paymentScheduleInstance.getEndDate())) {
                 paymentScheduleInstanceItem.setLast(true);
@@ -211,17 +267,40 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         }
         return paymentScheduleInstance;
     }
+    
+
+    
 
     /**
      * Compute request payment date.
      *
      * @param customerAccount the customer account
-     * @param dueDate the due date
-     * @return the date
+     * @param startDate the start date
+     * @param dayInMonth the day in month
+     * @return the request payment date
+     */
+    private Date computeRequestPaymentDate(CustomerAccount customerAccount, Date startDate,int dayInMonth)  {
+        Date requestPaymentDate = null;
+
+        if(dayInMonth >= DateUtils.getDayFromDate(startDate) ) {
+            requestPaymentDate = DateUtils.setDayToDate(startDate, dayInMonth);
+        }else {
+            requestPaymentDate = DateUtils.setMonthToDate(startDate, DateUtils.getDayFromDate(startDate) +1);
+            requestPaymentDate = DateUtils.setMonthToDate(requestPaymentDate, dayInMonth);
+        }
+        
+       return  calendarBankingService.getPreviousBankWorkingDate(requestPaymentDate);      
+    }
+    
+    /**
+     * Compute due date.
+     *
+     * @param customerAccount the customer account
+     * @param requestPaymentDate the request payment date
+     * @return the due date
      * @throws BusinessException the business exception
      */
-    private Date computeRequestPaymentDate(CustomerAccount customerAccount, Date dueDate) throws BusinessException {
-        Date requestPaymentDate = null;
+    private Date computeDueDate(CustomerAccount customerAccount, Date requestPaymentDate) throws BusinessException {       
         PaymentMethod preferredMethod = customerAccount.getPreferredPaymentMethod();
         if (preferredMethod == null) {
             throw new BusinessException("preferredMethod is null");
@@ -235,9 +314,8 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         if (preferredMethod.getPaymentType() == PaymentMethodEnum.DIRECTDEBIT) {
             ndDaysBeforeDueDate = Integer.parseInt(paramBean.getProperty("paymentSchedule.nbDaysBeforeDueDate.dd", "3"));
         }
+        return DateUtils.addDaysToDate(requestPaymentDate,  ndDaysBeforeDueDate);
 
-        requestPaymentDate = DateUtils.addDaysToDate(dueDate, (-1 * ndDaysBeforeDueDate));
-        return requestPaymentDate;
     }
 
     /**
@@ -260,10 +338,9 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
                 query = query.setParameter("status", status);
             }
             return (List<PaymentScheduleInstance>) query.getResultList();
-        } catch (Exception e) {            
+        } catch (Exception e) {
         }
         return null;
     }
-
 
 }

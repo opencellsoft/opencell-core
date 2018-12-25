@@ -20,6 +20,7 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -65,12 +66,15 @@ import org.meveo.model.shared.DateUtils;
 
 /**
  * Subscription
+ * 
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @author Mounir BAHIJE
+ * @lastModifiedVersion 5.3
  */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "SUB")
+@CustomFieldEntity(cftCodePrefix = "SUB", inheritCFValuesFrom = { "offer", "userAccount" })
 @ExportIdentifier({ "code" })
 @Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -84,22 +88,37 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Offer subscribed to
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_id")
     private OfferTemplate offer;
 
+    /**
+     * Subscription status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private SubscriptionStatusEnum status = SubscriptionStatusEnum.CREATED;
 
+    /**
+     * Last status change timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
     private Date statusDate = new Date();
 
+    /**
+     * Timestamp when subscribed
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
     private Date subscriptionDate = new Date();
 
+    /**
+     * Subscription termination date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "termination_date")
     private Date terminationDate;
@@ -111,42 +130,70 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @Column(name = "subscribed_till_date")
     private Date subscribedTillDate;
 
+    /**
+     * Services subscribed to
+     */
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<ServiceInstance> serviceInstances = new ArrayList<>();
 
+    /**
+     * Products subscribed to
+     */
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<ProductInstance> productInstances = new ArrayList<>();
 
+    /**
+     * Child access points
+     */
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<Access> accessPoints = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EDR> edrs = new ArrayList<>();
 
+    /**
+     * Parent User account
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id", nullable = false)
     @NotNull
     private UserAccount userAccount;
 
+    /**
+     * End agreement date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_agrement_date")
     private Date endAgreementDate;
 
+    /**
+     * Subscription termination reason
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_termin_reason_id")
     private SubscriptionTerminationReason subscriptionTerminationReason;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Type(type = "numeric_boolean")
     @Column(name = "default_level")
     private Boolean defaultLevel = true;
-    
+
+    /**
+     * If true, end of agreement date will be extended automatically till subscribedTillDate field
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
+    /**
+     * Subscription renewal configuration
+     */
     @Embedded
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
 
@@ -171,38 +218,85 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @Column(name = "renewal_notified_date")
     private Date renewalNotifiedDate;
 
+    /**
+     * Expression to determine minimum amount value
+     */
     @Column(name = "minimum_amount_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountEl;
 
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
-    
+
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    @Column(name = "minimum_amount_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    @Column(name = "minimum_label_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelElSpark;
+
+    /**
+     * Optional billing cycle for invoicing by subscription
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle")
     private BillingCycle billingCycle;
-    
+
+    /**
+     * Last billing run that invoiced this subscription
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
-    
+
+    /**
+     * Seller that offered products/services to subscribe to
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
+    
+    /**
+     * String value matched in the usageRatingJob to group the EDRs for rating.
+     */
+    @Column(name = "rating_group", length = 50)
+    private String ratingGroup;
 
+    /**
+     * Extra Rated transactions to reach minimum invoice amount per subscription
+     */
     @Transient
     private List<RatedTransaction> minRatedTransactions;
-    
+
+    /**
+     * Total invoicing amount without tax
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountWithoutTax;
-    
+    private BigDecimal totalInvoicingAmountWithoutTax;
+
+    /**
+     * Total invoicing amount with tax
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountWithTax;
-    
+    private BigDecimal totalInvoicingAmountWithTax;
+
+    /**
+     * Total invoicing tax amount
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountTax;
-    
+    private BigDecimal totalInvoicingAmountTax;
+
     public Date getEndAgreementDate() {
         return endAgreementDate;
     }
@@ -304,7 +398,28 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { offer, seller, userAccount };
+
+        ICustomFieldEntity[] parents = new ICustomFieldEntity[3];
+        int count = 0;
+        if (offer != null) {
+            parents[count] = offer;
+            count++;
+        }
+        if (seller != null) {
+            parents[count] = seller;
+            count++;
+        }
+        if (userAccount != null) {
+            parents[count] = userAccount;
+            count++;
+        }
+        if (count == 0) {
+            return null;
+        } else if (count == 3) {
+            return parents;
+        } else {
+            return Arrays.copyOfRange(parents, 0, count);
+        }
     }
 
     /**
@@ -379,22 +494,62 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         this.notifyOfRenewalDate = notifyOfRenewalDate;
     }
 
+    /**
+     * @return Expression to determine minimum amount value
+     */
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
 
+    /**
+     * @param minimumAmountEl Expression to determine minimum amount value
+     */
     public void setMinimumAmountEl(String minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
 
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value
+     */
     public String getMinimumLabelEl() {
         return minimumLabelEl;
     }
 
+    /**
+     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
+     */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
-    
+
+    /**
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
+
+    /**
+     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
+    }
+
     public BillingCycle getBillingCycle() {
         return billingCycle;
     }
@@ -428,48 +583,48 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
         return subscribedTillDate != null && DateUtils.setTimeToZero(subscribedTillDate).compareTo(DateUtils.setTimeToZero(new Date())) <= 0;
     }
-    
+
     /**
      * Auto update end of engagement date.
      */
     public void autoUpdateEndOfEngagementDate() {
         if (BooleanUtils.isTrue(this.autoEndOfEngagement)) {
             this.setEndAgreementDate(this.subscribedTillDate);
-        } 
+        }
     }
 
     /**
      * Update subscribedTillDate field in subscription while it was not renewed yet. Also calculate Notify of renewal date
      */
-	public void updateSubscribedTillAndRenewalNotifyDates() {
-		if (isRenewed()) {
-			return;
-		}
-		if (getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
-			if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
-				if (getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
-					getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
-				}
-				Calendar calendar = new GregorianCalendar();
-				calendar.setTime(getSubscriptionDate());
-				calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
-				setSubscribedTillDate(calendar.getTime());
+    public void updateSubscribedTillAndRenewalNotifyDates() {
+        if (isRenewed()) {
+            return;
+        }
+        if (getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
+            if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
+                if (getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
+                    getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
+                }
+                Calendar calendar = new GregorianCalendar();
+                calendar.setTime(getSubscriptionDate());
+                calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
+                setSubscribedTillDate(calendar.getTime());
 
-			} else {
-				setSubscribedTillDate(null);
-			}
-		}
+            } else {
+                setSubscribedTillDate(null);
+            }
+        }
 
-		if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
-			Calendar calendar = new GregorianCalendar();
-			calendar.setTime(getSubscribedTillDate());
-			calendar.add(Calendar.DAY_OF_MONTH, getSubscriptionRenewal().getDaysNotifyRenewal() * (-1));
-			setNotifyOfRenewalDate(calendar.getTime());
-		} else {
-			setNotifyOfRenewalDate(null);
-		}
-		this.autoUpdateEndOfEngagementDate();
-	} 
+        if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(getSubscribedTillDate());
+            calendar.add(Calendar.DAY_OF_MONTH, getSubscriptionRenewal().getDaysNotifyRenewal() * (-1));
+            setNotifyOfRenewalDate(calendar.getTime());
+        } else {
+            setNotifyOfRenewalDate(null);
+        }
+        this.autoUpdateEndOfEngagementDate();
+    }
 
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
         if (getSubscribedTillDate() != null && isRenewed()) {
@@ -477,7 +632,33 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         }
 
     }
-    
+
+    /**
+     * create AutoRenewDate
+     */
+    public void createAutoRenewDate(){
+        SubscriptionRenewal subscriptionRenewal = this.getSubscriptionRenewal();
+        if (subscriptionRenewal != null) {
+                subscriptionRenewal.setAutoRenewDate(new Date());
+        }
+	}
+
+    /**
+     * update AutoRenewDate when AutoRenew change
+     * @param subscriptionOld
+     */
+    public void updateAutoRenewDate(Subscription subscriptionOld){
+        SubscriptionRenewal subscriptionRenewalOld = subscriptionOld.getSubscriptionRenewal();
+        SubscriptionRenewal subscriptionRenewalNew = this.getSubscriptionRenewal();
+        boolean autoRenewOld = subscriptionRenewalOld.isAutoRenew();
+        boolean autoRenewNew = subscriptionRenewalNew.isAutoRenew();
+        if (autoRenewOld != autoRenewNew) {
+        if (subscriptionRenewalNew != null) {
+                subscriptionRenewalNew.setAutoRenewDate(new Date());
+            }
+        }
+    }
+
     public BillingRun getBillingRun() {
         return billingRun;
     }
@@ -485,39 +666,39 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     public void setBillingRun(BillingRun billingRun) {
         this.billingRun = billingRun;
     }
-    
-	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
-		minRatedTransactions = ratedTransactions;
-	}
 
-	public List<RatedTransaction> getMinRatedTransactions() {
-		return minRatedTransactions;
-	}
+    public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        minRatedTransactions = ratedTransactions;
+    }
 
-	public BigDecimal getTotalInvoicingAmountWithoutTax() {
-		return totalInvoicingAmountWithoutTax;
-	}
+    public List<RatedTransaction> getMinRatedTransactions() {
+        return minRatedTransactions;
+    }
 
-	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
-		this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
-	}
+    public BigDecimal getTotalInvoicingAmountWithoutTax() {
+        return totalInvoicingAmountWithoutTax;
+    }
 
-	public BigDecimal getTotalInvoicingAmountWithTax() {
-		return totalInvoicingAmountWithTax;
-	}
+    public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+        this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
+    }
 
-	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
-		this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
-	}
+    public BigDecimal getTotalInvoicingAmountWithTax() {
+        return totalInvoicingAmountWithTax;
+    }
 
-	public BigDecimal getTotalInvoicingAmountTax() {
-		return totalInvoicingAmountTax;
-	}
+    public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+        this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
+    }
 
-	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
-		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
-	}
-	
+    public BigDecimal getTotalInvoicingAmountTax() {
+        return totalInvoicingAmountTax;
+    }
+
+    public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+        this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+    }
+
     public Seller getSeller() {
         return seller;
     }
@@ -548,5 +729,13 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
+
+	public String getRatingGroup() {
+		return ratingGroup;
+	}
+
+	public void setRatingGroup(String ratingGroup) {
+		this.ratingGroup = ratingGroup;
+	}
 
 }

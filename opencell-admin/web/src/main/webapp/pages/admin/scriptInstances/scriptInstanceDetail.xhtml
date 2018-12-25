@@ -1,6 +1,5 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions"
-    template="/layout/template.xhtml">
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -11,17 +10,14 @@
 
     <ui:define name="body">
         <p:panel>
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
                     <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
                     <p:menuitem outcome="scriptInstances" value="#{messages['menu.scriptInstances']}" />
-				<p:menuitem value="#{messages['commons.new']} #{messages['scriptInstance.panel']}"
-					disabled="true" rendered="#{scriptInstanceBean.entity.transient}" />
-				<p:menuitem
-					value="#{messages['scriptInstance.panel']} - #{scriptInstanceBean.entity.code}"
-					disabled="true" rendered="#{!scriptInstanceBean.entity.transient}" />
-			</p:breadCrumb>
-		</h:form>
+                    <p:menuitem value="#{messages['commons.new']} #{messages['scriptInstance.panel']}" disabled="true" rendered="#{scriptInstanceBean.entity.transient}" />
+                    <p:menuitem value="#{messages['scriptInstance.panel']} - #{scriptInstanceBean.entity.code}" disabled="true" rendered="#{!scriptInstanceBean.entity.transient}" />
+                </p:breadCrumb>
+            </h:form>
             <a href='https://www.assembla.com/spaces/meveo-enterprise/wiki/Scripts' target='_blank'>Help ?</a>
         </p:panel>
         <hftl:formPanel label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" showFormButtons="false">
@@ -46,33 +42,32 @@
                 </h:panelGroup>
             </hftl:decorateFormField>
             <h:panelGroup id="scriptErrors">
-                <hftl:decorateFormField label="#{messages['scriptInstance.compilationErrors']}" componentWidth="100" newLine="true"
-                    rendered="#{scriptInstanceBean.entity.isError()}">
-                    <p:dataTable id="entityActions" var="entity" value="#{scriptInstanceBean.entity.scriptErrors}" paginator="true" rows="10" sortBy="#{entity.lineNumber}"
-                        sortField="lineNumber" paginatorAlwaysVisible="false"
-                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="10"
-                        lazy="false" styleClass="custom-grid" reflow="true">
-                        <hftl:column label="#{messages['scriptInstance.compilation.lineNumber']}" field="lineNumber" width="10%"/>
+                <hftl:decorateFormField label="#{messages['scriptInstance.compilationErrors']}" componentWidth="100" newLine="true" rendered="#{scriptInstanceBean.entity.isError()}">
+                    <p:dataTable id="entityActions" var="entity" value="#{scriptInstanceBean.entity.scriptErrors}" paginator="true" rows="10" sortBy="#{entity.lineNumber}" sortField="lineNumber"
+                        paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                        rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true">
+                        <hftl:column label="#{messages['scriptInstance.compilation.lineNumber']}" field="lineNumber" width="10%" />
                         <hftl:column label="#{messages['scriptInstance.compilation.columnNumber']}" field="columnNumber" width="15%" />
                         <hftl:column label="#{messages['scriptInstance.compilation.message']}" field="message" />
                     </p:dataTable>
                 </hftl:decorateFormField>
             </h:panelGroup>
-            <hftl:formField label="#{messages['scriptInstance.executionRoles']}" field="executionRoles" listType="pickUpList" dualListModel="#{scriptInstanceBean.execRolesDM}"
-                valueLabelField="name" componentWidth="50" />
-            <hftl:formField label="#{messages['scriptInstance.sourcingRoles']}" field="sourcingRoles" listType="pickUpList" dualListModel="#{scriptInstanceBean.sourcRolesDM}"
-                valueLabelField="name" componentWidth="50" />
-            <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!scriptInstanceBean.entity.transient and scriptInstanceBean.getPartOfModules() != null and scriptInstanceBean.getPartOfModules() != ''}">
+            <hftl:formField label="#{messages['scriptInstance.executionRoles']}" field="executionRoles" listType="pickUpList" dualListModel="#{scriptInstanceBean.execRolesDM}" valueLabelField="name"
+                componentWidth="50" />
+            <hftl:formField label="#{messages['scriptInstance.sourcingRoles']}" field="sourcingRoles" listType="pickUpList" dualListModel="#{scriptInstanceBean.sourcRolesDM}" valueLabelField="name"
+                componentWidth="50" />
+            <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}"
+                rendered="#{!scriptInstanceBean.entity.transient and scriptInstanceBean.getPartOfModules() != null and scriptInstanceBean.getPartOfModules() != ''}">
                 <h:outputText value="#{scriptInstanceBean.getPartOfModules()}" />
             </hftl:decorateFormField>
-            
-            <hf:formButtons backingBean="#{scriptInstanceBean}" edit="#{scriptInstanceBean.edit}" ajaxSubmit="true"
-                execute="#{scriptInstanceBean.entity.id!=null and !scriptInstanceBean.entity.error}" executeLabel="#{messages['action.execute']}" killConversationOnSave="false" killConversationOnBack="false" />
+
+            <hf:formButtons backingBean="#{scriptInstanceBean}" edit="#{scriptInstanceBean.edit}" ajaxSubmit="true" execute="#{scriptInstanceBean.entity.id!=null and !scriptInstanceBean.entity.error}"
+                executeLabel="#{messages['action.execute']}" killConversationOnSave="false" killConversationOnBack="false" />
+
+            <h:panelGroup id="logs" style="margin-top: 20px" styleClass="formFieldGroup clearLeft">
+                <p:outputLabel for="logText" value="#{messages['scriptInstance.logs']}" rendered="#{scriptInstanceBean.logs!=null}"/>
+                <p:inputTextarea id="logText" rendered="#{scriptInstanceBean.logs!=null}" value="#{scriptInstanceBean.logs}" cols="#{1}" rows="#{1}" autoResize="true" readonly="true" style="width:100%;" />
+            </h:panelGroup>
         </hftl:formPanel>
-        <p:dataTable var="log" value="#{scriptInstanceBean.getLogs()}" rendered="#{!empty(scriptInstanceBean.getLogs())}">
-            <p:column headerText="Logs">
-                <h:outputText value="#{log}" />
-            </p:column>
-        </p:dataTable>
     </ui:define>
 </ui:composition>

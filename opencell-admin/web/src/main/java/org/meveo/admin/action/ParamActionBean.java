@@ -13,21 +13,24 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.ParamProperty;
+import org.meveo.service.base.local.IPersistenceService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Khalid HORRI
+ * @lastModifiedVersion 5.2
  *
  */
 @Named
 @ConversationScoped
-public class ParamActionBean implements Serializable {
+public class ParamActionBean extends BaseBean<ParamProperty> implements Serializable {
 
     private static final long serialVersionUID = -4570971790276879220L;
 
@@ -46,14 +49,35 @@ public class ParamActionBean implements Serializable {
 
     private List<ParamProperty> properties = null;
 
-    private void beginConversation() {
-        if (conversation.isTransient()) {
-            conversation.begin();
-        }
+
+    /**
+     * Constructor
+     */
+    public ParamActionBean() {
+        super(ParamProperty.class);
     }
+
+    @Override
+    public ParamProperty initEntity() {
+        ParamProperty paramProperty = super.initEntity();
+        return paramProperty;
+    }
+
+
 
     public void preRenderView() {
         beginConversation();
+    }
+
+    /**
+     * Method that returns concrete PersistenceService for an entity class backing bean is bound to. That service is then used for operations on concrete entities (eg. save, delete
+     * etc).
+     *
+     * @return Persistence service
+     */
+    @Override
+    protected IPersistenceService<ParamProperty> getPersistenceService() {
+        return null;
     }
 
     public void reset() {
@@ -103,6 +127,10 @@ public class ParamActionBean implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
+    /**
+     *
+     * @param event the edit event
+     */
     public void onCellEdit(CellEditEvent event) {
         Object oldValue = event.getOldValue();
         Object newValue = event.getNewValue();
@@ -111,4 +139,33 @@ public class ParamActionBean implements Serializable {
         property.setValue(newValue == null ? null : newValue.toString());
         log.debug("Old: " + oldValue + ", New:" + newValue);
     }
+
+    /**
+     * Add new property to properties list
+     */
+    public void add() {
+        log.info("Add new property:" + this.entity.getKey() + " -> " + this.entity.getValue());
+        if (!this.isDataValid()) {
+            messages.error(new BundleKey("messages", "properties.add.error"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return;
+        }
+        if (getProperties().stream().anyMatch(property -> property.getKey().equals(this.entity.getKey()))){
+            messages.error(new BundleKey("messages", "properties.add.exist"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return;
+
+        }
+        getProperties().add(this.entity);
+        this.entity = newEntity();
+    }
+
+    /**
+     * Check if the input key is valid
+     * @return
+     */
+    private boolean isDataValid() {
+        return this.entity != null && this.entity.getKey().matches(ParamProperty.PROPERTY_PATTERN);
+    }
+
 }

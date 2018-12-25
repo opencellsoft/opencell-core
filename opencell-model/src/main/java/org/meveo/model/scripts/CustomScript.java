@@ -17,27 +17,44 @@ import org.meveo.model.ExportIdentifier;
 
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+/**
+ * Customization script
+ * 
+ * @author Andrius Karpavicius
+ */
 @ExportIdentifier({ "code" })
 @MappedSuperclass
 public abstract class CustomScript extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 8176170199770220430L;
 
+    /**
+     * Script contents/source
+     */
     @Column(name = "script", nullable = false, columnDefinition = "TEXT")
     @NotNull
     @XStreamConverter(XStreamCDATAConverter.class)
-    private String script;
+    protected String script;
 
+    /**
+     * Script language
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "src_type")
-    private ScriptSourceTypeEnum sourceTypeEnum = ScriptSourceTypeEnum.JAVA;
+    protected ScriptSourceTypeEnum sourceTypeEnum = ScriptSourceTypeEnum.JAVA;
 
+    /**
+     * Script compilation errors
+     */
     @Transient
-    private List<ScriptInstanceError> scriptErrors = new ArrayList<ScriptInstanceError>();
+    protected List<ScriptInstanceError> scriptErrors = new ArrayList<ScriptInstanceError>();
 
+    /**
+     * Does script currently have compilation errors
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "is_error")
-    private Boolean error = false;
+    protected Boolean error = false;
 
     /**
      * @return Script language

@@ -43,6 +43,8 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
 /**
+ * Tax
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
@@ -55,22 +57,28 @@ import org.meveo.model.ObservableEntity;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_tax_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "tax.getNbTaxesNotAssociated", query = "select count(*) from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null)"
-                + " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)"),
-        @NamedQuery(name = "tax.getTaxesNotAssociated", query = "from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null ) "
-                + " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)")
-
-})
+        @NamedQuery(name = "Tax.getNbTaxesNotAssociated", query = "select count(*) from Tax t where t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)"),
+        @NamedQuery(name = "Tax.getTaxesNotAssociated", query = "from Tax t where t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)"),
+        @NamedQuery(name = "Tax.getZeroTax", query = "from Tax t where t.percent=0 ") })
 public class Tax extends BusinessCFEntity {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Accounting code
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 
+    /**
+     * Tax percent
+     */
     @Column(name = "tax_percentage", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal percent;
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
@@ -124,10 +132,8 @@ public class Tax extends BusinessCFEntity {
         return descriptionI18n;
     }
 
-
-	
-	public String getIdOrCode() {
-		return StringUtils.isBlank(id) ? getCode() : String.valueOf(id);
-	}
+    public String getIdOrCode() {
+        return StringUtils.isBlank(id) ? getCode() : String.valueOf(id);
+    }
 
 }

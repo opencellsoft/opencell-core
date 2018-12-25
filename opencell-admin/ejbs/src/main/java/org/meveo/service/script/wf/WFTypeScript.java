@@ -8,18 +8,30 @@ import org.meveo.admin.wf.WorkflowType;
 import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.service.script.RunTimeLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WorkflowTypeClass
 public class WFTypeScript<E extends BusinessEntity> extends WorkflowType<E> implements WFTypeScriptInterface {
-	
 
-	public WFTypeScript() {
-		super();
-	}
+    /**
+     * A logger
+     */
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-	public WFTypeScript(E e) {
-		super(e);
-	}
+    /**
+     * A logger to replace with when running script in test mode (from GUI), so logs can be returned/visible to the end user
+     */
+    protected RunTimeLogger logTest = new RunTimeLogger(this.getClass());
+
+    public WFTypeScript() {
+        super();
+    }
+
+    public WFTypeScript(E e) {
+        super(e);
+    }
 
     @Override
     public void init(Map<String, Object> methodContext) throws BusinessException {
@@ -42,21 +54,27 @@ public class WFTypeScript<E extends BusinessEntity> extends WorkflowType<E> impl
         return EjbUtils.getServiceInterface(serviceInterfaceName);
     }
 
-	@Override
-	public List<String> getStatusList() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<String> getStatusList() {
+        return null;
+    }
 
-	@Override
-	public void changeStatus(String newStatus) throws BusinessException {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void changeStatus(String newStatus) throws BusinessException {
 
-	@Override
-	public String getActualStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    }
+
+    @Override
+    public String getActualStatus() {
+        return null;
+    }
+
+    /**
+     * Get log messages related to script execution (test mode run only)
+     * 
+     * @return Log messages
+     */
+    public String getLogMessages() {
+        return logTest.getLog();
+    }
 }

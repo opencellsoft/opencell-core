@@ -55,138 +55,248 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 
 /**
+ * Billing account
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "BA")
+@CustomFieldEntity(cftCodePrefix = "BA", inheritCFValuesFrom = "customerAccount")
 @ExportIdentifier({ "code" })
 @Table(name = "billing_billing_account")
 @DiscriminatorValue(value = "ACCT_BA")
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listIdsByBillingRunId", query = "SELECT b.id FROM BillingAccount b where b.billingRun.id=:billingRunId"),
-				@NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId")
-})
+        @NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId") })
 public class BillingAccount extends AccountEntity implements IBillableEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) BillingAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Account status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 10)
     private AccountStatusEnum status;
 
+    /**
+     * Last status change timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
     private Date statusDate = new Date();
 
+    /**
+     * Use electronic billing?
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "electronic_billing")
     private Boolean electronicBilling = false;
 
+    /**
+     * Next invoice date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "next_invoice_date")
     private Date nextInvoiceDate;
 
+    /**
+     * Account creation date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
     private Date subscriptionDate;
 
+    /**
+     * Account termination date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "termination_date")
     private Date terminationDate;
 
+    /**
+     * Customer account
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_account_id")
     private CustomerAccount customerAccount;
 
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * User accounts
+     */
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<UserAccount> usersAccounts = new ArrayList<>();
 
+    /**
+     * Invoices
+     */
     @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Invoice> invoices = new ArrayList<>();
 
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * Billing runs
+     */
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<BillingRunList> billingRunLists = new ArrayList<>();
 
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * Invoice aggregates
+     */
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
+    /**
+     * Discount rate
+     */
     @Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discountRate;
 
+    /**
+     * Billing cycle
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle")
     private BillingCycle billingCycle;
 
+    /**
+     * Country for tax calculation
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country_id")
     private TradingCountry tradingCountry;
 
+    /**
+     * Invoice language
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
 
+    /**
+     * Last billing run
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
 
+    /**
+     * Total amount without tax in the last billing run
+     */
     @Column(name = "br_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal brAmountWithoutTax;
 
+    /**
+     * Total amount with tax in the last billing run
+     */
     @Column(name = "br_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal brAmountWithTax;
 
+    /**
+     * Invoice prefix
+     */
     @Column(name = "invoice_prefix", length = 255)
     @Size(max = 255)
     private String invoicePrefix;
 
+    /**
+     * Subscription termination rules
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
 
+    /**
+     * A list of rated transactions
+     */
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "discount_plan_id")
-    private DiscountPlan discountPlan;
-
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
-    @MapKey(name = "code")
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     // key is the counter template code
+    /**
+     * Counter instances
+     */
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
     Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
 
+    /**
+     * Invoicing threshold - do not invoice for a lesser amount
+     */
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;
 
+    /**
+     * Expression to determine minimum amount value
+     */
     @Column(name = "minimum_amount_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountEl;
-    
+
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    @Column(name = "minimum_amount_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
-    
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    @Column(name = "minimum_label_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelElSpark;
+
+    /**
+     * A list of rated transactions
+     */
     @Transient
     private List<RatedTransaction> minRatedTransactions;
-    
+
+    /**
+     * Total invoicing amount without tax
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountWithoutTax;
-    
+    private BigDecimal totalInvoicingAmountWithoutTax;
+
+    /**
+     * Instance of discount plans. Once instantiated effectivity date is not affected when template is updated.
+     */
+	@OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<DiscountPlanInstance> discountPlanInstances;
+
+    /**
+     * Total invoicing amount with tax
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountWithTax;
-    
+    private BigDecimal totalInvoicingAmountWithTax;
+
+    /**
+     * Total invoicing tax amount
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountTax;
+    private BigDecimal totalInvoicingAmountTax;
+    
+    /**
+     * Applicable discount plan. Replaced by discountPlanInstances. Now used only in GUI.
+     */
+    @Transient
+    private DiscountPlan discountPlan;
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -363,14 +473,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
         this.ratedTransactions = ratedTransactions;
     }
 
-    public DiscountPlan getDiscountPlan() {
-        return discountPlan;
-    }
-
-    public void setDiscountPlan(DiscountPlan discountPlan) {
-        this.discountPlan = discountPlan;
-    }
-
     public Map<String, CounterInstance> getCounters() {
         return counters;
     }
@@ -381,7 +483,10 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { customerAccount };
+        if (customerAccount != null) {
+            return new ICustomFieldEntity[] { customerAccount };
+        }
+        return null;
     }
 
     @Override
@@ -408,63 +513,119 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
         this.invoicingThreshold = invoicingThreshold;
     }
 
+    /**
+     * @return Expression to determine minimum amount value
+     */
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
 
+    /**
+     * @param minimumAmountEl Expression to determine minimum amount value
+     */
     public void setMinimumAmountEl(String minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
 
+    /**
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value
+     */
     public String getMinimumLabelEl() {
         return minimumLabelEl;
     }
 
+    /**
+     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
+     */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
 
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
+
+    /**
+     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
+    }
+
     @Override
-	public void anonymize(String code) {
-		super.anonymize(code);
-		getContactInformationNullSafe().anonymize(code);
-		if (getUsersAccounts() != null) {
-			for (UserAccount ua : getUsersAccounts()) {
-				ua.anonymize(code);
-			}
-		}
-	}
+    public void anonymize(String code) {
+        super.anonymize(code);
+        getContactInformationNullSafe().anonymize(code);
+        if (getUsersAccounts() != null) {
+            for (UserAccount ua : getUsersAccounts()) {
+                ua.anonymize(code);
+            }
+        }
+    }
+
+    public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        minRatedTransactions = ratedTransactions;
+    }
+
+    public List<RatedTransaction> getMinRatedTransactions() {
+        return minRatedTransactions;
+    }
+
+    public BigDecimal getTotalInvoicingAmountWithoutTax() {
+        return totalInvoicingAmountWithoutTax;
+    }
+
+    public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+        this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
+    }
+
+    public BigDecimal getTotalInvoicingAmountWithTax() {
+        return totalInvoicingAmountWithTax;
+    }
+
+    public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+        this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
+    }
+
+    public BigDecimal getTotalInvoicingAmountTax() {
+        return totalInvoicingAmountTax;
+    }
+
+    public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+        this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+    }
     
-	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
-		minRatedTransactions = ratedTransactions;
+	public List<DiscountPlanInstance> getDiscountPlanInstances() {
+		return discountPlanInstances;
+	}
+	
+	public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstances) {
+		this.discountPlanInstances = discountPlanInstances;
 	}
 
-	public List<RatedTransaction> getMinRatedTransactions() {
-		return minRatedTransactions;
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
 	}
 
-	public BigDecimal getTotalInvoicingAmountWithoutTax() {
-		return totalInvoicingAmountWithoutTax;
-	}
-
-	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
-		this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
-	}
-
-	public BigDecimal getTotalInvoicingAmountWithTax() {
-		return totalInvoicingAmountWithTax;
-	}
-
-	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
-		this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
-	}
-
-	public BigDecimal getTotalInvoicingAmountTax() {
-		return totalInvoicingAmountTax;
-	}
-
-	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
-		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
 	}
 
 }

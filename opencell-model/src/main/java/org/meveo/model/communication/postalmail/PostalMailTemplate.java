@@ -29,18 +29,18 @@ import org.meveo.model.communication.MessageTemplate;
 @DiscriminatorValue("POSTAL_MAIL")
 public class PostalMailTemplate extends MessageTemplate {
 
-	private static final long serialVersionUID = 6264421465934474507L;
+    private static final long serialVersionUID = 6264421465934474507L;
 
-	@Column(name = "jasper_filename", length = 255)
+    @Column(name = "jasper_filename", length = 255)
     @Size(max = 255)
-	private String jasperFileName;
+    private String jasperFileName;
 
-	public String getJasperFileName() {
-		return jasperFileName;
-	}
+    public String getJasperFileName() {
+        return jasperFileName;
+    }
 
-	public void setJasperFileName(String jasperFileName) {
-		this.jasperFileName = jasperFileName;
-	}
+    public void setJasperFileName(String jasperFileName) {
+        this.jasperFileName = jasperFileName;
+    }
 
 }
