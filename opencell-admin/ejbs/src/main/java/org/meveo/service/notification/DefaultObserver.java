@@ -3,6 +3,7 @@ package org.meveo.service.notification;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Lock;
@@ -31,6 +32,7 @@ import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
 import org.meveo.event.qualifier.EndOfTerm;
 import org.meveo.event.qualifier.InboundRequestReceived;
+import org.meveo.event.qualifier.InstantiateWF;
 import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.event.qualifier.Processed;
@@ -40,9 +42,12 @@ import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Terminated;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.generic.wf.GenericWorkflow;
+import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
@@ -60,6 +65,8 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
+import org.meveo.service.generic.wf.GenericWorkflowService;
+import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
@@ -96,6 +103,12 @@ public class DefaultObserver {
 
     @Inject
     private CounterInstanceService counterInstanceService;
+    
+    @Inject
+    private GenericWorkflowService genericWorkflowService;
+    
+    @Inject
+    private WorkflowInstanceService workflowInstanceService;
 
     @Inject
     private GenericNotificationService genericNotificationService;
@@ -277,6 +290,18 @@ public class DefaultObserver {
         return result;
     }
 
+    public void entityInstantiateWF(@Observes @InstantiateWF BusinessEntity e) throws BusinessException {
+        log.debug("Defaut observer : Entity {} with id {} instantiateWF", e.getClass().getName(), e.getId());
+        
+        List<GenericWorkflow> genericWorkflows = genericWorkflowService.list();
+        for (GenericWorkflow genericWorkflow : genericWorkflows) {
+            WorkflowInstance linkedWFIns = new WorkflowInstance();
+            linkedWFIns.setEntityInstanceCode(e.getCode());
+            linkedWFIns.setGenericWorkflow(genericWorkflow);
+            workflowInstanceService.create(linkedWFIns);
+        }
+    }
+    
     public void entityCreated(@Observes @Created BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} created", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.CREATED, e);

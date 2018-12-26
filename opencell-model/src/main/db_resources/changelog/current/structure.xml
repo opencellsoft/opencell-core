@@ -803,6 +803,8 @@
         </createTable>
         <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_status" constraintName="fk_generic_wf" deferrable="false" initiallyDeferred="false"
             onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
+        <addUniqueConstraint columnNames="generic_wf_id, code" constraintName="uk_generic_wf_id_code_status" deferrable="false" disabled="false" initiallyDeferred="false"
+        	tableName="wf_status" />
         
         <createSequence sequenceName="wf_instance_seq" />
 		<createTable tableName="wf_instance">

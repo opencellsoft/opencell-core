@@ -60,6 +60,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
+import org.meveo.event.qualifier.InstantiateWF;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -75,6 +76,7 @@ import org.meveo.model.ISearchable;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -145,6 +147,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Inject
     protected ElasticClient elasticClient;
+
+    @Inject
+    @InstantiateWF
+    protected Event<BaseEntity> entityInstantiateWFEventProducer;
 
     @Inject
     @Created
@@ -495,6 +501,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityCreatedEventProducer.fire((BaseEntity) entity);
+        }
+        
+        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(WorkflowedEntity.class)) {
+            entityInstantiateWFEventProducer.fire((BaseEntity) entity);
         }
 
         if (accumulateCF && entity instanceof ICustomFieldEntity) {
