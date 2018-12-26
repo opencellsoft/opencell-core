@@ -127,7 +127,7 @@
 	<sql>update ${db.schema.adapted}ar_ddrequest_builder set payment_level ='AO'</sql>
 
 	</changeSet>
-	
+
 	<changeSet author="SaidRamli" id="3883_20181226">
          <insert tableName="adm_user">
             <column name="id" valueNumeric="-4" />
@@ -149,7 +149,7 @@
             <column name="role_id" value="-14"></column>
         </insert>
     </changeSet>
-    
+
      <changeSet author="SaidRamli" id="3591_20190114">
        <!--   Country Management permissions -->
         <insert tableName="adm_permission">
@@ -170,7 +170,7 @@
             <column name="permission_id" value="-109"></column>
             <column name="role_id" value="-1"></column>
         </insert>
-        
+
         <!--   Language Management permissions -->
         <insert tableName="adm_permission">
             <column name="id" valueNumeric="-110" />
@@ -190,7 +190,7 @@
             <column name="permission_id" value="-111"></column>
             <column name="role_id" value="-1"></column>
         </insert>
-        
+
         <!--   Currency Management permissions -->
         <insert tableName="adm_permission">
             <column name="id" valueNumeric="-112" />
@@ -210,7 +210,19 @@
             <column name="permission_id" value="-113"></column>
             <column name="role_id" value="-1"></column>
         </insert>
-        
+
 	 </changeSet>
-	 
+
+    <changeSet id="#3908_20191001" author="HORRI KHALID">
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-108"/>
+            <column name="name" value="useJob"/>
+            <column name="permission" value="useJob"/>
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-109"/>
+            <column name="name" value="createJob"/>
+            <column name="permission" value="createJob"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>
