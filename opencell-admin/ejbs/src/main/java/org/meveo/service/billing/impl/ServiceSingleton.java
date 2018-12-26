@@ -20,6 +20,7 @@ import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentGatewayRumSequence;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
 import org.meveo.service.admin.impl.SellerService;
@@ -241,11 +242,21 @@ public class ServiceSingleton {
 	@Lock(LockType.WRITE)
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public CustomerSequence getNextCustomerSequenceNumber(CustomerSequence customerSequence) {
+	public CustomerSequence getPaymentGatewayRumSequenceNumber(CustomerSequence customerSequence) {
 		customerSequence.getGenericSequence()
 				.setCurrentSequenceNb(customerSequence.getGenericSequence().getCurrentSequenceNb() + 1L);
 
 		return customerSequence;
+	}
+
+	@Lock(LockType.WRITE)
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public PaymentGatewayRumSequence getPaymentGatewayRumSequenceNumber(PaymentGatewayRumSequence rumSequence) {
+		rumSequence.getGenericSequence()
+				.setCurrentSequenceNb(rumSequence.getGenericSequence().getCurrentSequenceNb() + 1L);
+
+		return rumSequence;
 	}
 
 }

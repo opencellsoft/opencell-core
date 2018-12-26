@@ -53,6 +53,7 @@ import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
 import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -85,13 +86,14 @@ public interface AccountWs extends IBaseWs {
     ActionStatus updateCustomer(@WebParam(name = "customer") CustomerDto postData);
 
     /**
-     * Search for a customer with a given code
+     * Find a customer with a given code
      * 
      * @param customerCode The customer's code
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return The customer's data
      */
     @WebMethod
-    GetCustomerResponseDto findCustomer(@WebParam(name = "customerCode") String customerCode);
+    GetCustomerResponseDto findCustomer(@WebParam(name = "customerCode") String customerCode, @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * Remove customer with a given code
@@ -215,15 +217,16 @@ public interface AccountWs extends IBaseWs {
     ActionStatus updateCustomerAccount(@WebParam(name = "customerAccount") CustomerAccountDto postData);
 
     /**
-     * Search for a customer account with a given code.
+     * Find a customer account with a given code.
      * 
      * @param customerAccountCode The customer account's code
      * @param calculateBalances true if need to calculate balances.
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return customer account
      */
     @WebMethod
     GetCustomerAccountResponseDto findCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode,
-            @WebParam(name = "calculateBalances") Boolean calculateBalances);
+            @WebParam(name = "calculateBalances") Boolean calculateBalances, @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * Remove customerAccount with a given code.
@@ -304,8 +307,16 @@ public interface AccountWs extends IBaseWs {
     @WebMethod
     ActionStatus updateBillingAccount(@WebParam(name = "billingAccount") BillingAccountDto postData);
 
+    /**
+     * Find a Billing account with a given code
+     * 
+     * @param billingAccountCode Billing account's code
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @return Billing account's data
+     */
     @WebMethod
-    GetBillingAccountResponseDto findBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
+    GetBillingAccountResponseDto findBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode,
+            @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     @WebMethod
     ActionStatus removeBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
@@ -327,8 +338,15 @@ public interface AccountWs extends IBaseWs {
     @WebMethod
     ActionStatus applyProduct(@WebParam(name = "applyProduct") ApplyProductRequestDto postData);
 
+    /**
+     * Find a User account with a given code
+     * 
+     * @param userAccountCode User account's code
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @return User account's data
+     */
     @WebMethod
-    GetUserAccountResponseDto findUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);
+    GetUserAccountResponseDto findUserAccount(@WebParam(name = "userAccountCode") String userAccountCode, @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     @WebMethod
     ActionStatus removeUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);
@@ -533,65 +551,63 @@ public interface AccountWs extends IBaseWs {
 
     @WebMethod
     ParentEntitiesResponseDto findParents(@WebParam(name = "parentSearchDto") CRMAccountTypeSearchDto searchDto);
-    
+
     /**
-   	 * Exports an account hierarchy given a specific customer selected in the GUI.
-   	 * It includes Subscription, AccountOperation and Invoice details. It packaged the json output
-   	 * as a zipped file along with the pdf invoices.
-   	 * 
+     * Exports an account hierarchy given a specific customer selected in the GUI. It includes Subscription, AccountOperation and Invoice details. It packaged the json output as a
+     * zipped file along with the pdf invoices.
+     * 
      * @param customerCode the code of the customer
      * @return ActionStatus action status.
      */
     @WebMethod
-	ActionStatus exportCustomerHierarchy(@WebParam(name = "customerCode") String customerCode);
-    
+    ActionStatus exportCustomerHierarchy(@WebParam(name = "customerCode") String customerCode);
+
     /**
-     * Right to be forgotten. This concerns listing of risky or grey/black listed customers and their data.
-	 * Upon request, they can require their data to be erased.
-	 * In such case, mandatory information (accounting, invoicing, payments) must be preserved but the data tables including the customer's data must be anonymize (firstname/name/emails/phones/addresses/etc) so if this person register back it will be treated as a new customer without history.
+     * Right to be forgotten. This concerns listing of risky or grey/black listed customers and their data. Upon request, they can require their data to be erased. In such case,
+     * mandatory information (accounting, invoicing, payments) must be preserved but the data tables including the customer's data must be anonymize
+     * (firstname/name/emails/phones/addresses/etc) so if this person register back it will be treated as a new customer without history.
+     * 
      * @param customerCode The code of the customer
      * @return Request processing status
      */
     @WebMethod
-	ActionStatus anonymizeGpdr(@WebParam(name = "customerCode") String customerCode);
-	
-	// Sequences
-	
-	/**
-	 * Update the Provider's RUM sequence configuration.
-	 * 
-	 * @param postData
-	 *            DTO
-	 * @return status of the operation
-	 */
-	@WebMethod
-	ActionStatus updateMandateNumberSequence(@WebParam(name = "sequence") GenericSequenceDto postData);
+    ActionStatus anonymizeGpdr(@WebParam(name = "customerCode") String customerCode);
 
-	/**
-	 * Calculates and returns the next value of the mandate number.
-	 * 
-	 * @return next mandate value
-	 */
-	@WebMethod
-	GenericSequenceValueResponseDto getNextMandateNumberSequence();
-	
-	/**
-	 * Update the Provider's customer number sequence configuration.
-	 * 
-	 * @param postData
-	 *            DTO
-	 * @return status of the operation
-	 */
-	@WebMethod
-	ActionStatus updateCustomerNumberSequence(@WebParam(name = "sequence") GenericSequenceDto postData);
-	
-	/**
-	 * Calculates and returns the next value of the mandate number.
-	 * 
-	 * @return next customer no value
-	 */
-	@WebMethod
-	GenericSequenceValueResponseDto getNextCustomerNumberSequence();
+    // Sequences
+
+    /**
+     * Update the Provider's RUM sequence configuration.
+     * 
+     * @param postData DTO
+     * @return status of the operation
+     */
+    @WebMethod
+    ActionStatus updateMandateNumberSequence(@WebParam(name = "sequence") GenericSequenceDto postData);
+
+    /**
+     * Calculates and returns the next value of the mandate number.
+     * 
+     * @return next mandate value
+     */
+    @WebMethod
+    GenericSequenceValueResponseDto getNextMandateNumberSequence();
+
+    /**
+     * Update the Provider's customer number sequence configuration.
+     * 
+     * @param postData DTO
+     * @return status of the operation
+     */
+    @WebMethod
+    ActionStatus updateCustomerNumberSequence(@WebParam(name = "sequence") GenericSequenceDto postData);
+
+    /**
+     * Calculates and returns the next value of the mandate number.
+     * 
+     * @return next customer no value
+     */
+    @WebMethod
+    GenericSequenceValueResponseDto getNextCustomerNumberSequence();
 
 	/**
 	 * Creates a new customer sequence.

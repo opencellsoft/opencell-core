@@ -53,17 +53,6 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
     @Inject
     private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
 
-    @Override
-    public void create(ServiceTemplate serviceTemplate) throws BusinessException {
-        super.create(serviceTemplate);
-    }
-
-    @Override
-    public ServiceTemplate update(ServiceTemplate serviceTemplate) throws BusinessException {
-        ServiceTemplate result = super.update(serviceTemplate);
-        return result;
-    }
-
     public int getNbServiceWithNotOffer() {
         return ((Long) getEntityManager().createNamedQuery("serviceTemplate.getNbServiceWithNotOffer", Long.class).getSingleResult()).intValue();
     }

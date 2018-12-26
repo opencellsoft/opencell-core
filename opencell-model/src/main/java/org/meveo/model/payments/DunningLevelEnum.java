@@ -20,11 +20,7 @@ package org.meveo.model.payments;
 
 public enum DunningLevelEnum {
 
-    R0(1, "DunningLevelEnum.R0"),
-    R1(2, "DunningLevelEnum.R1"),
-    R2(3, "DunningLevelEnum.R2"),
-    R3(4, "DunningLevelEnum.R3"),
-    R4(5, "DunningLevelEnum.R4");
+    R0(1, "DunningLevelEnum.R0"), R1(2, "DunningLevelEnum.R1"), R2(3, "DunningLevelEnum.R2"), R3(4, "DunningLevelEnum.R3"), R4(5, "DunningLevelEnum.R4");
 
     private Integer id;
     private String label;

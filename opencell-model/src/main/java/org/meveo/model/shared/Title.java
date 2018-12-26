@@ -34,6 +34,11 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
+/**
+ * Person or company title
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "code" })
@@ -44,10 +49,16 @@ public class Title extends BusinessEntity {
 
     private static final long serialVersionUID = -6827515878506806536L;
 
+    /**
+     * Is this a company title
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "is_company")
     private Boolean isCompany = Boolean.FALSE;
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;

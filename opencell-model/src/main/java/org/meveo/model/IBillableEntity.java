@@ -27,15 +27,25 @@ import org.meveo.model.billing.RatedTransaction;
 public interface IBillableEntity extends IEntity {
 
     public BillingRun getBillingRun();
+
     public void setBillingRun(BillingRun billingRun);
+
     public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions);
+
     public List<RatedTransaction> getMinRatedTransactions();
+
     public BigDecimal getTotalInvoicingAmountWithoutTax();
-	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax);
-	public BigDecimal getTotalInvoicingAmountWithTax();
-	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax);
-	public BigDecimal getTotalInvoicingAmountTax();
-	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax);
-	public String getCode();
-	
+
+    public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax);
+
+    public BigDecimal getTotalInvoicingAmountWithTax();
+
+    public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax);
+
+    public BigDecimal getTotalInvoicingAmountTax();
+
+    public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax);
+
+    public String getCode();
+
 }

@@ -112,8 +112,8 @@ public class ElasticClient {
     /**
      * Apply a partial update to the entity in Elastic Search. Used to update CF field values of an entity
      *
-     * @param entity     Entity corresponding to a document in Elastic Search. Is used to construct document id only
-     * @param fieldName  Field name
+     * @param entity Entity corresponding to a document in Elastic Search. Is used to construct document id only
+     * @param fieldName Field name
      * @param fieldValue Field value
      */
     public void partialUpdate(ISearchable entity, String fieldName, Object fieldValue) {
@@ -126,7 +126,7 @@ public class ElasticClient {
     /**
      * Apply a partial update to the entity in Elastic Search
      *
-     * @param entity         Entity corresponding to a document in Elastic Search. Is used to construct document id only
+     * @param entity Entity corresponding to a document in Elastic Search. Is used to construct document id only
      * @param fieldsToUpdate A map of fieldname and values to update in entity
      */
     public void partialUpdate(ISearchable entity, Map<String, Object> fieldsToUpdate) {
@@ -162,9 +162,9 @@ public class ElasticClient {
     /**
      * Store and index entity in Elastic Search
      *
-     * @param entity        Entity to store in Elastic Search
+     * @param entity Entity to store in Elastic Search
      * @param partialUpdate Should it be treated as partial update instead of replace if document exists. This value can be overridden in elasticSearchConfiguration.json to always
-     *                      do upsert.
+     *        do upsert.
      */
     private void createOrUpdate(ISearchable entity, boolean partialUpdate) {
 
@@ -278,10 +278,10 @@ public class ElasticClient {
             for (BulkItemResponse bulkItemResponse : bulkResponse.getItems()) {
                 if (bulkItemResponse.getFailureMessage() != null) {
                     log.error("Failed to process {} in Elastic Search for {}/{}/{} reason: {}", bulkItemResponse.getOpType(), bulkItemResponse.getIndex(),
-                            bulkItemResponse.getType(), bulkItemResponse.getId(), bulkItemResponse.getFailureMessage(), bulkItemResponse.getFailure().getCause());
+                        bulkItemResponse.getType(), bulkItemResponse.getId(), bulkItemResponse.getFailureMessage(), bulkItemResponse.getFailure().getCause());
                 } else {
                     log.debug("Processed {} in Elastic Search for {}/{}/{} version: {}", bulkItemResponse.getOpType(), bulkItemResponse.getIndex(), bulkItemResponse.getType(),
-                            bulkItemResponse.getId(), bulkItemResponse.getVersion());
+                        bulkItemResponse.getId(), bulkItemResponse.getVersion());
                 }
             }
 
@@ -295,7 +295,7 @@ public class ElasticClient {
     /**
      * Execute a search compatible primefaces data table component search
      *
-     * @param paginationConfig     Query, pagination and sorting configuration
+     * @param paginationConfig Query, pagination and sorting configuration
      * @param classnamesOrCetCodes An array of full classnames or CET codes
      * @return Json result
      * @throws BusinessException business exception
@@ -313,33 +313,33 @@ public class ElasticClient {
 
         // Search either by a field
         if (StringUtils.isBlank(paginationConfig.getFullTextFilter()) && paginationConfig.getFilters() != null && !paginationConfig.getFilters().isEmpty()) {
-            return search(paginationConfig.getFilters(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(), sortOrder,
-                    returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
+            return search(paginationConfig.getFilters(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(),
+                paginationConfig.getSortField() != null ? new String[] { paginationConfig.getSortField() } : null, sortOrder != null ? new SortOrder[] { sortOrder } : null,
+                returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
         } else {
-            return search(paginationConfig.getFullTextFilter(), null, paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(),
-                    sortOrder, returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
+            return search(paginationConfig.getFullTextFilter(), null, paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(),
+                paginationConfig.getSortField() != null ? new String[] { paginationConfig.getSortField() } : null, sortOrder != null ? new SortOrder[] { sortOrder } : null,
+                returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
         }
     }
 
     /**
      * Execute a search on all fields (_all field)
      *
-     * @param query        Query - words (will be joined by AND) or query expression (+word1 - word2)
-     * @param category     - search by category that is directly taken from the name of the entity found in entityMapping.
-     *                     property of elasticSearchConfiguration.json.
-     *                     e.g. Customer, CustomerAccount, AccountOperation, etc.
-     *                     See elasticSearchConfiguration.json entityMapping keys for a list of categories.
-     * @param from         Pagination - starting record
-     * @param size         Pagination - number of records per page
-     * @param sortField    - Field to sort by. If omitted, will sort by score.
-     * @param sortOrder    Sorting order
+     * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
+     * @param category - search by category that is directly taken from the name of the entity found in entityMapping. property of elasticSearchConfiguration.json. e.g. Customer,
+     *        CustomerAccount, AccountOperation, etc. See elasticSearchConfiguration.json entityMapping keys for a list of categories.
+     * @param from Pagination - starting record
+     * @param size Pagination - number of records per page
+     * @param sortFields - Fields to sort by. If omitted, will sort by score.
+     * @param sortOrders Sorting orders
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
-     * @param classInfo    Entity classes to match
+     * @param classInfo Entity classes to match
      * @return Json result
      * @throws BusinessException business exception
      */
-    public String search(String query, String category, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields,
-                         List<ElasticSearchClassInfo> classInfo) throws BusinessException {
+    public String search(String query, String category, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields,
+            List<ElasticSearchClassInfo> classInfo) throws BusinessException {
 
         if (!esConnection.isEnabled()) {
             return "{}";
@@ -370,12 +370,12 @@ public class ElasticClient {
             size = DEFAULT_SEARCH_PAGE_SIZE;
         }
 
-        log.debug("Execute Elastic Search search for \"{}\" records {}-{} on {}, {} sort by {} {}", query, from, from + size, indexes, types, sortField, sortOrder);
+        log.debug("Execute Elastic Search search for \"{}\" records {}-{} on {}, {} sort by {} {}", query, from, from + size, indexes, types, sortFields, sortOrders);
 
         SearchRequestBuilder reqBuilder = esConnection.getClient().prepareSearch(indexes.toArray(new String[0]));
 
         if (!StringUtils.isBlank(category)) {
-            String[] categories = new String[]{category};
+            String[] categories = new String[] { category };
             reqBuilder.setTypes(categories);
         } else if (types != null) {
             reqBuilder.setTypes(types.toArray(new String[0]));
@@ -387,14 +387,6 @@ public class ElasticClient {
         // Limit return to only certain fields
         if (returnFields != null && returnFields.length > 0) {
             reqBuilder.addFields(returnFields);
-        }
-
-        // Add sorting if requested
-        if (sortField != null) {
-            if (sortOrder == null) {
-                sortOrder = SortOrder.ASC;
-            }
-            reqBuilder.addSort(sortField, sortOrder);
         }
 
         if (StringUtils.isBlank(query)) {
@@ -419,6 +411,19 @@ public class ElasticClient {
             }
         }
 
+        // Add sorting if requested
+        if (sortFields != null && sortFields.length > 0) {
+            for (int i = 0; i < sortFields.length; i++) {
+                SortOrder sortOrder = null;
+                if (sortOrders.length <= i) {
+                    sortOrder = SortOrder.ASC;
+                } else {
+                    sortOrder = sortOrders[i];
+                }
+                reqBuilder.addSort(sortFields[i], sortOrder);
+            }
+        }
+
         SearchResponse response = reqBuilder.execute().actionGet();
 
         String result = response.toString();
@@ -429,18 +434,18 @@ public class ElasticClient {
     /**
      * Execute a search on given fields for given values
      *
-     * @param queryValues  Fields and values to match
-     * @param from         Pagination - starting record
-     * @param size         Pagination - number of records per page
-     * @param sortField    - Field to sort by. If omitted, will sort by score.
-     * @param sortOrder    Sorting order
+     * @param queryValues Fields and values to match
+     * @param from Pagination - starting record
+     * @param size Pagination - number of records per page
+     * @param sortFields - Fields to sort by. If omitted, will sort by score.
+     * @param sortOrders Sorting orders
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
-     * @param classInfo    Entity classes to match
+     * @param classInfo Entity classes to match
      * @return Json result
      * @throws BusinessException business exception
      */
-    public String search(Map<String, ?> queryValues, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields,
-                         List<ElasticSearchClassInfo> classInfo) throws BusinessException {
+    public String search(Map<String, ?> queryValues, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields,
+            List<ElasticSearchClassInfo> classInfo) throws BusinessException {
 
         if (!esConnection.isEnabled()) {
             return "{}";
@@ -471,7 +476,7 @@ public class ElasticClient {
             size = DEFAULT_SEARCH_PAGE_SIZE;
         }
 
-        log.debug("Execute Elastic Search search for {} records {}-{} on {}, {} sort by {} {}", queryValues, from, from + size, indexes, types, sortField, sortOrder);
+        log.debug("Execute Elastic Search search for {} records {}-{} on {}, {} sort by {} {}", queryValues, from, from + size, indexes, types, sortFields, sortOrders);
 
         SearchRequestBuilder reqBuilder = esConnection.getClient().prepareSearch(indexes.toArray(new String[0]));
         if (types != null) {
@@ -486,37 +491,102 @@ public class ElasticClient {
             reqBuilder.addFields(returnFields);
         }
 
-        // Add sorting if requested
-        if (sortField != null) {
-            if (sortOrder == null) {
-                sortOrder = SortOrder.ASC;
-            }
-            reqBuilder.addSort(sortField, sortOrder);
-        }
-
         if (queryValues.isEmpty()) {
             reqBuilder.setQuery(QueryBuilders.matchAllQuery());
 
         } else if (queryValues.size() == 1) {
             Entry<String, ?> fieldValue = queryValues.entrySet().iterator().next();
-            if (fieldValue.getKey().contains(",")) {
-                reqBuilder.setQuery(QueryBuilders.multiMatchQuery(fieldValue.getValue(), StringUtils.stripAll(fieldValue.getKey().split(","))));
+
+            String[] fieldInfo = fieldValue.getKey().split(" ");
+            String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
+            String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
+
+            if (fieldName.contains(",")) {
+                reqBuilder.setQuery(QueryBuilders.multiMatchQuery(fieldValue.getValue(), StringUtils.stripAll(fieldName.split(","))));
+
+            } else if ("term".equals(condition)) {
+                reqBuilder.setQuery(QueryBuilders.termQuery(fieldName, fieldValue.getValue()));
+
+            } else if ("terms".equals(condition)) {
+                String valueTxt = fieldValue.getValue().toString();
+                String[] values = valueTxt.split("\\|");
+                reqBuilder.setQuery(QueryBuilders.termsQuery(fieldName, values));
+
+            } else if ("closestMatch".equals(condition)) {
+
+                String valueTxt = fieldValue.getValue().toString();
+
+                int valueLength = valueTxt.length();
+                String[] values = new String[valueLength];
+
+                for (int i = valueLength - 1; i >= 0; i--) {
+                    values[i] = valueTxt.substring(0, i + 1);
+                }
+
+                reqBuilder.setQuery(QueryBuilders.termsQuery(fieldName, values));
+                sortFields = new String[] { fieldName };
+                sortOrders = new SortOrder[] { SortOrder.DESC };
+
             } else {
-                reqBuilder.setQuery(QueryBuilders.matchQuery(fieldValue.getKey(), fieldValue.getValue()));
+                reqBuilder.setQuery(QueryBuilders.matchQuery(fieldName, fieldValue.getValue()));
             }
+
         } else {
 
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
             for (Entry<String, ?> fieldValue : queryValues.entrySet()) {
-                if (fieldValue.getKey().contains(",")) {
-                    boolQuery.must(QueryBuilders.multiMatchQuery(fieldValue.getValue(), StringUtils.stripAll(fieldValue.getKey().split(","))));
+
+                String[] fieldInfo = fieldValue.getKey().split(" ");
+                String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
+                String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
+
+                if (fieldName.contains(",")) {
+                    boolQuery.must(QueryBuilders.multiMatchQuery(fieldValue.getValue(), StringUtils.stripAll(fieldName.split(","))));
+
+                } else if ("term".equals(condition)) {
+                    boolQuery.must(QueryBuilders.termQuery(fieldName, fieldValue.getValue()));
+
+                } else if ("terms".equals(condition)) {
+                    String valueTxt = fieldValue.getValue().toString();
+                    String[] values = valueTxt.split("\\|");
+                    boolQuery.must(QueryBuilders.termsQuery(fieldName, values));
+
+                } else if ("closestMatch".equals(condition)) {
+
+                    String valueTxt = fieldValue.getValue().toString();
+
+                    int valueLength = valueTxt.length();
+                    String[] values = new String[valueLength];
+
+                    for (int i = valueLength - 1; i >= 0; i--) {
+                        values[i] = valueTxt.substring(0, i + 1);
+                    }
+
+                    boolQuery.must(QueryBuilders.termsQuery(fieldName, values));
+                    sortFields = new String[] { fieldName };
+                    sortOrders = new SortOrder[] { SortOrder.DESC };
+
                 } else {
-                    boolQuery.must(QueryBuilders.matchQuery(fieldValue.getKey(), fieldValue.getValue()));
+                    boolQuery.must(QueryBuilders.matchQuery(fieldName, fieldValue.getValue()));
                 }
             }
             reqBuilder.setQuery(boolQuery);
         }
+
+        // Add sorting if requested
+        if (sortFields != null && sortFields.length > 0) {
+            for (int i = 0; i < sortFields.length; i++) {
+                SortOrder sortOrder = null;
+                if (sortOrders.length <= i) {
+                    sortOrder = SortOrder.ASC;
+                } else {
+                    sortOrder = sortOrders[i];
+                }
+                reqBuilder.addSort(sortFields[i], sortOrder);
+            }
+        }
+
         SearchResponse response = reqBuilder.execute().actionGet();
 
         String result = response.toString();
@@ -653,7 +723,7 @@ public class ElasticClient {
      * Convert classnames (full or simple name) or CET codes into ElasticSearchClassInfo object containing info for search scope (index and type) calculation
      *
      * @param classnamesOrCetCodes An array of classnames (full or simple name) or CET codes
-     * @param ignoreUnknownNames   Should unknown classnames or CET codes throw an exception?
+     * @param ignoreUnknownNames Should unknown classnames or CET codes throw an exception?
      * @return list of elastic search class info.
      * @throws BusinessException business exception
      */
@@ -685,7 +755,7 @@ public class ElasticClient {
      * @param classnameOrCetCode Classname (full or simple name ) or CET code
      * @return Information used to determine index and type in Elastic Search
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public ElasticSearchClassInfo getSearchScopeInfo(String classnameOrCetCode) {
         ElasticSearchClassInfo classInfo = null;
         try {

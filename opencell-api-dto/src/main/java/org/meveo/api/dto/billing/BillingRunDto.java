@@ -81,7 +81,9 @@ public class BillingRunDto extends AuditableEntityDto {
     /** The invoice date. */
     private Date invoiceDate;
 
-    /** The last transaction date. */
+    /**
+     * Include in invoice Rated transactions up to that date
+     */
     private Date lastTransactionDate;
 
     /** The rejection reason. */
@@ -98,7 +100,7 @@ public class BillingRunDto extends AuditableEntityDto {
 
     /** The selected billing accounts. */
     private String selectedBillingAccounts;
-    
+
     /** Custom fields. */
     private CustomFieldsDto customFields;
 
@@ -434,9 +436,7 @@ public class BillingRunDto extends AuditableEntityDto {
     }
 
     /**
-     * Gets the last transaction date.
-     *
-     * @return the lastTransactionDate
+     * @return Include in invoice Rated transactions up to that date
      */
     public Date getLastTransactionDate() {
         return lastTransactionDate;
@@ -445,7 +445,7 @@ public class BillingRunDto extends AuditableEntityDto {
     /**
      * Sets the last transaction date.
      *
-     * @param lastTransactionDate the lastTransactionDate to set
+     * @param lastTransactionDate Include in invoice Rated transactions up to that date
      */
     public void setLastTransactionDate(Date lastTransactionDate) {
         this.lastTransactionDate = lastTransactionDate;
@@ -540,24 +540,24 @@ public class BillingRunDto extends AuditableEntityDto {
     public void setSelectedBillingAccounts(String selectedBillingAccounts) {
         this.selectedBillingAccounts = selectedBillingAccounts;
     }
-    
+
     /**
-      * Gets the custom fields.
-      *
-      * @return the custom fields
-      */
-     public CustomFieldsDto getCustomFields() {
-         return customFields;
-     }
-    
-     /**
-      * Sets the custom fields.
-      *
-      * @param customFields the new custom fields
-      */
-     public void setCustomFields(CustomFieldsDto customFields) {
-         this.customFields = customFields;
-     }
+     * Gets the custom fields.
+     *
+     * @return the custom fields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the new custom fields
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 
     /**
      * Sets the from entity.

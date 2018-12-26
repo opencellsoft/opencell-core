@@ -78,7 +78,6 @@ public class QuoteService extends BusinessService<Quote> {
      * @return list of invoice
      * @throws BusinessException business exception
      */
-    @SuppressWarnings("unused")
     public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos) throws BusinessException {
         return provideQuote(quoteInvoiceInfos, true);
     }
@@ -230,6 +229,7 @@ public class QuoteService extends BusinessService<Quote> {
                 }
             }
             invoiceService.create(invoice);
+            invoiceService.postCreate(invoice);
             invoices.add(invoice);
         }
         return invoices;

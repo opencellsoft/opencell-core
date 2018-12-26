@@ -22,7 +22,5 @@ package org.meveo.model.communication;
  * This enum make it easy to filter available templates for
  * dunning plan definition or billing cycle definition*/
 public enum MessageTemplateTypeEnum {
-	DUNNING, 
-	INVOICE, 
-	OTHER;
+    DUNNING, INVOICE, OTHER;
 }

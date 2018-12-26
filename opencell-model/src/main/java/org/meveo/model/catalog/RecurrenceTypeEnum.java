@@ -24,8 +24,7 @@ package org.meveo.model.catalog;
  */
 public enum RecurrenceTypeEnum {
 
-    CALENDAR(1, "reccurenceTypeEnum.calendar"),
-    PERIOD(2, "reccurenceTypeEnum.period");
+    CALENDAR(1, "reccurenceTypeEnum.calendar"), PERIOD(2, "reccurenceTypeEnum.period");
 
     private Integer id;
     private String label;

@@ -17,6 +17,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -30,6 +31,7 @@ import org.meveo.model.jaxb.subscription.Charge;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -65,6 +67,9 @@ public class SubscriptionImportService extends ImportService {
 
     @Inject
     private OfferTemplateService offerTemplateService;
+    
+    @Inject
+    private SellerService sellerService;
 
     @Inject
     @CurrentUser
@@ -76,6 +81,8 @@ public class SubscriptionImportService extends ImportService {
     private Map<CacheKeyStr, OfferTemplate> offerMap = new HashedMap();
 
     private Map<CacheKeyStr, UserAccount> userAccountMap = new HashedMap();
+
+    private Map<CacheKeyStr, Seller> sellerMap = new HashedMap();
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public int importSubscription(CheckedSubscription checkSubscription, org.meveo.model.jaxb.subscription.Subscription jaxbSubscription, String fileName, int i)
@@ -110,6 +117,23 @@ public class SubscriptionImportService extends ImportService {
             }
             checkSubscription.userAccount = userAccount;
         }
+        
+        
+        Seller seller = checkSubscription.seller;
+        if (seller == null) {
+            seller = sellerMap.get(new CacheKeyStr(currentUser.getProviderCode(), jaxbSubscription.getSellerCode()));
+            if (seller == null) {
+                try {
+                    seller = sellerService.findByCode(jaxbSubscription.getSellerCode());
+                    sellerMap.put(new CacheKeyStr(currentUser.getProviderCode(), jaxbSubscription.getSellerCode()), seller);
+                } catch (Exception e) {
+                    log.error("failed to find userAccount", e);
+                }
+            }
+            checkSubscription.userAccount = userAccount;
+        }        
+        
+        
         boolean ignoreCheck = jaxbSubscription.getIgnoreCheck() != null && jaxbSubscription.getIgnoreCheck().booleanValue();
         try {
             if (!ignoreCheck) {
@@ -155,6 +179,7 @@ public class SubscriptionImportService extends ImportService {
         subscription.setStatusDate(DateUtils.parseDateWithPattern(jaxbSubscription.getStatus().getDate(), paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
         subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
         subscription.setUserAccount(checkSubscription.userAccount);
+        subscription.setSeller(checkSubscription.seller);
         subscriptionService.create(subscription);
 
         if (jaxbSubscription.getCustomFields() != null) {

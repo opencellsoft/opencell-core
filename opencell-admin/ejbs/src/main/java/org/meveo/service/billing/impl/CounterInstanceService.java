@@ -19,26 +19,29 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
 import org.meveo.admin.exception.BusinessException;
-import static org.meveo.commons.utils.NumberUtils.getRoundingMode;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.CounterPeriodEvent;
+import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
@@ -46,7 +49,6 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
@@ -59,11 +61,16 @@ import org.meveo.service.base.ValueExpressionWrapper;
 /**
  * 
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class CounterInstanceService extends PersistenceService<CounterInstance> {
 
+    @Inject
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
+    
     @Inject
     private UserAccountService userAccountService;
 
@@ -75,6 +82,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
     @EJB
     private UsageChargeInstanceService usageChargeInstanceService;
+    
+    @Inject
+    private Event<CounterPeriodEvent> counterPeriodEvent;
 
     public CounterInstance counterInstanciation(UserAccount userAccount, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
         CounterInstance result = null;
@@ -170,22 +180,28 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param counterInstance Counter instance
      * @param chargeDate Charge date - to match the period validity dates
      * @param initDate Initial date, used for period start/end date calculation
-     * @param usageChargeInstance Usage charge instance to associate counter with
+     * @param chargeInstance Charge instance to associate counter with
+     * @param serviceInstance the Service instance of charge instance
      * @return CounterPeriod instance
      * @throws BusinessException Business exception
      */
     // we must make sure the counter period is persisted in db before storing it in cache
     // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) - problem with MariaDB. See #2393 - Issue with counter period creation in MariaDB
-    public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance) throws BusinessException {
+    public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance, ServiceInstance serviceInstance)
+            throws BusinessException {
 
-        CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
+        CounterPeriod counterPeriod = null;
 
-        CounterPeriod counterPeriod = instantiateCounterPeriod(counterTemplate, chargeDate, initDate, usageChargeInstance);
-        counterPeriod.setCounterInstance(counterInstance);
-        counterPeriodService.create(counterPeriod);
+        if (counterInstance != null) {
+            CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
 
-        counterInstance.getCounterPeriods().add(counterPeriod);
-        counterInstance.updateAudit(currentUser);
+            counterPeriod = instantiateCounterPeriod(counterTemplate, chargeDate, initDate, chargeInstance, serviceInstance);
+            counterPeriod.setCounterInstance(counterInstance);
+            counterPeriodService.create(counterPeriod);
+
+            counterInstance.getCounterPeriods().add(counterPeriod);
+            counterInstance.updateAudit(currentUser);
+        }
 
         return counterPeriod;
     }
@@ -196,12 +212,13 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param counterTemplate Counter template
      * @param chargeDate Charge date
      * @param initDate Initial date, used for period start/end date calculation
-     * @param usageChargeInstance Usage charge instance to associate counter with
-     * @return CounterPeriod instance
-     * @throws BusinessException Business exception
+     * @param chargeInstance charge instance to associate counter with
+     * @param serviceInstance the service instance of charge instance
+     * @return a counter period.
+     * @throws BusinessException the business exception
      */
-    public CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance)
-            throws BusinessException {
+    public CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, ChargeInstance chargeInstance, 
+            ServiceInstance serviceInstance) throws BusinessException {
 
         CounterPeriod counterPeriod = new CounterPeriod();
         Calendar cal = counterTemplate.getCalendar();
@@ -214,9 +231,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         Date endDate = cal.nextCalendarDate(startDate);
         BigDecimal initialValue = counterTemplate.getCeiling();
         log.info("create counter period from {} to {}", startDate, endDate);
-        if (!StringUtils.isBlank(counterTemplate.getCeilingExpressionEl()) && usageChargeInstance != null) {
-            initialValue = evaluateCeilingElExpression(counterTemplate.getCeilingExpressionEl(), usageChargeInstance, usageChargeInstance.getServiceInstance(),
-                usageChargeInstance.getSubscription());
+        if (!StringUtils.isBlank(counterTemplate.getCeilingExpressionEl()) && chargeInstance != null) {
+            initialValue = evaluateCeilingElExpression(counterTemplate.getCeilingExpressionEl(), chargeInstance, serviceInstance,
+                chargeInstance.getSubscription());
         }
         counterPeriod.setPeriodStartDate(startDate);
         counterPeriod.setPeriodEndDate(endDate);
@@ -231,6 +248,74 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
         return counterPeriod;
     }
+    
+    /**
+     * trigger counter period event
+     * 
+     * @param counterValueChangeInfo the counter value
+     * @param counterPeriod the counter period
+     */
+    public void triggerCounterPeriodEvent(CounterValueChangeInfo counterValueChangeInfo, CounterPeriod counterPeriod) {
+        // Fire notifications if counter value matches trigger value and counter value is tracked
+        if (counterValueChangeInfo != null && counterPeriod.getNotificationLevels() != null) {
+            // Need to refresh counterPeriod as it is stale object if it was updated in counterInstanceService.deduceCounterValue()
+            counterPeriod = emWrapper.getEntityManager().find(CounterPeriod.class, counterPeriod.getId());
+            List<Entry<String, BigDecimal>> counterPeriodEventLevels = counterPeriod.getMatchedNotificationLevels(counterValueChangeInfo.getPreviousValue(),
+                counterValueChangeInfo.getNewValue());
+
+            if (counterPeriodEventLevels != null && !counterPeriodEventLevels.isEmpty()) {
+                triggerCounterPeriodEvent(counterPeriod, counterPeriodEventLevels);
+            }
+        }
+    }
+    
+    /**
+     * trigger counter period event
+     * 
+     * @param counterPeriod the counter period
+     * @param counterPeriodEventLevels the counter period event levels
+     */
+    private void triggerCounterPeriodEvent(CounterPeriod counterPeriod, List<Entry<String, BigDecimal>> counterPeriodEventLevels) {
+        for (Entry<String, BigDecimal> counterValue : counterPeriodEventLevels) {
+            try {
+                CounterPeriodEvent event = new CounterPeriodEvent(counterPeriod, counterValue.getValue(), counterValue.getKey());
+                event.setCounterPeriod(counterPeriod);
+                counterPeriodEvent.fire(event);
+            } catch (Exception e) {
+                log.error("Failed to executing trigger counterPeriodEvent", e);
+            }
+        }
+    }
+    
+    private CounterPeriod getCounterPeriodByDate(CounterInstance counterInstance, Date date)
+            throws NoResultException {
+        Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
+        query.setParameter("counterInstance", counterInstance);
+        query.setParameter("date", date, TemporalType.TIMESTAMP);
+
+        return (CounterPeriod) query.getSingleResult();
+    }
+    
+    /**
+     * Find a counter period for a given date.
+     * 
+     * @param counterInstance Counter instance
+     * @param date Date to match
+     * @return Found counter period
+     * @throws BusinessException business exception
+     */
+    public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date) throws BusinessException {
+        try {
+            CounterPeriod counterPeriod = null;
+            if (counterInstance != null) {
+                counterPeriod = getCounterPeriodByDate(counterInstance, date);
+            }
+            return counterPeriod;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
 
     /**
      * Find or create a counter period for a given date.
@@ -238,19 +323,17 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param counterInstance Counter instance
      * @param date Date to match
      * @param initDate initial date.
-     * @param usageChargeInstance Usage charge instance to associate counter with
+     * @param chargeInstance Charge instance to associate counter with
+     * @param serviceInstance the Service instance of charge instance
      * @return Found or created counter period
      * @throws BusinessException business exception
      */
-    public CounterPeriod getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, UsageChargeInstance usageChargeInstance) throws BusinessException {
-        Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
-        query.setParameter("counterInstance", counterInstance);
-        query.setParameter("date", date, TemporalType.TIMESTAMP);
-
+    public CounterPeriod getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance, ServiceInstance serviceInstance)
+            throws BusinessException {
         try {
-            return (CounterPeriod) query.getSingleResult();
+            return getCounterPeriodByDate(counterInstance, date);
         } catch (NoResultException e) {
-            return createPeriod(counterInstance, date, initDate, usageChargeInstance);
+            return createPeriod(counterInstance, date, initDate, chargeInstance, serviceInstance);
         }
     }
 
@@ -298,10 +381,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      */
     public BigDecimal deduceCounterValue(CounterInstance counterInstance, Date date, Date initDate, BigDecimal value) throws CounterValueInsufficientException, BusinessException {
 
-        counterInstance = retrieveIfNotManaged(counterInstance);        
-        
-        CounterPeriod counterPeriod = getOrCreateCounterPeriod(counterInstance, date, initDate, null);
-
+        counterInstance = retrieveIfNotManaged(counterInstance);
+        CounterPeriod counterPeriod = getOrCreateCounterPeriod(counterInstance, date, initDate, null, null);
         if (counterPeriod == null || counterPeriod.getValue().compareTo(value) < 0) {
             throw new CounterValueInsufficientException();
 
@@ -369,30 +450,28 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return qb.find(getEntityManager());
     }
 
-    public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance charge, ServiceInstance serviceInstance, Subscription subscription) throws BusinessException {
-        int rounding = appProvider.getRounding() == null ? 3 : appProvider.getRounding();
-        BigDecimal result = null;
+    public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance chargeInstance, ServiceInstance serviceInstance, Subscription subscription)
+            throws BusinessException {
+
         if (StringUtils.isBlank(expression)) {
-            return result;
+            return null;
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
-        if (expression.indexOf("charge") >= 0) {
-            userMap.put("charge", charge);
+        if (expression.indexOf("charge") >= 0 || expression.indexOf("ci") >= 0) {
+            userMap.put("charge", chargeInstance);
+            userMap.put("ci", chargeInstance);
         }
-        if (expression.indexOf("service") >= 0) {
+        if (expression.indexOf("service") >= 0 || expression.indexOf("serviceInstance") >= 0) {
             userMap.put("service", serviceInstance);
+            userMap.put("serviceInstance", serviceInstance);
         }
         if (expression.indexOf("sub") >= 0) {
             userMap.put("sub", subscription);
         }
+        
+        BigDecimal result = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
+        result = result.setScale(chargeInstance.getChargeTemplate().getUnitNbDecimal(), chargeInstance.getChargeTemplate().getRoundingMode().getRoundingMode());
 
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
-        try {
-            result = (BigDecimal) res;
-            result = result.setScale(rounding, getRoundingMode(appProvider.getRoundingMode()));
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to BigDecimal but " + res);
-        }
         return result;
     }
 

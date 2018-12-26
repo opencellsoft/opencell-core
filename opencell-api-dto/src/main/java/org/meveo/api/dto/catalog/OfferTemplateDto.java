@@ -47,11 +47,27 @@ public class OfferTemplateDto extends ProductOfferingDto {
     /** The renewal rule. */
     private SubscriptionRenewalDto renewalRule;
 
-    /** The minimum amount EL. */
+    /**
+     * Expression to determine minimum amount value
+     */
     private String minimumAmountEl;
 
-    /** The minimum label EL. */
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
     private String minimumLabelEl;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    private String minimumLabelElSpark;
+
+    private Boolean autoEndOfEngagement;
 
     /**
      * Instantiates a new offer template dto.
@@ -195,38 +211,72 @@ public class OfferTemplateDto extends ProductOfferingDto {
     }
 
     /**
-     * Gets minimum amount El.
-     *
-     * @return the minimum amount El
+     * @return Expression to determine minimum amount value
      */
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
 
     /**
-     * Sets minimum amount El.
-     *
-     * @param minimumAmountEl minimum amount El
+     * @param minimumAmountEl Expression to determine minimum amount value
      */
     public void setMinimumAmountEl(String minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
 
     /**
-     * Gets minimum label El.
-     *
-     * @return the minimum label El
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value
      */
     public String getMinimumLabelEl() {
         return minimumLabelEl;
     }
 
     /**
-     * Sets minimum label El.
-     *
-     * @param minimumLabelEl minimum label El
+     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
+
+    /**
+     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
+    }
+
+    /**
+     * @return the autoEndOfEngagement
+     */
+    public Boolean getAutoEndOfEngagement() {
+        return autoEndOfEngagement;
+    }
+
+    /**
+     * @param autoEndOfEngagement the autoEndOfEngagement to set
+     */
+    public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
+        this.autoEndOfEngagement = autoEndOfEngagement;
     }
 }

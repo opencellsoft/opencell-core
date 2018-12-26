@@ -20,14 +20,12 @@ package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
@@ -46,7 +44,6 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.RecordedInvoiceCatAgregate;
 import org.meveo.model.shared.DateUtils;
@@ -182,24 +179,6 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         }
         return invoices;
     }
-
-    /**
-     * @param fromDueDate duedate from which we check
-     * @param toDueDate duedate to which we check
-     * @param paymentMethodEnum payment method enum
-     * @return list of recored invoice
-     * @throws Exception exception
-     */
-    @SuppressWarnings("unchecked")
-    public List<RecordedInvoice> getInvoicesToPay(Date fromDueDate, Date toDueDate, PaymentMethodEnum paymentMethodEnum) throws Exception {
-        try {
-            return (List<RecordedInvoice>) getEntityManager().createNamedQuery("RecordedInvoice.listRecordedInvoiceToPayByDate").setParameter("payMethod", paymentMethodEnum)
-                .setParameter("fromDueDate", fromDueDate).setParameter("toDueDate", toDueDate).getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
 
     /**
      * @param expression EL expression
@@ -427,6 +406,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
         recordedInvoice.setAmountWithoutTax(amountWithoutTax);
         recordedInvoice.setTaxAmount(amountTax);
+        recordedInvoice.setSeller(invoice.getSeller());
 
         try {
             recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));

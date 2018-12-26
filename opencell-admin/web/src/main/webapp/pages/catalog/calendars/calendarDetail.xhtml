@@ -3,6 +3,7 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
@@ -69,6 +70,8 @@
 						itemLabel="#{messages['calendar.calendarType.INTERVAL']}" />
 					<f:selectItem itemValue="JOIN"
 						itemLabel="#{messages['calendar.calendarType.JOIN']}" />
+					<f:selectItem itemValue="BANKING"
+						itemLabel="#{messages['calendar.calendarType.BANKING']}" />
 					<p:ajax event="change"
 						listener="#{calendarBean.changeCalendarType}" partialSubmit="true"
 						process="@this" update="@form" />
@@ -323,6 +326,91 @@
 					</h:panelGrid>
 				</h:panelGrid>
 
+			</h:panelGroup>
+			
+			<h:panelGroup
+				rendered="#{calendarBean.entity['class'].simpleName eq 'CalendarBanking'}">
+				<o:validateMultiple components="startDate endDate" validator="#{calendarBean.validateDateRange}" message="#{messages['validator.dateRange.incorrectOrder']}" />
+				<hftl:formField label="#{messages['calendar.startDate']}" field="startDate" 
+				required="true" useConverter="false"
+				newLine="true" id="startDate"/>
+				<hftl:formField label="#{messages['calendar.endDate']}"
+				field="endDate" useConverter="false" id="endDate" />
+
+				<hftl:decorateFormField fieldId="weekendPeriod"
+					label="#{messages['calendar.weekendPeriod']}" newLine="true">
+					<h:panelGrid columns="3">
+							<p:selectOneMenu id="weekendPeriod"
+								value="#{calendarBean.entity.weekendBegin}"
+								rendered="#{calendarBean.edit}">
+								<f:selectItem itemValue="#{null}" itemLabel="" />
+								<f:selectItem itemValue="1"
+									itemLabel="#{messages['calendar.weekday.1']}" />
+								<f:selectItem itemValue="2"
+									itemLabel="#{messages['calendar.weekday.2']}" />
+								<f:selectItem itemValue="3"
+									itemLabel="#{messages['calendar.weekday.3']}" />
+								<f:selectItem itemValue="4"
+									itemLabel="#{messages['calendar.weekday.4']}" />
+								<f:selectItem itemValue="5"
+									itemLabel="#{messages['calendar.weekday.5']}" />
+								<f:selectItem itemValue="6"
+									itemLabel="#{messages['calendar.weekday.6']}" />
+								<f:selectItem itemValue="7"
+									itemLabel="#{messages['calendar.weekday.7']}" />
+							</p:selectOneMenu>
+							<p:selectOneMenu id="weekendTo"
+								value="#{calendarBean.entity.weekendEnd}"
+								rendered="#{calendarBean.edit}">
+								<f:selectItem itemValue="#{null}" itemLabel="" />
+								<f:selectItem itemValue="1"
+									itemLabel="#{messages['calendar.weekday.1']}" />
+								<f:selectItem itemValue="2"
+									itemLabel="#{messages['calendar.weekday.2']}" />
+								<f:selectItem itemValue="3"
+									itemLabel="#{messages['calendar.weekday.3']}" />
+								<f:selectItem itemValue="4"
+									itemLabel="#{messages['calendar.weekday.4']}" />
+								<f:selectItem itemValue="5"
+									itemLabel="#{messages['calendar.weekday.5']}" />
+								<f:selectItem itemValue="6"
+									itemLabel="#{messages['calendar.weekday.6']}" />
+								<f:selectItem itemValue="7"
+									itemLabel="#{messages['calendar.weekday.7']}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+				</hftl:decorateFormField>
+
+				<hftl:decorateFormField fieldId="holidayPeriodToAdd"
+					label="#{messages['calendar.addHoliday']}" newLine="false">
+					<h:panelGrid columns="2">
+						<p:inputMask id="holidayPeriodToAdd"
+							value="#{calendarBean.holidayToAdd}" mask="99/99 - 99/99"
+							rendered="#{calendarBean.edit}" />
+						<p:commandButton icon="ui-icon-plus"
+							action="#{calendarBean.addHoliday()}" partialSubmit="true"
+							process=":formId:holidayPeriodToAdd, @this"
+							update=":formId:holidayPeriodToAdd, :formId:holidays"
+							rendered="#{calendarBean.edit}" />
+					</h:panelGrid>
+					<p:dataTable id="holidays" resizableColumns="true"
+							value="#{calendarBean.entity.holidays}" var="holiday"
+							paginator="false" styleClass="paginated" reflow="true">
+							<f:facet name="header">#{messages['calendar.holidays']}</f:facet>
+							<p:column width="70%">
+								<h:outputText value="#{holiday.holidayAsString}"
+									style="display:inline-block" />
+							</p:column>
+							<p:column width="30%">
+								<p:commandLink styleClass="ui-icon ui-icon-trash"
+									style="float:right;margin-right:10px"
+									action="#{calendarBean.removeHoliday(holiday)}"
+									partialSubmit="true" process="@this" update=":formId:holidays"
+									rendered="#{calendarBean.edit}">
+								</p:commandLink>
+							</p:column>
+						</p:dataTable>
+				</hftl:decorateFormField>
 			</h:panelGroup>
 
 		</hftl:formPanel>

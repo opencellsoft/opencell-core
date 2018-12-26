@@ -68,12 +68,28 @@ public class ServiceTemplateDto extends EnableBusinessDto {
     /** The image base 64. */
     private String imageBase64;
 
-    /** The minimum amount El. */
+    /**
+     * Expression to determine minimum amount value
+     */
     private String minimumAmountEl;
 
-    /** The minimum label El. */   
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
     private String minimumLabelEl;
-    
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    private String minimumLabelElSpark;
+
+    private Boolean autoEndOfEngagement;
+
     /** The renewal rule. */
     @JsonInclude(Include.NON_NULL)
     private SubscriptionRenewalDto renewalRule;
@@ -98,86 +114,88 @@ public class ServiceTemplateDto extends EnableBusinessDto {
         invoicingCalendar = serviceTemplate.getInvoicingCalendar() == null ? null : serviceTemplate.getInvoicingCalendar().getCode();
         imagePath = serviceTemplate.getImagePath();
         minimumAmountEl = serviceTemplate.getMinimumAmountEl();
+        minimumAmountElSpark = serviceTemplate.getMinimumAmountElSpark();
         minimumLabelEl = serviceTemplate.getMinimumLabelEl();
+        minimumLabelElSpark = serviceTemplate.getMinimumLabelElSpark();
 
         if (serviceTemplate.getBusinessServiceModel() != null) {
             somCode = serviceTemplate.getBusinessServiceModel().getCode();
         }
 
-        if(loadServiceChargeTemplate) {
+        if (loadServiceChargeTemplate) {
             // set serviceChargeTemplateRecurrings
             if (!serviceTemplate.getServiceRecurringCharges().isEmpty()) {
                 serviceChargeTemplateRecurrings = new ServiceChargeTemplateRecurringsDto();
-    
+
                 for (ServiceChargeTemplateRecurring recCharge : serviceTemplate.getServiceRecurringCharges()) {
                     ServiceChargeTemplateRecurringDto serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurringDto();
                     serviceChargeTemplateRecurring.setCode(recCharge.getChargeTemplate().getCode());
-    
+
                     for (WalletTemplate wallet : recCharge.getWalletTemplates()) {
                         serviceChargeTemplateRecurring.getWallets().getWallet().add(wallet.getCode());
                     }
-    
+
                     serviceChargeTemplateRecurrings.getServiceChargeTemplateRecurring().add(serviceChargeTemplateRecurring);
                 }
             }
-    
+
             // set serviceChargeTemplateSubscriptions
             if (!serviceTemplate.getServiceSubscriptionCharges().isEmpty()) {
                 serviceChargeTemplateSubscriptions = new ServiceChargeTemplateSubscriptionsDto();
-    
+
                 for (ServiceChargeTemplateSubscription subCharge : serviceTemplate.getServiceSubscriptionCharges()) {
                     ServiceChargeTemplateSubscriptionDto serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscriptionDto();
                     serviceChargeTemplateSubscription.setCode(subCharge.getChargeTemplate().getCode());
-    
+
                     for (WalletTemplate wallet : subCharge.getWalletTemplates()) {
                         serviceChargeTemplateSubscription.getWallets().getWallet().add(wallet.getCode());
                     }
-    
+
                     serviceChargeTemplateSubscriptions.getServiceChargeTemplateSubscription().add(serviceChargeTemplateSubscription);
                 }
             }
-    
+
             // set serviceChargeTemplateTerminations
             if (!serviceTemplate.getServiceTerminationCharges().isEmpty()) {
                 serviceChargeTemplateTerminations = new ServiceChargeTemplateTerminationsDto();
-    
+
                 for (ServiceChargeTemplateTermination terminationCharge : serviceTemplate.getServiceTerminationCharges()) {
                     ServiceChargeTemplateTerminationDto serviceChargeTemplateTermination = new ServiceChargeTemplateTerminationDto();
                     serviceChargeTemplateTermination.setCode(terminationCharge.getChargeTemplate().getCode());
-    
+
                     for (WalletTemplate wallet : terminationCharge.getWalletTemplates()) {
                         serviceChargeTemplateTermination.getWallets().getWallet().add(wallet.getCode());
                     }
-    
+
                     serviceChargeTemplateTerminations.getServiceChargeTemplateTermination().add(serviceChargeTemplateTermination);
                 }
-    
+
             }
-    
+
             // add serviceChargeTemplateUsages
             if (!serviceTemplate.getServiceUsageCharges().isEmpty()) {
                 serviceChargeTemplateUsages = new ServiceChargeTemplateUsagesDto();
-    
+
                 for (ServiceChargeTemplateUsage usageCharge : serviceTemplate.getServiceUsageCharges()) {
                     ServiceUsageChargeTemplateDto serviceUsageChargeTemplate = new ServiceUsageChargeTemplateDto();
                     serviceUsageChargeTemplate.setCode(usageCharge.getChargeTemplate().getCode());
-    
+
                     if (usageCharge.getCounterTemplate() != null) {
                         serviceUsageChargeTemplate.setCounterTemplate(usageCharge.getCounterTemplate().getCode());
                     }
-    
+
                     for (WalletTemplate wallet : usageCharge.getWalletTemplates()) {
                         serviceUsageChargeTemplate.getWallets().getWallet().add(wallet.getCode());
                     }
-    
+
                     serviceChargeTemplateUsages.getServiceChargeTemplateUsage().add(serviceUsageChargeTemplate);
                 }
             }
         }
-        
-		if (serviceTemplate.getServiceRenewal() != null) {
-			renewalRule = new SubscriptionRenewalDto(serviceTemplate.getServiceRenewal());
-		}
+
+        if (serviceTemplate.getServiceRenewal() != null) {
+            renewalRule = new SubscriptionRenewalDto(serviceTemplate.getServiceRenewal());
+        }
 
         customFields = customFieldInstances;
     }
@@ -399,7 +417,7 @@ public class ServiceTemplateDto extends EnableBusinessDto {
     public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
     }
-    
+
     @Override
     public String toString() {
         return "ServiceTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", longDescription=" + longDescription + ", invoicingCalendar=" + invoicingCalendar
@@ -409,46 +427,80 @@ public class ServiceTemplateDto extends EnableBusinessDto {
     }
 
     /**
-     * Get the minimum amount EL.
-     *
-     * @return the minimum amount EL
+     * @return Expression to determine minimum amount value
      */
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
 
     /**
-     * Sets the minimum amount EL.
-     *
-     * @param minimumAmountEl the minimum amount EL
+     * @param minimumAmountEl Expression to determine minimum amount value
      */
     public void setMinimumAmountEl(String minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
 
     /**
-     * Get the minimum label EL.
-     *
-     * @return the minimum label EL
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value
      */
     public String getMinimumLabelEl() {
         return minimumLabelEl;
     }
 
     /**
-     * Sets the minimum label EL.
-     *
-     * @param minimumLabelEl the minimum label EL
+     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
 
-	public SubscriptionRenewalDto getRenewalRule() {
-		return renewalRule;
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
+
+    /**
+     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
+    }
+
+    public SubscriptionRenewalDto getRenewalRule() {
+        return renewalRule;
+    }
+
+    public void setRenewalRule(SubscriptionRenewalDto renewalRule) {
+        this.renewalRule = renewalRule;
 	}
 
-	public void setRenewalRule(SubscriptionRenewalDto renewalRule) {
-		this.renewalRule = renewalRule;
-	}
+    /**
+     * @return the autoEndOfEngagement
+     */
+    public Boolean getAutoEndOfEngagement() {
+        return autoEndOfEngagement;
+    }
+
+    /**
+     * @param autoEndOfEngagement the autoEndOfEngagement to set
+     */
+    public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
+        this.autoEndOfEngagement = autoEndOfEngagement;
+    }
 }

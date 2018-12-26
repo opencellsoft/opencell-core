@@ -28,9 +28,12 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IReferenceEntity;
 
 /**
- * Language entity.
+ * Language entity
+ * @author Khalid HORRI
+ * @lastModifiedVersion 5.3
  */
 @Entity
 @Cacheable
@@ -41,10 +44,16 @@ import org.meveo.model.ExportIdentifier;
 public class Language extends AuditableEntity {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Language 3 letter code
+     */
     @Column(name = "language_code", length = 3)
     @Size(max = 3)
     private String languageCode;
 
+    /**
+     * Description
+     */
     @Column(name = "description_en", length = 100)
     @Size(max = 100)
     private String descriptionEn;
@@ -93,5 +102,9 @@ public class Language extends AuditableEntity {
     @Override
     public String toString() {
         return languageCode;
+    }
+
+    public String getDescription() {
+        return descriptionEn;
     }
 }

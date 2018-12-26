@@ -92,7 +92,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
             try {
                 offerScript = offerModelScriptService.beforeCreateOfferFromBOM(bomParams.getCustomFields(), bomParams.getBusinessOfferModel().getScript().getCode());
             } catch (BusinessException e) {
-                log.error("Failed to execute a script {}", bomParams.getBusinessOfferModel().getScript().getCode(), e);
+                log.error("Failed to execute script with code={}. {}", bomParams.getBusinessOfferModel().getScript().getCode(), e.getMessage());
             }
         }
 
@@ -159,9 +159,9 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
         newOfferTemplate.setSubscriptionRenewal(bomOffer.getSubscriptionRenewal());
 
         if (bomParams.getOfferCfValue() != null) {
-            newOfferTemplate.getCfValuesNullSafe().setValuesByCode(bomParams.getOfferCfValue());
-        } else {
-            newOfferTemplate.setCfValues(bomOffer.getCfValues());
+            newOfferTemplate.getCfValuesNullSafe().setValues(bomParams.getOfferCfValue());
+        } else if (bomOffer.getCfValues() != null) {
+            newOfferTemplate.getCfValuesNullSafe().setValues(bomOffer.getCfValues().getValuesByCode());
         }
 
         offerTemplateService.create(newOfferTemplate);

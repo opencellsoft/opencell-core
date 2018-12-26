@@ -36,14 +36,14 @@ public class RecordedInvoiceCatAgregate extends RecordedInvoice {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recorded_invoice_id")
     private RecordedInvoice recordedInvoice;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cat_inv_agregate_id")
-    private  CategoryInvoiceAgregate categoryInvoiceAgregate;
-    
+    private CategoryInvoiceAgregate categoryInvoiceAgregate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_cat_inv_agregate_id")
-    private  SubCategoryInvoiceAgregate subCategoryInvoiceAgregate;
+    private SubCategoryInvoiceAgregate subCategoryInvoiceAgregate;
 
     /**
      * @return the recordedInvoice
@@ -86,7 +86,5 @@ public class RecordedInvoiceCatAgregate extends RecordedInvoice {
     public void setSubCategoryInvoiceAgregate(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
         this.subCategoryInvoiceAgregate = subCategoryInvoiceAgregate;
     }
-    
-    
-    
+
 }

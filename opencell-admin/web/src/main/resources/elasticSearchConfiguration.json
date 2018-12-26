@@ -119,16 +119,20 @@
       "name": "name"
     },
     "Subscription": {
-      "userAccount.code": "getUserAccount().getCode()",
+     "userAccount.code": "getUserAccount().getCode()",
       "userAccount.name.fullName": "getUserAccount().getName().getFullName()",
       "userAccount.name.firstName": "getUserAccount().getName().firstName",
       "userAccount.name.lastName": "getUserAccount().getName().lastName",
+      "userAccount.address.zipCode": "getUserAccount().getAddress().getZipCode()",
+	  "email": "getUserAccount().getBillingAccount().getContactInformation().getEmail()",
+	  "subscriptionDate": "getSubscriptionDate()",
+	  "status": "getStatus()",
       "userAccount.name.title": "getUserAccount().getName().title.description",
       "userAccount.description": "getUserAccount().getDescription()",
       "userAccount.billingAccount": "getUserAccount().getBillingAccount().getCode()",
       "offer.code": "getOffer().getCode()",
       "offer.description": "getOffer().getDescription()",
-      "offer.description_sort": "getOffer().getDescription()"
+      "offer.name": "getOffer().getName()"
     },
     "ServiceInstance": {
       "subscription.code": "subscription.code",

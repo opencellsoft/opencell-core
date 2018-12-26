@@ -22,13 +22,13 @@ public class RecordedInvoiceDto extends AccountOperationDto implements Serializa
 
     /** The production date. */
     private Date productionDate;
-    
+
     /** The invoice date. */
     private Date invoiceDate;
-    
+
     /** The net to pay. */
     private BigDecimal netToPay;
-  
+
     /**
      * Instantiates a new recorded invoice dto.
      */
@@ -42,11 +42,8 @@ public class RecordedInvoiceDto extends AccountOperationDto implements Serializa
      * @param recordedInvoice the RecordedInvoice entity
      */
     public RecordedInvoiceDto(RecordedInvoice recordedInvoice) {
-        super();
-        setMatchingStatus(recordedInvoice.getMatchingStatus());
+        super(recordedInvoice);
         setInvoiceDate(recordedInvoice.getInvoiceDate());
-        setDueDate(recordedInvoice.getDueDate());
-        setReference(recordedInvoice.getReference());
     }
 
     /**
@@ -102,5 +99,5 @@ public class RecordedInvoiceDto extends AccountOperationDto implements Serializa
     public void setNetToPay(BigDecimal netToPay) {
         this.netToPay = netToPay;
     }
-    
+
 }

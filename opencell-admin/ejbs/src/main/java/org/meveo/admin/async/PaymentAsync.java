@@ -95,10 +95,10 @@ public class PaymentAsync {
            
             List<AccountOperation> listAoToPayOrRefund = null;
             if (operationCategory == OperationCategoryEnum.CREDIT) {
-                List<AccountOperation> listAoToPay = accountOperationService.getAOsToPay(paymentMethodType, fromDueDate,toDueDate, caID);
+                List<AccountOperation> listAoToPay = accountOperationService.getAOsToPayOrRefund(paymentMethodType, fromDueDate,toDueDate,OperationCategoryEnum.DEBIT, caID);
                 listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToPay, paymentMethodType, OperationCategoryEnum.DEBIT);
             } else {
-                List<AccountOperation> listAoToRefund = accountOperationService.getAOsToRefund(paymentMethodType, fromDueDate,toDueDate, caID);
+                List<AccountOperation> listAoToRefund = accountOperationService.getAOsToPayOrRefund(paymentMethodType, fromDueDate,toDueDate,OperationCategoryEnum.CREDIT, caID);
                 listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToRefund, paymentMethodType, OperationCategoryEnum.CREDIT);
             }
             if ("CA".equals(paymentPerAOorCA)) {
@@ -110,7 +110,7 @@ public class PaymentAsync {
                 }
                 if (amountToPay.compareTo(BigDecimal.ZERO) != 0) {
                     unitPaymentJobBean.execute(result, caID, aoIds, amountToPay.multiply(oneHundred).longValue(), createAO, matchingAO, operationCategory, paymentGateway,
-                        paymentMethodType);
+                        paymentMethodType, aoFilterScript);
                 }
             } else {
                 for (AccountOperation ao : listAoToPayOrRefund) {
@@ -118,7 +118,7 @@ public class PaymentAsync {
                         List<Long> aoIds = new ArrayList<Long>();
                         aoIds.add(ao.getId());
                         unitPaymentJobBean.execute(result, caID, aoIds, ao.getUnMatchingAmount().multiply(oneHundred).longValue(), createAO, matchingAO, operationCategory,
-                            paymentGateway, paymentMethodType);
+                            paymentGateway, paymentMethodType, aoFilterScript);
                     }
                 }
             }

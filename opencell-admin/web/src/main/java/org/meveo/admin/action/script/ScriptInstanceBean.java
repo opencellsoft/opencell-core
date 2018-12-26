@@ -65,12 +65,14 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 
     @Inject
     private RoleService roleService;
-    
+
     @Inject
     private ScriptInstanceCategoryService scriptInstanceCategoryService;
 
     private DualListModel<Role> execRolesDM;
     private DualListModel<Role> sourcRolesDM;
+
+    private String logMessages;
 
     public void initCompilationErrors() {
         if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
@@ -206,13 +208,15 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         return result;
     }
 
+    @ActionMethod
     public String execute() {
-        scriptInstanceService.test(entity.getCode(), null);
+        logMessages = scriptInstanceService.test(entity.getCode(), null);
+        messages.info(new BundleKey("messages", "message.scriptInstance.executed"));
         return null;
     }
 
-    public List<String> getLogs() {
-        return scriptInstanceService.getLogs(entity.getCode());
+    public String getLogs() {
+        return logMessages;
     }
 
     public boolean isUserHasSourcingRole(ScriptInstance scriptInstance) {
@@ -240,17 +244,15 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
             messages.info(new BundleKey("messages", "scriptInstance.compilationSuccessfull"));
         }
     }
-    
 
-    
-	public LazyDataModel<ScriptInstance> getScriptInstanceByCategory(String catCode) {
-		ScriptInstanceCategory category = scriptInstanceCategoryService.findByCode(catCode);
-		if (category != null) {
-			filters.put("scriptInstanceCategory", category);
-			return getLazyDataModel();
-		}
-		
-		return null;
-	}
+    public LazyDataModel<ScriptInstance> getScriptInstanceByCategory(String catCode) {
+        ScriptInstanceCategory category = scriptInstanceCategoryService.findByCode(catCode);
+        if (category != null) {
+            filters.put("scriptInstanceCategory", category);
+            return getLazyDataModel();
+        }
+
+        return null;
+    }
 
 }

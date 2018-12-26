@@ -22,6 +22,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
@@ -159,6 +160,10 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             pricePlanMatrix.setScriptInstance(scriptInstance);
         }
 
+        if (postData.getPriority() == null) {
+            postData.setPriority(1);
+        }
+
         pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
         pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
         pricePlanMatrix.setStartSubscriptionDate(postData.getStartSubscriptionDate());
@@ -170,19 +175,27 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setAmountWithoutTax(postData.getAmountWithoutTax());
         pricePlanMatrix.setAmountWithTax(postData.getAmountWithTax());
         pricePlanMatrix.setAmountWithoutTaxEL(postData.getAmountWithoutTaxEL());
+        pricePlanMatrix.setAmountWithoutTaxELSpark(postData.getAmountWithoutTaxELSpark());
         pricePlanMatrix.setAmountWithTaxEL(postData.getAmountWithTaxEL());
+        pricePlanMatrix.setAmountWithTaxELSpark(postData.getAmountWithTaxELSpark());
         pricePlanMatrix.setPriority(postData.getPriority());
         pricePlanMatrix.setCriteria1Value(postData.getCriteria1());
         pricePlanMatrix.setCriteria2Value(postData.getCriteria2());
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
+        pricePlanMatrix.setCriteriaELSpark(postData.getCriteriaELSpark());
         pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
-        pricePlanMatrix.setRatingELWithoutTax(postData.getRatingELWithoutTax());
-        pricePlanMatrix.setRatingELWithTax(postData.getRatingELWithTax());
+        pricePlanMatrix.setWoDescriptionELSpark(postData.getWoDescriptionELSpark());
+        pricePlanMatrix.setRatingWithTaxEL(postData.getRatingWithTaxEL());
+        pricePlanMatrix.setRatingWithTaxELSpark(postData.getRatingWithTaxELSpark());
+        pricePlanMatrix.setRatingWithoutTaxEL(postData.getRatingWithoutTaxEL());
+        pricePlanMatrix.setRatingWithoutTaxELSpark(postData.getRatingWithoutTaxELSpark());
         pricePlanMatrix.setMinimumAmountWithoutTaxEl(postData.getMinimumAmountWithoutTaxEl());
+        pricePlanMatrix.setMinimumAmountWithoutTaxELSpark(postData.getMinimumAmountWithoutTaxELSpark());
         pricePlanMatrix.setMinimumAmountWithTaxEl(postData.getMinimumAmountWithTaxEl());
+        pricePlanMatrix.setMinimumAmountWithTaxELSpark(postData.getMinimumAmountWithTaxELSpark());
         pricePlanMatrix.setInvoiceSubCategoryEL(postData.getInvoiceSubCategoryEL());
 
         try {
@@ -291,30 +304,107 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             pricePlanMatrix.setScriptInstance(scriptInstance);
         }
         pricePlanMatrix.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
-        pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
-        pricePlanMatrix.setStartSubscriptionDate(postData.getStartSubscriptionDate());
-        pricePlanMatrix.setEndSubscriptionDate(postData.getEndSubscriptionDate());
-        pricePlanMatrix.setStartRatingDate(postData.getStartRatingDate());
-        pricePlanMatrix.setEndRatingDate(postData.getEndRatingDate());
-        pricePlanMatrix.setMinSubscriptionAgeInMonth(postData.getMinSubscriptionAgeInMonth());
-        pricePlanMatrix.setMaxSubscriptionAgeInMonth(postData.getMaxSubscriptionAgeInMonth());
-        pricePlanMatrix.setAmountWithoutTax(postData.getAmountWithoutTax());
-        pricePlanMatrix.setAmountWithTax(postData.getAmountWithTax());
-        pricePlanMatrix.setAmountWithoutTaxEL(postData.getAmountWithoutTaxEL());
-        pricePlanMatrix.setAmountWithTaxEL(postData.getAmountWithTaxEL());
-        pricePlanMatrix.setPriority(postData.getPriority());
-        pricePlanMatrix.setCriteria1Value(postData.getCriteria1());
-        pricePlanMatrix.setCriteria2Value(postData.getCriteria2());
-        pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
-        pricePlanMatrix.setDescription(postData.getDescription());
-        pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
-        pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
-        pricePlanMatrix.setRatingELWithoutTax(postData.getRatingELWithoutTax());
-        pricePlanMatrix.setRatingELWithTax(postData.getRatingELWithTax());
-        pricePlanMatrix.setMinimumAmountWithoutTaxEl(postData.getMinimumAmountWithoutTaxEl());
-        pricePlanMatrix.setMinimumAmountWithTaxEl(postData.getMinimumAmountWithTaxEl());
-        pricePlanMatrix.setInvoiceSubCategoryEL(postData.getInvoiceSubCategoryEL());
+
+        if (pricePlanMatrix.getMinQuantity() != null) {
+            pricePlanMatrix.setMinQuantity(pricePlanMatrix.getMinQuantity());
+        }
+
+        if (postData.getMinQuantity() != null) {
+            pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
+        }
+        if (postData.getMaxQuantity() != null) {
+            pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
+        }
+        if (postData.getStartSubscriptionDate() != null) {
+            pricePlanMatrix.setStartSubscriptionDate(postData.getStartSubscriptionDate());
+        }
+        if (postData.getEndSubscriptionDate() != null) {
+            pricePlanMatrix.setEndSubscriptionDate(postData.getEndSubscriptionDate());
+        }
+        if (postData.getStartRatingDate() != null) {
+            pricePlanMatrix.setStartRatingDate(postData.getStartRatingDate());
+        }
+        if (postData.getEndRatingDate() != null) {
+            pricePlanMatrix.setEndRatingDate(postData.getEndRatingDate());
+        }
+        if (postData.getMinSubscriptionAgeInMonth() != null) {
+            pricePlanMatrix.setMinSubscriptionAgeInMonth(postData.getMinSubscriptionAgeInMonth());
+        }
+        if (postData.getMaxSubscriptionAgeInMonth() != null) {
+            pricePlanMatrix.setMaxSubscriptionAgeInMonth(postData.getMaxSubscriptionAgeInMonth());
+        }
+        if (postData.getAmountWithoutTax() != null) {
+            pricePlanMatrix.setAmountWithoutTax(postData.getAmountWithoutTax());
+        }
+        if (postData.getAmountWithTax() != null) {
+            pricePlanMatrix.setAmountWithTax(postData.getAmountWithTax());
+        }
+        if (postData.getAmountWithoutTaxEL() != null) {
+            pricePlanMatrix.setAmountWithoutTaxEL(postData.getAmountWithoutTaxEL());
+        }
+        if (postData.getAmountWithoutTaxELSpark() != null) {
+            pricePlanMatrix.setAmountWithoutTaxELSpark(postData.getAmountWithoutTaxELSpark());
+        }
+        if (postData.getAmountWithTaxEL() != null) {
+            pricePlanMatrix.setAmountWithTaxEL(postData.getAmountWithTaxEL());
+        }
+        if (postData.getAmountWithTaxELSpark() != null) {
+            pricePlanMatrix.setAmountWithTaxELSpark(postData.getAmountWithTaxELSpark());
+        }
+        if (postData.getPriority() != null) {
+            pricePlanMatrix.setPriority(postData.getPriority());
+        }
+        if (postData.getCriteria1() != null) {
+            pricePlanMatrix.setCriteria1Value(postData.getCriteria1());
+        }
+        if (postData.getCriteria2() != null) {
+            pricePlanMatrix.setCriteria2Value(postData.getCriteria2());
+        }
+        if (postData.getCriteria3() != null) {
+            pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
+        }
+        if (postData.getDescription() != null) {
+            pricePlanMatrix.setDescription(postData.getDescription());
+        }
+        if (postData.getCriteriaEL() != null) {
+            pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
+        }
+        if (postData.getCriteriaELSpark() != null) {
+            pricePlanMatrix.setCriteriaELSpark(postData.getCriteriaELSpark());
+        }
+        if (postData.getWoDescriptionEL() != null) {
+            pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
+        }
+        if (postData.getWoDescriptionELSpark() != null) {
+            pricePlanMatrix.setWoDescriptionELSpark(postData.getWoDescriptionELSpark());
+        }
+        if (postData.getRatingWithTaxEL() != null) {
+            pricePlanMatrix.setRatingWithTaxEL(postData.getRatingWithTaxEL());
+        }
+        if (postData.getRatingWithTaxELSpark() != null) {
+            pricePlanMatrix.setRatingWithTaxELSpark(postData.getRatingWithTaxELSpark());
+        }
+        if (postData.getRatingWithoutTaxEL() != null) {
+            pricePlanMatrix.setRatingWithoutTaxEL(postData.getRatingWithoutTaxEL());
+        }
+        if (postData.getRatingWithoutTaxELSpark() != null) {
+            pricePlanMatrix.setRatingWithoutTaxELSpark(postData.getRatingWithoutTaxELSpark());
+        }
+        if (postData.getMinimumAmountWithoutTaxEl() != null) {
+            pricePlanMatrix.setMinimumAmountWithoutTaxEl(postData.getMinimumAmountWithoutTaxEl());
+        }
+        if (postData.getMinimumAmountWithoutTaxELSpark() != null) {
+            pricePlanMatrix.setMinimumAmountWithoutTaxELSpark(postData.getMinimumAmountWithoutTaxELSpark());
+        }
+        if (postData.getMinimumAmountWithTaxEl() != null) {
+            pricePlanMatrix.setMinimumAmountWithTaxEl(postData.getMinimumAmountWithTaxEl());
+        }
+        if (postData.getMinimumAmountWithTaxELSpark() != null) {
+            pricePlanMatrix.setMinimumAmountWithTaxELSpark(postData.getMinimumAmountWithTaxELSpark());
+        }
+        if (postData.getInvoiceSubCategoryEL() != null) {
+            pricePlanMatrix.setInvoiceSubCategoryEL(postData.getInvoiceSubCategoryEL());
+        }
 
         if (postData.getLanguageDescriptions() != null) {
             pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), pricePlanMatrix.getDescriptionI18n()));
@@ -352,7 +442,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
         }
 
-        return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, true));
+        return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 
     public List<PricePlanMatrixDto> list(String eventCode) throws MeveoApiException {
@@ -368,7 +458,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
         List<PricePlanMatrixDto> pricePlanDtos = new ArrayList<>();
         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-            pricePlanDtos.add(new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, true)));
+            pricePlanDtos.add(new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
         }
 
         return pricePlanDtos;

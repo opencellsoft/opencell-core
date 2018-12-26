@@ -39,7 +39,8 @@ import org.meveo.model.shared.ContactInformation;
  *
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @author Khalid HORRI
+ * @lastModifiedVersion 5.3
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -78,6 +79,26 @@ public class SellerDto extends BusinessEntityDto {
 
     /** The address. */
     private AddressDto address;
+
+    /**
+     * The seller VAT No
+     */
+    private String vatNo;
+
+    /**
+     * The seller registration No
+     */
+    private String registrationNo;
+
+    /**
+     * A legal text for the seller
+     */
+    private String legalText;
+
+    /**
+     * The legal type of the seller
+     */
+    private String legalType;
 
     /**
      * Instantiates a new seller dto.
@@ -324,7 +345,73 @@ public class SellerDto extends BusinessEntityDto {
     public void setAddress(AddressDto address) {
         this.address = address;
     }
-	
+
+    /**
+     * Gets the seller's VAT No
+     * @return a VAT No
+     *
+     */
+    public String getVatNo() {
+        return vatNo;
+    }
+
+    /**
+     * Sets the seller's VAT No
+     * @param vatNo  new VAT No
+     */
+    public void setVatNo(String vatNo) {
+        this.vatNo = vatNo;
+    }
+
+    /**
+     * Gets the seller's registration No
+     * @return a registration No
+     *
+     */
+    public String getRegistrationNo() {
+        return registrationNo;
+    }
+
+    /**
+     * Sets the seller's registration No
+     * @param registrationNo  new registration No
+     */
+    public void setRegistrationNo(String registrationNo) {
+        this.registrationNo = registrationNo;
+    }
+
+    /**
+     * Gets the seller's legal text
+     * @return a legal text
+     */
+    public String getLegalText() {
+        return legalText;
+    }
+
+    /**
+     * Sets the seller's legal text
+     * @param legalText new legal text
+     */
+    public void setLegalText(String legalText) {
+        this.legalText = legalText;
+    }
+
+    /**
+     * Gets the seller's legal type
+     * @return a legal type
+     */
+    public String getLegalType() {
+        return legalType;
+    }
+
+    /**
+     * Sets the seller's legal type
+     * @param legalType new legal type
+     */
+    public void setLegalType(String legalType) {
+        this.legalType = legalType;
+    }
+
     @Override
     public String toString() {
         return "SellerDto [code=" + getCode() + ", description=" + getDescription() + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode="

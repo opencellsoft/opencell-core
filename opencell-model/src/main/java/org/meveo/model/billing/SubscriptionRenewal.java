@@ -2,23 +2,19 @@ package org.meveo.model.billing;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Type;
-
 
 /**
  * Embeddable set of renewal fields. Use in ServiceTemplate and Subscription.
  * 
+ * @author Andrius Karpavicius
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.1
+ * @author Mounir BAHIJE
+ * @lastModifiedVersion 5.3
  */
 @Embeddable
 public class SubscriptionRenewal implements Serializable {
@@ -72,18 +68,18 @@ public class SubscriptionRenewal implements Serializable {
             return calendarField;
         }
     }
-    
+
     public enum InitialTermTypeEnum {
-    	/**
-    	 * Uses RenewalPeriodUnitEnum.
-    	 */
-    	RECURRING,
-    	/**
-    	 * Uses date picker.
-    	 */
-    	FIXED;
-    	
-    	public String getLabel() {
+        /**
+         * Uses RenewalPeriodUnitEnum.
+         */
+        RECURRING,
+        /**
+         * Uses date picker.
+         */
+        FIXED;
+
+        public String getLabel() {
             return this.getClass().getSimpleName() + "." + this.name();
         }
     }
@@ -95,6 +91,14 @@ public class SubscriptionRenewal implements Serializable {
     @Column(name = "auto_renew")
     private boolean autoRenew;
 
+    /**
+     * Linked to auto_renew
+     *
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "auto_renew_date")
+    private Date autoRenewDate;
+    
     /**
      * Number of days before the end of term to trigger notification event
      */
@@ -147,10 +151,10 @@ public class SubscriptionRenewal implements Serializable {
      */
     @Column(name = "renew_for")
     private Integer renewFor;
-    
-	@Enumerated(EnumType.STRING)
-	@Column(name = "initial_term_type")
-	private InitialTermTypeEnum initialTermType = InitialTermTypeEnum.RECURRING;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "initial_term_type")
+    private InitialTermTypeEnum initialTermType = InitialTermTypeEnum.RECURRING;
 
     public boolean isAutoRenew() {
         return autoRenew;
@@ -240,12 +244,27 @@ public class SubscriptionRenewal implements Serializable {
         }
     }
 
-	public InitialTermTypeEnum getInitialTermType() {
-		return initialTermType;
-	}
+    public InitialTermTypeEnum getInitialTermType() {
+        return initialTermType;
+    }
 
-	public void setInitialTermType(InitialTermTypeEnum initialTermType) {
-		this.initialTermType = initialTermType;
-	}
+    public void setInitialTermType(InitialTermTypeEnum initialTermType) {
+        this.initialTermType = initialTermType;
+    }
 
+    /**
+     * AutoRenewDate getter
+     * @return
+     */
+    public Date getAutoRenewDate() {
+        return autoRenewDate;
+    }
+
+    /**
+     * AutoRenewDate setter
+     * @param autoRenewDate
+     */
+    public void setAutoRenewDate(Date autoRenewDate) {
+        this.autoRenewDate = autoRenewDate;
+    }
 }

@@ -21,6 +21,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -366,8 +367,11 @@ public class ElasticSearchConfiguration implements Serializable {
             if (ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(fieldTemplate.getKey(), "cft", cft)) {
 
                 // Change index property to "no" from "analyzed" or "not_analyzed"
-                if (cft.getIndexType().isStoreOnly()) {
+                if (cft.getIndexType() == CustomFieldIndexTypeEnum.STORE_ONLY) {
                     return fieldTemplate.getValue().replace("not_analyzed", "no").replace("analyzed", "no").replace("<fieldName>", cft.getCode());
+                    // Change index property "analyzed" to "not_analyzed"
+                } else if (cft.getIndexType() == CustomFieldIndexTypeEnum.INDEX_NOT_ANALYZE) {
+                    return fieldTemplate.getValue().replace("analyzed", "not_analyzed").replace("<fieldName>", cft.getCode());
                 } else {
                     return fieldTemplate.getValue().replace("<fieldName>", cft.getCode());
                 }

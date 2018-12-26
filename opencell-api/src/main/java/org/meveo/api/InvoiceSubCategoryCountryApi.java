@@ -44,8 +44,8 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
             missingParameters.add("invoiceSubCategory");
         }
 
-        if (StringUtils.isBlank(postData.getTax()) && StringUtils.isBlank(postData.getTaxCodeEL())) {
-            missingParameters.add("tax or taxCodeEL");
+        if (StringUtils.isBlank(postData.getTax()) && StringUtils.isBlank(postData.getTaxCodeEL()) && StringUtils.isBlank(postData.getTaxCodeELSpark())) {
+            missingParameters.add("tax, taxCodeEL or taxCodeELSpark");
         }
 
         handleMissingParameters();
@@ -87,7 +87,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 
             invoiceSubcategoryCountry.setTax(tax);
         }
-        
+
         TradingCountry sellingCountry = null;
         sellingCountry = tradingCountryService.findByTradingCountryCode(postData.getSellingCountry());
         
@@ -96,6 +96,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         invoiceSubcategoryCountry.setSellingCountry(sellersCountry);
         invoiceSubcategoryCountry.setFilterEL(postData.getFilterEL());
         invoiceSubcategoryCountry.setTaxCodeEL(postData.getTaxCodeEL());
+        invoiceSubcategoryCountry.setTaxCodeELSpark(postData.getTaxCodeELSpark());
         invoiceSubcategoryCountry.setStartValidityDate(postData.getStartValidityDate());
         invoiceSubcategoryCountry.setEndValidityDate(postData.getEndValidityDate());
         invoiceSubcategoryCountry.setPriority(postData.getPriority());
@@ -110,8 +111,8 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
             missingParameters.add("invoiceSubCategory");
         }
 
-        if (StringUtils.isBlank(postData.getTax()) && StringUtils.isBlank(postData.getTaxCodeEL())) {
-            missingParameters.add("tax or taxCodeEL");
+        if (StringUtils.isBlank(postData.getTax()) && StringUtils.isBlank(postData.getTaxCodeEL()) && StringUtils.isBlank(postData.getTaxCodeELSpark())) {
+            missingParameters.add("tax, taxCodeEL or taxCodeELSpark");
         }
 
         handleMissingParameters();
@@ -164,10 +165,13 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
             invoiceSubcategoryCountry.setPriority(postData.getPriority());
         }
 
-		if (postData.getTaxCodeEL() != null) {
+        if (postData.getTaxCodeEL() != null) {
             invoiceSubcategoryCountry.setTaxCodeEL(postData.getTaxCodeEL());
         }
-		
+        if (postData.getTaxCodeELSpark() != null) {
+            invoiceSubcategoryCountry.setTaxCodeELSpark(postData.getTaxCodeELSpark());
+        }
+
         invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry);
     }
 
@@ -243,9 +247,9 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = invoiceSubCategoryCountryService.listByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory,
             sellersCountry, buyersCountry, Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"), null, null);
 
-        if (invoiceSubcategoryCountries == null) {
+        if (invoiceSubcategoryCountries.isEmpty()) {
             throw new EntityDoesNotExistsException(
-                "InvoiceSubCategoryCountry with invoiceSubCategory=" + invoiceSubCategoryCode + ", tradingCountry=" + buyersCountryCode + " does not exists.");
+                "InvoiceSubCategoryCountry with invoiceSubCategory=" + invoiceSubCategoryCode +  ", sellersCountry=" + sellersCountryCode + " and tradingCountry=" + buyersCountryCode + " does not exists.");
         } else {
             for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubcategoryCountries) {
                 invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);

@@ -183,11 +183,17 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     private OfferTemplate populateFromDto(OfferTemplateDto postData, OfferTemplate offerTemplateToUpdate) throws MeveoApiException, BusinessException {
 
         OfferTemplate offerTemplate = offerTemplateToUpdate;
+        
         if (offerTemplate == null) {
             offerTemplate = new OfferTemplate();
             if (postData.isDisabled() != null) {
                 offerTemplate.setDisabled(postData.isDisabled());
             }
+        }
+        
+        Boolean autoEndOfEngagement = postData.getAutoEndOfEngagement();
+        if (autoEndOfEngagement != null) {
+            offerTemplate.setAutoEndOfEngagement(autoEndOfEngagement);
         }
 
         BusinessOfferModel businessOffer = null;
@@ -255,6 +261,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         offerTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
         offerTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
+        offerTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
+        offerTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         if (postData.getLifeCycleStatus() != null) {
             offerTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
         }
@@ -463,6 +471,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         OfferTemplateDto dto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false);
         dto.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
         dto.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
+        dto.setMinimumAmountElSpark(offerTemplate.getMinimumAmountElSpark());
+        dto.setMinimumLabelElSpark(offerTemplate.getMinimumLabelElSpark());
         
         if (loadOfferServiceTemplate && offerTemplate.getOfferServiceTemplates() != null && !offerTemplate.getOfferServiceTemplates().isEmpty()) {
             List<OfferServiceTemplateDto> offerTemplateServiceDtos = new ArrayList<>();

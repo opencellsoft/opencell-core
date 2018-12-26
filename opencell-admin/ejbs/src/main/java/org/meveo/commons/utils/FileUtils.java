@@ -303,6 +303,7 @@ public final class FileUtils {
     /**
      * @param sourceDirectory source directory
      * @param extensions list of extensions
+     * @param prefix Filename prefix
      * @return array of File instance
      */
     public static File[] getFilesForParsing(String sourceDirectory, final List<String> extensions, final String prefix) {

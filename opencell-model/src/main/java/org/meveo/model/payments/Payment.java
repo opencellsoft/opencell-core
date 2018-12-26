@@ -29,68 +29,65 @@ import javax.persistence.Entity;
 public class Payment extends AccountOperation {
 
     private static final long serialVersionUID = 1L;
-   
+
     /**
      * Number assigned by the Operator bank
      */
     @Column(name = "payment_order")
     private String paymentOrder;
-    
-   /**
-    *  Amount of financial expenses exluded in the amount
-    */
+
+    /**
+     * Amount of financial expenses exluded in the amount
+     */
     @Column(name = "payment_fees")
-    private BigDecimal fees = BigDecimal.ZERO; 
+    private BigDecimal fees = BigDecimal.ZERO;
 
     /**
      * Comments Text free if litigation or special conditions
      */
     @Column(name = "comment", columnDefinition = "LONGTEXT")
     private String comment;
-    
 
-	/**
-	 * @return the paymentOrder
-	 */
-	public String getPaymentOrder() {
-		return paymentOrder;
-	}
+    /**
+     * @return the paymentOrder
+     */
+    public String getPaymentOrder() {
+        return paymentOrder;
+    }
 
-	/**
-	 * @param paymentOrder the paymentOrder to set
-	 */
-	public void setPaymentOrder(String paymentOrder) {
-		this.paymentOrder = paymentOrder;
-	}
+    /**
+     * @param paymentOrder the paymentOrder to set
+     */
+    public void setPaymentOrder(String paymentOrder) {
+        this.paymentOrder = paymentOrder;
+    }
 
-	/**
-	 * @return the fees
-	 */
-	public BigDecimal getFees() {
-		return fees;
-	}
+    /**
+     * @return the fees
+     */
+    public BigDecimal getFees() {
+        return fees;
+    }
 
-	/**
-	 * @param fees the fees to set
-	 */
-	public void setFees(BigDecimal fees) {
-		this.fees = fees;
-	}
+    /**
+     * @param fees the fees to set
+     */
+    public void setFees(BigDecimal fees) {
+        this.fees = fees;
+    }
 
-	/**
-	 * @return the comment
-	 */
-	public String getComment() {
-		return comment;
-	}
+    /**
+     * @return the comment
+     */
+    public String getComment() {
+        return comment;
+    }
 
-	/**
-	 * @param comment the comment to set
-	 */
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-    
-    
+    /**
+     * @param comment the comment to set
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
 }

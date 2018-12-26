@@ -355,7 +355,7 @@ public class ImportAccountsJobBean {
             accountImportService.updateUserAccount(billingAccount, billingAccountDto, uAccount);
         } else {
             try {
-                userAccount = accountImportService.importUserAccount(billingAccount, billingAccountDto, uAccount);
+                userAccount = accountImportService.importUserAccount(billingAccount, billingAccountDto, uAccount, null);
 
                 log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j + " code:" + uAccount.getCode() + ", status:Created");
                 nbUserAccountsCreated++;

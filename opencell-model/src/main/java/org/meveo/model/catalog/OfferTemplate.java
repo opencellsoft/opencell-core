@@ -58,7 +58,7 @@ import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 public class OfferTemplate extends ProductOffering {
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_offer_model_id")
     private BusinessOfferModel businessOfferModel;
 
@@ -71,13 +71,33 @@ public class OfferTemplate extends ProductOffering {
     @OrderBy("id")
     private List<OfferProductTemplate> offerProductTemplates = new ArrayList<>();
 
+    /**
+     * Expression to determine minimum amount value
+     */
     @Column(name = "minimum_amount_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountEl;
 
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
+
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    @Column(name = "minimum_amount_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    @Column(name = "minimum_label_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelElSpark;
 
     @Embedded
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
@@ -93,7 +113,7 @@ public class OfferTemplate extends ProductOffering {
 
     @Transient
     private String transientCode;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
@@ -270,20 +290,60 @@ public class OfferTemplate extends ProductOffering {
         code = transientCode;
     }
 
+    /**
+     * @return Expression to determine minimum amount value
+     */
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
 
+    /**
+     * @param minimumAmountEl Expression to determine minimum amount value
+     */
     public void setMinimumAmountEl(String minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
 
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value
+     */
     public String getMinimumLabelEl() {
         return minimumLabelEl;
     }
 
+    /**
+     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
+     */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
+    }
+
+    /**
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
+
+    /**
+     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
     }
 
     /**

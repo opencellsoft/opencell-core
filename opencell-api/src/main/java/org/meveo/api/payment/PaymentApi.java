@@ -36,6 +36,7 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
@@ -213,7 +214,7 @@ public class PaymentApi extends BaseApi {
                 paymentDto.setPaymentOrder(p.getPaymentOrder());
                 paymentDto.setFees(p.getFees());
                 paymentDto.setComment(p.getComment());
-                paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, true));
+                paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                 if (p instanceof AutomatedPayment) {
                     AutomatedPayment ap = (AutomatedPayment) p;
                     paymentDto.setBankCollectionDate(ap.getBankCollectionDate());
@@ -362,7 +363,7 @@ public class PaymentApi extends BaseApi {
         if (paymentOrRefund.getMatchingAmounts() != null && !paymentOrRefund.getMatchingAmounts().isEmpty()) {
             for (MatchingAmount ma : paymentOrRefund.getMatchingAmounts().get(0).getMatchingCode().getMatchingAmounts()) {
                 if (ma.getAccountOperation().getTransactionCategory() != paymentOrRefund.getTransactionCategory()) {
-                    result.add(new AccountOperationDto(ma.getAccountOperation(), entityToDtoConverter.getCustomFieldsDTO(ma.getAccountOperation(), true)));
+                    result.add(new AccountOperationDto(ma.getAccountOperation(), entityToDtoConverter.getCustomFieldsDTO(ma.getAccountOperation(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
                 }
             }
         }
@@ -394,10 +395,10 @@ public class PaymentApi extends BaseApi {
         paymentHistoryDto.setPaymentMethodName(paymentHistory.getPaymentMethodName());
         paymentHistoryDto.setPaymentMethodType(paymentHistory.getPaymentMethodType());
         if (paymentHistory.getRefund() != null) {
-            paymentHistoryDto.setRefund(new AccountOperationDto(paymentHistory.getRefund(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getRefund(), true)));
+            paymentHistoryDto.setRefund(new AccountOperationDto(paymentHistory.getRefund(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getRefund(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
         }
         if (paymentHistory.getPayment() != null) {
-            paymentHistoryDto.setPayment(new AccountOperationDto(paymentHistory.getPayment(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getPayment(), true)));
+            paymentHistoryDto.setPayment(new AccountOperationDto(paymentHistory.getPayment(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getPayment(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
         }
         paymentHistoryDto.setSyncStatus(paymentHistory.getSyncStatus());
         paymentHistoryDto.setStatus(paymentHistory.getStatus());

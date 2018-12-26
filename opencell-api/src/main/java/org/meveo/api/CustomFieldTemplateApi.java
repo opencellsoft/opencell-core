@@ -29,7 +29,10 @@ import org.meveo.util.EntityCustomizationUtils;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2.1
+ */
+
 @Stateless
 public class CustomFieldTemplateApi extends BaseApi {
 
@@ -332,6 +335,10 @@ public class CustomFieldTemplateApi extends BaseApi {
             if (dto.isDisabled() != null) {
                 cft.setDisabled(dto.isDisabled());
             }
+        }
+        
+        if (dto.getDisplayFormat() != null) {
+            cft.setDisplayFormat(dto.getDisplayFormat());
         }
 
         if (dto.getDescription() != null) {

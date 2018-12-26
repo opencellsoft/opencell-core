@@ -99,7 +99,8 @@
     </page>
 
 	<page view-id=".+\/admin\/files\/.+">
-			<constraint type="READ">currentUser.hasRole('filesManagement')</constraint>
+		<constraint>currentUser.hasRole('administrationManagement')</constraint>
+		<constraint>currentUser.hasRole('filesManagement')</constraint>
 	</page>
 
 	<page view-id=".+\/admin\/.+">

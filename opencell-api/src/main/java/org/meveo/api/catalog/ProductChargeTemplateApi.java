@@ -22,6 +22,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.ProductChargeTemplateService;
@@ -227,7 +228,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
             throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
         }
 
-        ProductChargeTemplateDto result = new ProductChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, true));
+        ProductChargeTemplateDto result = new ProductChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
         return result;
     }

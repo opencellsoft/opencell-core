@@ -34,6 +34,11 @@ import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.validation.constraint.ClassName;
 
+/**
+ * Base notification information
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ModuleItem
 @ExportIdentifier({ "code" })
@@ -50,33 +55,54 @@ public class Notification extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 2634877161620665288L;
 
+    /**
+     * Classname of an entity that notification applies to
+     */
     @Column(name = "class_name_filter", length = 255, nullable = false)
     @NotNull
     @Size(max = 255)
     @ClassName
     private String classNameFilter;
 
+    /**
+     * Event that notification applies to
+     */
     @Column(name = "event_type_filter", length = 20, nullable = false)
     @NotNull
     @Enumerated(EnumType.STRING)
     private NotificationEventTypeEnum eventTypeFilter;
 
+    /**
+     * Expression to determine if notification applies
+     */
     @Column(name = "event_expression_filter", length = 2000)
     @Size(max = 2000)
     private String elFilter;
 
+    /**
+     * Counter template/definition to limit a number of notifications fired
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counter_template_id")
     private CounterTemplate counterTemplate;
 
+    /**
+     * Counter instance to limit a number of notifications fired
+     */
     @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
     @JoinColumn(name = "counter_instance_id")
     private CounterInstance counterInstance;
 
+    /**
+     * Script to run before notification firing or after in case of WebHook type notification
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
+    /**
+     * Parameters to be passed to script execution in a form of expressions.
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "adm_notification_params")
     private Map<String, String> params = new HashMap<String, String>();

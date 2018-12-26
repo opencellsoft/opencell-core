@@ -29,6 +29,7 @@ import javax.validation.constraints.Size;
 import org.meveo.model.billing.Country;
 
 /**
+ * Address information
  * 
  * @author anasseh
  * @author Edward P. Legaspi
@@ -37,139 +38,156 @@ import org.meveo.model.billing.Country;
 @Embeddable
 public class Address implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "address_1", length = 255)
-	@Size(max = 255)
-	protected String address1;
+    /**
+     * Address line 1
+     */
+    @Column(name = "address_1", length = 255)
+    @Size(max = 255)
+    protected String address1;
 
-	@Column(name = "address_2", length = 255)
-	@Size(max = 255)
-	protected String address2;
+    /**
+     * Address line 2
+     */
+    @Column(name = "address_2", length = 255)
+    @Size(max = 255)
+    protected String address2;
 
-	@Column(name = "address_3", length = 255)
-	@Size(max = 255)
-	protected String address3;
+    /**
+     * Address line 3
+     */
+    @Column(name = "address_3", length = 255)
+    @Size(max = 255)
+    protected String address3;
 
-	@Column(name = "address_zipcode", length = 10)
-	@Size(max = 10)
-	protected String zipCode;
+    /**
+     * Postal code
+     */
+    @Column(name = "address_zipcode", length = 10)
+    @Size(max = 10)
+    protected String zipCode;
 
-	@Column(name = "address_city", length = 50)
-	@Size(max = 50)
-	protected String city;
+    /**
+     * City
+     */
+    @Column(name = "address_city", length = 50)
+    @Size(max = 50)
+    protected String city;
 
+    /**
+     * Country
+     */
     @ManyToOne
     @JoinColumn(name = "address_country_id")
-	protected Country country;
+    protected Country country;
 
-	@Column(name = "address_state", length = 50)
-	@Size(max = 50)
-	protected String state;
+    /**
+     * State
+     */
+    @Column(name = "address_state", length = 50)
+    @Size(max = 50)
+    protected String state;
 
-	public Address() {
-	}
+    public Address() {
+    }
 
-	public Address(Address address) {
-		this(address.address1, address.address2, address.address3, address.zipCode, address.city, address.country,
-				address.state);
-	}
+    public Address(Address address) {
+        this(address.address1, address.address2, address.address3, address.zipCode, address.city, address.country, address.state);
+    }
 
-	public Address(String address1, String address2, String address3, String zipCode, String city, Country country,
-			String state) {
-		super();
-		this.address1 = address1;
-		this.address2 = address2;
-		this.address3 = address3;
-		this.zipCode = zipCode;
-		this.city = city;
-		this.country = country;
-		this.state = state;
-	}
+    public Address(String address1, String address2, String address3, String zipCode, String city, Country country, String state) {
+        super();
+        this.address1 = address1;
+        this.address2 = address2;
+        this.address3 = address3;
+        this.zipCode = zipCode;
+        this.city = city;
+        this.country = country;
+        this.state = state;
+    }
 
-	public String getAddress1() {
-		return address1;
-	}
+    public String getAddress1() {
+        return address1;
+    }
 
-	public void setAddress1(String address1) {
-		this.address1 = address1;
-	}
+    public void setAddress1(String address1) {
+        this.address1 = address1;
+    }
 
-	public String getAddress2() {
-		return address2;
-	}
+    public String getAddress2() {
+        return address2;
+    }
 
-	public void setAddress2(String address2) {
-		this.address2 = address2;
-	}
+    public void setAddress2(String address2) {
+        this.address2 = address2;
+    }
 
-	public String getAddress3() {
-		return address3;
-	}
+    public String getAddress3() {
+        return address3;
+    }
 
-	public void setAddress3(String address3) {
-		this.address3 = address3;
-	}
+    public void setAddress3(String address3) {
+        this.address3 = address3;
+    }
 
-	public String getZipCode() {
-		return zipCode;
-	}
+    public String getZipCode() {
+        return zipCode;
+    }
 
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
-	}
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
 
-	public String getCity() {
-		return city;
-	}
+    public String getCity() {
+        return city;
+    }
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	public String getState() {
-		return state;
-	}
+    public String getState() {
+        return state;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	public Country getCountry() {
-		return country;
-	}
+    public Country getCountry() {
+        return country;
+    }
 
-	public void setCountry(Country country) {
-		this.country = country;
-	}
+    public void setCountry(Country country) {
+        this.country = country;
+    }
 
-	public String getCountryBundle() {
-		if (country == null)
-			return null;
-		return "countries." + country.getDescription();
-	}
+    public String getCountryBundle() {
+        if (country == null)
+            return null;
+        return "countries." + country.getDescription();
+    }
 
-	@Override
-	public String toString() {
-		return (address1 == null ? "" : address1) + "|" + (address2 == null ? "" : address2) + "|"
-				+ (address3 == null ? "" : address3) + "|" + (zipCode == null ? "" : zipCode) + "|"
-				+ (city == null ? "" : city) + "|" + (state == null ? "" : state) + "|"
-				+ (country == null ? "" : country);
-	}
+    @Override
+    public String toString() {
+        return (address1 == null ? "" : address1) + "|" + (address2 == null ? "" : address2) + "|" + (address3 == null ? "" : address3) + "|" + (zipCode == null ? "" : zipCode)
+                + "|" + (city == null ? "" : city) + "|" + (state == null ? "" : state) + "|" + (country == null ? "" : country);
+    }
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		Address o = (Address) super.clone();
-		return o;
-	}
-	
-	public void anonymize(String code) {
-		setAddress1(code);
-		setAddress2(code);
-		setAddress3(code);
-		setCity(code);
-		setState(code);
-		setZipCode("xxx");
-		setCountry(null);
-	}
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Address o = (Address) super.clone();
+        return o;
+    }
+
+    public void anonymize(String code) {
+        setAddress1(code);
+        setAddress2(code);
+        setAddress3(code);
+        setCity(code);
+        setState(code);
+        setZipCode("xxx");
+        setCountry(null);
+    }
 }

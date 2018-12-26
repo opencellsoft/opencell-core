@@ -37,96 +37,97 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "code"})
-@Table(name = "com_sender_config", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@ExportIdentifier({ "code" })
+@Table(name = "com_sender_config", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @DiscriminatorColumn(name = "media")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_sndr_conf_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "com_sndr_conf_seq"), })
 public abstract class MessageSenderConfig extends BusinessEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "media", insertable = false, updatable = false)
-	private MediaEnum media;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "media", insertable = false, updatable = false)
+    private MediaEnum media;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "priority")
-	private PriorityEnum defaultPriority;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority")
+    private PriorityEnum defaultPriority;
 
-	@Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "manage_non_distrib")
-	private Boolean manageNonDistributedMessage;
+    private Boolean manageNonDistributedMessage;
 
-	@Column(name = "non_distrib_email", length = 255)
+    @Column(name = "non_distrib_email", length = 255)
     @Size(max = 255)
-	private String NonDistributedEmail;
+    private String NonDistributedEmail;
 
-	@Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "use_ack")
-	private Boolean useAcknoledgement;
+    private Boolean useAcknoledgement;
 
-	@Column(name = "ack_email", length = 255)
+    @Column(name = "ack_email", length = 255)
     @Size(max = 255)
-	private String ackEmail;
+    private String ackEmail;
 
-	@Embedded
-	private CommunicationPolicy senderPolicy;
+    @Embedded
+    private CommunicationPolicy senderPolicy;
 
-	public MediaEnum getMedia() {
-		return media;
-	}
+    public MediaEnum getMedia() {
+        return media;
+    }
 
-	public void setMedia(MediaEnum media) {
-		this.media = media;
-	}
+    public void setMedia(MediaEnum media) {
+        this.media = media;
+    }
 
-	public PriorityEnum getDefaultPriority() {
-		return defaultPriority;
-	}
+    public PriorityEnum getDefaultPriority() {
+        return defaultPriority;
+    }
 
-	public void setDefaultPriority(PriorityEnum defaultPriority) {
-		this.defaultPriority = defaultPriority;
-	}
+    public void setDefaultPriority(PriorityEnum defaultPriority) {
+        this.defaultPriority = defaultPriority;
+    }
 
-	public Boolean isManageNonDistributedMessage() {
-		return manageNonDistributedMessage;
-	}
+    public Boolean isManageNonDistributedMessage() {
+        return manageNonDistributedMessage;
+    }
 
-	public void setManageNonDistributedMessage(Boolean manageNonDistributedMessage) {
-		this.manageNonDistributedMessage = manageNonDistributedMessage;
-	}
+    public void setManageNonDistributedMessage(Boolean manageNonDistributedMessage) {
+        this.manageNonDistributedMessage = manageNonDistributedMessage;
+    }
 
-	public String getNonDistributedEmail() {
-		return NonDistributedEmail;
-	}
+    public String getNonDistributedEmail() {
+        return NonDistributedEmail;
+    }
 
-	public void setNonDistributedEmail(String nonDistributedEmail) {
-		NonDistributedEmail = nonDistributedEmail;
-	}
+    public void setNonDistributedEmail(String nonDistributedEmail) {
+        NonDistributedEmail = nonDistributedEmail;
+    }
 
-	public Boolean isUseAcknoledgement() {
-		return useAcknoledgement;
-	}
+    public Boolean isUseAcknoledgement() {
+        return useAcknoledgement;
+    }
 
-	public void setUseAcknoledgement(Boolean useAcknoledgement) {
-		this.useAcknoledgement = useAcknoledgement;
-	}
+    public void setUseAcknoledgement(Boolean useAcknoledgement) {
+        this.useAcknoledgement = useAcknoledgement;
+    }
 
-	public String getAckEmail() {
-		return ackEmail;
-	}
+    public String getAckEmail() {
+        return ackEmail;
+    }
 
-	public void setAckEmail(String ackEmail) {
-		this.ackEmail = ackEmail;
-	}
+    public void setAckEmail(String ackEmail) {
+        this.ackEmail = ackEmail;
+    }
 
-	public CommunicationPolicy getSenderPolicy() {
-		return senderPolicy;
-	}
+    public CommunicationPolicy getSenderPolicy() {
+        return senderPolicy;
+    }
 
-	public void setSenderPolicy(CommunicationPolicy senderPolicy) {
-		this.senderPolicy = senderPolicy;
-	}
+    public void setSenderPolicy(CommunicationPolicy senderPolicy) {
+        this.senderPolicy = senderPolicy;
+    }
 
 }

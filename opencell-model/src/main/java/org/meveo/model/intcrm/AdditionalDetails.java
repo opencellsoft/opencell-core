@@ -10,50 +10,62 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
+/**
+ * Additional contact details
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ExportIdentifier({ "additionalDetails" })
 @Table(name = "crm_additional_details")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_additional_details_seq") })
 public class AdditionalDetails extends BaseEntity {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2502533941498882545L;
 
-	@Column(name = "company_name", length = 200)
-	@Size(max = 200)
-	private String companyName;
-	
-	@Column(name = "position", length = 200)
-	@Size(max = 200)
-	private String position;
-		
-	@Column(name = "instant_messengers", length = 2000)
-	@Size(max = 500)
-	private String instantMessengers;
+    private static final long serialVersionUID = 2502533941498882545L;
 
-	public String getCompanyName() {
-		return companyName;
-	}
+    /**
+     * Company name
+     */
+    @Column(name = "company_name", length = 200)
+    @Size(max = 200)
+    private String companyName;
 
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
-	}
+    /**
+     * Position
+     */
+    @Column(name = "position", length = 200)
+    @Size(max = 200)
+    private String position;
 
-	public String getPosition() {
-		return position;
-	}
+    /**
+     * Instant messenger usernames
+     */
+    @Column(name = "instant_messengers", length = 2000)
+    @Size(max = 500)
+    private String instantMessengers;
 
-	public void setPosition(String position) {
-		this.position = position;
-	}
+    public String getCompanyName() {
+        return companyName;
+    }
 
-	public String getInstantMessengers() {
-		return instantMessengers;
-	}
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
 
-	public void setInstantMessengers(String instantMessengers) {
-		this.instantMessengers = instantMessengers;
-	}
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getInstantMessengers() {
+        return instantMessengers;
+    }
+
+    public void setInstantMessengers(String instantMessengers) {
+        this.instantMessengers = instantMessengers;
+    }
 }

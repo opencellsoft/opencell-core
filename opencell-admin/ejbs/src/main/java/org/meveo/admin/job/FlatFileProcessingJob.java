@@ -90,7 +90,9 @@ public class FlatFileProcessingJob extends Job {
             }
             File[] files = FileUtils.getFilesForParsing(inputDir, fileExtensions);
             if (files == null || files.length == 0) {
-                log.debug("there no file in {} with extension {}", inputDir, fileExtensions);
+                String msg = String.format("there is no file in %s with extension %s", inputDir, fileExtensions);
+                log.debug(msg);
+                result.registerError(msg);
                 return;
             }
             for (File file : files) {
@@ -106,12 +108,10 @@ public class FlatFileProcessingJob extends Job {
         }
     }
 
-
     @Override
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.MEDIATION;
     }
-
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {

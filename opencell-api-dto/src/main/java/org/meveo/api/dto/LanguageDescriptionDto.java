@@ -24,7 +24,7 @@ public class LanguageDescriptionDto implements Serializable {
 
     /** The language code. */
     private String languageCode;
-    
+
     /** The description. */
     private String description;
 
@@ -82,9 +82,6 @@ public class LanguageDescriptionDto implements Serializable {
         this.description = description;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "LanguageDescriptionDto [languageCode=" + languageCode + ", description=" + description + "]";
@@ -105,7 +102,9 @@ public class LanguageDescriptionDto implements Serializable {
         List<LanguageDescriptionDto> translationInfos = new ArrayList<>();
 
         for (Entry<String, String> translationInfo : multiLanguageMap.entrySet()) {
-            translationInfos.add(new LanguageDescriptionDto(translationInfo.getKey(), translationInfo.getValue()));
+            if (translationInfo.getValue() != null) {
+                translationInfos.add(new LanguageDescriptionDto(translationInfo.getKey(), translationInfo.getValue()));
+            }
         }
 
         return translationInfos;

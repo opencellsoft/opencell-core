@@ -17,6 +17,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
@@ -59,6 +60,11 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         }
 
         Job job = jobInstanceService.getJobByName(postData.getJobTemplate());
+
+        if (job == null) {
+            throw new EntityDoesNotExistsException("JobTemplate with code '" + postData.getJobTemplate() + "' doesn't exist.");
+        }
+
         JobCategoryEnum jobCategory = job.getJobCategory();
 
         JobInstance jobInstance = new JobInstance();
@@ -125,6 +131,10 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
     public JobInstance update(JobInstanceDto postData) throws MeveoApiException, BusinessException {
 
         String jobInstanceCode = postData.getCode();
+        
+        if (StringUtils.isBlank(postData.getJobTemplate())) {
+            missingParameters.add("jobTemplate");
+        }
 
         if (StringUtils.isBlank(jobInstanceCode)) {
             missingParameters.add("code");
@@ -139,6 +149,11 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         }
 
         Job job = jobInstanceService.getJobByName(postData.getJobTemplate());
+        
+        if (job == null) {
+            throw new EntityDoesNotExistsException("JobTemplate with code '" + postData.getJobTemplate() + "' doesn't exist." );
+        }
+        
         JobCategoryEnum jobCategory = job.getJobCategory();
 
         jobInstance.setJobTemplate(postData.getJobTemplate());
@@ -207,7 +222,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         
         customFieldInstanceService.instantiateCFWithDefaultValue(jobInstance);
         
-        JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, entityToDtoConverter.getCustomFieldsDTO(jobInstance, false));
+        JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, entityToDtoConverter.getCustomFieldsDTO(jobInstance, CustomFieldInheritanceEnum.INHERIT_NONE));
         return jobInstanceDto;
     }
 }

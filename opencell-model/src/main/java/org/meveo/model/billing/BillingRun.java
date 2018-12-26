@@ -28,13 +28,14 @@ import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -43,135 +44,255 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ICustomFieldEntity;
+import org.hibernate.annotations.Type;
+import org.meveo.model.*;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
 
+/**
+ * Billing run
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
+@ReferenceIdentifierQuery("BillingRun.findByIdAndBCCode")
 @CustomFieldEntity(cftCodePrefix = "BILLING_RUN")
 @Table(name = "billing_billing_run")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_billing_run_seq") })
-public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
+@NamedQueries({
+        @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') order by br.id asc"),
+        @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code ") })
+
+public class BillingRun extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Billing run processing start date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "process_date")
     private Date processDate;
 
+    /**
+     * Execution status
+     */
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
     private BillingRunStatusEnum status;
 
+    /**
+     * Last status change date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
     private Date statusDate;
 
+    /**
+     * Billing cycle
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "billing_cycle_id")
     private BillingCycle billingCycle;
 
+    /**
+     * Number of matched Billing accounts
+     */
     @Column(name = "nb_billing_account")
     private Integer billingAccountNumber;
 
+    /**
+     * Number of billable Billing accounts
+     */
     @Column(name = "nb_billable_billing_account")
     private Integer billableBillingAcountNumber;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "nb_producible_invoice")
     private Integer producibleInvoiceNumber;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "producible_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal producibleAmountWithoutTax;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "producible_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal producibleAmountTax;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "nb_invoice")
     private Integer InvoiceNumber;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "producible_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal producibleAmountWithTax;
 
+    /**
+     * Billed amount without tax
+     */
     @Column(name = "pr_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal prAmountWithoutTax;
 
+    /**
+     * Billed amount with tax
+     */
     @Column(name = "pr_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal prAmountWithTax;
 
+    /**
+     * Billed tax amount
+     */
     @Column(name = "pr_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal prAmountTax;
 
+    /**
+     * Invoices produced by a Billing run
+     */
     @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Invoice> invoices = new ArrayList<Invoice>();
 
+    /**
+     * Billing run lists
+     */
     @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<BillingRunList> billingRunLists = new HashSet<BillingRunList>();
 
+    /**
+     * Billed billing accounts
+     */
     @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
     private List<BillingAccount> billableBillingAccounts = new ArrayList<BillingAccount>();
 
+    /**
+     * Rated transactions included in this billing run
+     */
     @OneToMany(mappedBy = "billingRun", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Set<RatedTransaction> ratedTransactions = new HashSet<RatedTransaction>();
 
+    /**
+     * Billing run processing type
+     */
     @Enumerated(value = EnumType.STRING)
     @Column(name = "process_type")
     private BillingProcessTypesEnum processType;
 
+    /**
+     * Include Rated transactions between the dates - from date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date")
     private Date startDate;
 
+    /**
+     * Include Rated transactions between the dates - to date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_date")
     private Date endDate;
 
+    /**
+     * Invoice date
+     */
     @Column(name = "invoice_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date invoiceDate;
 
+    /**
+     * Include in invoice Rated transactions up to that date
+     */
     @Column(name = "last_transaction_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastTransactionDate;
 
+    /**
+     * Rejection reason
+     */
     @Column(name = "rejection_reason", length = 255)
     @Size(max = 255)
     private String rejectionReason;
 
+    /**
+     * Currency
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pr_currency_id")
     private Currency currency;
 
+    /**
+     * Country
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pr_country_id")
     private Country country;
 
+    /**
+     * Language
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pr_language_id")
     private Language language;
 
+    /**
+     * Selected billing accounts (identifiers)
+     */
     @Column(name = "selected_billing_accounts", columnDefinition = "TEXT")
     private String selectedBillingAccounts;
 
+    /**
+     * Pre-invoicing reports
+     */
     @Transient
     PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
 
+    /**
+     * Post-invoicing reports
+     */
     @Transient
     PostInvoicingReportsDTO postInvoicingReports = new PostInvoicingReportsDTO();
 
+    /**
+     * Rejected billing accounts
+     */
     @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
     private List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
-    
-    @Convert(converter = CustomFieldValuesConverter.class)
+
+    /**
+     * Custom field values in JSON format
+     */
+    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
-    
+
+    /**
+     * Accumulated custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
+    /**
+     * Unique identifier - UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
@@ -317,10 +438,16 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
         this.invoiceDate = invoiceDate;
     }
 
+    /**
+     * @return Include in invoice Rated transactions up to that date
+     */
     public Date getLastTransactionDate() {
         return lastTransactionDate;
     }
 
+    /**
+     * @param lastTransactionDate Include in invoice Rated transactions up to that date
+     */
     public void setLastTransactionDate(Date lastTransactionDate) {
         this.lastTransactionDate = lastTransactionDate;
     }
@@ -431,7 +558,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
         }
         rejectedBillingAccounts.add(rejectedBillingAccount);
     }
-    
+
     @Override
     public CustomFieldValues getCfValues() {
         return cfValues;
@@ -440,6 +567,16 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
     @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
     }
 
     @Override
@@ -453,7 +590,6 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -463,7 +599,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
         uuid = UUID.randomUUID().toString();
         return oldUuid;
     }
-    
+
     @Override
     public int hashCode() {
         return 961 + (("BR" + (id == null ? "" : id)).hashCode());
@@ -494,4 +630,32 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
         }
         return true;
     }
+
+    public void setDescriptionOrCode(String description) {
+
+    }
+
+    public String getReferenceCode() {
+        return id + "/" + billingCycle.getCode();
+    }
+
+    public void setReferenceCode(Object value) {
+        String id = null;
+        if (value != null) {
+            id = value.toString().split("/")[0];
+            setId(Long.valueOf(id));
+            billingCycle = new BillingCycle();
+            billingCycle.setCode(getBillingCycleCode(value.toString(), id));
+        }
+    }
+
+    private String getBillingCycleCode(String value, String id) {
+        return value.substring(id.length() + 1, value.length());
+    }
+
+    public String getReferenceDescription() {
+        return billingCycle.getDescription();
+    }
+
+
 }

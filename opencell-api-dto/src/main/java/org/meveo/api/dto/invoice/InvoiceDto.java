@@ -2,6 +2,7 @@ package org.meveo.api.dto.invoice;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -14,12 +15,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.TaxInvoiceAggregateDto;
 import org.meveo.api.dto.payment.RecordedInvoiceDto;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
- * The Class InvoiceDto.
+ * DTO equivalent of Invoice entity.
  * 
  * @author anasseh
  */
@@ -31,107 +37,192 @@ public class InvoiceDto extends AuditableEntityDto {
     private static final long serialVersionUID = 1072382628068718580L;
 
     /** The invoice id. */
-    private Long invoiceId;
+    protected Long invoiceId;
 
     /** The invoice type. */
     @XmlElement(required = true)
-    private String invoiceType;
+    protected String invoiceType;
 
     /** The billing account code. */
     @XmlElement(required = true)
-    private String billingAccountCode;
+    protected String billingAccountCode;
+
+    /**
+     * Code of the Seller
+     */
+    protected String sellerCode;
+
+    /**
+     * Code of the subscription
+     */
+    protected String subscriptionCode;
+
+    /**
+     * Order number
+     */
+    protected String orderNumber;
 
     /** The due date. */
     @XmlElement(required = true)
-    private Date dueDate;
+    protected Date dueDate;
 
     /** The invoice date. */
     @XmlElement(required = true)
-    private Date invoiceDate;
+    protected Date invoiceDate;
 
-    /** The category invoice agregates. */
+    /** The category invoice aggregates. */
     @XmlElementWrapper
     @XmlElement(name = "categoryInvoiceAgregate", required = true)
-    private List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
+    protected List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
+
+    /** The tax aggregates */
+    @XmlElementWrapper
+    @XmlElement(name = "taxAggregate", required = true)
+    protected List<TaxInvoiceAggregateDto> taxAggregates = new ArrayList<TaxInvoiceAggregateDto>();
 
     /** The list invoice id to link. */
     @XmlElementWrapper
     @XmlElement(name = "invoiceIdToLink")
-    private List<Long> listInvoiceIdToLink = new ArrayList<Long>();
+    protected List<Long> listInvoiceIdToLink = new ArrayList<Long>();
 
     /** The invoice number. */
-    private String invoiceNumber;
-    
+    protected String invoiceNumber;
+
     /** The discount. */
-    private BigDecimal discount;
-    
+    protected BigDecimal discount;
+
     /** The amount without tax. */
-    private BigDecimal amountWithoutTax;
-    
+    protected BigDecimal amountWithoutTax;
+
     /** The amount tax. */
-    private BigDecimal amountTax;
-    
+    protected BigDecimal amountTax;
+
     /** The amount with tax. */
-    private BigDecimal amountWithTax;
-    
+    protected BigDecimal amountWithTax;
+
     /** The payment method. */
-    private PaymentMethodEnum paymentMethod;
-    /**
-     * Deprecated in 4.8. Use pdfFilename!=null instead
-     */
-    @Deprecated
-    private boolean pdfPresent;
+    protected PaymentMethodEnum paymentMethod;
 
     /** The xml filename. */
-    private String xmlFilename;
-    
+    protected String xmlFilename;
+
     /** The xml. */
-    private String xml;
-    
+    protected String xml;
+
     /** The pdf filename. */
-    private String pdfFilename;
-    
+    protected String pdfFilename;
+
     /** The pdf. */
-    private byte[] pdf;
-    
-    /** The auto validation. */
-    private boolean autoValidation = true;
-    
-    /** The return xml. */
-    private boolean returnXml = false;
-    
-    /** The return pdf. */
-    private boolean returnPdf = false;
-    
-    /** The include balance. */
-    private boolean includeBalance = false;
+    protected byte[] pdf;
+
+    /**
+     * A request-only parameter. True if invoice should be assigned a number. Defaults to True.
+     */
+    protected Boolean autoValidation;
+
+    /**
+     * A request-only parameter. True if currently XML invoice should be returned.
+     */
+    protected Boolean returnXml;
+
+    /**
+     * A request-only parameter. True if currently PDF invoice should be returned.
+     */
+    protected Boolean returnPdf;
+
+    /**
+     * A request-only parameter. True if currently due balance should be returned
+     */
+    protected Boolean includeBalance;
 
     /** The recorded invoice dto. */
-    private RecordedInvoiceDto recordedInvoiceDto;
+    protected RecordedInvoiceDto recordedInvoiceDto;
 
     /** The net to pay. */
-    private BigDecimal netToPay;
+    protected BigDecimal netToPay;
 
     /** The invoice mode. */
     @XmlElement(required = true)
-    private InvoiceModeEnum invoiceMode;
+    protected InvoiceModeEnum invoiceMode;
 
     /** The custom fields. */
-    private CustomFieldsDto customFields;
-    
+    protected CustomFieldsDto customFields;
+
     /**
-     * The total due is a snapshot at invoice generation time of the due balance (not exigible) before invoice calculation+invoice amount.
-     * Due balance is a "future" dueBalance (the due balance at the invoice due date).
+     * The total due is a snapshot at invoice generation time of the due balance (not exigible) before invoice calculation+invoice amount. Due balance is a "future" dueBalance (the
+     * due balance at the invoice due date).
      */
-    private BigDecimal dueBalance;
+    protected BigDecimal dueBalance;
+
+    /**
+     * A flag to generate a draft invoice
+     */
+    protected Boolean isDraft;
 
     /**
      * Instantiates a new invoice dto.
      */
     public InvoiceDto() {
     }
-    
-	/**
+
+    /**
+     * Instantiates a new invoice dto. Note: does not fill in XML and PDF information
+     * 
+     * @param invoice Invoice
+     * @param includeTransactions Should Rated transactions be detailed in subcategory aggregate level
+     */
+    public InvoiceDto(Invoice invoice, boolean includeTransactions) {
+
+        this.setAuditable(invoice);
+        this.setInvoiceId(invoice.getId());
+        this.setBillingAccountCode(invoice.getBillingAccount().getCode());
+        if (invoice.getSubscription() != null) {
+            this.subscriptionCode = invoice.getSubscription().getCode();
+        }
+        if (invoice.getOrder() != null) {
+            this.orderNumber = invoice.getOrder().getOrderNumber();
+        }
+        if (invoice.getSeller() != null) {
+            this.sellerCode = invoice.getSeller().getCode();
+        }
+        this.setInvoiceDate(invoice.getInvoiceDate());
+        this.setDueDate(invoice.getDueDate());
+
+        this.setAmountWithoutTax(invoice.getAmountWithoutTax());
+        this.setAmountTax(invoice.getAmountTax());
+        this.setAmountWithTax(invoice.getAmountWithTax());
+        this.setInvoiceNumber(invoice.getInvoiceNumber());
+        this.setPaymentMethod(invoice.getPaymentMethodType());
+        this.setInvoiceType(invoice.getInvoiceType().getCode());
+        this.setDueBalance(invoice.getDueBalance());
+        this.setXmlFilename(invoice.getXmlFilename());
+        this.setPdfFilename(invoice.getPdfFilename());
+        this.discount = invoice.getDiscount();
+
+        for (InvoiceAgregate invoiceAggregate : invoice.getInvoiceAgregates()) {
+            if (invoiceAggregate instanceof CategoryInvoiceAgregate) {
+                categoryInvoiceAgregates.add(new CategoryInvoiceAgregateDto((CategoryInvoiceAgregate) invoiceAggregate, includeTransactions));
+            } else if (invoiceAggregate instanceof TaxInvoiceAgregate) {
+                taxAggregates.add(new TaxInvoiceAggregateDto((TaxInvoiceAgregate) invoiceAggregate));
+            }
+        }
+
+        categoryInvoiceAgregates.sort(Comparator.comparing(CategoryInvoiceAgregateDto::getCategoryInvoiceCode));
+        taxAggregates.sort(Comparator.comparing(TaxInvoiceAggregateDto::getTaxCode));
+
+        for (Invoice inv : invoice.getLinkedInvoices()) {
+            getListInvoiceIdToLink().add(inv.getId());
+        }
+
+        if (invoice.getRecordedInvoice() != null) {
+            RecordedInvoiceDto recordedInvoiceDto = new RecordedInvoiceDto(invoice.getRecordedInvoice());
+            setRecordedInvoiceDto(recordedInvoiceDto);
+        }
+
+        setNetToPay(invoice.getNetToPay());
+    }
+
+    /**
      * Gets the list invoice id to link.
      *
      * @return the listInvoiceIdToLink
@@ -273,24 +364,6 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     public void setAmountWithTax(BigDecimal amountWithTax) {
         this.amountWithTax = amountWithTax;
-    }
-
-    /**
-     * Checks if is pdf present.
-     *
-     * @return true, if is pdf present
-     */
-    public boolean isPdfPresent() {
-        return pdfPresent;
-    }
-
-    /**
-     * Sets the pdf present.
-     *
-     * @param pDFpresent the new pdf present
-     */
-    public void setPdfPresent(boolean pDFpresent) {
-        pdfPresent = pDFpresent;
     }
 
     /**
@@ -438,56 +511,56 @@ public class InvoiceDto extends AuditableEntityDto {
     }
 
     /**
-     * Checks if is auto validation.
+     * A request-only parameter
      *
-     * @return the autoValidation
+     * @return True if invoice should be assigned a number
      */
-    public boolean isAutoValidation() {
+    public Boolean isAutoValidation() {
         return autoValidation;
     }
 
     /**
-     * Sets the auto validation.
+     * A request-only parameter
      *
-     * @param autoValidation the autoValidation to set
+     * @param autoValidation True if invoice should be assigned a number
      */
-    public void setAutoValidation(boolean autoValidation) {
+    public void setAutoValidation(Boolean autoValidation) {
         this.autoValidation = autoValidation;
     }
 
     /**
-     * Checks if is return xml.
-     *
-     * @return the returnXml
+     * A request-only parameter
+     * 
+     * @return True if XML invoice content should be returned
      */
-    public boolean isReturnXml() {
+    public Boolean isReturnXml() {
         return returnXml;
     }
 
     /**
-     * Sets the return xml.
+     * A request-only parameter
      *
-     * @param returnXml the returnXml to set
+     * @param returnXml True if XML invoice content should be returned
      */
-    public void setReturnXml(boolean returnXml) {
+    public void setReturnXml(Boolean returnXml) {
         this.returnXml = returnXml;
     }
 
     /**
-     * Checks if is return pdf.
+     * A request-only parameter
      *
-     * @return the returnPdf
+     * @return True if PDF invoice content should be returned
      */
-    public boolean isReturnPdf() {
+    public Boolean isReturnPdf() {
         return returnPdf;
     }
 
     /**
-     * Sets the return pdf.
+     * A request-only parameter
      *
-     * @param returnPdf the returnPdf to set
+     * @param returnPdf True if PDF invoice content should be returned
      */
-    public void setReturnPdf(boolean returnPdf) {
+    public void setReturnPdf(Boolean returnPdf) {
         this.returnPdf = returnPdf;
     }
 
@@ -528,20 +601,20 @@ public class InvoiceDto extends AuditableEntityDto {
     }
 
     /**
-     * Checks if is include balance.
+     * A request-only parameter
      *
-     * @return the includeBalance
+     * @return True if currently due balance should be returned
      */
-    public boolean isIncludeBalance() {
+    public Boolean isIncludeBalance() {
         return includeBalance;
     }
 
     /**
-     * Sets the include balance.
+     * A request-only parameter
      *
-     * @param includeBalance the includeBalance to set
+     * @param includeBalance True if currently due balance should be returned
      */
-    public void setIncludeBalance(boolean includeBalance) {
+    public void setIncludeBalance(Boolean includeBalance) {
         this.includeBalance = includeBalance;
     }
 
@@ -564,42 +637,111 @@ public class InvoiceDto extends AuditableEntityDto {
     }
 
     /**
-     * Gets the net to pay.
-     *
-     * @return the netToPay
+     * @return Net amount to pay = amountWithTax+dueBalance
      */
     public BigDecimal getNetToPay() {
         return netToPay;
     }
 
     /**
-     * Sets the net to pay.
-     *
-     * @param netToPay the netToPay to set
+     * @param netToPay Net amount to pay = amountWithTax+dueBalance
      */
     public void setNetToPay(BigDecimal netToPay) {
         this.netToPay = netToPay;
     }
 
     /**
-     * @return the xml
+     * @return XML invoice contents
      */
     public String getXml() {
         return xml;
     }
 
     /**
-     * @param xml the xml to set
+     * @param xml XML invoice contents
      */
     public void setXml(String xml) {
         this.xml = xml;
     }
 
-	public BigDecimal getDueBalance() {
-		return dueBalance;
-	}
+    /**
+     * @return Currently due balance
+     */
+    public BigDecimal getDueBalance() {
+        return dueBalance;
+    }
 
-	public void setDueBalance(BigDecimal dueBalance) {
-		this.dueBalance = dueBalance;
-	}
+    /**
+     * @param dueBalance Currently due balance
+     */
+    public void setDueBalance(BigDecimal dueBalance) {
+        this.dueBalance = dueBalance;
+    }
+
+    /**
+     * @return Tax aggregates
+     */
+    public List<TaxInvoiceAggregateDto> getTaxAggregates() {
+        return taxAggregates;
+    }
+
+    /**
+     * @param taxAggregates Tax aggregates
+     */
+    public void setTaxAggregates(List<TaxInvoiceAggregateDto> taxAggregates) {
+        this.taxAggregates = taxAggregates;
+    }
+
+    /**
+     * @return Subscription code
+     */
+    public String getSubscriptionCode() {
+        return subscriptionCode;
+    }
+
+    /**
+     * @param subscriptionCode Subscription code
+     */
+    public void setSubscriptionCode(String subscriptionCode) {
+        this.subscriptionCode = subscriptionCode;
+    }
+
+    /**
+     * @return Order number
+     */
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    /**
+     * @param orderNumber Order number
+     */
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    /**
+     * @return Seller's code
+     */
+    public String getSellerCode() {
+        return sellerCode;
+    }
+
+    /**
+     * @param sellerCode Seller's code
+     */
+    public void setSellerCode(String sellerCode) {
+        this.sellerCode = sellerCode;
+    }
+
+    public Boolean isDraft() {
+        if (isDraft == null) {
+            isDraft = Boolean.FALSE;
+        }
+        return isDraft;
+    }
+
+    public void setDraft(Boolean draft) {
+        this.isDraft = draft;
+    }
 }

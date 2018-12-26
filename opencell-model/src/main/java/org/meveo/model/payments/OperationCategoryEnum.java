@@ -20,8 +20,7 @@ package org.meveo.model.payments;
 
 public enum OperationCategoryEnum {
 
-    DEBIT(1, "operationTypeEnum.debit"),
-    CREDIT(2, "operationTypeEnum.credit");
+    DEBIT(1, "operationTypeEnum.debit"), CREDIT(2, "operationTypeEnum.credit");
 
     private String label;
     private Integer id;

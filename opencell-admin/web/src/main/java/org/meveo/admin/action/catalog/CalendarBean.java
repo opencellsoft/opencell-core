@@ -21,11 +21,14 @@ package org.meveo.admin.action.catalog;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.faces.component.EditableValueHolder;
+import javax.faces.component.UIInput;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -36,9 +39,13 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarDateInterval;
+import org.meveo.model.catalog.CalendarHoliday;
 import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarIntervalTypeEnum;
 import org.meveo.model.catalog.CalendarJoin;
@@ -46,6 +53,7 @@ import org.meveo.model.catalog.CalendarPeriod;
 import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.catalog.DayInYear;
 import org.meveo.model.catalog.HourInDay;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
@@ -83,6 +91,11 @@ public class CalendarBean extends BaseBean<Calendar> {
 
     private Integer weekdayIntervalFrom;
     private Integer weekdayIntervalTo;
+    
+    private String holidayToAdd;
+
+    private Integer weekendFrom;
+    private Integer weekendTo;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -97,6 +110,43 @@ public class CalendarBean extends BaseBean<Calendar> {
         calendar.setCalendarType(CalendarYearly.class.getAnnotation(DiscriminatorValue.class).value());
 
         return calendar;
+    }
+    
+    /**
+     * Validate that if two dates are provided, the From value is before the To value.
+     * 
+     * @param context Faces context
+     * @param components Components being validated
+     * @param values Values to validate
+     * @return Is valid or not
+     */
+    public boolean validateDateRange(FacesContext context, List<UIInput> components, List<Object> values) {
+
+        if (values.size() != 2) {
+            throw new RuntimeException("Please bind validator to two components in the following order: dateFrom, dateTo");
+        }
+//        Date from = (Date) values.get(0);
+//        Date to = (Date) values.get(1);
+        Date from = null;
+        Date to = null;
+
+        if (values.get(0) != null) {
+            if (values.get(0) instanceof String) {
+                from = DateUtils.parseDateWithPattern((String) values.get(0), ParamBean.getInstance().getDateFormat());
+            } else {
+                from = (Date) values.get(0);
+            }
+        }
+        if (values.get(1) != null) {
+            if (values.get(1) instanceof String) {
+                to = DateUtils.parseDateWithPattern((String) values.get(1), ParamBean.getInstance().getDateFormat());
+            } else {
+                to = (Date) values.get(1);
+            }
+        }
+
+        // Check that two dates are one after another
+        return !(from != null && to != null && from.compareTo(to) > 0);
     }
 
     /**
@@ -145,6 +195,30 @@ public class CalendarBean extends BaseBean<Calendar> {
         this.weekdayIntervalTo = weekdayIntervalTo;
     }
 
+    public String getHolidayToAdd() {
+        return holidayToAdd;
+    }
+
+    public void setHolidayToAdd(String holidayToAdd) {
+        this.holidayToAdd = holidayToAdd;
+    }
+
+    public Integer getWeekendFrom() {
+        return weekendFrom;
+    }
+
+    public void setWeekendFrom(Integer weekendFrom) {
+        this.weekendFrom = weekendFrom;
+    }
+
+    public Integer getWeekendTo() {
+        return weekendTo;
+    }
+
+    public void setWeekendTo(Integer weekendTo) {
+        this.weekendTo = weekendTo;
+    }
+
     public void setDayInYearModel(DualListModel<DayInYear> perks) {
         this.dayInYearListModel = perks;
     }
@@ -162,6 +236,7 @@ public class CalendarBean extends BaseBean<Calendar> {
         values.put("PERIOD", resourceMessages.getString("calendar.calendarType.PERIOD"));
         values.put("INTERVAL", resourceMessages.getString("calendar.calendarType.INTERVAL"));
         values.put("JOIN", resourceMessages.getString("calendar.calendarType.JOIN"));
+        values.put("BANKING", resourceMessages.getString("calendar.calendarType.BANKING"));
 
         return values;
     }
@@ -183,7 +258,7 @@ public class CalendarBean extends BaseBean<Calendar> {
 
         String newType = (String) ((EditableValueHolder) event.getComponent()).getValue();
 
-        Class[] classes = { CalendarYearly.class, CalendarDaily.class, CalendarPeriod.class, CalendarInterval.class, CalendarJoin.class };
+        Class[] classes = { CalendarYearly.class, CalendarDaily.class, CalendarPeriod.class, CalendarInterval.class, CalendarJoin.class, CalendarBanking.class };
         for (Class clazz : classes) {
 
             if (newType.equalsIgnoreCase(((DiscriminatorValue) clazz.getAnnotation(DiscriminatorValue.class)).value())) {
@@ -270,7 +345,7 @@ public class CalendarBean extends BaseBean<Calendar> {
             }
 
             String[] monthDays = timeToAdd.split(" - ");
-            if (monthDays[0].compareTo("12/31") > 0 || monthDays[0].compareTo("01/01") < 0 || monthDays[1].compareTo("12/31") > 0 || monthDays[1].compareTo("01/01") < 0) {
+            if (!isValidMonthDays(monthDays[0].substring(0, 2),monthDays[0].substring(3)) || !isValidMonthDays(monthDays[1].substring(0, 2),monthDays[1].substring(3))) {
                 return;
             }
 
@@ -310,6 +385,42 @@ public class CalendarBean extends BaseBean<Calendar> {
     public List<CalendarIntervalTypeEnum> getCalendarIntervalTypeEnumValues() {
         return Arrays.asList(CalendarIntervalTypeEnum.values());
     }
+    
+    public void addHoliday() throws BusinessException {
+
+        CalendarHoliday holiday = null;
+
+
+        if (holidayToAdd == null) {
+            return;
+        }
+
+        String[] monthDays = holidayToAdd.split(" - ");
+        
+        if (!isValidMonthDays(monthDays[0].substring(0, 2),monthDays[0].substring(3)) || !isValidMonthDays(monthDays[1].substring(0, 2),monthDays[1].substring(3))) {
+            return;
+        }
+
+        monthDays[0] = monthDays[0].replace("/", "");
+        monthDays[1] = monthDays[1].replace("/", "");
+        holiday = new CalendarHoliday((CalendarBanking) entity, Integer.parseInt(monthDays[0]), Integer.parseInt(monthDays[1]));
+        
+        holidayToAdd = null;
+
+        // Check if not duplicate
+        if (((CalendarBanking) entity).getHolidays() != null && ((CalendarBanking) entity).getHolidays().contains(holiday)) {
+            return;
+        }
+        if (((CalendarBanking) entity).getHolidays() == null) {
+            ((CalendarBanking) entity).setHolidays(new ArrayList<CalendarHoliday>());
+        }
+        ((CalendarBanking) entity).getHolidays().add(holiday);
+        Collections.sort(((CalendarBanking) entity).getHolidays());
+    }
+
+    public void removeHoliday(CalendarHoliday holiday) {
+        ((CalendarBanking) entity).getHolidays().remove(holiday);
+    }
 
     @Override
     @ActionMethod
@@ -325,5 +436,37 @@ public class CalendarBean extends BaseBean<Calendar> {
         }
 
         return super.saveOrUpdate(killConversation);
+    }
+    
+    /**
+     * Checks if is valid month days.
+     *
+     * @param month the month
+     * @param day the day
+     * @return true, if is valid month days
+     */
+    private boolean isValidMonthDays(String month, String day) {
+        if(StringUtils.isBlank(month) || StringUtils.isBlank(day)) {
+            return false;
+        }
+        int iMonth = Integer.parseInt(month);
+        int iDay = Integer.parseInt(day);
+        switch (iMonth) {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12: return iDay <= 31;
+        case 4:
+        case 6:
+        case 9:
+        case 11: return iDay <= 30;
+        case 2: return iDay <= 29;
+        default:
+            break;
+        }
+        return false;
     }
 }

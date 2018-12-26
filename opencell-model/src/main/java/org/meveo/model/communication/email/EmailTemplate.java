@@ -28,44 +28,43 @@ import org.meveo.model.communication.MessageTemplate;
 @Entity
 @DiscriminatorValue("EMAIL")
 public class EmailTemplate extends MessageTemplate {
-	private static final long serialVersionUID = 7634125312706917352L;
-	
-	@Column(name = "subject", length = 255)
+    private static final long serialVersionUID = 7634125312706917352L;
+
+    @Column(name = "subject", length = 255)
     @Size(max = 255)
-	private String subject;
-	
-	@Column(name = "htmlcontent", columnDefinition = "TEXT")	
-	private String htmlContent;
-	
-	@Column(name = "textcontent", columnDefinition = "TEXT")
-	private String textContent;
+    private String subject;
 
-	public String getSubject() {
-		return subject;
-	}
+    @Column(name = "htmlcontent", columnDefinition = "TEXT")
+    private String htmlContent;
 
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
+    @Column(name = "textcontent", columnDefinition = "TEXT")
+    private String textContent;
 
-	public String getHtmlContent() {
-		return htmlContent;
-	}
+    public String getSubject() {
+        return subject;
+    }
 
-	public void setHtmlContent(String htmlContent) {
-		this.htmlContent = htmlContent;
-	}
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
 
-	public String getTextContent() {
-		return textContent;
-	}
+    public String getHtmlContent() {
+        return htmlContent;
+    }
 
-	public void setTextContent(String textContent) {
-		this.textContent = textContent;
-	}
+    public void setHtmlContent(String htmlContent) {
+        this.htmlContent = htmlContent;
+    }
 
-	public String toString() {
-		return super.toString() + "\n subject:" + subject + "\n html content:" + htmlContent
-				+ "\n text content:" + textContent;
-	}
+    public String getTextContent() {
+        return textContent;
+    }
+
+    public void setTextContent(String textContent) {
+        this.textContent = textContent;
+    }
+
+    public String toString() {
+        return super.toString() + "\n subject:" + subject + "\n html content:" + htmlContent + "\n text content:" + textContent;
+    }
 }

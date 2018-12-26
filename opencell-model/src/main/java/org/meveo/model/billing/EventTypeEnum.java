@@ -24,38 +24,39 @@ package org.meveo.model.billing;
 
 public enum EventTypeEnum {
 
-	CHARGE(1, "EventTypeEnum.charge");
+    CHARGE(1, "EventTypeEnum.charge");
 
-	private Integer id;
-	private String label;
+    private Integer id;
+    private String label;
 
-	EventTypeEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
+    EventTypeEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
 
-	}
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	/**
-	 * Gets enum by its id.
-	 * @param id id of event type
-	 * @return event type enum for given id.
-	 */
-	public static EventTypeEnum getValue(Integer id) {
-		if (id != null) {
-			for (EventTypeEnum status : values()) {
-				if (id.equals(status.getId())) {
-					return status;
-				}
-			}
-		}
-		return null;
-	}
+    /**
+     * Gets enum by its id.
+     * 
+     * @param id id of event type
+     * @return event type enum for given id.
+     */
+    public static EventTypeEnum getValue(Integer id) {
+        if (id != null) {
+            for (EventTypeEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
 }

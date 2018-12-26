@@ -70,6 +70,16 @@ public class UsageRatingJob extends Job {
         rateUntilDate.setFieldType(CustomFieldTypeEnum.DATE);
         rateUntilDate.setValueRequired(false);
         result.put("rateUntilDate", rateUntilDate);
+        
+        CustomFieldTemplate ratingGroup = new CustomFieldTemplate();
+        ratingGroup.setCode("ratingGroup");
+        ratingGroup.setAppliesTo("JOB_UsageRatingJob");
+        ratingGroup.setActive(true);
+        ratingGroup.setDescription(resourceMessages.getString("subscription.ratingGroup"));
+        ratingGroup.setFieldType(CustomFieldTypeEnum.STRING);
+        ratingGroup.setValueRequired(false);
+        ratingGroup.setDefaultValue(null);
+        result.put("ratingGroup", ratingGroup);
 
         return result;
     }

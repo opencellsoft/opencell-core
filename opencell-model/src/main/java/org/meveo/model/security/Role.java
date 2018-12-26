@@ -26,6 +26,11 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
+/**
+ * Application security role
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "name" })
@@ -38,21 +43,33 @@ public class Role extends BaseEntity {
 
     private static final long serialVersionUID = -2309961042891712685L;
 
+    /**
+     * Role name
+     */
     @Column(name = "role_name", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String name;
 
+    /**
+     * Role description
+     */
     @Column(name = "role_description", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String description;
 
+    /**
+     * Permissions held by a role
+     */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "adm_role_permission", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private Set<Permission> permissions = new HashSet<Permission>();
 
+    /**
+     * Roles hels by the rolw
+     */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "adm_role_role", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "child_role_id"))

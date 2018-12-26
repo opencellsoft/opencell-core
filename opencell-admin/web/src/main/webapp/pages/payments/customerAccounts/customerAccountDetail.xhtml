@@ -107,11 +107,12 @@
 										<hftl:formField label="#{messages['customer.jobTitle']}" field="jobTitle" />
                                         <hftl:formField label="#{messages['customerAccount.excludedFromPayment']}" field="excludedFromPayment"  />
                                         <hftl:formField label="#{messages['customerAccount.creditCategory']}" field="creditCategory" valueLabelField="code" listBean="#{creditCategoryBean}" />
-                                        <hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}" field="dueDateDelayEL" required="false" />                                       
-                                        <hftl:formField label="#{messages['customerAccount.status']}" field="status" disabled="true" />                                       
+                                        <hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}" field="dueDateDelayEL" required="false" textArea="true" rows="1" maxlength="2000" componentWidth="50"/>                                       
+                                        <hftl:formField label="#{messages['billingCycle.dueDateDelayELSpark']}" field="dueDateDelayELSpark" required="false"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
                                         <hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
 										<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
-								
+								        <hftl:formField label="#{messages['customerAccount.status']}" field="status" disabled="true" />                                       
+                                        
                                     </p:fieldset>
                                 </p:tab>
 
@@ -140,8 +141,8 @@
                                             <hftl:column label="#{messages['paymentMethod.alias']}" field="alias" />
                                             <p:column headerText="#{messages['paymentMethod.cardNrOrAccountNr']}">
                                                 <h:outputText value="#{entity.hiddenCardNumber} #{entity.expirationMonthAndYear}" rendered="#{entity.paymentType == PaymentMethodEnum.CARD}" />
-                                                <h:outputText value="#{entity.bankCoordinates.bankName} #{entity.bankCoordinates.iban}"
-                                                    rendered="#{entity.paymentType == PaymentMethodEnum.DIRECTDEBIT}" />
+                                                <h:outputText value="#{entity.bankCoordinates.bankName} " rendered="#{entity.paymentType == PaymentMethodEnum.DIRECTDEBIT}" />
+                                                <h:outputText value="#{entity.bankCoordinates.iban}" rendered="#{entity.paymentType == PaymentMethodEnum.DIRECTDEBIT}" converter="ibanConverter" />
                                             </p:column>
                                             <hftl:column label="#{messages['paymentMethod.preferred']}" field="preferred" isMessage="true" />
 
@@ -238,7 +239,7 @@
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.accountOwner']}"
                                                             field="bankCoordinates" childField="accountOwner" size="55" required="true" />                                                        
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.iban']}" field="bankCoordinates"
-                                                            childField="iban" size="45"   listenerUpdate="bicId"  required="true" />                                                           
+                                                            childField="iban" size="45"  listenerUpdate="bicId"  required="true" converter="ibanConverter" />
                                                        <h:panelGroup id="bicId">
                                                         <hftl:formField  entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bic']}" field="bankCoordinates"
                                                             childField="bic" size="15"  />  

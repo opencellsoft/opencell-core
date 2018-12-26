@@ -5,22 +5,17 @@ public enum CustomFieldIndexTypeEnum {
     /**
      * Store in Elastic Search but do not index it
      */
-    STORE_ONLY(true),
+    STORE_ONLY,
 
     /**
-     * Store and index in Elastic Search
+     * Store, index and analyze in Elastic Search
      */
-    INDEX(false);
+    INDEX,
 
-    private boolean storeOnly;
-
-    private CustomFieldIndexTypeEnum(boolean storeOnly) {
-        this.storeOnly = storeOnly;
-    }
-
-    public boolean isStoreOnly() {
-        return storeOnly;
-    }
+    /**
+     * Store and index without analyzing in Elastic Search
+     */
+    INDEX_NOT_ANALYZE;
 
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();

@@ -38,6 +38,11 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
+/**
+ * Workflow action
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ExportIdentifier({ "uuid" })
 @Table(name = "wf_action", uniqueConstraints = @UniqueConstraint(columnNames = { "uuid" }))
@@ -48,23 +53,38 @@ public class WFAction extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Unique identifier - UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
+    /**
+     * Expression to resolve action, or execute a sript
+     */
     @Column(name = "action_el", length = 2000)
     @Size(max = 2000)
     @NotNull
     private String actionEl;
 
+    /**
+     * Priority
+     */
     @Column(name = "priority")
     private int priority;
 
+    /**
+     * Expression to check if worklow action applies
+     */
     @Column(name = "condition_el", length = 2000)
     @Size(max = 2000)
     private String conditionEl;
 
+    /**
+     * Parent workflow transition
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wf_transition_id")
     private WFTransition wfTransition;

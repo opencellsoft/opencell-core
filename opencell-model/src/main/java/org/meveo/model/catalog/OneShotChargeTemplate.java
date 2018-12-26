@@ -31,6 +31,11 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 
+/**
+ * One shot charge template
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "cat_one_shot_charge_templ")
 @NamedQueries({
@@ -59,14 +64,23 @@ public class OneShotChargeTemplate extends ChargeTemplate {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * One shot charge type
+     */
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private OneShotChargeTemplateTypeEnum oneShotChargeTemplateType;
 
+    /**
+     * Immediate invoicing
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "immediate_invoicing")
     private Boolean immediateInvoicing = false;
 
+    /**
+     * Expression to determine if charge applies
+     */
     @Column(name = "filter_expression", length = 2000)
     @Size(max = 2000)
     private String filterExpression = null;

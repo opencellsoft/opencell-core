@@ -56,6 +56,7 @@ public class UsageRatingJobBean extends BaseJobBean {
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
             Date rateUntilDate = null;
+            String ratingGroup = null;
             try {
                 nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
                 waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
@@ -63,18 +64,19 @@ public class UsageRatingJobBean extends BaseJobBean {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
                 rateUntilDate = (Date) this.getParamOrCFValue(jobInstance, "rateUntilDate");
+                ratingGroup = (String) this.getParamOrCFValue(jobInstance, "ratingGroup");
             } catch (Exception e) {
-                nbRuns = new Long(1);
-                waitingMillis = new Long(0);
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
+                nbRuns = 1L;
+                waitingMillis = 0L;
+                log.warn("Cant get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
             }
-            List<Long> ids = edrService.getEDRidsToRate(rateUntilDate);
-            log.debug("edr to rate:" + ids.size());
+            List<Long> ids = edrService.getEDRidsToRate(rateUntilDate, ratingGroup);
+            log.debug("edr to rate={}", ids.size());
             result.setNbItemsToProcess(ids.size());
-            List<Future<String>> futures = new ArrayList<Future<String>>();
+            List<Future<String>> futures = new ArrayList<>();
             SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
-            log.debug("block to run:" + subListCreator.getBlocToRun());
-            log.debug("nbThreads:" + nbRuns);
+            log.debug("block to run={}", subListCreator.getBlocToRun());
+            log.debug("nbThreads={}", nbRuns);
 
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {

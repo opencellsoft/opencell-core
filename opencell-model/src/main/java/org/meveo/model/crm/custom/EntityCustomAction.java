@@ -23,6 +23,11 @@ import org.meveo.model.ModuleItem;
 import org.meveo.model.crm.CustomFieldTemplate.GroupedCustomFieldTreeItemType;
 import org.meveo.model.scripts.ScriptInstance;
 
+/**
+ * A custom action on an entity
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ModuleItem
 @Cacheable
@@ -34,23 +39,38 @@ public class EntityCustomAction extends EnableBusinessEntity {
 
     private static final long serialVersionUID = -1640429569087958881L;
 
+    /**
+     * Entity type that action applies to
+     */
     @Column(name = "applies_to", nullable = false, length = 100)
     @Size(max = 100)
     @NotNull
     private String appliesTo;
 
+    /**
+     * Expression to determine if action is applicable/allowed
+     */
     @Column(name = "applicable_on_el", length = 2000)
     @Size(max = 2000)
     private String applicableOnEl;
 
+    /**
+     * Label for button in GUI
+     */
     @Column(name = "label", length = 50)
     @Size(max = 50)
     private String label;
 
+    /**
+     * Translated label in JSON format with language code as a key and translated label as a value
+     */
     @Type(type = "json")
     @Column(name = "label_i18n", columnDefinition = "text")
     private Map<String, String> labelI18n;
 
+    /**
+     * Script to execute as action
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance script;

@@ -5,7 +5,7 @@
 	<groupId>com.opencellsoft</groupId>
 	<artifactId>opencell</artifactId>
 	<packaging>pom</packaging>
-	<version>5.2.0</version>
+	<version>5.3.0</version>
 	<name>Opencell Parent Project</name>
 
 	<modules>
@@ -20,13 +20,14 @@
 
 	<properties>
 		<!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific 
-			configuration (e.g. import.sql) -->
+			configuration (e.g.  import.sql) -->
 		<env>dev</env>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
 		<version.keycloak>2.5.5.Final</version.keycloak>
         <version.pdfbox>2.0.11</version.pdfbox> 
         <version.barcode>2.1</version.barcode>
+        
         <jackson.version>2.8.9</jackson.version> <!-- wildfly 11 -->
         <!-- <jackson.version>2.7.4</jackson.version> --> <!-- wildfly 10 -->
 		<dbtype>generic</dbtype>
@@ -751,7 +752,7 @@
 				<dependency>
 					<groupId>org.postgresql</groupId>
 					<artifactId>postgresql</artifactId>
-					<version>9.2-1002-jdbc4</version>
+					<version>9.4.1211</version>
 					<scope>provided</scope>
 				</dependency>
 				<dependency>

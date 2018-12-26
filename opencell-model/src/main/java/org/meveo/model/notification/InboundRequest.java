@@ -5,18 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.codec.binary.Base64;
@@ -26,6 +15,11 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
+/**
+ * Incoming request
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code" })
@@ -117,7 +111,8 @@ public class InboundRequest extends BusinessEntity {
      */
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "adm_inbound_req_headers")
-    @Column(name = "headers", columnDefinition = "TEXT")
+    @Column(name = "headers", columnDefinition = "TEXT" )
+    @MapKeyColumn(name="headers_key")
     private Map<String, String> headers = new HashMap<String, String>();
 
     /**
@@ -183,18 +178,33 @@ public class InboundRequest extends BusinessEntity {
     @Column(name = "resp_status")
     private Integer responseStatus;
 
+    /**
+     * Encoded request parameters
+     */
     @Transient
     private StringBuffer encodedParams = new StringBuffer();
 
+    /**
+     * Encoded request cookies
+     */
     @Transient
     private StringBuffer encodedCookies = new StringBuffer();
 
+    /**
+     * Encoded request headers
+     */
     @Transient
     private StringBuffer encodedHeaders = new StringBuffer();
 
+    /**
+     * Encoded response cookies
+     */
     @Transient
     private StringBuffer encodedRespCookies = new StringBuffer();
 
+    /**
+     * Encoded response headers
+     */
     @Transient
     private StringBuffer encodedRespHeaders = new StringBuffer();
 

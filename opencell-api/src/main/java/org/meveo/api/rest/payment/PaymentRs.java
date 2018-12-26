@@ -14,7 +14,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.PaymentActionStatus;
-
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
@@ -23,6 +22,7 @@ import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
+import org.meveo.api.dto.payment.PaymentGatewayRumSequenceDto;
 import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
@@ -33,10 +33,11 @@ import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplatesDto;
-
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.payment.PaymentGatewayRumSequenceResponseDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
@@ -44,7 +45,8 @@ import org.meveo.api.rest.IBaseRs;
  * 
  * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.3
  */
 
 @SuppressWarnings("deprecation")
@@ -328,6 +330,51 @@ public interface PaymentRs extends IBaseRs {
     @POST
     @Path("/paymentGateway/{code}/disable")
     ActionStatus disablePaymentGateway(@PathParam("code") String code);
+    
+    /**
+     * Creates a RUM sequence associated to the given payment gateway.
+     * @param postData the RUM sequence details
+     * @return Request processing status
+     */
+    @POST
+    @Path("/paymentGateway/rumSequence")
+    ActionStatus createRumSequence(PaymentGatewayRumSequenceDto postData);
+    
+    /**
+     * Updates a RUM sequence associated to the given payment gateway.
+     * @param postData the RUM sequence details
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/paymentGateway/rumSequence")
+    ActionStatus updateRumSequence(PaymentGatewayRumSequenceDto postData);
+    
+    /**
+     * Finds the RUM sequence with the specified code.
+     * @param code code of the RUM sequence 
+     * @return Request processing status
+     */
+    @GET
+    @Path("/paymentGateway/rumSequence/{code}")
+    PaymentGatewayRumSequenceResponseDto findRumSequence(@PathParam("code") String code);
+    
+    /**
+     * Deletes the RUM sequence with the specified code.
+     * @param code code of the RUM sequence
+     * @return Request processing status
+     */
+    @DELETE
+    @Path("/paymentGateway/rumSequence/{code}")
+    ActionStatus deleteRumSequence(@PathParam("code") String code);
+    
+    /**
+	 * Generates the next RUM sequence number.
+	 * @param code code of the sequence
+	 * @return sequence value dto
+	 */
+	@POST
+	@Path("/paymentGateway/rumSequence/{code}/next")
+	GenericSequenceValueResponseDto getNextPaymentGatewayRumSequenceNumber(@PathParam("code") String code);
 
     /**
      * List Payment matching a given criteria.

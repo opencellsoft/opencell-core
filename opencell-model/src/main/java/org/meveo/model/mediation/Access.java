@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -39,6 +38,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -46,14 +46,13 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 /**
- * Access linked to Subscription and Zone.
+ * Access point linked to Subscription
  */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "ACC")
+@CustomFieldEntity(cftCodePrefix = "ACC", inheritCFValuesFrom = "subscription")
 @ExportIdentifier({ "accessUserId", "subscription.code" })
 @Table(name = "medina_access", uniqueConstraints = { @UniqueConstraint(columnNames = { "acces_user_id", "subscription_id" }) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -65,67 +64,110 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
-    // input
+    /**
+     * Validity period - start date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date")
     private Date startDate;
 
+    /**
+     * Validity period - end date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_date")
     private Date endDate;
 
+    /**
+     * Access point identifier/number
+     */
     @Column(name = "acces_user_id", length = 255)
     @Size(max = 255)
     private String accessUserId;
 
+    /**
+     * Parent subscription
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
+    /**
+     * Unique identifier - UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    // @Type(type = "json")
-    @Convert(converter = CustomFieldValuesConverter.class)
+    /**
+     * Custom field values in JSON format
+     */
+    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
+    /**
+     * Accumulated custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
+    /**
+     * @return Validity start date
+     */
     public Date getStartDate() {
         return startDate;
     }
 
+    /**
+     * @param startDate Validity start date
+     */
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
+    /**
+     * @return Validity end date
+     */
     public Date getEndDate() {
         return endDate;
     }
 
+    /**
+     * @param endDate Validity end date
+     */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
+    /**
+     * @return Access user identifier
+     */
     public String getAccessUserId() {
         return accessUserId;
     }
 
+    /**
+     * @param accessUserId Access user identifier
+     */
     public void setAccessUserId(String accessUserId) {
         this.accessUserId = accessUserId;
     }
 
+    /**
+     * @return Subscription it relates to
+     */
     public Subscription getSubscription() {
         return subscription;
     }
 
+    /**
+     * @param subscription Subscription it relates to
+     */
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
-    }
-
-    public String getCacheKey() {
-        return accessUserId;
     }
 
     @Override
@@ -133,6 +175,9 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
         return uuid;
     }
 
+    /**
+     * @param uuid Unique identifier
+     */
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
@@ -175,6 +220,16 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     }
 
     @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
+    }
+
+    @Override
     public String toString() {
         return String.format("Access [%s, accessUserId=%s, startDate=%s, endDate=%s, subscription=%s, subscription.status=%s]", super.toString(), accessUserId, startDate, endDate,
             subscription != null ? subscription.getId() : null, subscription != null ? subscription.getStatus() : null);
@@ -182,6 +237,9 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { subscription };
+        if (subscription != null) {
+            return new ICustomFieldEntity[] { subscription };
+        }
+        return null;
     }
 }

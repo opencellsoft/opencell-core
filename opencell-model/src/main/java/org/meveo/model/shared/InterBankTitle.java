@@ -25,85 +25,104 @@ import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.validation.constraints.Size;
 
+/**
+ * Inter bank information
+ * 
+ * @author Andrius Karpavicius
+ */
 @Embeddable
 public class InterBankTitle implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "creditor_code", length = 255)
-	@Size(max = 255)
-	private String codeCreancier;
-
-	@Column(name = "financial_institution_code", length = 255)
+    /**
+     * Creditor code
+     */
+    @Column(name = "creditor_code", length = 255)
     @Size(max = 255)
-	protected String codeEtablissementCreancier;
+    private String codeCreancier;
 
-	@Column(name = "center_code", length = 255)
+    /**
+     * Financial institution code
+     */
+    @Column(name = "financial_institution_code", length = 255)
     @Size(max = 255)
-	protected String codeCentre;
+    protected String codeEtablissementCreancier;
 
-	@Column(name = "nne", length = 255)
+    /**
+     * Center code
+     */
+    @Column(name = "center_code", length = 255)
     @Size(max = 255)
-	protected String nne;
+    protected String codeCentre;
 
-	@Embedded
-	private Address adresseTSA;
+    /**
+     * NNE
+     */
+    @Column(name = "nne", length = 255)
+    @Size(max = 255)
+    protected String nne;
 
-	public InterBankTitle() {
+    /**
+     * TSA address
+     */
+    @Embedded
+    private Address adresseTSA;
 
-	}
+    public InterBankTitle() {
 
-	public InterBankTitle(String codeCreancier, String codeEtablissementCreancier,
-			String codeCentre, String nne, Address adresseTSA) {
-		this.codeCreancier = codeCreancier;
-		this.codeEtablissementCreancier = codeEtablissementCreancier;
-		this.codeCentre = codeCentre;
-		this.nne = nne;
-		this.adresseTSA = adresseTSA;
-	}
+    }
 
-	public String getCodeCreancier() {
-		return codeCreancier;
-	}
+    public InterBankTitle(String codeCreancier, String codeEtablissementCreancier, String codeCentre, String nne, Address adresseTSA) {
+        this.codeCreancier = codeCreancier;
+        this.codeEtablissementCreancier = codeEtablissementCreancier;
+        this.codeCentre = codeCentre;
+        this.nne = nne;
+        this.adresseTSA = adresseTSA;
+    }
 
-	public void setCodeCreancier(String codeCreancier) {
-		this.codeCreancier = codeCreancier;
-	}
+    public String getCodeCreancier() {
+        return codeCreancier;
+    }
 
-	public String getCodeEtablissementCreancier() {
-		return codeEtablissementCreancier;
-	}
+    public void setCodeCreancier(String codeCreancier) {
+        this.codeCreancier = codeCreancier;
+    }
 
-	public void setCodeEtablissementCreancier(String codeEtablissementCreancier) {
-		this.codeEtablissementCreancier = codeEtablissementCreancier;
-	}
+    public String getCodeEtablissementCreancier() {
+        return codeEtablissementCreancier;
+    }
 
-	public String getCodeCentre() {
-		return codeCentre;
-	}
+    public void setCodeEtablissementCreancier(String codeEtablissementCreancier) {
+        this.codeEtablissementCreancier = codeEtablissementCreancier;
+    }
 
-	public void setCodeCentre(String codeCentre) {
-		this.codeCentre = codeCentre;
-	}
+    public String getCodeCentre() {
+        return codeCentre;
+    }
 
-	public String getNne() {
-		return nne;
-	}
+    public void setCodeCentre(String codeCentre) {
+        this.codeCentre = codeCentre;
+    }
 
-	public void setNne(String nne) {
-		this.nne = nne;
-	}
+    public String getNne() {
+        return nne;
+    }
 
-	public Address getAdresseTSA() {
-		return adresseTSA;
-	}
+    public void setNne(String nne) {
+        this.nne = nne;
+    }
 
-	public void setAdresseTSA(Address adresseTSA) {
-		this.adresseTSA = adresseTSA;
-	}
+    public Address getAdresseTSA() {
+        return adresseTSA;
+    }
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
+    public void setAdresseTSA(Address adresseTSA) {
+        this.adresseTSA = adresseTSA;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

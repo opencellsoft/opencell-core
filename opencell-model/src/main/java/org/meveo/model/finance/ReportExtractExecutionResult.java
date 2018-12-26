@@ -20,6 +20,7 @@ import org.meveo.model.NotifiableEntity;
 
 /**
  * Result of ReportExtract execution.
+ * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 23 Apr 2018
@@ -56,7 +57,7 @@ public class ReportExtractExecutionResult extends AuditableEntity {
     @Column(name = "origin")
     private ReportExtractExecutionOrigin origin;
 
-    @Column(name = "error_message")
+    @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
 
     @Column(name = "status")

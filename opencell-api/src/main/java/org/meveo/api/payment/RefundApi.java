@@ -20,6 +20,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -175,7 +176,7 @@ public class RefundApi extends BaseApi {
                 refundDto.setPaymentMethod(refund.getPaymentMethod());
                 refundDto.setReference(refund.getReference());
                 refundDto.setTransactionDate(refund.getTransactionDate());
-                refundDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, true));
+                refundDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                 result.add(refundDto);
             }
         }

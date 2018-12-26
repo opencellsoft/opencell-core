@@ -57,6 +57,12 @@ public class StringUtils {
         return ((value == null) || ((value instanceof String) && ((String) value).trim().length() == 0));
     }
 
+    /**
+     * Value is null or empty
+     * 
+     * @param value Value to check
+     * @return True if value is null or is empty
+     */
     public static boolean isBlank(String value) {
         return (value == null || value.trim().length() == 0);
     }
@@ -169,7 +175,7 @@ public class StringUtils {
         buildString = buildString.replaceFirst("0", firstChar);
         return buildString;
     }
-    
+
     /**
      * Returns the zero-padded RUM sequence value.
      * 
@@ -177,20 +183,20 @@ public class StringUtils {
      * @param nbChar number of char
      * @return Long as string
      */
-	public static String getLongAsNChar(Long value, Long nbChar) {
-		String firstChar = "0";
-		if (value < 0) {
-			firstChar = "-";
-			value = value * -1L;
-		}
-		StringBuilder buildString = new StringBuilder("" + value);
-		while (buildString.length() < nbChar) {
-			buildString = buildString.insert(0, "0");
-		}
-		buildString = buildString.replace(0, 1, firstChar);
+    public static String getLongAsNChar(Long value, Long nbChar) {
+        String firstChar = "0";
+        if (value < 0) {
+            firstChar = "-";
+            value = value * -1L;
+        }
+        StringBuilder buildString = new StringBuilder("" + value);
+        while (buildString.length() < nbChar) {
+            buildString = buildString.insert(0, "0");
+        }
+        buildString = buildString.replace(0, 1, firstChar);
 
-		return buildString.toString();
-	}
+        return buildString.toString();
+    }
 
     public static String getArrayElements(String[] t) {
         String str = "";
@@ -278,8 +284,8 @@ public class StringUtils {
         newValue = newValue.replaceAll("\\s+", "_");
         return newValue;
     }
-    
-    public static final String getDefaultIfEmpty(String value ,String defaultValue) {
+
+    public static final String getDefaultIfEmpty(String value, String defaultValue) {
         return org.apache.commons.lang3.StringUtils.isNotEmpty(value) ? value : defaultValue;
     }
 

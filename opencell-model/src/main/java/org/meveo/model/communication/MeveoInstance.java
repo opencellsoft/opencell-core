@@ -40,126 +40,221 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Customer;
 
+/**
+ * Another installation of application. Allows to:
+ * <ul>
+ * <li>export configuration and data via export to another application installation</li>
+ * <li>notify another application installation about event occurred via notifications</li>
+ * <li>create EDRs in another application instalation. EDRs are created via API</li>
+ * </ul>
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
-@ExportIdentifier({ "code"})
+@ExportIdentifier({ "code" })
 @Table(name = "com_meveo_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_meveo_instance_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "com_meveo_instance_seq"), })
 public class MeveoInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1733186433208397850L;
 
+    /**
+     * Additional information - User
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    /**
+     * Additional information - Customer
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    /**
+     * Additional information - Product name
+     */
     @Column(name = "product_name", length = 255)
     @Size(max = 255)
     private String productName;
 
+    /**
+     * Additional information - Product version
+     */
     @Column(name = "product_version", length = 255)
     @Size(max = 255)
     private String productVersion;
 
+    /**
+     * Additional information - Owner
+     */
     @Column(name = "owner", length = 255)
     @Size(max = 255)
     private String owner;
 
+    /**
+     * Additional information - MD5
+     */
     @Column(name = "md5", length = 255)
     @Size(max = 255)
     private String md5;
 
+    /**
+     * Relation with current instalation
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private MeveoInstanceStatusEnum status;
 
+    /**
+     * Additional information - Creation date
+     */
     @Column(name = "creation_date")
     private Date creationDate;
 
+    /**
+     * Additional information - Update date
+     */
     @Column(name = "update_date")
     private Date updateDate;
 
+    /**
+     * Additional information - Enterprise key
+     */
     @Column(name = "key_entreprise", length = 255)
     @Size(max = 255)
     private String keyEntreprise;
 
+    /**
+     * Additional information - MAC address
+     */
     @Column(name = "mac_address", length = 255)
     @Size(max = 255)
     private String macAddress;
 
+    /**
+     * Additional information - Machine vendor
+     */
     @Column(name = "machine_vendor", length = 255)
     @Size(max = 255)
     private String machineVendor;
 
+    /**
+     * Additional information - Instalation mode
+     */
     @Column(name = "installation_mode", length = 255)
     @Size(max = 255)
     private String installationMode;
 
+    /**
+     * Additional information - Number of cores
+     */
     @Column(name = "nb_cores", length = 255)
     @Size(max = 255)
     private String nbCores;
 
+    /**
+     * Additional information - Memory
+     */
     @Column(name = "memory", length = 255)
     @Size(max = 255)
     private String memory;
 
+    /**
+     * Additional information - HD size
+     */
     @Column(name = "hd_size", length = 255)
     @Size(max = 255)
     private String hdSize;
 
+    /**
+     * Additional information - OS name
+     */
     @Column(name = "os_name", length = 255)
     @Size(max = 255)
     private String osName;
 
+    /**
+     * Additional information - OS version
+     */
     @Column(name = "ps_version", length = 255)
     @Size(max = 255)
     private String osVersion;
 
+    /**
+     * Additional information - OS ARCH
+     */
     @Column(name = "os_arch", length = 255)
     @Size(max = 255)
     private String osArch;
 
+    /**
+     * Additional information - JVM version
+     */
     @Column(name = "java_vm_version", length = 255)
     @Size(max = 255)
     private String javaVmVersion;
 
+    /**
+     * Additional information - JVM name
+     */
     @Column(name = "java_vm_name", length = 255)
     @Size(max = 255)
     private String javaVmName;
 
+    /**
+     * Additional information - JVM vendor
+     */
     @Column(name = "java_vendor", length = 255)
     @Size(max = 255)
     private String javaVendor;
 
+    /**
+     * Additional information - Java version
+     */
     @Column(name = "java_version", length = 255)
     @Size(max = 255)
     private String javaVersion;
 
+    /**
+     * Additional information - Application server vendor
+     */
     @Column(name = "as_vendor", length = 255)
     @Size(max = 255)
     private String asVendor;
 
+    /**
+     * Additional information - Application server version
+     */
     @Column(name = "as_version", length = 255)
     @Size(max = 255)
     private String asVersion;
 
+    /**
+     * URL of another instance
+     */
     @Column(name = "url", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String url;
-    
+
+    /**
+     * Authentication username to connect
+     */
     @Column(name = "auth_username", length = 60)
     @Size(max = 60)
     private String authUsername;
-    
+
+    /**
+     * Authentication password to connect
+     */
     @Column(name = "auth_password", length = 60)
     @Size(max = 60)
     private String authPassword;
-    
+
     public MeveoInstance() {
 
     }

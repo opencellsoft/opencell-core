@@ -9,16 +9,21 @@ import java.util.Map;
 /**
  * This model is used to contain data to charts created using the chart.js library.
  * see http://www.chartjs.org/docs/ for details on the chart.js library
+ * 
+ * @author Youssef IZEM
+ * @lastModifiedVersion 5.2
  */
 public class ChartJsModel {
 
     private List<String> chartLabels;
     private List<String> legendLabels;
     private Map<String, List<BigDecimal>> datasets;
+    private Map<String, String> dimensions;
     private BigDecimal trendValue;
+    private String title;
 
     public List<String> getChartLabels() {
-        if(chartLabels == null){
+        if (chartLabels == null) {
             chartLabels = new ArrayList<>();
         }
         return chartLabels;
@@ -29,7 +34,7 @@ public class ChartJsModel {
     }
 
     public List<String> getLegendLabels() {
-        if(legendLabels == null){
+        if (legendLabels == null){
             legendLabels = new ArrayList<>();
         }
         return legendLabels;
@@ -40,7 +45,7 @@ public class ChartJsModel {
     }
 
     public Map<String, List<BigDecimal>> getDatasets() {
-        if(datasets == null){
+        if (datasets == null) {
             datasets = new HashMap<>();
         }
         return datasets;
@@ -50,6 +55,17 @@ public class ChartJsModel {
         this.datasets = datasets;
     }
 
+    public Map<String, String> getDimensions() {
+        if (dimensions == null) {
+            dimensions = new HashMap<>();
+        }
+        return dimensions;
+    }
+
+    public void setDimensions(Map<String, String> dimensions) {
+        this.dimensions = dimensions;
+    }
+
     public BigDecimal getTrendValue() {
         return trendValue;
     }
@@ -57,4 +73,16 @@ public class ChartJsModel {
     public void setTrendValue(BigDecimal trendValue) {
         this.trendValue = trendValue;
     }
+
+    public String getTitle() {
+        return title;
+    }
+    public String gettitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
 }

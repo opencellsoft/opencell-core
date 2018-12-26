@@ -65,10 +65,18 @@ public class WalletTemplate extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     private BillingWalletTypeEnum walletType;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Type(type = "numeric_boolean")
     @Column(name = "consumption_alert_set")
     private boolean consumptionAlertSet;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Column(name = "fast_rating_level")
     private int fastRatingLevel;
 

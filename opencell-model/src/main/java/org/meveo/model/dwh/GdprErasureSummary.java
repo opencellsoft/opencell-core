@@ -8,8 +8,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 
 /**
- * Stores the summary of records to be deleted as specified by GDPR
- * configuration.
+ * Stores the summary of records to be deleted as specified by GDPR configuration.
  * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
@@ -23,81 +22,102 @@ import org.meveo.model.IEntity;
 // })
 public class GdprErasureSummary extends BaseEntity implements Serializable, IEntity {
 
-	@Column(name = "subscription_count")
-	private int subscriptionCount;
+    /**
+     * Number of Subscriptions affected
+     */
+    @Column(name = "subscription_count")
+    private int subscriptionCount;
 
-	@Column(name = "order_count")
-	private int orderCount;
+    /**
+     * Number of Orders affected
+     */
+    @Column(name = "order_count")
+    private int orderCount;
 
-	@Column(name = "invoice_count")
-	private int invoiceCount;
+    /**
+     * Number of Invoices affected
+     */
+    @Column(name = "invoice_count")
+    private int invoiceCount;
 
-	@Column(name = "account_op_count")
-	private int accountOperationCount;
+    /**
+     * Number of Account operations affected
+     */
+    @Column(name = "account_op_count")
+    private int accountOperationCount;
 
-	@Column(name = "unpaid_account_op_count")
-	private int unpaidAccountOperationCount;
+    /**
+     * Number of unpaid Account operations affected
+     */
+    @Column(name = "unpaid_account_op_count")
+    private int unpaidAccountOperationCount;
 
-	@Column(name = "customer_prospect_count")
-	private int customerProspectCount;
+    /**
+     * Number of customer prospects affected
+     */
+    @Column(name = "customer_prospect_count")
+    private int customerProspectCount;
 
-	@Column(name = "mailing_count")
-	private int mailingCount;
+    /**
+     * Number of communications affected
+     */
+    @Column(name = "mailing_count")
+    private int mailingCount;
 
-	public int getSubscriptionCount() {
-		return subscriptionCount;
-	}
+    public int getSubscriptionCount() {
+        return subscriptionCount;
+    }
 
-	public void setSubscriptionCount(int subscriptionCount) {
-		this.subscriptionCount = subscriptionCount;
-	}
+    public void setSubscriptionCount(int subscriptionCount) {
+        this.subscriptionCount = subscriptionCount;
+    }
 
-	public int getOrderCount() {
-		return orderCount;
-	}
+    public int getOrderCount() {
+        return orderCount;
+    }
 
-	public void setOrderCount(int orderCount) {
-		this.orderCount = orderCount;
-	}
+    public void setOrderCount(int orderCount) {
+        this.orderCount = orderCount;
+    }
 
-	public int getInvoiceCount() {
-		return invoiceCount;
-	}
+    public int getInvoiceCount() {
+        return invoiceCount;
+    }
 
-	public void setInvoiceCount(int invoiceCount) {
-		this.invoiceCount = invoiceCount;
-	}
+    public void setInvoiceCount(int invoiceCount) {
+        this.invoiceCount = invoiceCount;
+    }
 
-	public int getAccountOperationCount() {
-		return accountOperationCount;
-	}
+    public int getAccountOperationCount() {
+        return accountOperationCount;
+    }
 
-	public void setAccountOperationCount(int accountOperationCount) {
-		this.accountOperationCount = accountOperationCount;
-	}
+    public void setAccountOperationCount(int accountOperationCount) {
+        this.accountOperationCount = accountOperationCount;
+    }
 
-	public int getUnpaidAccountOperationCount() {
-		return unpaidAccountOperationCount;
-	}
+    public int getUnpaidAccountOperationCount() {
+        return unpaidAccountOperationCount;
+    }
 
-	public void setUnpaidAccountOperationCount(int unpaidAccountOperationCount) {
-		this.unpaidAccountOperationCount = unpaidAccountOperationCount;
-	}
+    public void setUnpaidAccountOperationCount(int unpaidAccountOperationCount) {
+        this.unpaidAccountOperationCount = unpaidAccountOperationCount;
+    }
 
-	public int getCustomerProspectCount() {
-		return customerProspectCount;
-	}
+    public int getCustomerProspectCount() {
+        return customerProspectCount;
+    }
 
-	public void setCustomerProspectCount(int customerProspectCount) {
-		this.customerProspectCount = customerProspectCount;
-	}
+    public void setCustomerProspectCount(int customerProspectCount) {
+        this.customerProspectCount = customerProspectCount;
+    }
 
-	public int getMailingCount() {
-		return mailingCount;
-	}
+    public int getMailingCount() {
+        return mailingCount;
+    }
 
-	public void setMailingCount(int mailingCount) {
-		this.mailingCount = mailingCount;
-	}
+    public void setMailingCount(int mailingCount) {
+        this.mailingCount = mailingCount;
+    }
 
 }

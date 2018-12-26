@@ -4,15 +4,18 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 
-import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.shared.DateUtils;
 import org.slf4j.Marker;
 import org.slf4j.helpers.MessageFormatter;
 
+/**
+ * A logger implementation to capture script execution logs locally
+ * 
+ * @author Andrius Karpavicius
+ */
 public class RunTimeLogger implements org.slf4j.Logger {
 
-    private Class<?> clazz;
-    private String scriptCode;
+    private String className;
 
     private String SEP = "  ";
     private String DEBUG = "DEBUG";
@@ -20,27 +23,24 @@ public class RunTimeLogger implements org.slf4j.Logger {
     private String TRACE = "TRACE";
     private String ERROR = "ERROR";
     private String WARN = "WARN";
-    
-    @SuppressWarnings("rawtypes")
-    private CustomScriptService scriptService;
+
+    StringBuffer logText = new StringBuffer();
 
     /**
+     * Logger instantiation
      * 
      * @param clazz class to log
-     * @param scriptCode code of script
-     * @param scriptServiceName script service name
      */
-    public RunTimeLogger(Class<?> clazz, String scriptCode, String scriptServiceName) {
-        this.clazz = clazz;
-        this.scriptCode = scriptCode;
-        scriptService = (ScriptInstanceService) EjbUtils.getServiceInterface(scriptServiceName);
+    public RunTimeLogger(Class<?> clazz) {
+        this.className = clazz.getCanonicalName();
     }
 
     /**
+     * Log a message
      * 
      * @param level log's level
      * @param message message
-     * @param throwable general excpetion.
+     * @param throwable Exception
      */
     public void log(String level, String message, Throwable throwable) {
         log(level, message, throwable.getMessage());
@@ -50,6 +50,7 @@ public class RunTimeLogger implements org.slf4j.Logger {
     }
 
     /**
+     * Log a message with parameters
      * 
      * @param level log level
      * @param message message
@@ -61,11 +62,11 @@ public class RunTimeLogger implements org.slf4j.Logger {
         sb.append(SEP);
         sb.append(level);
         sb.append(SEP);
-        sb.append("[" + clazz.getCanonicalName() + "]");
+        sb.append("[" + className + "]");
         sb.append(SEP);
         sb.append(MessageFormatter.arrayFormat(message, args).getMessage());
         sb.append("\n");
-        scriptService.addLog(sb.toString(), scriptCode);
+        logText.append(sb);
     }
 
     @Override
@@ -406,5 +407,18 @@ public class RunTimeLogger implements org.slf4j.Logger {
     @Override
     public void debug(Marker arg0, String arg1, Object arg2, Object arg3) {
 
+    }
+
+    /**
+     * Return log messages
+     * 
+     * @return Log messages
+     */
+    public String getLog() {
+        if (logText.length() == 0) {
+            return null;
+        } else {
+            return logText.toString();
+        }
     }
 }

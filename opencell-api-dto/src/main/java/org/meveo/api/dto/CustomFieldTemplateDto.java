@@ -23,6 +23,8 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
  * The Class CustomFieldTemplateDto.
  *
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2.1
  */
 @XmlRootElement(name = "CustomFieldTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -171,6 +173,10 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
      * Tags assigned to custom field template.
      */
     private String tags;
+    
+    /** display format. */
+    @XmlElement
+    protected String displayFormat;
 
     /**
      * Instantiates a new custom field template dto.
@@ -194,6 +200,7 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
         defaultValue = cf.getDefaultValue();
         useInheritedAsDefaultValue = cf.isUseInheritedAsDefaultValue();
         storageType = cf.getStorageType();
+        displayFormat = cf.getDisplayFormat();
         valueRequired = cf.isValueRequired();
         versionable = cf.isVersionable();
         triggerEndPeriodEvent = cf.isTriggerEndPeriodEvent();
@@ -414,7 +421,7 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
     @Override
     public String toString() {
         return "CustomFieldTemplateDto [code=" + code + ", description=" + description + ", fieldType=" + fieldType + ", accountLevel=" + accountLevel + ", appliesTo=" + appliesTo
-                + ", defaultValue=" + defaultValue + ", storageType=" + storageType + ", mapKeyType=" + mapKeyType + ", valueRequired=" + valueRequired + ", versionable="
+                + ", defaultValue=" + defaultValue + ", storageType=" + storageType + ", displayFormat=" + displayFormat + ", mapKeyType=" + mapKeyType + ", valueRequired=" + valueRequired + ", versionable="
                 + versionable + ", triggerEndPeriodEvent=" + triggerEndPeriodEvent + ", calendar=" + calendar + ", entityClazz=" + entityClazz + ", indexType=" + indexType + "]";
     }
 
@@ -729,4 +736,19 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
     public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
         this.languageDescriptions = languageDescriptions;
     }
+
+    /**
+     * @return the displayFormat
+     */
+    public String getDisplayFormat() {
+        return displayFormat;
+    }
+
+    /**
+     * @param displayFormat the displayFormat to set
+     */
+    public void setDisplayFormat(String displayFormat) {
+        this.displayFormat = displayFormat;
+    }
+    
 }
