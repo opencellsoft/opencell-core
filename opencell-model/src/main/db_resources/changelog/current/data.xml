@@ -127,7 +127,7 @@
 	<sql>update ${db.schema.adapted}ar_ddrequest_builder set payment_level ='AO'</sql>
 
 	</changeSet>
-
+	
 	<changeSet author="SaidRamli" id="3883_20181226">
          <insert tableName="adm_user">
             <column name="id" valueNumeric="-4" />
