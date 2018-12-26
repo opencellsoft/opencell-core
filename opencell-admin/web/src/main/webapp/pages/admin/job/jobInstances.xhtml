@@ -15,8 +15,9 @@
 				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
 				<p:menuitem outcome="jobInstances" value="#{messages['menu.jobInstances']}" />
 			</p:breadCrumb>
-		</h:form>     
-        <hftl:searchPanel label="#{messages['jobInstance.search']}" backingBean="#{jobInstanceListBean}" newButtonView="jobInstanceDetail" ajaxUpdateIds="timersBean_results_panel">
+        </h:form>
+        <hftl:searchPanel renderNewButton="#{currentUser.hasRole('createJob')}" label="#{messages['jobInstance.search']}" backingBean="#{jobInstanceListBean}"
+                          newButtonView="jobInstanceDetail" ajaxUpdateIds="timersBean_results_panel">
             <hftl:decorateFormField label="#{messages['timer.jobCategory']}">
                 <p:selectOneMenu id="jobCategory" value="#{jobInstanceListBean.filters['jobCategoryEnum']}">
                     <f:selectItem itemLabel="" />
@@ -29,11 +30,12 @@
         <h:panelGroup id="resultsDatatable">
             <hftl:dataList backingBean="#{jobInstanceListBean}" resultsId="timersBean_results" sortBy="code">
                 <p:column headerText="#{messages['timer.name']}" sortBy="#{entity.code}">
-                    <h:link outcome="jobInstanceDetail" value="#{entity.code}">
+                    <h:link outcome="jobInstanceDetail" value="#{entity.code}" rendered="#{currentUser.hasRole('useJob')}">
                         <f:param name="objectId" value="#{entity.id}" />
                         <f:param name="edit" value="true" />
                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                     </h:link>
+                    <h:outputText rendered="#{!currentUser.hasRole('useJob')}" value="#{entity.code}"></h:outputText>
                 </p:column>
                 <hftl:column label="#{messages['timer.jobName']}" field="jobTemplate" />
                 <hftl:column label="#{messages['job.category']}" field="jobCategoryEnum" />
@@ -43,7 +45,8 @@
                     <h:outputText styleClass="ui-icon ui-icon-circle-check" title="#{messages['timer.isRunning.this']}" rendered="#{jobInstanceListBean.isTimerRunning(entity)== JobRunningStatusEnum.RUNNING_THIS}" />
                     <h:outputText styleClass="ui-icon ui-icon-check" title="#{messages['timer.isRunning.other']}" rendered="#{jobInstanceListBean.isTimerRunning(entity)== JobRunningStatusEnum.RUNNING_OTHER}" />
                 </p:column>
-                <hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" renderEnableLink="true" />
+                <hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" renderEnableLink="#{currentUser.hasRole('useJob')}"
+                                    renderDeleteLink="#{currentUser.hasRole('useJob')}"/>
             </hftl:dataList>
         </h:panelGroup>
         <h:form>
