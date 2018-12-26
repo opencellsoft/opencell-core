@@ -9189,6 +9189,27 @@
             <column name="role_id" value="-6"></column>
         </insert>
     </changeSet>
+    <changeSet author="SaidRamli" id="3883_20181226">
+         <insert tableName="adm_user">
+            <column name="id" valueNumeric="-4" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2018-12-18 00:00:00.000" />
+            <column name="email" value="opencell.customercare@opencellsoft.com"/>
+            <column name="firstname" value="Jeanette"/>
+            <column name="lastname" value="Doe"/>
+            <column name="username" value="opencell.customercare" />
+            <column name="title_id" />
+            <column name="uuid" value="opencell.customercare" />
+        </insert>
+        <insert tableName="adm_user_role">
+            <column name="user_id" value="-4"></column>
+            <column name="role_id" value="-6"></column>
+        </insert>
+        <insert tableName="adm_user_role">
+            <column name="user_id" value="-4"></column>
+            <column name="role_id" value="-14"></column>
+        </insert>
+    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-titlesDEMO">
         <insert tableName="adm_title">
             <column name="id" valueNumeric="-1" />
