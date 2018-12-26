@@ -2298,6 +2298,17 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<redirect />
 	</navigation-case>
 	
+	<navigation-case>
+		<from-outcome>generalLedgers</from-outcome>
+		<to-view-id>/pages/billing/generalLedgers/generalLedgers.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>generalLedgersDetail</from-outcome>
+		<to-view-id>/pages/billing/generalLedgers/generalLedgersDetail.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
+	
 	<!-- IntCRM -->
 	
 	<navigation-case>

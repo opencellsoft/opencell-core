@@ -1866,8 +1866,14 @@
     TARGET="rules:#pages#billing#accountingCodes#accountingCodes.xhtml"
     TITLE="accountingCodes" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="accountingCodeDetail::#pages#billing#accountingCodes#accountingCodeDetail.xhtml"
+    ID="generalLedgers::#pages#billing#generalLedgers#generalLedgers.xhtml"
     NAME="output18"
+    PATH="/pages/billing/accountingCodes/accountingCodes.xhtml"
+    TARGET="rules:#pages#billing#accountingCodes#accountingCodes.xhtml"
+    TITLE="accountingCodes" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="accountingCodeDetail::#pages#billing#accountingCodes#accountingCodeDetail.xhtml"
+    NAME="output19"
     PATH="/pages/billing/accountingCodes/accountingCodeDetail.xhtml"
     TARGET="rules:#pages#billing#accountingCodes#accountingCodeDetail.xhtml"
     TITLE="accountingCodeDetail" model-entity="JSFProcessItemOutput"/>
