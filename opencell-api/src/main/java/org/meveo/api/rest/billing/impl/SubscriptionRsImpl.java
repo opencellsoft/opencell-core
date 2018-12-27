@@ -11,17 +11,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
-import org.meveo.api.dto.billing.ActivateServicesRequestDto;
-import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
-import org.meveo.api.dto.billing.OperationServicesRequestDto;
-import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
-import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
-import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
-import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -336,13 +326,14 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
      * 
      * @see org.meveo.api.rest.billing.SubscriptionRs#getOneShotChargeOthers()
      */
-    public GetOneShotChargesResponseDto getOneShotChargeOthers() {
-        GetOneShotChargesResponseDto result = new GetOneShotChargesResponseDto();
+    public OneShotChargeInstancesDto getOneShotChargeOthers(String subscriptionCode) {
+        OneShotChargeInstancesDto result = new OneShotChargeInstancesDto();
+
         try {
-            List<OneShotChargeTemplateDto> oneShotChargeOthers = subscriptionApi.getOneShotChargeOthers();
-            result.getOneshotCharges().addAll(oneShotChargeOthers);
+            result = subscriptionApi.getOneShotChargeOthers(subscriptionCode);
+            result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
         } catch (Exception e) {
-            processException(e, result.getActionStatus());
+            processException(e, new ActionStatus(ActionStatusEnum.FAIL, ""));
         }
 
         return result;

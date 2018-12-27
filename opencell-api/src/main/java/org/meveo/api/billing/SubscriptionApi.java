@@ -1620,11 +1620,34 @@ public class SubscriptionApi extends BaseApi {
         return results;
     }
 
+    private OneShotChargeInstancesDto getOneShotCharges(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        OneShotChargeInstancesDto oneShotChargeInstancesDto = new OneShotChargeInstancesDto();
+
+        if(subscriptionCode == null) {
+            throw new InvalidParameterException();
+        }
+
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+        }
+
+        List<OneShotChargeInstance> oneShotChargeInstances = oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(subscription.getId());
+        List<OneShotChargeInstanceDto> oneShotChargeInstanceDtos = new ArrayList<>();
+
+        for(OneShotChargeInstance oneShotChargeInstance : oneShotChargeInstances) {
+            OneShotChargeInstanceDto oneShotChargeInstanceDto = new OneShotChargeInstanceDto(oneShotChargeInstance);
+            oneShotChargeInstanceDtos.add(oneShotChargeInstanceDto);
+        }
+        oneShotChargeInstancesDto.setOneShotChargeInstances(oneShotChargeInstanceDtos);
+        return oneShotChargeInstancesDto;
+    }
+
     /**
      * @return list of one shot charge others.
      */
-    public List<OneShotChargeTemplateDto> getOneShotChargeOthers() {
-        return this.getOneShotCharges(OneShotChargeTemplateTypeEnum.OTHER);
+    public OneShotChargeInstancesDto getOneShotChargeOthers(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
+        return this.getOneShotCharges(subscriptionCode);
     }
 
     /**

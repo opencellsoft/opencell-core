@@ -24,6 +24,7 @@ public class OneShotChargeInstanceDto extends BusinessEntityDto {
     }
 
     public OneShotChargeInstanceDto(OneShotChargeInstance oneShotChargeInstance) {
+        setId(oneShotChargeInstance.getId());
         setCode(oneShotChargeInstance.getCode());
         setOperationDate(oneShotChargeInstance.getChargeDate());
         setTerminationDate(oneShotChargeInstance.getTerminationDate());
@@ -90,5 +91,17 @@ public class OneShotChargeInstanceDto extends BusinessEntityDto {
 
     public void setStatus(InstanceStatusEnum status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "OneShotChargeInstanceDto{" +
+                "operationDate=" + operationDate +
+                ", terminationDate=" + terminationDate +
+                ", status=" + status +
+                ", quantity=" + quantity +
+                ", amountWithoutTax=" + amountWithoutTax +
+                ", amountWithTax=" + amountWithTax +
+                '}';
     }
 }
