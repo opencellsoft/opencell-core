@@ -37,12 +37,14 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * Generic Workflow for entity data processing
  */
 @Entity
+@ModuleItem
 @Cacheable
 @ExportIdentifier({ "code" })
 @Table(name = "wf_generic_workflow", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))

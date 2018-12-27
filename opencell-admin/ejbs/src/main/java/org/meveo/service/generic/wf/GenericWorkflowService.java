@@ -27,6 +27,7 @@ import javax.ejb.Stateless;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.generic.wf.GenericWorkflow;
+import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
@@ -37,5 +38,9 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
     public List<Class<?>> getAllWorkflowedClass() {
         List<Class<?>> result = new ArrayList<>(WORKFLOWED_CLASSES);
         return result;
+    }
+
+    public void executeTransitionScript(WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
+        // TODO Auto-generated method stub
     }
 }
