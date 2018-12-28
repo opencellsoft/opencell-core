@@ -1619,7 +1619,7 @@ public class SubscriptionApi extends BaseApi {
         List<OneShotChargeTemplate> list = oneShotChargeTemplateService.list();
         for (OneShotChargeTemplate chargeTemplate : list) {
             if (chargeTemplate.getOneShotChargeTemplateType() == type) {
-                OneShotChargeTemplateDto oneshotChartTemplateDto = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+                OneShotChargeTemplateDto oneshotChartTemplateDto = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
                 results.add(oneshotChartTemplateDto);
             }
         }
@@ -1627,7 +1627,7 @@ public class SubscriptionApi extends BaseApi {
         return results;
     }
 
-    public List<OneShotChargeInstanceDto> getOneShotCharges(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
+    private List<OneShotChargeInstanceDto> getOneShotCharges(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
         Subscription subscription = subscriptionService.findByCode(subscriptionCode);
 
         if (subscription == null) {
@@ -1650,6 +1650,11 @@ public class SubscriptionApi extends BaseApi {
      */
     public List<OneShotChargeTemplateDto> getOneShotChargeOthers() throws EntityDoesNotExistsException, InvalidParameterException {
         return this.getOneShotCharges(OneShotChargeTemplateTypeEnum.OTHER);
+    }
+
+    public List<OneShotChargeInstanceDto> getOneShotChargeOthers(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
+
+        return this.getOneShotCharges(subscriptionCode);
     }
 
     /**
@@ -1900,12 +1905,13 @@ public class SubscriptionApi extends BaseApi {
         return result;
     }
 
-    public void cancelOneShotCharge(Long oneShotChargeId) {
+    public void terminateOneShotCharge(String oneShotChargeCode, String subscriptionCode) {
         try {
-            OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findById(oneShotChargeId);
+            Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+            OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findByCodeAndSubsription(oneShotChargeCode, subscription.getId());
             oneShotChargeInstanceService.terminateOneShotChargeInstance(oneShotChargeInstance);
         } catch (BusinessException e) {
-            log.error("Error on cancelOneShotCharge [{}] ", e.getMessage(), e);
+            e.printStackTrace();
         }
     }
 
