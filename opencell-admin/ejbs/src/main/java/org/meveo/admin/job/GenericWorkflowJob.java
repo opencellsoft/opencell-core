@@ -23,6 +23,13 @@ import org.meveo.service.job.Job;
 @Stateless
 public class GenericWorkflowJob extends Job {
 
+    /**
+     * Transition script params
+     */
+    public final static String GENERIC_WF = "GENERIC_WF";
+    public final static String WF_INS = "WF_INS";
+    public final static String IWF_ENTITY = "IWF_ENTITY";
+
     /** The generic workflow job bean. */
     @Inject
     private GenericWorkflowJobBean genericWorkflowJobBean;

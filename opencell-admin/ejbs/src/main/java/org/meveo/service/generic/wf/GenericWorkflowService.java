@@ -18,20 +18,41 @@
  */
 package org.meveo.service.generic.wf;
 
+import static org.meveo.admin.job.GenericWorkflowJob.GENERIC_WF;
+import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
+import static org.meveo.admin.job.GenericWorkflowJob.WF_INS;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WorkflowInstance;
+import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
 
 @Stateless
 public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
+
+    @Inject
+    private BusinessEntityService businessEntityService;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     static Set<Class<?>> WORKFLOWED_CLASSES = ReflectionUtils.getClassesAnnotatedWith(WorkflowedEntity.class, "org.meveo");
 
@@ -40,7 +61,30 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
         return result;
     }
 
-    public void executeTransitionScript(WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
-        // TODO Auto-generated method stub
+    public void executeTransitionScript(WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
+        log.debug("Executing generic workflow script:{} on instance {}", genericWorkflow.getCode(), workflowInstance);
+        try {
+            String qualifiedName = genericWorkflow.getTargetEntityClass();
+            Class<BusinessEntity> clazz = (Class<BusinessEntity>) Class.forName(qualifiedName);
+            businessEntityService.setEntityClass(clazz);
+            BusinessEntity businessEntity = businessEntityService.findByCode(workflowInstance.getEntityInstanceCode());
+
+            ScriptInstance scriptInstance = genericWorkflow.getTransitionScript();
+            String scriptCode = scriptInstance.getCode();
+            ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
+            Map<String, Object> methodContext = new HashMap<String, Object>();
+            methodContext.put(GENERIC_WF, genericWorkflow);
+            methodContext.put(WF_INS, workflowInstance);
+            methodContext.put(IWF_ENTITY, (IWFEntity) businessEntity);
+            methodContext.put(Script.CONTEXT_ACTION, scriptCode);
+            if (script == null) {
+                log.error("Script is null");
+                throw new BusinessException("script is null");
+            }
+            script.execute(methodContext);
+        } catch (Exception e) {
+            log.error("Failed to execute generic workflow {} on {}", genericWorkflow.getCode(), workflowInstance, e);
+            throw new BusinessException(e);
+        }
     }
 }

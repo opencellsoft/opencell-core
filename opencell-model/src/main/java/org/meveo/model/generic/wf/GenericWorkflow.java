@@ -79,7 +79,7 @@ public class GenericWorkflow extends EnableBusinessEntity {
     /**
      * The transition script
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "transition_script_id")
     private ScriptInstance transitionScript;
 
