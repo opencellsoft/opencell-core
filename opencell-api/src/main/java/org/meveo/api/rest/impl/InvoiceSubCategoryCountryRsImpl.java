@@ -66,9 +66,17 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
     @Override
     public ActionStatus remove(String invoiceSubCategoryCode, String sellersCountryCode, String buyersCountryCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        String searchingSellerCountryCode = sellersCountryCode;
+        String searchingBuyersCountryCode = buyersCountryCode;
+        if ("".equals(sellersCountryCode)) {
+            searchingSellerCountryCode = null;
+        }
+        if ("".equals(buyersCountryCode)) {
+            searchingBuyersCountryCode = null;
+        }
 
         try {
-            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, sellersCountryCode, buyersCountryCode);
+            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, searchingSellerCountryCode, searchingBuyersCountryCode);
         } catch (Exception e) {
             processException(e, result);
         }

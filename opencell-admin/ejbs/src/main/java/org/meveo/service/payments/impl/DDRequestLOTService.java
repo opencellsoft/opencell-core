@@ -39,10 +39,14 @@ import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+
+import org.meveo.model.admin.Seller;
+
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
+import org.meveo.model.payments.AutomatedRefund;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestBuilder;
@@ -55,6 +59,7 @@ import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentLevelEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -64,10 +69,12 @@ import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CalendarBankingService;
 
+
 /**
  * The Class DDRequestLOTService.
+ * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
@@ -99,9 +106,14 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
     @Inject
     private CalendarBankingService calendarBankingService;
 
+    @Inject
+    private PaymentGatewayService paymentGatewayService;
+
+
     /**
      * Creates the payment.
      *
+     * @param <T> the generic type
      * @param ddRequestItem the dd request item
      * @param paymentMethodEnum the payment method enum
      * @param amount the amount
@@ -115,26 +127,37 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
      * @param occForMatching the occ for matching
      * @param isToMatching the is to matching
      * @param matchingTypeEnum the matching type enum
+     * @param seller the seller
      * @return the automated payment
      * @throws BusinessException the business exception
      * @throws NoAllOperationUnmatchedException the no all operation unmatched exception
      * @throws UnbalanceAmountException the unbalance amount exception
      */
-    public AutomatedPayment createPayment(DDRequestItem ddRequestItem, PaymentMethodEnum paymentMethodEnum, BigDecimal amount, CustomerAccount customerAccount, String reference,
+    @SuppressWarnings("unchecked")
+    public <T extends AutomatedPayment> T createPaymentOrRefund(DDRequestItem ddRequestItem, PaymentMethodEnum paymentMethodEnum, BigDecimal amount, CustomerAccount customerAccount, String reference,
             String bankLot, Date depositDate, Date bankCollectionDate, Date dueDate, Date transactionDate, List<AccountOperation> occForMatching, boolean isToMatching,
-            MatchingTypeEnum matchingTypeEnum) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+            MatchingTypeEnum matchingTypeEnum,Seller seller) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
         log.info("create payment for amount:" + amount + " paymentMethodEnum:" + paymentMethodEnum + " isToMatching:" + isToMatching + "  customerAccount:"
                 + customerAccount.getCode() + "...");
 
         ParamBean paramBean = paramBeanFactory.getInstance();
-        String occTemplateCode = paramBean.getProperty("occ.payment.dd", "PAY_DDT");
+        String occTemplateCode = null;
+        T automatedPayment = null;
+        if(ddRequestItem.getDdRequestLOT().getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
+            occTemplateCode = paramBean.getProperty("occ.refund.dd", "REF_DDT");
+            automatedPayment = (T) new AutomatedRefund();
+        }else {
+            occTemplateCode = paramBean.getProperty("occ.payment.dd", "PAY_DDT");
+            automatedPayment = (T) new AutomatedPayment();
+        }
+                
 
         OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         if (occTemplate == null) {
             throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
         }
 
-        AutomatedPayment automatedPayment = new AutomatedPayment();
+       
         automatedPayment.setPaymentMethod(paymentMethodEnum);
         automatedPayment.setAmount(amount);
         automatedPayment.setUnMatchingAmount(amount);
@@ -155,7 +178,8 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
         automatedPayment.setUnMatchingAmount(amount);
         automatedPayment.setMatchingAmount(BigDecimal.ZERO);
         automatedPayment.setDdRequestItem(ddRequestItem);
-        automatedPaymentService.create(automatedPayment);
+        automatedPayment.setSeller(seller);
+        automatedPaymentService.create( automatedPayment);
         if (isToMatching) {
             List<Long> aoIds = new ArrayList<Long>();
             for (AccountOperation ao : occForMatching) {
@@ -163,24 +187,27 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
             }
             aoIds.add(automatedPayment.getId());
             matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIds, null, MatchingTypeEnum.A);
-            log.info("matching created  for 1 automatedPayment ");
+            log.info("matching created  for 1 automated Payment/Refund ");
         } else {
             log.info("no matching created ");
         }
-        log.info("automatedPayment created for amount:" + automatedPayment.getAmount());
+        log.info("automated Payment/Refund created for amount:" + automatedPayment.getAmount());
         return automatedPayment;
     }
 
     /**
      * Creates the DDRequest lot.
      *
+     * @param ddrequestLotOp the ddrequest lot op
      * @param listAoToPay list of account operations
      * @param ddRequestBuilder direct debit request builder
+     * @param result the result
      * @return the DD request LOT
      * @throws BusinessEntityException the business entity exception
      * @throws Exception the exception
      */
-    public DDRequestLOT createDDRquestLot(DDRequestLotOp ddrequestLotOp,List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder, JobExecutionResultImpl result) throws BusinessEntityException, Exception {
+    public DDRequestLOT createDDRquestLot(DDRequestLotOp ddrequestLotOp, List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder, JobExecutionResultImpl result)
+            throws BusinessEntityException, Exception {
 
         try {
             if (listAoToPay == null || listAoToPay.isEmpty()) {
@@ -190,6 +217,8 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
             DDRequestLOT ddRequestLOT = new DDRequestLOT();
             ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
             ddRequestLOT.setSendDate(new Date());
+            ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
+            ddRequestLOT.setSeller(ddrequestLotOp.getSeller());
             create(ddRequestLOT);
             int nbItemsKo = 0;
             int nbItemsOk = 0;
@@ -197,9 +226,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
             DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
             if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.AO) {
                 for (AccountOperation ao : listAoToPay) {
-                    String errorMsg = getMissingField(ao);
-                    Name caName =  ao.getCustomerAccount().getName();
-                    String caFullName = this.getCaFullName(caName); 
+                    String errorMsg = getMissingField(ao,ddRequestLOT);
+                    Name caName = ao.getCustomerAccount().getName();
+                    String caFullName = this.getCaFullName(caName);
                     ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
                     if (errorMsg != null) {
                         nbItemsKo++;
@@ -226,7 +255,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
                     CustomerAccount ca = entry.getKey();
                     String caFullName = this.getCaFullName(ca.getName());
                     for (AccountOperation ao : entry.getValue()) {
-                        String errorMsg = getMissingField(ao);
+                        String errorMsg = getMissingField(ao,ddRequestLOT);
                         if (errorMsg != null) {
                             allErrorsByItem += errorMsg + " ; ";
                         } else {
@@ -248,7 +277,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
             ddRequestLOT.setRejectedCause(StringUtils.truncate(allErrors, 255, true));
             ddRequestLOT.setTotalAmount(totalAmount);
             ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider));
-            ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT, appProvider);
+           ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT, appProvider);          
             ddRequestLOT.setSendDate(new Date());
             log.info("Successful createDDRquestLot totalAmount: {}", ddRequestLOT.getTotalAmount());
             return ddRequestLOT;
@@ -260,29 +289,34 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
             result.addReport("ddrequestLotOp id : " + ddrequestLotOp.getId() + " RejectReason : " + e.getMessage());
             return null;
         }
-        
-       
+
     }
 
+    /**
+     * Gets the ca full name.
+     *
+     * @param caName the ca name
+     * @return the ca full name
+     */
     private String getCaFullName(Name caName) {
         return caName != null ? caName.getFullName() : "";
     }
 
     /**
-     * Creates the payments for DD request lot.
+     * Creates the payments or refunds for DD request lot.
      *
      * @param ddRequestLOT the dd request LOT
      * @throws BusinessException the business exception
      * @throws NoAllOperationUnmatchedException the no all operation unmatched exception
      * @throws UnbalanceAmountException the unbalance amount exception
      */
-    public void createPaymentsForDDRequestLot(DDRequestLOT ddRequestLOT) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+    public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
         log.info("createPaymentsForDDRequestLot ddRequestLotId: {}, size:{}", ddRequestLOT.getId(), ddRequestLOT.getDdrequestItems().size());
         if (ddRequestLOT.isPaymentCreated()) {
             throw new BusinessException("Payment Already created.");
         }
         for (int i = 0; i < ddRequestLOT.getDdrequestItems().size(); i++) {
-            DDRequestItem ddrequestItem = ddRequestLOT.getDdrequestItems().get(i);
+            DDRequestItem ddrequestItem = ddRequestLOT.getDdrequestItems().get(i);          
             AutomatedPayment automatedPayment = null;
             PaymentErrorTypeEnum paymentErrorTypeEnum = null;
             PaymentStatusEnum paymentStatusEnum = null;
@@ -291,11 +325,12 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
                 if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0) {
                     log.info("invoice: {}  balanceDue:{}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
                 } else {
-                    automatedPayment = createPayment(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
+                    automatedPayment = createPaymentOrRefund(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
                         ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), ddrequestItem.getReference(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
                         DateUtils.addDaysToDate(new Date(), ArConfig.getDateValueAfter()), ddRequestLOT.getSendDate(), ddRequestLOT.getSendDate(),
-                        ddrequestItem.getAccountOperations(), true, MatchingTypeEnum.A_DERICT_DEBIT);
+                        ddrequestItem.getAccountOperations(), true, MatchingTypeEnum.A_DERICT_DEBIT,ddRequestLOT.getSeller());
                     ddrequestItem.setAutomatedPayment(automatedPayment);
+
                     paymentStatusEnum = PaymentStatusEnum.PENDING;
                 }
             } else {
@@ -318,8 +353,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
      *
      * @param accountOperation the account operation
      * @return the missing field
+     * @throws BusinessException 
      */
-    public String getMissingField(AccountOperation accountOperation) {
+    public String getMissingField(AccountOperation accountOperation,DDRequestLOT ddRequestLOT) throws BusinessException {
         String prefix = "AO.id:" + accountOperation.getId() + " : ";
         CustomerAccount ca = accountOperation.getCustomerAccount();
         if (ca == null) {
@@ -346,21 +382,32 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
         if (StringUtils.isBlank(appProvider.getDescription())) {
             return prefix + "provider.description";
         }
-        BankCoordinates providerBC = appProvider.getBankCoordinates();
-        if (providerBC == null) {
-            return prefix + "provider.bankCoordinates";
+        BankCoordinates bankCoordinates = null;
+        if (ddRequestLOT.getSeller() != null) {
+             
+            PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(ddRequestLOT.getSeller(), PaymentMethodEnum.DIRECTDEBIT);
+            if (paymentGateway == null) {
+                throw new BusinessException("Cant find payment gateway for seller : " + ddRequestLOT.getSeller());
+            }
+            bankCoordinates =  paymentGateway.getBankCoordinates();
+        } else {
+            bankCoordinates =  appProvider.getBankCoordinates();
+        }       
+               
+        if (bankCoordinates == null) {
+            return prefix + "provider or seller bankCoordinates";
         }
-        if (providerBC.getIban() == null) {
-            return prefix + "provider.iban";
+        if (bankCoordinates.getIban() == null) {
+            return prefix + "bankCoordinates.iban";
         }
-        if (providerBC.getBic() == null) {
-            return prefix + "provider.bic";
+        if (bankCoordinates.getBic() == null) {
+            return prefix + "bankCoordinates.bic";
         }
-        if (providerBC.getIcs() == null) {
-            return prefix + "provider.ics";
+        if (bankCoordinates.getIcs() == null) {
+            return prefix + "bankCoordinates.ics";
         }
         if (accountOperation.getReference() == null) {
-            return prefix + "recordedInvoice.reference";
+            return prefix + "accountOperation.reference";
         }
         if (ca.getDescription() == null) {
             return prefix + "ca.description";

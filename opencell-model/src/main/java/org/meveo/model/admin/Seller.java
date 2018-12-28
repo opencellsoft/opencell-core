@@ -52,6 +52,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 
@@ -162,6 +163,9 @@ public class Seller extends BusinessCFEntity {
      */
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CustomerSequence> customerSequences = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PaymentGateway> paymentGateways = new ArrayList<>();
 
     /**
      * General Ledger association
@@ -394,6 +398,21 @@ public class Seller extends BusinessCFEntity {
     public void setCustomerSequences(List<CustomerSequence> customerSequences) {
         this.customerSequences = customerSequences;
     }
+
+    /**
+     * @return the paymentGateways
+     */
+    public List<PaymentGateway> getPaymentGateways() {
+        return paymentGateways;
+    }
+
+    /**
+     * @param paymentGateways the paymentGateways to set
+     */
+    public void setPaymentGateways(List<PaymentGateway> paymentGateways) {
+        this.paymentGateways = paymentGateways;
+    }
+    
 
     public GeneralLedger getGeneralLedger() {
         return generalLedger;

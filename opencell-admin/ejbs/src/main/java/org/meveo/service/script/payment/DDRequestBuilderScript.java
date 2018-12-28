@@ -8,63 +8,46 @@ import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.service.script.Script;
 
-
 /**
  * The Class DDRequestBuilderScript.
  * 
  * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
-public abstract class  DDRequestBuilderScript extends Script implements DDRequestBuilderScriptInterface {
+public abstract class DDRequestBuilderScript extends Script implements DDRequestBuilderScriptInterface {
 
     /** The Constant DD_REQUEST_LOT. */
     public static final String DD_REQUEST_LOT = "DD_REQUEST_LOT";
-    
+
+    /** The Constant DD_REQUEST_LIST_AO. */
     public static final String DD_REQUEST_LIST_AO = "DD_REQUEST_LIST_AO";
-    
+
     /** The Constant PROVIDER. */
     public static final String PROVIDER = "PROVIDER";
 
-    public static final String DD_REJECT_PREFIX = "DD_REJECT_PREFIX";
-
-    public static final String DD_REJECT_EXTENSION = "DD_REJECT_EXTENSION";
-
+    /** The Constant DD_REJECT_FILE. */
     public static final String DD_REJECT_FILE = "DD_REJECT_FILE";
 
+    /** The Constant DD_REJECT_FILE_INFOS. */
     public static final String DD_REJECT_FILE_INFOS = "DD_REJECT_FILE_INFOS";
 
-     @Override
-    public void generateDDRequestLotFile(Map<String, Object> methodContext) throws BusinessException {        
-    }
-   
     @Override
-    public String getDDFileName(Map<String, Object> methodContext) throws BusinessException { 
-        return null;
+    public void generateDDRequestLotFile(Map<String, Object> methodContext) throws BusinessException {
     }
-    
+
     @Override
-    public void generateSCTRequestLotFile(Map<String, Object> methodContext) throws BusinessException {        
-    }
-   
-    @Override
-    public String getSCTFileName(Map<String, Object> methodContext) throws BusinessException { 
+    public String getDDFileName(Map<String, Object> methodContext) throws BusinessException {
         return null;
     }
 
     @Override
-    public String getDDRejectFilePrefix(Map<String, Object> methodContext) throws BusinessException {
-        return null;
-    }
-
-
-    @Override
-    public String getDDRejectFileExtension(Map<String, Object> methodContext) throws BusinessException {
+    public DDRejectFileInfos processSDDRejectedFile(Map<String, Object> methodContext) throws BusinessException {
         return null;
     }
 
     @Override
-    public DDRejectFileInfos processDDRejectedFile(Map<String, Object> methodContext) throws BusinessException {
+    public DDRejectFileInfos processSCTRejectedFile(Map<String, Object> methodContext) throws BusinessException {
         return null;
     }
     

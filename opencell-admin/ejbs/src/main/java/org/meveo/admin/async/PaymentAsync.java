@@ -95,10 +95,10 @@ public class PaymentAsync {
            
             List<AccountOperation> listAoToPayOrRefund = null;
             if (operationCategory == OperationCategoryEnum.CREDIT) {
-                List<AccountOperation> listAoToPay = accountOperationService.getAOsToPay(paymentMethodType, fromDueDate,toDueDate, caID);
+                List<AccountOperation> listAoToPay = accountOperationService.getAOsToPayOrRefund(paymentMethodType, fromDueDate,toDueDate,OperationCategoryEnum.DEBIT, caID);
                 listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToPay, paymentMethodType, OperationCategoryEnum.DEBIT);
             } else {
-                List<AccountOperation> listAoToRefund = accountOperationService.getAOsToRefund(paymentMethodType, fromDueDate,toDueDate, caID);
+                List<AccountOperation> listAoToRefund = accountOperationService.getAOsToPayOrRefund(paymentMethodType, fromDueDate,toDueDate,OperationCategoryEnum.CREDIT, caID);
                 listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToRefund, paymentMethodType, OperationCategoryEnum.CREDIT);
             }
             if ("CA".equals(paymentPerAOorCA)) {

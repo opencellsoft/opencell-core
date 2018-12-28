@@ -53,6 +53,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -76,15 +77,20 @@ import org.meveo.model.crm.custom.CustomFieldValues;
         @Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
 @CustomFieldEntity(cftCodePrefix = "ACC_OP")
 @NamedQueries({
-        @NamedQuery(name = "AccountOperation.listAoToPayWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and " + 
+        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" + 
                 "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
                 "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),  
-        @NamedQuery(name = "AccountOperation.listAoToPay", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.customerAccount.id=:caIdIN  and ao.transactionCategory='DEBIT' and " + 
+        @NamedQuery(name = "AccountOperation.listAoToPayOrRefund", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.customerAccount.id=:caIdIN and ao.type  "
+                + "                             in ('I','OCC') and ao.transactionCategory='DEBIT' and " + 
                 "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
-                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),       
-        @NamedQuery(name = "AccountOperation.listAOIdsToRefund", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.customerAccount.id=:caIdIN and ao.type not in ('P','AP') and " +
-                "                               ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and " + 
-                "                               pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN   "),
+                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),   
+        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCAbySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" + 
+                "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
+                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),  
+        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundBySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.customerAccount.id=:caIdIN and ao.type  "
+                + "                             in ('I','OCC') and ao.transactionCategory='DEBIT' and " + 
+                "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
+                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),          
         @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao.customerAccount=:customerAccount")
 })
 public class AccountOperation extends AuditableEntity implements ICustomFieldEntity, ISearchable {
@@ -352,6 +358,10 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @ManyToOne(optional = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "rejected_payment_id")
     private RejectedPayment rejectedPayment;
+    
+    @ManyToOne(optional = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
     
 
     public Date getDueDate() {
@@ -803,4 +813,19 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     public void setRejectedPayment(RejectedPayment rejectedPayment) {
         this.rejectedPayment = rejectedPayment;
     }
+
+    /**
+     * @return the seller
+     */
+    public Seller getSeller() {
+        return seller;
+    }
+
+    /**
+     * @param seller the seller to set
+     */
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+    
 }

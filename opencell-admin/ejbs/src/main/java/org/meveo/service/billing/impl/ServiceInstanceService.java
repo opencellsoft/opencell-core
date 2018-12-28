@@ -445,7 +445,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             RecurringChargeInstance activeRecurringChargeInstance = recurringChargeInstanceService.retrieveIfNotManaged(recurringChargeInstance);
             if (walletOperationService.isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
-                recurringChargeInstanceService.applyRecurringChargeInstance(recurringChargeInstance,
+                recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(),
                     serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(), serviceInstance.getRateUntilDate() != null);
             }
         }

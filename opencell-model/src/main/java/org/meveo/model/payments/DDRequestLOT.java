@@ -26,6 +26,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -39,7 +41,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.admin.Seller;
 
+/**
+ * 
+ * @author anasseh
+ *
+ */
 @Entity
 @Table(name = "ar_ddrequest_lot")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -86,6 +94,15 @@ public class DDRequestLOT extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ddrequest_builder_id")
     private DDRequestBuilder ddRequestBuilder;
+    
+    /** The Payment Or Refund Enum. */
+    @Column(name = "payment_or_refund")
+    @Enumerated(EnumType.STRING)
+    PaymentOrRefundEnum paymentOrRefundEnum;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
 
     public String getFileName() {
         return fileName;
@@ -180,5 +197,37 @@ public class DDRequestLOT extends AuditableEntity {
     public void setDdRequestBuilder(DDRequestBuilder ddRequestBuilder) {
         this.ddRequestBuilder = ddRequestBuilder;
     }
+
+  
+
+    /**
+     * @return the paymentOrRefundEnum
+     */
+    public PaymentOrRefundEnum getPaymentOrRefundEnum() {
+        return paymentOrRefundEnum;
+    }
+
+    /**
+     * @param paymentOrRefundEnum the paymentOrRefundEnum to set
+     */
+    public void setPaymentOrRefundEnum(PaymentOrRefundEnum paymentOrRefundEnum) {
+        this.paymentOrRefundEnum = paymentOrRefundEnum;
+    }
+
+    /**
+     * @return the seller
+     */
+    public Seller getSeller() {
+        return seller;
+    }
+
+    /**
+     * @param seller the seller to set
+     */
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+    
+    
 
 }

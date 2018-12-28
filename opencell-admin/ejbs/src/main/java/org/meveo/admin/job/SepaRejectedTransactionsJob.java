@@ -34,24 +34,28 @@ import org.meveo.service.payments.impl.DDRequestBuilderService;
  * 
  * @author anasseh
  * @author Wassim Drira
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  * 
  */
 @Stateless
 public class SepaRejectedTransactionsJob extends Job {
 
-    /** paramBeanFactory to instantiate adequate ParamBean */
+    /** paramBeanFactory to instantiate adequate ParamBean. */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
+    /** The sepa rejected transactions job bean. */
     @Inject
     private SepaRejectedTransactionsJobBean sepaRejectedTransactionsJobBean;
 
+    /** The dd request builder service. */
     @Inject
     private DDRequestBuilderService ddRequestBuilderService;
 
+    /** The dd request builder factory. */
     @Inject
     private DDRequestBuilderFactory ddRequestBuilderFactory;
+
 
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -70,8 +74,8 @@ public class SepaRejectedTransactionsJob extends Job {
                 throw new BusinessException("Can't find ddRequestBuilder by code:" + ddRequestBuilderCode);
             }
             DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
-            String prefix = ddRequestBuilderInterface.getDDRejectFilePrefix();
-            String ext = ddRequestBuilderInterface.getDDRejectFileExtension();
+            String prefix = (String) this.getParamOrCFValue(jobInstance, "RejectSepaJob_fileNamePrefix");
+            String ext = (String) this.getParamOrCFValue(jobInstance, "RejectSepaJob_fileNameExtension");
             String inputDir = paramBeanFactory.getChrootDir() + ((String) this.getParamOrCFValue(jobInstance, "RejectSepaJob_inputDir")).replaceAll("\\..", "");
             log.info("inputDir=" + inputDir);
             File dir = new File(inputDir);
@@ -100,6 +104,7 @@ public class SepaRejectedTransactionsJob extends Job {
         }
     }
 
+
     @Override
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.ACCOUNT_RECEIVABLES;
@@ -119,6 +124,28 @@ public class SepaRejectedTransactionsJob extends Job {
         inputDirectoryCF.setMaxValue(256L);
         result.put("RejectSepaJob_inputDir", inputDirectoryCF);
 
+        CustomFieldTemplate fileNamePrefixCF = new CustomFieldTemplate();
+        fileNamePrefixCF.setCode("RejectSepaJob_fileNamePrefix");
+        fileNamePrefixCF.setAppliesTo("JOB_SepaRejectedTransactionsJob");
+        fileNamePrefixCF.setActive(true);
+        fileNamePrefixCF.setDescription(resourceMessages.getString("flatFile.fileNamePrefix"));
+        fileNamePrefixCF.setFieldType(CustomFieldTypeEnum.STRING);
+        fileNamePrefixCF.setDefaultValue(null);
+        fileNamePrefixCF.setValueRequired(true);
+        fileNamePrefixCF.setMaxValue(256L);
+        result.put("RejectSepaJob_fileNamePrefix", fileNamePrefixCF);
+
+        CustomFieldTemplate fileNameExtensionCF = new CustomFieldTemplate();
+        fileNameExtensionCF.setCode("RejectSepaJob_fileNameExtension");
+        fileNameExtensionCF.setAppliesTo("JOB_SepaRejectedTransactionsJob");
+        fileNameExtensionCF.setActive(true);
+        fileNameExtensionCF.setDescription(resourceMessages.getString("flatFile.fileNameExtension"));
+        fileNameExtensionCF.setFieldType(CustomFieldTypeEnum.STRING);
+        fileNameExtensionCF.setDefaultValue(null);
+        fileNameExtensionCF.setValueRequired(true);
+        fileNameExtensionCF.setMaxValue(256L);
+        result.put("RejectSepaJob_fileNameExtension", fileNameExtensionCF);
+
         CustomFieldTemplate payentGatewayCF = new CustomFieldTemplate();
         payentGatewayCF.setCode("RejectSepaJob_ddRequestBuilder");
         payentGatewayCF.setAppliesTo("JOB_SepaRejectedTransactionsJob");
@@ -128,6 +155,21 @@ public class SepaRejectedTransactionsJob extends Job {
         payentGatewayCF.setEntityClazz(DDRequestBuilder.class.getName());
         payentGatewayCF.setValueRequired(true);
         result.put("RejectSepaJob_ddRequestBuilder", payentGatewayCF);
+        
+        Map<String, String> lisValuesCreditDebit = new HashMap<String, String>();
+        lisValuesCreditDebit.put("Credit", "Payment");
+        lisValuesCreditDebit.put("Debit", "Refund");
+
+        CustomFieldTemplate creditOrDebitCF = new CustomFieldTemplate();
+        creditOrDebitCF.setCode("RejectSepaJob_creditOrDebit");
+        creditOrDebitCF.setAppliesTo("JOB_SepaRejectedTransactionsJob");
+        creditOrDebitCF.setActive(true);
+        creditOrDebitCF.setDefaultValue("Credit");
+        creditOrDebitCF.setDescription(resourceMessages.getString("jobExecution.paymentOrRefund"));
+        creditOrDebitCF.setFieldType(CustomFieldTypeEnum.LIST);
+        creditOrDebitCF.setValueRequired(true);
+        creditOrDebitCF.setListValues(lisValuesCreditDebit);
+        result.put("RejectSepaJob_creditOrDebit", creditOrDebitCF);
 
         return result;
     }
