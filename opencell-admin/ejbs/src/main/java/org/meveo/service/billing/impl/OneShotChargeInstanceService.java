@@ -77,6 +77,23 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         return oneShotChargeInstance;
     }
 
+    public OneShotChargeInstance findById(Long oneShotChargeId) {
+        OneShotChargeInstance oneShotChargeInstance = null;
+        try {
+            log.debug("start of find {} by id (id={}) ..", new Object[] { "OneShotChargeInstance", oneShotChargeId });
+            QueryBuilder qb = new QueryBuilder(OneShotChargeInstance.class, "c");
+            qb.addCriterion("c.id", "=", oneShotChargeId, true);
+            oneShotChargeInstance = (OneShotChargeInstance) qb.getQuery(getEntityManager()).getSingleResult();
+            log.debug("end of find {} by id (id={}, Result found={}.",
+                    new Object[] { "OneShotChargeInstance", oneShotChargeId, oneShotChargeInstance != null });
+        } catch (NoResultException nre) {
+            log.debug("findById : aucune charge ponctuelle n'a ete trouvee");
+        } catch (Exception e) {
+            log.error("failed to find oneShotChargeInstance by Id", e);
+        }
+        return oneShotChargeInstance;
+    }
+
     public OneShotChargeInstance oneShotChargeInstanciation(ServiceInstance serviceInstance, OneShotChargeTemplate chargeTemplate, BigDecimal amoutWithoutTax,
             BigDecimal amoutWithoutTx2, boolean isSubscriptionCharge, boolean isVirtual) throws BusinessException {
 
@@ -226,8 +243,11 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     }
 
     public void terminateOneShotChargeInstance(OneShotChargeInstance oneShotChargeInstance) throws BusinessException {
-        oneShotChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
-        oneShotChargeInstance.setTerminationDate(new Date());
+        List<WalletOperation> walletOperations = oneShotChargeInstance.getWalletOperations();
+        for(WalletOperation walletOperation : walletOperations) {
+            walletOperation.setStatus(WalletOperationStatusEnum.CANCELED);
+        }
+        oneShotChargeInstance.setStatus(InstanceStatusEnum.CANCELED);
         update(oneShotChargeInstance);
     }
 

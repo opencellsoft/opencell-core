@@ -1897,13 +1897,12 @@ public class SubscriptionApi extends BaseApi {
         return result;
     }
 
-    public void terminateOneShotCharge(String oneShotChargeCode, String subscriptionCode) {
+    public void cancelOneShotCharge(Long oneShotChargeId) {
         try {
-            Subscription subscription = subscriptionService.findByCode(subscriptionCode);
-            OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findByCodeAndSubsription(oneShotChargeCode, subscription.getId());
+            OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findById(oneShotChargeId);
             oneShotChargeInstanceService.terminateOneShotChargeInstance(oneShotChargeInstance);
         } catch (BusinessException e) {
-            e.printStackTrace();
+            log.error("Error on cancelOneShotCharge [{}] ", e.getMessage(), e);
         }
     }
 

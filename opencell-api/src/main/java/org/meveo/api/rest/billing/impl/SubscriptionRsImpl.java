@@ -404,11 +404,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public ActionStatus terminateOneShotCharge(String subscriptionCode, String oneshotChargeCode) {
+    public ActionStatus cancelOneShotCharge(Long oneshotChargeId) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.terminateOneShotCharge(oneshotChargeCode, subscriptionCode);
+            subscriptionApi.cancelOneShotCharge(oneshotChargeId);
         } catch (Exception e) {
             processException(e, result);
         }

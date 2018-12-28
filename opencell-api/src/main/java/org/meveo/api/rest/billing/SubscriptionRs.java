@@ -164,8 +164,8 @@ public interface SubscriptionRs extends IBaseRs {
 
 
     @DELETE
-    @Path("/oneShotCharge/{subscriptionCode}/{oneshotChargeCode}")
-    ActionStatus terminateOneShotCharge(@PathParam("subscriptionCode") String subscriptionCode, @PathParam("oneshotChargeCode") String oneshotChargeCode);
+    @Path("/oneShotCharge/{oneShotChargeId}")
+    ActionStatus cancelOneShotCharge(@PathParam("oneShotChargeId") Long oneShotChargeId);
 
 
     /**
