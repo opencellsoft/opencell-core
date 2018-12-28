@@ -18,11 +18,7 @@
  */
 package org.meveo.model.crm;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -32,6 +28,7 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.billing.AccountingCode;
 
 /**
  * Customer category
@@ -76,6 +73,13 @@ public class CustomerCategory extends BusinessCFEntity {
     @Column(name = "exoneration_reason", length = 255)
     @Size(max = 255)
     private String exonerationReason;
+
+    /**
+     * related Accounting Code
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
 
     /**
      * @return True if account is exonerated from taxes
@@ -132,4 +136,19 @@ public class CustomerCategory extends BusinessCFEntity {
     public void setExonerationReason(String exonerationReason) {
         this.exonerationReason = exonerationReason;
     }
+
+    /**
+     * @return the accounting code
+     */
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
+
+    /**
+     * @param accountingCode the accounting code to set
+     */
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
+    }
+
 }
