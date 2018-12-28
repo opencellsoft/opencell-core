@@ -1,11 +1,5 @@
 package org.meveo.api.rest.billing.impl;
 
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -27,9 +21,12 @@ import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.OneShotChargeInstance;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.service.billing.impl.WalletOperationService;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -324,14 +321,20 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     /**
      * Get all one shot charge others.
      * 
-     * @see org.meveo.api.rest.billing.SubscriptionRs#getOneShotChargeOthers()
+     * @see org.meveo.api.rest.billing.SubscriptionRs#getOneShotChargeOthers(String subscriptionCode)
      */
-    public OneShotChargeInstancesDto getOneShotChargeOthers(String subscriptionCode) {
-        OneShotChargeInstancesDto result = new OneShotChargeInstancesDto();
+    public GetOneShotChargesResponseDto getOneShotChargeOthers(String subscriptionCode) {
+        GetOneShotChargesResponseDto result = new GetOneShotChargesResponseDto();
 
         try {
-            result = subscriptionApi.getOneShotChargeOthers(subscriptionCode);
-            result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+            if(subscriptionCode == null) {
+                List<OneShotChargeTemplateDto> oneShotChargeOthers = subscriptionApi.getOneShotChargeOthers();
+                result.getOneshotCharges().addAll(oneShotChargeOthers);
+            } else {
+                List<OneShotChargeInstanceDto> oneShotChargeInstances = subscriptionApi.getOneShotChargeOthers(subscriptionCode);
+                result.getOneshotChargeInstances().addAll(oneShotChargeInstances);
+            }
+
         } catch (Exception e) {
             processException(e, new ActionStatus(ActionStatusEnum.FAIL, ""));
         }

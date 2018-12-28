@@ -26,6 +26,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
+import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.EntityNotAllowedException;
@@ -1044,11 +1045,9 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
 
-        List<OneShotChargeInstance> oneShotChargeInstances = oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(subscription.getId());
-
         CustomFieldInheritanceEnum inherit = (inheritCF != null && !mergedCF) ? inheritCF : CustomFieldInheritanceEnum.getInheritCF(true, mergedCF);
 
-        result = subscriptionToDto(subscription, inherit, oneShotChargeInstances);
+        result = subscriptionToDto(subscription, inherit);
 
         return result;
     }
@@ -1620,13 +1619,8 @@ public class SubscriptionApi extends BaseApi {
         return results;
     }
 
-    private OneShotChargeInstancesDto getOneShotCharges(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
+    private List<OneShotChargeInstanceDto> getOneShotCharges(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
         Subscription subscription = subscriptionService.findByCode(subscriptionCode);
-        OneShotChargeInstancesDto oneShotChargeInstancesDto = new OneShotChargeInstancesDto();
-
-        if(subscriptionCode == null) {
-            throw new InvalidParameterException();
-        }
 
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
@@ -1639,14 +1633,18 @@ public class SubscriptionApi extends BaseApi {
             OneShotChargeInstanceDto oneShotChargeInstanceDto = new OneShotChargeInstanceDto(oneShotChargeInstance);
             oneShotChargeInstanceDtos.add(oneShotChargeInstanceDto);
         }
-        oneShotChargeInstancesDto.setOneShotChargeInstances(oneShotChargeInstanceDtos);
-        return oneShotChargeInstancesDto;
+
+        return oneShotChargeInstanceDtos;
     }
 
     /**
      * @return list of one shot charge others.
      */
-    public OneShotChargeInstancesDto getOneShotChargeOthers(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
+    public List<OneShotChargeTemplateDto> getOneShotChargeOthers() throws EntityDoesNotExistsException, InvalidParameterException {
+        return this.getOneShotCharges(OneShotChargeTemplateTypeEnum.OTHER);
+    }
+
+    public List<OneShotChargeInstanceDto> getOneShotChargeOthers(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
         return this.getOneShotCharges(subscriptionCode);
     }
 

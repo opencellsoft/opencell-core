@@ -176,7 +176,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/listOneshotChargeOthers")
-    OneShotChargeInstancesDto getOneShotChargeOthers(@QueryParam("subscriptionCode") String subscriptionCode);
+    GetOneShotChargesResponseDto getOneShotChargeOthers(@QueryParam("subscriptionCode") String subscriptionCode);
 
     /**
      * Create or update subscription information ONLY. Does not include access, services nor products
