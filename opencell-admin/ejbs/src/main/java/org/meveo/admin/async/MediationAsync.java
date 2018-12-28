@@ -24,7 +24,9 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.medina.impl.CSVCDRParser;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
@@ -76,21 +78,24 @@ public class MediationAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        if (scriptCode == null) {
+
             for (File file : files) {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                     break;
                 }
-                mediationJobBean.execute(result, parameter, file);
-            }
-        } else {
+                if (scriptCode == null) {
+                    mediationJobBean.execute(result, parameter, file);
+                } else {
 
-            Map<String, Object> context = new HashedMap();
-            ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
-            context.put(Script.CONTEXT_CURRENT_USER, lastCurrentUser);
-            context.put("CDR_FILES", files);
-            script.execute(context);
-        }
+                    Map<String, Object> context = new HashedMap();
+                    ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
+                    context.put(Script.CONTEXT_CURRENT_USER, lastCurrentUser);
+                    context.put(JobExecutionResultImpl.JOB_EXECUTION_RESULT, result);
+                    context.put(CSVCDRParser.CDR_FILE, file);
+                    script.execute(context);
+                }
+            }
+
         return new AsyncResult<String>("OK");
     }
 }
