@@ -40,6 +40,7 @@ import org.meveo.event.qualifier.Rejected;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Terminated;
+import org.meveo.event.qualifier.TrackWFHistory;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -47,7 +48,9 @@ import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.generic.wf.GenericWorkflow;
+import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstance;
+import org.meveo.model.generic.wf.WorkflowInstanceHistory;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
@@ -66,6 +69,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
 import org.meveo.service.generic.wf.GenericWorkflowService;
+import org.meveo.service.generic.wf.WorkflowInstanceHistoryService;
 import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
@@ -103,12 +107,15 @@ public class DefaultObserver {
 
     @Inject
     private CounterInstanceService counterInstanceService;
-    
+
     @Inject
     private GenericWorkflowService genericWorkflowService;
-    
+
     @Inject
     private WorkflowInstanceService workflowInstanceService;
+
+    @Inject
+    private WorkflowInstanceHistoryService workflowInstanceHistoryService;
 
     @Inject
     private GenericNotificationService genericNotificationService;
@@ -292,7 +299,7 @@ public class DefaultObserver {
 
     public void entityInstantiateWF(@Observes @InstantiateWF BusinessEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} instantiateWF", e.getClass().getName(), e.getId());
-        
+
         List<GenericWorkflow> genericWorkflows = genericWorkflowService.list();
         for (GenericWorkflow genericWorkflow : genericWorkflows) {
             WorkflowInstance linkedWFIns = new WorkflowInstance();
@@ -301,7 +308,28 @@ public class DefaultObserver {
             workflowInstanceService.create(linkedWFIns);
         }
     }
-    
+
+    public void entityTrackWFHistory(@Observes @TrackWFHistory WorkflowInstance trakedWFInstance) throws BusinessException {
+        log.debug("Defaut observer : Entity {} with id {} trackWFHistory", trakedWFInstance.getClass().getName(), trakedWFInstance.getId());
+
+        GenericWorkflow genericWorkflow = trakedWFInstance.getGenericWorkflow();
+
+        if (genericWorkflow.isEnableHistory()) {
+            log.debug("Defaut observer : History is enabled for generic workflow", genericWorkflow.getCode());
+
+            WFStatus wfStatusFrom = workflowInstanceService.findById(trakedWFInstance.getId()).getWfStatus();
+            WFStatus wfStatusTo = trakedWFInstance.getWfStatus();
+            if (wfStatusFrom != wfStatusTo || !wfStatusFrom.equals(wfStatusTo)) {
+                WorkflowInstanceHistory wfHistory = new WorkflowInstanceHistory();
+                wfHistory.setActionDate(new Date());
+                wfHistory.setWfStatusFrom(wfStatusFrom);
+                wfHistory.setWfStatusTo(wfStatusTo);
+                wfHistory.setWorkflowInstance(trakedWFInstance);
+                workflowInstanceHistoryService.create(wfHistory);
+            }
+        }
+    }
+
     public void entityCreated(@Observes @Created BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} created", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.CREATED, e);

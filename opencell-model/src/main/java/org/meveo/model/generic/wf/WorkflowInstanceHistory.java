@@ -24,6 +24,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -47,15 +48,15 @@ public class WorkflowInstanceHistory extends BaseEntity {
     /**
      * Workflow status from
      */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wf_status_from", insertable = false, updatable = false)
+    @OneToOne
+    @JoinColumn(name = "wf_status_from", updatable = false)
     private WFStatus wfStatusFrom;
 
     /**
      * Workflow status to
      */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wf_status_to", insertable = false, updatable = false)
+    @OneToOne
+    @JoinColumn(name = "wf_status_to", updatable = false)
     private WFStatus wfStatusTo;
 
     /**
@@ -64,6 +65,13 @@ public class WorkflowInstanceHistory extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "action_date")
     private Date actionDate;
+
+    /**
+     * Workflow instance
+     */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "wf_instance_id")
+    private WorkflowInstance workflowInstance;
 
     /**
      * A event comment
@@ -100,5 +108,13 @@ public class WorkflowInstanceHistory extends BaseEntity {
 
     public void setEvent(String event) {
         this.event = event;
+    }
+
+    public WorkflowInstance getWorkflowInstance() {
+        return workflowInstance;
+    }
+
+    public void setWorkflowInstance(WorkflowInstance workflowInstance) {
+        this.workflowInstance = workflowInstance;
     }
 }

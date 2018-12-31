@@ -61,6 +61,12 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
         return result;
     }
 
+    /**
+     * 
+     * @param workflowInstance
+     * @param genericWorkflow
+     * @throws BusinessException
+     */
     public void executeTransitionScript(WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
         log.debug("Executing generic workflow script:{} on instance {}", genericWorkflow.getCode(), workflowInstance);
         try {

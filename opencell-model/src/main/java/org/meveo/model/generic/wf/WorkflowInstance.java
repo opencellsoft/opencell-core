@@ -18,11 +18,17 @@
  */
 package org.meveo.model.generic.wf;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -43,7 +49,7 @@ public class WorkflowInstance extends BaseEntity {
     /**
      * Generic Workflow
      */
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "generic_wf_id")
     private GenericWorkflow genericWorkflow;
 
@@ -52,6 +58,19 @@ public class WorkflowInstance extends BaseEntity {
      */
     @Column(name = "entity_instance_code", nullable = false)
     private String entityInstanceCode;
+
+    /**
+     * Workflow status from
+     */
+    @OneToOne
+    @JoinColumn(name = "wf_status_id")
+    private WFStatus wfStatus;
+
+    /**
+     * A list of workflow instance hitories
+     */
+    @OneToMany(mappedBy = "workflowInstance", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WorkflowInstanceHistory> wfHistories = new ArrayList<>();
 
     public GenericWorkflow getGenericWorkflow() {
         return genericWorkflow;
@@ -67,5 +86,21 @@ public class WorkflowInstance extends BaseEntity {
 
     public void setEntityInstanceCode(String entityInstanceCode) {
         this.entityInstanceCode = entityInstanceCode;
+    }
+
+    public WFStatus getWfStatus() {
+        return wfStatus;
+    }
+
+    public void setWfStatus(WFStatus wfStatus) {
+        this.wfStatus = wfStatus;
+    }
+
+    public List<WorkflowInstanceHistory> getWfHistories() {
+        return wfHistories;
+    }
+
+    public void setWfHistories(List<WorkflowInstanceHistory> wfHistories) {
+        this.wfHistories = wfHistories;
     }
 }

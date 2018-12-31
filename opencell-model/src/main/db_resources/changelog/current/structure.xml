@@ -814,9 +814,12 @@
             <column name="version" type="int4" />
             <column name="entity_instance_code" type="varchar(255)" />
             <column name="generic_wf_id" type="bigint" />
+            <column name="wf_status_id" type="bigint" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_instance" constraintName="fk_generic_wf" deferrable="false" initiallyDeferred="false"
             onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
+         <addForeignKeyConstraint baseColumnNames="wf_status_id" baseTableName="wf_instance" constraintName="fk_wf_status" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
         
         <createSequence sequenceName="wf_instance_history_seq" />
 		<createTable tableName="wf_instance_history">
@@ -824,18 +827,17 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wf_instance_history_pk" />
             </column>
             <column name="version" type="int4" />
-            <column name="wf_status_from" type="bigint">
-            	<constraints nullable="false" />
-            </column>
-            <column name="wf_status_to" type="bigint">
-            	<constraints nullable="false" />
-            </column>
+            <column name="wf_status_from" type="bigint" />
+            <column name="wf_status_to" type="bigint" />
             <column name="action_date" type="datetime" />
             <column name="event" type="varchar(255)" />
+            <column name="wf_instance_id" type="bigint" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="wf_status_from" baseTableName="wf_instance_history" constraintName="fk_wf_status_from" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
         <addForeignKeyConstraint baseColumnNames="wf_status_to" baseTableName="wf_instance_history" constraintName="fk_wf_status_to" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
+        <addForeignKeyConstraint baseColumnNames="wf_instance_id" baseTableName="wf_instance_history" constraintName="fk_wf_instance" deferrable="false" initiallyDeferred="false"
+            onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_instance" />
     </changeSet>
 </databaseChangeLog>

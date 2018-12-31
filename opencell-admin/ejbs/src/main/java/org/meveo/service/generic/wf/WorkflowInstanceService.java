@@ -18,11 +18,46 @@
  */
 package org.meveo.service.generic.wf;
 
-import javax.ejb.Stateless;
+import java.util.Arrays;
+import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.generic.wf.GenericWorkflow;
+import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class WorkflowInstanceService extends PersistenceService<WorkflowInstance> {
+
+    @Inject
+    private GenericWorkflowService genericWorkflowService;
+
+    @Inject
+    private WFStatusService wfStatusService;
+
+    public void changeStatus(WorkflowInstance wfInstance, WFStatus wfStatus) throws BusinessException {
+        changeStatus(wfInstance, wfStatus.getCode());
+    }
+
+    public void changeStatus(WorkflowInstance wfInstance, String statusCode) throws BusinessException {
+        WFStatus wfStatus = wfStatusService.findByCode(statusCode);
+
+        if (wfStatus == null) {
+            throw new BusinessException("Cant find workflow status entity by code: " + statusCode);
+        }
+
+        GenericWorkflow genericWorkflow = wfInstance.getGenericWorkflow();
+        List<WFStatus> statuses = genericWorkflowService.findById(genericWorkflow.getId(), Arrays.asList("statuses")).getStatuses();
+        if (!statuses.contains(wfStatus)) {
+            throw new BusinessException("Cant find status=" + statusCode + " in generiw workflow parent");
+        }
+
+        wfInstance.setWfStatus(wfStatus);
+        
+        update(wfInstance);
+    }
 }
