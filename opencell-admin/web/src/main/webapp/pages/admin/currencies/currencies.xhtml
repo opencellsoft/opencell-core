@@ -26,7 +26,8 @@
         </h:form>
 
 		<hftl:searchPanel label="#{messages['currency.search']}" columns="3"
-			backingBean="#{currencyListBean}">
+			backingBean="#{currencyListBean}"
+			renderNewButton="#{currentUser.hasRole('superAdministrateur')}">
 			<hftl:searchField label="#{messages['currency.code']}"
 				field="currencyCode" />
 			<hftl:searchField label="#{messages['currency.name']}"
@@ -35,10 +36,8 @@
 
 		<hftl:dataList label="#{messages['currency.title']}"    backingBean="#{currencyListBean}">
 			<hftl:column label="#{messages['currency.code']}"	field="currencyCode" width="10%" entityView="currencyDetail" valueIdField="id"/>
-			<hftl:column label="#{messages['currency.name']}"
-				field="descriptionEn" />
-			<hftl:actionsColumn
-				permission="#{currentUser.hasRole('administrationManagement')}" />
+			<hftl:column label="#{messages['currency.name']}" field="descriptionEn" />
+			<hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>
