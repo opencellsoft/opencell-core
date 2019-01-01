@@ -385,6 +385,24 @@
                         </hftl:dataList>
 
                     </p:tab>
+                    <p:tab id="dunningDocs" title="#{messages['customerAccount.dunning.documents']}" rendered="#{not empty customerAccountBean.entity.id}">
+                        <hftl:dataList backingBean="#{dunningDocumentBean}" dataModel="#{dunningDocumentBean.getDunningDocuments(customerAccountBean.entity)}"
+                                       label="#{messages['accountOperation.title']}" disabled="true" deleteManyButton="false" exportToXml="false">
+                            <p:column width="50%">
+                                <f:facet name="header">
+                                    <h:outputText value="Danning Doc creation" />
+                                </f:facet>
+                                <h:outputText value="#{entity.created}" />
+                            </p:column>
+
+                            <p:column width="50%">
+                                <f:facet name="header">
+                                    <h:outputText value="Status" />
+                                </f:facet>
+                                <h:outputText value="#{entity.status}" />
+                            </p:column>
+                        </hftl:dataList>
+                    </p:tab>
                 </p:tabView>
 
             </h:panelGroup>

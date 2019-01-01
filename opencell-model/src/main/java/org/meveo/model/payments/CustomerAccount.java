@@ -51,6 +51,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.shared.ContactInformation;
 
@@ -121,6 +122,12 @@ public class CustomerAccount extends AccountEntity {
      */
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AccountOperation> accountOperations = new ArrayList<>();
+
+    /**
+     * List of ca's dunning docs
+     */
+    @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    List<DunningDocument> dunningDocuments = new ArrayList<>();
 
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
@@ -298,6 +305,14 @@ public class CustomerAccount extends AccountEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<DunningDocument> getDunningDocuments() {
+        return dunningDocuments;
+    }
+
+    public void setDunningDocuments(List<DunningDocument> dunningDocuments) {
+        this.dunningDocuments = dunningDocuments;
     }
 
     public List<ActionDunning> getActionDunnings() {
