@@ -18,12 +18,32 @@
  */
 package org.meveo.service.generic.wf;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.ejb.Stateless;
 
+import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
 import org.meveo.service.base.PersistenceService;
+
+import com.google.common.collect.Maps;
 
 @Stateless
 public class WorkflowInstanceHistoryService extends PersistenceService<WorkflowInstanceHistory> {
 
+    public WorkflowInstanceHistory getLastWFHistory(WorkflowInstance workflowInstance) {
+
+        Map<String, Object> params = Maps.newHashMap();
+        String query = "From WorkflowInstanceHistory where workflowInstance = :workflowInstance order by actionDate desc";
+        params.put("workflowInstance", workflowInstance);
+
+        List<WorkflowInstanceHistory> wfHistories = (List<WorkflowInstanceHistory>) executeSelectQuery(query, params);
+
+        if (wfHistories != null && !wfHistories.isEmpty()) {
+            return wfHistories.iterator().next();
+        }
+
+        return null;
+    }
 }

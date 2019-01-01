@@ -1169,11 +1169,11 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>genericWfsHistory</from-outcome>
-		<to-view-id>/pages/admin/workflow/genericWfsHistory.xhtml</to-view-id>
+		<to-view-id>/pages/admin/workflow/workflowInstanceHistories.xhtml</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>genericWfsDetail</from-outcome>
-		<to-view-id>/pages/admin/workflow/genericWfsHistoryDetail.xhtml
+		<to-view-id>/pages/admin/workflow/workflowInstanceHistoryDetail.xhtml
 		</to-view-id>
 		<redirect include-view-params="true" />
 	</navigation-case>
