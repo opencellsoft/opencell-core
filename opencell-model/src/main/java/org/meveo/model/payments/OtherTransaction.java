@@ -24,6 +24,7 @@ import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -59,6 +60,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @Entity
 @ObservableEntity
 @Table(name = "ar_other_transaction")
+@DiscriminatorColumn(name = "transaction_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_other_transaction_seq"), })
 @CustomFieldEntity(cftCodePrefix = "OTH_TR")
@@ -86,6 +88,13 @@ public class OtherTransaction extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "transaction_category")
     @Enumerated(EnumType.STRING)
     private OperationCategoryEnum transactionCategory;
+    
+    /**
+     * Operation type
+     */
+    @Column(name = "transaction_type", insertable = false, updatable = false, length = 31)
+    @Size(max = 31)
+    private String type;
 
     /**
      * Reference
@@ -230,7 +239,8 @@ public class OtherTransaction extends AuditableEntity implements ICustomFieldEnt
     /**
      * Description
      */
-    @Transient
+    @Column(name = "description", length = 255)
+    @Size(max = 255)
     private String description;
 
     /**
@@ -309,6 +319,14 @@ public class OtherTransaction extends AuditableEntity implements ICustomFieldEnt
 
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
+    }
+    
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public OperationCategoryEnum getTransactionCategory() {
@@ -558,11 +576,11 @@ public class OtherTransaction extends AuditableEntity implements ICustomFieldEnt
     }
 
     public String getDescription() {
-        return occDescription;
+        return description;
     }
 
     public void setDescription(String description) {
-        this.occDescription = description;
+        this.description = description;
     }
 
     /**

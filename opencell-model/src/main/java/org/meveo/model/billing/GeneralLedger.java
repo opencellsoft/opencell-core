@@ -50,12 +50,7 @@ import org.meveo.model.payments.OtherTransaction;
 public class GeneralLedger extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
-
-    /** The AFB120 file name. */
-    @Column(name = "file_name", length = 255)
-    @Size(max = 255)
-    private String fileName;
-
+    
     /**
      * A list of OT
      */
@@ -67,14 +62,6 @@ public class GeneralLedger extends BusinessEntity {
      */
     @OneToOne(mappedBy = "generalLedger")
     private Seller seller;
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
 
     public List<OtherTransaction> getOtherTransactions() {
         return otherTransactions;

@@ -814,7 +814,7 @@
    
     </changeSet>
     
-    <changeSet  id="#3514_20181105" author="AmineBenAicha">
+    <changeSet  id="#3514_20180101" author="hznibar">
 		<createSequence sequenceName="billing_general_ledger_seq" />
 		<createSequence sequenceName="ar_other_transaction_seq" />
 		
@@ -837,10 +837,14 @@
         <addUniqueConstraint columnNames="code" constraintName="uk_billing_general_ledger_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_general_ledger" />
         
         <createTable tableName="ar_other_transaction">
+        	<column name="transaction_type" type="varchar(31)">
+                <constraints nullable="false" />
+            </column>
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_other_transaction_pkey" />
             </column>
             <column name="version" type="int4" />
+            <column name="description" type="varchar(255)" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -868,6 +872,7 @@
             <column name="payment_info4" type="varchar(255)" />
             <column name="payment_info5" type="varchar(255)" />
             <column name="payment_info6" type="varchar(255)" />
+            <column name="payment_info7" type="varchar(255)" />
             <column name="tax_amount" type="numeric(23, 12)" />
             <column name="operation_date" type="datetime" />
             <column name="bank_collection_date" type="datetime" />
@@ -894,14 +899,6 @@
         </addColumn>
         <addForeignKeyConstraint constraintName="fk_crm_seller_general_ledger" referencedTableName="billing_general_ledger" referencedColumnNames="id" baseTableName="crm_seller" baseColumnNames="general_ledger_id" />
     </changeSet>
-    <changeSet id="#105_20181224" author="hznibar">
-		<addColumn tableName="billing_general_ledger">
-			<column name="file_name" type="varchar(255)" />
-		</addColumn>
-		<addColumn tableName="ar_other_transaction">
-			<column name="payment_info7" type="varchar(255)" />
-		</addColumn>
-	</changeSet>
     
 </databaseChangeLog>
 
