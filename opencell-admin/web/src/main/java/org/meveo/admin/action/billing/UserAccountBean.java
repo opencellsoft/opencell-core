@@ -131,7 +131,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     private Map<Long, Amounts> openBalance = new HashMap<>();
 
     // Retrieved wallet operations to improve GUI performance for Ajax request
-    private Map<String, List<WalletOperation>> walletOperations = new HashMap<String, List<WalletOperation>>();
+    private Map<String, LazyDataModel<WalletOperation>> walletOperations = new HashMap<String, LazyDataModel<WalletOperation>>();
 
     private EntityListDataModelPF<ProductInstance> productInstances = null;
 
@@ -305,15 +305,16 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         return result;
     }
 
-    public List<WalletOperation> getWalletOperations(String walletCode) {
-
-        if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
-            log.debug("getWalletOperations {}", walletCode);
-            walletOperations.put(walletCode, walletOperationService.findByUserAccountAndWalletCode(walletCode, entity, false));
-        }
-
-        return walletOperations.get(walletCode);
-    }
+    public LazyDataModel<WalletOperation> getWalletOperations(String walletCode) {   	
+   	 HashMap<String, Object> filters = new HashMap<String, Object>();
+   	 filters.put("wallet.code", walletCode);
+   	 
+		if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
+			log.debug("getWalletOperations {}", walletCode);
+			walletOperations.put(walletCode,walletOperationBean.getLazyDataModel(filters, true));
+		}		 
+		return walletOperations.get(walletCode);
+   }
 
     @Produces
     @Named("getRatedTransactionsInvoiced")
