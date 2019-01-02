@@ -1,0 +1,411 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+    xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{customerAccountBean.preRenderView}" />
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+            <f:viewParam name="customerId" value="#{customerAccountBean.customerId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
+            <f:viewParam name="mainTab" value="#{customerAccountBean.activeMainTab}" />
+            <f:viewParam name="tab" value="#{customerAccountBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+    
+        <hftl:entityPopup id="accountingCodePopup"
+			header="#{messages['accountingCode']}"
+			backingBean="#{accountingCodeListBean}"  
+			selection="#{accountOperationBean.filters['accountingCode']}"
+			searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}" searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" 
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}" 
+			column2="description" 
+			updateField=":parentTab:searchForm:cAaccountingCodeId">
+		</hftl:entityPopup>
+    
+    	 <hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" 
+        		updateField=":parentTab:formCustomerAccount:childTab:customerSelectId :parentTab:formCustomerAccount:childTab:customerSelectId_text" selection="#{customerAccountBean.entity.customer}"
+        		backingBean="#{customerListBean}" searchField1Label="#{messages['customer.code']}" searchField1="code"
+            	column1Label="#{messages['customer.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
+
+        <p:importEnum type="org.meveo.model.payments.CustomerAccountStatusEnum" var="CustomerAccountStatusEnum" />
+        <p:importEnum type="org.meveo.model.payments.PaymentMethodEnum" var="PaymentMethodEnum" />
+        
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+                <p:menuitem outcome="customerAccounts" value="#{messages['menu.customerAccounts']}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['menu.customerAccount']}" disabled="true" rendered="#{customerAccountBean.entity.transient}" />
+                <p:menuitem value="#{messages['menu.customerAccount']} - #{customerAccountBean.entity.code}" disabled="true" rendered="#{!customerAccountBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
+
+        <h:panelGroup styleClass="col2-set">
+            <h:panelGroup styleClass="col1">
+                <hf:hierarchyPanel treeBean="#{customerTreeBean}" entity="#{customerAccountBean.entity}" />
+            </h:panelGroup>
+            <h:panelGroup styleClass="col2">
+
+                <p:tabView id="parentTab" activeIndex="#{customerAccountBean.activeMainTab}">
+                    <p:tab id="compte" title="#{messages['customerAccount.tab.account']}">
+                        <hftl:formPanel formId="formCustomerAccount" backingBean="#{customerAccountBean}" showFormButtons="true" useCustomIdParam="true">
+                            <p:tabView id="childTab" activeIndex="#{customerAccountBean.activeTab}">
+                                <p:tab id="tab0" title="#{messages['customerAccount.tab.account']}">
+
+                                    <p:fieldset legend="#{messages['customerAccount.form']}" styleClass="clearLeft">
+                                    
+                                    	<hftl:formField id="customerSelectId" label="#{messages['customerAccount.customer']}" field="customer" valueLabelField="code" required="true" popup="true"
+                                        popupId="searchCustomerPopup" allowEdit="true" componentWidth="200"/>
+
+                                        <hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" />
+                                        <hftl:formField label="#{messages['accountEntity.primaryContact']}" field="primaryContact" valueLabelField="code" listBean="#{providerContactBean}" />
+                                        <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" />
+                                        <hftl:formField label="#{messages['customerAccount.externalRef1']}" field="externalRef1" />
+                                        <hftl:formField label="#{messages['customerAccount.externalRef2']}" field="externalRef2" />
+                                        <hftl:formField id="currencySelectId" label="#{messages['currency.codeCurrency']}" required="true" field="tradingCurrency" valueLabelField="currencyCode"
+                                            listBean="#{tradingCurrencyBean}" componentWidth="10" />
+                                        <!--                                                     popup="true" popupId="customerAccCurrencyPopup" /> -->
+                                        <hftl:formField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage" valueLabelField="languageCode"
+                                            required="true" listBean="#{tradingLanguageBean}" componentWidth="10" />
+
+                                        <h:panelGroup rendered="#{not empty customerAccountBean.entity.id}">
+                                            <hftl:formField label="#{messages['customerAccount.dunningLevel']}" field="dunningLevel" rendered="#{true or !customerAccountBean.edit}" newLine="true" />
+                                            <hftl:decorateFormField fieldId="dunning_date_text" label="#{messages['customerAccount.dateDunningLevel']}">
+                                                <h:outputText id="dunning_date_text" rendered="#{true or !customerAccountBean.edit}" value="#{customerAccountBean.entity.getDateDunningLevel()}"
+                                                    style="font-weight:bold;">
+                                                    <f:convertDateTime pattern="#{paramBean.dateTimeFormat}" />
+                                                </h:outputText>
+                                            </hftl:decorateFormField>
+                                            <hftl:decorateFormField fieldId="balance_text" label="#{messages['customerAccount.balanceDue']}">
+                                                <h:outputText id="balance_text" rendered="#{true or !customerAccountBean.edit}" value="#{customerAccountBean.getBalanceDue()}" style="font-weight:bold;"
+                                                    converter="bigDecimalConverter" />
+                                            </hftl:decorateFormField>
+                                            <hftl:decorateFormField fieldId="balanceEx_text" label="#{messages['customerAccount.balanceExigible']}">
+                                                <h:outputText id="balanceEx_text" rendered="#{true or !customerAccountBean.edit}" value="#{customerAccountBean.getBalanceExigibleWithoutLitigation()}"
+                                                    style="font-weight:bold;" converter="bigDecimalConverter" />
+                                            </hftl:decorateFormField>
+                                        </h:panelGroup>
+
+
+                                        <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" required="false" listBean="#{titleBean}"
+                                            listenerUpdate=":parentTab:formCustomerAccount:childTab:userNamePanel" styleClass="clearLeft" />
+                                            
+                                        <h:panelGroup id="userNamePanel" layout="block">
+                                            <hftl:formField
+                                                label="#{messages[(customerAccountBean.entity.name.title != null and customerAccountBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"
+                                                field="name" childField="lastName" required="#{customerAccountBean.entity.name.title != null}" />
+                                            <hftl:formField label="#{messages['name.firstName']}" field="name" childField="firstName"
+                                                rendered="#{customerAccountBean.entity.name.title == null or !customerAccountBean.entity.name.title.isCompany}" />
+                                        </h:panelGroup>
+										
+										<hftl:formField label="#{messages['customer.jobTitle']}" field="jobTitle" />
+                                        <hftl:formField label="#{messages['customerAccount.excludedFromPayment']}" field="excludedFromPayment"  />
+                                        <hftl:formField label="#{messages['customerAccount.creditCategory']}" field="creditCategory" valueLabelField="code" listBean="#{creditCategoryBean}" />
+                                        <hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}" field="dueDateDelayEL" required="false" textArea="true" rows="1" maxlength="2000" componentWidth="50"/>                                       
+                                        <hftl:formField label="#{messages['billingCycle.dueDateDelayELSpark']}" field="dueDateDelayELSpark" required="false"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
+                                        <hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
+										<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
+								        <hftl:formField label="#{messages['customerAccount.status']}" field="status" disabled="true" />                                       
+                                        
+                                    </p:fieldset>
+                                </p:tab>
+
+                                <p:tab id="tab1" title="#{messages['customerAccount.tab.information']}">
+                                    <p:fieldset legend="#{messages['commons.contacts']}">
+                                        <hftl:formField label="#{messages['contactInformation.email']}" field="contactInformation" childField="email" popup="false" required="false" id="email"
+                                            validateEmail="true" />
+
+                                        <hftl:formField label="#{messages['contactInformation.phone']}" maxlength="50" field="contactInformation" childField="phone" popup="false" />
+                                        <hftl:formField label="#{messages['contactInformation.mobile']}" maxlength="50" field="contactInformation" childField="mobile" popup="false" />
+                                    </p:fieldset>
+                                    <p:fieldset legend="#{messages['commons.address']}">
+                                        <hftl:formField label="#{messages['address.address1']}" field="address" id="address1" childField="address1" popup="false" />
+                                        <hftl:formField label="#{messages['address.address2']}" field="address" id="address2" childField="address2" popup="false" />
+                                        <hftl:formField label="#{messages['address.address3']}" field="address" id="address3" childField="address3" popup="false" />
+                                        <hftl:formField label="#{messages['address.zipCode']}" id="zipCode" field="address" childField="zipCode" popup="false" newLine="true" />
+                                        <hftl:formField label="#{messages['address.city']}" id="city" field="address" childField="city" popup="false" />
+                                        <hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="false" field="address" childField="country" valueLabelField="description" listBean="#{countryBean}"/> 
+                                    </p:fieldset>
+
+                                    <p:fieldset legend="#{messages['customerAccount.paymentMethods']}">
+                                        <p:dataTable id="paymentMethods" var="entity" value="#{customerAccountBean.entity.paymentMethods}" paginator="false" rows="10" lazy="false"
+                                            styleClass="custom-grid" rowIndexVar="rowIndex" resizableColumns="true" sortBy="#{entity.alias}" sortField="alias">
+
+                                            <hftl:column label="#{messages['paymentMethod.type']}" field="paymentType.label" isMessage="true" />
+                                            <hftl:column label="#{messages['paymentMethod.alias']}" field="alias" />
+                                            <p:column headerText="#{messages['paymentMethod.cardNrOrAccountNr']}">
+                                                <h:outputText value="#{entity.hiddenCardNumber} #{entity.expirationMonthAndYear}" rendered="#{entity.paymentType == PaymentMethodEnum.CARD}" />
+                                                <h:outputText value="#{entity.bankCoordinates.bankName} " rendered="#{entity.paymentType == PaymentMethodEnum.DIRECTDEBIT}" />
+                                                <h:outputText value="#{entity.bankCoordinates.iban}" rendered="#{entity.paymentType == PaymentMethodEnum.DIRECTDEBIT}" converter="ibanConverter" />
+                                            </p:column>
+                                            <hftl:column label="#{messages['paymentMethod.preferred']}" field="preferred" isMessage="true" />
+
+                                            <p:column headerText="#{messages['commons.actions']}">
+                                                <p:commandButton icon="ui-icon-document" action="#{customerAccountBean.editPaymentMethod(entity)}"
+                                                    update=":parentTab:formCustomerAccount:messages :parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails"
+                                                    rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE}" process="@this">
+                                                </p:commandButton>
+                                                <p:commandButton icon="ui-icon-trash" action="#{customerAccountBean.removePaymentMethod(entity)}"
+                                                    update="paymentMethods :parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails"
+                                                    process="@this" actionListener="#{customerAccountBean.setPreferredPaymentMethod(null)}" disabled="#{!customerAccountBean.edit}">
+                                                    <!--                                                             <p:collector value="#{entity}" removeFrom="#{customerAccountBean.entity.paymentMethods}" /> -->
+                                                    <f:setPropertyActionListener value="#{null}" target="#{customerAccountBean.selectedPaymentMethod}" />
+                                                    <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+                                                </p:commandButton>
+										      
+										        <p:commandButton icon="ui-icon-circle-close" rendered="#{ not entity.disabled }" action="#{customerAccountBean.disablePaymentMethod(entity)}" 
+										         update="paymentMethods :parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails">
+										            <f:setPropertyActionListener value="#{null}" target="#{customerAccountBean.selectedPaymentMethod}" />
+										            <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
+										        </p:commandButton>                                                
+                                                <p:commandButton  icon="ui-icon-circle-check" action="#{customerAccountBean.enablePaymentMethod(entity)}"
+										            rendered="#{entity.disabled}"  
+										            update="paymentMethods :parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails">
+										            <f:setPropertyActionListener value="#{null}" target="#{customerAccountBean.selectedPaymentMethod}" />
+										            <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
+										        </p:commandButton>
+                                                
+                                                
+                                                <p:commandButton icon="ui-icon-star" action="#{customerAccountBean.setPreferredPaymentMethod(entity)}" title="#{messages['paymentMethod.makePreferred']}"
+                                                    update=":parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails paymentMethods"
+                                                    rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE and !entity.preferred and not entity.disabled}" process="@this">
+
+                                                </p:commandButton>
+                                            </p:column>
+                                            <f:facet name="footer">
+                                                <p:selectOneMenu id="newPaymentMethodType" value="#{customerAccountBean.newPaymentMethodType}">                                                   
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.CHECK.label]}" itemValue="#{PaymentMethodEnum.CHECK}" />
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.DIRECTDEBIT.label]}" itemValue="#{PaymentMethodEnum.DIRECTDEBIT}" />
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.WIRETRANSFER.label]}" itemValue="#{PaymentMethodEnum.WIRETRANSFER}" />
+                                                    <f:converter converterId="enumConverter" />
+                                                    <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.payments.PaymentMethodEnum" />
+                                                </p:selectOneMenu>
+
+                                                <p:commandButton value="#{messages['commons.addNew']}" action="#{customerAccountBean.newPaymentMethod()}" style="margin-left:10px"
+                                                    update=":parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails paymentMethods"
+                                                    rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE}" process="newPaymentMethodType @this" disabled="#{!customerAccountBean.edit}"/>
+                                            </f:facet>
+                                        </p:dataTable>
+
+                                        <p:messages id="paymentMethodMessages" redisplay="false" />
+
+                                        <h:panelGroup id="paymentMethodDetails">
+
+                                            <p:separator rendered="#{customerAccountBean.selectedPaymentMethod!=null}" />
+
+                                            <p:panel id="paymentMethodPanelId"  header="#{messages['customerAccount.paymentMethod']}" rendered="#{customerAccountBean.selectedPaymentMethod!=null}">
+                                                <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
+                                                    <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.alias']}" field="alias" required="true" />
+
+                                                    <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.CARD}">
+                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.cardType']}" field="cardType"
+                                                            required="true" edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" />
+                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.cardOwner']}" field="owner"
+                                                            required="true" edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" />
+                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.cardExpirationMonth']}"
+                                                            field="monthExpiration" required="true" edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" minValue="1" maxValue="12"
+                                                            size="2" componentWidth="15" />
+                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.cardExpirationYear']}"
+                                                            field="yearExpiration" required="true" edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" size="2" componentWidth="15"
+                                                            minValue="0" maxValue="99" />
+                                                        <hftl:decorateFormField fieldId="cardNr" label="#{messages['paymentMethod.cardNumber']}"
+                                                            rendered="#{customerAccountBean.selectedPaymentMethod.tokenId!=null}">
+                                                            <h:outputText value="**** **** **** #{customerAccountBean.selectedPaymentMethod.hiddenCardNumber}" styleClass="field-value" />
+                                                        </hftl:decorateFormField>
+                                                        <hftl:decorateFormField fieldId="cardNr" label="#{messages['paymentMethod.cardNumber']}"
+                                                            rendered="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}"
+                                                            required="true">
+                                                            <p:inputMask id="cardNr" mask="9999 9999 9999 9999" value="#{customerAccountBean.selectedPaymentMethod.cardNumber}" required="true" />
+                                                        </hftl:decorateFormField>
+                                                    </c:if>
+                                    
+                                                    <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.DIRECTDEBIT}">
+                                                    	<hftl:decorateFormField
+															label="#{messages['customerAccount.mandateIdentification']}" fieldId="mandateIdentification">
+															<p:inputText id="mandateIdentification" value="#{customerAccountBean.selectedPaymentMethod.mandateIdentification}" required="true" />
+														</hftl:decorateFormField>
+														<hftl:decorateFormField
+															label="#{messages['customerAccount.mandateDate']}" fieldId="mandateDate">
+															<p:calendar id="mandateDate" value="#{customerAccountBean.selectedPaymentMethod.mandateDate}" pattern="#{paramBean.dateFormat}" required="true" />
+														</hftl:decorateFormField>
+                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bankName']}" field="bankCoordinates"
+                                                            childField="bankName" size="55" required="true" />
+                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.accountOwner']}"
+                                                            field="bankCoordinates" childField="accountOwner" size="55" required="true" />                                                        
+                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.iban']}" field="bankCoordinates"
+                                                            childField="iban" size="45"  listenerUpdate="bicId"  required="true" converter="ibanConverter" />
+                                                       <h:panelGroup id="bicId">
+                                                        <hftl:formField  entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bic']}" field="bankCoordinates"
+                                                            childField="bic" size="15"  />  
+                                                            </h:panelGroup>                                                                                                   
+                                                    </c:if>
+                                                </p:outputPanel>
+                                                <h:panelGroup layout="block" styleClass="form-panel-actions">
+                                                    <p:commandButton value="#{messages['paymentMethod.savePaymentMethod']}" action="#{customerAccountBean.savePaymentMethod()}"
+                                                        update="paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethods :parentTab:formCustomerAccount:childTab:paymentMethodDetails"
+                                                        rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE}" process="paymentMethodDetails"  disabled="#{!customerAccountBean.edit}" />
+                                                    <p:commandButton value="#{messages['action.cancel']}" action="#{customerAccountBean.cancelPaymentMethodEdit}"
+                                                        update="paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethods :parentTab:formCustomerAccount:childTab:paymentMethodDetails"
+                                                        rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE}" process="@this" disabled="#{!customerAccountBean.edit}" />
+                                                </h:panelGroup>
+                                            </p:panel>
+                                        </h:panelGroup>
+                                    </p:fieldset>
+                                </p:tab>
+
+                                <hftl:customFields backingBean="#{customerAccountBean}" messagesId=":parentTab:formCustomerAccount:messages" />
+                                <hftl:displayWorkflowsHistory entity="#{customerAccountBean.entity}" />
+
+                            </p:tabView>
+                            <ui:param name="buttons" value="true"/>
+                                <ui:define name="buttons">                                
+                                    <h:panelGroup rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}">
+                                        <div class="action-buttons">                                                                                   
+			                                <p:commandButton action="#{customerAccountBean.closeCustomerAccount}"
+                                    value="#{messages['customerAccount.buttonCloseAccount']}" immediate="true"
+                                    onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}">
+                                    <!-- 										<f:attribute name="backView" value="#{backView}" /> -->
+                                </p:commandButton>
+                                <p:button  outcome="addBillingAccount"
+                                    value="#{messages['customerAccount.buttonAddBillingAccount']}">
+                                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                                </p:button>
+                     
+                                        </div>
+                                    </h:panelGroup>
+                                
+                                </ui:define>                       
+                        </hftl:formPanel>
+                    </p:tab>
+                    <p:tab id="ops" title="#{messages['customerAccount.operations']}" rendered="#{not empty customerAccountBean.entity.id}">
+                        <hftl:searchPanel renderNewButton="false" label="#{messages['accountOperation.search']}" columns="1" backingBean="#{accountOperationBean}" ajax="true"
+                            ajaxUpdateIds=":parentTab:results_panel">
+                            <hftl:searchField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />
+                            <hftl:searchField label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus" />
+                            <hftl:searchField label="#{messages['accountOperation.occCode']}" field="occCode" />
+							
+						    <hftl:searchField id="cAaccountingCodeId" label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" valueLabelField="code"  popup="true"
+							popupId="accountingCodePopup" showResetButton="true" />
+							
+							<hftl:searchField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />
+                            <hftl:searchField label="#{messages['accountOperation.dueDate']}" field="dueDate" />
+                            <hftl:searchField label="#{messages['order.number']}" field="orderNumber" />
+                        </hftl:searchPanel>
+
+                        <h:form id="addOperationForm">
+                            <h:panelGroup layout="block" styleClass="form-panel-actions">
+                                <p:button value="#{messages['customerAccount.addOperation']}" outcome="addNewOperation"
+                                    rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}" includeViewParams="true">
+                                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                                </p:button>
+                                <p:commandButton value="#{messages['customerAccount.addPaymentCheck']}" action="#{otherCreditAndChargeBean.loadFromTemplatePaymentCheck(customerAccountBean.entity.id)}"
+                                    rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}" />
+                                <p:button outcome="transferAccount" value="#{messages['customerAccount.buttonTransfert']}"
+                                    rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}">
+                                    <f:param name="objectId" value="#{customerAccountBean.entity.id}" />
+                                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                                </p:button>
+                            </h:panelGroup>
+                        </h:form>
+
+                        <hftl:dataList backingBean="#{accountOperationBean}" dataModel="#{accountOperationBean.getAccountOperations(customerAccountBean.entity)}"
+                            label="#{messages['accountOperation.title']}" disabled="true" deleteManyButton="false" exportToXml="false">
+
+                            <p:column width="10%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['accountOperation.type']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.type}" />
+                            </p:column>
+
+                            <p:column width="10%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['accountOperation.occCode']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.occCode}" />
+                            </p:column>
+
+                            <p:column width="20%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['accountOperation.occDescription']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.occDescription}" />
+                            </p:column>
+
+                            <p:column width="10%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['order.number']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.orderNumber}" />
+                            </p:column>
+
+                            <hftl:column label="#{messages['accountOperation.transactionDate']}" field="transactionDate" isDate="true" width="10%" />
+                            <hftl:column label="#{messages['accountOperation.dueDate']}" field="dueDate" isDate="true" width="10%" />
+                            <p:column headerText="#{messages['accountOperation.debit']}" width="10%">
+                                <h:outputText value="#{entity.amount}" rendered="#{entity.transactionCategory eq 'DEBIT'}">
+                                    <f:converter converterId="bigDecimal4DigitsConverter" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{messages['accountOperation.credit']}" width="10%">
+                                <h:outputText value="#{entity.amount}" rendered="#{entity.transactionCategory eq 'CREDIT'}">
+                                    <f:converter converterId="bigDecimal4DigitsConverter" />
+                                </h:outputText>
+                            </p:column>
+
+                            <hftl:column label="#{messages['accountOperation.unMatchingAmount']}" field="unMatchingAmount" converterParam="4digits" width="10%" />
+
+                            <hftl:column label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus.label" isMessage="true" width="10%" />
+
+							<hftl:actionsColumn width="15%" renderDeleteLink="false"
+								editView="#{accountOperationBean.displayOperation(entity)}"
+								backView="backToCaFromOcc"
+								backEntityId="#{customerAccountBean.objectId}"
+								backTab="0" backMainTab="1"
+								renderViewLink="true" />
+
+							<ui:define name="add-on-buttons">
+                                <h:panelGroup layout="block" styleClass="form-panel-actions" rendered="#{accountOperationBean.canUserUpdateEntity()}">
+                                    <p:commandButton action="#{accountOperationBean.matching(customerAccountBean.entity.id)}" value="#{messages['customerAccount.buttonLettrage']}"
+                                        rendered="#{customerAccountBean.isActiveAccount()}" />
+                                    <p:commandButton action="#{accountOperationBean.consultMatching(customerAccountBean.entity.id)}" value="#{messages['customerAccount.buttonConsultMatching']}"
+                                        rendered="#{customerAccountBean.isActiveAccount()}" />
+
+                                    <p:commandButton action="#{accountOperationBean.addLitigation(customerAccountBean.entity.id)}"
+                                        value="#{messages['accountOperation_I.buttonAddLitigation']}" rendered="#{customerAccountBean.isActiveAccount()}" />
+                                    <p:commandButton action="#{accountOperationBean.cancelLitigation(customerAccountBean.entity.id)}"
+                                        value="#{messages['accountOperation_I.buttonCancelLitigation']}" rendered="#{customerAccountBean.isActiveAccount()}" />
+                                </h:panelGroup>
+                            </ui:define>
+                        </hftl:dataList>
+
+                    </p:tab>
+                    <p:tab id="dunningDocs" title="#{messages['customerAccount.dunning.documents']}" rendered="#{not empty customerAccountBean.entity.id}">
+                        <hftl:dataList backingBean="#{dunningDocumentBean}" dataModel="#{dunningDocumentBean.getDunningDocuments(customerAccountBean.entity)}"
+                                       label="#{messages['accountOperation.title']}" disabled="true" deleteManyButton="false" exportToXml="false">
+                            <p:column width="50%">
+                                <f:facet name="header">
+                                    <h:outputText value="Danning Doc creation" />
+                                </f:facet>
+                                <h:outputText value="#{entity.created}" />
+                            </p:column>
+
+                            <p:column width="50%">
+                                <f:facet name="header">
+                                    <h:outputText value="Status" />
+                                </f:facet>
+                                <h:outputText value="#{entity.status}" />
+                            </p:column>
+                        </hftl:dataList>
+                    </p:tab>
+                </p:tabView>
+
+            </h:panelGroup>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

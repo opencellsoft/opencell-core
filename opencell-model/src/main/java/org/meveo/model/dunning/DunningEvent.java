@@ -1,5 +1,6 @@
 package org.meveo.model.dunning;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableEntity;
 
 import javax.persistence.*;
@@ -11,6 +12,8 @@ import java.util.Date;
  */
 @Entity
 @Table(name="dunning_event")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @org.hibernate.annotations.Parameter(name = "sequence_name", value = "dunning_event_seq"), })
 public class DunningEvent extends AuditableEntity {
 
     /** dunning doc */

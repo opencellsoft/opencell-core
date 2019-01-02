@@ -1,13 +1,12 @@
 package org.meveo.model.dunning;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.Payment;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,6 +14,8 @@ import java.util.List;
  */
 @Entity
 @Table(name="dunning_document")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @org.hibernate.annotations.Parameter(name = "sequence_name", value = "dunning_document_seq"), })
 public class DunningDocument extends AuditableEntity {
 
     /**
