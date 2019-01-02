@@ -33,6 +33,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.Auditable;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
@@ -86,6 +87,13 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
         }
         Collections.sort(classNames);
         return classNames;
+    }
+
+    @Override
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        super.saveOrUpdate(killConversation);
+        return null;
     }
 
     public void saveOrUpdateWFStatus() throws BusinessException {
