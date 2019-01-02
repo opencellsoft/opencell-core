@@ -165,6 +165,28 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
      * Expression for getting the InvoiceSubCategory.
      */
     private String invoiceSubCategoryEL;
+    
+    /**
+     * Expression to calculate price with/without tax. It overrides quantity x unitPrice when set.
+     */
+    private String totalAmountEL;
+    
+    /**
+     * Expression to calculate price with/without tax, It overrides quantity x unitPrice when set - for Spark.
+     */
+    private String totalAmountELSpark;
+    
+    /**
+	 * Minimum allowed amount for a walletOperation. If this amount is less than the
+	 * walletOperation this amount is save and the old value is save in rawAmount.
+	 */
+    private String minimumAmountEL;
+    
+    /**
+	 * Minimum allowed amount for a walletOperation. If this amount is less than the
+	 * walletOperation this amount is save and the old value is save in rawAmount - for Spark.
+	 */
+    private String minimumAmountELSpark;
 
     /**
      * Instantiates a new price plan matrix dto.
@@ -229,15 +251,11 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(pricePlan.getDescriptionI18n()));
         woDescriptionEL = pricePlan.getWoDescriptionEL();
         woDescriptionELSpark = pricePlan.getWoDescriptionELSpark();
-        ratingWithTaxEL = pricePlan.getRatingWithTaxEL();
-        ratingWithTaxELSpark = pricePlan.getRatingWithTaxELSpark();
-        ratingWithoutTaxEL = pricePlan.getRatingWithoutTaxEL();
-        ratingWithoutTaxELSpark = pricePlan.getRatingWithoutTaxELSpark();
-        minimumAmountWithoutTaxEl = pricePlan.getMinimumAmountWithoutTaxEl();
-        minimumAmountWithoutTaxELSpark = pricePlan.getMinimumAmountWithoutTaxELSpark();
-        minimumAmountWithTaxEl = pricePlan.getMinimumAmountWithTaxEl();
-        minimumAmountWithTaxELSpark = pricePlan.getMinimumAmountWithTaxELSpark();
         invoiceSubCategoryEL = pricePlan.getInvoiceSubCategoryEL();
+        totalAmountEL = pricePlan.getTotalAmountEL();
+        totalAmountELSpark = pricePlan.getTotalAmountELSpark();
+        minimumAmountEL = pricePlan.getMinimumAmountEL();
+        minimumAmountELSpark = pricePlan.getMinimumAmountELSpark();
     }
 
     /**
@@ -918,5 +936,37 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
 
 	public void setInvoiceSubCategoryEL(String invoiceSubCategoryEL) {
 		this.invoiceSubCategoryEL = invoiceSubCategoryEL;
+	}
+
+	public String getTotalAmountEL() {
+		return totalAmountEL;
+	}
+
+	public void setTotalAmountEL(String totalAmountEL) {
+		this.totalAmountEL = totalAmountEL;
+	}
+
+	public String getTotalAmountELSpark() {
+		return totalAmountELSpark;
+	}
+
+	public void setTotalAmountELSpark(String totalAmountELSpark) {
+		this.totalAmountELSpark = totalAmountELSpark;
+	}
+
+	public String getMinimumAmountEL() {
+		return minimumAmountEL;
+	}
+
+	public void setMinimumAmountEL(String minimumAmountEL) {
+		this.minimumAmountEL = minimumAmountEL;
+	}
+
+	public String getMinimumAmountELSpark() {
+		return minimumAmountELSpark;
+	}
+
+	public void setMinimumAmountELSpark(String minimumAmountELSpark) {
+		this.minimumAmountELSpark = minimumAmountELSpark;
 	}
 }
