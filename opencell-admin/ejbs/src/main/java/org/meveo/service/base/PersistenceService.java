@@ -60,7 +60,9 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
+import org.meveo.event.qualifier.InstantiateWF;
 import org.meveo.event.qualifier.Removed;
+import org.meveo.event.qualifier.TrackWFHistory;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
@@ -75,10 +77,12 @@ import org.meveo.model.ISearchable;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -145,6 +149,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Inject
     protected ElasticClient elasticClient;
+
+    @Inject
+    @InstantiateWF
+    protected Event<BaseEntity> entityInstantiateWFEventProducer;
+    
+    @Inject
+    @TrackWFHistory
+    protected Event<BaseEntity> entityTrackWFHistoryEventProducer;
 
     @Inject
     @Created
@@ -421,6 +433,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityUpdatedEventProducer.fire((BaseEntity) entity);
         }
+        
+        if (entity instanceof WorkflowInstance) {
+            entityTrackWFHistoryEventProducer.fire((WorkflowInstance) entity);
+        }
 
         // Schedule end of period events
         // Be careful - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
@@ -495,6 +511,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityCreatedEventProducer.fire((BaseEntity) entity);
+        }
+        
+        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(WorkflowedEntity.class)) {
+            entityInstantiateWFEventProducer.fire((BaseEntity) entity);
         }
 
         if (accumulateCF && entity instanceof ICustomFieldEntity) {
