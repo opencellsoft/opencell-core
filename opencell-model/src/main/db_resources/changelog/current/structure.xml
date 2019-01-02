@@ -813,4 +813,31 @@
    
    
     </changeSet>
+
+	<changeSet id="#3629_20181210 - Price plan el vars" author="EdwardPLegaspi">
+    	<addColumn tableName="cat_price_plan_matrix">
+    		<column name="total_amount_el" type="${type.text}" />
+    		<column name="minimum_amount_el" type="${type.text}" />
+    		<column name="total_amount_el_sp" type="${type.text}" />
+    		<column name="minimum_amount_el_sp" type="${type.text}" />
+    	</addColumn>
+    	
+    	<sql>
+    		<![CDATA[
+			update cat_price_plan_matrix set total_amount_el=coalesce(rating_el_without_tax, rating_el_with_tax);
+			update cat_price_plan_matrix set total_amount_el_sp=coalesce(rating_el_without_tax_sp, rating_el_with_tax_sp);
+			update cat_price_plan_matrix set minimum_amount_el=coalesce(minimum_amount_without_tax_el, minimum_amount_with_tax_el);
+			update cat_price_plan_matrix set minimum_amount_el_sp=coalesce(minimum_amount_without_tax_el_sp, minimum_amount_with_tax_el_sp);
+			]]>
+    	</sql>
+    	
+    	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_with_tax"></dropColumn>
+    	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_with_tax_sp"></dropColumn>
+    	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_without_tax"></dropColumn>
+    	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_without_tax_sp"></dropColumn>
+    	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_without_tax_el"></dropColumn>
+    	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_without_tax_el_sp"></dropColumn>
+    	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_with_tax_el"></dropColumn>
+    	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_with_tax_el_sp"></dropColumn>
+    </changeSet>
 </databaseChangeLog>
