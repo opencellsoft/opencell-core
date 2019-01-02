@@ -66,7 +66,7 @@
 
                             <hftl:column label="#{messages['discountPlanItem.invoiceCategory']}" field="invoiceCategory.code" />
                             <hftl:column label="#{messages['discountPlanItem.invoiceSubCategory']}" field="invoiceSubCategory.code" />
-                            <hftl:column label="#{messages['discountPlanItem.type']}" field="discountPlanItemType" />
+                            <hftl:column label="#{messages['discountPlanItem.type']}" field="discountPlanItemType.label" isMessage="true" />
                             <hftl:column label="#{messages['discountPlanItem.discountValue']}" field="discountValue" />
 
                             <p:column styleClass="actions-column" rendered="#{discountPlanBean.edit}">
@@ -109,7 +109,7 @@
 
                                     <h:panelGroup id="itemType" styleClass="formFieldGroup">
                                         <hftl:formField id="discountValuePercentage" label="#{messages['discountPlanItem.discountValue']}" field="discountValue" required="true" minValue="-100"
-                                            maxValue="100" rendered="#{discountPlanBean.discountPlanItem.discountPlanItemType eq DiscountPlanItemTypeEnum.PERCENTAGE}" />
+                                            maxValue="100" spinner="true" rendered="#{discountPlanBean.discountPlanItem.discountPlanItemType eq DiscountPlanItemTypeEnum.PERCENTAGE}" />
                                         <hftl:formField id="discountValueFixed" label="#{messages['discountPlanItem.discountValue']}" field="discountValue" required="true"
                                             rendered="#{discountPlanBean.discountPlanItem.discountPlanItemType eq DiscountPlanItemTypeEnum.FIXED}" />
                                     </h:panelGroup>

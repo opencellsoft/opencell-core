@@ -8,23 +8,17 @@ package org.meveo.model.catalog;
  */
 public enum DiscountPlanItemTypeEnum {
 
-	PERCENTAGE("PERCENTAGE", "DiscountPlanItemTypeEnum.Percentage"), //
-	FIXED("PERCENTAGE", "DiscountPlanItemTypeEnum.Fixed");
+    /**
+     * Percentage type of discount
+     */
+    PERCENTAGE,
 
-	private String id;
-	private String label;
+    /**
+     * Fixed amount type of discount
+     */
+    FIXED;
 
-	private DiscountPlanItemTypeEnum(String id, String label) {
-		this.id = id;
-		this.label = label;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
+    public String getLabel() {
+        return this.getClass().getSimpleName() + "." + this.name();
+    }
 }
