@@ -215,7 +215,7 @@
             <column name="cf_values" type="${type.json}"></column>
             <column name="uuid" type="varchar(60)" />
         </addColumn>
-        <sql>update ${db.schema.adapted}crm_customer_category set uuid = id</sql>
+        <sql>update ${db.schema.adapted}crm_customer_category set uuid = concat('customer_cat_', id)</sql>
      </changeSet>
      
     <changeSet id="#3464_20180701" author="AndriusKarpavicius">
