@@ -20,6 +20,7 @@ package org.meveo.admin.action.generic.wf;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -96,6 +97,11 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
             }
             entity.getStatuses().add(selectedWFStatus);
             messages.info(new BundleKey("messages", "generic.wf.saved"));
+        } else {
+            Auditable auditable = selectedWFStatus.getAuditable();
+            auditable.setUpdated(new Date());
+            auditable.setUpdater(currentUser.getUserName());
+            selectedWFStatus.setAuditable(auditable);
         }
 
         resetWFStatus();
