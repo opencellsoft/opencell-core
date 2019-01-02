@@ -208,7 +208,16 @@
         <sql>update ${db.schema.adapted}ar_ddrequest_builder set cf_values_accum=cf_values</sql>
         <sql>update ${db.schema.adapted}ar_payment_schedule_tmpl set cf_values_accum=cf_values</sql>
     </changeSet>
-
+    
+     <changeSet id="#3841_20181228" author="SaidRamli">
+        <addColumn tableName="crm_customer_category">
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}crm_customer_category set uuid = concat('customer_cat_', id)</sql>
+     </changeSet>
+     
     <changeSet id="#3464_20180701" author="AndriusKarpavicius">
         <addColumn tableName="cat_usage_charge_template">
             <column name="filter_el_sp" type="varchar(2000)" />
