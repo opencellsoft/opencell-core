@@ -276,7 +276,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
         if (!isVirtual) {
             if (paramBean.isServiceMultiInstantiation()) {
-                List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription, InstanceStatusEnum.INACTIVE);
+                List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription, InstanceStatusEnum.ACTIVE);
                 if (serviceInstances != null && !serviceInstances.isEmpty()) {
                     throw new IncorrectServiceInstanceException(
                         "Service instance with code=" + serviceInstance.getCode() + ", subscription code=" + subscription.getCode() + " is already instantiated.");
