@@ -46,8 +46,8 @@ import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -73,6 +73,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -301,6 +302,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
+        
+        lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
         
         if(ratedTransactions == null || ratedTransactions.isEmpty()) {
             ratedTransactions = (List<RatedTransaction>) getEntityManager().createNamedQuery("RatedTransaction.listAllRTByBillingAccount", RatedTransaction.class)
