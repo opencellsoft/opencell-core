@@ -75,6 +75,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -309,6 +310,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
+        
+		lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
         
         //TODO[Edward] If !isExonerated then check if there is a tax script inside invoice.invoiceType.
         // Create a new boolean calculateTax=!isExonerated and invoice.invoiceType.taxScript is null.
