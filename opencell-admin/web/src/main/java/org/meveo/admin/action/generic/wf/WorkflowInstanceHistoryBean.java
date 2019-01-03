@@ -18,7 +18,6 @@
  */
 package org.meveo.admin.action.generic.wf;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.view.ViewScoped;
@@ -27,11 +26,12 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.generic.wf.WorkflowInstanceHistoryService;
-import org.meveo.service.wf.WorkflowService;
+import org.meveo.service.generic.wf.WorkflowInstanceService;
 
 /**
  * Standard backing bean for {@link WorkflowInstanceHistory} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
@@ -51,11 +51,7 @@ public class WorkflowInstanceHistoryBean extends BaseBean<WorkflowInstanceHistor
     private WorkflowInstanceHistoryService workflowInstanceHistoryService;
 
     @Inject
-    private WorkflowService workflowService;
-
-    private List<WorkflowInstanceHistory> wfHistories = new ArrayList<>();
-
-    private BusinessEntity oldConsultedEntity = null;
+    private WorkflowInstanceService workflowInstanceService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -80,5 +76,27 @@ public class WorkflowInstanceHistoryBean extends BaseBean<WorkflowInstanceHistor
     @Override
     protected String getDefaultSort() {
         return "actionDate";
+    }
+
+    /**
+     * This method is called from some businessEntityDetail's page.
+     * 
+     * @param entity Entity object
+     * @return List of Workflow instance
+     */
+
+    public List<WorkflowInstance> getWorkflowInstances(BusinessEntity entity) {
+        return workflowInstanceService.findByEntityInstanceCode(entity.getCode());
+    }
+
+    /**
+     * This method is called from some businessEntityDetail's page.
+     * 
+     * @param entity Entity object
+     * @return List of Workflow instance history
+     */
+
+    public List<WorkflowInstanceHistory> getWorkflowHistories(BusinessEntity entity) {
+        return workflowInstanceHistoryService.findByEntityInstanceCode(entity.getCode());
     }
 }

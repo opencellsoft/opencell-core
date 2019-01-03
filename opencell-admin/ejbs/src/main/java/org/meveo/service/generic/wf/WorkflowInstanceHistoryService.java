@@ -34,16 +34,31 @@ public class WorkflowInstanceHistoryService extends PersistenceService<WorkflowI
 
     public WorkflowInstanceHistory getLastWFHistory(WorkflowInstance workflowInstance) {
 
-        Map<String, Object> params = Maps.newHashMap();
-        String query = "From WorkflowInstanceHistory where workflowInstance = :workflowInstance order by actionDate desc";
-        params.put("workflowInstance", workflowInstance);
-
-        List<WorkflowInstanceHistory> wfHistories = (List<WorkflowInstanceHistory>) executeSelectQuery(query, params);
+        List<WorkflowInstanceHistory> wfHistories = findByWorkflowInstance(workflowInstance);
 
         if (wfHistories != null && !wfHistories.isEmpty()) {
             return wfHistories.iterator().next();
         }
 
         return null;
+    }
+
+    public List<WorkflowInstanceHistory> findByWorkflowInstance(WorkflowInstance workflowInstance) {
+
+        Map<String, Object> params = Maps.newHashMap();
+        String query = "From WorkflowInstanceHistory where workflowInstance = :workflowInstance order by actionDate desc";
+        params.put("workflowInstance", workflowInstance);
+
+        return (List<WorkflowInstanceHistory>) executeSelectQuery(query, params);
+    }
+
+    public List<WorkflowInstanceHistory> findByEntityInstanceCode(String entityInstanceCode) {
+
+        Map<String, Object> params = Maps.newHashMap();
+        String query = "From WorkflowInstanceHistory where workflowInstance.entityInstanceCode = :entityInstanceCode"
+                + " order by workflowInstance.genericWorkflow.code, actionDate desc";
+        params.put("entityInstanceCode", entityInstanceCode);
+
+        return (List<WorkflowInstanceHistory>) executeSelectQuery(query, params);
     }
 }
