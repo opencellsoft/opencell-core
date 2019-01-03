@@ -216,13 +216,6 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
                 if (workflowOrder.isDisabled()) {
                     disabledOrderWF = true;
                 }
-            } else {
-                workflowOrder = new Workflow();
-                workflowOrder.setWfType(OrderWF.class.getName());
-                workflowOrder.setCode(WF_ORDER);
-                wfService.create(workflowOrder);
-                WFTransition catchAllDefault = createCatchAll();
-                workflowOrder.getTransitions().add(catchAllDefault);
             }
         }
         if (workflowOrder != null) {
