@@ -28,10 +28,14 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
+import org.primefaces.model.LazyDataModel;
+
+import java.util.List;
 
 /**
  * Standard backing bean for {@link RecordedInvoice} (extends {@link BaseBean}
@@ -115,6 +119,15 @@ public class RecordedInvoiceBean extends CustomFieldBean<RecordedInvoice> {
 			messages.error(e.getMessage());
 		}
 		return null;
+	}
+
+	public LazyDataModel<RecordedInvoice> getDueInvoices(DunningDocument dc){
+		if (!dc.isTransient()) {
+			filters.put("customerAccount", dc);
+			return getLazyDataModel();
+		} else {
+			return null;
+		}
 	}
 
 }

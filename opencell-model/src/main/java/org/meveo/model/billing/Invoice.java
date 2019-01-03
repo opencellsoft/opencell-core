@@ -359,13 +359,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
-    /**
-     * if an invoice becomes unpaid then, it's associated with a dunning doc
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dunning_document_id")
-    private DunningDocument dunningDocument;
-
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
 
@@ -627,14 +620,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
     public void setAdjustedInvoice(Invoice adjustedInvoice) {
         this.adjustedInvoice = adjustedInvoice;
-    }
-
-    public DunningDocument getDunningDocument() {
-        return dunningDocument;
-    }
-
-    public void setDunningDocument(DunningDocument dunningDocument) {
-        this.dunningDocument = dunningDocument;
     }
 
     public Long getInvoiceAdjustmentCurrentSellerNb() {
