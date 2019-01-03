@@ -269,6 +269,7 @@
             <template ref="Provider" />
             <template ref="ProviderContact" />
             <template ref="OCCTemplate" />
+            <template ref="ScriptInstance" />     
             <template ref="InvoiceType" />
             <template ref="Seller" />
             <template ref="Title" />
@@ -302,8 +303,7 @@
             <template ref="OfferTemplateCategory" /> 
             <template ref="ProductTemplate" /> 
             <template ref="BundleTemplate" />
-            <template ref="ChargeTemplate" />
-            <template ref="ScriptInstance" />            
+            <template ref="ChargeTemplate" />       
             <template ref="MeveoModule" />           
             <template ref="ServiceTemplate" />   
             <template ref="OfferTemplate" />   
@@ -314,6 +314,7 @@
 
     <template name="Customer hierarchy">
         <groupedTemplates>
+            <template ref="AddressBook" />
             <template ref="Customer" />
             <template ref="CustomerAccount" />
             <template ref="BillingAccount" />

@@ -23,7 +23,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "invoiceType.code", "seller.code" })
+@ExportIdentifier({ "code" })
 @Table(name = "billing_seq_invoice")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "bill_seq_invoice_seq"), })
