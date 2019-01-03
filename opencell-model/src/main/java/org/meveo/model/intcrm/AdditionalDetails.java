@@ -16,7 +16,6 @@ import org.meveo.model.ExportIdentifier;
  * @author Andrius Karpavicius
  */
 @Entity
-@ExportIdentifier({ "additionalDetails" })
 @Table(name = "crm_additional_details")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_additional_details_seq") })
