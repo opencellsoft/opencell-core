@@ -79,6 +79,10 @@ public class SubscriptionDto extends BusinessEntityDto {
     @XmlElement(name = "productInstance")
     private List<ProductInstanceDto> productInstances = new ArrayList<ProductInstanceDto>();
 
+    @XmlElementWrapper(name = "oneShotChargesInstances")
+    @XmlElement(name = "oneShotChargeInstance")
+    private List<OneShotChargeInstanceDto> oneShotCharges = new ArrayList<>();
+
     /** The termination reason. */
     private String terminationReason;
 
@@ -479,6 +483,14 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     public void setProductInstances(List<ProductInstanceDto> productInstances) {
         this.productInstances = productInstances;
+    }
+
+    public List<OneShotChargeInstanceDto> getOneShotCharges() {
+        return oneShotCharges;
+    }
+
+    public void setOneShotCharges(List<OneShotChargeInstanceDto> oneShotCharges) {
+        this.oneShotCharges = oneShotCharges;
     }
 
     /**
