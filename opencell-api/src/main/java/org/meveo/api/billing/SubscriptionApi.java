@@ -1,5 +1,6 @@
 package org.meveo.api.billing;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,27 +21,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
-import org.meveo.api.dto.billing.ActivateServicesRequestDto;
-import org.meveo.api.dto.billing.ChargeInstanceOverrideDto;
-import org.meveo.api.dto.billing.DueDateDelayDto;
-import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
-import org.meveo.api.dto.billing.OperationServicesRequestDto;
-import org.meveo.api.dto.billing.ProductDto;
-import org.meveo.api.dto.billing.ProductInstanceDto;
-import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.ServiceInstanceDto;
-import org.meveo.api.dto.billing.ServiceToActivateDto;
-import org.meveo.api.dto.billing.ServiceToInstantiateDto;
-import org.meveo.api.dto.billing.ServiceToUpdateDto;
-import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
-import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
-import org.meveo.api.dto.billing.SubscriptionRenewalDto;
-import org.meveo.api.dto.billing.SubscriptionsDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
-import org.meveo.api.dto.billing.UpdateServicesRequestDto;
-import org.meveo.api.dto.billing.WalletOperationDto;
+import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -55,22 +36,8 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.DueDateDelayEnum;
-import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.ProductInstance;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionRenewal;
+import org.meveo.model.billing.*;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
-import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
@@ -1059,24 +1026,29 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Find subscription by code
-     * 
+     *
      * @param subscriptionCode code of subscription to find
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException meveo api exception
      */
     public SubscriptionDto findSubscription(String subscriptionCode) throws MeveoApiException {
-        return this.findSubscription(subscriptionCode, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+        return this.findSubscription(subscriptionCode, false, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    public SubscriptionDto findSubscription(String subscriptionCode, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
+        return this.findSubscription(subscriptionCode, false, inheritCF);
     }
 
     /**
      * Find subscription
-     * 
+     *
      * @param subscriptionCode code of subscription to find
-     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param mergedCF true/false
+     * @param inheritCF Custom field inheritance type
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException meveo api exception
      */
-    public SubscriptionDto findSubscription(String subscriptionCode, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
+    public SubscriptionDto findSubscription(String subscriptionCode, boolean mergedCF, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
         SubscriptionDto result = new SubscriptionDto();
 
         if (StringUtils.isBlank(subscriptionCode)) {
@@ -1088,7 +1060,9 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
 
-        result = subscriptionToDto(subscription, inheritCF);
+        CustomFieldInheritanceEnum inherit = (inheritCF != null && !mergedCF) ? inheritCF : CustomFieldInheritanceEnum.getInheritCF(true, mergedCF);
+
+        result = subscriptionToDto(subscription, inherit);
 
         return result;
     }
@@ -1121,12 +1095,24 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Convert subscription dto to entity
-     * 
+     *
      * @param subscription instance of Subscription to be mapped
      * @param inheritCF choose whether CF values are inherited and/or merged
      * @return instance of SubscriptionDto
      */
     public SubscriptionDto subscriptionToDto(Subscription subscription, CustomFieldInheritanceEnum inheritCF) {
+        return this.subscriptionToDto(subscription, inheritCF, null);
+    }
+
+    /**
+     * Convert subscription dto to entity
+     *
+     * @param subscription instance of Subscription to be mapped
+     * @param inheritCF choose whether CF values are inherited and/or merged
+     * @param oneShotChargeInstances instances of OneShotCharges to be mapped
+     * @return instance of SubscriptionDto
+     */
+    public SubscriptionDto subscriptionToDto(Subscription subscription, CustomFieldInheritanceEnum inheritCF, List<OneShotChargeInstance> oneShotChargeInstances) {
         SubscriptionDto dto = new SubscriptionDto(subscription);
         if (subscription.getAccessPoints() != null) {
             for (Access ac : subscription.getAccessPoints()) {
@@ -1641,10 +1627,28 @@ public class SubscriptionApi extends BaseApi {
         return results;
     }
 
+    public List<OneShotChargeInstanceDto> getOneShotCharges(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+        }
+
+        List<OneShotChargeInstance> oneShotChargeInstances = oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(subscription.getId());
+        List<OneShotChargeInstanceDto> oneShotChargeInstanceDtos = new ArrayList<>();
+
+        for(OneShotChargeInstance oneShotChargeInstance : oneShotChargeInstances) {
+            OneShotChargeInstanceDto oneShotChargeInstanceDto = new OneShotChargeInstanceDto(oneShotChargeInstance);
+            oneShotChargeInstanceDtos.add(oneShotChargeInstanceDto);
+        }
+
+        return oneShotChargeInstanceDtos;
+    }
+
     /**
      * @return list of one shot charge others.
      */
-    public List<OneShotChargeTemplateDto> getOneShotChargeOthers() {
+    public List<OneShotChargeTemplateDto> getOneShotChargeOthers() throws EntityDoesNotExistsException, InvalidParameterException {
         return this.getOneShotCharges(OneShotChargeTemplateTypeEnum.OTHER);
     }
 
@@ -1894,6 +1898,15 @@ public class SubscriptionApi extends BaseApi {
         result.setSubscriptionEndDate(DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), DateUtils.DATE_PATTERN));
         
         return result;
+    }
+
+    public void cancelOneShotCharge(Long oneShotChargeId) {
+        try {
+            OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findById(oneShotChargeId);
+            oneShotChargeInstanceService.terminateOneShotChargeInstance(oneShotChargeInstance);
+        } catch (BusinessException e) {
+            log.error("Error on cancelOneShotCharge [{}] ", e.getMessage(), e);
+        }
     }
 
     /**
