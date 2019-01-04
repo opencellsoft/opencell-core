@@ -1,27 +1,11 @@
 package org.meveo.api.rest.billing.impl;
 
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
-import org.meveo.api.dto.billing.ActivateServicesRequestDto;
-import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
-import org.meveo.api.dto.billing.OperationServicesRequestDto;
-import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
-import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
-import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
-import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -36,7 +20,13 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -331,15 +321,22 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     /**
      * Get all one shot charge others.
      * 
-     * @see org.meveo.api.rest.billing.SubscriptionRs#getOneShotChargeOthers()
+     * @see org.meveo.api.rest.billing.SubscriptionRs#getOneShotChargeOthers(String subscriptionCode)
      */
-    public GetOneShotChargesResponseDto getOneShotChargeOthers() {
+    public GetOneShotChargesResponseDto getOneShotChargeOthers(String subscriptionCode) {
         GetOneShotChargesResponseDto result = new GetOneShotChargesResponseDto();
+
         try {
-            List<OneShotChargeTemplateDto> oneShotChargeOthers = subscriptionApi.getOneShotChargeOthers();
-            result.getOneshotCharges().addAll(oneShotChargeOthers);
+            if(subscriptionCode == null) {
+                List<OneShotChargeTemplateDto> oneShotChargeOthers = subscriptionApi.getOneShotChargeOthers();
+                result.getOneshotCharges().addAll(oneShotChargeOthers);
+            } else {
+                List<OneShotChargeInstanceDto> oneShotChargeInstances = subscriptionApi.getOneShotChargeOthers(subscriptionCode);
+                result.getOneshotChargeInstances().addAll(oneShotChargeInstances);
+            }
+
         } catch (Exception e) {
-            processException(e, result.getActionStatus());
+            processException(e, new ActionStatus(ActionStatusEnum.FAIL, ""));
         }
 
         return result;
@@ -403,6 +400,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
+        return result;
+    }
+
+    @Override
+    public ActionStatus cancelOneShotCharge(Long oneshotChargeId) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.cancelOneShotCharge(oneshotChargeId);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
         return result;
     }
 
