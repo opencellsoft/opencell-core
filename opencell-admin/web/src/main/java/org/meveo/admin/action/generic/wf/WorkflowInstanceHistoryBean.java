@@ -26,6 +26,7 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
 import org.meveo.service.base.PersistenceService;
@@ -52,6 +53,8 @@ public class WorkflowInstanceHistoryBean extends BaseBean<WorkflowInstanceHistor
 
     @Inject
     private WorkflowInstanceService workflowInstanceService;
+
+    private GenericWorkflow selectedGenericWF = null;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -98,5 +101,21 @@ public class WorkflowInstanceHistoryBean extends BaseBean<WorkflowInstanceHistor
 
     public List<WorkflowInstanceHistory> getWorkflowHistories(BusinessEntity entity) {
         return workflowInstanceHistoryService.findByEntityInstanceCode(entity.getCode());
+    }
+
+    public List<WorkflowInstanceHistory> getWorkflowHistories(GenericWorkflow genericWorkflow) {
+        return workflowInstanceHistoryService.findByGenericWorkflow(genericWorkflow);
+    }
+
+    public GenericWorkflow getSelectedGenericWF() {
+        return selectedGenericWF;
+    }
+
+    public void setSelectedGenericWF(GenericWorkflow selectedGenericWF) {
+        this.selectedGenericWF = selectedGenericWF;
+    }
+
+    public void selectGenericWF(GenericWorkflow genericWF) {
+        this.selectedGenericWF = genericWF;
     }
 }

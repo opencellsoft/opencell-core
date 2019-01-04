@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 
+import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
 import org.meveo.service.base.PersistenceService;
@@ -41,6 +42,15 @@ public class WorkflowInstanceHistoryService extends PersistenceService<WorkflowI
         }
 
         return null;
+    }
+
+    public List<WorkflowInstanceHistory> findByGenericWorkflow(GenericWorkflow genericWorkflow) {
+
+        Map<String, Object> params = Maps.newHashMap();
+        String query = "From WorkflowInstanceHistory where workflowInstance.genericWorkflow = :genericWorkflow order by actionDate desc";
+        params.put("genericWorkflow", genericWorkflow);
+
+        return (List<WorkflowInstanceHistory>) executeSelectQuery(query, params);
     }
 
     public List<WorkflowInstanceHistory> findByWorkflowInstance(WorkflowInstance workflowInstance) {

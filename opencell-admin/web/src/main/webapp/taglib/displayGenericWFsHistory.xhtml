@@ -28,33 +28,44 @@
 
 	<c:set var="edit" value="#{false}" />
 	
-	<p:tab title="${tabLabel}" rendered="${!empty(workflowInstanceHistoryListBean.getWorkflowInstances(entity))}">
-		<h:panelGroup id="gwfHistoId">
-			  <p:fieldset legend="#{messages['generic.wfHistory.linkedInstances']}">
-			  		<p:dataTable id="gwfLinkedWFInstances" var="wfInstance" backingBean="#{workflowInstanceHistoryListBean}" value="#{workflowInstanceHistoryListBean.getWorkflowInstances(entity)}" paginator="true" rows="10" 
-		                  sortField="#{'genericWorkflow.code'}" sortBy="#{wfInstance.genericWorkflow.code}" sortOrder="DESCENDING" paginatorAlwaysVisible="false"
-		                  paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20"
-		                  lazy="false" styleClass="custom-grid" reflow="true">
-		                  <hftl:column label="#{messages['generic.wf.title']}" field="genericWorkflow.code" entity="${wfInstance}" />
-		                  <hftl:column label="#{messages['BusinessEntity.description']}" field="genericWorkflow.description" entity="${wfInstance}" />
-		                  <hftl:column label="#{messages['wfStatus.current']}" field="wfStatus.code" entity="${wfInstance}" />
-		                  <hftl:column label="#{messages['BusinessEntity.description']}" field="wfStatus.description" entity="${wfInstance}" />
-		            </p:dataTable>
-			  </p:fieldset>
-			  
-              <p:dataTable id="gwfActionsAndReportsData" var="histo" backingBean="#{workflowInstanceHistoryListBean}" value="#{workflowInstanceHistoryListBean.getWorkflowHistories(entity)}" paginator="true" rows="10" 
-                  sortField="#{'actionDate'}" sortBy="#{histo.actionDate}" sortOrder="DESCENDING" paginatorAlwaysVisible="false"
-                  paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20"
-                  lazy="false" styleClass="custom-grid" reflow="true">
-                  <hftl:column label="#{messages['workflowHistory.actionDate']}" field="actionDate" entity="${histo}" time="true" isDate="true" />
-                  <hftl:column label="#{messages['workflowHistory.fromStatus']}" field="wfStatusFrom.code"  entity="${histo}" />
-                  <hftl:column label="#{messages['workflowHistory.toStatus']}" field="wfStatusTo.code"  entity="${histo}" />
-                  <hftl:column label="#{messages['generic.wf.title']}" field="workflowInstance.genericWorkflow.code" entity="${histo}" />
-                  <hftl:column label="#{messages['workflowHistory.event']}" field="event" entity="${histo}" />
-                  <hftl:column label="#{messages['workflowHistory.creator']}" field="workflowInstance.genericWorkflow.auditable.creator" entity="${histo}" />
-              </p:dataTable>
-		</h:panelGroup>
-	</p:tab>
+	<p:tab id="wfHistoryTab"
+		title="${tabLabel}" rendered="${!empty(workflowInstanceHistoryBean.getWorkflowInstances(entity))}">
+		  <p:fieldset legend="#{messages['generic.wfHistory.linkedInstances']}">
+		  		<p:dataTable var="wfInstance" backingBean="#{workflowInstanceHistoryBean}" value="#{workflowInstanceHistoryBean.getWorkflowInstances(entity)}" paginator="true" rows="10" 
+	                  sortField="#{'genericWorkflow.code'}" sortBy="#{wfInstance.genericWorkflow.code}" sortOrder="DESCENDING" paginatorAlwaysVisible="false"
+	                  paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20"
+	                  lazy="false" styleClass="custom-grid" reflow="true">
+	                  <hftl:column label="#{messages['generic.wf.title']}" field="genericWorkflow.code" entity="${wfInstance}" />
+	                  <hftl:column label="#{messages['BusinessEntity.description']}" field="genericWorkflow.description" entity="${wfInstance}" />
+	                  <hftl:column label="#{messages['wfStatus.current']}" field="wfStatus.code" entity="${wfInstance}" />
+	                  <hftl:column label="#{messages['BusinessEntity.description']}" field="wfStatus.description" entity="${wfInstance}" />
+	                  
+	                  <p:column headerText="#{messages['commons.actions']}">
+	                             <p:commandButton icon="ui-icon-document" action="#{workflowInstanceHistoryBean.selectGenericWF(wfInstance.genericWorkflow)}"
+	                                 update=":wfHistoryTab:wfHistoryDetails"
+	                     			 process="@this" />
+	                        </p:column>
+	            </p:dataTable>
+		  </p:fieldset>
+		  
+		  <h:panelGroup id="wfHistoryDetails">
+		  		<c:if test="#{workflowInstanceHistoryBean.selectedGenericWF != null}">
+		  			<p:fieldset legend="#{messages['workflowHistory.tabLabel']} for #{workflowInstanceHistoryBean.selectedGenericWF.code}">
+			             <p:dataTable var="histo" backingBean="#{workflowInstanceHistoryBean}" value="#{workflowInstanceHistoryBean.getWorkflowHistories(entity)}" paginator="true" rows="10" 
+			                 sortField="#{'actionDate'}" sortBy="#{histo.actionDate}" sortOrder="DESCENDING" paginatorAlwaysVisible="false"
+			                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20"
+			                 lazy="false" styleClass="custom-grid" reflow="true">
+			                 <hftl:column label="#{messages['workflowHistory.actionDate']}" field="actionDate" entity="${histo}" time="true" isDate="true" />
+			                 <hftl:column label="#{messages['workflowHistory.fromStatus']}" field="wfStatusFrom.code"  entity="${histo}" />
+			                 <hftl:column label="#{messages['workflowHistory.toStatus']}" field="wfStatusTo.code"  entity="${histo}" />
+			                 <hftl:column label="#{messages['generic.wf.title']}" field="workflowInstance.genericWorkflow.code" entity="${histo}" />
+			                 <hftl:column label="#{messages['workflowHistory.event']}" field="event" entity="${histo}" />
+			                 <hftl:column label="#{messages['workflowHistory.creator']}" field="workflowInstance.genericWorkflow.auditable.creator" entity="${histo}" />
+			             </p:dataTable>
+	             	</p:fieldset>
+             	</c:if>
+           </h:panelGroup>
 
+	</p:tab>
 </ui:composition>
 </html>
