@@ -232,8 +232,12 @@ public class InvoiceTypeApi extends BaseApi {
                             throw new MeveoApiException("Not able to update, check the current number");
                         }
                     }
-                    invoiceSequence.setCurrentInvoiceNb(invoiceSequenceFromDto.getCurrentInvoiceNb());
-                    invoiceSequence.setSequenceSize(invoiceSequenceFromDto.getSequenceSize());
+					if (invoiceSequenceFromDto.getCurrentInvoiceNb() != null) {
+						invoiceSequence.setCurrentInvoiceNb(invoiceSequenceFromDto.getCurrentInvoiceNb());
+					}
+					if(invoiceSequenceFromDto.getSequenceSize() != null) {
+						invoiceSequence.setSequenceSize(invoiceSequenceFromDto.getSequenceSize());
+					}
                     invoiceSequence.setCode(invoiceType.getCode());
                     invoiceSequenceService.update(invoiceSequence);
                 } else {

@@ -61,6 +61,27 @@ public class ServiceSingleton {
 
     @Inject
     private Logger log;
+    
+    /**
+     * Gets the sequence from the seller or its parent hierarchy. Otherwise return the sequence from invoiceType.
+     * @param invoiceType {@link InvoiceType}
+     * @param seller {@link Seller}
+     * @return {@link InvoiceSequence}
+     */
+	private InvoiceSequence getSequenceFromSellerHierarchy(InvoiceType invoiceType, Seller seller) {
+		InvoiceSequence sequence = invoiceType.getSellerSequenceSequenceByType(seller);
+
+		if (sequence == null) {
+			// gets the sequence from parent seller
+			if (seller.getSeller() != null) {
+				sequence = getSequenceFromSellerHierarchy(invoiceType, seller.getSeller());
+			} else {
+				sequence = invoiceType.getInvoiceSequence();
+			}
+		}
+
+		return sequence;
+	}
 
     /**
      * Get invoice number sequence. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
@@ -98,10 +119,8 @@ public class ServiceSingleton {
             }
         }
 
-        InvoiceSequence sequence = invoiceType.getSellerSequenceSequenceByType(seller);
-        if (sequence == null) {
-            sequence = invoiceType.getInvoiceSequence();
-        }
+        InvoiceSequence sequence = getSequenceFromSellerHierarchy(invoiceType, seller);
+        		
         if (sequence == null) {
             sequence = new InvoiceSequence();
             sequence.setCurrentInvoiceNb(0L);
