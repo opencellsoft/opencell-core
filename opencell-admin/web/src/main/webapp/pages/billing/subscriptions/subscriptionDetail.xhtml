@@ -490,8 +490,14 @@
                                             <hftl:formField label="#{messages['subscription.renewalNotifiedDate']}" field="renewalNotifiedDate" edit="false" rendered="#{subscriptionBean.entity.renewalNotifiedDate != null}"/>
                                             <hftl:formField label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
                                                 field="terminationDate" edit="false" rendered="#{subscriptionBean.entity.terminationDate != null}" />
-        
-                                        </h:panelGroup>
+
+										<hftl:formField label="#{messages['terminationReason']}"
+											field="subscriptionTerminationReason"
+											valueLabelField="descriptionOrCode" edit="false"
+											listBean="#{subscriptionTerminationReasonBean}"
+											rendered="#{subscriptionBean.entity.status == 'RESILIATED' and (subscriptionBean.entity.subscriptionTerminationReason != null)}" />
+
+									</h:panelGroup>
                                     </p:tab>
 
 									<hftl:customFields backingBean="#{subscriptionBean}" messagesId=":subscriptionTab:subscriptionFormId:messages" />
