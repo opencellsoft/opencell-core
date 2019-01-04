@@ -156,6 +156,24 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<to-view-id>/pages/admin/sellers/sellerDetail.xhtml</to-view-id>
 		<redirect />
 	</navigation-case>
+	<navigation-case>
+		<from-outcome>backToSellerFromOcc</from-outcome>
+		<to-view-id>/pages/admin/sellers/sellerDetail.xhtml</to-view-id>
+		<redirect include-view-params="true">
+		    <view-param>
+				<name>objectId</name>
+				<value>#{sellerBean.backEntityId}</value>
+			</view-param>
+			<view-param>
+				<name>mainTab</name>
+				<value>#{sellerBean.backMainTab}</value>
+			</view-param>
+			<view-param>
+				<name>tab</name>
+				<value>#{sellerBean.backTab}</value>
+			</view-param>
+		</redirect>
+	</navigation-case>
 
 	<navigation-case>
 		<from-outcome>timerEntities</from-outcome>
