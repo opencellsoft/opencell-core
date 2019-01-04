@@ -2271,4 +2271,7 @@
             <column name="auto_renew_date" type="datetime"/>
         </addColumn>
     </changeSet>
+    <changeSet id="#3692_20190103" author="HatimOudad">
+     <modifyDataType columnName="iban" newDataType="varchar(80)" tableName="crm_provider"/>
+    </changeSet>
 </databaseChangeLog>

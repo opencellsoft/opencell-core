@@ -87,6 +87,7 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -108,6 +109,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.script.Script;
@@ -127,7 +129,8 @@ import org.xml.sax.SAXException;
  * @author Said Ramli
  * @author Abdellatif BARI
  * @author Mounir Bahije
- * @lastModifiedVersion 5.2.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2
  **/
 @Stateless
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
@@ -164,6 +167,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
+
+    @Inject
+    private DiscountPlanService discountPlanService;
 
     /** transformer factory. */
     private TransformerFactory transfac = TransformerFactory.newInstance();
@@ -810,6 +816,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             offerTemplateDescription = offerTemplate.getDescriptionI18n().get(tradingLanguage);
         }
         offerTag.setAttribute("description",offerTemplateDescription);
+        offerTag.setAttribute("name",offerTemplate.getName());
         addCustomFields(offerTemplate, doc, offerTag);
         offersTag.appendChild(offerTag);
     }
@@ -2073,17 +2080,24 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : discountInvoiceAgregates) {
 
+            String discountPlanCode = subCategoryInvoiceAgregate.getDiscountPlanCode();
+
             Element discount = doc.createElement("discount");
-            discount.setAttribute("discountPlanCode", subCategoryInvoiceAgregate.getDiscountPlanCode());
+            discount.setAttribute("discountPlanCode", discountPlanCode);
+
+            if(!StringUtils.isBlank(discountPlanCode)){
+                DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode);
+                if(discountPlan != null){
+                    discount.setAttribute("discountPlanDescription", discountPlan.getDescription());
+                }
+            }
+
             discount.setAttribute("discountPlanItemCode", subCategoryInvoiceAgregate.getDiscountPlanItemCode());
             discount.setAttribute("invoiceSubCategoryCode", subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode());
             discount.setAttribute("discountAmountWithoutTax", roundToString(subCategoryInvoiceAgregate.getAmountWithoutTax(), rounding, roundingMode) + "");
             discount.setAttribute("discountPercent", roundToString(subCategoryInvoiceAgregate.getDiscountPercent(), rounding, roundingMode) + "");
-
             discounts.appendChild(discount);
-
         }
-
     }
 
     /**

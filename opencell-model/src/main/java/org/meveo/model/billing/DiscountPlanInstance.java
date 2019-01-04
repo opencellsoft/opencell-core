@@ -69,10 +69,15 @@ public class DiscountPlanInstance extends BaseEntity {
 	 * @return returns true if this DiscountItem is to be applied
 	 */
 	public boolean isEffective(Date date) {
-		if (startDate == null) {
+		if (startDate == null && endDate == null) {
 			return true;
 		}
-
+		if (startDate != null && endDate == null) {
+			return date.compareTo(startDate) >= 0;
+		}
+		if (startDate == null) {
+			return date.before(endDate);
+		}
 		return (date.compareTo(startDate) >= 0) && (date.before(endDate));
 	}
 	
