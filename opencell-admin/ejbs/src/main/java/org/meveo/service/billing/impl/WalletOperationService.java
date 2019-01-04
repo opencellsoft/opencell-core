@@ -39,10 +39,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.InsufficientBalanceException;
-import org.meveo.admin.exception.WalletNotFoundException;
 import org.meveo.cache.WalletCacheContainerProvider;
-import org.meveo.commons.utils.ListUtils;
-import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -52,7 +49,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -80,7 +76,6 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 
@@ -109,9 +104,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
     @Inject
     private WalletCacheContainerProvider walletCacheContainerProvider;
-
-    @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
 
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;

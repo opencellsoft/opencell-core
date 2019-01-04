@@ -38,6 +38,8 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.IncorrectServiceInstanceException;
+import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
@@ -79,7 +81,6 @@ import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
-import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.primefaces.component.datatable.DataTable;
@@ -92,16 +93,13 @@ import org.primefaces.context.RequestContext;
  * @author Wassim Drira
  * @author Said Ramli
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2.1
+ * @lastModifiedVersion 5.2.5
  */
 @Named
 @ViewScoped
 public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     private static final long serialVersionUID = 1L;
-
-    @Inject
-    private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
 
     @Inject
     private SubscriptionService subscriptionService;
@@ -174,6 +172,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     private List<WalletTemplate> prepaidWalletTemplates;
 
+    private Date terminationDate;
+    
+    private SubscriptionTerminationReason terminationReason;
+    
     /**
      * User Account Id passed as a parameter. Used when creating new subscription entry from user account definition window, so default uset Account will be set on newly created
      * subscription entry.
@@ -679,68 +681,46 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
     }
 
-    public void terminateService() {
-        try {
-            Date terminationDate = selectedServiceInstance.getTerminationDate();
+    @ActionMethod
+    public void terminateService() throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
-            SubscriptionTerminationReason newSubscriptionTerminationReason = selectedServiceInstance.getSubscriptionTerminationReason();
-            log.debug("selected subscriptionTerminationReason={},terminationDate={},selectedServiceInstanceId={},status={}",
-                new Object[] { newSubscriptionTerminationReason != null ? newSubscriptionTerminationReason.getId() : null, terminationDate, selectedServiceInstance.getId(),
-                        selectedServiceInstance.getStatus() });
+        log.debug("selected subscriptionTerminationReason={}, terminationDate={}, selectedServiceInstanceId={}, status={}", terminationReason, terminationDate,
+            selectedServiceInstance.getId(), selectedServiceInstance.getStatus());
 
-            // Obtain EM attached service instance entity
-            entity = subscriptionService.refreshOrRetrieve(entity);
-            selectedServiceInstance = entity.getServiceInstances().get(entity.getServiceInstances().indexOf(selectedServiceInstance));
+        // Obtain EM attached service instance entity
+        entity = subscriptionService.refreshOrRetrieve(entity);
+        selectedServiceInstance = entity.getServiceInstances().get(entity.getServiceInstances().indexOf(selectedServiceInstance));
 
-            if (selectedServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
-                serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, newSubscriptionTerminationReason, entity.getOrderNumber());
-            } else {
-                serviceInstanceService.updateTerminationMode(selectedServiceInstance, terminationDate);
-            }
+        serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, terminationReason, entity.getOrderNumber());
+       
+        subscriptionService.refresh(entity);
 
-            subscriptionService.refresh(entity);
+        initServiceInstances(entity.getServiceInstances());
+        initServiceTemplates();
+        resetChargesDataModels();
 
-            initServiceInstances(entity.getServiceInstances());
-            initServiceTemplates();
-            resetChargesDataModels();
+        selectedServiceInstance = null;
+        terminationReason = null;
+        terminationDate = null;
 
-            selectedServiceInstance = null;
-
-            messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-
-        } catch (BusinessException e1) {
-            messages.error(e1.getMessage());
-        } catch (Exception e) {
-            log.error("unexpected exception when terminating service!", e);
-            messages.error(e.getMessage());
-        }
+        messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
     }
 
     @ActionMethod
-    public String terminateSubscription() {
-        try {
+    public String terminateSubscription() throws BusinessException {
 
-            SubscriptionTerminationReason reason = entity.getSubscriptionTerminationReason();
-            Date terminationDate = entity.getTerminationDate();
+        entity = subscriptionService.refreshOrRetrieve(entity);
 
-            entity = subscriptionService.refreshOrRetrieve(entity);
+        log.debug("selected subscriptionTerminationReason={}, terminationDate={}, subscriptionId={}, status={}", terminationReason, terminationDate, entity.getCode(),
+            entity.getStatus());
 
-            entity.setSubscriptionTerminationReason(reason);
-            entity.setTerminationDate(terminationDate);
+        subscriptionService.terminateSubscription(entity, terminationDate, terminationReason, entity.getOrderNumber());
 
-            log.debug("selected subscriptionTerminationReason={},terminationDate={},subscriptionId={},status={}",
-                new Object[] { entity.getSubscriptionTerminationReason(), entity.getTerminationDate(), entity.getCode(), entity.getStatus() });
-            subscriptionService.terminateSubscription(entity, entity.getTerminationDate(), entity.getSubscriptionTerminationReason(), entity.getOrderNumber());
-            messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-            return "subscriptionDetail";
+        terminationReason = null;
+        terminationDate = null;
 
-        } catch (BusinessException e1) {
-            messages.error(e1.getMessage());
-        } catch (Exception e) {
-            log.error("unexpected exception when terminating service!", e);
-            messages.error(e.getMessage());
-        }
-        return null;
+        messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+        return "subscriptionDetail";
     }
 
     public void cancelService() {
@@ -1095,5 +1075,21 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         subscriptionService.cancelSubscriptionRenewal(entity);
         RequestContext.getCurrentInstance().reset("subscriptionTab");
         return null;
+    }
+
+    public Date getTerminationDate() {
+        return terminationDate;
+    }
+
+    public void setTerminationDate(Date terminationDate) {
+        this.terminationDate = terminationDate;
+    }
+
+    public SubscriptionTerminationReason getTerminationReason() {
+        return terminationReason;
+    }
+
+    public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
+        this.terminationReason = terminationReason;
     }
 }
