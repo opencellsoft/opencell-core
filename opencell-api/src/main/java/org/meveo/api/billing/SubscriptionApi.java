@@ -1,5 +1,6 @@
 package org.meveo.api.billing;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -1630,6 +1631,13 @@ public class SubscriptionApi extends BaseApi {
         List<OneShotChargeInstanceDto> oneShotChargeInstanceDtos = new ArrayList<>();
 
         for(OneShotChargeInstance oneShotChargeInstance : oneShotChargeInstances) {
+            if(oneShotChargeInstance.getAmountWithTax() == null) {
+                BigDecimal quantity = oneShotChargeInstance.getQuantity();
+                BigDecimal amountWithoutTax = quantity.multiply(oneShotChargeInstance.getWalletOperations().get(0).getAmountWithTax());
+                BigDecimal amountWithTax = quantity.multiply(oneShotChargeInstance.getWalletOperations().get(0).getAmountTax());
+                oneShotChargeInstance.setAmountWithoutTax(amountWithoutTax);
+                oneShotChargeInstance.setAmountWithTax(amountWithTax);
+            }
             OneShotChargeInstanceDto oneShotChargeInstanceDto = new OneShotChargeInstanceDto(oneShotChargeInstance);
             oneShotChargeInstanceDtos.add(oneShotChargeInstanceDto);
         }
