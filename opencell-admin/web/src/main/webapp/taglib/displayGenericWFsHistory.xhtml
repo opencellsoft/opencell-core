@@ -41,10 +41,10 @@
 	                  <hftl:column label="#{messages['BusinessEntity.description']}" field="wfStatus.description" entity="${wfInstance}" />
 	                  
 	                  <p:column headerText="#{messages['commons.actions']}">
-	                             <p:commandButton icon="ui-icon-document" action="#{workflowInstanceHistoryBean.selectGenericWF(wfInstance.genericWorkflow)}"
-	                                 update=":wfHistoryTab:wfHistoryDetails"
-	                     			 process="@this" />
-	                        </p:column>
+                             <p:commandButton icon="ui-icon-document" action="#{workflowInstanceHistoryBean.selectGenericWF(wfInstance.genericWorkflow)}"
+                                 update=":parentTab:formCustomerAccount:childTab:wfHistoryDetails"
+                     			 process="@this" />
+	                  </p:column>
 	            </p:dataTable>
 		  </p:fieldset>
 		  
