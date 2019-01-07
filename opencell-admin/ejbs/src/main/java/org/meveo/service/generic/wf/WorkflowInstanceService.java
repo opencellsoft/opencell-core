@@ -20,6 +20,7 @@ package org.meveo.service.generic.wf;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -29,6 +30,8 @@ import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.service.base.PersistenceService;
+
+import com.google.common.collect.Maps;
 
 @Stateless
 public class WorkflowInstanceService extends PersistenceService<WorkflowInstance> {
@@ -57,7 +60,16 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
         }
 
         wfInstance.setWfStatus(wfStatus);
-        
+
         update(wfInstance);
+    }
+
+    public List<WorkflowInstance> findByEntityInstanceCode(String entityInstanceCode) {
+
+        Map<String, Object> params = Maps.newHashMap();
+        String query = "From WorkflowInstance where entityInstanceCode = :entityInstanceCode";
+        params.put("entityInstanceCode", entityInstanceCode);
+
+        return (List<WorkflowInstance>) executeSelectQuery(query, params);
     }
 }
