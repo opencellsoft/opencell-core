@@ -937,6 +937,10 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_dunning_document_sequence" />
             </column>
             <column name="version" type="int4" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_dunning_document_code"/>
+            </column>
+            <column name="description" type="varchar(255)" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
