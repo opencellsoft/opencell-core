@@ -24,15 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -59,6 +52,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
@@ -173,10 +167,58 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             log.warn("billingRun is null");
         } else {
             filters.put("billingRun", br);
+            configureFilters();
             return getLazyDataModel();
         }
 
         return null;
+    }
+
+    /**
+     * Configure filters
+     */
+    private void configureFilters() {
+        if (filters.containsKey("billingAccount")) {
+            Object billingAccounts = filters.get("billingAccount");
+            if (isNullOrEmpty(billingAccounts)) {
+                filters.remove("billingAccount");
+            } else {
+                if (billingAccounts instanceof Object[]) {
+                    List<BillingAccount> baList = new ArrayList<>();
+                    for (Object ba : (Object[]) billingAccounts) {
+                        baList.add((BillingAccount) ba);
+                    }
+                    filters.put("billingAccount", baList);
+                }
+
+            }
+        }
+        if (filters.containsKey("billingAccount.description")) {
+            Object billingAccountDescription = filters.get("billingAccount.description");
+            filters.put(PersistenceService.SEARCH_WILDCARD_OR_IGNORE_CAS + " billingAccount.description", billingAccountDescription);
+            filters.remove("billingAccount.description");
+        }
+
+    }
+
+    /**
+     * @param billingAccounts a billing accounts list
+     * @return return true if BillingAccounts list is null or empty
+     */
+    private boolean isNullOrEmpty(Object billingAccounts) {
+        if (billingAccounts == null)
+            return true;
+        if (billingAccounts instanceof List && ((List) billingAccounts).isEmpty())
+            return true;
+        return false;
+    }
+
+    /**
+     * @param br a Billing run
+     * @return a list of BillingAccounts
+     */
+    public List<BillingAccount> getBillingAccounts(BillingRun br) {
+        return br.getBillableBillingAccounts();
     }
 
     @Override
