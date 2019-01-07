@@ -435,7 +435,7 @@
     </changeSet>
 
     <changeSet id="#3705_20181019 - Migrate discount plan from ba to new table" author="EdwardPLegaspi" dbms="postgresql">
-        <sql>INSERT INTO billing_discount_plan (billing_account_id, discount_plan_id) SELECT id, discount_plan_id FROM billing_billing_account;</sql>
+        <sql>INSERT INTO ${db.schema.adapted}billing_discount_plan (billing_account_id, discount_plan_id) SELECT id, discount_plan_id FROM ${db.schema.adapted}billing_billing_account;</sql>
     </changeSet>
 
     <changeSet id="#3705_20181019 - Migrate discount plan from ba to new table" author="EdwardPLegaspi" dbms="mysql">
@@ -833,10 +833,10 @@
     	
     	<sql>
     		<![CDATA[
-			update cat_price_plan_matrix set total_amount_el=coalesce(rating_el_without_tax, rating_el_with_tax);
-			update cat_price_plan_matrix set total_amount_el_sp=coalesce(rating_el_without_tax_sp, rating_el_with_tax_sp);
-			update cat_price_plan_matrix set minimum_amount_el=coalesce(minimum_amount_without_tax_el, minimum_amount_with_tax_el);
-			update cat_price_plan_matrix set minimum_amount_el_sp=coalesce(minimum_amount_without_tax_el_sp, minimum_amount_with_tax_el_sp);
+			update ${db.schema.adapted}cat_price_plan_matrix set total_amount_el=coalesce(rating_el_without_tax, rating_el_with_tax);
+			update ${db.schema.adapted}cat_price_plan_matrix set total_amount_el_sp=coalesce(rating_el_without_tax_sp, rating_el_with_tax_sp);
+			update ${db.schema.adapted}cat_price_plan_matrix set minimum_amount_el=coalesce(minimum_amount_without_tax_el, minimum_amount_with_tax_el);
+			update ${db.schema.adapted}cat_price_plan_matrix set minimum_amount_el_sp=coalesce(minimum_amount_without_tax_el_sp, minimum_amount_with_tax_el_sp);
 			]]>
     	</sql>
     	
