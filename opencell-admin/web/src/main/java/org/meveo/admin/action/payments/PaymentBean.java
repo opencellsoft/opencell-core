@@ -88,9 +88,9 @@ public class PaymentBean extends CustomFieldBean<Payment> {
 
 
 
-	public LazyDataModel<Payment> getDunningPayments(DunningDocument dc){
-		if (!dc.isTransient()) {
-			filters.put("dunningDocument", dc);
+	public LazyDataModel<Payment> getDunningPayments(DunningDocument dunningDocument){
+		if (!dunningDocument.isTransient()) {
+			filters.put("dunningDocument", dunningDocument);
 			return getLazyDataModel();
 		} else {
 			return null;

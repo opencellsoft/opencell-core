@@ -19,6 +19,7 @@
 package org.meveo.service.payments.impl;
 
 import org.meveo.model.dunning.DunningDocument;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
@@ -30,6 +31,6 @@ import javax.ejb.Stateless;
  * @author mboukayoua
  */
 @Stateless
-public class DunningDocumentService extends PersistenceService<DunningDocument> {
+public class DunningDocumentService extends BusinessService<DunningDocument> {
 
 }

@@ -60,6 +60,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
@@ -272,6 +273,12 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
      */
     @Column(name = "rating_group", length = 50)
     private String ratingGroup;
+
+    /**
+     * List of dunning docs accociated with this subcription
+     */
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    private List<DunningDocument> dunningDocuments;
 
     /**
      * Extra Rated transactions to reach minimum invoice amount per subscription

@@ -2,7 +2,9 @@ package org.meveo.model.dunning;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
@@ -17,7 +19,7 @@ import java.util.List;
 @Table(name="dunning_document")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "dunning_document_seq"), })
-public class DunningDocument extends AuditableEntity {
+public class DunningDocument extends BusinessEntity {
 
     /**
      * Customer account
@@ -25,6 +27,10 @@ public class DunningDocument extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_account_id")
     private CustomerAccount customerAccount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_subscription_id")
+    private Subscription subscription;
 
     /**
      * Unpaid invoices associated to this dunning document
@@ -39,25 +45,20 @@ public class DunningDocument extends AuditableEntity {
     @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.LAZY)
     private List<Payment> payments;
 
-    /**
-     * dunning process events
-     */
-    @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.LAZY)
-    private List<DunningEvent> events;
-
-    /**
-     * Dunning doc status
-     */
-    @Column
-    @Enumerated(EnumType.STRING)
-    private DunningDocStatusEnum status;
-
     public CustomerAccount getCustomerAccount() {
         return customerAccount;
     }
 
     public void setCustomerAccount(CustomerAccount customerAccount) {
         this.customerAccount = customerAccount;
+    }
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
     }
 
     public List<RecordedInvoice> getDueInvoices() {
@@ -74,21 +75,5 @@ public class DunningDocument extends AuditableEntity {
 
     public void setPayments(List<Payment> payments) {
         this.payments = payments;
-    }
-
-    public List<DunningEvent> getEvents() {
-        return events;
-    }
-
-    public void setEvents(List<DunningEvent> events) {
-        this.events = events;
-    }
-
-    public DunningDocStatusEnum getStatus() {
-        return status;
-    }
-
-    public void setStatus(DunningDocStatusEnum status) {
-        this.status = status;
     }
 }

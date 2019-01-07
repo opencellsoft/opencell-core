@@ -121,9 +121,9 @@ public class RecordedInvoiceBean extends CustomFieldBean<RecordedInvoice> {
 		return null;
 	}
 
-	public LazyDataModel<RecordedInvoice> getDueInvoices(DunningDocument dc){
-		if (!dc.isTransient()) {
-			filters.put("customerAccount", dc);
+	public LazyDataModel<RecordedInvoice> getDueInvoices(DunningDocument dunningDocument){
+		if (!dunningDocument.isTransient()) {
+			filters.put("dunningDocument", dunningDocument);
 			return getLazyDataModel();
 		} else {
 			return null;

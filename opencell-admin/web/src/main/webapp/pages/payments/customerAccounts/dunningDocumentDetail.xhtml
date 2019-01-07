@@ -22,12 +22,12 @@
             <hftl:formPanel label="#{messages['dunning.document.panel']}" backingBean="#{dunningDocumentBean}" showFormButtons="false"
                             formId="headerForm" edit="false">
                 <p:tabView id="tabView" activeIndex="#{dunningDocumentBean.activeTab}">
-                    <p:tab title="#{messages['dunning.doument.tab.information']}">
+                    <p:tab title="#{messages['dunning.document.tab.information']}">
                         <p:fieldset legend="header">
                             <h:panelGroup>
-                                <hftl:formField label="#{messages['dunning.document.customer.account']}" field="customerAccount.code"/>
-                                <hftl:formField label="#{messages['dunning.document.created']}" field="auditable.created"/>
-                                <hftl:formField label="#{messages['dunning.document.updated']}" field="auditable.updated"/>
+                                <hftl:formField label="#{messages['dunning.document.customer.account']}" field="customerAccount" valueLabelField="code"/>
+                                <hftl:formField label="#{messages['dunning.document.created']}" field="auditable" valueLabelField="created"/>
+                                <hftl:formField label="#{messages['dunning.document.updated']}" field="auditable" valueLabelField="updated"/>
                                 <hftl:formField label="#{messages['dunning.document.statut']}" field="statut" />
                             </h:panelGroup>
                         </p:fieldset>

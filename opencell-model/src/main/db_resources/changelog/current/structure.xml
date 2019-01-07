@@ -946,28 +946,11 @@
             <column name="customer_account_id" type="bigint" >
                 <constraints nullable="false" foreignKeyName="fk_dunning_document_ca" references="ar_customer_account(id)"/>
             </column>
-            <column name="status" type="varchar(100)" />
+            <column name="billing_subscription_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_dunning_document_subscription" references="billing_subscription(id)"/>
+            </column>
         </createTable>
         <createSequence sequenceName="dunning_document_seq"/>
-        <createTable tableName="dunning_event">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_dunning_event_sequence" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="dunning_document_id" type="bigint" >
-                <constraints nullable="false" foreignKeyName="fk_dunning_event_document" references="dunning_document(id)"/>
-            </column>
-            <column name="event_name" type="varchar(100)" />
-            <column name="event_date" type="datetime" />
-            <column name="event_type" type="varchar(100)" />
-        </createTable>
-        <createSequence sequenceName="dunning_event_seq"/>
         <addColumn tableName="ar_account_operation">
             <column name="dunning_document_id" type="bigint">
                 <constraints nullable="true" foreignKeyName="fk_ar_account_operation_dunning_document" references="dunning_document(id)" />
