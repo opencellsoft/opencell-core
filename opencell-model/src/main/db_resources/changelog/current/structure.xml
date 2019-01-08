@@ -1707,7 +1707,7 @@
             ) WHERE seller_id IS NULL;
         ]]>
         </sql>
-        <addNotNullConstraint tableName="billing_invoice" columnName="seller_id"/>
+        <addNotNullConstraint tableName="billing_invoice" columnName="seller_id" columnDataType="BIGINT"/>
     
         <sql><![CDATA[
             UPDATE ${db.schema.adapted}billing_subscription subu SET seller_id = (
@@ -1719,7 +1719,7 @@
             ) WHERE seller_id IS NULL;
         ]]>
         </sql>        
-        <addNotNullConstraint tableName="billing_subscription" columnName="seller_id"/>
+        <addNotNullConstraint tableName="billing_subscription" columnName="seller_id" columnDataType="BIGINT"/>
         
         <sql><![CDATA[
             UPDATE ${db.schema.adapted}billing_product_instance bpiu SET seller_id = (
@@ -1731,7 +1731,7 @@
             ) WHERE seller_id IS NULL;
         ]]>
         </sql>    
-        <addNotNullConstraint tableName="billing_product_instance" columnName="seller_id"/>
+        <addNotNullConstraint tableName="billing_product_instance" columnName="seller_id" columnDataType="BIGINT"/>
               
     </changeSet>
      
@@ -2194,11 +2194,11 @@
     </changeSet>
     
     <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
-    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value"/>
+    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
     	<dropColumn tableName="cat_discount_plan_item">
     		<column name="discount_amount"></column>
     	</dropColumn>
-    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el"/>    	
+    	<renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el" columnDataType="varchar(2000)"/>    	
     </changeSet>
     
     <changeSet id="#3769_20181116 - Refactor discount effectivity dates" author="EdwardPLegaspi">
@@ -2231,8 +2231,8 @@
     <changeSet id="#3792_20181116 - Convert discount tables to CF entity - add constraints" author="EdwardPLegaspi">
     	<sql>UPDATE ${db.schema.adapted}cat_discount_plan SET uuid=concat(code, '_', id)</sql>
     	<sql>UPDATE ${db.schema.adapted}cat_discount_plan_item SET uuid=concat(code, '_', id)</sql>
-    	<addNotNullConstraint tableName="cat_discount_plan" columnName="uuid"/>
-    	<addNotNullConstraint tableName="cat_discount_plan_item" columnName="uuid"/>
+    	<addNotNullConstraint tableName="cat_discount_plan" columnName="uuid" columnDataType="varchar(60)"/>
+    	<addNotNullConstraint tableName="cat_discount_plan_item" columnName="uuid" columnDataType="varchar(60)"/>
     </changeSet>
     <changeSet id="#3799_20181119 - Create discount plan instance table" author="EdwardPLegaspi">    
     	<createTable tableName="billing_discount_plan_instance">
