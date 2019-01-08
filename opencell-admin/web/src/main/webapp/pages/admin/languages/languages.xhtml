@@ -24,7 +24,9 @@
             </p:breadCrumb>
         </h:form>
         <hftl:searchPanel label="#{messages['language.search']}" columns="3"
-                          backingBean="#{languageListBean}">
+                          backingBean="#{languageListBean}"
+                          renderNewButton="#{currentUser.hasRole('superAdministrateur')}">
+                          
             <hftl:searchField label="#{messages['language.code']}"
                               field="languageCode"/>
             <hftl:searchField label="#{messages['language.name']}"
