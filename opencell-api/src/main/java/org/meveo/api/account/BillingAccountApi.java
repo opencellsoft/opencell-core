@@ -61,7 +61,8 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2.X
  **/
 
 @Stateless
@@ -249,15 +250,6 @@ public class BillingAccountApi extends AccountEntityApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-        }
-        if (StringUtils.isBlank(postData.getBillingCycle())) {
-            missingParameters.add("billingCycle");
-        }
-        if (StringUtils.isBlank(postData.getCountry())) {
-            missingParameters.add("country");
-        }
-        if (StringUtils.isBlank(postData.getLanguage())) {
-            missingParameters.add("language");
         }
         if (postData.getElectronicBilling() != null && postData.getElectronicBilling()) {
             if (StringUtils.isBlank(postData.getEmail())) {
