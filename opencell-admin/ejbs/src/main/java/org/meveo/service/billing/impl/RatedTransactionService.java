@@ -1006,16 +1006,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
         }
         // }
+        
+        if (discountPlanItem.getDiscountValueEL() != null) {
+			discountPercent = getDecimalExpression(discountPlanItem.getDiscountValueEL(), userAccount, wallet,
+					invoice, amount);
+			log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
+					discountPercent, amount);
+		}
 
         if (amount != null && !BigDecimal.ZERO.equals(amount)) {            
             BigDecimal discountAmount;
-            if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-				if (discountPlanItem.getDiscountValueEL() != null) {
-					discountPercent = getDecimalExpression(discountPlanItem.getDiscountValueEL(), userAccount, wallet,
-							invoice, amount);
-					log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
-							discountPercent, amount);
-				}
+            if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {		
             	discountAmount = amount.multiply(discountPercent.divide(HUNDRED)).negate().setScale(invoiceRounding, NumberUtils.getRoundingMode(invoiceRoundingMode));
             	
 			} else {
