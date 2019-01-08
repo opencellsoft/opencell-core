@@ -44,6 +44,7 @@ import javax.persistence.TypedQuery;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -69,8 +70,8 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
@@ -988,6 +989,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private void appendDiscountAggregate(UserAccount userAccount, boolean isExonerated, WalletInstance wallet, Invoice invoice, InvoiceSubCategory invoiceSubCat,
             DiscountPlanItem discountPlanItem, Map<String, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isVirtual, BillingRun billingRun) throws BusinessException {
 
+    	int invoiceRounding = appProvider.getInvoiceRounding();
+    	RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
         BillingAccount billingAccount = userAccount.getBillingAccount();
         BigDecimal amount = BigDecimal.ZERO;
         BigDecimal discountPercent = discountPlanItem.getDiscountValue();
@@ -1004,14 +1007,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         // }
 
-        if (amount != null && !BigDecimal.ZERO.equals(amount)) {
-            if (discountPlanItem.getDiscountValueEL() != null) {
-                discountPercent = getDecimalExpression(discountPlanItem.getDiscountValueEL(), userAccount, wallet, invoice, amount);
-				log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
-						discountPercent, amount);
-            }
-            BigDecimal discountAmountWithoutTax = amount.multiply(discountPercent.divide(HUNDRED)).negate();
-            // BigDecimal discountAmountWithoutTax=amount.multiply(discountPlanItem.getPercent().divide(HUNDRED)).negate();
+        if (amount != null && !BigDecimal.ZERO.equals(amount)) {            
+            BigDecimal discountAmount;
+            if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+				if (discountPlanItem.getDiscountValueEL() != null) {
+					discountPercent = getDecimalExpression(discountPlanItem.getDiscountValueEL(), userAccount, wallet,
+							invoice, amount);
+					log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
+							discountPercent, amount);
+				}
+            	discountAmount = amount.multiply(discountPercent.divide(HUNDRED)).negate().setScale(invoiceRounding, NumberUtils.getRoundingMode(invoiceRoundingMode));
+            	
+			} else {
+				discountAmount = discountPlanItem.getDiscountValue().negate().setScale(invoiceRounding, NumberUtils.getRoundingMode(invoiceRoundingMode));
+			}
+            
             List<Tax> taxes = new ArrayList<Tax>();
             for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCat.getInvoiceSubcategoryCountries()) {
                 if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
@@ -1023,38 +1033,40 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 }
             }
             
-            SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
+            SubCategoryInvoiceAgregate discountAggregate = new SubCategoryInvoiceAgregate();
             BigDecimal discountAmountTax = BigDecimal.ZERO;
             if (!isExonerated) {
                 for (Tax tax : taxes) {
-                    BigDecimal amountTax = discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));
+                    BigDecimal amountTax = discountAmount.multiply(tax.getPercent().divide(HUNDRED));
                     discountAmountTax = discountAmountTax.add(amountTax);
-                    invoiceAgregateSubcat.addSubCategoryTax(tax);
+                    discountAggregate.addSubCategoryTax(tax);
                     TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId().toString());
                     if (taxInvoiceAgregate != null) {
                         taxInvoiceAgregate.addAmountTax(amountTax);
-                        taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
+                        taxInvoiceAgregate.addAmountWithoutTax(discountAmount);
                     }
                 }
             }
 
-            BigDecimal discountAmountWithTax = discountAmountWithoutTax.add(discountAmountTax);
+            BigDecimal discountAmountWithTax = discountAmount.add(discountAmountTax);
 
-            invoiceAgregateSubcat.updateAudit(currentUser);
-            invoiceAgregateSubcat.setBillingRun(billingRun);
-            invoiceAgregateSubcat.setInvoice(invoice);
-            invoiceAgregateSubcat.setWallet(userAccount.getWallet());
-            invoiceAgregateSubcat.setAccountingCode(invoiceSubCat.getAccountingCode());
-            fillAgregates(invoiceAgregateSubcat, userAccount);
-            invoiceAgregateSubcat.setAmountWithoutTax(discountAmountWithoutTax);
-            invoiceAgregateSubcat.setAmountWithTax(discountAmountWithTax);
-            invoiceAgregateSubcat.setAmountTax(discountAmountTax);
-            invoiceAgregateSubcat.setInvoiceSubCategory(invoiceSubCat);
+            discountAggregate.updateAudit(currentUser);
+            discountAggregate.setBillingRun(billingRun);
+            discountAggregate.setInvoice(invoice);
+            discountAggregate.setWallet(userAccount.getWallet());
+            discountAggregate.setAccountingCode(invoiceSubCat.getAccountingCode());
+            fillAgregates(discountAggregate, userAccount);
+            discountAggregate.setAmountWithoutTax(discountAmount);
+            discountAggregate.setAmountWithTax(discountAmountWithTax);
+            discountAggregate.setAmountTax(discountAmountTax);
+            discountAggregate.setInvoiceSubCategory(invoiceSubCat);
 
-            invoiceAgregateSubcat.setDiscountAggregate(true);
-            invoiceAgregateSubcat.setDiscountPercent(discountPercent);
-            invoiceAgregateSubcat.setDiscountPlanCode(discountPlanItem.getDiscountPlan().getCode());
-            invoiceAgregateSubcat.setDiscountPlanItemCode(discountPlanItem.getCode());
+            discountAggregate.setDiscountAggregate(true);
+			if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+				discountAggregate.setDiscountPercent(discountPercent);
+			}
+            discountAggregate.setDiscountPlanCode(discountPlanItem.getDiscountPlan().getCode());
+            discountAggregate.setDiscountPlanItemCode(discountPlanItem.getCode());
         }
     }
 
