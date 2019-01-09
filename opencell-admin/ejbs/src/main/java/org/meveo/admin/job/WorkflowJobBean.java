@@ -132,6 +132,13 @@ public class WorkflowJobBean extends BaseJobBean {
         }
     }
     
+    /**
+     * Fetch CF entity reference code by CF code.
+     *
+     * @param jobInstance the job instance
+     * @param cfKey the cf code
+     * @return the CF entity reference code
+     */
     private String fetchCFEntityReferenceCode(JobInstance jobInstance, String cfKey) {
         try {
             EntityReferenceWrapper reference = (EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, cfKey);
@@ -139,33 +146,28 @@ public class WorkflowJobBean extends BaseJobBean {
                 return reference.getCode();
             }
         } catch (Exception e) {
-            log.error("Error on fetchCFEntityReferenceCode : {}", e.getMessage());
+            log.error("Error on fetchCFEntityReferenceCode : ", e);
         } 
         return null;
     }
 
     /**
-     * @param wfType
+     * @param wfType workflow type class name
      * @return A Filter to retrieve all Entities of the given WorkflowType subClass generic type : e.g for DunningWF it will be a filter for all CustomerAccount
      * @throws BusinessException
      */
     private Filter filterByWfType(String wfType) throws BusinessException {
-        Type entityType =  this.getEntityClassByWfType(wfType);
-        try {
-            FilterSelector filterSelector = new FilterSelector();
-            filterSelector.setTargetEntity(entityType.getTypeName());
-            filterSelector.setAlias("e");
-            Filter filter = new Filter();
-            filter.setPrimarySelector(filterSelector);
-
-            return filter;  
-        } catch (Exception e) {
-            throw new BusinessException(String.format("Error on filterByWfType : [%s]", e.getMessage()));
-        }
+        Type entityType = this.getEntityClassByWfType(wfType);
+        FilterSelector filterSelector = new FilterSelector();
+        filterSelector.setTargetEntity(entityType.getTypeName());
+        filterSelector.setAlias("e");
+        Filter filter = new Filter();
+        filter.setPrimarySelector(filterSelector);
+        return filter;
     }
 
     /**
-     * @param wfType
+     * @param wfType workflow type class name
      * @return The SubClass generic type of the given workflow type. e.g : for DunningWF it will return CustomerAccount.class
      * @throws BusinessException
      */
@@ -186,6 +188,12 @@ public class WorkflowJobBean extends BaseJobBean {
         }
     }
 
+    /**
+     * Checks if is not WorkFlow super class.
+     *
+     * @param The class type 
+     * @return true, if is not WF super class
+     */
     private boolean isNotWFSuperClass(Type type) {
         if (!(type instanceof ParameterizedType)) {
             return true;
