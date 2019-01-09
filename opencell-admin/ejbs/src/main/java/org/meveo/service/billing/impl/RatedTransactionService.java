@@ -1051,6 +1051,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             BigDecimal discountAmountWithTax = discountAmount.add(discountAmountTax);
 
+            discountAggregate.setDescription(invoiceSubCat.getDescription());
             discountAggregate.updateAudit(currentUser);
             discountAggregate.setBillingRun(billingRun);
             discountAggregate.setInvoice(invoice);
