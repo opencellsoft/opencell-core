@@ -232,7 +232,7 @@
         <sql>update ${db.schema.adapted}ar_ddrequest_builder set cf_values_accum=cf_values</sql>
         <sql>update ${db.schema.adapted}ar_payment_schedule_tmpl set cf_values_accum=cf_values</sql>
     </changeSet>
-    
+
      <changeSet id="#3841_20181228" author="SaidRamli">
         <addColumn tableName="crm_customer_category">
             <column name="cf_values_accum" type="${type.json}"></column>
@@ -241,7 +241,7 @@
         </addColumn>
         <sql>update ${db.schema.adapted}crm_customer_category set uuid = concat('customer_cat_', id)</sql>
      </changeSet>
-     
+
     <changeSet id="#3464_20180701" author="AndriusKarpavicius">
         <addColumn tableName="cat_usage_charge_template">
             <column name="filter_el_sp" type="varchar(2000)" />
@@ -854,7 +854,7 @@
     		<column name="total_amount_el_sp" type="${type.text}" />
     		<column name="minimum_amount_el_sp" type="${type.text}" />
     	</addColumn>
-    	
+
     	<sql>
     		<![CDATA[
 			update cat_price_plan_matrix set total_amount_el=coalesce(rating_el_without_tax, rating_el_with_tax);
@@ -863,7 +863,7 @@
 			update cat_price_plan_matrix set minimum_amount_el_sp=coalesce(minimum_amount_without_tax_el_sp, minimum_amount_with_tax_el_sp);
 			]]>
     	</sql>
-    	
+
     	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_with_tax"></dropColumn>
     	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_with_tax_sp"></dropColumn>
     	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_without_tax"></dropColumn>
@@ -872,5 +872,12 @@
     	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_without_tax_el_sp"></dropColumn>
     	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_with_tax_el"></dropColumn>
     	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_with_tax_el_sp"></dropColumn>
+    </changeSet>
+    <changeSet id="#3840_27122018" author="abdelkader.bouazza">
+        <addColumn tableName="crm_customer_category">
+            <column name="accounting_code_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_crm_customer_category_accounting_code" referencedTableName="billing_accounting_code"
+                                 baseColumnNames="accounting_code_id" baseTableName="crm_customer_category" referencedColumnNames="id" />
     </changeSet>
 </databaseChangeLog>
