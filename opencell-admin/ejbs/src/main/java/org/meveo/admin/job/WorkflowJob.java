@@ -50,7 +50,7 @@ public class WorkflowJob extends Job {
         filterCF.setDescription("Filter");
         filterCF.setFieldType(CustomFieldTypeEnum.ENTITY);
         filterCF.setEntityClazz(Filter.class.getName());
-        filterCF.setValueRequired(true);
+        filterCF.setValueRequired(false);
         result.put("wfJob_filter", filterCF);
 
         CustomFieldTemplate worklowCF = new CustomFieldTemplate();
