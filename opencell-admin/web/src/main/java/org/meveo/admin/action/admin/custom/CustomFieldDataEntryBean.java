@@ -63,7 +63,10 @@ import org.meveo.service.script.CustomScriptService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.EntityCustomizationUtils;
+import org.meveo.util.view.LazyDataModelWSize;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,7 +135,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @Inject
     protected Messages messages;
-    
+
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -598,7 +601,8 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
 
         cfv.getMapValuesForGUI().add(value);
-
+        cfv.setDatasetForGUI(null);
+        
         entityValueHolder.clearNewValues();
     }
 
@@ -607,9 +611,9 @@ public class CustomFieldDataEntryBean implements Serializable {
      * 
      * @param wildcode A partial entity code match
      * @return A list of entities [partially] matching code
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
-     * @throws ClassNotFoundException 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws ClassNotFoundException
      */
     public List<BusinessEntity> autocompleteEntityForCFV(String wildcode) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         String classname = (String) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get("classname");
@@ -872,8 +876,9 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
 
         cfValue.getMatrixValuesForGUI().add(rowKeysAndValues);
-
-        entityValueHolder.clearNewValues();
+        cfValue.setDatasetForGUI(null);
+        
+        entityValueHolder.clearNewValues();        
     }
 
     /**
@@ -892,10 +897,10 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_ACTION, action.getCode());
-			Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
+            Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
 
             // Display a message accordingly on what is set in result
-			if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
+            if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
                 messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
                 log.info("A key message to show after entity custom action execution (RESULT_GUI_MESSAGE_KEY) is : {}", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY));
 
@@ -1618,9 +1623,8 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
         return componentId;
     }
-    
-    public boolean hasVisibleTabs(List<GroupedCustomField> children, ICustomFieldEntity entity,
-            CustomFieldValueHolder cfValueHolder) {
+
+    public boolean hasVisibleTabs(List<GroupedCustomField> children, ICustomFieldEntity entity, CustomFieldValueHolder cfValueHolder) {
         for (GroupedCustomField cfTab : children) {
             if (cfTab.hasVisibleCustomFields(entity, cfValueHolder)) {
                 return true;
@@ -1633,7 +1637,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * Get key of ron type.
      * 
      * @param key custom field key
-     * @return the custom field key or null in the error case 
+     * @return the custom field key or null in the error case
      */
     private Object getRonKey(Object key) {
         Object ronkey = key;
@@ -1905,7 +1909,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get the values matrix
-     *  
+     * 
      * @param cft the custom field
      * @param matrixValuesForGUI the matrix values for GUI
      * @param csvLine the csv line
@@ -1991,12 +1995,12 @@ public class CustomFieldDataEntryBean implements Serializable {
 
                     if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST || cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
                         if (!addMapValuesItem(cft, mapValuesForGUI, csvLine)) {
-                            messages.error(new BundleKey("messages", "customFieldTemplate.importFile.fail"), importedLines+1);
+                            messages.error(new BundleKey("messages", "customFieldTemplate.importFile.fail"), importedLines + 1);
                             return;
                         }
                     } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
                         if (!addMatrixValuesItem(cft, matrixValuesForGUI, csvLine)) {
-                            messages.error(new BundleKey("messages", "customFieldTemplate.importFile.fail"), importedLines+1);
+                            messages.error(new BundleKey("messages", "customFieldTemplate.importFile.fail"), importedLines + 1);
                             return;
                         }
                     }
@@ -2022,4 +2026,35 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     }
 
+    @SuppressWarnings("rawtypes")
+    public LazyDataModel getValueDataset(CustomFieldValue cfv, CustomFieldStorageTypeEnum storageType) {
+        return getValueDataset(cfv, storageType, null, false);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public LazyDataModel getValueDataset(CustomFieldValue cfv, CustomFieldStorageTypeEnum storageType, Map<String, Object> inputFilters, boolean forceReload) {
+        if (cfv.getDatasetForGUI() == null || forceReload) {
+
+            LazyDataModel dataset = new LazyDataModelWSize() {
+
+                private static final long serialVersionUID = -5796910936316457322L;
+
+                @Override
+                public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+                    List valueList = storageType == CustomFieldStorageTypeEnum.MATRIX ? cfv.getMatrixValuesForGUI() : cfv.getMapValuesForGUI();
+                    setRowCount(valueList.size());
+
+                    if (getRowCount() > 0) {
+                        int toNr = first + pageSize;
+                        return valueList.subList(first, getRowCount() <= toNr ? getRowCount() : toNr);
+
+                    } else {
+                        return new ArrayList();
+                    }
+                }
+            };
+            cfv.setDatasetForGUI(dataset);
+        }
+        return (LazyDataModel) cfv.getDatasetForGUI();
+    }
 }

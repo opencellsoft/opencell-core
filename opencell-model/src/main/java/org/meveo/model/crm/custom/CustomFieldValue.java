@@ -232,8 +232,17 @@ public class CustomFieldValue implements Serializable, Cloneable {
     @JsonIgnore
     private IReferenceEntity entityReferenceValueForGUI;
 
+    /**
+     * Is it a newly entered period that was not saved to DB yet
+     */
     @JsonIgnore
     protected boolean isNewPeriod = false;
+
+    /**
+     * A lazy dataset of type LazyDataModel for list, map and matrix type value display for data entry in GUI to be used in p:dataTable component
+     */
+    @JsonIgnore
+    private Object datasetForGUI;
 
     /**
      * Custom field value instance
@@ -622,6 +631,20 @@ public class CustomFieldValue implements Serializable, Cloneable {
      */
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    /**
+     * @return A lazy dataset of type LazyDataModel for list, map and matrix type value display for data entry in GUI to be used in p:dataTable component
+     */
+    public Object getDatasetForGUI() {
+        return datasetForGUI;
+    }
+
+    /**
+     * @param datasetForGUI A lazy dataset of type LazyDataModel for list, map and matrix type value display for data entry in GUI to be used in p:dataTable component
+     */
+    public void setDatasetForGUI(Object datasetForGUI) {
+        this.datasetForGUI = datasetForGUI;
     }
 
     /**
