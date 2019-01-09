@@ -6,7 +6,7 @@
 		<groupId>com.opencellsoft</groupId>
 		<artifactId>opencell</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>5.3.0</version>
+		<version>6.0.0</version>
 	</parent>
 	<artifactId>opencell-tmforum</artifactId>
 	<name>Opencell tmforum API</name>

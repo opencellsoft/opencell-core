@@ -4,7 +4,7 @@
 	<groupId>info.opencell.tests</groupId>
 	<artifactId>opencelltests</artifactId>
 	<name>Opencell tests</name>
-	<version>5.3.0</version>
+	<version>6.0.0</version>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>eviwarePluginRepository</id>
@@ -44,7 +44,7 @@
 			<plugin>
 				<groupId>com.smartbear.soapui</groupId>
 				<artifactId>soapui-maven-plugin</artifactId>
-				<version>5.3.0</version>
+				<version>6.0.0</version>
 				 <configuration>
                             <outputFolder>${basedir}/target/surefire-reports/</outputFolder>
 							<junitReport>true</junitReport>
@@ -125,7 +125,7 @@
 					<dependency>
 						<groupId>com.smartbear.soapui</groupId>
 						<artifactId>soapui</artifactId>
-						<version>5.3.0</version>
+						<version>6.0.0</version>
 						<exclusions>
 							<exclusion>
 								<groupId>javafx</groupId>
