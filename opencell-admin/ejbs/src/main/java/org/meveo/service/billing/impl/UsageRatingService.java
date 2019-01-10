@@ -380,11 +380,6 @@ public class UsageRatingService implements Serializable {
             if (edr.getQuantity().compareTo(deducedQuantity) == 0) {
                 stopEDRRating = true;
                 stopAfterApplication = true;
-
-            } else {
-                if (edr.getQuantity().compareTo(deducedQuantity) == 0) {
-                    stopEDRRating = true;
-                }
             }
 
         } else {
