@@ -4478,16 +4478,6 @@
             <column name="name" value="sc-module-myusers-menu" />
             <column name="permission" value="sc-module-myusers-menu" />
         </insert>
-        <insert tableName="adm_permission">
-            <column name="id" valueNumeric="-108"/>
-            <column name="name" value="useJob"/>
-            <column name="permission" value="useJob"/>
-        </insert>
-        <insert tableName="adm_permission">
-            <column name="id" valueNumeric="-109"/>
-            <column name="name" value="createJob"/>
-            <column name="permission" value="createJob"/>
-        </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-calendarDays">
         <insert tableName="cat_day_in_year">

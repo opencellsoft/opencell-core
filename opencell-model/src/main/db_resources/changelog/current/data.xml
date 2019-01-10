@@ -127,4 +127,16 @@
 	<sql>update ${db.schema.adapted}ar_ddrequest_builder set payment_level ='AO'</sql>
 
 	</changeSet>
+    <changeSet id="#3908_20191001" author="HORRI KHALID">
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-108"/>
+            <column name="name" value="useJob"/>
+            <column name="permission" value="useJob"/>
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-109"/>
+            <column name="name" value="createJob"/>
+            <column name="permission" value="createJob"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>
