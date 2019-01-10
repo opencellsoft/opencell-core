@@ -2095,6 +2095,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             discount.setAttribute("discountPlanItemCode", subCategoryInvoiceAgregate.getDiscountPlanItemCode());
             discount.setAttribute("invoiceSubCategoryCode", subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode());
             discount.setAttribute("discountAmountWithoutTax", roundToString(subCategoryInvoiceAgregate.getAmountWithoutTax(), rounding, roundingMode) + "");
+            discount.setAttribute("discountAmountWithTax", roundToString(subCategoryInvoiceAgregate.getAmountWithTax(), rounding, roundingMode) + "");
             discount.setAttribute("discountPercent", roundToString(subCategoryInvoiceAgregate.getDiscountPercent(), rounding, roundingMode) + "");
             discounts.appendChild(discount);
         }
