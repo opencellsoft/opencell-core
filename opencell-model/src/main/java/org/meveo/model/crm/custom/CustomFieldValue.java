@@ -1525,4 +1525,25 @@ public class CustomFieldValue implements Serializable, Cloneable {
             return this;
         }
     }
+
+    /**
+     * Check if List/Map/Matrix type field is excessive in size
+     * 
+     * @return True if List or Map value exceeds 20K rows
+     */
+    @SuppressWarnings("rawtypes")
+    public boolean isExcessiveInSize() {
+        List listValue = getListValue();
+
+        if (listValue != null && listValue.size() > 20000) {
+            return true;
+        }
+
+        Map mapValue = getMapValue();
+        if (mapValue != null && mapValue.size() > 20000) {
+            return true;
+        }
+
+        return false;
+    }
 }

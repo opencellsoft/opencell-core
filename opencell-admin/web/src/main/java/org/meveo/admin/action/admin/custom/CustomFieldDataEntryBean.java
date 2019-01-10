@@ -47,7 +47,6 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValueHolder;
-import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -255,16 +254,15 @@ public class CustomFieldDataEntryBean implements Serializable {
         GroupedCustomField groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
         groupedFieldTemplates.put(entity.getUuid(), groupedCustomField);
 
-        Map<String, List<CustomFieldValue>> cfValuesByCode = null;
+        Map<String, List<CustomFieldValue>> cfValuesByCode = new HashMap<>();
         // Get custom field instances mapped by a CFT code if entity has any field defined
         // if (!((IEntity) entity).isTransient() && customFieldTemplates != null && customFieldTemplates.size() > 0) {
         // No longer checking for isTransient as for offer new version creation, CFs are duplicated, but entity is not persisted, offering to review it in GUI before saving it.
-        if (customFieldTemplates != null && customFieldTemplates.size() > 0 && ((ICustomFieldEntity) entity).getCfValues() != null) {
-            CustomFieldValues customFieldValues = SerializationUtils.clone(((ICustomFieldEntity) entity).getCfValues()); // need to clone the value, to be able to track if value
-                                                                                                                         // changes
-            cfValuesByCode = customFieldValues.getValuesByCode();
+        if (customFieldTemplates != null && customFieldTemplates.size() > 0 && ((ICustomFieldEntity) entity).getCfValues() != null
+                && ((ICustomFieldEntity) entity).getCfValues().getValuesByCode() != null) {
+
+            cfValuesByCode = prepareCFIForGUI(customFieldTemplates, ((ICustomFieldEntity) entity).getCfValues().getValuesByCode(), entity);
         }
-        cfValuesByCode = prepareCFIForGUI(customFieldTemplates, cfValuesByCode, entity);
         CustomFieldValueHolder entityFieldsValues = new CustomFieldValueHolder(customFieldTemplates, cfValuesByCode, entity);
         fieldsValues.put(entity.getUuid(), entityFieldsValues);
     }
@@ -296,7 +294,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Prepare custom field values for GUI - instantiate fields with default values, deserialize values for GUI
+     * Prepare custom field values for GUI - instantiate fields with default values, deserialize values for GUI.
      * 
      * @param customFieldTemplates Custom field templates applicable for the entity, mapped by a custom CFT code
      * @param cfValuesByCode Custom field values mapped by a CFT code
@@ -310,7 +308,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         Map<String, List<CustomFieldValue>> cfisPrepared = new HashMap<>();
 
         // For each template, check if custom field value exists, and instantiate one if needed with a default value
-        for (CustomFieldTemplate cft : customFieldTemplates.values()) {
+        cftLoop: for (CustomFieldTemplate cft : customFieldTemplates.values()) {
 
             List<CustomFieldValue> cfValuesByTemplate = null;
             if (cfValuesByCode != null) {
@@ -331,14 +329,31 @@ public class CustomFieldDataEntryBean implements Serializable {
                         cfValue.setValue(inheritedValue);
                     }
                 }
-
                 cfValuesByTemplate.add(cfValue);
             }
 
-            // Deserialize values if applicable
-            for (CustomFieldValue cfValue : cfValuesByTemplate) {
-                deserializeForGUI(cfValue, cft);
+            // Mark field as not visible in GUI if its a List/Map/Matrix and contains a large amount of data and ignore its value, as exiting value in entity will be used during
+            // saving process
+            if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST || cft.getStorageType() == CustomFieldStorageTypeEnum.MAP
+                    || cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+                cft.setHideInGUI(false);
+
+                for (CustomFieldValue cfValue : cfValuesByTemplate) {
+                    if (cfValue.isExcessiveInSize()) {
+                        cft.setHideInGUI(true);
+                        continue cftLoop;
+                    }
+                }
             }
+
+            // Clone values and deserialize values for GUI if applicable
+            List<CustomFieldValue> cfValuesByTemplateCloned = new ArrayList<>();
+            for (CustomFieldValue cfValue : cfValuesByTemplate) {
+                cfValue = SerializationUtils.clone(cfValue);
+                deserializeForGUI(cfValue, cft);
+                cfValuesByTemplateCloned.add(cfValue);
+            }
+            cfValuesByTemplate = cfValuesByTemplateCloned;
 
             // Make sure that only one value is retrieved
             if (!cft.isVersionable()) {
@@ -602,7 +617,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         cfv.getMapValuesForGUI().add(value);
         cfv.setDatasetForGUI(null);
-        
+
         entityValueHolder.clearNewValues();
     }
 
@@ -634,8 +649,8 @@ public class CustomFieldDataEntryBean implements Serializable {
         for (CustomFieldTemplate cft : groupedFieldTemplates.get(entity.getUuid()).getFields()) {
 
             // Ignore the validation on a field when creating entity and CFT.hideOnNew=true or editing entity and CFT.allowEdit=false or when CFT.applicableOnEL expression
-            // evaluates to false
-            if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
+            // evaluates to false or when field is hidden in GUI CFT.hiddenInGUI=true
+            if (cft.isDisabled() || !cft.isValueRequired() || cft.isHideInGUI() || (isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
                     || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
                 continue;
 
@@ -877,8 +892,8 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         cfValue.getMatrixValuesForGUI().add(rowKeysAndValues);
         cfValue.setDatasetForGUI(null);
-        
-        entityValueHolder.clearNewValues();        
+
+        entityValueHolder.clearNewValues();
     }
 
     /**
@@ -1004,8 +1019,8 @@ public class CustomFieldDataEntryBean implements Serializable {
         if (groupedCustomFields != null) {
             for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
 
-                // Do not update existing CF value if it is not updatable
-                if (!isNewEntity && !cft.isAllowEdit()) {
+                // Do not update existing CF value if it is not updatable or was hidden in GUI
+                if ((!isNewEntity && !cft.isAllowEdit()) || cft.isHideInGUI()) {
 
                     if (entity != null && entity.getCfValues() != null) {
                         List<CustomFieldValue> previousCfValues = entity.getCfValues().getValuesByCode().get(cft.getCode());
