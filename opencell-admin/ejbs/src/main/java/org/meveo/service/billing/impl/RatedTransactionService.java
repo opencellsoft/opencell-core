@@ -665,7 +665,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             }
 
-            appendInvoiceDiscountAggregates(userAccount, isExonerated, invoice, taxInvoiceAgregateMap, isVirtual);
+            appendInvoiceDiscountAggregates(userAccount, isExonerated, invoice, taxInvoiceAgregateMap, isVirtual, billingRun);
         }
 
         BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
@@ -913,7 +913,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param isVirtual true/false
      */
     private void appendInvoiceDiscountAggregates(UserAccount userAccount, boolean isExonerated, Invoice invoice, Map<String, TaxInvoiceAgregate> taxInvoiceAgregateMap,
-            boolean isVirtual) {
+            boolean isVirtual, BillingRun billingRun) {
         try {
             BillingAccount billingAccount = userAccount.getBillingAccount();
 			if (billingAccount.getDiscountPlanInstances() != null
@@ -933,7 +933,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 								if (discountPlanItem.getInvoiceSubCategory() != null) {
 									appendDiscountAggregate(userAccount, isExonerated, userAccount.getWallet(), invoice,
 											discountPlanItem.getInvoiceSubCategory(), discountPlanItem,
-											taxInvoiceAgregateMap, isVirtual, null);
+											taxInvoiceAgregateMap, isVirtual, billingRun);
 
 									// Apply discount to all subcategories of a particular invoice category
 								} else if (discountPlanItem.getInvoiceCategory() != null) {
@@ -941,7 +941,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 									for (InvoiceSubCategory invoiceSubCat : invoiceCat.getInvoiceSubCategories()) {
 										appendDiscountAggregate(userAccount, isExonerated, userAccount.getWallet(),
 												invoice, invoiceSubCat, discountPlanItem, taxInvoiceAgregateMap,
-												isVirtual, null);
+												isVirtual, billingRun);
 									}
 
 									// Apply discount to all subcategories in the invoice
@@ -961,7 +961,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 									for (InvoiceSubCategory invoiceSubCategory : allSubcategories) {
 										appendDiscountAggregate(userAccount, isExonerated, userAccount.getWallet(),
 												invoice, invoiceSubCategory, discountPlanItem, taxInvoiceAgregateMap,
-												isVirtual, null);
+												isVirtual, billingRun);
 									}
 								}
 							}
