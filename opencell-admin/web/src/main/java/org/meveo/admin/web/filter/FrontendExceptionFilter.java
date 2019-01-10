@@ -54,7 +54,7 @@ public class FrontendExceptionFilter extends HttpFilter {
     public void doFilter(HttpServletRequest request, HttpServletResponse response, HttpSession session, FilterChain chain) throws ServletException, IOException {
         try {
             chain.doFilter(request, response);
-        } catch (FileNotFoundException ignore) {
+        } catch (IOException ignore) {
             logger.log(FINE, "Ignoring thrown exception; file not found should be interpreted as 404.", ignore);
             response.sendError(HttpServletResponse.SC_NOT_FOUND, request.getRequestURI());
         } catch (ServletException ignore) {
