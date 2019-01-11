@@ -318,7 +318,10 @@ public class DefaultObserver {
             log.debug("Defaut observer : History is enabled for generic workflow", genericWorkflow.getCode());
 
             WorkflowInstanceHistory lastWfHistory = workflowInstanceHistoryService.getLastWFHistory(trakedWFInstance);
-            WFStatus wfStatusFrom = lastWfHistory.getWfStatusTo();
+            WFStatus wfStatusFrom = null;
+            if (lastWfHistory != null) {
+                wfStatusFrom = lastWfHistory.getWfStatusTo();
+            }
             WFStatus wfStatusTo = trakedWFInstance.getWfStatus();
             if (wfStatusFrom != wfStatusTo || !wfStatusFrom.equals(wfStatusTo)) {
                 WorkflowInstanceHistory wfHistory = new WorkflowInstanceHistory();
