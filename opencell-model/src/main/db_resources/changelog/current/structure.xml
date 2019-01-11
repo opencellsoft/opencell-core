@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+        <changeSet id="#3773_20181130" author="abdelkader.bouazza">
+            <modifyDataType tableName="dwh_report_extract" columnName="sql_query" newDataType="${type.text}"/>
+            <modifyDataType tableName="dwh_report_extract" columnName="sql_query" newDataType="${type.text}"/>
+
+            <modifyDataType tableName="rating_edr" columnName="reject_reason" newDataType="${type.text}"/>
+
+            <modifyDataType tableName="cat_triggered_edr" columnName="param_1_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_triggered_edr" columnName="param_2_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_triggered_edr" columnName="param_3_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_triggered_edr" columnName="param_4_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_triggered_edr" columnName="quantity_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_triggered_edr" columnName="subscription_el" newDataType="${type.text}"/>
+
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="invoice_subcategory_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="minimum_amount_with_tax_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="minimum_amount_without_tax_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="rating_el_with_tax" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="wo_description_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="amount_with_tax_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="amount_without_tax_el" newDataType="${type.text}"/>
+
+            <modifyDataType tableName="ar_ddrequest_lot" columnName="file_name" newDataType="${type.text}"/>
+            <modifyDataType tableName="ar_account_operation" columnName="bank_lot" newDataType="${type.text}"/>
+        </changeSet>
 
         <changeSet id="#3680 - Extend FtpAdapterJob to support file export and SFTP-P" author="mboukayoua" dbms="postgresql">
         <update tableName="meveo_job_instance">
@@ -208,7 +232,7 @@
         <sql>update ${db.schema.adapted}ar_ddrequest_builder set cf_values_accum=cf_values</sql>
         <sql>update ${db.schema.adapted}ar_payment_schedule_tmpl set cf_values_accum=cf_values</sql>
     </changeSet>
-    
+
      <changeSet id="#3841_20181228" author="SaidRamli">
         <addColumn tableName="crm_customer_category">
             <column name="cf_values_accum" type="${type.json}"></column>
@@ -217,7 +241,7 @@
         </addColumn>
         <sql>update ${db.schema.adapted}crm_customer_category set uuid = concat('customer_cat_', id)</sql>
      </changeSet>
-     
+
     <changeSet id="#3464_20180701" author="AndriusKarpavicius">
         <addColumn tableName="cat_usage_charge_template">
             <column name="filter_el_sp" type="varchar(2000)" />
@@ -830,7 +854,7 @@
     		<column name="total_amount_el_sp" type="${type.text}" />
     		<column name="minimum_amount_el_sp" type="${type.text}" />
     	</addColumn>
-    	
+
     	<sql>
     		<![CDATA[
 			update ${db.schema.adapted}cat_price_plan_matrix set total_amount_el=coalesce(rating_el_without_tax, rating_el_with_tax);
@@ -839,7 +863,7 @@
 			update ${db.schema.adapted}cat_price_plan_matrix set minimum_amount_el_sp=coalesce(minimum_amount_without_tax_el_sp, minimum_amount_with_tax_el_sp);
 			]]>
     	</sql>
-    	
+
     	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_with_tax"></dropColumn>
     	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_with_tax_sp"></dropColumn>
     	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_without_tax"></dropColumn>
@@ -848,5 +872,12 @@
     	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_without_tax_el_sp"></dropColumn>
     	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_with_tax_el"></dropColumn>
     	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_with_tax_el_sp"></dropColumn>
+    </changeSet>
+    <changeSet id="#3840_27122018" author="abdelkader.bouazza">
+        <addColumn tableName="crm_customer_category">
+            <column name="accounting_code_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_crm_customer_category_accounting_code" referencedTableName="billing_accounting_code"
+                                 baseColumnNames="accounting_code_id" baseTableName="crm_customer_category" referencedColumnNames="id" />
     </changeSet>
 </databaseChangeLog>

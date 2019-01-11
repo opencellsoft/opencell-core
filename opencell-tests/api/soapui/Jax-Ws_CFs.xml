@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -22730,7 +22730,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="e74a27a2-2a15-4ea1-8570-709bafa2af97" name="XPath Match">
               <con:configuration>
                 <path>//customField[@code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" description="String Versionable parent inheritance required" valuePeriodStartDate="2018-*-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="20*-*-01T00:00:00${#Project#timezone2}">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" description="String Versionable parent inheritance required" valuePeriodStartDate="*" valuePeriodEndDate="*">
                      <fieldType>STRING</fieldType>
                      <stringValue>b</stringValue>
                   </customField>]]></content>
@@ -22742,7 +22742,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="c553c910-997b-4dcb-839c-93a45ac2e714" name="XPath Match 1">
               <con:configuration>
                 <path>//customField[@code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED" description="String map versionable parent inheritance required" valuePeriodStartDate="20*-*-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="20*-*-01T00:00:00${#Project#timezone2}">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED" description="String map versionable parent inheritance required" valuePeriodStartDate="*" valuePeriodEndDate="*">
                      <fieldType>STRING</fieldType>
                      <mapValue>
                         <entry>
@@ -22761,7 +22761,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="0b8d5a3c-9fbf-49a1-a953-6c51d7cf85d8" name="XPath Match 2">
               <con:configuration>
                 <path>//customField[@code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED"]</path>
-                <content><![CDATA[<customField code="CF_BASE_STRING_LIST_V_PI_REQUIRED" description="String List versionable parent inheritance required" valuePeriodStartDate="20*-*-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="20*-*-01T00:00:00${#Project#timezone2}">
+                <content><![CDATA[<customField code="CF_BASE_STRING_LIST_V_PI_REQUIRED" description="String List versionable parent inheritance required" valuePeriodStartDate="*" valuePeriodEndDate="*">
                      <fieldType>STRING</fieldType>
                      <listValue>
                         <value>
@@ -22777,7 +22777,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="36855ad6-a6ff-42de-bdd1-935a7ae239e5" name="XPath Match 3">
               <con:configuration>
                 <path>//customField[@code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED"]</path>
-                <content><![CDATA[<customField code="CF_BASE_STRING_MATRIX_V_PI_REQUIRED" description="String matrix valueRequired parent inheritance required" valuePeriodStartDate="20*-*-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="20*-*-01T00:00:00${#Project#timezone2}">
+                <content><![CDATA[<customField code="CF_BASE_STRING_MATRIX_V_PI_REQUIRED" description="String matrix valueRequired parent inheritance required" valuePeriodStartDate="*" valuePeriodEndDate="*">
                      <fieldType>STRING</fieldType>
                      <mapValue>
                         <entry>
@@ -39752,7 +39752,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
   </con:testSuite>
-  <con:testSuite id="3daa77f2-7212-4c47-8897-e17970c6a5da" name="CF value accumulation">
+  <con:testSuite id="3daa77f2-7212-4c47-8897-e17970c6a5da" name="CF value accumulation - disabled as accumulateCF is turned off for now" disabled="true">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="6e08d491-4332-4226-933c-e1cf59b572ed" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Setup data" searchProperties="true">
