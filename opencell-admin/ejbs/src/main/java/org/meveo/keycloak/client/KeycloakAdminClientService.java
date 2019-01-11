@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.http.HttpStatus;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -34,6 +33,7 @@ import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -80,10 +80,6 @@ public class KeycloakAdminClientService {
             if (!StringUtils.isBlank(clientSecret)) {
                 keycloakAdminClientConfig.setClientSecret(clientSecret);
             }
-            String proxyUrl = System.getProperty("opencell.keycloak.proxy-url");
-            if (!StringUtils.isBlank(proxyUrl)) {
-                keycloakAdminClientConfig.setProxyUrl(proxyUrl);
-            }
 
             log.debug("Found keycloak configuration: {}", keycloakAdminClientConfig);
         } catch (Exception e) {
@@ -108,10 +104,7 @@ public class KeycloakAdminClientService {
                 .clientSecret(keycloakAdminClientConfig.getClientSecret()) //
                 .authorization(session.getTokenString()); //
                 
-        if(!StringUtils.isBlank(keycloakAdminClientConfig.getProxyUrl())) {
-            keycloakBuilder.resteasyClient(new ResteasyClientBuilder().defaultProxy(keycloakAdminClientConfig.getProxyUrl())
-                .connectionPoolSize(20).build());
-        }
+            keycloakBuilder.resteasyClient(new ResteasyClientProxyBuilder().connectionPoolSize(20).build());
         
         return keycloakBuilder.build();
     }
