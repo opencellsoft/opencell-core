@@ -10,6 +10,8 @@ public class KeycloakAdminClientConfig {
     private String realm;
     private String clientId;
     private String clientSecret;
+    private String proxyUrl;
+    
 
     public String getServerUrl() {
         return serverUrl;
@@ -42,10 +44,18 @@ public class KeycloakAdminClientConfig {
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
     }
+    
+    public String getProxyUrl() {
+        return proxyUrl;
+    }
+
+    public void setProxyUrl(String proxyUrl) {
+        this.proxyUrl = proxyUrl;
+    }
 
     @Override
     public String toString() {
-        return "KeycloakAdminClientConfig [serverUrl=" + serverUrl + ", realm=" + realm + ", clientId=" + clientId + ", clientSecret=" + clientSecret + "]";
+        return "KeycloakAdminClientConfig [serverUrl=" + serverUrl + ", realm=" + realm + ", clientId=" + clientId + ", clientSecret=" + clientSecret + ", proxyUrl=" + proxyUrl + "]";
     }
 
 }

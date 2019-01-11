@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.http.HttpStatus;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -79,6 +80,10 @@ public class KeycloakAdminClientService {
             if (!StringUtils.isBlank(clientSecret)) {
                 keycloakAdminClientConfig.setClientSecret(clientSecret);
             }
+            String proxyUrl = System.getProperty("opencell.keycloak.proxy-url");
+            if (!StringUtils.isBlank(proxyUrl)) {
+                keycloakAdminClientConfig.setProxyUrl(proxyUrl);
+            }
 
             log.debug("Found keycloak configuration: {}", keycloakAdminClientConfig);
         } catch (Exception e) {
@@ -94,16 +99,21 @@ public class KeycloakAdminClientService {
      * @return instance of Keycloak.
      */
     private Keycloak getKeycloakClient(KeycloakSecurityContext session, KeycloakAdminClientConfig keycloakAdminClientConfig) {
-        Keycloak keycloak = KeycloakBuilder.builder() //
-            .serverUrl(keycloakAdminClientConfig.getServerUrl()) //
-            .realm(keycloakAdminClientConfig.getRealm()) //
-            .grantType(OAuth2Constants.CLIENT_CREDENTIALS) //
-            .clientId(keycloakAdminClientConfig.getClientId()) //
-            .clientSecret(keycloakAdminClientConfig.getClientSecret()) //
-            .authorization(session.getTokenString()) //
-            .build();
-
-        return keycloak;
+        
+        KeycloakBuilder keycloakBuilder = KeycloakBuilder.builder() //
+                .serverUrl(keycloakAdminClientConfig.getServerUrl()) //
+                .realm(keycloakAdminClientConfig.getRealm()) //
+                .grantType(OAuth2Constants.CLIENT_CREDENTIALS) //
+                .clientId(keycloakAdminClientConfig.getClientId()) //
+                .clientSecret(keycloakAdminClientConfig.getClientSecret()) //
+                .authorization(session.getTokenString()); //
+                
+        if(!StringUtils.isBlank(keycloakAdminClientConfig.getProxyUrl())) {
+            keycloakBuilder.resteasyClient(new ResteasyClientBuilder().defaultProxy(keycloakAdminClientConfig.getProxyUrl())
+                .connectionPoolSize(20).build());
+        }
+        
+        return keycloakBuilder.build();
     }
 
     /**
