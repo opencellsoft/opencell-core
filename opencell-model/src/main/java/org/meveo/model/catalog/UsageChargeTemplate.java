@@ -34,12 +34,15 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.NumberUtils;
 
 /**
  * Usage charge template
  * 
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
+ * @lastModifiedDate 7.0
  */
 @Entity
 @Table(name = "cat_usage_charge_template")
@@ -118,6 +121,20 @@ public class UsageChargeTemplate extends ChargeTemplate {
      */
     @Transient
     private int previousPriority = 1;
+    
+    /**
+     * If true and (charge has no counter associated) then the next matching charge with the full quantity of the EDR.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "trigger_next_charge")
+    protected Boolean triggerNextCharge = false;
+    
+    /**
+     * Overrides the triggerNextCharge switch.
+     */
+    @Column(name = "trigger_next_charge_el", length = 2000)
+    @Size(max = 2000)
+    protected String triggerNextChargeEL;
 
     public String getFilterParam1() {
         return filterParam1;
@@ -226,4 +243,20 @@ public class UsageChargeTemplate extends ChargeTemplate {
     public boolean isPriorityChanged() {
         return priority != previousPriority;
     }
+
+	public Boolean getTriggerNextCharge() {
+		return triggerNextCharge;
+	}
+
+	public void setTriggerNextCharge(Boolean triggerNextCharge) {
+		this.triggerNextCharge = triggerNextCharge;
+	}
+
+	public String getTriggerNextChargeEL() {
+		return triggerNextChargeEL;
+	}
+
+	public void setTriggerNextChargeEL(String triggerNextChargeEL) {
+		this.triggerNextChargeEL = triggerNextChargeEL;
+	}
 }

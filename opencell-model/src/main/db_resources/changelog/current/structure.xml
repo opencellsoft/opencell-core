@@ -880,4 +880,11 @@
         <addForeignKeyConstraint constraintName="fk_crm_customer_category_accounting_code" referencedTableName="billing_accounting_code"
                                  baseColumnNames="accounting_code_id" baseTableName="crm_customer_category" referencedColumnNames="id" />
     </changeSet>
+    
+    <changeSet id="#3842_20190111 - Trigger next charge" author="EdwardPLegaspi">
+        <addColumn tableName="cat_usage_charge_template">
+            <column name="trigger_next_charge" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="trigger_next_charge_el" type="${type.text}"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
