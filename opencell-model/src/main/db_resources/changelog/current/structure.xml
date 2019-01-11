@@ -817,6 +817,7 @@
     <changeSet  id="#3514_20180101" author="hznibar">
 		<createSequence sequenceName="billing_general_ledger_seq" />
 		<createSequence sequenceName="ar_other_transaction_seq" />
+		<createSequence sequenceName="ar_payment_ventilation_seq" />
 		
 		<createTable tableName="billing_general_ledger">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -887,17 +888,39 @@
             <column name="cf_values_accum" type="${type.json}"></column>
 			<column name="general_ledger_id" type="bigint" />
             <column name="accounting_code_id" type="bigint"></column>
-            <column name="ddrequest_item_id" type="bigint"></column>
         </createTable>
     	<addForeignKeyConstraint constraintName="fk_ar_other_transaction_general_ledger" referencedTableName="billing_general_ledger" referencedColumnNames="id" baseTableName="ar_other_transaction" baseColumnNames="general_ledger_id" />
     	<addForeignKeyConstraint constraintName="fk_ar_other_transaction_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_other_transaction" baseColumnNames="accounting_code_id" />
-    	<addForeignKeyConstraint baseColumnNames="ddrequest_item_id" baseTableName="ar_other_transaction" constraintName="fk_ar_other_transaction_ddreq_item" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_ddrequest_item" />
 		
 		<addColumn tableName="crm_seller">
             <column name="general_ledger_id" type="bigint" />
         </addColumn>
         <addForeignKeyConstraint constraintName="fk_crm_seller_general_ledger" referencedTableName="billing_general_ledger" referencedColumnNames="id" baseTableName="crm_seller" baseColumnNames="general_ledger_id" />
+        
+        <createTable tableName="ar_payment_ventilation">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_ventilation_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)" />
+            <column name="ventilation_amount" type="numeric(23, 12)" />
+            <column name="ventilation_date" type="date" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="customer_account_id" type="bigint" />
+            <column name="original_ot_id" type="bigint" />
+            <column name="new_ot_id" type="bigint" />
+            <column name="account_operation_id" type="bigint" />
+        </createTable>
+        <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_customer_account" referencedTableName="ar_customer_account" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="customer_account_id" />
+        <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_other_transaction_origin" referencedTableName="ar_other_transaction" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="original_ot_id" />
+        <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_other_transaction" referencedTableName="ar_other_transaction" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="new_ot_id" />
+        <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_account_operation" referencedTableName="ar_account_operation" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="account_operation_id" />       
+        
     </changeSet>
     
 </databaseChangeLog>

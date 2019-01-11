@@ -1,0 +1,110 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="objectId" value="#{otherTransactionBean.objectId}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:entityPopup id="customerAccountPopup"
+			header="#{messages['customerAccount.popup.header']}"
+			backingBean="#{customerAccountListBean}"
+			searchField1Label="#{messages['customerAccount.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['customerAccount.name']}"
+			searchField2="name"
+			column1Label="#{messages['customerAccount.code']}" column1="code"
+			column2Label="#{messages['customerAccount.name']}" column2="name"
+			selection="#{paymentVentilationBean.entity.customerAccount}"
+			updateField=":formId:customerSelectId :formId:customerSelectId_text">
+		</hftl:entityPopup>
+
+
+		<hftl:formPanel formId="formId"
+			label="#{messages['otherTransaction.selectionCustomerAccount']}"
+			showFormButtons="false" backingBean="#{paymentVentilationBean}"
+			useCustomIdParam="true">
+
+			<hftl:formField
+				label="#{messages['otherTransaction.unMatchingAmount']}"
+				required="true" field="originalOT" childField="unMatchingAmount"
+				displayOneLine="true" componentWidth="100" edit="false"
+				allowEdit="false" converter="bigDecimal4DigitsConverter"
+				disabled="true" />
+
+			<hftl:formField id="customerSelectId"
+				label="#{messages['accountOperation.customerAccount']}"
+				field="customerAccount" valueLabelField="code" required="true"
+				popup="true" popupId="customerAccountPopup" allowEdit="false"
+				displayOneLine="true" componentWidth="100" />
+			<hftl:formField label="#{messages['otherTransaction.amount']}"
+				required="true" field="ventilationAmount" displayOneLine="true"
+				componentWidth="100" />
+			<ui:param name="buttons" value="true" />
+			<ui:define name="buttons">
+				<p:commandButton ajax="false"
+					value="#{messages['paymentVentilation.buttonVentilate']}"
+					action="#{paymentVentilationBean.saveOrUpdate(false)}"/>
+				<p:button value="#{messages['action.back']}"
+					outcome="backToSellerFromOT" includeViewParams="true">
+					<f:param name="cid"
+						value="#{javax.enterprise.context.conversation.id}" />
+				</p:button>
+			</ui:define>
+		</hftl:formPanel>
+		<hftl:dataList backingBean="#{paymentVentilationBean}" edit="#{true}"
+			checkMany="#{false}"
+			dataModel="#{paymentVentilationBean.getPaymentVentilations()}"
+			label="#{messages['paymentVentilation.title']}" disabled="true"
+			deleteManyButton="false" exportToXml="false">
+
+			<p:column width="10%">
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['paymentVentilation.customerAccount']}" />
+				</f:facet>
+				<h:outputText value="#{entity.customerAccount.code}" />
+			</p:column>
+			<p:column>
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['paymentVentilation.ventilationAmount']}" />
+				</f:facet>
+				<h:outputText value="#{entity.ventilationAmount}" />
+			</p:column>
+			<p:column width="10%">
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['paymentVentilation.ventilationDate']}" />
+				</f:facet>
+				<h:outputText value="#{entity.ventilationDate}" />
+			</p:column>
+
+			<!-- 								<hftl:actionsColumn width="15%" renderDeleteLink="true" renderViewLink="false" renderEditLink="false"/> -->
+			<p:column exportable="false" toggleable="false" width="60">
+				<f:facet name="header">
+					<h:outputText value="#{messages['commons.actions']}" />
+				</f:facet>
+				<p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.delete}" name="#{resultsId}doDelete"
+                         update="@form :formId" />
+        <p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash" oncomplete="#{resultsId}doDelete()">
+            <f:setPropertyActionListener target="#{backingBean.entity}" value="#{entity}"/>
+            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert"/>
+		</p:commandButton>
+			</p:column>
+
+
+
+
+
+		</hftl:dataList>
+	</ui:define>
+</ui:composition>

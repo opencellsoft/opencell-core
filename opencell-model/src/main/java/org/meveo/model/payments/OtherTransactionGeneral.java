@@ -8,5 +8,7 @@ import javax.persistence.Entity;
 public class OtherTransactionGeneral extends OtherTransaction {
 
     private static final long serialVersionUID = 1L;
+    
+    
 
 }

@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -31,6 +30,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -305,13 +305,9 @@ public class OtherTransaction extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "billing_account_name", length = 255)
     @Size(max = 255)
     private String billingAccountName;
-
-    /**
-     * DD request item
-     */
-    @ManyToOne(optional = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "ddrequest_item_id")
-    private DDRequestItem ddRequestItem;
+    
+    @OneToOne(mappedBy = "newOT")
+    private PaymentVentilation paymentVentilation;
 
     public Date getDueDate() {
         return dueDate;
@@ -402,9 +398,17 @@ public class OtherTransaction extends AuditableEntity implements ICustomFieldEnt
         this.occDescription = occDescription;
     }
 
+    public PaymentVentilation getPaymentVentilation() {
+        return paymentVentilation;
+    }
+
+    public void setPaymentVentilation(PaymentVentilation paymentVentilation) {
+        this.paymentVentilation = paymentVentilation;
+    }
+
     @Override
     public int hashCode() {
-        return 961 + ("AccountOperation" + occCode).hashCode();
+        return 961 + ("OtherTransaction" + occCode).hashCode();
     }
 
     @Override
@@ -711,20 +715,6 @@ public class OtherTransaction extends AuditableEntity implements ICustomFieldEnt
      */
     public void setBillingAccountName(String billingAccountName) {
         this.billingAccountName = billingAccountName;
-    }
-
-    /**
-     * @return the ddRequestItem
-     */
-    public DDRequestItem getDdRequestItem() {
-        return ddRequestItem;
-    }
-
-    /**
-     * @param ddRequestItem the ddRequestItem to set
-     */
-    public void setDdRequestItem(DDRequestItem ddRequestItem) {
-        this.ddRequestItem = ddRequestItem;
     }
 
     public GeneralLedger getGeneralLedger() {

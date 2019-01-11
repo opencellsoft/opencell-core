@@ -157,7 +157,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<redirect />
 	</navigation-case>
 	<navigation-case>
-		<from-outcome>backToSellerFromOcc</from-outcome>
+		<from-outcome>backToSellerFromOT</from-outcome>
 		<to-view-id>/pages/admin/sellers/sellerDetail.xhtml</to-view-id>
 		<redirect include-view-params="true">
 		    <view-param>
@@ -167,10 +167,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 			<view-param>
 				<name>mainTab</name>
 				<value>#{sellerBean.backMainTab}</value>
-			</view-param>
-			<view-param>
-				<name>tab</name>
-				<value>#{sellerBean.backTab}</value>
 			</view-param>
 		</redirect>
 	</navigation-case>

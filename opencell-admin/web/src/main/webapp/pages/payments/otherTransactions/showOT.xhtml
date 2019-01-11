@@ -22,7 +22,7 @@
             <p:tabView id="tabView" activeIndex="#{otherTransactionBean.activeTab}">
 				<p:tab title="#{messages['customer.tab.information']}">
             <hftl:formField label="#{messages['otherTransaction.type']}" field="type" edit="false"/>
-  			<hftl:formField label="#{messages['otherTransaction.customerAccount']}" field="customerAccount" valueLabelField="code" edit="false" />
+  			<hftl:formField label="#{messages['otherTransaction.generalLedger']}" field="generalLedger" childField="code" edit="false" />
 	       	<hftl:formField label="#{messages['otherTransaction.occCode']}" field="occCode" edit="false" />
 	      	<hftl:formField label="#{messages['otherTransaction.accountCode']}" field="accountCode" edit="false" />			       
 	      	<hftl:formField label="#{messages['otherTransaction.occDescription']}" field="occDescription" edit="false" useConverter="false" size="45" />         						      

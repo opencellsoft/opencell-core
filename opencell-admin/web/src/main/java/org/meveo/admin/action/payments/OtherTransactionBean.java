@@ -18,7 +18,6 @@
  */
 package org.meveo.admin.action.payments;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -28,23 +27,16 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.IEntity;
-import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.payments.MatchingAmount;
-import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OtherTransaction;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OtherTransactionService;
-import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -69,14 +61,6 @@ public class OtherTransactionBean extends CustomFieldBean<OtherTransaction> {
     @Inject
     protected MatchingCodeService matchingCodeService;
 
-    @Inject
-    private OtherTransactionListBean otherTransactionListBean;
-
-    @Inject
-    private RecordedInvoiceService recordedInvoiceService;
-
-    private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
-
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -100,141 +84,10 @@ public class OtherTransactionBean extends CustomFieldBean<OtherTransaction> {
         return otherTransactionService;
     }
 
-    public String displayOperation(OtherTransaction otherTransaction) {
-        String page = "/pages/payments/otherTransactions/showOcc.xhtml";
-
-//        if (otherTransaction instanceof RecordedInvoice) {
-//            page = "/pages/payments/otherTransactions/showInvoice.xhtml";
-//        }
-//        if (otherTransaction instanceof AutomatedPayment) {
-//            page = "/pages/payments/otherTransactions/showAutomatedPayment.xhtml";
-//        }
-//        if (otherTransaction instanceof Payment) {
-//            page = "/pages/payments/otherTransactions/showPayment.xhtml";
-//        }
-        return page;
-    }
-
-    /**
-     * Match selected operations.
-     * 
-     * @param customerAccountId Customer account identifier
-     * @return Redirect page
-     */
-    public String matching(Long customerAccountId) {
-        List<Long> operationIds = new ArrayList<Long>();
-        log.debug("getChecked():" + getSelectedEntities());
-        for (IEntity operation : getSelectedEntities()) {
-            operationIds.add((Long) operation.getId());
-        }
-        log.info("operationIds    " + operationIds);
-        if (operationIds.isEmpty()) {
-            messages.error(new BundleKey("messages", "customerAccount.matchingUnselectedOperation"));
-            return null;
-        }
-        try {
-            MatchingReturnObject result = matchingCodeService.matchOperations(customerAccountId, null, operationIds, null);
-            if (result.isOk()) {
-                messages.info(new BundleKey("messages", "customerAccount.matchingSuccessful"));
-            } else {
-                otherTransactionListBean.setPartialMatchingOps(result.getPartialMatchingOcc());
-                return "/pages/payments/customerAccounts/partialMatching.xhtml&faces-redirect=true";
-            }
-
-        } catch (NoAllOperationUnmatchedException ee) {
-            messages.error(new BundleKey("messages", "customerAccount.noAllOperationUnmatched"));
-        } catch (BusinessException ee) {
-            messages.error(new BundleKey("messages", ee.getMessage()));
-        } catch (Exception e) {
-            log.error("failed to matching ", e);
-            messages.error(e.getMessage());
-        }
-        return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
-    }
-
-    public String consultMatching(long customerAccountId) {
-        List<Long> operationIds = new ArrayList<Long>();
-        log.debug("getChecked():" + getSelectedEntities());
-        for (IEntity operation : getSelectedEntities()) {
-            operationIds.add((Long) operation.getId());
-        }
-        log.trace(" consultMatching operationIds " + operationIds);
-        if (operationIds.isEmpty() || operationIds.size() > 1) {
-            messages.warn(new BundleKey("messages", "consultMatching.noOperationSelected"));
-
-            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
-        }
-        OtherTransaction otherTransaction = otherTransactionService.findById(operationIds.get(0));
-        if (otherTransaction.getMatchingStatus() != MatchingStatusEnum.L && otherTransaction.getMatchingStatus() != MatchingStatusEnum.P) {
-            messages.info(new BundleKey("messages", "consultMatching.operationNotMatched"));
-
-            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
-        }
-//        matchingAmounts = otherTransaction.getMatchingAmounts();
-//        if (matchingAmounts.size() == 1) {
-//            return "/pages/payments/matchingCode/matchingCodeDetail.xhtml?objectId=" + matchingAmounts.get(0).getMatchingCode().getId() + "&edit=false&faces-redirect=true";
-//        }
-        return "/pages/payments/matchingCode/selectMatchingCode.xhtml?objectId=" + otherTransaction.getId() + "&edit=false&faces-redirect=true";
-    }
-    
-    /**
-     * Add Litigation 
-     * 
-     * @param customerAccountId customer account id
-     * @return outcome
-     */
-    public String addLitigation(long customerAccountId) {
-        try {            
-            log.debug("getChecked():" + getSelectedEntities());
-            if (getSelectedEntities() != null && getSelectedEntities().isEmpty()) {
-                messages.warn(new BundleKey("messages", "otherTransaction.selectTypeOCC"));
-                return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
-            }
-            for (IEntity operation : getSelectedEntities()) {
-                recordedInvoiceService.addLitigation((Long) operation.getId());
-            }
-            messages.info(new BundleKey("messages", "save.successful"));
-        } catch (Exception e) {
-            messages.error(e.getMessage());
-        }
-        return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
-    }
-    
-    /**
-     * Cancel Litigation 
-     * 
-     * @param customerAccountId customer account id
-     * @return outcome
-     */
-    public String cancelLitigation(long customerAccountId) {
-        try {            
-            log.debug("getChecked():" + getSelectedEntities());
-            if (getSelectedEntities() != null && getSelectedEntities().isEmpty()) {
-                messages.warn(new BundleKey("messages", "otherTransaction.selectTypeOCC"));
-                return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
-            }
-            for (IEntity operation : getSelectedEntities()) {
-                recordedInvoiceService.cancelLitigation((Long) operation.getId());
-            }
-            messages.info(new BundleKey("messages", "save.successful"));
-        } catch (Exception e) {
-            messages.error(e.getMessage());
-        }
-        return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
-    }
-
-    public List<MatchingAmount> getMatchingAmounts() {
-        return matchingAmounts;
-    }
-
-    public void setMatchingAmounts(List<MatchingAmount> matchingAmounts) {
-        this.matchingAmounts = matchingAmounts;
-    }
-
     public String getDate() {
         return (new Date()).toString();
     }
-
+    
     public LazyDataModel<OtherTransaction> getOtherTransactions(Seller seller) {
         if (!seller.isTransient() && seller.getGeneralLedger() != null && !seller.getGeneralLedger().isTransient()) {
             filters.put("generalLedger", seller.getGeneralLedger());
