@@ -1091,4 +1091,11 @@
     <changeSet id="#3970 - Change of RT description database field from varchar to text" author="mounir.boukayoua">
         <modifyDataType tableName="billing_rated_transaction" columnName="description" newDataType="${type.text}"/>
     </changeSet>
+    
+    <changeSet id="#3842_20190111 - Trigger next charge" author="EdwardPLegaspi">
+        <addColumn tableName="cat_usage_charge_template">
+            <column name="trigger_next_charge" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="trigger_next_charge_el" type="${type.text}"/>
+        </addColumn>
+    </changeSet> 	q
 </databaseChangeLog>

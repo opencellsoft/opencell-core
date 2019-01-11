@@ -299,10 +299,10 @@ public class UsageRatingService implements Serializable {
         }
 
         synchronized (this) {// cachedCounterPeriod) { TODO how to ensure one at a time update?
-            BigDecimal deduceByQuantity = chargeTemplate.getInChargeUnit(edr.getQuantity());
-            log.debug("value to deduce {} * {} = {} from current value {}", edr.getQuantity(), chargeTemplate.getUnitMultiplicator(), deduceByQuantity, counterPeriod.getValue());
+            BigDecimal quantityToDeduce = chargeTemplate.getInChargeUnit(edr.getQuantity());
+            log.debug("value to deduce {} * {} = {} from current value {}", edr.getQuantity(), chargeTemplate.getUnitMultiplicator(), quantityToDeduce, counterPeriod.getValue());
 
-            counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, deduceByQuantity, isVirtual);
+            counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, quantityToDeduce, isVirtual);
 
             // Quantity is not tracked in counter (no initial value)
             if (counterValueChangeInfo == null) {
@@ -313,7 +313,7 @@ public class UsageRatingService implements Serializable {
                 BigDecimal deducedQuantity = counterValueChangeInfo.getDeltaValue();
 
                 // Not everything was deduced
-                if (deducedQuantity.compareTo(deduceByQuantity) < 0) {
+                if (deducedQuantity.compareTo(quantityToDeduce) < 0) {
                     deducedQuantityInEDRUnit = chargeTemplate.getInEDRUnit(deducedQuantity);
                     // Everything was deduced
                 } else {
