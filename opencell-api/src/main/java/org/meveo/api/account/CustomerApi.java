@@ -54,6 +54,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.export.CustomBigDecimalConverter;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -65,6 +66,7 @@ import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
@@ -128,6 +130,9 @@ public class CustomerApi extends AccountEntityApi {
 
     @Inject
     private CustomerSequenceApi customerSequenceApi;
+
+    @Inject
+    private AccountingCodeService accountingCodeService;
 
     public void create(CustomerDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -479,6 +484,13 @@ public class CustomerApi extends AccountEntityApi {
         customerCategory.setExonerationTaxElSpark(postData.getExonerationTaxElSpark());
         customerCategory.setExonerationReason(postData.getExonerationReason());
 
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            customerCategory.setAccountingCode(accountingCode);
+        }
         customerCategoryService.create(customerCategory);
     }
 
@@ -519,6 +531,14 @@ public class CustomerApi extends AccountEntityApi {
         if (postData.getExonerationReason() != null && StringUtils.compare(postData.getExonerationReason(), customerCategory.getExonerationReason()) != 0) {
             customerCategory.setExonerationReason(postData.getExonerationReason());
             toUpdate = true;
+        }
+
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            customerCategory.setAccountingCode(accountingCode);
         }
 
         if (toUpdate) {

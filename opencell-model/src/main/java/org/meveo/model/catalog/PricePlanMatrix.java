@@ -784,7 +784,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 
 	/**
 	 * Expression to get the total amount. Previously called ratingEL.
-	 * @param totalAmountEL EL expression
+	 * @param totalAmountELSpark  EL expression used in Spark case.
 	 */
 	public void setTotalAmountELSpark(String totalAmountELSpark) {
 		this.totalAmountELSpark = totalAmountELSpark;
