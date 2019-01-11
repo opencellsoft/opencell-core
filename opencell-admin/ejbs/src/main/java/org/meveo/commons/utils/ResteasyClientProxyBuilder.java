@@ -10,7 +10,7 @@ public class ResteasyClientProxyBuilder extends ResteasyClientBuilder {
     private static final String PROXY_VAR_KEY = "opencell.keycloak.proxy-url";
     public ResteasyClientProxyBuilder() {
         String proxyUrl = System.getProperty(PROXY_VAR_KEY);
-        if (StringUtils.isNotEmpty(proxyUrl)) {
+        if (StringUtils.isNotBlank(proxyUrl)) {
             this.defaultProxy(proxyUrl);
         }
     }
