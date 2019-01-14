@@ -13,18 +13,22 @@ import java.util.zip.ZipOutputStream;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.admin.FileDto;
+import org.meveo.api.dto.admin.FileRequestDto;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 
 /**
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Youssef IZEM
+ * @lastModifiedVersion 5.4
  * 
  */
 @Stateless
@@ -92,7 +96,7 @@ public class FilesApi extends BaseApi {
         }
 
         try (FileOutputStream fos = new FileOutputStream(new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip"));
-            ZipOutputStream zos = new ZipOutputStream(fos)) {
+                ZipOutputStream zos = new ZipOutputStream(fos)) {
             FileUtils.addDirToArchive(getProviderRootDir(), file.getPath(), zos);
             fos.flush();
         } catch (IOException e) {
@@ -129,6 +133,65 @@ public class FilesApi extends BaseApi {
             throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
         } finally {
             IOUtils.closeQuietly(fop);
+        }
+    }
+
+    /**
+     * Allows to upload a base64 file
+     * 
+     * @param postData contains filename and the base64 data to upload
+     * @throws MeveoApiException
+     */
+    public void uploadFileBase64(FileRequestDto postData) throws MeveoApiException {
+        if (postData == null || StringUtils.isBlank(postData.getFilepath())) {
+            missingParameters.add("filepath");
+        }
+        if (postData == null || StringUtils.isBlank(postData.getContent())) {
+            missingParameters.add("content");
+        }
+
+        handleMissingParametersAndValidate(postData);
+
+        File file = new File(getProviderRootDir() + File.separator + postData.getFilepath());
+        FileOutputStream fop = null;
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            fop = new FileOutputStream(file);
+
+            fop.write(Base64.decodeBase64(postData.getContent()));
+            fop.flush();
+
+        } catch (Exception e) {
+            throw new BusinessApiException("Error uploading file: " + postData.getFilepath() + ". " + e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(fop);
+        }
+    }
+
+    /**
+     * Allows to unzip a file
+     * 
+     * @param postData contains filename to unzip
+     * @throws MeveoApiException
+     */
+    public void unzipFile(FileRequestDto postData) throws MeveoApiException {
+        if (postData == null || StringUtils.isBlank(postData.getFilepath())) {
+            missingParameters.add("filepath");
+        }
+
+        handleMissingParametersAndValidate(postData);
+
+        File file = new File(getProviderRootDir() + File.separator + postData.getFilepath());
+        try {
+            if (FilenameUtils.getExtension(file.getName()).equals("zip")) {
+                String parentDir = file.getParent();
+                FileUtils.unzipFile(parentDir, new FileInputStream(file));
+            }
+        } catch (Exception e) {
+            throw new BusinessApiException("Error unziping file: " + postData.getFilepath() + ". " + e.getMessage());
         }
     }
 
@@ -173,7 +236,7 @@ public class FilesApi extends BaseApi {
             throw new BusinessApiException("File does not exists: " + file.getPath());
         }
 
-        try (FileInputStream fis = new FileInputStream(file)){
+        try (FileInputStream fis = new FileInputStream(file)) {
             response.setContentType(Files.probeContentType(file.toPath()));
             response.setContentLength((int) file.length());
             response.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
