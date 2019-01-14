@@ -24,8 +24,7 @@
             </p:breadCrumb>
         </h:form>
         <hftl:searchPanel label="#{messages['language.search']}" columns="3"
-                          backingBean="#{languageListBean}"
-                          renderNewButton="#{currentUser.hasRole('superAdministrateur')}">
+                          backingBean="#{languageListBean}">
                           
             <hftl:searchField label="#{messages['language.code']}"
                               field="languageCode"/>
@@ -35,7 +34,7 @@
 
         <hftl:dataList label="#{messages['language.title']}"
                        backingBean="#{languageListBean}">
-            <hftl:column label="#{messages['language.code']}" field="languageCode" width="10%" entityView="languageDetail" valueIdField="id"/>
+            <hftl:column label="#{messages['language.code']}" edit="#{currentUser.hasRole('languageManagement')}" field="languageCode" width="10%" entityView="languageDetail" valueIdField="id"/>
             <hftl:column label="#{messages['language.name']}"
                          field="descriptionEn"/>
             <hftl:actionsColumn

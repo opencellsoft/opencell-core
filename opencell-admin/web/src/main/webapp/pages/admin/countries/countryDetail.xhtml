@@ -49,7 +49,7 @@
                           column2="description">
         </hftl:entityPopup>
 
-        <hftl:formPanel formId="formCountry" label="#{messages['country.countryPanel']}" backingBean="#{countryBean}">
+        <hftl:formPanel formId="formCountry" label="#{messages['country.countryPanel']}" backingBean="#{countryBean}" showEditButton="#{currentUser.hasRole('countryManagement')}" >
 
             <hftl:formField label="#{messages['country.code']}" field="countryCode" required="true" maxlength="3"/>
 
