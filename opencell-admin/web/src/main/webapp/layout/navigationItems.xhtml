@@ -364,10 +364,14 @@
 			<p:menuitem id="scriptInstances" outcome="scriptInstances" value="#{messages['menu.scriptInstances']}" />
 		</p:submenu>
 			
-		<p:menuitem id="filters" outcome="filters"
-			value="#{messages['menu.filters']}" />
-		<p:submenu id="workflows" label="#{messages['menu.workflow']}"
-			outcome="workflows">
+		<p:menuitem id="filters" outcome="filters" value="#{messages['menu.filters']}" />
+		<p:submenu id="workflows" label="#{messages['menu.workflow']}">
+			<p:submenu id="generic_workflow" label="#{messages['menu.generic.workflow']}">
+				<p:menuitem id="genericWorkflows" value="#{messages['menu.generic.workflows']}"
+					outcome="genericWorkflows" />
+				<p:menuitem id="genericWfsHistory" value="#{messages['menu.generic.workflowHistory']}"
+					outcome="genericWfsHistory" />
+			</p:submenu>
 			<p:menuitem id="crud_workflows" value="#{messages['menu.workflow']}"
 				outcome="workflows" />
 			<p:menuitem id="workflowHistory"
