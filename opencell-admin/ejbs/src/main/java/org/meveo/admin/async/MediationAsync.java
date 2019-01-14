@@ -86,11 +86,10 @@ public class MediationAsync {
                 if (scriptCode == null) {
                     mediationJobBean.execute(result, parameter, file);
                 } else {
-
                     Map<String, Object> context = new HashedMap();
                     ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
                     context.put(Script.CONTEXT_CURRENT_USER, lastCurrentUser);
-                    context.put(JobExecutionResultImpl.JOB_EXECUTION_RESULT, result);
+                    context.put(Script.JOB_EXECUTION_RESULT, result);
                     context.put(CSVCDRParser.CDR_FILE, file);
                     script.execute(context);
                 }

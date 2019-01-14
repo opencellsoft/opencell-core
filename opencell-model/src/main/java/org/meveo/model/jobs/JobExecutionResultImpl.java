@@ -43,10 +43,6 @@ import org.meveo.model.NotifiableEntity;
 
 public class JobExecutionResultImpl extends BaseEntity {
     private static final long serialVersionUID = 430457580612075457L;
-    /**
-     *
-     */
-    public static final String JOB_EXECUTION_RESULT = "JobExecutionResult";
 
     /**
      * Job instance
