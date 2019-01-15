@@ -114,6 +114,12 @@ public class ProviderService extends PersistenceService<Provider> {
     public Provider getProviderNoCache() {
 
         Provider provider = getEntityManager().find(Provider.class, CURRENT_PROVIDER_ID);
+        if (provider.getInvoiceConfiguration() != null) {
+            provider.getInvoiceConfiguration().getDisplayBillingCycle();
+        }
+        if (provider.getGdprConfiguration() != null) {
+            provider.getGdprConfiguration().getInvoiceLife();
+        }
         return provider;
     }
 
@@ -132,14 +138,14 @@ public class ProviderService extends PersistenceService<Provider> {
 
     @Override
     public Provider update(Provider provider) throws BusinessException {
-        // Refresh appProvider application scope variable if applicable
+
+        provider = super.update(provider);
+
+        // Refresh appProvider request scope variable if applicable
         if (appProvider.getId().equals(provider.getId())) {
             refreshAppProvider(provider);
         }
 
-        provider = super.update(provider);
-
-        // clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
         return provider;
     }
 
@@ -160,9 +166,8 @@ public class ProviderService extends PersistenceService<Provider> {
      * 
      * @param provider New provider data to refresh with
      */
-    private void refreshAppProvider(Provider thisProvider) {
-    	Provider provider = findById(thisProvider.getId());    	
-    	
+    private void refreshAppProvider(Provider provider) {
+
         try {
             BeanUtils.copyProperties(appProvider, provider);
         } catch (IllegalAccessException | InvocationTargetException e) {
