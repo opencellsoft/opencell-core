@@ -62,7 +62,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardD
  *
  * @author anasseh
  * @author Mounir Bahije
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
 @PaymentGatewayClass
 public class IngenicoGatewayPayment implements GatewayPaymentInterface {
@@ -87,7 +87,18 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         paramBean.getProperty("connect.api.endpoint.host", "changeIt");
         paramBean.getProperty("connect.api.endpoint.scheme", "changeIt");
         paramBean.getProperty("connect.api.integrator", "");
-        paramBean.getProperty("connect.api.socketTimeout", "300000");        
+        paramBean.getProperty("connect.api.socketTimeout", "300000");
+
+        String proxyHost = System.getProperty("https.proxyHost");
+        String proxyPort = System.getProperty("https.proxyPort");
+
+        log.info("https.proxyHost = " + proxyHost);
+        log.info("https.proxyPort = " + proxyPort);
+
+        if (!StringUtils.isBlank(proxyHost)) {
+            paramBean.getProperty("connect.api.proxy.uri", proxyHost + ":" + proxyPort );
+            log.info("connect.api.proxy.uri = " + proxyHost + ":" + proxyPort);
+        }
         CommunicatorConfiguration communicatorConfiguration = new CommunicatorConfiguration(ParamBean.getInstance().getProperties());
         communicatorConfiguration.setApiKeyId(paymentGateway.getApiKey());
         communicatorConfiguration.setSecretApiKey(paymentGateway.getSecretKey());
