@@ -349,7 +349,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             // Clone values and deserialize values for GUI if applicable
             List<CustomFieldValue> cfValuesByTemplateCloned = new ArrayList<>();
             for (CustomFieldValue cfValue : cfValuesByTemplate) {
-                cfValue = SerializationUtils.clone(cfValue);
+                cfValue = cfValue.clone(); // SerializationUtils.clone(cfValue);
                 deserializeForGUI(cfValue, cft);
                 cfValuesByTemplateCloned.add(cfValue);
             }
@@ -2048,12 +2048,17 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @SuppressWarnings("rawtypes")
     public LazyDataModel getValueDataset(CustomFieldValue cfv, CustomFieldStorageTypeEnum storageType, Map<String, Object> inputFilters, boolean forceReload) {
+        if (cfv == null) {
+            return null;
+        }
+
         if (cfv.getDatasetForGUI() == null || forceReload) {
 
             LazyDataModel dataset = new LazyDataModelWSize() {
 
                 private static final long serialVersionUID = -5796910936316457322L;
 
+                @SuppressWarnings("unchecked")
                 @Override
                 public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
                     List valueList = storageType == CustomFieldStorageTypeEnum.MATRIX ? cfv.getMatrixValuesForGUI() : cfv.getMapValuesForGUI();
@@ -2061,7 +2066,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
                     if (getRowCount() > 0) {
                         int toNr = first + pageSize;
-                        return valueList.subList(first, getRowCount() <= toNr ? getRowCount() : toNr);
+                        return new ArrayList(valueList.subList(first, getRowCount() <= toNr ? getRowCount() : toNr));
 
                     } else {
                         return new ArrayList();

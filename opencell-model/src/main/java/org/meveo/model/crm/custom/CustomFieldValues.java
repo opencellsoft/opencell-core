@@ -99,7 +99,7 @@ public class CustomFieldValues implements Serializable {
     }
 
     /**
-     * Set custom field values as is. Just a regular setter for bean's valuesByCode field. Do not use this method, as it does not track changes to CF field values. Use setValues()
+     * Set custom field values as is. Just a regular setter for bean's valuesByCode field. DO NOT USE this method, as it does not track changes to CF field values. Use setValues()
      * instead.
      * 
      * @param newValuesByCode values by code
@@ -920,6 +920,14 @@ public class CustomFieldValues implements Serializable {
      */
     public Set<String> getDirtyCfPeriods() {
         return dirtyCfPeriods;
+    }
+
+    /**
+     * Clear dirty value and period flags. NO NEED TO USE it other than for testing.
+     */
+    public void clearDirtyFlags() {
+        dirtyCfValues = new HashSet<>();
+        dirtyCfPeriods = new HashSet<>();
     }
 
     @Override
