@@ -297,7 +297,7 @@
 														label="#{messages['billingAccount.email']}">
 														<p:inputText id="email_select"
 															rendered="#{billingAccountBean.edit}"
-															value="#{billingAccountBean.entity.contactInformation.email}" size="20"
+															value="#{billingAccountBean.entity.contactInformationNullSafe.email}" size="20"
 															maxlength="100" converter="nullableStringConverter"
 															required="#{billingAccountBean.entity.electronicBilling == true}">
 															<o:validator validatorId="javax.faces.RegularExpression"
@@ -305,7 +305,7 @@
 																message="#{messages['validator.email.invalid']}" />
 														</p:inputText>
 														<h:outputText rendered="#{!billingAccountBean.edit}"
-															id="emailText" value="#{billingAccountBean.entity.contactInformation.email}" />
+															id="emailText" value="#{billingAccountBean.entity.contactInformationNullSafe.email}" />
 													</hftl:decorateFormField>
 												</h:panelGroup>
 												
