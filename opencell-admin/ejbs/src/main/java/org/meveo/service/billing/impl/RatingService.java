@@ -511,7 +511,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             }
         }
         
-        calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax, pricePlan);
+        calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
        
         // calculate WO description based on EL from Price plan
         if (pricePlan != null && pricePlan.getWoDescriptionEL() != null) {
@@ -567,7 +567,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param pricePlan The price plan.
      * @throws BusinessException Business exception
      */
-    public void calculateAmounts(WalletOperation walletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax, PricePlanMatrix pricePlan) throws BusinessException {
+    public void calculateAmounts(WalletOperation walletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax) throws BusinessException {
 
         Integer rounding = appProvider.getRounding();
         RoundingModeEnum roundingMode = appProvider.getRoundingMode();
@@ -606,10 +606,10 @@ public class RatingService extends BusinessService<WalletOperation> {
         walletOperation.setAmountTax(amounts[2]);
         
         // we override the wo if minimum amount el is set
-		if (pricePlan != null) {
-			if (appProvider.isEntreprise() && !StringUtils.isBlank(pricePlan.getMinimumAmountEL())) {
+		if (walletOperation.getPriceplan() != null) {
+			if (appProvider.isEntreprise() && !StringUtils.isBlank(walletOperation.getPriceplan().getMinimumAmountEL())) {
 				BigDecimal minimumAmount = BigDecimal.valueOf(
-						evaluateDoubleExpression(pricePlan.getMinimumAmountEL(), walletOperation,
+						evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(), walletOperation,
 								walletOperation.getWallet().getUserAccount()));
 				// if minAmount > amountWithoutTax override its value
 				if (walletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0) {
@@ -620,24 +620,27 @@ public class RatingService extends BusinessService<WalletOperation> {
 					walletOperation.setAmountWithTax(minimumAmount.add(amountTax));
 
 					// sets the raw amount
-					if (StringUtils.isBlank(pricePlan.getAmountWithoutTaxEL())) {
-						walletOperation.setRawAmountWithoutTax(pricePlan.getAmountWithoutTax());
+					if (StringUtils.isBlank(walletOperation.getPriceplan().getAmountWithoutTaxEL())) {
+						walletOperation.setRawAmountWithoutTax(walletOperation.getPriceplan().getAmountWithoutTax());
+					
 					} else {
 						if (unitPriceWithoutTax != null) {
 							walletOperation.setRawAmountWithoutTax(unitPriceWithoutTax.multiply(walletOperation.getQuantity()));
 						}
 					}
 				}
-			} else if (!StringUtils.isBlank(pricePlan.getMinimumAmountEL())) {
+				
+			} else if (!StringUtils.isBlank(walletOperation.getPriceplan().getMinimumAmountEL())) {
 				BigDecimal minimumAmount = BigDecimal.valueOf(
-						evaluateDoubleExpression(pricePlan.getMinimumAmountEL(), walletOperation,
+						evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(), walletOperation,
 								walletOperation.getWallet().getUserAccount()));
 				if (walletOperation.getAmountWithTax().compareTo(minimumAmount) < 0) {
-					BigDecimal oldAmountWithTax = pricePlan.getAmountWithTax();
+					BigDecimal oldAmountWithTax = walletOperation.getPriceplan().getAmountWithTax();
 					walletOperation.setAmountWithTax(minimumAmount);
 
-					if (StringUtils.isBlank(pricePlan.getAmountWithTaxEL())) {
+					if (StringUtils.isBlank(walletOperation.getPriceplan().getAmountWithTaxEL())) {
 						walletOperation.setRawAmountWithTax(oldAmountWithTax);
+					
 					} else {
 						if (unitPriceWithTax != null) {
 							walletOperation.setRawAmountWithTax(unitPriceWithTax.multiply(walletOperation.getQuantity()));
@@ -851,7 +854,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     }
                 }
 
-                calculateAmounts(operation, unitAmountWithoutTax, unitAmountWithTax, priceplan);
+                calculateAmounts(operation, unitAmountWithoutTax, unitAmountWithTax);
 
             } else {
                 operation.setUnitAmountWithoutTax(null);

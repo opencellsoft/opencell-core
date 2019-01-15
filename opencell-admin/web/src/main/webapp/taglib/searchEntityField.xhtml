@@ -30,8 +30,8 @@
             <c:if test="#{listElements!=null}">
                 <c:set var="elements" value="#{listElements}" />
             </c:if>
-            <c:if test="#{!filterMatchMode}">
-                <c:set var="filterMatchMode" value="startsWith"/>
+            <c:if test="#{filterMatchMode==null}">
+                <c:set var="filterMatchMode" value="startWith"/>
             </c:if>
 
 

@@ -170,8 +170,9 @@ public class ProviderService extends PersistenceService<Provider> {
 
         try {
             BeanUtils.copyProperties(appProvider, provider);
+            
         } catch (IllegalAccessException | InvocationTargetException e) {
-            log.error("Failed to update alProvider fields");
+            log.error("Failed to update appProvider fields");
         }
 
         appProvider.setCurrency(provider.getCurrency() != null ? provider.getCurrency() : null);
