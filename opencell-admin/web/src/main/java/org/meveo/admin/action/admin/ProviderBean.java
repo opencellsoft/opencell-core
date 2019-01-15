@@ -113,6 +113,10 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 		if (entity.getCustomerNoSequence() == null) {
 			entity.setCustomerNoSequence(new GenericSequence());
 		}
+		
+		entity.getCurrency().getCurrencyCode();
+        entity.getCountry().getCountryCode();
+        entity.getLanguage().getLanguageCode();
 
         return entity;
     }
