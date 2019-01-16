@@ -880,12 +880,4 @@
         <addForeignKeyConstraint constraintName="fk_crm_customer_category_accounting_code" referencedTableName="billing_accounting_code"
                                  baseColumnNames="accounting_code_id" baseTableName="crm_customer_category" referencedColumnNames="id" />
     </changeSet>
-
-    <changeSet id="#3863_14012019 - Allow to have a CFT of type reference to an AccountingCode" author="abdelkader.bouazza">
-        <addColumn tableName="billing_accounting_code">
-            <column name="uuid" type="varchar(60)"/>
-            <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}"/>
-        </addColumn>
-    </changeSet>
 </databaseChangeLog>
