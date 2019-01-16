@@ -25,7 +25,7 @@
             </p:breadCrumb>
         </h:form>
 
-        <hftl:formPanel label="#{messages['currency.currencyPanel']}" backingBean="#{currencyBean}" showEditButton="#{currentUser.hasRole('currencyManagement')}" >
+        <hftl:formPanel label="#{messages['currency.currencyPanel']}" backingBean="#{currencyBean}" >
             <hftl:formField label="#{messages['currency.code']}"
                             field="currencyCode" required="false"/>
             <hftl:formField label="#{messages['currency.name']}"
