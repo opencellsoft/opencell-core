@@ -270,6 +270,19 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         log.info("customerAccountBalanceDueWithoutLitigation  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
     }
+    
+    /**
+     * Customer account balance current without litigation.
+     *
+     * @param customerAccount the customer account
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
+    public BigDecimal customerAccountBalanceCurrentWithoutLitigation(CustomerAccount customerAccount, Date to) throws BusinessException {
+        log.info("customerAccountBalanceDueWithoutLitigation  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
+        return computeBalance(customerAccount, to, false, MatchingStatusEnum.O, MatchingStatusEnum.P);
+    }
 
     /**
      * Customer account balance due without litigation.
@@ -295,7 +308,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      */
     public BigDecimal customerAccountBalance(CustomerAccount customerAccount, Date to) throws BusinessException {
         log.info("customerAccountBalanceDue  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
-        return computeBalance(customerAccount, to, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+        return computeBalance(customerAccount, to, false, MatchingStatusEnum.O, MatchingStatusEnum.P);
     }
 
     /**
@@ -311,6 +324,21 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
 
     }
+    
+    /**
+     * Customer account balance currentexigible.
+     *
+     * @param customerAccount the customer account
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
+    public BigDecimal customerAccountBalanceCurrentExigible(CustomerAccount customerAccount, Date to) throws BusinessException {
+        log.info("customerAccountBalanceExigible  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
+        return computeBalance(customerAccount, to, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+
+    }
+
 
     /**
      * Customer account balance exigible without litigation.

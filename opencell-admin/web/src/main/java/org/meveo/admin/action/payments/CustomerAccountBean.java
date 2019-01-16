@@ -222,6 +222,19 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     }
 
     /**
+     * Compute balance current
+     * 
+     * @return due balance
+     * @throws BusinessException General business exception
+     */
+    public BigDecimal getBalanceCurrent() throws BusinessException {
+        if (entity.getId() == null) {
+            return new BigDecimal(0);
+        } else
+            return customerAccountService.customerAccountBalance(entity, new Date());
+    } 
+    
+    /**
      * Compute balance due
      * 
      * @return due balance
@@ -235,16 +248,30 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     }
 
     /**
-     * Compute balance exigible without litigation.
+     * Compute balance due exigible (without litigation).
      * 
      * @return exigible balance without litigation
      * @throws BusinessException General business exception
      */
-    public BigDecimal getBalanceExigibleWithoutLitigation() throws BusinessException {
+    public BigDecimal getBalanceDueExigible() throws BusinessException {
         if (entity.getId() == null) {
             return new BigDecimal(0);
         } else {
-            return customerAccountService.customerAccountBalanceExigibleWithoutLitigation(entity, new Date());
+            return customerAccountService.customerAccountBalanceDueWithoutLitigation(entity, new Date());
+        }
+    }
+    
+    /**
+     * Compute balance current (without litigation).
+     * 
+     * @return exigible balance without litigation
+     * @throws BusinessException General business exception
+     */
+    public BigDecimal getBalanceCurrentExigible() throws BusinessException {
+        if (entity.getId() == null) {
+            return new BigDecimal(0);
+        } else {
+            return customerAccountService.customerAccountBalanceCurrentExigible(entity, new Date());
         }
     }
 

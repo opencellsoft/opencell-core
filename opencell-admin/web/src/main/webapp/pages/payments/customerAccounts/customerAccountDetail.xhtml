@@ -75,21 +75,32 @@
                                             required="true" listBean="#{tradingLanguageBean}" componentWidth="10" />
 
                                         <h:panelGroup rendered="#{not empty customerAccountBean.entity.id}">
+
+                                            <hftl:decorateFormField fieldId="balance_text" label="#{messages['customerAccount.balanceDue']}">
+                                                <h:outputText id="balance_text" rendered="#{true or !customerAccountBean.edit}" value="#{customerAccountBean.getBalanceDue()}" style="font-weight:bold;"
+                                                    converter="bigDecimalConverter" />
+                                            </hftl:decorateFormField>
+                                            <hftl:decorateFormField fieldId="balanceEx_text" label="#{messages['customerAccount.balanceExigible']}">
+                                                <h:outputText id="balanceEx_text" rendered="#{true or !customerAccountBean.edit}" value="#{customerAccountBean.getBalanceDueExigible()}"
+                                                    style="font-weight:bold;" converter="bigDecimalConverter" />
+                                            </hftl:decorateFormField>                                          
+                                            <hftl:decorateFormField fieldId="balanceCurrent_text" label="#{messages['customerAccount.balanceCurrent']}">
+                                                <h:outputText id="balanceCurrent_text" rendered="#{true or !customerAccountBean.edit}" value="#{customerAccountBean.getBalanceCurrent()}" style="font-weight:bold;"
+                                                    converter="bigDecimalConverter" />
+                                            </hftl:decorateFormField>
+                                            <hftl:decorateFormField fieldId="balanceCurrentEx_text" label="#{messages['customerAccount.balanceCurrentExigible']}">
+                                                <h:outputText id="balanceCurrentEx_text" rendered="#{true or !customerAccountBean.edit}" value="#{customerAccountBean.getBalanceCurrentExigible()}"
+                                                    style="font-weight:bold;" converter="bigDecimalConverter" />
+                                            </hftl:decorateFormField> 
+                                             </h:panelGroup> 
+                                             <h:panelGroup rendered="#{not empty customerAccountBean.entity.id}">
                                             <hftl:formField label="#{messages['customerAccount.dunningLevel']}" field="dunningLevel" rendered="#{true or !customerAccountBean.edit}" newLine="true" />
                                             <hftl:decorateFormField fieldId="dunning_date_text" label="#{messages['customerAccount.dateDunningLevel']}">
                                                 <h:outputText id="dunning_date_text" rendered="#{true or !customerAccountBean.edit}" value="#{customerAccountBean.entity.getDateDunningLevel()}"
                                                     style="font-weight:bold;">
                                                     <f:convertDateTime pattern="#{paramBean.dateTimeFormat}" />
                                                 </h:outputText>
-                                            </hftl:decorateFormField>
-                                            <hftl:decorateFormField fieldId="balance_text" label="#{messages['customerAccount.balanceDue']}">
-                                                <h:outputText id="balance_text" rendered="#{true or !customerAccountBean.edit}" value="#{customerAccountBean.getBalanceDue()}" style="font-weight:bold;"
-                                                    converter="bigDecimalConverter" />
-                                            </hftl:decorateFormField>
-                                            <hftl:decorateFormField fieldId="balanceEx_text" label="#{messages['customerAccount.balanceExigible']}">
-                                                <h:outputText id="balanceEx_text" rendered="#{true or !customerAccountBean.edit}" value="#{customerAccountBean.getBalanceExigibleWithoutLitigation()}"
-                                                    style="font-weight:bold;" converter="bigDecimalConverter" />
-                                            </hftl:decorateFormField>
+                                            </hftl:decorateFormField>                                                                                        
                                         </h:panelGroup>
 
 
