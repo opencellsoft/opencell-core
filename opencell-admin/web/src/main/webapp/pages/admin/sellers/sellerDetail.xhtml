@@ -340,8 +340,6 @@
 								field="transactionDate" />
 							<hftl:searchField label="#{messages['otherTransaction.dueDate']}"
 								field="dueDate" />
-							<hftl:searchField label="#{messages['order.number']}"
-								field="orderNumber" />
 						</hftl:searchPanel>
 
 						<hftl:dataList backingBean="#{otherTransactionBean}" edit="#{true}" checkMany="#{false}"
@@ -442,30 +440,6 @@
 						        </p:button>
    						 </p:column>
 
-							
-
-							<ui:define name="add-on-buttons">
-								<h:panelGroup layout="block" styleClass="form-panel-actions"
-									rendered="#{otherTransactionBean.canUserUpdateEntity()}">
-									<p:commandButton
-										action="#{otherTransactionBean.matching(customerAccountBean.entity.id)}"
-										value="#{messages['customerAccount.buttonLettrage']}"
-										rendered="#{customerAccountBean.isActiveAccount()}" />
-									<p:commandButton
-										action="#{otherTransactionBean.consultMatching(customerAccountBean.entity.id)}"
-										value="#{messages['customerAccount.buttonConsultMatching']}"
-										rendered="#{customerAccountBean.isActiveAccount()}" />
-
-									<p:commandButton
-										action="#{otherTransactionBean.addLitigation(customerAccountBean.entity.id)}"
-										value="#{messages['otherTransaction_I.buttonAddLitigation']}"
-										rendered="#{customerAccountBean.isActiveAccount()}" />
-									<p:commandButton
-										action="#{otherTransactionBean.cancelLitigation(customerAccountBean.entity.id)}"
-										value="#{messages['otherTransaction_I.buttonCancelLitigation']}"
-										rendered="#{customerAccountBean.isActiveAccount()}" />
-								</h:panelGroup>
-							</ui:define>
 						</hftl:dataList>
 
 					</p:tab>

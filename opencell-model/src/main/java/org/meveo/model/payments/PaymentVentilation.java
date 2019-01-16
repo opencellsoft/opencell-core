@@ -24,6 +24,8 @@ import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -79,6 +81,13 @@ public class PaymentVentilation extends AuditableEntity {
     @Column(name = "ventilation_date")
     @Temporal(TemporalType.DATE)
     private Date ventilationDate;
+    
+    /**
+     * Ventilation action status
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ventilation_action_status")
+    private VentilationActionStatusEnum ventilationActionStatus;
 
     /**
      * Instantiates a new payment ventilation.
@@ -142,6 +151,18 @@ public class PaymentVentilation extends AuditableEntity {
     public void setVentilationDate(Date ventilationDate) {
         this.ventilationDate = ventilationDate;
     }
+    
+    
+
+    public VentilationActionStatusEnum getVentilationActionStatus() {
+        return ventilationActionStatus;
+    }
+
+
+    public void setVentilationActionStatus(VentilationActionStatusEnum ventilationActionStatus) {
+        this.ventilationActionStatus = ventilationActionStatus;
+    }
+
 
     /*
      * (non-Javadoc)

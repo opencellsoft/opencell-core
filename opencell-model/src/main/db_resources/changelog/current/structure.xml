@@ -915,6 +915,7 @@
             <column name="original_ot_id" type="bigint" />
             <column name="new_ot_id" type="bigint" />
             <column name="account_operation_id" type="bigint" />
+            <column name="ventilation_action_status" type="varchar(255)" />
         </createTable>
         <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_customer_account" referencedTableName="ar_customer_account" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="customer_account_id" />
         <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_other_transaction_origin" referencedTableName="ar_other_transaction" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="original_ot_id" />

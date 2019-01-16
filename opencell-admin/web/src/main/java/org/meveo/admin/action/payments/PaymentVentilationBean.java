@@ -34,11 +34,13 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OtherTransactionGeneral;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentVentilation;
+import org.meveo.model.payments.VentilationActionStatusEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -49,69 +51,66 @@ import org.omnifaces.cdi.Param;
 import org.primefaces.model.LazyDataModel;
 
 /**
- * Standard backing bean for {@link PaymentVentilation} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link PaymentVentilation} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link MatchingAmount} service. Extends {@link PersistenceService}
-	 */
-	@Inject
-	private PaymentVentilationService paymentVentilationService;
+    /**
+     * Injected @{link MatchingAmount} service. Extends {@link PersistenceService}
+     */
+    @Inject
+    private PaymentVentilationService paymentVentilationService;
 
-	@Inject
+    @Inject
     private OCCTemplateService oCCTemplateService;
 
-	@Inject
-	private OtherTransactionGeneralService otherTransactionGeneralService;
-	
-	@Inject
+    @Inject
+    private OtherTransactionGeneralService otherTransactionGeneralService;
+
+    @Inject
     private PaymentService paymentService;
-	
-	@Inject
+
+    @Inject
     @Param
     private Long otgId;
-
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public PaymentVentilationBean() {
-		super(PaymentVentilation.class);
-	}
     
+    @Inject
+    @Param
+    private Long backEntityId;
+
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public PaymentVentilationBean() {
+        super(PaymentVentilation.class);
+    }
+
     @PostConstruct
     public void init() {
-
         if (otgId != null) {
             getEntity().setOriginalOT(otherTransactionGeneralService.findById(otgId));
         }
     }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<PaymentVentilation> getPersistenceService() {
-		return paymentVentilationService;
-	}
-	
-	
-	private Payment createPayment() throws BusinessException {
-        ParamBean paramBean = paramBeanFactory.getInstance();
-        BigDecimal ventilationAmout = entity.getVentilationAmount();
-        OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.411100", "411100"));
-        OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) entity.getOriginalOT();
-        
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<PaymentVentilation> getPersistenceService() {
+        return paymentVentilationService;
+    }
+
+    private Payment createPayment(PaymentVentilation paymentVentilation, OCCTemplate occTemplate) throws BusinessException {
+        BigDecimal ventilationAmout = paymentVentilation.getVentilationAmount();
+        OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) paymentVentilation.getOriginalOT();
+
         Payment payment = new Payment();
-        payment.setCustomerAccount(entity.getCustomerAccount());
+        payment.setCustomerAccount(paymentVentilation.getCustomerAccount());
         payment.setDescription(originalOTG.getDescription());
         payment.setPaymentMethod(originalOTG.getPaymentMethod());
         payment.setAmount(ventilationAmout);
@@ -125,32 +124,45 @@ public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
         payment.setTransactionDate(originalOTG.getTransactionDate());
         payment.setDueDate(originalOTG.getDueDate());
         payment.setMatchingStatus(MatchingStatusEnum.O);
-        //Additional payment information 1 - Bank Code
+        // Additional payment information 1 - Bank Code
         payment.setPaymentInfo1(originalOTG.getPaymentInfo1());
-        //Additional payment information 2 - Branch Code
+        // Additional payment information 2 - Branch Code
         payment.setPaymentInfo2(originalOTG.getPaymentInfo2());
-        //Additional payment information 3 - Account Number
+        // Additional payment information 3 - Account Number
         payment.setPaymentInfo3(originalOTG.getPaymentInfo3());
         paymentService.create(payment);
-        
+
         return payment;
-        
+
     }
 
-    private OtherTransactionGeneral createOTG() throws BusinessException {
-	    ParamBean paramBean = paramBeanFactory.getInstance();
+    private OtherTransactionGeneral createVentilatedOTG() throws BusinessException {
+        ParamBean paramBean = paramBeanFactory.getInstance();
         BigDecimal ventilationAmout = entity.getVentilationAmount();
         OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.rec.dr", "PAY_REC_DR"));
-        OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) entity.getOriginalOT();
-        
+        return createOTG(occTemplate, entity, ventilationAmout, ventilationAmout, BigDecimal.ZERO, MatchingStatusEnum.L);
+    }
+
+    private OtherTransactionGeneral createUnventilatedOTG(PaymentVentilation paymentVentilation) throws BusinessException {
+        ParamBean paramBean = paramBeanFactory.getInstance();
+        BigDecimal ventilationAmout = paymentVentilation.getVentilationAmount();
+        OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.rec.cr", "PAY_REC_CR"));
+        return createOTG(occTemplate, paymentVentilation, ventilationAmout, BigDecimal.ZERO, ventilationAmout, MatchingStatusEnum.O);
+
+    }
+
+    private OtherTransactionGeneral createOTG(OCCTemplate occTemplate, PaymentVentilation paymentVentilation, BigDecimal amount, BigDecimal ventilatedAmout,
+            BigDecimal unventilatedAmout, MatchingStatusEnum status) throws BusinessException {
+
+        OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) paymentVentilation.getOriginalOT();
+
         OtherTransactionGeneral otg = new OtherTransactionGeneral();
-        //otg.setPaymentVentilation(entity);
         otg.setGeneralLedger(originalOTG.getGeneralLedger());
         otg.setDescription(originalOTG.getDescription());
         otg.setPaymentMethod(originalOTG.getPaymentMethod());
-        otg.setAmount(ventilationAmout);
-        otg.setUnMatchingAmount(BigDecimal.ZERO);
-        otg.setMatchingAmount(ventilationAmout);
+        otg.setAmount(amount);
+        otg.setMatchingAmount(ventilatedAmout);
+        otg.setUnMatchingAmount(unventilatedAmout);
         otg.setAccountingCode(occTemplate.getAccountingCode());
         otg.setOccCode(occTemplate.getCode());
         otg.setOccDescription(occTemplate.getDescription());
@@ -158,37 +170,38 @@ public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
         otg.setReference(originalOTG.getReference());
         otg.setTransactionDate(originalOTG.getTransactionDate());
         otg.setDueDate(originalOTG.getDueDate());
-        otg.setMatchingStatus(MatchingStatusEnum.L);
-        //Additional payment information 1 - Bank Code
+        otg.setMatchingStatus(status);
+        // Additional payment information 1 - Bank Code
         otg.setPaymentInfo1(originalOTG.getPaymentInfo1());
-        //Additional payment information 2 - Branch Code
+        // Additional payment information 2 - Branch Code
         otg.setPaymentInfo2(originalOTG.getPaymentInfo2());
-        //Additional payment information 3 - Account Number
+        // Additional payment information 3 - Account Number
         otg.setPaymentInfo3(originalOTG.getPaymentInfo3());
-        
+
         otg.setPaymentInfo7(originalOTG.getPaymentInfo7());
         otherTransactionGeneralService.create(otg);
-        
+
         return otg;
-        
+
     }
-    
-    @Override
+
     @ActionMethod
-    public void delete() throws BusinessException {
-        PaymentVentilation paymentVentilation = getEntity();
-        
-        OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) entity.getOriginalOT(); 
-        originalOTG.setUnMatchingAmount(originalOTG.getUnMatchingAmount().add(paymentVentilation.getVentilationAmount()));
-        originalOTG.setMatchingAmount(originalOTG.getMatchingAmount().subtract(paymentVentilation.getVentilationAmount()));
-        MatchingStatusEnum matchingStatus = originalOTG.getMatchingAmount().compareTo(BigDecimal.ZERO) == 0 ? MatchingStatusEnum.O : MatchingStatusEnum.P;
-        originalOTG.setMatchingStatus(matchingStatus);
-        otherTransactionGeneralService.update(originalOTG);
-        delete((Long) getEntity().getId());
-        resetFormEntity();
-        getEntity().setOriginalOT(originalOTG);
-        init();
+    public String unventilate(PaymentVentilation paymentVentilation) throws BusinessException {
+        AccountOperation ao = paymentVentilation.getAccountOperation();
+
+        if (ao != null && ao.getMatchingStatus() != MatchingStatusEnum.O) {
+            throw new ValidationException("Unauthorized ventilation", "paymentVentilation.unauthorized");
+        }
+        paymentVentilation.setVentilationActionStatus(VentilationActionStatusEnum.U);
+        super.saveOrUpdate(paymentVentilation);
+
+        createUnventilatedOTG(paymentVentilation);
+        ParamBean paramBean = paramBeanFactory.getInstance();
+        OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.411100.dr", "411100_DR"));
+        createPayment(paymentVentilation, occTemplate); //// Account operation Debit
+        return "/pages/payments/otherTransactions/ventilateTransaction.xhtml?otgId="+paymentVentilation.getOriginalOT().getId()+"&edit=true&backView=backToSellerFromOT&backEntityId="+backEntityId+"&faces-redirect=true";
     }
+
 
     @Override
     @ActionMethod
@@ -196,11 +209,8 @@ public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
         BigDecimal ventilationAmout = entity.getVentilationAmount();
         BigDecimal unventilatedAmount = entity.getOriginalOT().getUnMatchingAmount();
         OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) entity.getOriginalOT();
-        
-        String outcome = "backToSellerFromOT";
-        //String outcome = "/pages/payments/otherTransactions/ventilateTransaction.xhtml?otgId="+entity.getOriginalOT().getId()+"&edit=true&cid=1&backView=backToSellerFromOT&backTab=0&backMainTab=1&faces-redirect=true";
-        
-        if(ventilationAmout.compareTo(BigDecimal.ZERO) <= 0 || unventilatedAmount.compareTo(ventilationAmout) < 0) {
+
+        if (ventilationAmout.compareTo(BigDecimal.ZERO) <= 0 || unventilatedAmount.compareTo(ventilationAmout) < 0) {
             throw new ValidationException("Ventilation amount is not valid", "paymentVentilation.invalidAmount");
         }
         originalOTG.setUnMatchingAmount(unventilatedAmount.subtract(ventilationAmout));
@@ -211,17 +221,20 @@ public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
             otherTransactionGeneralService.update(originalOTG);
             entity.setVentilationDate(new Date());
             super.saveOrUpdate(entity);
-            entity.setNewOT(createOTG());
-            entity.setAccountOperation(createPayment()); //// Account operation Credit
-            outcome = super.saveOrUpdate(killConversation);
+            entity.setNewOT(createVentilatedOTG());
+            ParamBean paramBean = paramBeanFactory.getInstance();
+            OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.411100.cr", "411100_CR"));
+            entity.setAccountOperation(createPayment(entity, occTemplate)); //// Account operation Credit
+            super.saveOrUpdate(killConversation);
         } catch (BusinessException e) {
+            log.error(e.getMessage(), e);
             messages.error(new BundleKey("messages", "error.unexpected"));
-        }  
-          
-        return outcome;
-        
+        }
+
+        return "/pages/payments/otherTransactions/ventilateTransaction.xhtml?otgId="+entity.getOriginalOT().getId()+"&edit=true&backView=backToSellerFromOT&backEntityId="+backEntityId+"&faces-redirect=true";
+
     }
-    
+
     public LazyDataModel<PaymentVentilation> getPaymentVentilations() {
         if (entity != null && entity.getOriginalOT() != null && !entity.getOriginalOT().isTransient()) {
             filters.put("originalOT", entity.getOriginalOT());
@@ -240,13 +253,13 @@ public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
     protected List<String> getListFieldsToFetch() {
         return Arrays.asList("originalOT");
     }
-	
-	/**
+
+    /**
      * get OCC template by code.
      *
      * @param occTemplateCode the occ template code
      * @return OCC Template
-     * @throws BusinessException             Business Exception
+     * @throws BusinessException Business Exception
      */
     private OCCTemplate getOCCTemplate(String occTemplateCode) throws BusinessException {
         OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);

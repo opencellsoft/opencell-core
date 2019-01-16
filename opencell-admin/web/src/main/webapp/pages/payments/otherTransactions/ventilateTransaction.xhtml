@@ -52,7 +52,7 @@
 			<ui:define name="buttons">
 				<p:commandButton ajax="false"
 					value="#{messages['paymentVentilation.buttonVentilate']}"
-					action="#{paymentVentilationBean.saveOrUpdate(false)}"/>
+					action="#{paymentVentilationBean.saveOrUpdate(false)}" />
 				<p:button value="#{messages['action.back']}"
 					outcome="backToSellerFromOT" includeViewParams="true">
 					<f:param name="cid"
@@ -89,16 +89,19 @@
 			</p:column>
 
 			<!-- 								<hftl:actionsColumn width="15%" renderDeleteLink="true" renderViewLink="false" renderEditLink="false"/> -->
-			<p:column exportable="false" toggleable="false" width="60">
+			<p:column exportable="false" toggleable="false" width="10%">
 				<f:facet name="header">
 					<h:outputText value="#{messages['commons.actions']}" />
 				</f:facet>
-				<p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.delete}" name="#{resultsId}doDelete"
-                         update="@form :formId" />
-        <p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash" oncomplete="#{resultsId}doDelete()">
-            <f:setPropertyActionListener target="#{backingBean.entity}" value="#{entity}"/>
-            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert"/>
-		</p:commandButton>
+				<p:commandButton
+					value="#{messages['paymentVentilation.buttonUnventilate']}"
+					update="@form"
+					action="#{paymentVentilationBean.unventilate(entity)}"
+					disabled="#{entity.accountOperation.matchingStatus.name() ne 'O' or entity.ventilationActionStatus.name() eq 'U'}">
+
+					<p:confirm header="#{messages['commons.confirmationHeader']}"
+						message="#{messages['paymentVentilation.confirmUnventilate']}" icon="ui-icon-alert" />
+				</p:commandButton>
 			</p:column>
 
 
