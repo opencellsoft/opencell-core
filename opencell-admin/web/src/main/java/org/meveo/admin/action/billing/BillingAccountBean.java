@@ -135,23 +135,29 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			sourceDS = discountPlanService.list();
 			discountPlanDM = new DualListModel<>(sourceDS, new ArrayList<>());
 		}
+		
+		entity.getTradingCountry().getCountryCode();
+		entity.getTradingLanguage().getLanguageCode();
 
         return entity;
     }
 
     @ActionMethod
-	public void instantiateDiscountPlan() throws BusinessException {
+	public String instantiateDiscountPlan() throws BusinessException {
 		if (entity.getDiscountPlan() != null) {
 			DiscountPlan dp = entity.getDiscountPlan();
-			entity = billingAccountService.refreshOrRetrieve(entity);
 			entity = billingAccountService.instantiateDiscountPlan(entity, dp, null);
 			entity.setDiscountPlan(null);
 		}
+		
+		return getEditViewName();
 	}
 	
 	@ActionMethod
-	public void deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
+	public String deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
 		billingAccountService.terminateDiscountPlan(entity, dpi);
+		return getEditViewName();
+//		messages.warn(new BundleKey("messages", "message.discount.terminate.warning"));
 	}
 
     @Override
@@ -166,13 +172,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
                 billingAccountService.initBillingAccount(entity);
             }
 
-//			entity.setDiscountPlans(new HashSet<>(discountPlanService.refreshOrRetrieve(discountPlanDM.getTarget())));
-
             String outcome = super.saveOrUpdate(killConversation);
 
             if (outcome != null) {
-                return getEditViewName(); // "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() +
-                                          // "&faces-redirect=true&includeViewParams=true";
+                return getEditViewName();
             }
 
         } catch (DuplicateDefaultAccountException e1) {
