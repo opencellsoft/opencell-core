@@ -34,6 +34,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
@@ -199,6 +200,8 @@ public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
         ParamBean paramBean = paramBeanFactory.getInstance();
         OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.411100.dr", "411100_DR"));
         createPayment(paymentVentilation, occTemplate); //// Account operation Debit
+
+        messages.info(new BundleKey("messages", "update.successful"));
         return "/pages/payments/otherTransactions/ventilateTransaction.xhtml?otgId="+paymentVentilation.getOriginalOT().getId()+"&edit=true&backView=backToSellerFromOT&backEntityId="+backEntityId+"&faces-redirect=true";
     }
 
