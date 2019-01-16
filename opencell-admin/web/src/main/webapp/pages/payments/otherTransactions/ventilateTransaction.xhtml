@@ -66,7 +66,7 @@
 			label="#{messages['paymentVentilation.title']}" disabled="true"
 			deleteManyButton="false" exportToXml="false">
 
-			<p:column width="10%">
+			<p:column width="20%">
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['paymentVentilation.customerAccount']}" />
@@ -78,9 +78,11 @@
 					<h:outputText
 						value="#{messages['paymentVentilation.ventilationAmount']}" />
 				</f:facet>
-				<h:outputText value="#{entity.ventilationAmount}" />
+				<h:outputText value="#{entity.ventilationAmount}">
+					<f:converter converterId="bigDecimal4DigitsConverter" />
+				</h:outputText>
 			</p:column>
-			<p:column width="10%">
+			<p:column width="20%">
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['paymentVentilation.ventilationDate']}" />
@@ -89,7 +91,7 @@
 			</p:column>
 
 			<!-- 								<hftl:actionsColumn width="15%" renderDeleteLink="true" renderViewLink="false" renderEditLink="false"/> -->
-			<p:column exportable="false" toggleable="false" width="10%">
+			<p:column exportable="false" toggleable="false" width="20%">
 				<f:facet name="header">
 					<h:outputText value="#{messages['commons.actions']}" />
 				</f:facet>
@@ -100,7 +102,8 @@
 					disabled="#{entity.accountOperation.matchingStatus.name() ne 'O' or entity.ventilationActionStatus.name() eq 'U'}">
 
 					<p:confirm header="#{messages['commons.confirmationHeader']}"
-						message="#{messages['paymentVentilation.confirmUnventilate']}" icon="ui-icon-alert" />
+						message="#{messages['paymentVentilation.confirmUnventilate']}"
+						icon="ui-icon-alert" />
 				</p:commandButton>
 			</p:column>
 
