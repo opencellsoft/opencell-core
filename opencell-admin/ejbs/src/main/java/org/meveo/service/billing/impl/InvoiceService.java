@@ -622,8 +622,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             lastTransactionDate = billingRun.getLastTransactionDate();
             invoiceDate = billingRun.getInvoiceDate();
         }
-        
-		lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
+
+        lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
 
         // Store RTs, to reach minimum amount per invoice, to DB
         if (minAmountTransactions != null) {
@@ -1057,8 +1057,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename);
             if ("true".equals(paramBeanFactory.getInstance().getProperty("invoice.pdf.addWaterMark", "true"))) {
-                if (invoice.getInvoiceType().getCode().equals(paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT")) || (invoice.isDraft() != null
-                        && invoice.isDraft())) {
+                if (invoice.getInvoiceType().getCode().equals(paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT"))
+                        || (invoice.isDraft() != null && invoice.isDraft())) {
                     PdfWaterMark.add(pdfFullFilename, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
                 }
             }
@@ -1768,7 +1768,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         if (lastTransactionDate == null) {
-            lastTransactionDate = new Date();
+            lastTransactionDate = invoiceDate;
         }
 
         if (entity.getBillingRun() != null && (entity.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)
@@ -1777,8 +1777,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new BusinessException("The entity is already in an billing run with status " + entity.getBillingRun().getStatus());
         }
 
-        // Create missing rated transactions up to an invoice date
-        ratedTransactionService.createRatedTransaction(entity, invoiceDate);
+        // Create missing rated transactions up to a last transaction date
+        ratedTransactionService.createRatedTransaction(entity, lastTransactionDate);
 
         ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entity, firstTransactionDate, lastTransactionDate);
         List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(),
