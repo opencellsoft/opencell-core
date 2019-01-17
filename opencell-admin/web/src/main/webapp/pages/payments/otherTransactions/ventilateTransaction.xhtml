@@ -52,7 +52,7 @@
 			<ui:define name="buttons">
 				<p:commandButton ajax="false"
 					value="#{messages['paymentVentilation.buttonVentilate']}"
-					action="#{paymentVentilationBean.saveOrUpdate(false)}" />
+					action="#{paymentVentilationBean.ventilate()}" />
 				<p:button value="#{messages['action.back']}"
 					outcome="backToSellerFromOT" includeViewParams="true">
 					<f:param name="cid"
