@@ -39,6 +39,11 @@ public class SignFileRequestDto  extends BaseEntityDto {
     /** The content. */
     private byte[] content;
     
+    /**
+     * The order of the file in the list of the procedure's docs to sign 
+     */
+    private Integer position;
+    
     /** 
      * The list external positions.
      * List of SignFileObjectRequestDto items , encapsulating positions and pages for each file on which the signature will be put
@@ -190,4 +195,17 @@ public class SignFileRequestDto  extends BaseEntityDto {
         this.listExternalPositions = listExternalPositions;
     }
 
+    /**
+     * @return the position
+     */
+    public Integer getPosition() {
+        return position;
+    }
+
+    /**
+     * @param position the position to set
+     */
+    public void setPosition(Integer position) {
+        this.position = position;
+    }
 }
