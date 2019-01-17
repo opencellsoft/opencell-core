@@ -22,6 +22,7 @@ import static org.meveo.commons.utils.NumberUtils.getRoundingMode;
 import static org.meveo.commons.utils.NumberUtils.round;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -48,6 +49,7 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
@@ -1049,8 +1051,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 }
             }
 
-            BigDecimal discountAmountWithTax = discountAmount.add(discountAmountTax);
+			if (appProvider.isEntreprise()) {
+				BigDecimal discountAmountWithTax = discountAmount.add(discountAmountTax);
+				discountAmountWithTax = discountAmountWithTax.setScale(invoiceRounding, NumberUtils.getRoundingMode(invoiceRoundingMode));
+				
+				discountAggregate.setAmountWithoutTax(discountAmount);
+	            discountAggregate.setAmountWithTax(discountAmountWithTax);
+	            
+			} else {
+				BigDecimal discountAmountWithoutTax = discountAmount.subtract(discountAmountTax);
+				discountAmountWithoutTax = discountAmountWithoutTax.setScale(invoiceRounding, NumberUtils.getRoundingMode(invoiceRoundingMode));
+				
+				discountAggregate.setAmountWithoutTax(discountAmountWithoutTax);
+	            discountAggregate.setAmountWithTax(discountAmount);
+			}
 
+            discountAggregate.setAmountTax(discountAmountTax);
+			
             discountAggregate.setDescription(discountPlanItem.getCode());
             discountAggregate.updateAudit(currentUser);
             discountAggregate.setBillingRun(billingRun);
@@ -1058,9 +1075,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             discountAggregate.setWallet(userAccount.getWallet());
             discountAggregate.setAccountingCode(invoiceSubCat.getAccountingCode());
             fillAgregates(discountAggregate, userAccount);
-            discountAggregate.setAmountWithoutTax(discountAmount);
-            discountAggregate.setAmountWithTax(discountAmountWithTax);
-            discountAggregate.setAmountTax(discountAmountTax);
             discountAggregate.setInvoiceSubCategory(invoiceSubCat);
 
             discountAggregate.setDiscountAggregate(true);
