@@ -118,7 +118,7 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
             quantity = subCategoryInvoiceAgregate.getQuantity();
             amountWithoutTax = subCategoryInvoiceAgregate.getAmountWithoutTax();
             amountTax = subCategoryInvoiceAgregate.getAmountTax();
-            amountWithTax = subCategoryInvoiceAgregate.getAmountTax();
+            amountWithTax = subCategoryInvoiceAgregate.getAmountWithTax();
 
             if (subCategoryInvoiceAgregate.getInvoiceSubCategory() != null) {
                 invoiceSubCategoryCode = subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode();
