@@ -9,9 +9,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OtherTransactionGeneral;
@@ -37,10 +35,6 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
         BigDecimal ventilationAmout = entity.getVentilationAmount();
         BigDecimal unventilatedAmount = entity.getOriginalOT().getUnMatchingAmount();
         OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) entity.getOriginalOT();
-
-        if (ventilationAmout.compareTo(BigDecimal.ZERO) <= 0 || unventilatedAmount.compareTo(ventilationAmout) < 0) {
-            throw new ValidationException("Ventilation amount is not valid", "paymentVentilation.invalidAmount");
-        }
         originalOTG.setUnMatchingAmount(unventilatedAmount.subtract(ventilationAmout));
         originalOTG.setMatchingAmount(originalOTG.getMatchingAmount().add(ventilationAmout));
         MatchingStatusEnum matchingStatus = originalOTG.getUnMatchingAmount().compareTo(BigDecimal.ZERO) == 0 ? MatchingStatusEnum.L : MatchingStatusEnum.P;
@@ -55,14 +49,9 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
         update(entity);
 
     }
-    
+
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void unventilatePayment(PaymentVentilation paymentVentilation) throws BusinessException {
-        AccountOperation ao = paymentVentilation.getAccountOperation();
-
-        if (ao != null && ao.getMatchingStatus() != MatchingStatusEnum.O) {
-            throw new ValidationException("Unauthorized ventilation", "paymentVentilation.unauthorized");
-        }
         paymentVentilation.setVentilationActionStatus(VentilationActionStatusEnum.U);
         update(paymentVentilation);
 

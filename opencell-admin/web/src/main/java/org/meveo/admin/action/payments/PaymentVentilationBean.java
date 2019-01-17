@@ -31,17 +31,12 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.OtherTransactionGeneral;
-import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentVentilation;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.OtherTransactionGeneralService;
-import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.PaymentVentilationService;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.LazyDataModel;
@@ -63,18 +58,12 @@ public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
     private PaymentVentilationService paymentVentilationService;
 
     @Inject
-    private OCCTemplateService oCCTemplateService;
-
-    @Inject
     private OtherTransactionGeneralService otherTransactionGeneralService;
-
-    @Inject
-    private PaymentService paymentService;
 
     @Inject
     @Param
     private Long otgId;
-    
+
     @Inject
     @Param
     private Long backEntityId;
@@ -101,33 +90,49 @@ public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
         return paymentVentilationService;
     }
 
-
     @ActionMethod
-    public String unventilate(PaymentVentilation paymentVentilation){
-        try {
-            paymentVentilationService.unventilatePayment(paymentVentilation);
-            messages.info(new BundleKey("messages", "update.successful"));
-        } catch (BusinessException e) {
-            log.error(e.getMessage(), e);
-            messages.error(new BundleKey("messages", "error.unexpected"));
+    public String unventilate(PaymentVentilation paymentVentilation) {
+        AccountOperation ao = entity.getAccountOperation();
+
+        if (ao != null && ao.getMatchingStatus() != MatchingStatusEnum.O) {
+            log.error("Unauthorized unventilation!");
+            messages.error(new BundleKey("messages", "paymentVentilation.unauthorized"));
+        } else {
+            try {
+                paymentVentilationService.unventilatePayment(paymentVentilation);
+                messages.info(new BundleKey("messages", "update.successful"));
+            } catch (BusinessException e) {
+                log.error(e.getMessage(), e);
+                messages.error(new BundleKey("messages", "error.unexpected"));
+            }
         }
-        return "/pages/payments/otherTransactions/ventilateTransaction.xhtml?otgId="+paymentVentilation.getOriginalOT().getId()+"&edit=true&backView=backToSellerFromOT&backEntityId="+backEntityId+"&faces-redirect=true";
+        
+        return "/pages/payments/otherTransactions/ventilateTransaction.xhtml?otgId=" + paymentVentilation.getOriginalOT().getId()
+                + "&edit=true&backView=backToSellerFromOT&backEntityId=" + backEntityId + "&faces-redirect=true";
     }
 
-    public String ventilate()  {
-        try {
-            paymentVentilationService.ventilatePayment(entity);
-            messages.info(new BundleKey("messages", "save.successful"));
-        } catch (BusinessException e) {
-            log.error(e.getMessage(), e);
-            messages.error(new BundleKey("messages", "error.unexpected"));
-        }        
-        return "/pages/payments/otherTransactions/ventilateTransaction.xhtml?otgId="+entity.getOriginalOT().getId()+"&edit=true&backView=backToSellerFromOT&backEntityId="+backEntityId+"&faces-redirect=true";
+    public String ventilate() throws BusinessException {
+        BigDecimal ventilationAmout = entity.getVentilationAmount();
+        BigDecimal unventilatedAmount = entity.getOriginalOT().getUnMatchingAmount();
+        if (ventilationAmout.compareTo(BigDecimal.ZERO) <= 0 || unventilatedAmount.compareTo(ventilationAmout) < 0) {
+            log.error("Ventilation amount is not valid");
+            messages.error(new BundleKey("messages", "paymentVentilation.invalidAmount"));
+        } else {
+            try {
+                paymentVentilationService.ventilatePayment(entity);
+                messages.info(new BundleKey("messages", "save.successful"));
+            } catch (BusinessException e) {
+                log.error(e.getMessage(), e);
+                messages.error(new BundleKey("messages", "error.unexpected"));
+            }
+        }
+        
+        return "/pages/payments/otherTransactions/ventilateTransaction.xhtml?otgId=" + entity.getOriginalOT().getId() + "&edit=true&backView=backToSellerFromOT&backEntityId="
+                + backEntityId + "&faces-redirect=true";
 
     }
 
-
-    public LazyDataModel<PaymentVentilation> getPaymentVentilations() {
+    public LazyDataModel<PaymentVentilation> getPaymentVentilations() throws BusinessException {
         if (entity != null && entity.getOriginalOT() != null && !entity.getOriginalOT().isTransient()) {
             filters.put("originalOT", entity.getOriginalOT());
             return getLazyDataModel();
