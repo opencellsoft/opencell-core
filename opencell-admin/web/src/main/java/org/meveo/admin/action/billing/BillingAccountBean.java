@@ -135,9 +135,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			sourceDS = discountPlanService.list();
 			discountPlanDM = new DualListModel<>(sourceDS, new ArrayList<>());
 		}
-		
-		entity.getTradingCountry().getCountryCode();
-		entity.getTradingLanguage().getLanguageCode();
 
         return entity;
     }
