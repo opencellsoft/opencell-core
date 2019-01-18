@@ -342,6 +342,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
     }
+    
+    /**
+     * Returns {@link InvoiceTypeSellerSequence} from the nearest parent.
+     * @param invoiceType {@link InvoiceType}
+     * @param seller {@link Seller}
+     * @return {@link InvoiceTypeSellerSequence}
+     */
+	public InvoiceTypeSellerSequence getInvoiceTypeSellerSequence(InvoiceType invoiceType, Seller seller) {
+		InvoiceTypeSellerSequence sequence = invoiceType.getSellerSequenceByType(seller);
+
+		if (sequence == null && seller.getSeller() != null) {
+			sequence = getInvoiceTypeSellerSequence(invoiceType, seller.getSeller());
+		}
+
+		return sequence;
+	}
 
     /**
      * Assign invoice number to an invoice
@@ -362,21 +378,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         InvoiceSequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
-        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
-        if (seller != null) {
-            invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
-        }
-
         int sequenceSize = sequence.getSequenceSize();
+        
+        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
+        InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
         String prefix = invoiceType.getPrefixEL();
-        if (invoiceTypeSellerSequence != null) {
-            prefix = invoiceTypeSellerSequence.getPrefixEL();
-        }
-        if (prefix != null && !StringUtils.isBlank(prefix)) {
-            prefix = evaluatePrefixElExpression(prefix, invoice);
-        } else {
-            prefix = "";
-        }
+		if (invoiceTypeSellerSequencePrefix != null) {
+			prefix = invoiceTypeSellerSequencePrefix.getPrefixEL();
+
+		} else if (seller != null) {
+			invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
+			if (invoiceTypeSellerSequence != null) {
+				prefix = invoiceTypeSellerSequence.getPrefixEL();
+			}
+		}
+
+		if (prefix != null && !StringUtils.isBlank(prefix)) {
+			prefix = evaluatePrefixElExpression(prefix, invoice);
+
+		} else {
+			prefix = "";
+		}
 
         long nextInvoiceNb = sequence.getCurrentInvoiceNb();
         String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
