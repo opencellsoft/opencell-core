@@ -888,4 +888,8 @@
             <column name="cf_values_accum" type="${type.json}"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#3970 - Change of RT description database field from varchar(255) to text" author="mounir.boukayoua">
+        <modifyDataType tableName="billing_rated_transaction" columnName="description" newDataType="${type.text}"/>
+    </changeSet>
 </databaseChangeLog>
