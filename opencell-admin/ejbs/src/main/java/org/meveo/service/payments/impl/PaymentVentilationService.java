@@ -1,7 +1,9 @@
 package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -9,8 +11,11 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.NoAllOperationUnmatchedException;
+import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OtherTransactionGeneral;
 import org.meveo.model.payments.Payment;
@@ -29,6 +34,9 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
 
     @Inject
     private PaymentService paymentService;
+
+    @Inject
+    private MatchingCodeService matchingCodeService;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void ventilatePayment(PaymentVentilation entity) throws BusinessException {
@@ -51,14 +59,18 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void unventilatePayment(PaymentVentilation paymentVentilation) throws BusinessException {
+    public void unventilatePayment(PaymentVentilation paymentVentilation) throws UnbalanceAmountException, Exception {
         paymentVentilation.setVentilationActionStatus(VentilationActionStatusEnum.U);
         update(paymentVentilation);
 
         createUnventilatedOTG(paymentVentilation);
         ParamBean paramBean = paramBeanFactory.getInstance();
         OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.411100.dr", "411100_DR"));
-        createPayment(paymentVentilation, occTemplate); //// Account operation Debit}
+        Payment p = createPayment(paymentVentilation, occTemplate); //// Account operation Debit}
+        List<Long> operationIds = new ArrayList<Long>();
+        operationIds.add(p.getId());
+        operationIds.add(paymentVentilation.getAccountOperation().getId());
+        matchingCodeService.matchOperations(paymentVentilation.getCustomerAccount().getId(), null, operationIds, null, MatchingTypeEnum.A);
     }
 
     private Payment createPayment(PaymentVentilation paymentVentilation, OCCTemplate occTemplate) throws BusinessException {

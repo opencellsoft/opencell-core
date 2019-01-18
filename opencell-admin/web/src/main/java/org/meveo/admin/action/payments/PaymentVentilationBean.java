@@ -30,6 +30,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -101,12 +102,14 @@ public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
             try {
                 paymentVentilationService.unventilatePayment(paymentVentilation);
                 messages.info(new BundleKey("messages", "update.successful"));
-            } catch (BusinessException e) {
+            } catch (NoAllOperationUnmatchedException e) {
+                messages.error(new BundleKey("messages", "customerAccount.noAllOperationUnmatched"));
+            } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                messages.error(new BundleKey("messages", "error.unexpected"));
+                messages.error(new BundleKey("messages", e.getMessage()));
             }
         }
-        
+
         return "/pages/payments/otherTransactions/ventilateTransaction.xhtml?otgId=" + paymentVentilation.getOriginalOT().getId()
                 + "&edit=true&backView=backToSellerFromOT&backEntityId=" + backEntityId + "&faces-redirect=true";
     }
@@ -123,7 +126,7 @@ public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
                 messages.info(new BundleKey("messages", "save.successful"));
             } catch (BusinessException e) {
                 log.error(e.getMessage(), e);
-                messages.error(new BundleKey("messages", "error.unexpected"));
+                messages.error(new BundleKey("messages", e.getMessage()));
             }
         }
         
