@@ -422,7 +422,7 @@
 						
 						        
 						        <p:button id="#{resultsId}ventilate" outcome="/pages/payments/otherTransactions/ventilateTransaction.xhtml"
-						                  value="#{messages['paymentVentilation.buttonVentilate']}" rendered="#{entity.type eq 'OTG' and entity.transactionCategory eq 'CREDIT'}">
+						                  value="#{messages['paymentVentilation.ventilations']}" rendered="#{entity.type eq 'OTG' and entity.transactionCategory eq 'CREDIT'}">
 						            <f:param name="otgId" value="#{entity.id}"/>
 						            <f:param name="edit" value="true"/>
 						            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
