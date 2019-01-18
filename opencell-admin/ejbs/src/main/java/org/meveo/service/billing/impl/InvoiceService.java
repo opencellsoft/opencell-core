@@ -353,6 +353,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
     
+    /**
+     * Returns {@link InvoiceTypeSellerSequence} from the nearest parent.
+     * @param invoiceType {@link InvoiceType}
+     * @param seller {@link Seller}
+     * @return {@link InvoiceTypeSellerSequence}
+     */
 	public InvoiceTypeSellerSequence getInvoiceTypeSellerSequence(InvoiceType invoiceType, Seller seller) {
 		InvoiceTypeSellerSequence sequence = invoiceType.getSellerSequenceByType(seller);
 
