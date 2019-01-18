@@ -2,6 +2,7 @@ package org.meveo.admin.action.notification;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.model.notification.InboundRequest;
@@ -137,8 +139,15 @@ public class InboundServlet extends HttpServlet {
                 } else {
                     res.setStatus(200);
                 }
-
-                if (inReq.getResponseBody() != null) {
+                if(inReq.getBytes() != null) {
+                    try (OutputStream out = res.getOutputStream();) {
+                        out.write(inReq.getBytes());
+                        out.close();
+                    } catch (IOException e) {
+                        log.error("Failed to produce the response", e);
+                        res.setStatus(500);
+                    }
+                } else if (inReq.getResponseBody() != null) {
                     try (PrintWriter out = res.getWriter()) {
                         out.print(inReq.getResponseBody());
                     } catch (IOException e) {
@@ -149,6 +158,8 @@ public class InboundServlet extends HttpServlet {
             }
 
             inReq = inboundRequestService.update(inReq);
+
+
 
             log.debug("Inbound request finished with status {}", res.getStatus());
 
