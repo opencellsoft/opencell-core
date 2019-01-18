@@ -19,25 +19,17 @@
 package org.meveo.model.payments;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -54,47 +46,25 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
-import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.GeneralLedger;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
-
-
 /**
- * Account operation
+ * Other transaction
  *
- * @author Edward P. Legaspi
- * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @author Amine BEN AICHA
+ * @lastModifiedVersion 5.3
  * 
  */
 @Entity
 @ObservableEntity
-@Table(name = "ar_account_operation")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Table(name = "ar_other_transaction")
 @DiscriminatorColumn(name = "transaction_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
-@CustomFieldEntity(cftCodePrefix = "ACC_OP")
-@NamedQueries({
-        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" + 
-                "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
-                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),  
-        @NamedQuery(name = "AccountOperation.listAoToPayOrRefund", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.customerAccount.id=:caIdIN and ao.type  "
-                + "                             in ('I','OCC') and ao.transactionCategory='DEBIT' and " + 
-                "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
-                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),   
-        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCAbySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" + 
-                "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
-                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),  
-        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundBySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.customerAccount.id=:caIdIN and ao.type  "
-                + "                             in ('I','OCC') and ao.transactionCategory='DEBIT' and " + 
-                "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
-                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),          
-        @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao.customerAccount=:customerAccount")
-})
-public class AccountOperation extends AuditableEntity implements ICustomFieldEntity, ISearchable {
+        @Parameter(name = "sequence_name", value = "ar_other_transaction_seq"), })
+@CustomFieldEntity(cftCodePrefix = "OTH_TR")
+public class OtherTransaction extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
 
@@ -104,13 +74,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "due_date")
     @Temporal(TemporalType.DATE)
     private Date dueDate;
-
-    /**
-     * Operation type
-     */
-    @Column(name = "transaction_type", insertable = false, updatable = false, length = 31)
-    @Size(max = 31)
-    private String type;
 
     /**
      * Operation date
@@ -125,6 +88,13 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "transaction_category")
     @Enumerated(EnumType.STRING)
     private OperationCategoryEnum transactionCategory;
+    
+    /**
+     * Operation type
+     */
+    @Column(name = "transaction_type", insertable = false, updatable = false, length = 31)
+    @Size(max = 31)
+    private String type;
 
     /**
      * Reference
@@ -139,14 +109,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
-
-    /**
-     * Deprecated in 5.2. Use accountingCode instead
-     */
-    @Deprecated
-    @Column(name = "account_code_client_side", length = 255)
-    @Size(max = 255)
-    private String accountCodeClientSide;
 
     /**
      * Amount with tax
@@ -179,11 +141,11 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     private BigDecimal unMatchingAmount = BigDecimal.ZERO;
 
     /**
-     * Associated Customer account
+     * Associated General ledger
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_account_id")
-    private CustomerAccount customerAccount;
+    @JoinColumn(name = "general_ledger_id")
+    private GeneralLedger generalLedger;
 
     /**
      * Matching status
@@ -191,12 +153,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Enumerated(EnumType.STRING)
     @Column(name = "matching_status")
     private MatchingStatusEnum matchingStatus;
-
-    /**
-     * A list of matches
-     */
-    @OneToMany(mappedBy = "accountOperation", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MatchingAmount> matchingAmounts = new ArrayList<>();
 
     /**
      * OCC code
@@ -275,12 +231,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     private PaymentMethodEnum paymentMethod;
 
     /**
-     * Associated invoices
-     */
-    @OneToMany(mappedBy = "recordedInvoice", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Invoice> invoices;
-
-    /**
      * Code
      */
     @Transient
@@ -289,7 +239,8 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     /**
      * Description
      */
-    @Transient
+    @Column(name = "description", length = 255)
+    @Size(max = 255)
     private String description;
 
     /**
@@ -340,6 +291,13 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "payment_info6", length = 255)
     @Size(max = 255)
     private String paymentInfo6;
+    
+    /**
+     * Additional payment information - AFB120 additional information
+     */
+    @Column(name = "payment_info7", length = 255)
+    @Size(max = 255)
+    private String paymentInfo7;
 
     /**
      * Billing account name
@@ -347,26 +305,9 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "billing_account_name", length = 255)
     @Size(max = 255)
     private String billingAccountName;
-
-    /**
-     * DD request item
-     */
-    @ManyToOne(optional = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "ddrequest_item_id")
-    private DDRequestItem ddRequestItem;
-
-   
-    @ManyToOne(optional = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "rejected_payment_id")
-    private RejectedPayment rejectedPayment;
     
-    @ManyToOne(optional = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "seller_id")
-    private Seller seller;
-    
-    @OneToOne(mappedBy = "accountOperation")
+    @OneToOne(mappedBy = "newOT")
     private PaymentVentilation paymentVentilation;
-    
 
     public Date getDueDate() {
         return dueDate;
@@ -374,6 +315,14 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
+    }
+    
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public OperationCategoryEnum getTransactionCategory() {
@@ -406,11 +355,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     }
 
     public void setMatchingAmount(BigDecimal matchingAmount) {
-        if(matchingAmount == null) {
-            this.matchingAmount =BigDecimal.ZERO;
-        }else {
-            this.matchingAmount = matchingAmount;
-        }
+        this.matchingAmount = matchingAmount;
     }
 
     public Date getTransactionDate() {
@@ -426,27 +371,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     }
 
     public void setUnMatchingAmount(BigDecimal unMatchingAmount) {
-       if(unMatchingAmount == null) {
-           this.unMatchingAmount = BigDecimal.ZERO;
-       }else {
-           this.unMatchingAmount = unMatchingAmount;
-       }
-    }
-
-    public CustomerAccount getCustomerAccount() {
-        return customerAccount;
-    }
-
-    public void setCustomerAccount(CustomerAccount customerAccount) {
-        this.customerAccount = customerAccount;
-    }
-
-    public String getAccountCodeClientSide() {
-        return accountCodeClientSide;
-    }
-
-    public void setAccountCodeClientSide(String accountCodeClientSide) {
-        this.accountCodeClientSide = accountCodeClientSide;
+        this.unMatchingAmount = unMatchingAmount;
     }
 
     public MatchingStatusEnum getMatchingStatus() {
@@ -483,7 +408,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 
     @Override
     public int hashCode() {
-        return 961 + ("AccountOperation" + occCode).hashCode();
+        return 961 + ("OtherTransaction" + occCode).hashCode();
     }
 
     @Override
@@ -493,11 +418,11 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
             return true;
         } else if (obj == null) {
             return false;
-        } else if (!(obj instanceof AccountOperation)) {
+        } else if (!(obj instanceof OtherTransaction)) {
             return false;
         }
 
-        AccountOperation other = (AccountOperation) obj;
+        OtherTransaction other = (OtherTransaction) obj;
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
@@ -507,22 +432,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
         } else if (!occCode.equals(other.occCode))
             return false;
         return true;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setMatchingAmounts(List<MatchingAmount> matchingAmounts) {
-        this.matchingAmounts = matchingAmounts;
-    }
-
-    public List<MatchingAmount> getMatchingAmounts() {
-        return matchingAmounts;
     }
 
     @Override
@@ -671,19 +580,11 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     }
 
     public String getDescription() {
-        return occDescription;
+        return description;
     }
 
     public void setDescription(String description) {
-        this.occDescription = description;
-    }
-
-    public List<Invoice> getInvoices() {
-        return invoices;
-    }
-
-    public void setInvoices(List<Invoice> invoices) {
-        this.invoices = invoices;
+        this.description = description;
     }
 
     /**
@@ -785,6 +686,24 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     }
 
     /**
+     * Gets the payment info 7.
+     *
+     * @return the payment info 7
+     */
+    public String getPaymentInfo7() {
+        return paymentInfo7;
+    }
+
+    /**
+     * Sets the payment info 7.
+     *
+     * @param paymentInfo7 the new payment info 7
+     */
+    public void setPaymentInfo7(String paymentInfo7) {
+        this.paymentInfo7 = paymentInfo7;
+    }
+
+    /**
      * @return the billingAccountName
      */
     public String getBillingAccountName() {
@@ -798,46 +717,11 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
         this.billingAccountName = billingAccountName;
     }
 
-    /**
-     * @return the ddRequestItem
-     */
-    public DDRequestItem getDdRequestItem() {
-        return ddRequestItem;
+    public GeneralLedger getGeneralLedger() {
+        return generalLedger;
     }
 
-    /**
-     * @param ddRequestItem the ddRequestItem to set
-     */
-    public void setDdRequestItem(DDRequestItem ddRequestItem) {
-        this.ddRequestItem = ddRequestItem;
+    public void setGeneralLedger(GeneralLedger generalLedger) {
+        this.generalLedger = generalLedger;
     }
-
-    /**
-     * @return the rejectedPayment
-     */
-    public RejectedPayment getRejectedPayment() {
-        return rejectedPayment;
-    }
-
-    /**
-     * @param rejectedPayment the rejectedPayment to set
-     */
-    public void setRejectedPayment(RejectedPayment rejectedPayment) {
-        this.rejectedPayment = rejectedPayment;
-    }
-
-    /**
-     * @return the seller
-     */
-    public Seller getSeller() {
-        return seller;
-    }
-
-    /**
-     * @param seller the seller to set
-     */
-    public void setSeller(Seller seller) {
-        this.seller = seller;
-    }
-    
 }
