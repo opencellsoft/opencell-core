@@ -1004,7 +1004,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
             if (invoiceAgregate instanceof SubCategoryInvoiceAgregate && ((SubCategoryInvoiceAgregate) invoiceAgregate).getWallet().equals(wallet)
                     && ((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory().equals(invoiceSubCat) && !invoiceAgregate.isDiscountAggregate()) {
-                amount = amount.add(invoiceAgregate.getAmountWithoutTax());
+				if (appProvider.isEntreprise()) {
+					amount = amount.add(invoiceAgregate.getAmountWithoutTax());
+
+				} else {
+					amount = amount.add(invoiceAgregate.getAmountWithTax());
+				}
             }
         }
         // }
