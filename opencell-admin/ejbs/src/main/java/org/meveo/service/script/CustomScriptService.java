@@ -592,9 +592,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Execute action on an entity.
+     * Execute action on an entity/event. Does not call init() or finalize() methods of the script.
      * 
-     * @param entity Entity to execute action on
+     * @param entityOrEvent Entity or event to execute action on
      * @param scriptCode Script to execute, identified by a code
      * @param encodedParameters Additional parameters encoded in URL like style param=value&amp;param=value
      * @return Context parameters. Will not be null even if "context" parameter is null.
@@ -602,15 +602,15 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws ElementNotFoundException Script not found
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters) throws BusinessException {
+    public Map<String, Object> execute(Object entityOrEvent, String scriptCode, String encodedParameters) throws BusinessException {
 
-        return execute(entity, scriptCode, CustomScriptService.parseParameters(encodedParameters));
+        return execute(entityOrEvent, scriptCode, CustomScriptService.parseParameters(encodedParameters));
     }
 
     /**
-     * Execute action on an entity.
+     * Execute action on an entity/event. Does not call init() or finalize() methods of the script.
      * 
-     * @param entity Entity to execute action on
+     * @param entityOrEvent Entity or event to execute action on
      * @param scriptCode Script to execute, identified by a code
      * @param context Additional parameters
      * @return Context parameters. Will not be null even if "context" parameter is null.
@@ -619,20 +619,42 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context)
-            throws BusinessException {
+    public Map<String, Object> execute(Object entityOrEvent, String scriptCode, Map<String, Object> context) throws BusinessException {
 
         if (context == null) {
             context = new HashMap<>();
         }
-        context.put(Script.CONTEXT_ENTITY, entity);
+        context.put(Script.CONTEXT_ENTITY, entityOrEvent);
         context.put(Script.CONTEXT_ACTION, scriptCode);
         Map<String, Object> result = execute(scriptCode, context);
         return result;
     }
 
     /**
-     * Execute action on an entity.
+     * Execute action on an entity/event. Does not call init() or finalize() methods of the script.
+     * 
+     * @param entityOrEvent Entity or event to execute action on
+     * @param scriptCode Script to execute, identified by a code
+     * @param context Additional parameters
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws BusinessException Any execution exception
+     */
+    public Map<String, Object> executeWInitAndFinalize(Object entityOrEvent, String scriptCode, Map<String, Object> context) throws BusinessException {
+
+        if (context == null) {
+            context = new HashMap<>();
+        }
+        context.put(Script.CONTEXT_ENTITY, entityOrEvent);
+        context.put(Script.CONTEXT_ACTION, scriptCode);
+        Map<String, Object> result = executeWInitAndFinalize(scriptCode, context);
+        return result;
+    }
+    
+    /**
+     * Execute script. Does not call init() or finalize() methods of the script.
      * 
      * @param scriptCode Script to execute, identified by a code
      * @param context Method context
@@ -643,10 +665,15 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(String scriptCode, Map<String, Object> context)
-            throws BusinessException {
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context) throws BusinessException {
 
         log.trace("Script {} to be executed with parameters {}", scriptCode, context);
+
+        if (context == null) {
+            context = new HashMap<String, Object>();
+        }
+        context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+        context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
         SI classInstance = getScriptInstance(scriptCode);
         classInstance.execute(context);
@@ -655,6 +682,38 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         return context;
     }
 
+    /**
+     * Execute script. DOES call init() or finalize() methods of the script.
+     * 
+     * @param scriptCode Script to execute, identified by a code
+     * @param context Method context
+     * 
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws BusinessException Any execution exception
+     */
+    public Map<String, Object> executeWInitAndFinalize(String scriptCode, Map<String, Object> context) throws BusinessException {
+
+        log.trace("Script {} to be executed with parameters {}", scriptCode, context);
+
+        if (context == null) {
+            context = new HashMap<String, Object>();
+        }
+        context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+        context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+
+        SI classInstance = getScriptInstance(scriptCode);
+        classInstance.init(context);
+        classInstance.execute(context);
+        classInstance.finalize(context);
+
+        log.trace("Script {} executed with parameters {}", scriptCode, context);
+        return context;
+    }
+
+    
     /**
      * Execute a class that extends Script
      * 
@@ -665,11 +724,16 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws BusinessException Any execution exception
      */
     protected Map<String, Object> execute(SI compiledScript, Map<String, Object> context) throws BusinessException {
+
         if (context == null) {
             context = new HashMap<String, Object>();
         }
 
+        context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+        context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+
         compiledScript.execute(context);
+
         return context;
     }
 
