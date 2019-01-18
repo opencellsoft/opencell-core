@@ -1043,32 +1043,45 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             
             SubCategoryInvoiceAgregate discountAggregate = new SubCategoryInvoiceAgregate();
             BigDecimal discountAmountTax = BigDecimal.ZERO;
-            if (!isExonerated) {
-                for (Tax tax : taxes) {
-                    BigDecimal amountTax = discountAmount.multiply(tax.getPercent().divide(HUNDRED));
-                    discountAmountTax = discountAmountTax.add(amountTax);
-                    discountAggregate.addSubCategoryTax(tax);
-                    TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId().toString());
-                    if (taxInvoiceAgregate != null) {
-                        taxInvoiceAgregate.addAmountTax(amountTax);
-                        taxInvoiceAgregate.addAmountWithoutTax(discountAmount);
-                    }
-                }
-            }
+            BigDecimal totalDiscountAmountWithoutTax = BigDecimal.ZERO;
+			if (!isExonerated) {
+				for (Tax tax : taxes) {
+
+					BigDecimal taxPercent = tax.getPercent().divide(HUNDRED);
+					BigDecimal amountTax;
+					if (appProvider.isEntreprise()) {
+						amountTax = discountAmount.multiply(taxPercent);
+
+					} else {
+						BigDecimal discountAmountWithoutTax = discountAmount.divide(BigDecimal.ONE.add(taxPercent),
+								NumberUtils.getRoundingMode(invoiceRoundingMode));
+						totalDiscountAmountWithoutTax = totalDiscountAmountWithoutTax.add(discountAmountWithoutTax);
+						amountTax = discountAmountWithoutTax.multiply(taxPercent);
+					}
+					discountAmountTax = discountAmountTax.add(amountTax);
+
+					discountAggregate.addSubCategoryTax(tax);
+					TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId().toString());
+					if (taxInvoiceAgregate != null) {
+						taxInvoiceAgregate.addAmountTax(amountTax);
+						taxInvoiceAgregate.addAmountWithoutTax(discountAmount);
+					}
+				}
+			}
 
 			if (appProvider.isEntreprise()) {
 				BigDecimal discountAmountWithTax = discountAmount.add(discountAmountTax);
-				discountAmountWithTax = discountAmountWithTax.setScale(invoiceRounding, NumberUtils.getRoundingMode(invoiceRoundingMode));
-				
+				discountAmountWithTax = discountAmountWithTax.setScale(invoiceRounding,
+						NumberUtils.getRoundingMode(invoiceRoundingMode));
+
 				discountAggregate.setAmountWithoutTax(discountAmount);
-	            discountAggregate.setAmountWithTax(discountAmountWithTax);
-	            
+				discountAggregate.setAmountWithTax(discountAmountWithTax);
+
 			} else {
-				BigDecimal discountAmountWithoutTax = discountAmount.subtract(discountAmountTax);
-				discountAmountWithoutTax = discountAmountWithoutTax.setScale(invoiceRounding, NumberUtils.getRoundingMode(invoiceRoundingMode));
-				
-				discountAggregate.setAmountWithoutTax(discountAmountWithoutTax);
-	            discountAggregate.setAmountWithTax(discountAmount);
+				totalDiscountAmountWithoutTax = totalDiscountAmountWithoutTax.setScale(invoiceRounding,
+						NumberUtils.getRoundingMode(invoiceRoundingMode));
+				discountAggregate.setAmountWithoutTax(totalDiscountAmountWithoutTax);
+				discountAggregate.setAmountWithTax(discountAmount);
 			}
 
             discountAggregate.setAmountTax(discountAmountTax);
