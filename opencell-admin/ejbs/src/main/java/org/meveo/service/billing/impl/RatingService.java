@@ -564,7 +564,6 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param walletOperation Wallet operation
      * @param unitPriceWithoutTax Unit price without tax. Used in B2B (provider.isEnterise=true) as base to calculate taxes and price/amount with tax.
      * @param unitPriceWithTax Unit price with tax. Used in B2C (provider.isEnterise=false) as base to calculate taxes and price/amount without tax.
-     * @param pricePlan The price plan.
      * @throws BusinessException Business exception
      */
     public void calculateAmounts(WalletOperation walletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax) throws BusinessException {
