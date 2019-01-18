@@ -1,8 +1,8 @@
 package org.meveo.admin.action.notification;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 
@@ -134,13 +134,8 @@ public class InboundServlet extends HttpServlet {
                     res.setStatus(200);
                 }
                 if(inReq.getBytes() != null) {
-                    try (OutputStream out = res.getOutputStream();) {
-                        out.write(inReq.getBytes());
-                        out.close();
-                    } catch (IOException e) {
-                        log.error("Failed to produce the response", e);
-                        res.setStatus(500);
-                    }
+                    IOUtils.copy(new ByteArrayInputStream(inReq.getBytes()), res.getOutputStream());
+                    res.flushBuffer();
                 } else if (inReq.getResponseBody() != null) {
                     try (PrintWriter out = res.getWriter()) {
                         out.print(inReq.getResponseBody());
@@ -157,7 +152,7 @@ public class InboundServlet extends HttpServlet {
 
             log.debug("Inbound request finished with status {}", res.getStatus());
 
-        } catch (BusinessException e) {
+        } catch (BusinessException | IOException e) {
             log.error("Failed to process Inbound request ", e);
         }
 
