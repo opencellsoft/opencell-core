@@ -1056,7 +1056,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 						BigDecimal discountAmountWithoutTax = discountAmount.divide(BigDecimal.ONE.add(taxPercent),
 								NumberUtils.getRoundingMode(invoiceRoundingMode));
 						totalDiscountAmountWithoutTax = totalDiscountAmountWithoutTax.add(discountAmountWithoutTax);
-						amountTax = discountAmountWithoutTax.multiply(taxPercent);
+						amountTax = discountAmount.subtract(discountAmountWithoutTax);
 					}
 					discountAmountTax = discountAmountTax.add(amountTax);
 
