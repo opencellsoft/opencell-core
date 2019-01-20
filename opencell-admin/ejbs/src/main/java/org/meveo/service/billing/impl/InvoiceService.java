@@ -141,7 +141,8 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @author Said Ramli
- * @lastModifiedVersion 5.1 
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
@@ -621,7 +622,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return ratedTransactionGroups;
        
     }
-    
+
     /**
      * Creates the agregates and invoice.
      *
@@ -637,7 +638,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<Invoice> createAgregatesAndInvoice(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
-            Date firstTransactionDate, Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean isDraft) throws BusinessException {
+                                                   Date firstTransactionDate, Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean isDraft) throws BusinessException {
+        return createAgregatesAndInvoice( entity,  billingRun,  ratedTransactionFilter,  invoiceDate,
+                 firstTransactionDate,  lastTransactionDate,  minAmountTransactions,  isDraft,  false);
+    }
+
+    /**
+     * Creates the agregates and invoice.
+     *
+     * @param entity entity to be billed
+     * @param billingRun billing run
+     * @param ratedTransactionFilter rated transaction filter
+     * @param invoiceDate date of invoice
+     * @param firstTransactionDate date of first transaction
+     * @param lastTransactionDate date of last transaction
+     * @param minAmountTransactions Min amount rated transactions
+     * @return created invoice
+     * @throws BusinessException business exception
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public List<Invoice> createAgregatesAndInvoice(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
+            Date firstTransactionDate, Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean isDraft, boolean ignoreInvoicingThreshold) throws BusinessException {
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
@@ -775,7 +796,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     
                     this.create(invoice);
                     
-                    ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, ratedTransactionSelection, firstTransactionDate, lastTransactionDate, false, false, billingRun);
+                    ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, ratedTransactionSelection, firstTransactionDate, lastTransactionDate, false, false, billingRun, ignoreInvoicingThreshold);
                     log.debug("appended aggregates");
     
                     for (RatedTransaction ratedTransaction : invoice.getRatedTransactions()) {
@@ -1793,6 +1814,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Date invoiceDate = generateInvoiceRequestDto.getInvoicingDate();
         Date firstTransactionDate = generateInvoiceRequestDto.getFirstTransactionDate();
         Date lastTransactionDate = generateInvoiceRequestDto.getLastTransactionDate();
+        boolean ignoreInvoicingThreshold = generateInvoiceRequestDto.getIgnoreInvoicingThreshold();
 
         if (StringUtils.isBlank(entity)) {
             throw new BusinessException("entity is null");
@@ -1819,7 +1841,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         ratedTransactionService.createRatedTransaction(entity, invoiceDate);
 
         entity = billingAccountService.calculateInvoicing(entity, firstTransactionDate, lastTransactionDate, null);
-        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(), isDraft);
+        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(), isDraft, ignoreInvoicingThreshold);
         
 //        if (!isDraft) {
             for(Invoice invoice: invoices) {
