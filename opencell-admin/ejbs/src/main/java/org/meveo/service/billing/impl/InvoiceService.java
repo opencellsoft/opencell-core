@@ -633,6 +633,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param firstTransactionDate date of first transaction
      * @param lastTransactionDate date of last transaction
      * @param minAmountTransactions Min amount rated transactions
+     * @param isDraft the is Draft
      * @return created invoice
      * @throws BusinessException business exception
      */
@@ -653,6 +654,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param firstTransactionDate date of first transaction
      * @param lastTransactionDate date of last transaction
      * @param minAmountTransactions Min amount rated transactions
+     * @param isDraft the is Draft
+     * @param ignoreInvoicingThreshold the ignore invoicing threshold
      * @return created invoice
      * @throws BusinessException business exception
      */
