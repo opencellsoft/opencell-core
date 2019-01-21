@@ -14,6 +14,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -22,6 +24,8 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
  * Web service for managing {@link org.meveo.model.catalog.ServiceTemplate}.
  * 
  * @author Edward P. Legaspi
+ * @author Youssef IZEM
+ * @lastModifiedVersion 5.4
  **/
 @Path("/catalog/serviceTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -100,4 +104,14 @@ public interface ServiceTemplateRs extends IBaseRs {
     @POST
     @Path("/{code}/disable")
     ActionStatus disable(@PathParam("code") String code);
+    
+    /**
+     * Gets a service template list widh .
+     * 
+     * @param pagingAndFiltering PagingAndFiltering config.
+     * @return Return serviceTemplate list
+     */
+    @Path("/list")
+    @GET
+    GetListServiceTemplateResponseDto list(PagingAndFiltering pagingAndFiltering);
 }
