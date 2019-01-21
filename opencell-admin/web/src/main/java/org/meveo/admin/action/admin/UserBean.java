@@ -26,6 +26,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +55,6 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -150,6 +152,7 @@ public class UserBean extends CustomFieldBean<User> {
             setSelectedFolder(null);
         }
         initSelectionOptions();
+
     }
 
     @Override
@@ -324,6 +327,26 @@ public class UserBean extends CustomFieldBean<User> {
             if (!subDir.exists()) {
                 subDir.mkdirs();
             }
+        }
+
+        Path link = Paths.get(getFilePath() + File.separator + "logs");
+        if (!Files.isSymbolicLink(link)) {
+            CreateSymbolicLinkLogs(link);
+        }
+    }
+
+    private void CreateSymbolicLinkLogs(Path link) {
+        String serverDir = System.getProperty("jboss.server.base.dir");
+        if (serverDir == null) {
+            serverDir = Paths.get(getFilePath()).resolve(Paths.get("..", "..", "wildfly", "standalone")).normalize().toString();
+        }
+
+        Path logDir = Paths.get(serverDir + File.separator + "log");
+
+        try {
+            Files.createSymbolicLink(link, logDir);
+        } catch (IOException | UnsupportedOperationException | SecurityException e) {
+            log.error("Logs symbolic link creation failed : " + e);
         }
     }
 
