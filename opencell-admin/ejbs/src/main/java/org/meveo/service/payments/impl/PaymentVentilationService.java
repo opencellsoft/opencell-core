@@ -37,7 +37,6 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
     @Inject
     private MatchingCodeService matchingCodeService;
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void ventilatePayment(PaymentVentilation entity) throws BusinessException {
         BigDecimal ventilationAmout = entity.getVentilationAmount();
         BigDecimal unventilatedAmount = entity.getOriginalOT().getUnMatchingAmount();
@@ -57,7 +56,6 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
 
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void unventilatePayment(PaymentVentilation paymentVentilation) throws UnbalanceAmountException, Exception {
         paymentVentilation.setVentilationActionStatus(VentilationActionStatusEnum.U);
         update(paymentVentilation);
