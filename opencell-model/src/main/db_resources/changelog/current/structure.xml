@@ -937,6 +937,10 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_dunning_document_sequence" />
             </column>
             <column name="version" type="int4" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_dunning_document_code"/>
+            </column>
+            <column name="description" type="varchar(255)" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -947,7 +951,7 @@
                 <constraints nullable="false" foreignKeyName="fk_dunning_document_ca" references="ar_customer_account(id)"/>
             </column>
             <column name="billing_subscription_id" type="bigint">
-                <constraints nullable="false" foreignKeyName="fk_dunning_document_subscription" references="billing_subscription(id)"/>
+                <constraints nullable="true" foreignKeyName="fk_dunning_document_subscription" references="billing_subscription(id)"/>
             </column>
         </createTable>
         <createSequence sequenceName="dunning_document_seq"/>
