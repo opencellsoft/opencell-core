@@ -11,7 +11,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -38,7 +37,7 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
     @Inject
     private MatchingCodeService matchingCodeService;
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void ventilatePayment(PaymentVentilation entity) throws BusinessException {
         BigDecimal ventilationAmout = entity.getVentilationAmount();
         BigDecimal unventilatedAmount = entity.getOriginalOT().getUnMatchingAmount();
@@ -58,7 +57,7 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
 
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void unventilatePayment(PaymentVentilation paymentVentilation) throws UnbalanceAmountException, Exception {
         paymentVentilation.setVentilationActionStatus(VentilationActionStatusEnum.U);
         update(paymentVentilation);
