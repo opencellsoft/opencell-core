@@ -84,13 +84,13 @@
 			outcome="terminationReasons"
 			value="#{messages['menu.terminationReason']}" />
 		<p:menuitem id="currencies"
-			rendered="#{currentUser.hasRole('superAdminManagement')}"
+			rendered="#{currentUser.hasRole('currencyManagement')}"
 			outcome="currencies" value="#{messages['menu.currencies']}" />
 		<p:menuitem id="languages"
-			rendered="#{currentUser.hasRole('superAdminManagement')}"
+			rendered="#{currentUser.hasRole('languageManagement')}"
 			outcome="languages" value="#{messages['menu.languages']}" />
 		<p:menuitem id="countries"
-			rendered="#{currentUser.hasRole('superAdminManagement')}"
+			rendered="#{currentUser.hasRole('countryManagement')}"
 			outcome="countries" value="#{messages['menu.countries']}" />
 		<p:menuitem id="meveoProperties"
 			rendered="#{currentUser.hasRole('superAdminManagement')}"
@@ -295,6 +295,7 @@
 	
 	<p:submenu id="finance" label="#{messages['menu.finance']}" rendered="#{currentUser.hasRole('financeVisualization') or currentUser.hasRole('financeManagement') }">
 		<p:menuitem id="chartOfAccounts" outcome="accountingCodes" value="#{messages['menu.chartOfAccounts']}" rendered="#{currentUser.hasRole('financeVisualization')}" />
+		<p:menuitem id="generalLedgers" outcome="generalLedgers" value="#{messages['menu.generalLedgers']}" />
 		<p:menuitem id="revenueRecognitionRules" outcome="revenueRecognitionRules" value="#{messages['menu.revenueRecognitionRules']}" />				
 		<p:menuitem id="revenueSchedules" outcome="revenueSchedules" value="#{messages['menu.revenueSchedules']}" />
 		<p:menuitem id="reportExtracts" outcome="reportExtracts" value="#{messages['menu.reportExtracts']}" />
