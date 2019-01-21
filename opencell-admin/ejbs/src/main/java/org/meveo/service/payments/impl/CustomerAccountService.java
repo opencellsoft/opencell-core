@@ -150,7 +150,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         
 		if (!isFuture) {
 			if (isDue) {
-				queryBuilder.addCriterion("dueDate", "<", to, false);
+				queryBuilder.addCriterion("dueDate", "<<", to, false);
 				
 			} else {
 				queryBuilder.addCriterion("transactionDate", "<=", to, false);
