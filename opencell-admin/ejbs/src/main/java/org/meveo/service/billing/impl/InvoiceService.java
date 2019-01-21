@@ -1817,7 +1817,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Date invoiceDate = generateInvoiceRequestDto.getInvoicingDate();
         Date firstTransactionDate = generateInvoiceRequestDto.getFirstTransactionDate();
         Date lastTransactionDate = generateInvoiceRequestDto.getLastTransactionDate();
-        boolean ignoreInvoicingThreshold = generateInvoiceRequestDto.getIgnoreInvoicingThreshold();
+        boolean ignoreInvoicingThreshold = false;
+        if (generateInvoiceRequestDto.getIgnoreInvoicingThreshold() != null) {
+            ignoreInvoicingThreshold = generateInvoiceRequestDto.getIgnoreInvoicingThreshold();
+        }
+
 
         if (StringUtils.isBlank(entity)) {
             throw new BusinessException("entity is null");
