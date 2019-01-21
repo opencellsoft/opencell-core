@@ -225,7 +225,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             balance = balance.multiply(new BigDecimal(balanceFlag));
             log.debug("end computeBalance customerAccount code:{} , balance:{}", customerAccount.getCode(), balance);
         } catch (Exception e) {
-            throw new BusinessException("Internal error");
+            throw new BusinessException("Internal error",e);
         }
         return balance;
 
