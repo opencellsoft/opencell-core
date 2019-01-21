@@ -141,7 +141,8 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @author Said Ramli
- * @lastModifiedVersion 5.1 
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
@@ -352,6 +353,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
     }
+    
+    /**
+     * Returns {@link InvoiceTypeSellerSequence} from the nearest parent.
+     * @param invoiceType {@link InvoiceType}
+     * @param seller {@link Seller}
+     * @return {@link InvoiceTypeSellerSequence}
+     */
+	public InvoiceTypeSellerSequence getInvoiceTypeSellerSequence(InvoiceType invoiceType, Seller seller) {
+		InvoiceTypeSellerSequence sequence = invoiceType.getSellerSequenceByType(seller);
+
+		if (sequence == null && seller.getSeller() != null) {
+			sequence = getInvoiceTypeSellerSequence(invoiceType, seller.getSeller());
+		}
+
+		return sequence;
+	}
 
     /**
      * Assign invoice number to an invoice
@@ -371,21 +388,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         InvoiceSequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
-        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
-        if(seller != null) {
-            invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
-        }
-
         int sequenceSize = sequence.getSequenceSize();
+        
+        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
+        InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
         String prefix = invoiceType.getPrefixEL();
-        if(invoiceTypeSellerSequence != null) {
-        	prefix = invoiceTypeSellerSequence.getPrefixEL();
-        }
-        if (prefix != null && !StringUtils.isBlank(prefix)) {
-            prefix = evaluatePrefixElExpression(prefix, invoice);
-        } else {
-            prefix = "";
-        }
+		if (invoiceTypeSellerSequencePrefix != null) {
+			prefix = invoiceTypeSellerSequencePrefix.getPrefixEL();
+
+		} else if (seller != null) {
+			invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
+			if (invoiceTypeSellerSequence != null) {
+				prefix = invoiceTypeSellerSequence.getPrefixEL();
+			}
+		}
+
+		if (prefix != null && !StringUtils.isBlank(prefix)) {
+			prefix = evaluatePrefixElExpression(prefix, invoice);
+
+		} else {
+			prefix = "";
+		}
 
         long nextInvoiceNb = sequence.getCurrentInvoiceNb();
         String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
@@ -599,7 +622,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return ratedTransactionGroups;
        
     }
-    
+
     /**
      * Creates the agregates and invoice.
      *
@@ -610,12 +633,35 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param firstTransactionDate date of first transaction
      * @param lastTransactionDate date of last transaction
      * @param minAmountTransactions Min amount rated transactions
+     * @param isDraft the is Draft
      * @return created invoice
      * @throws BusinessException business exception
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<Invoice> createAgregatesAndInvoice(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
-            Date firstTransactionDate, Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean isDraft) throws BusinessException {
+                                                   Date firstTransactionDate, Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean isDraft) throws BusinessException {
+        return createAgregatesAndInvoice( entity,  billingRun,  ratedTransactionFilter,  invoiceDate,
+                 firstTransactionDate,  lastTransactionDate,  minAmountTransactions,  isDraft,  false);
+    }
+
+    /**
+     * Creates the agregates and invoice.
+     *
+     * @param entity entity to be billed
+     * @param billingRun billing run
+     * @param ratedTransactionFilter rated transaction filter
+     * @param invoiceDate date of invoice
+     * @param firstTransactionDate date of first transaction
+     * @param lastTransactionDate date of last transaction
+     * @param minAmountTransactions Min amount rated transactions
+     * @param isDraft the is Draft
+     * @param ignoreInvoicingThreshold the ignore invoicing threshold
+     * @return created invoice
+     * @throws BusinessException business exception
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public List<Invoice> createAgregatesAndInvoice(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
+            Date firstTransactionDate, Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean isDraft, boolean ignoreInvoicingThreshold) throws BusinessException {
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
@@ -753,7 +799,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     
                     this.create(invoice);
                     
-                    ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, ratedTransactionSelection, firstTransactionDate, lastTransactionDate, false, false, billingRun);
+                    ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, ratedTransactionSelection, firstTransactionDate, lastTransactionDate, false, false, billingRun, ignoreInvoicingThreshold);
                     log.debug("appended aggregates");
     
                     for (RatedTransaction ratedTransaction : invoice.getRatedTransactions()) {
@@ -1771,6 +1817,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Date invoiceDate = generateInvoiceRequestDto.getInvoicingDate();
         Date firstTransactionDate = generateInvoiceRequestDto.getFirstTransactionDate();
         Date lastTransactionDate = generateInvoiceRequestDto.getLastTransactionDate();
+        boolean ignoreInvoicingThreshold = generateInvoiceRequestDto.getIgnoreInvoicingThreshold();
 
         if (StringUtils.isBlank(entity)) {
             throw new BusinessException("entity is null");
@@ -1797,7 +1844,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         ratedTransactionService.createRatedTransaction(entity, invoiceDate);
 
         entity = billingAccountService.calculateInvoicing(entity, firstTransactionDate, lastTransactionDate, null);
-        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(), isDraft);
+        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(), isDraft, ignoreInvoicingThreshold);
         
 //        if (!isDraft) {
             for(Invoice invoice: invoices) {

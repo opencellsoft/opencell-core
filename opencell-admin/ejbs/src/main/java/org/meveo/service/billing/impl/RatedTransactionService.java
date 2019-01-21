@@ -93,8 +93,9 @@ import org.meveo.service.script.billing.TaxScriptService;
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @author Abdelmounaim Akadid
- * 
- * @lastModifiedVersion 5.2
+ * @author Mounir Bahije
+ *
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
@@ -281,7 +282,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Append invoice aggregates to an invoice. Only one of these should be provided: ratedTransactionFilter, ratedTransactions, orderNumber
-     * 
+     *
      * @param billingAccount Billing Account
      * @param invoice Invoice to append invoice aggregates to
      * @param ratedTransactionFilter Filter to use to filter rated transactions.
@@ -296,7 +297,31 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void appendInvoiceAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, List<RatedTransaction> ratedTransactions,
-            Date firstTransactionDate, Date lastTransactionDate, boolean isInvoiceAdjustment, boolean isVirtual, BillingRun billingRun) throws BusinessException {
+                                       Date firstTransactionDate, Date lastTransactionDate, boolean isInvoiceAdjustment, boolean isVirtual, BillingRun billingRun) throws BusinessException {
+        appendInvoiceAgregates( billingAccount,  invoice,  ratedTransactionFilter,  ratedTransactions,
+                 firstTransactionDate,  lastTransactionDate,  isInvoiceAdjustment,  isVirtual,  billingRun, false);
+    }
+
+
+    /**
+     * Append invoice aggregates to an invoice. Only one of these should be provided: ratedTransactionFilter, ratedTransactions, orderNumber
+     * 
+     * @param billingAccount Billing Account
+     * @param invoice Invoice to append invoice aggregates to
+     * @param ratedTransactionFilter Filter to use to filter rated transactions.
+     * @param ratedTransactions A list of rated transactions - used in conjunction with isVirtual=true
+     * @param firstTransactionDate First transaction date
+     * @param lastTransactionDate Last transaction date
+     * @param isInvoiceAdjustment Is this invoice adjustment
+     * @param isVirtual Is this a virtual invoice - invoice is not persisted, rated transactions are not persisted either
+     * @param ignoreInvoicingThreshold Is this a ignoreInvoicing threshold - used to test or not if Invoice amount below the threshold
+     * @throws BusinessException BusinessException
+     */
+    @SuppressWarnings({ "unchecked", "unused" })
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void appendInvoiceAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, List<RatedTransaction> ratedTransactions,
+            Date firstTransactionDate, Date lastTransactionDate, boolean isInvoiceAdjustment, boolean isVirtual, BillingRun billingRun, boolean ignoreInvoicingThreshold) throws BusinessException {
 
         boolean entreprise = appProvider.isEntreprise();
         int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
@@ -672,9 +697,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
                 : billingAccount.getInvoicingThreshold();
-        if (invoicingThreshold != null && invoice.getAmountWithoutTax() != null) {
-            if (invoicingThreshold.compareTo(invoice.getAmountWithoutTax()) > 0) {
-                throw new BusinessException("Invoice amount below the threshold");
+        if (!ignoreInvoicingThreshold) {
+            if (invoicingThreshold != null && invoice.getAmountWithoutTax() != null) {
+                if (invoicingThreshold.compareTo(invoice.getAmountWithoutTax()) > 0) {
+                    throw new BusinessException("Invoice amount below the threshold");
+                }
             }
         }
 
@@ -1004,7 +1031,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
             if (invoiceAgregate instanceof SubCategoryInvoiceAgregate && ((SubCategoryInvoiceAgregate) invoiceAgregate).getWallet().equals(wallet)
                     && ((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory().equals(invoiceSubCat) && !invoiceAgregate.isDiscountAggregate()) {
-                amount = amount.add(invoiceAgregate.getAmountWithoutTax());
+				if (appProvider.isEntreprise()) {
+					amount = amount.add(invoiceAgregate.getAmountWithoutTax());
+
+				} else {
+					amount = amount.add(invoiceAgregate.getAmountWithTax());
+				}
             }
         }
         // }
@@ -1038,32 +1070,45 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             
             SubCategoryInvoiceAgregate discountAggregate = new SubCategoryInvoiceAgregate();
             BigDecimal discountAmountTax = BigDecimal.ZERO;
-            if (!isExonerated) {
-                for (Tax tax : taxes) {
-                    BigDecimal amountTax = discountAmount.multiply(tax.getPercent().divide(HUNDRED));
-                    discountAmountTax = discountAmountTax.add(amountTax);
-                    discountAggregate.addSubCategoryTax(tax);
-                    TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId().toString());
-                    if (taxInvoiceAgregate != null) {
-                        taxInvoiceAgregate.addAmountTax(amountTax);
-                        taxInvoiceAgregate.addAmountWithoutTax(discountAmount);
-                    }
-                }
-            }
+            BigDecimal totalDiscountAmountWithoutTax = BigDecimal.ZERO;
+			if (!isExonerated) {
+				for (Tax tax : taxes) {
+
+					BigDecimal taxPercent = tax.getPercent().divide(HUNDRED);
+					BigDecimal amountTax;
+					if (appProvider.isEntreprise()) {
+						amountTax = discountAmount.multiply(taxPercent);
+
+					} else {
+						BigDecimal discountAmountWithoutTax = discountAmount.divide(BigDecimal.ONE.add(taxPercent),
+								NumberUtils.getRoundingMode(invoiceRoundingMode));
+						totalDiscountAmountWithoutTax = totalDiscountAmountWithoutTax.add(discountAmountWithoutTax);
+						amountTax = discountAmount.subtract(discountAmountWithoutTax);
+					}
+					discountAmountTax = discountAmountTax.add(amountTax);
+
+					discountAggregate.addSubCategoryTax(tax);
+					TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId().toString());
+					if (taxInvoiceAgregate != null) {
+						taxInvoiceAgregate.addAmountTax(amountTax);
+						taxInvoiceAgregate.addAmountWithoutTax(discountAmount);
+					}
+				}
+			}
 
 			if (appProvider.isEntreprise()) {
 				BigDecimal discountAmountWithTax = discountAmount.add(discountAmountTax);
-				discountAmountWithTax = discountAmountWithTax.setScale(invoiceRounding, NumberUtils.getRoundingMode(invoiceRoundingMode));
-				
+				discountAmountWithTax = discountAmountWithTax.setScale(invoiceRounding,
+						NumberUtils.getRoundingMode(invoiceRoundingMode));
+
 				discountAggregate.setAmountWithoutTax(discountAmount);
-	            discountAggregate.setAmountWithTax(discountAmountWithTax);
-	            
+				discountAggregate.setAmountWithTax(discountAmountWithTax);
+
 			} else {
-				BigDecimal discountAmountWithoutTax = discountAmount.subtract(discountAmountTax);
-				discountAmountWithoutTax = discountAmountWithoutTax.setScale(invoiceRounding, NumberUtils.getRoundingMode(invoiceRoundingMode));
-				
-				discountAggregate.setAmountWithoutTax(discountAmountWithoutTax);
-	            discountAggregate.setAmountWithTax(discountAmount);
+				totalDiscountAmountWithoutTax = totalDiscountAmountWithoutTax.setScale(invoiceRounding,
+						NumberUtils.getRoundingMode(invoiceRoundingMode));
+				discountAggregate.setAmountWithoutTax(totalDiscountAmountWithoutTax);
+				discountAggregate.setAmountWithTax(discountAmount);
 			}
 
             discountAggregate.setAmountTax(discountAmountTax);

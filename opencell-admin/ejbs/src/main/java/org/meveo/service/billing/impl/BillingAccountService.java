@@ -82,7 +82,8 @@ import org.meveo.service.order.OrderService;
  * @author Abdelmounaim Akadid
  * @author Mounir Bahije
  * @author Khalid HORRI
- * @lastModifiedVersion 5.2.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class BillingAccountService extends AccountService<BillingAccount> {
@@ -424,33 +425,45 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public IBillableEntity updateEntityTotalAmounts(IBillableEntity entity, BillingRun billingRun) throws BusinessException {
         log.debug("updateEntityTotalAmounts  entity:" + entity.getId());
 
-        if(entity instanceof BillingAccount) {
-        	entity = findByCode(((BillingAccount) entity).getCode());
-        } 
-        
-        if(entity instanceof Subscription) {
-        	entity = subscriptionService.findByCode(((Subscription) entity).getCode());
-        } 
-        
-        if(entity instanceof Order) {
-        	entity = orderService.findByCode(((Order) entity).getCode());
-        } 
-        
+        BillingAccount billingAccount = null;
+        if (entity instanceof BillingAccount) {
+            entity = findByCode(((BillingAccount) entity).getCode());
+            billingAccount = (BillingAccount) entity;
+        }
+
+        if (entity instanceof Subscription) {
+            entity = subscriptionService.findByCode(((Subscription) entity).getCode());
+            billingAccount = ((Subscription) entity).getUserAccount() != null ? ((Subscription) entity).getUserAccount().getBillingAccount() : null;
+        }
+
+        if (entity instanceof Order) {
+            entity = orderService.findByCode(((Order) entity).getCode());
+            if (((Order) entity).getUserAccounts() != null && !((Order) entity).getUserAccounts().isEmpty()) {
+                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ?
+                        (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() : null;
+            }
+        }
+
         entity = calculateInvoicing(entity, null, billingRun.getLastTransactionDate(), billingRun);
-        
+
         BigDecimal invoiceAmount = entity.getTotalInvoicingAmountWithoutTax();
         if (invoiceAmount != null) {
-            BillingCycle billingCycle = billingRun.getBillingCycle();
-            BigDecimal invoicingThreshold = billingCycle == null ? null : billingCycle.getInvoicingThreshold();
+            BigDecimal invoicingThreshold = null;
+            if (billingAccount != null) {
+                invoicingThreshold = billingAccount.getInvoicingThreshold();
+            }
+            if (invoicingThreshold == null && billingRun.getBillingCycle() != null) {
+                invoicingThreshold = billingRun.getBillingCycle().getInvoicingThreshold();
+            }
 
             if (invoicingThreshold != null) {
                 if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
                     log.debug("updateEntityTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
-                    		entity.getCode(), invoiceAmount, invoicingThreshold);
+                            entity.getCode(), invoiceAmount, invoicingThreshold);
                     return null;
                 } else {
                     log.debug("updateEntityTotalAmounts  invoicingThreshold(out continue invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
-                    		entity.getCode(), invoiceAmount, invoicingThreshold);
+                            entity.getCode(), invoiceAmount, invoicingThreshold);
                 }
             } else {
                 log.debug("updateBillingAccountTotalAmounts no invoicingThreshold to apply");
@@ -458,18 +471,18 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
             log.debug("set brAmount {} in BA {}", invoiceAmount, entity.getId());
         }
-        
+
         entity.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
 
-        if(entity instanceof BillingAccount) {
-        	((BillingAccount)entity).setBrAmountWithoutTax(invoiceAmount);
-            updateNoCheck((BillingAccount)entity);
+        if (entity instanceof BillingAccount) {
+            ((BillingAccount) entity).setBrAmountWithoutTax(invoiceAmount);
+            updateNoCheck((BillingAccount) entity);
         }
-        if(entity instanceof Order) {
-            orderService.updateNoCheck((Order)entity);
+        if (entity instanceof Order) {
+            orderService.updateNoCheck((Order) entity);
         }
-        if(entity instanceof Subscription) {
-            subscriptionService.updateNoCheck((Subscription)entity);
+        if (entity instanceof Subscription) {
+            subscriptionService.updateNoCheck((Subscription) entity);
         }
 
         return entity;

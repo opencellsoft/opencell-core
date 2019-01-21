@@ -16,7 +16,8 @@ import org.meveo.api.dto.FilterDto;
  * @author anasseh
  * @author Abdelmounaim Akadid
  * @author Said Ramli
- * @lastModifiedVersion 5.1 
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.3
  */
 @XmlRootElement(name = "GenerateInvoiceRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,6 +63,9 @@ public class GenerateInvoiceRequestDto {
     
     /** The custom fields. */
     private CustomFieldsDto customFields;
+
+    /** The ignore invoicing threshold. */
+    private Boolean ignoreInvoicingThreshold;
 
     /**
      * Instantiates a new generate invoice request dto.
@@ -278,9 +282,23 @@ public class GenerateInvoiceRequestDto {
 		this.billingAccountCode = billingAccountCode;
 	}
 
-	@Override
+    /**
+     * @return the ignoreInvoicingThreshold
+     */
+	public Boolean getIgnoreInvoicingThreshold() {
+        return ignoreInvoicingThreshold;
+    }
+
+    /**
+     * @param ignoreInvoicingThreshold the ignoreInvoicingThreshold to set
+     */
+    public void setIgnoreInvoicingThreshold(Boolean ignoreInvoicingThreshold) {
+        this.ignoreInvoicingThreshold = ignoreInvoicingThreshold;
+    }
+
+    @Override
     public String toString() {
         return "GenerateInvoiceRequestDto [targetCode=" + targetCode + ", targetType=" + targetType + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate
-                + ", filter=" + filter + ", orderNumber=" + orderNumber + ", generateXML=" + generateXML + ", generatePDF=" + generatePDF + ", generateAO=" + generateAO + "]";
+                + ", filter=" + filter + ", orderNumber=" + orderNumber + ", generateXML=" + generateXML + ", generatePDF=" + generatePDF + ", generateAO=" + generateAO + ", ignoreInvoicingThreshold=" + ignoreInvoicingThreshold + "]";
     }
 }
