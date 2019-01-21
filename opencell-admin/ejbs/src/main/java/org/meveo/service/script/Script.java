@@ -45,18 +45,6 @@ public abstract class Script implements ScriptInterface {
      * Parent entity of an entity, on which script acts on
      */
     public static String CONTEXT_PARENT_ENTITY = "CONTEXT_PARENT_ENTITY";
-
-
-    /**
-     * Current user
-     */
-    public static String CONTEXT_CURRENT_USER = "CONTEXT_CURRENT_USER";
-
-    /**
-     * Current provider/tenant
-     */
-    public static String CONTEXT_APP_PROVIDER = "CONTEXT_APP_PROVIDER";
-
     
     /**
      * Current user
