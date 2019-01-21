@@ -344,7 +344,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
                 List<OneShotChargeTemplateDto> oneShotChargeOthers = subscriptionApi.getOneShotChargeOthers();
                 result.getOneshotCharges().addAll(oneShotChargeOthers);
             } else {
-                List<OneShotChargeInstanceDto> oneShotChargeInstances = subscriptionApi.getOneShotCharges(subscriptionCode);
+                List<OneShotChargeInstanceDto> oneShotChargeInstances = subscriptionApi.getOneShotChargeOthers(subscriptionCode);
                 result.getOneshotChargeInstances().addAll(oneShotChargeInstances);
             }
 
@@ -417,11 +417,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public ActionStatus cancelOneShotCharge(Long oneshotChargeId) {
+    public ActionStatus terminateOneShotCharge(String subscriptionCode, String oneshotChargeCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.cancelOneShotCharge(oneshotChargeId);
+            subscriptionApi.terminateOneShotCharge(oneshotChargeCode, subscriptionCode);
         } catch (Exception e) {
             processException(e, result);
         }

@@ -173,8 +173,8 @@ public interface SubscriptionRs extends IBaseRs {
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     @DELETE
-    @Path("/oneShotCharge/{oneShotChargeId}")
-    ActionStatus cancelOneShotCharge(@PathParam("oneShotChargeId") Long oneShotChargeId);
+    @Path("/oneShotCharge/{subscriptionCode}/{oneshotChargeCode}")
+    ActionStatus terminateOneShotCharge(@PathParam("subscriptionCode") String subscriptionCode, @PathParam("oneshotChargeCode") String oneshotChargeCode);
 
     /**
      * Search for a subscription with a given code.
