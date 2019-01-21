@@ -997,5 +997,95 @@
         <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_account_operation" referencedTableName="ar_account_operation" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="account_operation_id" />       
         
     </changeSet>
+    
+    <changeSet id="#3650_20181220" author="AmineBenAicha">
+        <createSequence sequenceName="wf_generic_workflow_seq" />
+        <createTable tableName="wf_generic_workflow">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_generic_workflow_pk" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_wf_generic_workflow_code"/>
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="target_entity_class" type="varchar(255)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="enable_history" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="transition_script_id" type="bigint" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="transition_script_id" baseTableName="wf_generic_workflow" constraintName="fk_wf_transition_script" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+        
+        <createSequence sequenceName="wf_status_seq" />
+		<createTable tableName="wf_status">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_status_pk" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="generic_wf_id" type="bigint" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_status" constraintName="fk_generic_wf" deferrable="false" initiallyDeferred="false"
+            onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
+        <addUniqueConstraint columnNames="generic_wf_id, code" constraintName="uk_generic_wf_id_code_status" deferrable="false" disabled="false" initiallyDeferred="false"
+        	tableName="wf_status" />
+        
+        <createSequence sequenceName="wf_instance_seq" />
+		<createTable tableName="wf_instance">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_instance_pk" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="entity_instance_code" type="varchar(255)" />
+            <column name="generic_wf_id" type="bigint" />
+            <column name="wf_status_id" type="bigint" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_instance" constraintName="fk_generic_wf" deferrable="false" initiallyDeferred="false"
+            onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
+         <addForeignKeyConstraint baseColumnNames="wf_status_id" baseTableName="wf_instance" constraintName="fk_wf_status" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
+        
+        <createSequence sequenceName="wf_instance_history_seq" />
+		<createTable tableName="wf_instance_history">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_instance_history_pk" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="wf_status_from" type="bigint" />
+            <column name="wf_status_to" type="bigint" />
+            <column name="action_date" type="datetime" />
+            <column name="event" type="varchar(255)" />
+            <column name="wf_instance_id" type="bigint" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="wf_status_from" baseTableName="wf_instance_history" constraintName="fk_wf_status_from" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
+        <addForeignKeyConstraint baseColumnNames="wf_status_to" baseTableName="wf_instance_history" constraintName="fk_wf_status_to" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
+        <addForeignKeyConstraint baseColumnNames="wf_instance_id" baseTableName="wf_instance_history" constraintName="fk_wf_instance" deferrable="false" initiallyDeferred="false"
+            onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_instance" />
+    </changeSet>
 </databaseChangeLog>
 
