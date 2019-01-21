@@ -172,8 +172,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @Size(max = 255)
     private String code;
 
-    @Column(name = "description", length = 255)
-    @Size(max = 255)
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "unity_description", length = 20)
