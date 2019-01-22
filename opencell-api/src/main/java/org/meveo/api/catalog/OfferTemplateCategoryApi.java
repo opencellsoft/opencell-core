@@ -206,6 +206,29 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
     }
 
     /**
+     * Returns All or only the active segment list
+     * 
+     * @return list of offer category
+     * @throws MeveoApiException meveo api exception
+     */
+    public List<OfferTemplateCategoryDto> list(Boolean active) throws MeveoApiException {
+        List<OfferTemplateCategoryDto> offerTemplateCategoryDtos = new ArrayList<OfferTemplateCategoryDto>();
+
+        List<OfferTemplateCategory> offerTemplateCategories = offerTemplateCategoryService.list(active);
+        if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
+            for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
+                OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto();
+                offerTemplateCategoryDto.setCode(offerTemplateCategory.getCode());
+                offerTemplateCategoryDto.setName(offerTemplateCategory.getName());
+                offerTemplateCategoryDto.setDescription(offerTemplateCategory.getDescription());
+                offerTemplateCategoryDtos.add(offerTemplateCategoryDto);
+            }
+        }
+
+        return offerTemplateCategoryDtos;
+    }
+
+    /**
      * 
      * @param uriInfo uri infos
      * @return list of offer template category
