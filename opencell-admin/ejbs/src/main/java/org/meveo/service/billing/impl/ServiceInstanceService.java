@@ -127,6 +127,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     @Inject
     private  RecurringChargeTemplateService recurringChargeTemplateService;
 
+    @Inject
+    private SubscriptionService subscriptionService;
+
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
      * 
@@ -479,6 +482,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if(paymentScheduleTemplate != null) {
             paymentScheduleInstanceService.instanciateFromService(paymentScheduleTemplate,serviceInstance);
         }
+
+        subscriptionService.update(subscription);
     }
 
 
