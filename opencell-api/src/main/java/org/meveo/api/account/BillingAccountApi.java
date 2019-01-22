@@ -282,7 +282,7 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setCustomerAccount(customerAccount);
         }
 
-        if (!StringUtils.isBlank(postData.getBillingCycle())) {
+        if (postData.getBillingCycle() != null) {
             BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
             if (billingCycle == null) {
                 throw new EntityDoesNotExistsException(BillingCycle.class, postData.getBillingCycle());
@@ -290,7 +290,7 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setBillingCycle(billingCycle);
         }
 
-        if (!StringUtils.isBlank(postData.getCountry())) {
+        if (postData.getCountry() != null) {
             TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
             if (tradingCountry == null) {
                 throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
@@ -298,7 +298,7 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setTradingCountry(tradingCountry);
         }
 
-        if (!StringUtils.isBlank(postData.getLanguage())) {
+        if (postData.getLanguage() != null) {
             TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage());
             if (tradingLanguage == null) {
                 throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
