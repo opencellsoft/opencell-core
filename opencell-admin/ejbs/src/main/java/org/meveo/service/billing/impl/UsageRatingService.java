@@ -70,7 +70,7 @@ import org.slf4j.Logger;
  * 
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class UsageRatingService implements Serializable {
