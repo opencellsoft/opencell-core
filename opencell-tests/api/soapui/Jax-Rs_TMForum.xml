@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API - wildfly" resourceRoot="" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API - wildfly" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" id="862741d9-1cba-4f44-8645-23cbf90521aa" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -21506,7 +21506,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>52aeb328-93fd-471b-b122-0f5cc377798a</con:value>
+              <con:value>065a3b8a-9663-4d58-95a5-416732b53d37</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -22544,8 +22544,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="343b660b-dc01-44bf-b958-cb0b11dd46c5" name="XPath Match 11">
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE3']/terminationDate</path>
-                <content>2016-02-29T00:00:00${#Project#timezone}</content>
-                <allowWildcards>false</allowWildcards>
+                <content>2016-07-02T00:00:00*</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -22961,8 +22961,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="343b660b-dc01-44bf-b958-cb0b11dd46c5" name="XPath Match 11">
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE3']/terminationDate</path>
-                <content>2016-02-29T00:00:00${#Project#timezone}</content>
-                <allowWildcards>false</allowWildcards>
+                <content>2016-07-02T00:00:00*</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -23044,6 +23044,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="e2e583ed-a9a4-475f-865d-f8010bbaec3c" name="XPath Match 20">
+              <con:configuration>
+                <path>exists(//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2" and subscriptionDate=terminationDate])</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -30304,7 +30313,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                },
                {
                   "name":"subscriptionDate",
-                  "value":"2016-02-27"
+                  "value":"2016-01-01"
                },
                {
                   "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
@@ -30513,58 +30522,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:sourceType>Response</con:sourceType>
             <con:sourceStep>Create Product order - 2 items</con:sourceStep>
             <con:sourcePath>$.id</con:sourcePath>
-            <con:targetType>Request</con:targetType>
-            <con:targetStep>GenerateInvoice</con:targetStep>
-            <con:targetPath>//targetCode</con:targetPath>
+            <con:targetType>orderNrThatCreatedSubscription</con:targetType>
+            <con:targetStep>#TestSuite#</con:targetStep>
+            <con:targetPath/>
             <con:type>JSONPATH</con:type>
             <con:targetTransferType>XPATH</con:targetTransferType>
-            <con:upgraded>true</con:upgraded>
-          </con:transfers>
-          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
-            <con:name>Set order number manual service termination</con:name>
-            <con:sourceType>Response</con:sourceType>
-            <con:sourceStep>Create Product order - 2 items</con:sourceStep>
-            <con:sourcePath>$.id</con:sourcePath>
-            <con:targetType>Request</con:targetType>
-            <con:targetStep>GenerateInvoice after manual activation</con:targetStep>
-            <con:targetPath>//targetCode</con:targetPath>
-            <con:type>JSONPATH</con:type>
-            <con:targetTransferType>XPATH</con:targetTransferType>
-            <con:upgraded>true</con:upgraded>
-          </con:transfers>
-          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
-            <con:name>Set order number manual subscription termination</con:name>
-            <con:sourceType>Response</con:sourceType>
-            <con:sourceStep>Create Product order - 2 items</con:sourceStep>
-            <con:sourcePath>$.id</con:sourcePath>
-            <con:targetType>Request</con:targetType>
-            <con:targetStep>GenerateInvoice after manual subscription termination</con:targetStep>
-            <con:targetPath>//targetCode</con:targetPath>
-            <con:type>JSONPATH</con:type>
-            <con:targetTransferType>XPATH</con:targetTransferType>
-            <con:upgraded>true</con:upgraded>
-          </con:transfers>
-          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
-            <con:name>Set order number manual activation</con:name>
-            <con:sourceType>Response</con:sourceType>
-            <con:sourceStep>Create Product order - 2 items</con:sourceStep>
-            <con:sourcePath>$.id</con:sourcePath>
-            <con:targetType>Request</con:targetType>
-            <con:targetStep>GenerateInvoice after manual activation</con:targetStep>
-            <con:targetPath>//targetCode</con:targetPath>
-            <con:type>JSONPATH</con:type>
-            <con:targetTransferType>XPATH</con:targetTransferType>
-            <con:upgraded>true</con:upgraded>
-          </con:transfers>
-          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
-            <con:name>Set order number after manual service termination</con:name>
-            <con:sourceType>Response</con:sourceType>
-            <con:sourceStep>Create Product order - 2 items</con:sourceStep>
-            <con:sourcePath>$.id</con:sourcePath>
-            <con:targetType>Request</con:targetType>
-            <con:targetStep>GenerateInvoice after manual service termination</con:targetStep>
-            <con:targetPath>//targetCode</con:targetPath>
-            <con:type>JSONPATH</con:type>
             <con:upgraded>true</con:upgraded>
           </con:transfers>
         </con:config>
@@ -30585,7 +30547,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>2c4f12c8-1f1e-42a9-a573-37cdeb700876</targetCode>
+            <targetCode>${#TestSuite#orderNrThatCreatedSubscription}</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -30655,7 +30617,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000010</invoiceNumber>
+         	<invoiceNumber>SellFact_000000037</invoiceNumber>
          	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
@@ -30762,7 +30724,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>2c4f12c8-1f1e-42a9-a573-37cdeb700876</targetCode>
+            <targetCode>${#TestSuite#orderNrThatCreatedSubscription}</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -30858,7 +30820,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>2c4f12c8-1f1e-42a9-a573-37cdeb700876</targetCode>
+            <targetCode>${#TestSuite#orderNrThatCreatedSubscription}</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -30953,7 +30915,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>2c4f12c8-1f1e-42a9-a573-37cdeb700876</targetCode>
+            <targetCode>${#TestSuite#orderNrThatCreatedSubscription}</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -30966,6 +30928,118 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <token>SUCCESS</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Get Invoice after manual subscription termination" id="cade4b93-32d2-4e31-845c-998c2debf819">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>InvoiceWsSoapBinding</con:interface>
+          <con:operation>findXMLInvoice</con:operation>
+          <con:request name="Get Invoice after manual subscription termination" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/InvoiceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findInvoiceByIdOrType>
+         	<invoiceNumber>SellFact_000000011</invoiceNumber>
+         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         <includeTransations>true</includeTransations>
+      </ws:findInvoiceByIdOrType>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/>
+            <con:assertion type="Simple Contains" id="f7e29452-9309-4179-8e84-e2b4e1c8badb" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="c11d6c95-7a14-4c1e-84fb-cef6cefc651d" name="XPath Match">
+              <con:configuration>
+                <path>count(//ratedTransaction)</path>
+                <content>2</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="8dc34ece-eec6-42e7-a533-8fb6f3952b9c" name="Contains 1">
+              <con:configuration>
+                <token>&lt;paymentMethod>DIRECTDEBIT&lt;/paymentMethod></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="ff041be2-3305-4416-a7c3-98361cfd604a" name="XPath Match 1">
+              <con:configuration>
+                <path>//ratedTransaction[code="${#Project#baseEntityPrefix}_OST"]</path>
+                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <usageDate>2016-02-01T00:00:00*</usageDate>
+  <unitAmountWithoutTax>5.000000000000</unitAmountWithoutTax>
+  <unitAmountWithTax>5.250000000000</unitAmountWithTax>
+  <unitAmountTax>0.250000000000</unitAmountTax>
+  <quantity>2.000000000000</quantity>
+  <amountWithoutTax>10.000000000000</amountWithoutTax>
+  <amountWithTax>10.500000000000</amountWithTax>
+  <amountTax>0.500000000000</amountTax>
+  <code>${#Project#baseEntityPrefix}_OST</code>
+  <description>Termination charge</description>
+  <unityDescription>1</unityDescription>
+  <priceplanCode>${#Project#baseEntityPrefix}_OST</priceplanCode>
+  <doNotTriggerInvoicing>false</doNotTriggerInvoicing>
+  <taxCode>TAX_05</taxCode>
+  <taxPercent>5.000000000000</taxPercent>
+</ratedTransaction>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="b898cc33-aec0-467c-b6ea-b08aec9987e4" name="XPath Match 2">
+              <con:configuration>
+                <path>//ratedTransaction[code="${#Project#baseEntityPrefix}_REC1"]</path>
+                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <usageDate>2016-02-01T00:00:00*</usageDate>
+  <unitAmountWithoutTax>10.000000000000</unitAmountWithoutTax>
+  <unitAmountWithTax>10.500000000000</unitAmountWithTax>
+  <unitAmountTax>0.500000000000</unitAmountTax>
+  <quantity>-2.000000000000</quantity>
+  <amountWithoutTax>-20.000000000000</amountWithoutTax>
+  <amountWithTax>-21.000000000000</amountWithTax>
+  <amountTax>-1.000000000000</amountTax>
+  <code>${#Project#baseEntityPrefix}_REC1</code>
+  <description>Recurring charge</description>
+  <unityDescription>1</unityDescription>
+  <priceplanCode>${#Project#baseEntityPrefix}_REC1</priceplanCode>
+  <doNotTriggerInvoicing>false</doNotTriggerInvoicing>
+  <startDate>2016-02-01T00:00:00*</startDate>
+  <endDate>2016-03-01T00:00:00*</endDate>
+  <taxCode>TAX_05</taxCode>
+  <taxPercent>5.000000000000</taxPercent>
+</ratedTransaction>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -31006,66 +31080,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:targetPath>//invoiceType</con:targetPath>
             <con:upgraded>true</con:upgraded>
           </con:transfers>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="Get Invoice after manual subscription termination" id="cade4b93-32d2-4e31-845c-998c2debf819">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>InvoiceWsSoapBinding</con:interface>
-          <con:operation>findXMLInvoice</con:operation>
-          <con:request name="Get Invoice after manual subscription termination" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/InvoiceWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000011</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
-         <includeTransations>true</includeTransations>
-      </ws:findInvoiceByIdOrType>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/>
-            <con:assertion type="Simple Contains" id="f7e29452-9309-4179-8e84-e2b4e1c8badb" name="Contains">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="XPath Match" id="c11d6c95-7a14-4c1e-84fb-cef6cefc651d" name="XPath Match">
-              <con:configuration>
-                <path>count(//ratedTransaction)</path>
-                <content>4</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="8dc34ece-eec6-42e7-a533-8fb6f3952b9c" name="Contains 1">
-              <con:configuration>
-                <token>&lt;paymentMethod>DIRECTDEBIT&lt;/paymentMethod></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
-              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
-              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>Preemptive</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
         </con:config>
       </con:testStep>
       <con:testStep type="restrequest" name="Create Product order - filterexpression" id="0e0766a4-1c80-4412-9cb4-7ef734f996aa">
@@ -31833,8 +31847,175 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="46049da8-6791-4e75-b3e9-74423a1c5689" name="XPath Match">
               <con:configuration>
                 <path>count(//ratedTransaction)</path>
-                <content>2</content>
+                <content>1</content>
                 <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="5552ef98-8051-4b55-a267-971866332726" name="XPath Match 1">
+              <con:configuration>
+                <path>//ratedTransaction[code="TM_BASE2_OST"]</path>
+                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <usageDate>2016-02-29T00:00:00*</usageDate>
+  <unitAmountWithoutTax>5.000000000000</unitAmountWithoutTax>
+  <unitAmountWithTax>5.250000000000</unitAmountWithTax>
+  <unitAmountTax>0.250000000000</unitAmountTax>
+  <quantity>2.000000000000</quantity>
+  <amountWithoutTax>10.000000000000</amountWithoutTax>
+  <amountWithTax>10.500000000000</amountWithTax>
+  <amountTax>0.500000000000</amountTax>
+  <code>${#Project#baseEntityPrefix}_OST</code>
+  <description>Termination charge</description>
+  <unityDescription>1</unityDescription>
+  <priceplanCode>${#Project#baseEntityPrefix}_OST</priceplanCode>
+  <doNotTriggerInvoicing>false</doNotTriggerInvoicing>
+  <taxCode>TAX_05</taxCode>
+  <taxPercent>5.000000000000</taxPercent>
+</ratedTransaction>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="GenerateInvoice with order that created subscription" id="9beb9817-37fe-45de-81e4-dba5743f6610">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>InvoiceWsSoapBinding</con:interface>
+          <con:operation>generateInvoiceData</con:operation>
+          <con:request name="GenerateInvoice with order that created subscription" id="7e62d038-732c-4fef-a703-9048e8424c07">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/InvoiceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:generateInvoiceData>
+         <generateInvoiceRequest>
+            <targetCode>${#TestSuite#orderNrThatCreatedSubscription}</targetCode>
+            <targetType>ORDER</targetType>
+            <invoicingDate>2016-10-01T00:00:00</invoicingDate>
+         </generateInvoiceRequest>
+      </ws:generateInvoiceData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="1bc75f17-2661-416c-84be-e978469d0b48"/>
+            <con:assertion type="Simple Contains" id="b1c9508f-7951-43c5-a8c2-d4ef20c695cf" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="transfer" name="Set invoice number for invoice that created subscription" id="a46dc489-30c4-424f-80a3-24cdd8587eb0">
+        <con:settings/>
+        <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+            <con:name>Set invoice number to xml request</con:name>
+            <con:sourceType>Response</con:sourceType>
+            <con:sourceStep>GenerateInvoice with order that created subscription</con:sourceStep>
+            <con:sourcePath>//invoiceNumber</con:sourcePath>
+            <con:targetType>Request</con:targetType>
+            <con:targetStep>Get Invoice for order that created subscription</con:targetStep>
+            <con:targetPath>//invoiceNumber</con:targetPath>
+            <con:upgraded>true</con:upgraded>
+          </con:transfers>
+          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+            <con:name>Set invoice type to xml</con:name>
+            <con:sourceType>Response</con:sourceType>
+            <con:sourceStep>GenerateInvoice with order that created subscription</con:sourceStep>
+            <con:sourcePath>//invoiceTypeCode</con:sourcePath>
+            <con:targetType>Request</con:targetType>
+            <con:targetStep>Get Invoice for order that created subscription</con:targetStep>
+            <con:targetPath>//invoiceType</con:targetPath>
+            <con:upgraded>true</con:upgraded>
+          </con:transfers>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Get Invoice for order that created subscription" id="7e350285-01d6-4b81-a6c1-54f749213f5e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>InvoiceWsSoapBinding</con:interface>
+          <con:operation>findXMLInvoice</con:operation>
+          <con:request name="Get Invoice for order that created subscription" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/InvoiceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findInvoiceByIdOrType>
+         	<invoiceNumber>SellFact_000000042</invoiceNumber>
+         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         <includeTransations>true</includeTransations>
+      </ws:findInvoiceByIdOrType>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/>
+            <con:assertion type="Simple Contains" id="f7e29452-9309-4179-8e84-e2b4e1c8badb" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="aa448c6e-976e-44e8-9c32-c679cf855747" name="XPath Match">
+              <con:configuration>
+                <path>//ratedTransaction[code="${#Project#baseEntityPrefix}_REC1" and contains(usageDate,"2016-02-29")]</path>
+                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <usageDate>2016-02-29T00:00:00*</usageDate>
+  <unitAmountWithoutTax>10.000000000000</unitAmountWithoutTax>
+  <unitAmountWithTax>10.500000000000</unitAmountWithTax>
+  <unitAmountTax>0.500000000000</unitAmountTax>
+  <quantity>-0.070000000000</quantity>
+  <amountWithoutTax>-0.700000000000</amountWithoutTax>
+  <amountWithTax>-0.735000000000</amountWithTax>
+  <amountTax>-0.035000000000</amountTax>
+  <code>${#Project#baseEntityPrefix}_REC1</code>
+  <description>Recurring charge</description>
+  <unityDescription>1</unityDescription>
+  <priceplanCode>${#Project#baseEntityPrefix}_REC1</priceplanCode>
+  <doNotTriggerInvoicing>false</doNotTriggerInvoicing>
+  <startDate>2016-02-29T00:00:00*</startDate>
+  <endDate>2016-03-01T00:00:00*</endDate>
+  <taxCode>TAX_05</taxCode>
+  <taxPercent>5.000000000000</taxPercent>
+</ratedTransaction>]]></content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -31860,6 +32041,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <con:property>
         <con:name>index</con:name>
         <con:value>68</con:value>
+      </con:property>
+      <con:property>
+        <con:name>orderNrThatCreatedSubscription</con:name>
+        <con:value>a0e88450-7807-4c1a-955c-794bf7b287fe</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

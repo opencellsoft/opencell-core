@@ -25,7 +25,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -41,6 +40,7 @@ import org.meveo.api.dto.document.sign.SignProcedureResponseDto;
 import org.meveo.api.dto.document.sign.YousignEventEnum;
 import org.meveo.api.dto.response.RawResponseDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +115,7 @@ public class YouSignApi extends BaseApi {
             this.prepareMembers(filesToSign, procedure.getMembers(), withInternalMember);
             
             // Creating procedureusing  Yousign platform API :
-            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyClient client = new ResteasyClientProxyBuilder().build();
             ResteasyWebTarget target = client.target(YOU_SIGN_REST_URL.concat("/procedures"));
             Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).post(Entity.json(procedure));
             
@@ -212,7 +212,7 @@ public class YouSignApi extends BaseApi {
             final String YOU_SIGN_REST_URL = this.getMandatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
             final String YOU_SIGN_AUTH_TOKEN = this.getMandatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
             
-            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyClient client = new ResteasyClientProxyBuilder().build();
             ResteasyWebTarget target = client.target(YOU_SIGN_REST_URL.concat("/files/".concat(id).concat("/download")));
             Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).get();
             
@@ -246,7 +246,7 @@ public class YouSignApi extends BaseApi {
             final String YOU_SIGN_REST_URL = this.getMandatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
             final String YOU_SIGN_AUTH_TOKEN = this.getMandatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
             
-            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyClient client = new ResteasyClientProxyBuilder().build();
             ResteasyWebTarget target = client.target( YOU_SIGN_REST_URL.concat("/procedures/".concat(id)) );
             Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).get();
             
@@ -380,7 +380,7 @@ public class YouSignApi extends BaseApi {
         
         try {
             
-            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyClient client = new ResteasyClientProxyBuilder().build();
             ResteasyWebTarget target = client.target(url.concat("/files"));
             Invocation.Builder resBuilder = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + token);
             

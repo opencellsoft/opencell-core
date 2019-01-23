@@ -8,6 +8,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.catalog.BaseServiceChargeTemplateDto;
@@ -16,6 +17,8 @@ import org.meveo.api.dto.catalog.ServiceChargeTemplateSubscriptionDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateTerminationDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.ServiceUsageChargeTemplateDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
@@ -49,15 +52,19 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @author Youssef IZEM
+ * @lastModifiedVersion 5.4
  */
 @Stateless
 public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemplateDto> {
+
+    private static final String DEFAULT_SORT_ORDER_ID = "id";
 
     @Inject
     private ServiceTemplateService serviceTemplateService;
@@ -98,8 +105,6 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     @Inject
     private SubscriptionApi subscriptionApi;
 
-    
-
     /**
      * Sets the service charge template.
      * 
@@ -111,7 +116,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
      */
 
     @SuppressWarnings("unchecked")
-    private void setServiceChargeTemplate(ServiceTemplate serviceTemplate, @SuppressWarnings("rawtypes") ServiceChargeTemplate serviceChargeTemplate, 
+    private void setServiceChargeTemplate(ServiceTemplate serviceTemplate, @SuppressWarnings("rawtypes") ServiceChargeTemplate serviceChargeTemplate,
             BaseServiceChargeTemplateDto serviceChargeTemplateDto, ChargeTemplate chargeTemplate) throws MeveoApiException {
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, serviceChargeTemplateDto.getCode());
@@ -132,39 +137,39 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceChargeTemplate.setServiceTemplate(serviceTemplate);
         serviceChargeTemplate.setCounterTemplate(counterTemplateService.getCounterTemplate(serviceChargeTemplateDto.getCounterTemplate()));
     }
-    
-    private void createServiceChargeTemplateRecurring(ServiceTemplate serviceTemplate, ServiceChargeTemplateRecurringDto serviceChargeTemplateDto) 
-            throws MeveoApiException, BusinessException  {
+
+    private void createServiceChargeTemplateRecurring(ServiceTemplate serviceTemplate, ServiceChargeTemplateRecurringDto serviceChargeTemplateDto)
+            throws MeveoApiException, BusinessException {
         RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
         ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
         setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, serviceChargeTemplateDto, chargeTemplate);
         serviceChargeTemplateRecurringService.create(serviceChargeTemplate);
     }
 
-    private void createServiceChargeTemplateSubscription(ServiceTemplate serviceTemplate, ServiceChargeTemplateSubscriptionDto serviceChargeTemplateDto) 
-            throws MeveoApiException, BusinessException  {
+    private void createServiceChargeTemplateSubscription(ServiceTemplate serviceTemplate, ServiceChargeTemplateSubscriptionDto serviceChargeTemplateDto)
+            throws MeveoApiException, BusinessException {
         OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
         ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
         setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, serviceChargeTemplateDto, chargeTemplate);
         serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate);
     }
-    
-    private void createServiceChargeTemplateTermination(ServiceTemplate serviceTemplate, ServiceChargeTemplateTerminationDto serviceChargeTemplateDto) 
-            throws MeveoApiException, BusinessException  {
+
+    private void createServiceChargeTemplateTermination(ServiceTemplate serviceTemplate, ServiceChargeTemplateTerminationDto serviceChargeTemplateDto)
+            throws MeveoApiException, BusinessException {
         OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
         ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
         setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, serviceChargeTemplateDto, chargeTemplate);
         serviceChargeTemplateTerminationService.create(serviceChargeTemplate);
     }
-    
-    private void createServiceChargeTemplateUsage(ServiceTemplate serviceTemplate, ServiceUsageChargeTemplateDto serviceChargeTemplateDto) 
-            throws MeveoApiException, BusinessException  {
+
+    private void createServiceChargeTemplateUsage(ServiceTemplate serviceTemplate, ServiceUsageChargeTemplateDto serviceChargeTemplateDto)
+            throws MeveoApiException, BusinessException {
         UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
         ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
         setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, serviceChargeTemplateDto, chargeTemplate);
         serviceUsageChargeTemplateService.create(serviceChargeTemplate);
     }
-    
+
     private void createServiceChargeTemplateRecurring(ServiceTemplateDto postData, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
 
         if (postData.getServiceChargeTemplateRecurrings() != null) {
@@ -174,7 +179,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
             }
         }
     }
-    
+
     private void createServiceChargeTemplateSubscription(ServiceTemplateDto postData, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
 
         if (postData.getServiceChargeTemplateSubscriptions() != null) {
@@ -236,12 +241,12 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         }
 
         ServiceTemplate serviceTemplate = new ServiceTemplate();
-        
+
         Boolean autoEndOfEngagement = postData.getAutoEndOfEngagement();
         if (autoEndOfEngagement != null) {
             serviceTemplate.setAutoEndOfEngagement(autoEndOfEngagement);
         }
-        
+
         serviceTemplate.setBusinessServiceModel(businessService);
         serviceTemplate.setCode(postData.getCode());
         serviceTemplate.setDescription(postData.getDescription());
@@ -306,12 +311,12 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (serviceTemplate == null) {
             throw new EntityDoesNotExistsException(ServiceTemplateService.class, postData.getCode());
         }
-        
+
         Boolean autoEndOfEngagement = postData.getAutoEndOfEngagement();
         if (autoEndOfEngagement != null) {
             serviceTemplate.setAutoEndOfEngagement(autoEndOfEngagement);
         }
-        
+
         serviceTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         serviceTemplate.setDescription(postData.getDescription());
         serviceTemplate.setLongDescription(postData.getLongDescription());
@@ -455,5 +460,37 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         setAllWalletTemplatesToNull(serviceTemplate);
 
         serviceTemplateService.remove(serviceTemplate);
+    }
+
+    public GetListServiceTemplateResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+
+        String sortBy = DEFAULT_SORT_ORDER_ID;
+        if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+            sortBy = pagingAndFiltering.getSortBy();
+        }
+
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, ServiceTemplate.class);
+
+        Long totalCount = serviceTemplateService.count(paginationConfiguration);
+
+        GetListServiceTemplateResponseDto result = new GetListServiceTemplateResponseDto();
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if (totalCount > 0) {
+            List<ServiceTemplate> services = serviceTemplateService.list(paginationConfiguration);
+            if (services != null) {
+                for (ServiceTemplate service : services) {
+                    result.addServiceTemplate(new ServiceTemplateDto(service));
+                }
+            }
+        }
+
+        return result;
+
     }
 }

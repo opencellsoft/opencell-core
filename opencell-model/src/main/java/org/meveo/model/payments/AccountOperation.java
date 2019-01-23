@@ -38,6 +38,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -363,6 +364,9 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @JoinColumn(name = "seller_id")
     private Seller seller;
     
+    @OneToOne(mappedBy = "accountOperation")
+    private PaymentVentilation paymentVentilation;
+    
 
     public Date getDueDate() {
         return dueDate;
@@ -467,6 +471,14 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 
     public void setOccDescription(String occDescription) {
         this.occDescription = occDescription;
+    }
+
+    public PaymentVentilation getPaymentVentilation() {
+        return paymentVentilation;
+    }
+
+    public void setPaymentVentilation(PaymentVentilation paymentVentilation) {
+        this.paymentVentilation = paymentVentilation;
     }
 
     @Override

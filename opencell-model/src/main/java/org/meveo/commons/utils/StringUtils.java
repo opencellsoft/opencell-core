@@ -288,5 +288,22 @@ public class StringUtils {
     public static final String getDefaultIfEmpty(String value, String defaultValue) {
         return org.apache.commons.lang3.StringUtils.isNotEmpty(value) ? value : defaultValue;
     }
+    
+    /**
+     * Check if string s contain only digital character
+     *
+     * @param s
+     * @return
+     */
+    public static boolean isDigital(String s) {
 
+      for (Character c : s.toCharArray()) {
+
+        if (!Character.isDigit(c)) {
+          return false;
+        }
+      }
+
+      return true;
+    }
 }

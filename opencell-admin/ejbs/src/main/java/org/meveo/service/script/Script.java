@@ -87,6 +87,11 @@ public abstract class Script implements ScriptInterface {
     public static String JOB_RESULT_TO_PROCESS = "RESULT_TO_PROCESS";
 
     /**
+     * The job execution result.
+     */
+    public static final String JOB_EXECUTION_RESULT = "JobExecutionResult";
+
+    /**
      * A logger
      */
     protected Logger log = LoggerFactory.getLogger(this.getClass());
