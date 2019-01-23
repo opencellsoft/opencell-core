@@ -33,7 +33,7 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
     private OCCTemplateService oCCTemplateService;
 
     @Inject
-    private PaymentService paymentService;
+    private AccountOperationService paymentService;
 
     @Inject
     private MatchingCodeService matchingCodeService;
