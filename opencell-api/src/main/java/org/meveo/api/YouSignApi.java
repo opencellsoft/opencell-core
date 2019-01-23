@@ -53,9 +53,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Stateless
 public class YouSignApi extends BaseApi {
     
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(YouSignApi.class);
-    
     /** The Constant YOUSIGN_API_TOKEN_PROPERTY_KEY. */
     private static final String YOUSIGN_API_TOKEN_PROPERTY_KEY = "yousign.api.token";
     
@@ -127,10 +124,10 @@ public class YouSignApi extends BaseApi {
             }
 
         } catch (MeveoApiException mve) {
-            LOG.error(" Error on createProcedure : {} ", mve.getMessage());
+            log.error(" Error on createProcedure : {} ", mve.getMessage());
             throw mve;
         } catch (Exception e) {
-            LOG.error(" Error on createProcedure : {} ", e.getMessage(), e);
+            log.error(" Error on createProcedure : {} ", e.getMessage(), e);
             throw new MeveoApiException(" Error on createProcedure " + e.getMessage());
         }
         return result;
@@ -175,7 +172,7 @@ public class YouSignApi extends BaseApi {
 
         RawResponseDto<String> result = new RawResponseDto<>();
         byte [] content = this.downloadFileById(fileId).getContent();
-        String filePath = getDownloadedFilePath(fileName, "pdf"); 
+        String filePath = getDownloadedFilePath(fileName); 
         try {
             Files.write(Paths.get(filePath), Base64.decodeBase64(content));
         } catch (Exception e) {
@@ -185,7 +182,7 @@ public class YouSignApi extends BaseApi {
         return result;
     }
     
-    private String getDownloadedFilePath(String fileName, String extension) throws MeveoApiException {
+    private String getDownloadedFilePath(String fileName) throws MeveoApiException {
         String signeddocsDir = this.getYousignParam(YOUSIGN_API_DOWNLOAD_DIR_KEY, false, "/signeddocs");
         if (!signeddocsDir.startsWith(File.separator)) {
             signeddocsDir =  File.separator +  signeddocsDir;
@@ -195,7 +192,7 @@ public class YouSignApi extends BaseApi {
         if (!parentDir.exists()) {
             parentDir.mkdirs();  
         }
-        return parentDirPath + File.separator + fileName + "." + extension;
+        return parentDirPath + File.separator + fileName;
     }
     
     /**
@@ -223,10 +220,10 @@ public class YouSignApi extends BaseApi {
             }
 
         } catch (MeveoApiException mve) {
-            LOG.error(" Error on downloadFileById : {} , id = {}", mve.getMessage(), id);
+            log.error(" Error on downloadFileById : {} , id = {}", mve.getMessage(), id);
             throw mve;
         } catch (Exception e) {
-            LOG.error(" Error on downloadFileById : {} , id = {} ", e.getMessage(), id);
+            log.error(" Error on downloadFileById : {} , id = {} ", e.getMessage(), id);
             throw new MeveoApiException(" Error on downloadFileById, id =  {} " + id + " : " +  e.getMessage());
         }
         return result;
@@ -257,10 +254,10 @@ public class YouSignApi extends BaseApi {
             }
 
         } catch (MeveoApiException mve) {
-            LOG.error(" Error on getProcedureById : {} , id = {}", mve.getMessage(), id);
+            log.error(" Error on getProcedureById : {} , id = {}", mve.getMessage(), id);
             throw mve;
         } catch (Exception e) {
-            LOG.error(" Error on getProcedureById : {} , id = {} ", e.getMessage(), id);
+            log.error(" Error on getProcedureById : {} , id = {} ", e.getMessage(), id);
             throw new MeveoApiException(" Error on getProcedureById, id =  {} " + id + " : " +  e.getMessage());
         }
         return result;
@@ -384,7 +381,7 @@ public class YouSignApi extends BaseApi {
             ResteasyWebTarget target = client.target(url.concat("/files"));
             Invocation.Builder resBuilder = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + token);
             
-            LOG.debug(" Start uploading files to Yousign ... ");
+            log.debug(" Start uploading files to Yousign ... ");
             for (SignFileRequestDto file :filesToSign ) {
                 
                 Response response =  resBuilder.post(Entity.json(file)); 
@@ -404,13 +401,13 @@ public class YouSignApi extends BaseApi {
                     throw new MeveoApiException(" [Yousign Error] [" + response.getStatus() +"] : " + response.getStatusInfo().getReasonPhrase());
                 }
             }
-            LOG.debug(" End uploading files to Yousign ... ");
+            log.debug(" End uploading files to Yousign ... ");
             
         } catch (MeveoApiException mve) {
-            LOG.error(" Error on uploadFilesToSign : {} ", mve.getMessage());
+            log.error(" Error on uploadFilesToSign : {} ", mve.getMessage());
             throw mve;
         } catch (Exception e) {
-            LOG.error(" Error on uploadFilesToSign : {} ", e.getMessage(), e);
+            log.error(" Error on uploadFilesToSign : {} ", e.getMessage(), e);
             throw new MeveoApiException(" Error on uploadFilesToSign " + e.getMessage());
         }
     }
@@ -498,7 +495,7 @@ public class YouSignApi extends BaseApi {
             fileInputStream.read(fileBytes); 
             return fileBytes; 
         } catch (Exception e) { 
-            LOG.error("Error reading file {} contents", filePath, e); 
+            log.error("Error reading file {} contents", filePath, e); 
         }  
         return null; 
     }
