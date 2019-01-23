@@ -33,7 +33,7 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
     private OCCTemplateService oCCTemplateService;
 
     @Inject
-    private AccountOperationService paymentService;
+    private PaymentService paymentService;
 
     @Inject
     private MatchingCodeService matchingCodeService;
@@ -42,7 +42,6 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void ventilatePayment(PaymentVentilation entity) throws Exception {
-        log.info("###### ventilatePayment   ################################################");
         BigDecimal ventilationAmout = entity.getVentilationAmount();
         BigDecimal unventilatedAmount = entity.getOriginalOT().getUnMatchingAmount();
         OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) entity.getOriginalOT();
@@ -63,7 +62,6 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void unventilatePayment(PaymentVentilation paymentVentilation) throws UnbalanceAmountException, Exception {
-        log.info("###### unventilatePayment   ################################################");
         paymentVentilation.setVentilationActionStatus(VentilationActionStatusEnum.U);
         update(paymentVentilation);
 
@@ -79,7 +77,6 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     private Payment createPayment(PaymentVentilation paymentVentilation, OCCTemplate occTemplate) throws BusinessException {
-        log.info("###### STARTING CREATION PAYMENT   ################################################");
         BigDecimal ventilationAmout = paymentVentilation.getVentilationAmount();
         OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) paymentVentilation.getOriginalOT();
 
