@@ -51,10 +51,10 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
         originalOTG.setMatchingStatus(matchingStatus);
         otherTransactionGeneralService.update(originalOTG);
         entity.setVentilationDate(new Date());
-        entity.setNewOT(createVentilatedOTG(entity));
         ParamBean paramBean = paramBeanFactory.getInstance();
         OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.411100.cr", "411100_CR"));
         entity.setAccountOperation(createPayment(entity, occTemplate)); //// Account operation Credit
+        entity.setNewOT(createVentilatedOTG(entity));
         create(entity);
 
     }
