@@ -75,6 +75,7 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
         matchingCodeService.matchOperations(paymentVentilation.getCustomerAccount().getId(), null, operationIds, null, MatchingTypeEnum.A);
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     private Payment createPayment(PaymentVentilation paymentVentilation, OCCTemplate occTemplate) throws BusinessException {
         BigDecimal ventilationAmout = paymentVentilation.getVentilationAmount();
         OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) paymentVentilation.getOriginalOT();
