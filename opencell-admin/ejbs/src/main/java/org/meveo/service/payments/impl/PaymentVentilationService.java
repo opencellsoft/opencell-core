@@ -42,6 +42,7 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void ventilatePayment(PaymentVentilation entity) throws Exception {
+        log.info("###### ventilatePayment   ################################################");
         BigDecimal ventilationAmout = entity.getVentilationAmount();
         BigDecimal unventilatedAmount = entity.getOriginalOT().getUnMatchingAmount();
         OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) entity.getOriginalOT();
@@ -62,6 +63,7 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void unventilatePayment(PaymentVentilation paymentVentilation) throws UnbalanceAmountException, Exception {
+        log.info("###### unventilatePayment   ################################################");
         paymentVentilation.setVentilationActionStatus(VentilationActionStatusEnum.U);
         update(paymentVentilation);
 
