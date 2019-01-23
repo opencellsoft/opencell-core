@@ -102,11 +102,11 @@ public class PaymentService extends PersistenceService<Payment> {
     private RefundService refundService;
 
 
-//    @MeveoAudit
-//    @Override
-//    public void create(Payment entity) throws BusinessException {
-//        super.create(entity);
-//    }
+    @MeveoAudit
+    @Override
+    public void create(Payment entity) throws BusinessException {
+        super.create(entity);
+    }
 
     /**
      * Pay by card token. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment
