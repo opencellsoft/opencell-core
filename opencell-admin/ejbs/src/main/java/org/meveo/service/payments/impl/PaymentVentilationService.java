@@ -11,9 +11,9 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
@@ -37,9 +37,11 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
 
     @Inject
     private MatchingCodeService matchingCodeService;
-
+    
+    
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void ventilatePayment(PaymentVentilation entity) throws BusinessException {
+    public void ventilatePayment(PaymentVentilation entity) throws Exception {
         BigDecimal ventilationAmout = entity.getVentilationAmount();
         BigDecimal unventilatedAmount = entity.getOriginalOT().getUnMatchingAmount();
         OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) entity.getOriginalOT();
@@ -49,15 +51,15 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
         originalOTG.setMatchingStatus(matchingStatus);
         otherTransactionGeneralService.update(originalOTG);
         entity.setVentilationDate(new Date());
-        create(entity);
-        entity.setNewOT(createVentilatedOTG(entity));
         ParamBean paramBean = paramBeanFactory.getInstance();
         OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.411100.cr", "411100_CR"));
         entity.setAccountOperation(createPayment(entity, occTemplate)); //// Account operation Credit
-        update(entity);
+        entity.setNewOT(createVentilatedOTG(entity));
+        create(entity);
 
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void unventilatePayment(PaymentVentilation paymentVentilation) throws UnbalanceAmountException, Exception {
         paymentVentilation.setVentilationActionStatus(VentilationActionStatusEnum.U);
