@@ -29,11 +29,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
@@ -42,7 +39,6 @@ import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
@@ -53,7 +49,6 @@ import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
-import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
@@ -67,7 +62,6 @@ import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.script.payment.DateRangeScript;
 
 /**
  * The Class DDRequestLOTService.
@@ -100,6 +94,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
     /** The dd request item service. */
     @Inject
     private DDRequestItemService ddRequestItemService;
+    
+    @Inject
+    private PaymentService paymentService;
 
     /**
      * Creates the payment.
@@ -294,7 +291,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
                     log.info("invoice: {}  balanceDue:{}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
                 } else {
                     automatedPayment = createPayment(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
-                        ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), ddrequestItem.getReference(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
+                        ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), "ddItem"+ddrequestItem.getId(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
                         DateUtils.addDaysToDate(new Date(), ArConfig.getDateValueAfter()), ddRequestLOT.getSendDate(), ddRequestLOT.getSendDate(),
                         ddrequestItem.getAccountOperations(), true, MatchingTypeEnum.A_DERICT_DEBIT);
                     ddrequestItem.setAutomatedPayment(automatedPayment);
@@ -378,16 +375,11 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
      * @throws BusinessException the business exception
      */
     public void rejectPayment(DDRequestItem ddRequestItem, String rejectCause) throws BusinessException {
-
         AutomatedPayment automatedPayment = ddRequestItem.getAutomatedPayment();
-        if (automatedPayment.getMatchingAmounts() == null || automatedPayment.getMatchingAmounts().isEmpty()) {
+        if (automatedPayment == null || automatedPayment.getMatchingAmounts() == null || automatedPayment.getMatchingAmounts().isEmpty()) {
             throw new BusinessException("ddRequestItem id :" + ddRequestItem.getId() + " Callback not expected");
         }
-        matchingCodeService.unmatching(automatedPayment.getMatchingAmounts().get(0).getMatchingCode().getId());
-
-        automatedPayment.setMatchingStatus(MatchingStatusEnum.R);
-        automatedPayment.setComment(rejectCause);
-        automatedPaymentService.updateNoCheck(automatedPayment);
+    	paymentService.paymentCallback(automatedPayment.getReference(), PaymentStatusEnum.REJECTED, rejectCause, rejectCause);
     }
 
     /**
