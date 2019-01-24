@@ -1857,4 +1857,15 @@ $$ LANGUAGE plpgsql;
         <addUniqueConstraint columnNames="entity_class" constraintName="uk_adm_custom_generic_entity_code_class" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_custom_generic_entity_code" />
     </changeSet>
 
+    <changeSet id="#3848_23012019" author="abdelkader.bouazza">
+        <createTable tableName="cat_offer_tmpl_discount_plan">
+            <column name="offer_tmpl_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="discount_plan_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="offer_tmpl_id, discount_plan_id" constraintName="cat_offer_tmpl_discount_plan_pkey" tableName="cat_offer_tmpl_discount_plan" />
+    </changeSet>
 </databaseChangeLog>
