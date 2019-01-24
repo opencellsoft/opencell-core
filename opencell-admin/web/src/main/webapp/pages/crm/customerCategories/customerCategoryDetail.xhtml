@@ -12,6 +12,20 @@
     </ui:define>
 
 	<ui:define name="body">
+
+		<hftl:entityPopup id="accountingCodePopup"
+						  header="#{messages['accountingCode']}"
+						  backingBean="#{accountingCodeListBean}"
+						  selection="#{customerCategoryBean.entity.accountingCode}"
+						  searchField1Label="#{messages['businessEntity.code']}"
+						  searchField1="code"
+						  searchField2Label="#{messages['businessEntity.description']}"
+						  searchField2="description"
+						  column1Label="#{messages['businessEntity.code']}" column1="code"
+						  column2Label="#{messages['businessEntity.description']}"
+						  column2="description"
+						  updateField="formId:tabView:accountingCodeId formId:tabView:accountingCodeId_text">
+		</hftl:entityPopup>
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
@@ -25,23 +39,35 @@
 			</p:breadCrumb>
 		</h:form>
 
-		<hftl:formPanel label="#{messages['customerCategory.panel']}"
-			backingBean="#{customerCategoryBean}">
-			<hftl:formField label="#{messages['businessEntity.code']}" field="code"
-				validateUnique="true" required="true" />
-			<hftl:formField label="#{messages['businessEntity.description']}"
-				field="description" useConverter="false" id="description"
-				/>
-			<hftl:formField
-				label="#{messages['customerCategory.exoneratedFromTaxes']}"
-				field="exoneratedFromTaxes" />
-            <hftl:formField label="#{messages['customerCategory.exonerationTaxEl']}"
-                   field="exonerationTaxEl" textArea="true" rows="1" maxlength="2000"/>
-            <hftl:formField label="#{messages['customerCategory.exonerationTaxElSpark']}"
-                   field="exonerationTaxElSpark" textArea="true" rows="1" maxlength="2000"/>
-            <hftl:formField label="#{messages['customerCategory.exonerationReason']}"
-                   field="exonerationReason" size="80"/>				
+		<hftl:formPanel label="#{messages['customerCategory.panel']}" backingBean="#{customerCategoryBean}">
+
+			<p:tabView id="tabView">
+			   <p:tab title="#{messages['customerCategory.tab.information']}">
+					<hftl:formField label="#{messages['businessEntity.code']}" field="code"
+						validateUnique="true" required="true" />
+					<hftl:formField label="#{messages['businessEntity.description']}"
+						field="description" useConverter="false" id="description"
+						/>
+                   <hftl:formField id="accountingCodeId"
+                                   label="#{messages['customerCategory.accountingCode']}" field="accountingCode"
+                                   valueLabelField="code" listenerUpdate="@this" popup="true"
+                                   popupId="accountingCodePopup" showResetButton="true" />
+                   <hftl:formField
+						label="#{messages['customerCategory.exoneratedFromTaxes']}"
+						field="exoneratedFromTaxes" />
+		            <hftl:formField label="#{messages['customerCategory.exonerationTaxEl']}"
+		                   field="exonerationTaxEl" textArea="true" rows="1" maxlength="2000"/>
+		            <hftl:formField label="#{messages['customerCategory.exonerationTaxElSpark']}"
+		                   field="exonerationTaxElSpark" textArea="true" rows="1" maxlength="2000"/>
+		            <hftl:formField label="#{messages['customerCategory.exonerationReason']}"
+		                   field="exonerationReason" size="80"/>
+	            </p:tab>
+	            <hftl:customFields backingBean="#{customerCategoryBean}" messagesId=":formId:messages" />
+	         </p:tabView>
 		</hftl:formPanel>
+
+
+
 	</ui:define>
 
 </ui:composition>

@@ -114,6 +114,7 @@ public class CatalogApi extends BaseApi {
                     // Nothing to do with WO here, other then reusing an existing method to calculate price amounts based on amountWithoutTax or amountWithTax depending on
                     // provider.isEnterprise() value
                     WalletOperation wo = new WalletOperation();
+                    wo.setPriceplan(pricePlans.get(0));
                     wo.setQuantity(BigDecimal.ONE);
                     wo.setTaxPercent(price.getTaxRate());
                     ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
@@ -162,6 +163,7 @@ public class CatalogApi extends BaseApi {
                     // provider.isEnterprise() value
                     WalletOperation wo = new WalletOperation();
                     wo.setQuantity(BigDecimal.ONE);
+                    wo.setPriceplan(pricePlans.get(0));
                     wo.setTaxPercent(price.getTaxRate());
                     ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
                     price.setDutyFreeAmount(wo.getUnitAmountWithoutTax());
@@ -214,6 +216,7 @@ public class CatalogApi extends BaseApi {
                     // provider.isEnterprise() value
                     WalletOperation wo = new WalletOperation();
                     wo.setQuantity(BigDecimal.ONE);
+                    wo.setPriceplan(pricePlans.get(0));
                     wo.setTaxPercent(price.getTaxRate());
                     ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
                     price.setDutyFreeAmount(wo.getUnitAmountWithoutTax());

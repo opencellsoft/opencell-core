@@ -1627,7 +1627,7 @@ public class SubscriptionApi extends BaseApi {
         return results;
     }
 
-    private List<OneShotChargeInstanceDto> getOneShotCharges(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
+    public List<OneShotChargeInstanceDto> getOneShotCharges(String subscriptionCode) throws EntityDoesNotExistsException, InvalidParameterException {
         Subscription subscription = subscriptionService.findByCode(subscriptionCode);
 
         if (subscription == null) {
@@ -1912,6 +1912,15 @@ public class SubscriptionApi extends BaseApi {
             oneShotChargeInstanceService.terminateOneShotChargeInstance(oneShotChargeInstance);
         } catch (BusinessException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void cancelOneShotCharge(Long oneShotChargeId) {
+        try {
+            OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findById(oneShotChargeId);
+            oneShotChargeInstanceService.terminateOneShotChargeInstance(oneShotChargeInstance);
+        } catch (BusinessException e) {
+            log.error("Error on cancelOneShotCharge [{}] ", e.getMessage(), e);
         }
     }
 

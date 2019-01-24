@@ -14,6 +14,7 @@ import org.meveo.model.ExportIdentifier;
  * Additional contact details
  * 
  * @author Andrius Karpavicius
+ * @lastModifiedVersion 5.4
  */
 @Entity
 @Table(name = "crm_additional_details")
