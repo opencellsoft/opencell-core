@@ -116,10 +116,9 @@ public class DunningDocumentWFScript extends Script {
                 workflowInstanceService.changeStatus(workflowInstance, DunningDocumentStatusEnum.R4.name());
                 createWFInstanceHistory(workflowInstance, currentStatus, DunningDocumentStatusEnum.R4.getDescription());
             }
-            if (DunningDocumentStatusEnum.R4.name().equals(currentStatus.getCode())
+            /*if (DunningDocumentStatusEnum.R4.name().equals(currentStatus.getCode())
                     && isDelayFromLastEventIsPassed(workflowInstance, DUNNING_R4_DELAY)){
-                boolean
-            }
+            }*/
         }catch (DunningDocumentWFException e){
             throw new BusinessException(e);
         }
