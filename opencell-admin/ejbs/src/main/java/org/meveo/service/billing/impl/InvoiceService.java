@@ -31,13 +31,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -99,6 +93,8 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
@@ -109,6 +105,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.communication.impl.EmailSender;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
@@ -213,6 +210,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private PaymentMethodService paymentMethodService;
+
+    @Inject
+    private EmailSender emailSender;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -361,7 +361,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Assign invoice number to an invoice
-     * 
+     *
      * @param invoice invoice
      * @throws BusinessException business exception
      */
@@ -444,7 +444,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get a list of invoices that are validated, but PDF was not yet generated.
-     * 
+     *
      * @param billingRunId An optional billing run identifier for filtering
      * @return A list of invoice ids
      */
@@ -510,7 +510,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get rated transactions for entity grouped by billing account and seller, which allows invoice generation by seller and billing account
-     * 
+     *
      * @param entity entity to be billed
      * @param billingRun billing run
      * @param ratedTransactionFilter rated transaction filter
@@ -837,6 +837,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoiceList;
     }
 
+    private boolean isElectronicBillingEnabled(Invoice invoice) {
+        boolean isElectronicBillingEnabled = false;
+
+        if (invoice.getBillingAccount() != null) {
+            isElectronicBillingEnabled = invoice.getBillingAccount().getElectronicBilling();
+        }
+        if (invoice.getSubscription() != null) {
+            isElectronicBillingEnabled = invoice.getSubscription().getElectronicBilling();
+        }
+        if (invoice.getOrder() != null) {
+            isElectronicBillingEnabled = invoice.getOrder().getElectronicBilling();
+        }
+        return isElectronicBillingEnabled;
+    }
+
     private Map<InvoiceType, List<RatedTransaction>> executeBCScript(BillingRun billingRun, InvoiceType invoiceType, List<RatedTransaction> ratedTransactions,
             IBillableEntity entity, String scriptInstanceCode) throws BusinessException {
         try {
@@ -859,7 +874,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Creates Invoice and its aggregates in memory.
-     * 
+     *
      * @param ratedTransactions list of rated transaction
      * @param billingAccount billing account
      * @param invoiceType type of invoice
@@ -924,8 +939,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Produce invoice's PDF file and update invoice record in DB.
-     * 
-     * 
+     *
+     *
      * @param invoice Invoice
      * @return Update invoice entity
      * @throws BusinessException business exception
@@ -1097,7 +1112,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Delete invoice's PDF file.
-     * 
+     *
      * @param invoice Invoice
      * @return True if file was deleted
      * @throws BusinessException business exception
@@ -1263,7 +1278,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             BigDecimal amountWithoutTax = subCategoryInvoiceAgregate.getAmountWithoutTax();
             subCategoryInvoiceAgregate
-                .setAmountWithoutTax(amountWithoutTax != null ? amountWithoutTax.setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode()) : BigDecimal.ZERO);
+                    .setAmountWithoutTax(amountWithoutTax != null ? amountWithoutTax.setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode()) : BigDecimal.ZERO);
 
             subCategoryInvoiceAgregate.getCategoryInvoiceAgregate().addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
 
@@ -1400,7 +1415,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get a full path to an invoice's XML file.
-     * 
+     *
      * @param invoice Invoice
      * @param createDirs Should missing directories be created
      * @return Absolute path to an XML file
@@ -1423,7 +1438,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Return a XML filename that was assigned to invoice, or in case it was not assigned yet - generate a filename. A default XML filename is
      * invoiceDateOrBillingRunId/invoiceNumber.pdf or invoiceDateOrBillingRunId/_IA_invoiceNumber.pdf for adjustment invoice
-     * 
+     *
      * @param invoice Invoice
      * @return XML file name
      */
@@ -1473,8 +1488,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get a full path to an invoice's PDF file.
-     * 
-     * 
+     *
+     *
      * @param invoice Invoice
      * @param createDirs Should missing directories be created
      * @return Absolute path to a PDF file
@@ -1497,8 +1512,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Return a pdf filename that was assigned to invoice, or in case it was not assigned yet - generate a filename. A default PDF filename is invoiceDate_invoiceNumber.pdf or
      * invoiceDate_IA_invoiceNumber.pdf for adjustment invoice
-     * 
-     * 
+     *
+     *
      * @param invoice Invoice
      * @return Pdf file name
      */
@@ -1558,7 +1573,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Produce invoice's XML file and update invoice record in DB.
-     * 
+     *
      * @param invoice Invoice to produce XML for
      * @return Update invoice entity
      * @throws BusinessException business exception
@@ -1572,7 +1587,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Produce invoice's XML file.
-     * 
+     *
      * @param invoice Invoice
      * @throws BusinessException business exception
      */
@@ -1583,7 +1598,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Delete invoice's XML file.
-     * 
+     *
      * @param invoice Invoice
      * @return True if file was deleted
      * @throws BusinessException business exception
@@ -1604,7 +1619,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Check if invoice's XML file exists.
-     * 
+     *
      * @param invoice Invoice
      * @return True if invoice's XML file exists
      */
@@ -1617,7 +1632,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Retrieve invoice's XML file contents as a string.
-     * 
+     *
      * @param invoice Invoice
      * @return Invoice's XML file contents as a string
      * @throws BusinessException business exception
@@ -1654,7 +1669,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Check if invoice's PDF file exists.
-     * 
+     *
      * @param invoice Invoice
      * @return True if invoice's PDF file exists
      */
@@ -1667,7 +1682,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Retrieve invoice's PDF file contents as a byte array.
-     * 
+     *
      * @param invoice Invoice
      * @return Invoice's PDF file contents as a byte array
      * @throws BusinessException business exception
@@ -1709,11 +1724,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Generate XML (if neeed) and PDF files for Invoice.
-     * 
+     *
      * @param invoice Invoice
      * @param regenerate Regenerate XML and PDF files ignoring id they exist already
      * @return invoice
-     * 
+     *
      * @throws BusinessException business exception
      */
     public Invoice generateXmlAndPdfInvoice(Invoice invoice, boolean regenerate) throws BusinessException {
@@ -1841,7 +1856,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Create RatedTransaction and generate invoice for the billingAccount.
-     * 
+     *
      * @param billingAccount billing account
      * @param invoiceDate date of invoice
      * @param firstTransactionDate first transaction date.
@@ -1856,7 +1871,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      * @throws ImportInvoiceException import invoice exception
      * @throws InvoiceExistException invoice exists exception
-     * 
+     *
      * @deprecated : - It contains a lot of args. - It breaks the 'Separation of responsibilities' pattern by creating the Invoice, creating the PDF/XML file and producing the AOs
      *             !! <br>
      *             use generateInvoice(BillingAccount, GenerateInvoiceRequestDto) + produceFilesAndAO(boolean, boolean, boolean, Invoice) instead.
@@ -1997,7 +2012,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Determine an invoice template to use. Rule for selecting an invoiceTemplate is: InvoiceType &gt; BillingCycle &gt; default.
-     * 
+     *
      * @param invoice invoice
      * @param billingCycle Billing cycle
      * @param invoiceType Invoice type
@@ -2053,8 +2068,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get a list of invoice identifiers that belong to a given Billing run and that do not have XML generated yet.
-     * 
-     * 
+     *
+     *
      * @param billingRunId Billing run id
      * @return A list of invoice identifiers
      */
@@ -2067,7 +2082,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get a summarized information for invoice numbering. Contains grouping by invoice type, seller, invoice date and a number of invoices.
-     * 
+     *
      * @param billingRunId Billing run id
      * @return A list of invoice identifiers
      */
@@ -2086,7 +2101,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Retrieve invoice ids matching billing run, invoice type, seller and invoice date combination.
-     * 
+     *
      * @param billingRunId Billing run id
      * @param invoiceTypeId Invoice type id
      * @param sellerId Seller id
@@ -2095,7 +2110,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public List<Long> getInvoiceIds(Long billingRunId, Long invoiceTypeId, Long sellerId, Date invoiceDate) {
         return getEntityManager().createNamedQuery("Invoice.byBrItSelDate", Long.class).setParameter("billingRunId", billingRunId).setParameter("invoiceTypeId", invoiceTypeId)
-            .setParameter("sellerId", sellerId).setParameter("invoiceDate", invoiceDate).getResultList();
+                .setParameter("sellerId", sellerId).setParameter("invoiceDate", invoiceDate).getResultList();
     }
 
     /**
@@ -2139,7 +2154,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Return all invoices with now - invoiceDate date &gt; n years.
-     * 
+     *
      * @param nYear age of the invoices
      * @return Filtered list of invoices
      */
@@ -2170,7 +2185,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * A first part of invoiceService.create() method. Does not call PersistenceService.create(), Need to call InvoiceService.postCreate() separately
-     * 
+     *
      * @param invoice Invoice entity
      * @throws BusinessException General business exception
      */
@@ -2184,6 +2199,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (invoice instanceof ICustomFieldEntity) {
             customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) invoice);
         }
+        //activate/deactivate sending invoice by Emails
+        if(!isElectronicBillingEnabled(invoice)){
+            invoice.setDontSend(true);
+        }
 
         getEntityManager().persist(invoice);
 
@@ -2192,7 +2211,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * A second part of invoiceService.create() method.
-     * 
+     *
      * @param invoice Invoice entity
      * @throws BusinessException General business exception
      */
@@ -2203,5 +2222,143 @@ public class InvoiceService extends PersistenceService<Invoice> {
         cfValueAccumulator.entityCreated(invoice);
 
         log.trace("end of post create {}. entity id={}.", invoice.getClass().getSimpleName(), invoice.getId());
+    }
+
+    /**
+     * Send the invoice by email
+     * @param invoice the invoice
+     * @param mailingTypeEnum : Mailing type
+     * @param overrideEmail : override Email
+     * @return true if the invoice is sent, false else.
+     * @throws BusinessException
+     */
+    public boolean sendByEmail(Invoice invoice, MailingTypeEnum mailingTypeEnum, String overrideEmail) throws BusinessException {
+        try {
+            invoice = refreshOrRetrieve(invoice);
+            if (invoice.getPdfFilename() == null) {
+                return false;
+            }
+            List<String> to = new ArrayList<>();
+            List<String> cc = new ArrayList<>();
+            List<File> files = new ArrayList<>();
+
+            String fileName = getFullPdfFilePath(invoice, false);
+            File attachment = new File(fileName);
+            if (!attachment.exists()) {
+                return false;
+            }
+            files.add(attachment);
+            EmailTemplate emailTemplate = invoice.getInvoiceType().getEmailTemplate();
+            MailingTypeEnum mailingType = invoice.getInvoiceType().getMailingType();
+            BillingAccount billingAccount = invoice.getBillingAccount();
+            Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
+            to.add(billingAccount.getContactInformation().getEmail());
+            if (billingAccount.getCcedEmails() != null) {
+                cc.addAll(Arrays.asList(billingAccount.getCcedEmails().split(",")));
+            }
+            if (billingAccount.getEmailTemplate() != null) {
+                emailTemplate = billingAccount.getEmailTemplate();
+            }
+            if (billingAccount.getMailingType() != null) {
+                mailingType = billingAccount.getMailingType();
+            }
+
+            Boolean electronicBilling = billingAccount.getElectronicBilling();
+            Subscription subscription = invoice.getSubscription();
+            if (subscription != null) {
+                electronicBilling = subscription.getElectronicBilling();
+                seller = (subscription.getSeller() != null) ? subscription.getSeller() : seller;
+                to.clear();
+                to.add(subscription.getEmail());
+                cc.clear();
+                if (subscription.getCcedEmails() != null) {
+                    cc.addAll(Arrays.asList(subscription.getCcedEmails().split(",")));
+                }
+                emailTemplate = (subscription.getEmailTemplate() != null) ? subscription.getEmailTemplate() : emailTemplate;
+                mailingType = (subscription.getMailingType() != null) ? subscription.getMailingType() : mailingType;
+
+            }
+            Order order = invoice.getOrder();
+            if(order!= null){
+                electronicBilling = order.getElectronicBilling();
+                to.clear();
+                to.add(order.getEmail());
+                cc.clear();
+                if (order.getCcedEmails() != null) {
+                    cc.addAll(Arrays.asList(order.getCcedEmails().split(",")));
+                }
+                emailTemplate = (order.getEmailTemplate() != null) ? order.getEmailTemplate() : emailTemplate;
+                mailingType = (order.getMailingType() != null) ? order.getMailingType() : mailingType;
+            }
+            if (overrideEmail != null) {
+                to.clear();
+                to.add(overrideEmail);
+                cc.clear();
+            }
+            if (to.isEmpty() || emailTemplate == null) {
+                return false;
+            }
+            if (electronicBilling && mailingTypeEnum.equals(mailingType)) {
+                emailSender.send(seller.getContactInformation().getEmail(), to, to, cc, null, emailTemplate.getSubject(), emailTemplate.getTextContent(),
+                        emailTemplate.getHtmlContent(), files, null);
+                invoice.setAlreadySent(true);
+                update(invoice);
+
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
+    }
+    /**
+     * Return a list of invoices that not already sent and can be sent : dontsend:false.
+     * @return a list of invoices
+     * @throws BusinessException
+     */
+    public List<Invoice> findByNotAlreadySentAndDontSend() throws BusinessException {
+        List<Invoice> result = new ArrayList<Invoice>();
+        QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null);
+        qb.addCriterionEntity("alreadySent", false);
+        qb.addCriterionEntity("dontSend", false);
+        try {
+            result = (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
+        return result;
+    }
+
+     /**
+      * Check if an invoice is draft.
+     * @param invoice the invoice
+     * @return true if is draft else return false.
+     * @throws BusinessException
+     */
+    public boolean isDraft(Invoice invoice) throws BusinessException {
+        invoice = refreshOrRetrieve(invoice);
+        InvoiceType invoiceType = invoice.getInvoiceType();
+        InvoiceType draftInvoiceType = invoiceTypeService.getDefaultDraft();
+        if (invoiceType == null)
+            return false;
+        return invoiceType.equals(draftInvoiceType) || invoice.getInvoiceNumber() == null;
+    }
+
+    /**
+     * Evaluate the override Email EL
+     * @param overrideEmailEl override Email
+     * @param userMap the userMap
+     * @param invoice the invoice
+     * @return the
+     * @throws BusinessException
+     */
+    public String evaluateOverrideEmail(String overrideEmailEl, HashMap<Object, Object> userMap, Invoice invoice) throws BusinessException {
+        invoice = refreshOrRetrieve(invoice);
+        userMap.put("invoice", invoice);
+        String result = ValueExpressionWrapper.evaluateExpression(overrideEmailEl, userMap, String.class);
+        if (StringUtils.isBlank(result)) {
+            return null;
+        }
+        return result;
     }
 }

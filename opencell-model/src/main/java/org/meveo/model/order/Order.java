@@ -27,6 +27,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.Email;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -37,6 +39,8 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.quote.Quote;
@@ -215,6 +219,27 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
+
+    @ManyToOne()
+    @JoinColumn(name = "email_template_id")
+    private EmailTemplate emailTemplate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mailing_type")
+    private MailingTypeEnum mailingType;
+
+    @Column(name = "cced_emails", length = 2000)
+    @Size(max = 2000)
+    private String ccedEmails;
+
+    @Column(name = "email", length = 255)
+    @Email
+    @Size(max = 255)
+    private String email;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "electronic_billing")
+    private boolean electronicBilling;
 
     /**
      * Rated transactions to reach minimum amount per invoice
@@ -501,5 +526,45 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
 
     public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
         this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+    }
+
+    public EmailTemplate getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    public void setEmailTemplate(EmailTemplate emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    public MailingTypeEnum getMailingType() {
+        return mailingType;
+    }
+
+    public void setMailingType(MailingTypeEnum mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public boolean getElectronicBilling() {
+        return electronicBilling;
+    }
+
+    public void setElectronicBilling(boolean electronicBilling) {
+        this.electronicBilling = electronicBilling;
     }
 }

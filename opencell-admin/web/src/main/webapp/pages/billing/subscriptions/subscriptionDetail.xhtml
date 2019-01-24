@@ -173,6 +173,19 @@
 			dataModel="#{subscriptionBean.listProductSellers()}"
 			updateField=":subscriptionTab:applyProductForm:productSellerSelectId :subscriptionTab:applyProductForm:productSellerSelectId_text">
 		</hftl:entityPopup>
+		<hftl:entityPopup id="searchEmailTemplatePopup"
+						  header="#{messages['emailTemplate']}"
+						  updateField=":subscriptionTab:subscriptionFormId:informationTab:emailTemplateId :subscriptionTab:subscriptionFormId:informationTab:emailTemplateId_text"
+						  selection="#{subscriptionBean.entity.emailTemplate}"
+						  backingBean="#{emailTemplateBean}"
+						  searchField1Label="#{messages['businessEntity.code']}"
+						  searchField1="code"
+						  column1Label="#{messages['businessEntity.code']}"
+						  column1="code"
+						  column2Label="#{messages['businessEntity.description']}"
+						  column2="description">
+
+		</hftl:entityPopup>
 		
 		<p:panel>
 			<h:form id="crumbmenuForm">
@@ -490,14 +503,28 @@
                                             <hftl:formField label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
                                                 field="terminationDate" edit="false" rendered="#{subscriptionBean.entity.terminationDate != null}" />
 
-										<hftl:formField label="#{messages['terminationReason']}"
-											field="subscriptionTerminationReason"
-											valueLabelField="descriptionOrCode" edit="false"
-											listBean="#{subscriptionTerminationReasonBean}"
-											rendered="#{subscriptionBean.entity.status == 'RESILIATED' and (subscriptionBean.entity.subscriptionTerminationReason != null)}" />
 
-									</h:panelGroup>
-                                    </p:tab>
+										</h:panelGroup>
+
+									</p:tab>
+									<p:tab title="#{messages['invoice.electronicBilling']}">
+
+										<hftl:formField label="#{messages['invoice.electronicBilling']}" field="electronicBilling"
+														listenerUpdate=":subscriptionTab:subscriptionFormId:informationTab:email :subscriptionTab:subscriptionFormId:informationTab:ccedEmails :subscriptionTab:subscriptionFormId:informationTab:mailingType :subscriptionTab:subscriptionFormId:informationTab:emailTemplateId"/>
+										<hftl:formField label="#{messages['invoice.email']}"
+														required="#{subscriptionBean.entity.electronicBilling}"
+														id="email" field="email"
+														validateEmail="true"
+														disabled="#{!subscriptionBean.entity.electronicBilling}"/>
+										<hftl:formField label="#{messages['invoice.ccedEmails']}" id="ccedEmails" field="ccedEmails"
+														disabled="#{!subscriptionBean.entity.electronicBilling}"/>
+										<hftl:formField label="#{messages['invoice.mailingType']}" id="mailingType" field="mailingType" noSelectionLabel="false"
+														disabled="#{!subscriptionBean.entity.electronicBilling}"/>
+										<hftl:formField required="#{subscriptionBean.entity.electronicBilling}" id="emailTemplateId" label="#{messages['emailTemplate']}" field="emailTemplate" valueLabelField="code"
+                                                        popup="true"
+                                                        popupId="searchEmailTemplatePopup"/>
+
+									</p:tab>
 
 									<hftl:customFields backingBean="#{subscriptionBean}" messagesId=":subscriptionTab:subscriptionFormId:messages" />
 									<hftl:displayWorkflowsHistory entity="#{subscriptionBean.entity}" />

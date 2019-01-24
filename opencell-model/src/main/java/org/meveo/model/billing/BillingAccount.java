@@ -52,6 +52,8 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 
 /**
@@ -297,6 +299,27 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
      */
     @Transient
     private DiscountPlan discountPlan;
+    /**
+     * Email Template
+     */
+    @ManyToOne()
+    @JoinColumn(name = "email_template_id")
+    private EmailTemplate emailTemplate;
+
+    /**
+     * Mailing type can be Manual, Auto, Batch
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mailing_type")
+    private MailingTypeEnum mailingType;
+
+    /**
+     * A list of emails separated by comma, That can be used a cc
+     */
+    @Column(name = "cced_emails", length = 2000)
+    @Size(max = 2000)
+    private String ccedEmails;
+
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -628,4 +651,27 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 		this.discountPlan = discountPlan;
 	}
 
+    public EmailTemplate getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    public void setEmailTemplate(EmailTemplate emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    public MailingTypeEnum getMailingType() {
+        return mailingType;
+    }
+
+    public void setMailingType(MailingTypeEnum mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
 }

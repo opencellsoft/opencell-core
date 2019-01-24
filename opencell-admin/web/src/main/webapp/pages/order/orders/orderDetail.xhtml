@@ -59,6 +59,20 @@
 			updateField=":orderForm:tabView:orderInfo:billingCycleSelectId :orderForm:tabView:orderInfo:billingCycleSelectId_text">
 		</hftl:entityPopup>
 
+        <hftl:entityPopup id="emailTemplatePopup"
+                          header="#{messages['billingCycle.popup.header']}"
+                          backingBean="#{emailTemplateBean}"
+                          searchField1Label="#{messages['businessEntity.code']}"
+                          searchField1="code"
+                          searchField2Label="#{messages['businessEntity.description']}"
+                          searchField2="description"
+                          column1Label="#{messages['businessEntity.code']}" column1="code"
+                          column2Label="#{messages['businessEntity.description']}"
+                          column2="description"
+                          selection="#{orderBean.entity.emailTemplate}"
+                          updateField=":orderForm:tabView:orderInfo:emailTemplateId :orderForm:tabView:orderInfo:emailTemplateId_text">
+        </hftl:entityPopup>
+
         <hftl:formPanel formId="orderForm" label="#{messages['order.panel']}" backingBean="#{orderBean}" edit="#{orderBean.orderEditable}" showEditButton="#{orderBean.orderEditable}" ajaxSubmit="true"
             submitPartialProcess=":orderForm:tabView:orderInfo">
             <p:tabView id="tabView" activeIndex="#{orderBean.activeTab}">
@@ -161,6 +175,21 @@
                                 </h:panelGroup>
 
                             </p:outputPanel>
+                        </p:fieldset>
+                        <p:fieldset legend="#{messages['invoice.electronicBilling']}" styleClass="clearBoth">
+
+                            <hftl:formField label="#{messages['invoice.electronicBilling']}" field="electronicBilling"
+                                            listenerUpdate=":orderForm:tabView:orderInfo:email :orderForm:tabView:orderInfo:ccedEmails :orderForm:tabView:orderInfo:mailingType :orderForm:tabView:orderInfo:emailTemplateId"/>
+                            <hftl:formField required="#{orderBean.entity.electronicBilling==true}" label="#{messages['invoice.email']}" id="email" field="email"
+                                            disabled="#{!orderBean.entity.electronicBilling}"/>
+                            <hftl:formField label="#{messages['invoice.ccedEmails']}" id="ccedEmails" field="ccedEmails"
+                                            disabled="#{!orderBean.entity.electronicBilling}"/>
+                            <hftl:formField label="#{messages['invoice.mailingType']}" id="mailingType" field="mailingType" noSelectionLabel="false"
+                                            disabled="#{!orderBean.entity.electronicBilling}"/>
+                            <hftl:formField required="#{orderBean.entity.electronicBilling==true}" id="emailTemplateId" label="#{messages['emailTemplate']}" field="emailTemplate"
+                                            valueLabelField="code"
+                                            popup="true"
+                                            popupId="emailTemplatePopup"/>
                         </p:fieldset>
                         <div class="clearLeft"></div>
 

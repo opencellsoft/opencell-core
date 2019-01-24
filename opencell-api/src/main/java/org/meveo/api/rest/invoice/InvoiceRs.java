@@ -225,4 +225,11 @@ public interface InvoiceRs extends IBaseRs {
     @Path("/list")
     InvoicesDto listPost(PagingAndFiltering pagingAndFiltering);
 
+    /**
+     * @return
+     */
+    @POST
+    @Path("/sendByEmail")
+    ActionStatus sendByEmail(InvoiceDto invoiceDto);
+
 }

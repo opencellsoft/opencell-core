@@ -42,6 +42,7 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -998,5 +999,42 @@ public class InvoiceApi extends BaseApi {
         }
 
         return result;
+    }
+
+    public boolean sendByEmail(InvoiceDto invoiceDto, MailingTypeEnum mailingType) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+        if (StringUtils.isBlank(invoiceDto.getInvoiceId())) {
+            missingParameters.add("invoiceId");
+        }
+        handleMissingParameters();
+        Invoice invoice = invoiceService.findById(invoiceDto.getInvoiceId());
+        if (invoice == null) {
+            throw new EntityDoesNotExistsException(Invoice.class, invoiceDto.getInvoiceId());
+        }
+        if (MailingTypeEnum.AUTO.equals(mailingType) && invoice.isDontSend()) {
+            return false;
+        }
+        if (MailingTypeEnum.AUTO.equals(mailingType) && invoice.getInvoiceType().equals(invoiceTypeService.getDefaultDraft())) {
+            return false;
+        }
+        if (invoiceDto.isCheckAlreadySent() && !invoice.isAlreadySent()) {
+            return invoiceService.sendByEmail(invoice, mailingType, invoiceDto.getOverrideEmail());
+        }
+        if (!invoiceDto.isCheckAlreadySent() && MailingTypeEnum.MANUAL.equals(mailingType)) {
+            return invoiceService.sendByEmail(invoice, mailingType, invoiceDto.getOverrideEmail());
+        }
+        return false;
+
+    }
+
+    public List<GenerateInvoiceResultDto> sendByEmail(List<GenerateInvoiceResultDto> invoicesResult)
+            throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+        for (GenerateInvoiceResultDto invoiceResult : invoicesResult) {
+            invoiceResult.setCheckAlreadySent(true);
+            invoiceResult.setSentByEmail(false);
+            if (sendByEmail(invoiceResult, MailingTypeEnum.AUTO)) {
+                invoiceResult.setSentByEmail(true);
+            }
+        }
+        return invoicesResult;
     }
 }

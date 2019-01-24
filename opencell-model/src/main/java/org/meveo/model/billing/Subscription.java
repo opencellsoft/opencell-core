@@ -51,6 +51,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.Email;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -60,6 +61,8 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
@@ -272,6 +275,29 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
      */
     @Column(name = "rating_group", length = 50)
     private String ratingGroup;
+
+
+    @ManyToOne()
+    @JoinColumn(name = "email_template_id")
+    private EmailTemplate emailTemplate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mailing_type")
+    private MailingTypeEnum mailingType;
+
+    @Column(name = "cced_emails", length = 2000)
+    @Size(max = 2000)
+    private String ccedEmails;
+
+    @Column(name = "email", length = 255)
+    @Email
+    @Size(max = 255)
+    private String email;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "electronic_billing")
+    private boolean electronicBilling;
+
 
     /**
      * Extra Rated transactions to reach minimum invoice amount per subscription
@@ -738,4 +764,43 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 		this.ratingGroup = ratingGroup;
 	}
 
+    public EmailTemplate getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    public void setEmailTemplate(EmailTemplate emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    public MailingTypeEnum getMailingType() {
+        return mailingType;
+    }
+
+    public void setMailingType(MailingTypeEnum mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public boolean getElectronicBilling() {
+        return electronicBilling;
+    }
+
+    public void setElectronicBilling(boolean electronicBilling) {
+        this.electronicBilling = electronicBilling;
+    }
 }

@@ -352,6 +352,20 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private BigDecimal dueBalance;
 
     /**
+     * Check if the invoice already sent
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "already_sent")
+    private boolean alreadySent;
+
+    /**
+     * Dont send the invoice if true.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "dont_send")
+    private boolean dontSend;
+
+    /**
      * Seller that invoice was issued to
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -943,5 +957,21 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
      */
     public void setDraft(Boolean draft) {
         this.draft = draft;
+    }
+
+    public boolean isAlreadySent() {
+        return alreadySent;
+    }
+
+    public void setAlreadySent(boolean alreadySent) {
+        this.alreadySent = alreadySent;
+    }
+
+    public boolean isDontSend() {
+        return dontSend;
+    }
+
+    public void setDontSend(boolean dontSend) {
+        this.dontSend = dontSend;
     }
 }
