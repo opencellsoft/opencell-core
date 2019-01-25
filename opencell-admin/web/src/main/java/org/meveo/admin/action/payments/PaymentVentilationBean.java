@@ -106,7 +106,7 @@ public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
                 messages.error(new BundleKey("messages", "customerAccount.noAllOperationUnmatched"));
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                messages.error(new BundleKey("messages", e.getMessage()));
+                messages.error(e.getMessage());
             }
         }
 
@@ -124,9 +124,9 @@ public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
             try {
                 paymentVentilationService.ventilatePayment(entity);
                 messages.info(new BundleKey("messages", "save.successful"));
-            } catch (BusinessException e) {
+            } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                messages.error(new BundleKey("messages", e.getMessage()));
+                messages.error(e.getMessage());
             }
         }
         
