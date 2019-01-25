@@ -9,6 +9,11 @@ import org.beanio.StreamFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 6.0
+ */
 public class FileParserBeanio implements IFileParser {
 
     private StreamFactory factory = null;
@@ -51,6 +56,7 @@ public class FileParserBeanio implements IFileParser {
             return false;
         }
         recordContext.setRecord(null);
+        recordContext.setReason(null);
         try {
             recordContext.setRecord(beanReader.read());
             recordContext.setLineContent(beanReader.getRecordContext(0).getRecordText());
