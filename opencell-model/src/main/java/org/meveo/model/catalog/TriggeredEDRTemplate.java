@@ -22,6 +22,8 @@ import org.meveo.model.scripts.ScriptInstance;
  * A rule for new EDR creation for a processed EDR
  * 
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 6.0
  */
 @Entity
 @ObservableEntity
@@ -141,6 +143,7 @@ public class TriggeredEDRTemplate extends BusinessEntity {
     
     /**
      * Expression to compute the OpencellInstance code so the instance on which the EDR is triggered can be inferred from the Offer or whatever.
+     * It overrides the value on meveoInstance.
      */
     @Column(name = "opencell_instance_el", columnDefinition = "TEXT")
     @Size(max = 2000)
@@ -150,8 +153,8 @@ public class TriggeredEDRTemplate extends BusinessEntity {
      * Script to run
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "script_instance_id")
-    private ScriptInstance scriptInstance;
+    @JoinColumn(name = "triggered_edr_script_instance_id")
+    private ScriptInstance triggeredEdrScript;
 
     /**
      * @return Expression to evaluate subscription code
@@ -383,15 +386,15 @@ public class TriggeredEDRTemplate extends BusinessEntity {
      * Get the script executed after TriggeredEdr construction.
      * @return {@link ScriptInstance}
      */
-    public ScriptInstance getScriptInstance() {
-        return scriptInstance;
+    public ScriptInstance getTriggeredEdrScript() {
+        return triggeredEdrScript;
     }
 
     /**
      * Set the script executed after TriggeredEdr construction.
      * @param scriptInstance {@link ScriptInstance}
      */
-    public void setScriptInstance(ScriptInstance scriptInstance) {
-        this.scriptInstance = scriptInstance;
+    public void setTriggeredEdrScript(ScriptInstance triggeredEdrScript) {
+        this.triggeredEdrScript = triggeredEdrScript;
     }
 }
