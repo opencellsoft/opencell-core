@@ -134,7 +134,8 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
@@ -837,6 +838,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoiceList;
     }
 
+    /**
+     * Check if the electronic billing is enabled.
+     * @param invoice the invoice.
+     * @return True if electronic billing is enabled for any Billable entity, false else.
+     */
     private boolean isElectronicBillingEnabled(Invoice invoice) {
         boolean isElectronicBillingEnabled = false;
 
@@ -2223,7 +2229,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         log.trace("end of post create {}. entity id={}.", invoice.getClass().getSimpleName(), invoice.getId());
     }
-
     /**
      * Send the invoice by email
      * @param invoice the invoice
@@ -2279,7 +2284,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             }
             Order order = invoice.getOrder();
-            if(order!= null){
+            if (order != null) {
                 electronicBilling = order.getElectronicBilling();
                 to.clear();
                 to.add(order.getEmail());
@@ -2339,9 +2344,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice = refreshOrRetrieve(invoice);
         InvoiceType invoiceType = invoice.getInvoiceType();
         InvoiceType draftInvoiceType = invoiceTypeService.getDefaultDraft();
-        if (invoiceType == null)
-            return false;
-        return invoiceType.equals(draftInvoiceType) || invoice.getInvoiceNumber() == null;
+        return invoiceType != null && (invoiceType.equals(draftInvoiceType) || invoice.getInvoiceNumber() == null);
     }
 
     /**

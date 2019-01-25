@@ -14,7 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by HORRI on 07/01/2019.
+ * A Job to send invoices by Email
+ * @author HORRI Khalid
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class SendInvoiceJob extends Job {

@@ -292,19 +292,36 @@ public class InvoiceType extends BusinessCFEntity {
         this.customInvoiceXmlScriptInstance = customInvoiceXmlScriptInstance;
     }
 
+    /**
+     * Gets Email Template.
+     * @return Email Template.
+     */
     public EmailTemplate getEmailTemplate() {
         return emailTemplate;
     }
 
+    /**
+     * Sets Email template.
+     * @param emailTemplate the Email template.
+     */
     public void setEmailTemplate(EmailTemplate emailTemplate) {
         this.emailTemplate = emailTemplate;
     }
 
+    /**
+     * Gets Mailing Type.
+     * @return Mailing Type.
+     */
     public MailingTypeEnum getMailingType() {
         return mailingType;
     }
 
+    /**
+     * Sets Mailing Type.
+     * @param mailingType mailing type
+     */
     public void setMailingType(MailingTypeEnum mailingType) {
         this.mailingType = mailingType;
     }
+
 }

@@ -73,7 +73,8 @@ import org.meveo.model.shared.DateUtils;
  * @author Said Ramli
  * @author Abdellatif BARI
  * @author Mounir BAHIJE
- * @lastModifiedVersion 5.3
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
@@ -764,42 +765,82 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 		this.ratingGroup = ratingGroup;
 	}
 
+    /**
+     * Gets Email Template.
+     * @return Email Template.
+     */
     public EmailTemplate getEmailTemplate() {
         return emailTemplate;
     }
 
+    /**
+     * Sets Email template.
+     * @param emailTemplate the Email template.
+     */
     public void setEmailTemplate(EmailTemplate emailTemplate) {
         this.emailTemplate = emailTemplate;
     }
 
+    /**
+     * Gets Mailing Type.
+     * @return Mailing Type.
+     */
     public MailingTypeEnum getMailingType() {
         return mailingType;
     }
 
+    /**
+     * Sets Mailing Type.
+     * @param mailingType mailing type
+     */
     public void setMailingType(MailingTypeEnum mailingType) {
         this.mailingType = mailingType;
     }
 
+    /**
+     * Gets cc Emails.
+     * @return cc Emails
+     */
     public String getCcedEmails() {
         return ccedEmails;
     }
 
+    /**
+     * Sets cc Emails.
+     * @param ccedEmails Cc Emails
+     */
     public void setCcedEmails(String ccedEmails) {
         this.ccedEmails = ccedEmails;
     }
 
+    /**
+     * Gets Email address.
+     * @return The Email address
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Sets Email.
+     * @param email the Email address
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
+    /**
+     * Check id electronic billing is enabled.
+     * @return True if enabled, false else
+     */
     public boolean getElectronicBilling() {
         return electronicBilling;
     }
 
+    /**
+     * Sets the electronic billing.
+     * @param electronicBilling True or False
+     */
     public void setElectronicBilling(boolean electronicBilling) {
         this.electronicBilling = electronicBilling;
     }

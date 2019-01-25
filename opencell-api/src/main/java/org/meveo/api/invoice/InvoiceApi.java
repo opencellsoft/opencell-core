@@ -68,7 +68,8 @@ import org.primefaces.model.SortOrder;
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @author Abdelmounaim Akadid
- * @lastModifiedVersion 5.1
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class InvoiceApi extends BaseApi {
@@ -1001,6 +1002,15 @@ public class InvoiceApi extends BaseApi {
         return result;
     }
 
+    /**
+     * Send the invoice by Email.
+     * @param invoiceDto The invoice DTO
+     * @param mailingType The mailing type
+     * @return True if sent, false else
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     * @throws BusinessException
+     */
     public boolean sendByEmail(InvoiceDto invoiceDto, MailingTypeEnum mailingType) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
         if (StringUtils.isBlank(invoiceDto.getInvoiceId())) {
             missingParameters.add("invoiceId");
@@ -1026,6 +1036,14 @@ public class InvoiceApi extends BaseApi {
 
     }
 
+    /**
+     * Send a list of invoices
+     * @param invoicesResult  the invoice result
+     * @return GenerateInvoiceResultDto
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     * @throws BusinessException
+     */
     public List<GenerateInvoiceResultDto> sendByEmail(List<GenerateInvoiceResultDto> invoicesResult)
             throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
         for (GenerateInvoiceResultDto invoiceResult : invoicesResult) {

@@ -23,7 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by HORRI on 07/01/2019.
+ * A bean used to send invoices by Email
+ * @author HORRI Khalid
+ * @lastModifiedVersion 7.0
  */
 public class SendInvoiceJobBean extends BaseJobBean {
 
@@ -87,10 +89,7 @@ public class SendInvoiceJobBean extends BaseJobBean {
             return false;
         }
         File pdfFile = new File(pdfPath);
-        if (!pdfFile.exists()) {
-            return false;
-        }
-        return true;
+        return pdfFile.exists();
 
     }
 }

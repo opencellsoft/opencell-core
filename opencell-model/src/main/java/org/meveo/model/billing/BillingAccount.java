@@ -60,7 +60,8 @@ import org.meveo.model.payments.CustomerAccount;
  * Billing account
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "BA", inheritCFValuesFrom = "customerAccount")
@@ -651,26 +652,50 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 		this.discountPlan = discountPlan;
 	}
 
+    /**
+     * Gets Email Template.
+     * @return Email Template.
+     */
     public EmailTemplate getEmailTemplate() {
         return emailTemplate;
     }
 
+    /**
+     * Sets Email template.
+     * @param emailTemplate the Email template.
+     */
     public void setEmailTemplate(EmailTemplate emailTemplate) {
         this.emailTemplate = emailTemplate;
     }
 
+    /**
+     * Gets Mailing Type.
+     * @return Mailing Type.
+     */
     public MailingTypeEnum getMailingType() {
         return mailingType;
     }
 
+    /**
+     * Sets Mailing Type
+     * @param mailingType mailing type
+     */
     public void setMailingType(MailingTypeEnum mailingType) {
         this.mailingType = mailingType;
     }
 
+    /**
+     * Gets cc Emails
+     * @return
+     */
     public String getCcedEmails() {
         return ccedEmails;
     }
 
+    /**
+     * Sets cc Emails
+     * @param ccedEmails Cc Emails
+     */
     public void setCcedEmails(String ccedEmails) {
         this.ccedEmails = ccedEmails;
     }
