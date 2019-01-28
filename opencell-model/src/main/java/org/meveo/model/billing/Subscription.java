@@ -61,6 +61,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 
@@ -161,6 +162,12 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @JoinColumn(name = "user_account_id", nullable = false)
     @NotNull
     private UserAccount userAccount;
+
+    /**
+     * Account operations associated with a Subscription
+     */
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AccountOperation> accountOperations = new ArrayList<>();
 
     /**
      * End agreement date
@@ -266,7 +273,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
-    
+
     /**
      * String value matched in the usageRatingJob to group the EDRs for rating.
      */
@@ -636,24 +643,25 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     /**
      * create AutoRenewDate
      */
-    public void createAutoRenewDate(){
+    public void createAutoRenewDate() {
         SubscriptionRenewal subscriptionRenewal = this.getSubscriptionRenewal();
         if (subscriptionRenewal != null) {
-                subscriptionRenewal.setAutoRenewDate(new Date());
+            subscriptionRenewal.setAutoRenewDate(new Date());
         }
-	}
+    }
 
     /**
      * update AutoRenewDate when AutoRenew change
+     * 
      * @param subscriptionOld
      */
-    public void updateAutoRenewDate(Subscription subscriptionOld){
+    public void updateAutoRenewDate(Subscription subscriptionOld) {
         SubscriptionRenewal subscriptionRenewalOld = subscriptionOld.getSubscriptionRenewal();
         SubscriptionRenewal subscriptionRenewalNew = this.getSubscriptionRenewal();
         boolean autoRenewOld = subscriptionRenewalOld.isAutoRenew();
         boolean autoRenewNew = subscriptionRenewalNew.isAutoRenew();
         if (autoRenewOld != autoRenewNew) {
-        if (subscriptionRenewalNew != null) {
+            if (subscriptionRenewalNew != null) {
                 subscriptionRenewalNew.setAutoRenewDate(new Date());
             }
         }
@@ -730,12 +738,27 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
 
-	public String getRatingGroup() {
-		return ratingGroup;
-	}
+    public String getRatingGroup() {
+        return ratingGroup;
+    }
 
-	public void setRatingGroup(String ratingGroup) {
-		this.ratingGroup = ratingGroup;
-	}
+    public void setRatingGroup(String ratingGroup) {
+        this.ratingGroup = ratingGroup;
+    }
 
+    public List<EDR> getEdrs() {
+        return edrs;
+    }
+
+    public void setEdrs(List<EDR> edrs) {
+        this.edrs = edrs;
+    }
+
+    public List<AccountOperation> getAccountOperations() {
+        return accountOperations;
+    }
+
+    public void setAccountOperations(List<AccountOperation> accountOperations) {
+        this.accountOperations = accountOperations;
+    }
 }

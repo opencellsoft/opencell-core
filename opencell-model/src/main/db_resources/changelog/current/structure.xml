@@ -1090,4 +1090,12 @@
             <column name="trigger_next_charge_el" type="${type.text}"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#44_20190114" author="AmineBenAicha">
+    	<addColumn tableName="ar_account_operation">
+            <column name="subscription_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="ar_account_operation" constraintName="fk_ao_subscription_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+    </changeSet>
 </databaseChangeLog>

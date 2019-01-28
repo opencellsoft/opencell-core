@@ -447,6 +447,15 @@
                                      	<hftl:formField label="#{messages['offerTemplate.minimumLabelElSpark']}" field="minimumLabelElSpark" id="minimumLabelElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />   
                                      	<hftl:formField label="#{messages[appProvider.entreprise?'offerTemplate.minimumAmountWithoutTaxElSpark':'offerTemplate.minimumAmountWithTaxElSpark']}" field="minimumAmountElSpark" id="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
                                  	
+                                 		<hftl:decorateFormField fieldId="balance_text" label="#{messages['subscription.balanceDue']}">
+                                            <h:outputText id="balance_text" rendered="#{true or !subscriptionBean.edit}" value="#{subscriptionBean.getBalanceDue()}" style="font-weight:bold;"
+                                                converter="bigDecimalConverter" />
+                                        </hftl:decorateFormField>
+                                        <hftl:decorateFormField fieldId="balanceEx_text" label="#{messages['subscription.balanceExigible']}">
+                                            <h:outputText id="balanceEx_text" rendered="#{true or !subscriptionBean.edit}" value="#{subscriptionBean.getBalanceExigibleWithoutLitigation()}"
+                                                style="font-weight:bold;" converter="bigDecimalConverter" />
+                                        </hftl:decorateFormField>
+                                 	
 										<hftl:formField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
                             				popupId="billingCyclePopup" />
                             				

@@ -1090,4 +1090,31 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
         this.terminationReason = terminationReason;
     }
+    
+    /**
+     * Compute balance due
+     * 
+     * @return due balance
+     * @throws BusinessException General business exception
+     */
+    public BigDecimal getBalanceDue() throws BusinessException {
+        if (entity.getId() == null) {
+            return new BigDecimal(0);
+        } else
+            return subscriptionService.subscriptionBalanceDue(entity, new Date());
+    }
+
+    /**
+     * Compute balance exigible without litigation.
+     * 
+     * @return exigible balance without litigation
+     * @throws BusinessException General business exception
+     */
+    public BigDecimal getBalanceExigibleWithoutLitigation() throws BusinessException {
+        if (entity.getId() == null) {
+            return new BigDecimal(0);
+        } else {
+            return subscriptionService.subscriptionBalanceExigibleWithoutLitigation(entity, new Date());
+        }
+    }
 }
