@@ -11,7 +11,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 public abstract class BaseJobBean {
 
     @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
+    protected CustomFieldInstanceService customFieldInstanceService;
     
     /**
      * Gets the parameter CF value if found , otherwise return CF value from customFieldInstanceService.

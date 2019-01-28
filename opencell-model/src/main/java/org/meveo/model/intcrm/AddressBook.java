@@ -23,7 +23,7 @@ import org.meveo.model.communication.contact.Contact;
  * @author Andrius Karpavicius
  */
 @Entity
-@ExportIdentifier({ "addressbook" })
+@ExportIdentifier({ "code" })
 @Table(name = "crm_address_book")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_address_book_seq"), })

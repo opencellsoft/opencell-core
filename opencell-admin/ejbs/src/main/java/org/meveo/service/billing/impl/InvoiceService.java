@@ -610,6 +610,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
+        
+        lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
 
         if (billingRun == null) {
             if (invoiceDate == null) {
