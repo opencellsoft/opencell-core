@@ -57,6 +57,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 
@@ -366,6 +367,13 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     
     @OneToOne(mappedBy = "accountOperation")
     private PaymentVentilation paymentVentilation;
+    
+    /**
+     * Associated Subscription
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
     
 
     public Date getDueDate() {
@@ -839,5 +847,12 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     public void setSeller(Seller seller) {
         this.seller = seller;
     }
-    
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
 }
