@@ -888,4 +888,11 @@
             <column name="cf_values_accum" type="${type.json}"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#3607_20190123" author="andrius.karpavicius">
+        <addColumn tableName="cust_cet">
+            <column name="store_as_table" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>        
+    </changeSet>
+    
 </databaseChangeLog>

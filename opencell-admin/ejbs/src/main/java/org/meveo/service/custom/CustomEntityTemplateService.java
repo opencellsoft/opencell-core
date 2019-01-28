@@ -202,4 +202,26 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
         return result;
     }
+
+    @Override
+    public CustomEntityTemplate findByCode(String code) {
+
+        if (useCETCache) {
+
+            CustomEntityTemplate cet = customFieldsCache.getCustomEntityTemplate(code);
+
+            // Populate cache if record is not found in cache
+            if (cet == null) {
+                cet = super.findByCode(code);
+                if (cet != null) {
+                    customFieldsCache.addUpdateCustomEntityTemplate(cet);
+                }
+            }
+
+            return cet;
+
+        } else {
+            return super.findByCode(code);
+        }
+    }
 }
