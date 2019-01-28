@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.PriceELErrorException;
 import org.meveo.admin.exception.RatingScriptExecutionErrorException;
@@ -85,7 +86,7 @@ import org.meveo.service.script.catalog.TriggeredEdrScriptService;
  * {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the {@link org.meveo.model.billing.WalletOperation} with the appropriate values.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 6.0
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class RatingService extends BusinessService<WalletOperation> {
@@ -418,14 +419,14 @@ public class RatingService extends BusinessService<WalletOperation> {
                         String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), walletOperation, ua);
                         sub = subscriptionService.findByCode(subCode);
                         if (sub == null) {
-                            log.info("could not find subscription for code =" + subCode + " (EL=" + triggeredEDRTemplate.getSubscriptionEl() + ") in triggered EDR with code "
-                                    + triggeredEDRTemplate.getCode());
+							log.info("Could not find subscription for code={} (EL={}) in triggered EDR with code {}",
+									subCode, triggeredEDRTemplate.getSubscriptionEl(), triggeredEDRTemplate.getCode());
                         }
                     }
                     
                     if (sub != null) {
                         newEdr.setSubscription(sub);
-                        log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
+                        log.info("trigger EDR from code {}", triggeredEDRTemplate.getCode());
                         if (chargeInstance.getAuditable() != null) {
                             log.info("trigger EDR from code {}", triggeredEDRTemplate.getCode());
                             
@@ -442,6 +443,10 @@ public class RatingService extends BusinessService<WalletOperation> {
                     }
                     
                 } else {
+					if (StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
+						throw new BusinessException("TriggeredEDRTemplate.subscriptionEl must not be null and must point to an existing Access.");
+					}
+                	
                     CDR cdr = new CDR();
                     String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), walletOperation, ua);
                     cdr.setAccess_id(subCode);
@@ -453,16 +458,21 @@ public class RatingService extends BusinessService<WalletOperation> {
                     cdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua)));
                     
                     String url = "api/rest/billing/mediation/chargeCdr";
-                    Response response = meveoInstanceService.callTextServiceMeveoInstance(url, triggeredEDRTemplate.getMeveoInstance(), cdr.toCsv());
+                    Response response = meveoInstanceService.callTextServiceMeveoInstance(url, meveoInstance, cdr.toCsv());
                     ActionStatus actionStatus = response.readEntity(ActionStatus.class);
                     log.debug("response {}", actionStatus);
                     
-                    if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
-                        throw new BusinessException("Error charging Edr on remote instance Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
-                    
-                    } else if (actionStatus == null) {
-                        throw new BusinessException("Error charging Edr on remote instance");
-                    }
+					if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+						log.error("RemoteCharging with status={}", actionStatus.getErrorCode());
+						throw new ChargingEdrOnRemoteInstanceErrorException(
+								"Error charging Edr on remote instance code " + actionStatus.getErrorCode() + ", info "
+										+ actionStatus.getMessage());
+
+					} else if (actionStatus == null) {
+						log.error("RemoteCharging: No response code from API.");
+						throw new ChargingEdrOnRemoteInstanceErrorException(
+								"Error charging Edr. No response code from API.");
+					}
                 }
             }
         }

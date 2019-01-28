@@ -23,7 +23,7 @@ import org.meveo.model.scripts.ScriptInstance;
  * 
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
- * @lastModifiedVersion 6.0
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity

@@ -504,6 +504,10 @@ public class UsageRatingService implements Serializable {
                     edrService.create(newEdr);
                     
                 } else {
+                	if (StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
+						throw new BusinessException("TriggeredEDRTemplate.subscriptionEl must not be null and must point to an existing Access.");
+					}
+                	
                     CDR cdr = new CDR();
                     String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), edr, walletOperation);
                     cdr.setAccess_id(subCode);
@@ -515,16 +519,21 @@ public class UsageRatingService implements Serializable {
                     cdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), edr, walletOperation)));
 
                     String url = "api/rest/billing/mediation/chargeCdr";
-                    Response response = meveoInstanceService.callTextServiceMeveoInstance(url, triggeredEDRTemplate.getMeveoInstance(), cdr.toCsv());
+                    Response response = meveoInstanceService.callTextServiceMeveoInstance(url, meveoInstance, cdr.toCsv());
                     ActionStatus actionStatus = response.readEntity(ActionStatus.class);
                     log.debug("response {}", actionStatus);
 
-                    if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
-                        throw new ChargingEdrOnRemoteInstanceErrorException("Error charging Edr on remote instance Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
-                    
-                    } else if (actionStatus != null) {
-                        throw new ChargingEdrOnRemoteInstanceErrorException("Error charging Edr");
-                    }
+					if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+						log.error("RemoteCharging with status={}", actionStatus.getErrorCode());
+						throw new ChargingEdrOnRemoteInstanceErrorException(
+								"Error charging Edr on remote instance code " + actionStatus.getErrorCode() + ", info "
+										+ actionStatus.getMessage());
+
+					} else if (actionStatus == null) {
+						log.error("RemoteCharging: No response code from API.");
+						throw new ChargingEdrOnRemoteInstanceErrorException(
+								"Error charging Edr. No response code from API.");
+					}
                 }
             }
         }
@@ -664,7 +673,7 @@ public class UsageRatingService implements Serializable {
                     continue;
                 }
 
-                log.debug("Found matching charge instance: id=" + usageChargeInstance.getId());
+				log.debug("Found matching charge instance: id={}", usageChargeInstance.getId());
 
                 WalletOperation walletOperation = new WalletOperation();
                 edrIsRated = rateEDRonChargeAndCounters(walletOperation, edr, usageChargeInstance, isVirtual);
