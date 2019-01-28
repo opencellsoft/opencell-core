@@ -1084,28 +1084,17 @@
     <changeSet id="#3970 - Change of RT description database field from varchar to text" author="mounir.boukayoua">
         <modifyDataType tableName="billing_rated_transaction" columnName="description" newDataType="${type.text}"/>
     </changeSet>
-    <changeSet id="#2947_20181231_add_eamiling_invoice_invoice_type" author="Khalid HORRI">
+
+    <changeSet id="#2947_20181231_add_emailing_invoice_invoice_type" author="Khalid HORRI">
         <addColumn tableName="billing_invoice_type">
             <column name="mailing_type" type="varchar(255)"></column>
             <column name="email_template_id" type="bigint"/>
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="billing_invoice_type" constraintName="fk_inv_email_template" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
-    </changeSet>
-
-    <changeSet id="#2947_20181231_add_eamiling_invoice_billing_account" author="Khalid HORRI">
         <addColumn tableName="billing_billing_account">
             <column name="mailing_type" type="varchar(255)"></column>
             <column name="cced_emails" type="varchar(2000)"></column>
             <column name="email_template_id" type="bigint"/>
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="billing_billing_account" constraintName="fk_ba_email_template" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
-    </changeSet>
-
-    <changeSet id="#2947_20181231_add_eamiling_invoice_subscription" author="Khalid HORRI">
         <addColumn tableName="billing_subscription">
             <column name="mailing_type" type="varchar(255)"></column>
             <column name="cced_emails" type="varchar(2000)"></column>
@@ -1115,12 +1104,6 @@
             </column>
             <column name="email_template_id" type="bigint"/>
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="billing_subscription" constraintName="fk_sub_email_template" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
-    </changeSet>
-
-    <changeSet id="#2947_20181231_add_eamiling_invoice_order" author="Khalid HORRI">
         <addColumn tableName="ord_order">
             <column name="mailing_type" type="varchar(255)"></column>
             <column name="cced_emails" type="varchar(2000)"></column>
@@ -1130,12 +1113,6 @@
             </column>
             <column name="email_template_id" type="bigint"/>
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="ord_order" constraintName="fk_ordr_email_template" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
-    </changeSet>
-
-    <changeSet id="#2947_20181231_add_eamiling_invoice_invoice" author="Khalid HORRI">
         <addColumn tableName="billing_invoice">
             <column name="already_sent" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false"/>
@@ -1144,5 +1121,21 @@
                 <constraints nullable="false"/>
             </column>
         </addColumn>
+        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="billing_invoice_type" constraintName="fk_inv_email_template" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
+
+        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="billing_billing_account" constraintName="fk_ba_email_template" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
+
+        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="billing_subscription" constraintName="fk_sub_email_template" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
+
+        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="ord_order" constraintName="fk_ordr_email_template" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
+
     </changeSet>
 </databaseChangeLog>
