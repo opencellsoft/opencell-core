@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -52,6 +53,14 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
         this.name = name;
     }
 
+    /**
+     * Should data be stored in a separate table
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "store_as_table", nullable = false)
+    @NotNull
+    public boolean storeAsTable;
+    
     public String getAppliesTo() {
         return CFT_PREFIX + "_" + getCode();
     }
@@ -79,5 +88,13 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
 
     public static String getModifyPermission(String code) {
         return "CE_" + code + "-modify";
+    }
+    
+    public boolean isStoreAsTable() {
+        return storeAsTable;
+    }
+    
+    public void setStoreAsTable(boolean storeAsTable) {
+        this.storeAsTable = storeAsTable;
     }
 }

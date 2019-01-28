@@ -36,6 +36,7 @@
                 <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" showOnlyOnNew="true" required="true" validateUnique="true" />
                 <hftl:formField label="#{messages['customizedEntities.name']}" field="name" required="true" />
                 <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
+                <hftl:formField label="#{messages['customizedEntities.storeAsTable']}" field="storeAsTable" />
                 <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!customEntityTemplateBean.entity.transient}">
                     <h:outputText value="#{customEntityTemplateBean.partOfModules}" />
                 </hftl:decorateFormField>

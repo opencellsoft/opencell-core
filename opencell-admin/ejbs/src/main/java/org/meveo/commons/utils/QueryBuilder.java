@@ -31,7 +31,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 
 /**
  * Query builder class for building JPA queries.
@@ -692,6 +695,8 @@ public class QueryBuilder {
     }
 
     /**
+     * Get a JPA query object
+     * 
      * @param em entity manager
      * @return instance of Query.
      */
@@ -704,6 +709,30 @@ public class QueryBuilder {
         for (Map.Entry<String, Object> e : params.entrySet()) {
             result.setParameter(e.getKey(), e.getValue());
         }
+        return result;
+    }
+
+    /**
+     * Get Hibernate native query object
+     * 
+     * @param em entity manager
+     * @param convertToMap If False, query will return a list of Object[] values. If True, query will return a list of map of values.
+     * @return instance of Query.
+     */
+    public SQLQuery getNativeQuery(EntityManager em, boolean convertToMap) {
+        applyPagination(paginationSortAlias);
+
+        Session session = em.unwrap(Session.class);
+        SQLQuery result = session.createSQLQuery(q.toString());
+        applyPagination(result);
+        
+        if (convertToMap) {
+            result.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
+        }
+        for (Map.Entry<String, Object> e : params.entrySet()) {
+            result.setParameter(e.getKey(), e.getValue());
+        }
+
         return result;
     }
 
@@ -729,6 +758,8 @@ public class QueryBuilder {
     }
 
     /**
+     * Convert to a query to count number of entities matched: "select .. from" is changed to "select count(*) from"
+     * 
      * @param em entity Manager
      * @return instance of Query.
      */
@@ -761,8 +792,33 @@ public class QueryBuilder {
         }
         return result;
     }
+    
 
     /**
+     * Convert to a query to count number of records matched: "select .. from" is changed to "select count(*) from". To be used with NATIVE query in conjunction with
+     * getNativeQuery()
+     * 
+     * @param em entity Manager
+     * @return instance of Query.
+     */
+    public Query getNativeCountQuery(EntityManager em) {
+        String from = "from ";
+
+        String countSql = "select count(*) " + q.toString().substring(q.indexOf(from));
+
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // log.trace("Count query is {}", countSql);
+
+        Query result = em.createNativeQuery(countSql);
+        for (Map.Entry<String, Object> e : params.entrySet()) {
+            result.setParameter(e.getKey(), e.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * Count a number of entities matching search criteria
+     * 
      * @param em entity Manager
      * @return number of query.
      */
@@ -772,6 +828,8 @@ public class QueryBuilder {
     }
 
     /**
+     * Perform a search and return a list of entities matching search criteria
+     * 
      * @param em entity manager
      * @return list of result
      */
@@ -818,7 +876,9 @@ public class QueryBuilder {
     }
 
     /**
-     * @param query query using for pagination.
+     * Apply pagination criteria to a JPA query
+     * 
+     * @param query JPA query to apply pagination to
      */
     private void applyPagination(Query query) {
         if (paginationConfiguration == null) {
@@ -829,11 +889,42 @@ public class QueryBuilder {
     }
 
     /**
-     * @param query query instance
+     * Apply pagination criteria to a JPA query
+     * 
+     * @param query JPA query to apply pagination to
      * @param firstRow the index of first row
      * @param numberOfRows number of rows shoud return.
      */
     public void applyPagination(Query query, Integer firstRow, Integer numberOfRows) {
+        if (firstRow != null) {
+            query.setFirstResult(firstRow);
+        }
+        if (numberOfRows != null) {
+            query.setMaxResults(numberOfRows);
+        }
+    }
+
+    /**
+     * Apply pagination criteria to a Hibernate query
+     * 
+     * @param query Hibernate query to apply pagination to
+     */
+    private void applyPagination(SQLQuery query) {
+        if (paginationConfiguration == null) {
+            return;
+        }
+
+        applyPagination(query, paginationConfiguration.getFirstRow(), paginationConfiguration.getNumberOfRows());
+    }
+
+    /**
+     * Apply pagination criteria to a Hibernate query
+     * 
+     * @param query Hibernate query to apply pagination to
+     * @param firstRow the index of first row
+     * @param numberOfRows number of rows shoud return.
+     */
+    public void applyPagination(SQLQuery query, Integer firstRow, Integer numberOfRows) {
         if (firstRow != null) {
             query.setFirstResult(firstRow);
         }

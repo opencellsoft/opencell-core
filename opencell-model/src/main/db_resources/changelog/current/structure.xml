@@ -899,4 +899,11 @@
             <column name="trigger_next_charge_el" type="${type.text}"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#3607_20190123" author="andrius.karpavicius">
+        <addColumn tableName="cust_cet">
+            <column name="store_as_table" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>        
+    </changeSet>
+    
 </databaseChangeLog>
