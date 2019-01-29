@@ -36,7 +36,8 @@ public class JaxRsActivator extends Application {
         resources.add(RESTCorsRequestFilter.class);
         resources.add(RESTCorsResponseFilter.class);
         resources.add(JaxRsExceptionMapper.class);
-
+        resources.add(JacksonProvider.class);
+        
         return resources;
     }
 
