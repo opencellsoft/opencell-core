@@ -393,14 +393,18 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{messages['customerAccount.dunning.documents.creation']}" />
                                 </f:facet>
-                                <h:outputText value="#{entity.auditable.created}" />
+                                <h:outputText value="#{entity.auditable.created}">
+                                	<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
+								</h:outputText>
                             </p:column>
 
                             <p:column width="19%">
                                 <f:facet name="header">
                                     <h:outputText value="#{messages['customerAccount.dunning.documents.update']}" />
                                 </f:facet>
-                                <h:outputText value="#{entity.auditable.updated}" />
+                                <h:outputText value="#{entity.auditable.updated}">
+									<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
+								</h:outputText>
                             </p:column>
 
                             <p:column width="19%">

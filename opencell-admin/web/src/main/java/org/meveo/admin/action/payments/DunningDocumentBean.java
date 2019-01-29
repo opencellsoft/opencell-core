@@ -19,12 +19,19 @@
 package org.meveo.admin.action.payments;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.dunning.DunningDocument;
+import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.wf.WorkflowHistory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.generic.wf.WorkflowInstanceHistoryService;
+import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.meveo.service.payments.impl.DunningDocumentService;
 import org.primefaces.model.LazyDataModel;
+
+import java.util.List;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -54,6 +61,7 @@ public class DunningDocumentBean extends BaseBean<DunningDocument> {
      */
     @Inject
     private DunningDocumentService dunningDocumentService;
+    
     /**
      * Method that returns concrete PersistenceService for an entity class backing bean is bound to. That service is then used for operations on concrete entities (eg. save, delete
      * etc).
@@ -65,6 +73,11 @@ public class DunningDocumentBean extends BaseBean<DunningDocument> {
         return dunningDocumentService;
     }
 
+    /**
+     * get CA's associated dunning documents
+     * @param ca
+     * @return CA's dunning docs
+     */
     public LazyDataModel<DunningDocument> getDunningDocuments(CustomerAccount ca) {
         if (!ca.isTransient()) {
             filters.put("customerAccount", ca);
@@ -72,5 +85,5 @@ public class DunningDocumentBean extends BaseBean<DunningDocument> {
         } else {
             return null;
         }
-    }
+    }    
 }
