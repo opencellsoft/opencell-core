@@ -389,31 +389,37 @@
                     <p:tab id="dunningDocs" title="#{messages['customerAccount.dunning.documents']}" rendered="#{not empty customerAccountBean.entity.id}">
                         <hftl:dataList resultsId="dunningDocs"  backingBean="#{dunningDocumentBean}" dataModel="#{dunningDocumentBean.getDunningDocuments(customerAccountBean.entity)}"
                                        label="#{messages['accountOperation.title']}" disabled="true" deleteManyButton="false" exportToXml="false">
-                            <p:column width="24%">
+                            <p:column width="19%">
                                 <f:facet name="header">
                                     <h:outputText value="#{messages['customerAccount.dunning.documents.creation']}" />
                                 </f:facet>
                                 <h:outputText value="#{entity.auditable.created}" />
                             </p:column>
 
-                            <p:column width="24%">
+                            <p:column width="19%">
                                 <f:facet name="header">
                                     <h:outputText value="#{messages['customerAccount.dunning.documents.update']}" />
                                 </f:facet>
                                 <h:outputText value="#{entity.auditable.updated}" />
                             </p:column>
 
-                            <p:column width="24%">
+                            <p:column width="19%">
                                 <f:facet name="header">
                                     <h:outputText value="#{messages['customerAccount.dunning.nbr.dueinvoices']}" />
                                 </f:facet>
                                 <h:outputText value="#{entity.dueInvoices.size()}" />
                             </p:column>
-                            <p:column width="24%">
+                            <p:column width="19%">
                                 <f:facet name="header">
-                                    <h:outputText value="#{messages['customerAccount.dunning.nbr.payments']}" />
+                                    <h:outputText value="#{messages['customerAccount.dunning.amountWithTax']}" />
                                 </f:facet>
-                                <h:outputText value="#{entity.payments.size()}" />
+                                <h:outputText value="#{entity.amountWithTax}" converter="bigDecimal4DigitsConverter"/>
+                            </p:column>
+                            <p:column width="19%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['customerAccount.dunning.paidAmount']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.paidAmount}" converter="bigDecimal4DigitsConverter"/>
                             </p:column>
                             <hftl:actionsColumn renderViewLink="true"
                                                 editView="/pages/payments/customerAccounts/dunningDocumentDetail.xhtml"

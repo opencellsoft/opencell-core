@@ -1,100 +1,139 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-    xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
 
-    <ui:define name="metadata">
-        <f:metadata>
-            <f:viewParam name="objectId" value="#{dunningDocumentBean.objectId}"/>
-            <f:viewParam name="tab" value="#{dunningDocumentBean.activeTab}"/>
-        </f:metadata>
-    </ui:define>
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="objectId" value="#{dunningDocumentBean.objectId}" />
+			<f:viewParam name="tab" value="#{dunningDocumentBean.activeTab}" />
+		</f:metadata>
+	</ui:define>
 
-    <ui:define name="body">
-        <h:form id="crumbmenuForm">
-            <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                <p:menuitem value="#{messages['menu.customers']}" disabled="true" />
-                <p:menuitem outcome="customerAccounts" value="#{messages['menu.customerAccounts']}" />
-                <p:menuitem value="#{messages['menu.customerAccount']} - #{dunningDocumentBean.entity.customerAccount.code}" disabled="true" />
-            </p:breadCrumb>
-        </h:form>
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+				<p:menuitem outcome="customerAccounts"
+					value="#{messages['menu.customerAccounts']}" />
+				<p:menuitem
+					value="#{messages['menu.customerAccount']} - #{dunningDocumentBean.entity.customerAccount.code}"
+					disabled="true" />
+			</p:breadCrumb>
+		</h:form>
 
-        <p:panel>
-            <hftl:formPanel label="#{messages['dunning.document.panel']}" backingBean="#{dunningDocumentBean}" showFormButtons="false"
-                            formId="headerForm" edit="false">
-                <p:tabView id="tabView" activeIndex="#{dunningDocumentBean.activeTab}">
-                    <p:tab title="#{messages['dunning.document.tab.information']}">
-                        <p:fieldset legend="header">
-                            <h:panelGroup>
-                                <hftl:formField label="#{messages['dunning.document.customer.account']}" field="customerAccount" valueLabelField="code"/>
-                                <hftl:formField label="#{messages['dunning.document.created']}" field="auditable" valueLabelField="created"/>
-                                <hftl:formField label="#{messages['dunning.document.updated']}" field="auditable" valueLabelField="updated"/>
-                                <hftl:formField label="#{messages['dunning.document.statut']}" field="statut" />
-                            </h:panelGroup>
-                        </p:fieldset>
-                        <p:fieldset legend="#{messages['dunning.document.due.invoices']}">
-                            <hftl:dataList resultsId="dueinvoices" backingBean="#{recordedInvoiceBean}" dataModel="#{recordedInvoiceBean.getDueInvoices(dunningDocumentBean.entity)}"
-                                           label="#{messages['dunning.document.unpaid.invoices.title']}" disabled="true" deleteManyButton="false" exportToXml="false">
+		<p:panel>
+			<hftl:formPanel
+				label="#{messages['dunning.document.panel']} #{dunningDocumentBean.entity.code}"
+				backingBean="#{dunningDocumentBean}" showFormButtons="false"
+				formId="headerForm" edit="false">
+				<p:tabView id="childTab"
+					activeIndex="#{dunningDocumentBean.activeTab}">
+					<p:tab title="#{messages['dunning.document.panel']}">
+						<p:fieldset legend="header">
+							<h:panelGroup>
+								<hftl:formField
+									label="#{messages['dunning.document.customer.account']}"
+									field="customerAccount" valueLabelField="code" />
+								<hftl:formField label="#{messages['dunning.document.created']}"
+									field="auditable" valueLabelField="created" />
+								<hftl:formField label="#{messages['dunning.document.updated']}"
+									field="auditable" valueLabelField="updated" />
+								<hftl:formField
+									label="#{messages['dunning.document.amountWithoutTax']}"
+									field="amountWithoutTax" />
+								<hftl:formField
+									label="#{messages['dunning.document.amountWithTax']}"
+									field="amountWithTax" />
+								<hftl:formField
+									label="#{messages['dunning.document.paidAmount']}"
+									field="paidAmount" />
+							</h:panelGroup>
+						</p:fieldset>
+						<p:fieldset legend="#{messages['dunning.document.due.invoices']}">
+							<hftl:dataList resultsId="dueinvoices"
+								backingBean="#{recordedInvoiceBean}"
+								dataModel="#{recordedInvoiceBean.getDueInvoices(dunningDocumentBean.entity)}"
+								label="#{messages['dunning.document.unpaid.invoices.title']}"
+								disabled="true" deleteManyButton="false" exportToXml="false"
+								formId="dueinvoices_form">
 
-                                <p:column style="width:30px">
-                                    <p:rowToggler />
-                                </p:column>
+								<p:column style="width:30px">
+									<p:rowToggler />
+								</p:column>
 
-                                <hftl:column label="#{messages['invoice.invoiceDate']}" isDate="true"
-                                             field="invoiceDate" />
-                                <hftl:column label="#{messages['invoice.dueDate']}" isDate="true"
-                                             field="dueDate" />
-                                <hftl:column label="#{messages['invoice.amountWithTax']}"
-                                             field="amountWithTax" converterParam="4digits"/>
+								<hftl:column label="#{messages['invoice.invoiceDate']}"
+									isDate="true" field="invoiceDate" />
+								<hftl:column label="#{messages['invoice.dueDate']}"
+									isDate="true" field="dueDate" />
+								<hftl:column label="#{messages['invoice.amountWithTax']}"
+									field="amountWithTax" converterParam="4digits" />
 
-                                <hftl:actionsColumn renderViewLink="true"
-                                                    editView="/pages/billing/invoices/invoiceDetail.xhtml"
-                                                    renderEditLink="false" renderDeleteLink="false"
-                                                    backView="backToBaFromInvoice" backEntityId="#{dunningDocumentBean.objectId}"
-                                                    backTab="0" backMainTab="2">
-                                    <h:commandLink
-                                            action="#{recordednvoiceBean.downloadPdfInvoice(entity.id)}"
-                                            rendered="#{invoiceBean.isPdfInvoiceAlreadyGenerated(entity.id)}">
-                                        <h:graphicImage value="/img/pdf.gif"
-                                                        style="border:0; margin-top:2px" />
-                                    </h:commandLink>
-                                </hftl:actionsColumn>
-                            </hftl:dataList>
-                        </p:fieldset>
-                        <p:fieldset legend="Payments">
-                            <hftl:dataList resultsId="payements" backingBean="#{paymentBean}" dataModel="#{paymentBean.getDunningPayments(dunningDocumentBean.entity)}"
-                                           label="#{messages['dunning.document.payments.title']}" disabled="true" deleteManyButton="false" exportToXml="false">
+								<hftl:actionsColumn renderViewLink="true"
+									editView="/pages/billing/invoices/invoiceDetail.xhtml"
+									renderEditLink="false" renderDeleteLink="false"
+									backView="backToBaFromInvoice"
+									backEntityId="#{dunningDocumentBean.objectId}" backTab="0"
+									backMainTab="2">
+									<h:commandLink
+										action="#{recordednvoiceBean.downloadPdfInvoice(entity.id)}"
+										rendered="#{invoiceBean.isPdfInvoiceAlreadyGenerated(entity.id)}">
+										<h:graphicImage value="/img/pdf.gif"
+											style="border:0; margin-top:2px" />
+									</h:commandLink>
+								</hftl:actionsColumn>
+							</hftl:dataList>
+						</p:fieldset>
+						<p:fieldset legend="#{messages['dunning.document.payments']}">
+							<hftl:dataList resultsId="payements" backingBean="#{paymentBean}"
+								dataModel="#{paymentBean.getDunningPayments(dunningDocumentBean.entity)}"
+								label="#{messages['dunning.document.payments.title']}"
+								disabled="true" deleteManyButton="false" exportToXml="false"
+								formId="payements_form">
 
-                                <p:column style="width:30px">
-                                    <p:rowToggler />
-                                </p:column>
+								<p:column style="width:30px">
+									<p:rowToggler />
+								</p:column>
 
-                                <hftl:column label="#{messages['accountOperation.transactionDate']}" field="transactionDate" isDate="true" />
-                                <hftl:column label="#{messages['accountOperation.reference']}" field="reference" />
-                                <hftl:column label="#{messages['accountOperation.amount']}" field="amount" />
-                                <hftl:column label="#{messages['accountOperation.depositDate']}" field="depositDate" isDate="true" />
-                                <hftl:column label="#{messages['accountOperation.paymentMethod']}" field="paymentMethod" />
-                                <hftl:column label="#{messages['accountOperation.occDescription']}" field="occDescription" />
+								<hftl:column
+									label="#{messages['accountOperation.transactionDate']}"
+									field="transactionDate" isDate="true" />
+								<hftl:column label="#{messages['accountOperation.reference']}"
+									field="reference" />
+								<hftl:column label="#{messages['accountOperation.amount']}"
+									field="amount" />
+								<hftl:column label="#{messages['accountOperation.depositDate']}"
+									field="depositDate" isDate="true" />
+								<hftl:column
+									label="#{messages['accountOperation.paymentMethod']}"
+									field="paymentMethod" />
+								<hftl:column
+									label="#{messages['accountOperation.occDescription']}"
+									field="occDescription" />
 
-                                <hftl:actionsColumn renderViewLink="true"
-                                                    editView="/pages/billing/invoices/invoiceDetail.xhtml"
-                                                    renderEditLink="false" renderDeleteLink="false"
-                                                    backView="backToBaFromInvoice" backEntityId="#{dunningDocumentBean.objectId}"
-                                                    backTab="0" backMainTab="2">
-                                    <h:commandLink
-                                            action="#{recordednvoiceBean.downloadPdfInvoice(entity.id)}"
-                                            rendered="#{invoiceBean.isPdfInvoiceAlreadyGenerated(entity.id)}">
-                                        <h:graphicImage value="/img/pdf.gif"
-                                                        style="border:0; margin-top:2px" />
-                                    </h:commandLink>
-                                </hftl:actionsColumn>
-                            </hftl:dataList>
-                        </p:fieldset>
-                        <p:fieldset legend="Dunning Events">
-                        </p:fieldset>
-                    </p:tab>
-                </p:tabView>
-
-            </hftl:formPanel>
-        </p:panel>
-    </ui:define>
+								<hftl:actionsColumn renderViewLink="true"
+									editView="/pages/billing/invoices/invoiceDetail.xhtml"
+									renderEditLink="false" renderDeleteLink="false"
+									backView="backToBaFromInvoice"
+									backEntityId="#{dunningDocumentBean.objectId}" backTab="0"
+									backMainTab="2">
+									<h:commandLink
+										action="#{recordednvoiceBean.downloadPdfInvoice(entity.id)}"
+										rendered="#{invoiceBean.isPdfInvoiceAlreadyGenerated(entity.id)}">
+										<h:graphicImage value="/img/pdf.gif"
+											style="border:0; margin-top:2px" />
+									</h:commandLink>
+								</hftl:actionsColumn>
+							</hftl:dataList>
+						</p:fieldset>
+					</p:tab>
+				</p:tabView>
+			</hftl:formPanel>
+		</p:panel>
+	</ui:define>
 </ui:composition>

@@ -5,11 +5,14 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
 
 import javax.persistence.*;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -75,5 +78,38 @@ public class DunningDocument extends BusinessEntity {
 
     public void setPayments(List<Payment> payments) {
         this.payments = payments;
+    }
+    
+    @Transient
+    public BigDecimal getAmountWithoutTax() {
+    	BigDecimal amountWithoutTax = BigDecimal.ZERO;
+    	if (dueInvoices != null && !dueInvoices.isEmpty()) {
+    		for (RecordedInvoice recordedInvoice : dueInvoices) {
+    			amountWithoutTax = amountWithoutTax.add(recordedInvoice.getAmountWithoutTax());
+			}
+    	}
+    	return amountWithoutTax;
+    }
+    
+    @Transient
+    public BigDecimal getAmountWithTax() {
+    	BigDecimal amountWithTax = BigDecimal.ZERO;
+    	if (dueInvoices != null && !dueInvoices.isEmpty()) {
+    		for (RecordedInvoice recordedInvoice : dueInvoices) {
+    			amountWithTax = amountWithTax.add(recordedInvoice.getAmount());
+			}
+    	}
+    	return amountWithTax;
+    }
+    
+    @Transient
+    public BigDecimal getPaidAmount() {
+    	BigDecimal paidAmount = BigDecimal.ZERO;
+    	if (payments != null && !payments.isEmpty()) {
+    		for (AccountOperation payment : payments) {
+    			paidAmount = paidAmount.add(payment.getAmount());
+			}
+    	}
+    	return paidAmount;
     }
 }

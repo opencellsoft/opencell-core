@@ -41,6 +41,13 @@ import javax.inject.Named;
 @Named
 @ViewScoped
 public class DunningDocumentBean extends BaseBean<DunningDocument> {
+	
+	/**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public DunningDocumentBean() {
+        super(DunningDocument.class);
+    }
 
     /**
      * Injected @{link DunningDocument} service. Extends {@link PersistenceService}
