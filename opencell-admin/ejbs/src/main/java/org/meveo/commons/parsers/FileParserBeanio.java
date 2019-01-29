@@ -57,6 +57,7 @@ public class FileParserBeanio implements IFileParser {
         }
         recordContext.setRecord(null);
         recordContext.setReason(null);
+        log.info("the reason before reading line numbre {} is {}",beanReader.getLineNumber()+1,recordContext.getReason());
         try {
             recordContext.setRecord(beanReader.read());
             recordContext.setLineContent(beanReader.getRecordContext(0).getRecordText());
@@ -80,6 +81,8 @@ public class FileParserBeanio implements IFileParser {
             }else {
                 return false;
             }            
+        }finally {
+            log.info("the reason after reading line numbre {} is {}",beanReader.getLineNumber(),recordContext.getReason());
         }
 
         if (recordContext.getRecord() != null) {
