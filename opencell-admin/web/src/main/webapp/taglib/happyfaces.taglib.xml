@@ -183,6 +183,10 @@
         <source>displayGenericWFsHistory.xhtml</source>
     </tag>
     <tag>
+     <tag-name>displayGenericWFsHistory</tag-name>
+        <source>displayGenericWFsHistory.xhtml</source>
+    </tag>
+    <tag>
         <tag-name>getFieldInformation</tag-name>
         <handler-class>org.meveo.util.view.GetFieldInformationHandler</handler-class>
     </tag>

@@ -197,15 +197,17 @@
 
 						<hftl:formField label="#{messages['serviceInstance.code']}"
 							field="code" size="50" edit="false" componentWidth="25"/>
-						<hftl:formField
-							label="#{messages['serviceInstance.terminationDate']}"
-							field="terminationDate" required="true" edit="true" componentWidth="25"/>
-						<hftl:formField
-							label="#{messages['menu.terminationReason']}"
-							field="subscriptionTerminationReason" valueLabelField="descriptionOrCode"
-							required="true"
-							listBean="#{subscriptionTerminationReasonBean}" styleClass="clearLeft" />
-
+                        <hftl:decorateFormField fieldId="serviceTerminationDate" label="#{messages['serviceInstance.terminationDate']}" componentWidth="25">
+                            <p:calendar id="serviceTerminationDate" value="#{subscriptionBean.terminationDate}" pattern="#{paramBean.dateFormat}" required="true" />
+                        </hftl:decorateFormField>
+                        
+                        <hftl:decorateFormField fieldId="serviceTerminationReason" label="#{messages['menu.terminationReason']}" componentWidth="25">
+                            <p:selectOneMenu id="serviceTerminationReason" value="#{subscriptionBean.terminationReason}" required="true">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItems value="#{subscriptionTerminationReasonBean.listAll()}" var="elem" itemLabel="#{elem.descriptionOrCode}" itemValue="#{elem}" />
+                                <hftl:objectConverter />
+                            </p:selectOneMenu>  
+                        </hftl:decorateFormField>
                         <ui:param name="buttons" value="true"/>
                         <ui:define name="buttons">                        
 							<p:commandButton action="#{subscriptionBean.terminateService()}"
@@ -223,7 +225,7 @@
 
 		<p:dialog id="subscriptionTerminationPopup"
 			header="#{messages['subscriptionTerminationPopup.title']}"
-			widgetVar="dlg_subscriptionTerminationPopup"  modal="true" appendTo="@(body)" closeOnEscape="true" width="400" >
+			widgetVar="dlg_subscriptionTerminationPopup"  modal="true" appendTo="@(body)" closeOnEscape="true" width="700" >
 			<p:outputPanel id="subscriptionTerminationPanel">
                 <p:messages id="subTerminationMessages"/>
 				<hftl:formPanel edit="true"
@@ -233,15 +235,17 @@
 
 						<hftl:formField label="#{messages['businessEntity.code']}"
 							field="code" size="50" edit="false" /> 
-						<hftl:formField
-							label="#{messages['serviceInstance.terminationDate']}"
-							field="terminationDate" required="true" edit="true"  pattern="#{paramBean.dateFormat}"/>
-							
-						<hftl:formField
-							label="#{messages['menu.terminationReason']}"
-							field="subscriptionTerminationReason" valueLabelField="descriptionOrCode"
-							required="true"  edit="true"
-							listBean="#{subscriptionTerminationReasonBean}"/>
+                        <hftl:decorateFormField fieldId="subTerminationDate" label="#{messages['serviceInstance.terminationDate']}" componentWidth="25">
+                            <p:calendar id="subTerminationDate" value="#{subscriptionBean.terminationDate}" pattern="#{paramBean.dateFormat}" required="true" />
+                        </hftl:decorateFormField>
+                        
+                        <hftl:decorateFormField fieldId="subTerminationReason" label="#{messages['menu.terminationReason']}" componentWidth="25">
+                            <p:selectOneMenu id="subTerminationReason" value="#{subscriptionBean.terminationReason}" required="true">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItems value="#{subscriptionTerminationReasonBean.listAll()}" var="elem" itemLabel="#{elem.descriptionOrCode}" itemValue="#{elem}" />
+                                <hftl:objectConverter />
+                            </p:selectOneMenu>  
+                        </hftl:decorateFormField>
 
                         <ui:param name="buttons" value="true"/>
                         <ui:define name="buttons">                        
@@ -485,8 +489,14 @@
                                             <hftl:formField label="#{messages['subscription.renewalNotifiedDate']}" field="renewalNotifiedDate" edit="false" rendered="#{subscriptionBean.entity.renewalNotifiedDate != null}"/>
                                             <hftl:formField label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
                                                 field="terminationDate" edit="false" rendered="#{subscriptionBean.entity.terminationDate != null}" />
-        
-                                        </h:panelGroup>
+
+										<hftl:formField label="#{messages['terminationReason']}"
+											field="subscriptionTerminationReason"
+											valueLabelField="descriptionOrCode" edit="false"
+											listBean="#{subscriptionTerminationReasonBean}"
+											rendered="#{subscriptionBean.entity.status == 'RESILIATED' and (subscriptionBean.entity.subscriptionTerminationReason != null)}" />
+
+									</h:panelGroup>
                                     </p:tab>
 
 									<hftl:customFields backingBean="#{subscriptionBean}" messagesId=":subscriptionTab:subscriptionFormId:messages" />
@@ -502,7 +512,7 @@
 											rendered="#{ (subscriptionBean.entity.status == SubscriptionStatusEnum.ACTIVE or subscriptionBean.entity.status == SubscriptionStatusEnum.SUSPENDED) and subscriptionBean.canUserUpdateEntity()}"
 											type="button"
 											disabled="#{not empty subscriptionBean.entity.terminationDate}" />
-										<p:commandButton action="#{subscriptionBean.cancelSubscriptionRenewal}" value="#{messages['action.subscription.cancelRenewal']}" rendered="#{subscriptionBean.entity.subscriptionRenewal.initialyActiveFor != null}" immediate="true" ajax="false"></p:commandButton>
+										<p:commandButton action="#{subscriptionBean.cancelSubscriptionRenewal}" value="#{messages['action.subscription.cancelRenewal']}" rendered="#{subscriptionBean.entity.subscriptionRenewal.initialyActiveFor != null and subscriptionBean.entity.status != SubscriptionStatusEnum.RESILIATED}" immediate="true" ajax="false"></p:commandButton>
 									</p:panel>
 								</ui:define>
 						</hftl:formPanel>

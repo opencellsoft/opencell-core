@@ -85,6 +85,10 @@
         <c:set var="showResetButton" value="true" />
     </c:if>
 
+    <c:if test="${empty(multiSelect)}">
+        <c:set var="multiSelect" value="false"/>
+    </c:if>
+
     <hftl:getFieldInformation backingBean="${backingBean}" fieldName="${field}" var="fieldInfo" />
 
     <!-- If value binding is a text field, display a text input field -->
@@ -94,10 +98,12 @@
                 <c:set var="isAutocomplete" value="false" />
             </c:if>
             <hftl:searchTextField id="${empty(id)?fieldIdPrefix.concat('_txt'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
-                componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
-                labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}"
-                maxlength="${maxlength}" listValues="${listValues}" isAutocomplete="${isAutocomplete}" autocompleteBean="#{autocompleteBean}"
-                autocompleteMethod="${autocompleteMethod}" converter="${converter}" />
+                                  componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}"
+                                  labelStyle="${labelStyle}"
+                                  labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}"
+                                  inputWidth="${inputWidth}" size="${size}"
+                                  maxlength="${maxlength}" listValues="${listValues}" isAutocomplete="${isAutocomplete}" autocompleteBean="#{autocompleteBean}"
+                                  autocompleteMethod="${autocompleteMethod}" converter="${converter}"/>
         </c:if>
 
         <c:if test="${not empty(listElements)}">
@@ -106,9 +112,12 @@
             </c:if>
 
             <hftl:searchEntityField id="${empty(id)?fieldIdPrefix.concat('_entity'):id}" backingBean="${backingBean}" field="${field}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
-                disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
-                labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}"
-                listElements="${listElements}" valueLabelField="${valueLabelField}" valueField="${valueField}" size="${size}" />
+                                    disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}"
+                                    style="${style}" labelStyle="${labelStyle}"
+                                    labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}"
+                                    inputWidth="${inputWidth}"
+                                    listElements="${listElements}" valueLabelField="${valueLabelField}" valueField="${valueField}" size="${size}" multiSelect="${multiSelect}"
+                                    filterMatchMode="${filterMatchMode}"/>
         </c:if>
     </c:if>
 

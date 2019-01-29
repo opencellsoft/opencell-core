@@ -31,6 +31,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -202,29 +203,59 @@ public class SubscriptionService extends BusinessService<Subscription> {
         return subscription;
     }
 
+    /**
+     * Terminate subscription. If termination date is not provided, a current date will be used. If termination date is a future date, subscription's subscriptionRenewal will be
+     * updated with a termination date and a reason.
+     * 
+     * @param subscription Subscription to terminate
+     * @param terminationDate Termination date
+     * @param terminationReason Termination reason
+     * @param orderNumber Order number that requested subscription termination
+     * @return Updated subscription entity
+     * @throws BusinessException General business exception
+     */
     @MeveoAudit
     public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
             throws BusinessException {
         return terminateSubscription(subscription, terminationDate, terminationReason, orderNumber, null, null);
     }
 
+    /**
+     * Terminate subscription. If termination date is not provided, a current date will be used. If termination date is a future date, subscription's subscriptionRenewal will be
+     * updated with a termination date and a reason.
+     * 
+     * @param subscription Subscription to terminate
+     * @param terminationDate Termination date
+     * @param terminationReason Termination reason
+     * @param orderNumber Order number that requested subscription termination
+     * @param orderItemId Order item's identifier in the order that requested subscription termination
+     * @param orderItemAction Order item's action that requested subscription termination
+     * @return Updated subscription entity
+     * @throws BusinessException General business exception
+     */
     @MeveoAudit
     public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber,
             Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
 
-        if (terminationReason == null) {
-            throw new BusinessException("terminationReason is null");
+        if (terminationDate == null) {
+            terminationDate = new Date();
         }
-        
-		// checks if termination date is > today
-		Date endOfDayToday = DateUtils.setDateToEndOfDay(new Date());
-		if (terminationDate.before(endOfDayToday)) {
-			return terminateSubscription(subscription, terminationDate, terminationReason, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
-					terminationReason.isApplyTerminationCharges(), orderNumber, orderItemId, orderItemAction);
-		} else {
-			// if future date set subscription termination
-			return terminateSubscriptionWithFutureDate(subscription, terminationDate, terminationReason);
-		}
+
+        if (terminationReason == null) {
+            throw new ValidationException("Termination reason not provided", "subscription.error.noTerminationReason");
+
+        } else if (DateUtils.setDateToEndOfDay(terminationDate).before(DateUtils.setDateToEndOfDay(subscription.getSubscriptionDate()))) {
+            throw new ValidationException("Termination date can not be before the subscription date", "subscription.error.terminationDateBeforeSubscriptionDate");
+        }
+
+        // checks if termination date is > now (do not ignore time, as subscription time is time sensative)
+        Date now = new Date();
+        if (terminationDate.compareTo(now) <= 0) {
+            return terminateSubscriptionWithPastDate(subscription, terminationDate, terminationReason, orderNumber, orderItemId, orderItemAction);
+        } else {
+            // if future date/time set subscription termination
+            return terminateSubscriptionWithFutureDate(subscription, terminationDate, terminationReason);
+        }
     }
 
     private Subscription terminateSubscriptionWithFutureDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason) throws BusinessException {
@@ -239,29 +270,19 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		return subscription;
 	}
 
-	@MeveoAudit
-    private Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, boolean applyAgreement,
-            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
-        if (terminationDate == null) {
-            terminationDate = new Date();
-        }
-
+    @MeveoAudit
+    private Subscription terminateSubscriptionWithPastDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber,
+            Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
+	    
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
             if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus()) || InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
-                if (terminationReason != null) {
-                    serviceInstanceService.terminateService(serviceInstance, terminationDate, terminationReason, orderNumber);
-                } else {
-                    serviceInstanceService.terminateService(serviceInstance, terminationDate, applyAgreement, applyReimbursment, applyTerminationCharges, orderNumber, null);
-                }
-
+                serviceInstanceService.terminateService(serviceInstance, terminationDate, terminationReason, orderNumber);
                 orderHistoryService.create(orderNumber, orderItemId, serviceInstance, orderItemAction);
             }
         }
 
-        if (terminationReason != null) {
-            subscription.setSubscriptionTerminationReason(terminationReason);
-        }
+        subscription.setSubscriptionTerminationReason(terminationReason);
         subscription.setTerminationDate(terminationDate);
         subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
         subscription = update(subscription);

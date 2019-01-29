@@ -18,27 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
@@ -49,10 +28,8 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -67,7 +44,6 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
@@ -89,14 +65,34 @@ import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.script.billing.TaxScriptService;
 
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * RatedTransactionService : A class for Rated transaction persistence services.
  * 
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @author Abdelmounaim Akadid
- * 
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
@@ -1050,24 +1046,38 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public IBillableEntity updateEntityTotalAmounts(IBillableEntity entity, BillingRun billingRun) throws BusinessException {
         log.debug("updateEntityTotalAmounts  entity:" + entity.getId());
 
+        BillingAccount billingAccount = null;
         if (entity instanceof BillingAccount) {
             entity = billingAccountService.findById((Long) entity.getId());
+            billingAccount = (BillingAccount) entity;
         }
 
         if (entity instanceof Subscription) {
             entity = subscriptionService.findById((Long) entity.getId());
+            billingAccount = ((Subscription) entity).getUserAccount() != null ? ((Subscription) entity).getUserAccount().getBillingAccount() : null;
         }
 
         if (entity instanceof Order) {
             entity = orderService.findById((Long) entity.getId());
+            if (((Order) entity).getUserAccounts() != null && !((Order) entity).getUserAccounts().isEmpty()) {
+                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ?
+                        (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() : null;
+            }
         }
+
 
         calculateAmountsAndCreateMinAmountTransactions(entity, null, billingRun.getLastTransactionDate());
 
         BigDecimal invoiceAmount = entity.getTotalInvoicingAmountWithoutTax();
         if (invoiceAmount != null) {
-            BillingCycle billingCycle = billingRun.getBillingCycle();
-            BigDecimal invoicingThreshold = billingCycle == null ? null : billingCycle.getInvoicingThreshold();
+            BigDecimal invoicingThreshold = null;
+            if (billingAccount != null) {
+                invoicingThreshold = billingAccount.getInvoicingThreshold();
+            }
+            if (invoicingThreshold == null && billingRun.getBillingCycle() != null) {
+                invoicingThreshold = billingRun.getBillingCycle().getInvoicingThreshold();
+            }
+
 
             if (invoicingThreshold != null) {
                 if (invoicingThreshold.compareTo(invoiceAmount) > 0) {

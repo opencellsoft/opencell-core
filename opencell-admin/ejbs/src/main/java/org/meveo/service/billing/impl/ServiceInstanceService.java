@@ -49,6 +49,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.payments.PaymentScheduleTemplate;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -473,62 +474,54 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     /**
-     * Terminate a service.
+     * Terminate a service. If terminationDate if before the service's subscriptionDate, a service's subscriptionDate will be used as termination date.
      * 
-     * @param serviceInstance service instance
-     * @param terminationDate termination date
-     * @param terminationReason termination reason
-     * @param orderNumber order number
+     * @param serviceInstance Service instance to terminate
+     * @param terminationDate Termination date
+     * @param terminationReason Termination reason
+     * @param orderNumber Order number requesting service termination
+     * @return Updated service instance
      * @throws IncorrectSusbcriptionException incorrect subscription exception
      * @throws IncorrectServiceInstanceException incorrect service exception
      * @throws BusinessException business exception
      */
-    public void terminateService(ServiceInstance serviceInstance, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
+    public ServiceInstance terminateService(ServiceInstance serviceInstance, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
-        terminateService(serviceInstance, terminationDate, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
-            terminationReason.isApplyTerminationCharges(), orderNumber, terminationReason);
+        Subscription subscription = serviceInstance.getSubscription();
 
-    }
-
-    /**
-     * Terminate a service.
-     * 
-     * @param serviceInstance service instance
-     * @param terminationDate termination date
-     * @param applyAgreement apply agreement
-     * @param applyReimbursment apply reimbursement
-     * @param applyTerminationCharges apply termination charges
-     * @param orderNumber order number
-     * @param terminationReason termination reason
-     * @throws IncorrectSusbcriptionException incorrect subscription exception
-     * @throws IncorrectServiceInstanceException incorrect service instance exception
-     * @throws BusinessException business exception
-     */
-    public void terminateService(ServiceInstance serviceInstance, Date terminationDate, boolean applyAgreement, boolean applyReimbursment, boolean applyTerminationCharges,
-            String orderNumber, SubscriptionTerminationReason terminationReason) throws BusinessException {
-
-        if (serviceInstance.getId() != null) {
-            log.info("Terminating service {} for {}", serviceInstance.getId(), terminationDate);
+        if (serviceInstance.getStatus() != InstanceStatusEnum.ACTIVE && serviceInstance.getStatus() != InstanceStatusEnum.SUSPENDED) {
+            throw new IncorrectServiceInstanceException("Can not terminate a service that is not active or suspended. Service Code=" + serviceInstance.getCode() + ",subscription Code" + subscription.getCode());
         }
+
         if (terminationDate == null) {
             terminationDate = new Date();
         }
 
-        String serviceCode = serviceInstance.getCode();
-        Subscription subscription = serviceInstance.getSubscription();
-        if (subscription == null) {
-            throw new IncorrectSusbcriptionException("service Instance does not have subscrption . serviceCode=" + serviceInstance.getCode());
-        }
-        if (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
-            throw new IncorrectServiceInstanceException("service instance is inactive. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
+        if (terminationReason == null) {
+            throw new ValidationException("Termination reason not provided", "subscription.error.noTerminationReason");
+
+        } else if (DateUtils.setDateToEndOfDay(terminationDate).before(DateUtils.setDateToEndOfDay(serviceInstance.getSubscription().getSubscriptionDate()))) {
+            throw new ValidationException("Termination date can not be before the subscription date", "subscription.error.terminationDateBeforeSubscriptionDate");
+
+            // Handle cases when subscription has various services and subscription is terminated before service's subscription date
+        } else if (terminationDate.before(serviceInstance.getSubscriptionDate())) {
+            terminationDate = serviceInstance.getSubscriptionDate();
         }
 
-        // execute termination script
+        if (serviceInstance.getId() != null) {
+            log.info("Terminating service {} for {}", serviceInstance.getId(), terminationDate);
+        }
+
+        // Execute termination script
         if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
             serviceModelScriptService.terminateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(),
                 terminationDate, terminationReason);
         }
+
+        boolean applyAgreement = terminationReason.isApplyAgreement();
+        boolean applyReimbursment = terminationReason.isApplyReimbursment();
+        boolean applyTerminationCharges = terminationReason.isApplyTerminationCharges();
 
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 
@@ -551,8 +544,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 endDate = serviceInstance.getEndAgreementDate();
             }
 
-            log.info("Terminating recurring charge {} with chargeDate {}, nextChargeDate {}, endDate {}, endAggrementDate {}", recurringChargeInstance.getId(),
-                recurringChargeInstance.getChargeDate(), recurringChargeInstance.getNextChargeDate(), endDate, serviceInstance.getEndAgreementDate());
+            log.info("Terminating recurring charge {} with chargeDate {}, nextChargeDate {}, terminationDate {}, endAggrementDate {}, terminationReason {}",
+                recurringChargeInstance.getId(), recurringChargeInstance.getChargeDate(), recurringChargeInstance.getNextChargeDate(), endDate,
+                serviceInstance.getEndAgreementDate(), terminationReason.getCode());
 
             if (endDate.after(nextChargeDate)) {
                 walletOperationService.applyChargeAgreement(recurringChargeInstance, recurringChargeInstance.getRecurringChargeTemplate(), endDate);
@@ -607,37 +601,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             paymentScheduleInstanceService.terminate(serviceInstance,terminationDate);
         }
         
-        update(serviceInstance);
-    }
-
-    /**
-     * @param serviceInstance service instance
-     * @param terminationDate termination date
-     * @throws IncorrectSusbcriptionException incorrect subscription exception
-     * @throws IncorrectServiceInstanceException incorrect service instance exception
-     * @throws BusinessException business exception
-     */
-    public void updateTerminationMode(ServiceInstance serviceInstance, Date terminationDate)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-        log.info("updateTerminationMode terminationDate={},serviceInstanceId={}", terminationDate, serviceInstance.getId());
-
-        SubscriptionTerminationReason newReason = serviceInstance.getSubscriptionTerminationReason();
-
-        log.info("updateTerminationMode terminationDate={},serviceInstanceId={},newApplyReimbursment=#2,newApplyAgreement=#3,newApplyTerminationCharges=#4", terminationDate,
-            serviceInstance.getId(), newReason.isApplyReimbursment(), newReason.isApplyAgreement(), newReason.isApplyTerminationCharges());
-
-        String serviceCode = serviceInstance.getCode();
-        Subscription subscription = serviceInstance.getSubscription();
-        if (subscription == null) {
-            throw new IncorrectSusbcriptionException("service Instance does not have subscrption . serviceCode=" + serviceInstance.getCode());
-        }
-
-        if (serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
-            throw new IncorrectServiceInstanceException("service instance is not terminated. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
-        }
-
-        terminateService(serviceInstance, terminationDate, newReason.isApplyAgreement(), newReason.isApplyReimbursment(), newReason.isApplyTerminationCharges(), null, newReason);
-
+        serviceInstance = update(serviceInstance);
+        
+        return serviceInstance;
     }
 
     /**
@@ -865,7 +831,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     /**
      * Find a list of service instance by subscription entity, service template codes and service instance status list.
      * 
-     * @param codes the service template codes
      * @param codes the service template codes
 	 * @param subscriptionCode the code of subscription entity
      * @param statuses service instance statuses

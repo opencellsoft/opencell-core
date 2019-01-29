@@ -33,6 +33,7 @@ import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -94,16 +95,18 @@ public class KeycloakAdminClientService {
      * @return instance of Keycloak.
      */
     private Keycloak getKeycloakClient(KeycloakSecurityContext session, KeycloakAdminClientConfig keycloakAdminClientConfig) {
-        Keycloak keycloak = KeycloakBuilder.builder() //
-            .serverUrl(keycloakAdminClientConfig.getServerUrl()) //
-            .realm(keycloakAdminClientConfig.getRealm()) //
-            .grantType(OAuth2Constants.CLIENT_CREDENTIALS) //
-            .clientId(keycloakAdminClientConfig.getClientId()) //
-            .clientSecret(keycloakAdminClientConfig.getClientSecret()) //
-            .authorization(session.getTokenString()) //
-            .build();
 
-        return keycloak;
+        KeycloakBuilder keycloakBuilder = KeycloakBuilder.builder() 
+                .serverUrl(keycloakAdminClientConfig.getServerUrl()) 
+                .realm(keycloakAdminClientConfig.getRealm()) 
+                .grantType(OAuth2Constants.CLIENT_CREDENTIALS) 
+                .clientId(keycloakAdminClientConfig.getClientId()) 
+                .clientSecret(keycloakAdminClientConfig.getClientSecret()) 
+                .authorization(session.getTokenString()); 
+                
+            keycloakBuilder.resteasyClient(new ResteasyClientProxyBuilder().connectionPoolSize(20).build());
+        
+        return keycloakBuilder.build();
     }
 
     /**

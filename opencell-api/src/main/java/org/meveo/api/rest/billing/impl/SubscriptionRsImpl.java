@@ -13,9 +13,11 @@ import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
+import org.meveo.api.dto.billing.OneShotChargeInstanceDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
 import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
+import org.meveo.api.dto.billing.SubscriptionAndServicesToActivateRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
 import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
@@ -40,7 +42,8 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Youssef IZEM
+ * @lastModifiedVersion 5.4
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -163,7 +166,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
             sortOrder);
 
         try {
-            if(inheritCF != null) {
+            if (inheritCF != null) {
                 return subscriptionApi.list(pagingAndFiltering, inheritCF);
             } else {
                 return subscriptionApi.list(mergedCF, pagingAndFiltering);
@@ -189,11 +192,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public GetSubscriptionResponseDto findSubscription(String subscriptionCode, CustomFieldInheritanceEnum inheritCF) {
+    public GetSubscriptionResponseDto findSubscription(String subscriptionCode, boolean mergedCF, CustomFieldInheritanceEnum inheritCF) {
         GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
 
         try {
-            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, inheritCF));
+            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, mergedCF, inheritCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -331,15 +334,22 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     /**
      * Get all one shot charge others.
      * 
-     * @see org.meveo.api.rest.billing.SubscriptionRs#getOneShotChargeOthers()
+     * @see org.meveo.api.rest.billing.SubscriptionRs#getOneShotChargeOthers(String subscriptionCode)
      */
-    public GetOneShotChargesResponseDto getOneShotChargeOthers() {
+    public GetOneShotChargesResponseDto getOneShotChargeOthers(String subscriptionCode) {
         GetOneShotChargesResponseDto result = new GetOneShotChargesResponseDto();
+
         try {
-            List<OneShotChargeTemplateDto> oneShotChargeOthers = subscriptionApi.getOneShotChargeOthers();
-            result.getOneshotCharges().addAll(oneShotChargeOthers);
+            if (subscriptionCode == null) {
+                List<OneShotChargeTemplateDto> oneShotChargeOthers = subscriptionApi.getOneShotChargeOthers();
+                result.getOneshotCharges().addAll(oneShotChargeOthers);
+            } else {
+                List<OneShotChargeInstanceDto> oneShotChargeInstances = subscriptionApi.getOneShotChargeOthers(subscriptionCode);
+                result.getOneshotChargeInstances().addAll(oneShotChargeInstances);
+            }
+
         } catch (Exception e) {
-            processException(e, result.getActionStatus());
+            processException(e, new ActionStatus(ActionStatusEnum.FAIL, ""));
         }
 
         return result;
@@ -369,9 +379,9 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         return result;
     }
 
-	@Override
-	public ActionStatus activate(String subscriptionCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus activate(String subscriptionCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             subscriptionApi.activateSubscription(subscriptionCode);
@@ -380,11 +390,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus cancelSubscriptionRenewal(String subscriptionCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus cancelSubscriptionRenewal(String subscriptionCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             subscriptionApi.cancelSubscriptionRenewal(subscriptionCode);
@@ -393,7 +403,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         }
 
         return result;
-	}
+    }
 
     @Override
     public SubscriptionForCustomerResponseDto activateForCustomer(SubscriptionForCustomerRequestDto postData) {
@@ -402,6 +412,30 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
             result = subscriptionApi.activateForCustomer(postData);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus terminateOneShotCharge(String subscriptionCode, String oneshotChargeCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.terminateOneShotCharge(oneshotChargeCode, subscriptionCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus subscribeAndActivateServices(SubscriptionAndServicesToActivateRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            subscriptionApi.subscribeAndActivateServices(postData);
+        } catch (Exception e) {
+            processException(e, result);
         }
         return result;
     }

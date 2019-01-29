@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+        <changeSet id="#3773_20181130" author="abdelkader.bouazza">
+            <modifyDataType tableName="dwh_report_extract" columnName="sql_query" newDataType="${type.text}"/>
+            <modifyDataType tableName="dwh_report_extract" columnName="sql_query" newDataType="${type.text}"/>
+
+            <modifyDataType tableName="rating_edr" columnName="reject_reason" newDataType="${type.text}"/>
+
+            <modifyDataType tableName="cat_triggered_edr" columnName="param_1_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_triggered_edr" columnName="param_2_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_triggered_edr" columnName="param_3_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_triggered_edr" columnName="param_4_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_triggered_edr" columnName="quantity_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_triggered_edr" columnName="subscription_el" newDataType="${type.text}"/>
+
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="invoice_subcategory_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="minimum_amount_with_tax_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="minimum_amount_without_tax_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="rating_el_with_tax" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="wo_description_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="amount_with_tax_el" newDataType="${type.text}"/>
+            <modifyDataType tableName="cat_price_plan_matrix" columnName="amount_without_tax_el" newDataType="${type.text}"/>
+
+            <modifyDataType tableName="ar_ddrequest_lot" columnName="file_name" newDataType="${type.text}"/>
+            <modifyDataType tableName="ar_account_operation" columnName="bank_lot" newDataType="${type.text}"/>
+        </changeSet>
 
         <changeSet id="#3680 - Extend FtpAdapterJob to support file export and SFTP-P" author="mboukayoua" dbms="postgresql">
         <update tableName="meveo_job_instance">
@@ -208,6 +232,15 @@
         <sql>update ${db.schema.adapted}ar_ddrequest_builder set cf_values_accum=cf_values</sql>
         <sql>update ${db.schema.adapted}ar_payment_schedule_tmpl set cf_values_accum=cf_values</sql>
     </changeSet>
+
+     <changeSet id="#3841_20181228" author="SaidRamli">
+        <addColumn tableName="crm_customer_category">
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}crm_customer_category set uuid = concat('customer_cat_', id)</sql>
+     </changeSet>
 
     <changeSet id="#3464_20180701" author="AndriusKarpavicius">
         <addColumn tableName="cat_usage_charge_template">
@@ -426,7 +459,7 @@
     </changeSet>
 
     <changeSet id="#3705_20181019 - Migrate discount plan from ba to new table" author="EdwardPLegaspi" dbms="postgresql">
-        <sql>INSERT INTO billing_discount_plan (billing_account_id, discount_plan_id) SELECT id, discount_plan_id FROM billing_billing_account;</sql>
+        <sql>INSERT INTO ${db.schema.adapted}billing_discount_plan (billing_account_id, discount_plan_id) SELECT id, discount_plan_id FROM ${db.schema.adapted}billing_billing_account;</sql>
     </changeSet>
 
     <changeSet id="#3705_20181019 - Migrate discount plan from ba to new table" author="EdwardPLegaspi" dbms="mysql">
@@ -811,7 +844,7 @@
          <addForeignKeyConstraint constraintName="fk_sell_id_dd_lot" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="ar_ddrequest_lot" referencedColumnNames="id"/>     
    
    
-
+   
     </changeSet>
 
 	<changeSet id="#3629_20181210 - Price plan el vars" author="EdwardPLegaspi">
@@ -824,10 +857,10 @@
 
     	<sql>
     		<![CDATA[
-			update cat_price_plan_matrix set total_amount_el=coalesce(rating_el_without_tax, rating_el_with_tax);
-			update cat_price_plan_matrix set total_amount_el_sp=coalesce(rating_el_without_tax_sp, rating_el_with_tax_sp);
-			update cat_price_plan_matrix set minimum_amount_el=coalesce(minimum_amount_without_tax_el, minimum_amount_with_tax_el);
-			update cat_price_plan_matrix set minimum_amount_el_sp=coalesce(minimum_amount_without_tax_el_sp, minimum_amount_with_tax_el_sp);
+			update ${db.schema.adapted}cat_price_plan_matrix set total_amount_el=coalesce(rating_el_without_tax, rating_el_with_tax);
+			update ${db.schema.adapted}cat_price_plan_matrix set total_amount_el_sp=coalesce(rating_el_without_tax_sp, rating_el_with_tax_sp);
+			update ${db.schema.adapted}cat_price_plan_matrix set minimum_amount_el=coalesce(minimum_amount_without_tax_el, minimum_amount_with_tax_el);
+			update ${db.schema.adapted}cat_price_plan_matrix set minimum_amount_el_sp=coalesce(minimum_amount_without_tax_el_sp, minimum_amount_with_tax_el_sp);
 			]]>
     	</sql>
 
@@ -839,6 +872,123 @@
     	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_without_tax_el_sp"></dropColumn>
     	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_with_tax_el"></dropColumn>
     	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_with_tax_el_sp"></dropColumn>
+    </changeSet>
+    <changeSet id="#3840_27122018" author="abdelkader.bouazza">
+        <addColumn tableName="crm_customer_category">
+            <column name="accounting_code_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_crm_customer_category_accounting_code" referencedTableName="billing_accounting_code"
+                                 baseColumnNames="accounting_code_id" baseTableName="crm_customer_category" referencedColumnNames="id" />
+    </changeSet>
+
+     <changeSet  id="#3514_20180101" author="hznibar">
+		<createSequence sequenceName="billing_general_ledger_seq" />
+		<createSequence sequenceName="ar_other_transaction_seq" />
+		<createSequence sequenceName="ar_payment_ventilation_seq" />
+
+		<createTable tableName="billing_general_ledger">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_general_ledger_pkey" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_billing_general_ledger_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_general_ledger" />
+
+        <createTable tableName="ar_other_transaction">
+        	<column name="transaction_type" type="varchar(31)">
+                <constraints nullable="false" />
+            </column>
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_other_transaction_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="description" type="varchar(255)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="amount" type="numeric(23, 12)" />
+            <column name="due_date" type="date" />
+            <column name="matching_amount" type="numeric(23, 12)" />
+            <column name="matching_status" type="varchar(255)" />
+            <column name="occ_code" type="varchar(255)" />
+            <column name="occ_description" type="varchar(255)" />
+            <column name="reference" type="varchar(255)" />
+            <column name="transaction_category" type="varchar(255)" />
+            <column name="transaction_date" type="date" />
+            <column name="un_matching_amount" type="numeric(23, 12)" />
+            <column name="bank_lot" type="varchar(255)" />
+            <column name="bank_reference" type="varchar(255)" />
+            <column name="payment_method" type="varchar(255)" />
+            <column name="amount_without_tax" type="numeric(23, 12)" />
+            <column name="billing_account_name" type="varchar(255)" />
+            <column name="invoice_date" type="date" />
+            <column name="payment_info" type="varchar(255)" />
+            <column name="payment_info1" type="varchar(255)" />
+            <column name="payment_info2" type="varchar(255)" />
+            <column name="payment_info3" type="varchar(255)" />
+            <column name="payment_info4" type="varchar(255)" />
+            <column name="payment_info5" type="varchar(255)" />
+            <column name="payment_info6" type="varchar(255)" />
+            <column name="payment_info7" type="varchar(255)" />
+            <column name="tax_amount" type="numeric(23, 12)" />
+            <column name="operation_date" type="datetime" />
+            <column name="bank_collection_date" type="datetime" />
+            <column name="deposit_date" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="uuid" type="varchar(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="order_num" type="varchar(500)" />
+            <column name="cf_values" type="${type.json}"/>
+            <column name="cf_values_accum" type="${type.json}"></column>
+			<column name="general_ledger_id" type="bigint" />
+            <column name="accounting_code_id" type="bigint"></column>
+        </createTable>
+    	<addForeignKeyConstraint constraintName="fk_ar_other_transaction_general_ledger" referencedTableName="billing_general_ledger" referencedColumnNames="id" baseTableName="ar_other_transaction" baseColumnNames="general_ledger_id" />
+    	<addForeignKeyConstraint constraintName="fk_ar_other_transaction_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_other_transaction" baseColumnNames="accounting_code_id" />
+
+		<addColumn tableName="crm_seller">
+            <column name="general_ledger_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_crm_seller_general_ledger" referencedTableName="billing_general_ledger" referencedColumnNames="id" baseTableName="crm_seller" baseColumnNames="general_ledger_id" />
+
+        <createTable tableName="ar_payment_ventilation">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_ventilation_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)" />
+            <column name="ventilation_amount" type="numeric(23, 12)" />
+            <column name="ventilation_date" type="date" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="customer_account_id" type="bigint" />
+            <column name="original_ot_id" type="bigint" />
+            <column name="new_ot_id" type="bigint" />
+            <column name="account_operation_id" type="bigint" />
+            <column name="ventilation_action_status" type="varchar(255)" />
+        </createTable>
+        <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_customer_account" referencedTableName="ar_customer_account" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="customer_account_id" />
+        <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_other_transaction_origin" referencedTableName="ar_other_transaction" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="original_ot_id" />
+        <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_other_transaction" referencedTableName="ar_other_transaction" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="new_ot_id" />
+        <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_account_operation" referencedTableName="ar_account_operation" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="account_operation_id" />
+
     </changeSet>
 
     <changeSet id="#3650_20181220" author="AmineBenAicha">
@@ -862,7 +1012,7 @@
             </column>
             <column name="description" type="varchar(255)" />
             <column name="target_entity_class" type="varchar(255)">
-                <constraints nullable="false" />
+            	<constraints nullable="false" />
             </column>
             <column name="enable_history" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
@@ -870,11 +1020,11 @@
             <column name="transition_script_id" type="bigint" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="transition_script_id" baseTableName="wf_generic_workflow" constraintName="fk_wf_transition_script" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 
         <createSequence sequenceName="wf_status_seq" />
-        <createTable tableName="wf_status">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
+		<createTable tableName="wf_status">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wf_status_pk" />
             </column>
             <column name="version" type="int4" />
@@ -887,18 +1037,18 @@
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
             <column name="uuid" type="varchar(60)">
-                <constraints nullable="false" />
+            	<constraints nullable="false" />
             </column>
             <column name="generic_wf_id" type="bigint" />
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_status" constraintName="fk_generic_wf" deferrable="false" initiallyDeferred="false"
-                                 onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
+        <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_status" constraintName="fk_status_generic_wf" deferrable="false" initiallyDeferred="false"
+            onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
         <addUniqueConstraint columnNames="generic_wf_id, code" constraintName="uk_generic_wf_id_code_status" deferrable="false" disabled="false" initiallyDeferred="false"
-                             tableName="wf_status" />
+        	tableName="wf_status" />
 
         <createSequence sequenceName="wf_instance_seq" />
-        <createTable tableName="wf_instance">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
+		<createTable tableName="wf_instance">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wf_instance_pk" />
             </column>
             <column name="version" type="int4" />
@@ -906,14 +1056,14 @@
             <column name="generic_wf_id" type="bigint" />
             <column name="wf_status_id" type="bigint" />
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_instance" constraintName="fk_generic_wf" deferrable="false" initiallyDeferred="false"
-                                 onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
-        <addForeignKeyConstraint baseColumnNames="wf_status_id" baseTableName="wf_instance" constraintName="fk_wf_status" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
+        <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_instance" constraintName="fk_instance_generic_wf" deferrable="false" initiallyDeferred="false"
+            onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
+         <addForeignKeyConstraint baseColumnNames="wf_status_id" baseTableName="wf_instance" constraintName="fk_instance_wf_status" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
 
         <createSequence sequenceName="wf_instance_history_seq" />
-        <createTable tableName="wf_instance_history">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
+		<createTable tableName="wf_instance_history">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wf_instance_history_pk" />
             </column>
             <column name="version" type="int4" />
@@ -923,43 +1073,15 @@
             <column name="event" type="varchar(255)" />
             <column name="wf_instance_id" type="bigint" />
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="wf_status_from" baseTableName="wf_instance_history" constraintName="fk_wf_status_from" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
-        <addForeignKeyConstraint baseColumnNames="wf_status_to" baseTableName="wf_instance_history" constraintName="fk_wf_status_to" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
-        <addForeignKeyConstraint baseColumnNames="wf_instance_id" baseTableName="wf_instance_history" constraintName="fk_wf_instance" deferrable="false" initiallyDeferred="false"
-                                 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_instance" />
+        <addForeignKeyConstraint baseColumnNames="wf_status_from" baseTableName="wf_instance_history" constraintName="fk_history_wf_status_from" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
+        <addForeignKeyConstraint baseColumnNames="wf_status_to" baseTableName="wf_instance_history" constraintName="fk_history_wf_status_to" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
+        <addForeignKeyConstraint baseColumnNames="wf_instance_id" baseTableName="wf_instance_history" constraintName="fk_history_wf_instance" deferrable="false" initiallyDeferred="false"
+            onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_instance" />
     </changeSet>
 
-    <changeSet id="#3879 - dunning model" author="mboukayoua" dbms="postgresql">
-        <createTable tableName="dunning_document">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_dunning_document_sequence" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="uk_dunning_document_code"/>
-            </column>
-            <column name="description" type="varchar(255)" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="customer_account_id" type="bigint" >
-                <constraints nullable="false" foreignKeyName="fk_dunning_document_ca" references="ar_customer_account(id)"/>
-            </column>
-            <column name="billing_subscription_id" type="bigint">
-                <constraints nullable="true" foreignKeyName="fk_dunning_document_subscription" references="billing_subscription(id)"/>
-            </column>
-        </createTable>
-        <createSequence sequenceName="dunning_document_seq"/>
-        <addColumn tableName="ar_account_operation">
-            <column name="dunning_document_id" type="bigint">
-                <constraints nullable="true" foreignKeyName="fk_ar_account_operation_dunning_document" references="dunning_document(id)" />
-            </column>
-        </addColumn>
+    <changeSet id="#3970 - Change of RT description database field from varchar to text" author="mounir.boukayoua">
+        <modifyDataType tableName="billing_rated_transaction" columnName="description" newDataType="${type.text}"/>
     </changeSet>
-
 </databaseChangeLog>

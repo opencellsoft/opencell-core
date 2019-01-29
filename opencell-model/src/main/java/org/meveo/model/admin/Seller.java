@@ -22,7 +22,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -33,6 +43,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.GeneralLedger;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.TradingCountry;
@@ -51,6 +62,7 @@ import org.meveo.model.shared.ContactInformation;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Khalid HORRI
+ * @author Amine BEN AICHA
  * @lastModifiedVersion 5.3
  **/
 
@@ -155,6 +167,13 @@ public class Seller extends BusinessCFEntity {
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaymentGateway> paymentGateways = new ArrayList<>();
 
+    /**
+     * General Ledger association
+     */
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "general_ledger_id")
+    private GeneralLedger generalLedger;
+
     public Seller() {
         super();
     }
@@ -193,6 +212,7 @@ public class Seller extends BusinessCFEntity {
 
     /**
      * Gets the seller's VAT No
+     * 
      * @return a VAT No
      *
      */
@@ -202,7 +222,8 @@ public class Seller extends BusinessCFEntity {
 
     /**
      * Sets the seller's VAT No
-     * @param vatNo  new VAT No
+     * 
+     * @param vatNo new VAT No
      */
     public void setVatNo(String vatNo) {
         this.vatNo = vatNo;
@@ -210,6 +231,7 @@ public class Seller extends BusinessCFEntity {
 
     /**
      * Gets the seller's registration No
+     * 
      * @return a registration No
      *
      */
@@ -219,7 +241,8 @@ public class Seller extends BusinessCFEntity {
 
     /**
      * Sets the seller's registration No
-     * @param registrationNo  new registration No
+     * 
+     * @param registrationNo new registration No
      */
     public void setRegistrationNo(String registrationNo) {
         this.registrationNo = registrationNo;
@@ -227,6 +250,7 @@ public class Seller extends BusinessCFEntity {
 
     /**
      * Gets the seller's legal text
+     * 
      * @return a legal text
      */
     public String getLegalText() {
@@ -235,6 +259,7 @@ public class Seller extends BusinessCFEntity {
 
     /**
      * Sets the seller's legal text
+     * 
      * @param legalText new legal text
      */
     public void setLegalText(String legalText) {
@@ -243,6 +268,7 @@ public class Seller extends BusinessCFEntity {
 
     /**
      * Gets the seller's legal type
+     * 
      * @return a legal type
      */
     public String getLegalType() {
@@ -251,6 +277,7 @@ public class Seller extends BusinessCFEntity {
 
     /**
      * Sets the seller's legal type
+     * 
      * @param legalType new legal type
      */
     public void setLegalType(String legalType) {
@@ -386,4 +413,12 @@ public class Seller extends BusinessCFEntity {
         this.paymentGateways = paymentGateways;
     }
     
+
+    public GeneralLedger getGeneralLedger() {
+        return generalLedger;
+    }
+
+    public void setGeneralLedger(GeneralLedger generalLedger) {
+        this.generalLedger = generalLedger;
+    }
 }

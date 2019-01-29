@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Max;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -22,7 +21,6 @@ public class GenericSequence implements Serializable {
     /**
      * Prefix of sequence.
      */
-    @Pattern(regexp = "^[\\p{Upper}-]{1,256}$")
     @Column(name = "prefix", length = 255)
     @Size(max = 255)
     private String prefix = "";
