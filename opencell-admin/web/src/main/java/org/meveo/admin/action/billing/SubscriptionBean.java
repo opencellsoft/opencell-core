@@ -505,9 +505,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         return usageChargeInstances;
     }
 
-    public void instanciateManyServices() {
+    @ActionMethod
+    public void instanciateManyServices() throws BusinessException {
 
-        try {
             if (quantity == null || quantity.compareTo(BigDecimal.ZERO) <= 0) {
                 log.warn("instanciateManyServices quantity is negative! set it to 1");
                 quantity = BigDecimal.ONE;
@@ -561,12 +561,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 resetChargesDataModels();
                 messages.info(new BundleKey("messages", "instanciation.instanciateSuccessful"));
             }
-        } catch (BusinessException e1) {
-            messages.error(e1.getMessage());
-        } catch (Exception e) {
-            log.error("error in SubscriptionBean.instanciateManyServices", e);
-            messages.error(e.getMessage());
-        }
 
         keepCurrentTab();
 
@@ -575,9 +569,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     /**
      * actives services.
      */
-    public void activateService() {
+    @ActionMethod
+    public void activateService() throws BusinessException {
         log.debug("activateService...");
-        try {
             if (selectedServiceInstance != null) {
                 log.debug("activateService id={} checked", selectedServiceInstance.getId());
                 if (selectedServiceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
@@ -608,12 +602,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             selectedServiceInstance = null;
             messages.info(new BundleKey("messages", "activation.activateSuccessful"));
 
-        } catch (BusinessException e1) {
-            messages.error(new BundleKey("messages", "activation.activateUnsuccessful"), e1.getMessage());
-        } catch (Exception e) {
-            log.error("unexpected exception when activating service!", e);
-            messages.error(new BundleKey("messages", "activation.activateUnsuccessful"), e.getMessage());
-        }
     }
 
     /**
@@ -740,8 +728,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
     }
 
-    public void suspendService() {
-        try {
+    @ActionMethod
+    public void suspendService() throws BusinessException {
             // Obtain EM attached service instance entity
             entity = subscriptionService.refreshOrRetrieve(entity);
             selectedServiceInstance = entity.getServiceInstances().get(entity.getServiceInstances().indexOf(selectedServiceInstance));
@@ -756,13 +744,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             selectedServiceInstance = null;
             messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
-
-        } catch (BusinessException e1) {
-            messages.error(e1.getMessage());
-        } catch (Exception e) {
-            log.error("unexpected exception when suspending service!", e);
-            messages.error(e.getMessage());
-        }
     }
 
     public BigDecimal getQuantity() {
@@ -825,9 +806,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         log.debug("setting usageChargeIns " + chargeInstance);
     }
 
-    public void saveUsageChargeIns() {
+    @ActionMethod
+    public void saveUsageChargeIns() throws BusinessException {
         log.debug("saveUsageChargeIns getObjectId={}", getObjectId());
-        try {
             if (usageChargeInstance != null && usageChargeInstance.getId() != null) {
                 log.debug("update usageChargeIns {}, id={}", usageChargeInstance, usageChargeInstance.getId());
                 usageChargeInstanceService.update(usageChargeInstance);
@@ -836,10 +817,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 usageChargeInstances = null;
                 messages.info(new BundleKey("messages", "save.successful"));
             }
-        } catch (Exception e) {
-            log.error("Failed saving usage charge!", e);
-            messages.error(e.getMessage());
-        }
     }
 
     public List<WalletTemplate> findWalletTemplatesForOneShot() {
