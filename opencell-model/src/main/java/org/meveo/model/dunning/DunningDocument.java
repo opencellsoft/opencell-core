@@ -1,9 +1,9 @@
 package org.meveo.model.dunning;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.billing.Invoice;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -11,7 +11,6 @@ import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
 
 import javax.persistence.*;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -19,10 +18,11 @@ import java.util.List;
  * Dunning document
  */
 @Entity
+@WorkflowedEntity
 @Table(name="dunning_document")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "dunning_document_seq"), })
-public class DunningDocument extends BusinessEntity {
+public class DunningDocument extends BusinessEntity implements IWFEntity {
 
     /**
      * Customer account
