@@ -147,7 +147,8 @@ public class FilesRsImpl extends BaseRs implements FilesRs {
 
         try {
             filesApi.uploadFileBase64(postData);
-            filesApi.unzipFile(postData);
+            filesApi.unzipFile(postData.getFilepath(), true);
+            filesApi.suppressFile(postData.getFilepath());
         } catch (Exception e) {
             processException(e, result);
         }

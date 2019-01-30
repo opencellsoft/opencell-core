@@ -152,15 +152,19 @@ public class FilesApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        File file = new File(getProviderRootDir() + File.separator + postData.getFilepath());
+        String filepath = getProviderRootDir() + File.separator + postData.getFilepath();
+        File file = new File(filepath);
         FileOutputStream fop = null;
         try {
-            if (!file.exists()) {
-                file.createNewFile();
+
+            File parent = file.getParentFile();
+            if (parent == null) {
+                throw new BusinessApiException("Invalid path : " + filepath);
             }
 
+            parent.mkdirs();
+            file.createNewFile();
             fop = new FileOutputStream(file);
-
             fop.write(Base64.decodeBase64(postData.getContent()));
             fop.flush();
 
@@ -174,24 +178,24 @@ public class FilesApi extends BaseApi {
     /**
      * Allows to unzip a file
      * 
-     * @param postData contains filename to unzip
+     * @param filePath
+     * @param deleteOnError
      * @throws MeveoApiException
      */
-    public void unzipFile(FileRequestDto postData) throws MeveoApiException {
-        if (postData == null || StringUtils.isBlank(postData.getFilepath())) {
-            missingParameters.add("filepath");
+    public void unzipFile(String filePath, boolean deleteOnError) throws MeveoApiException {
+        if (filePath == null || StringUtils.isBlank(filePath)) {
+            throw new BusinessApiException("filePath is required ! ");
         }
 
-        handleMissingParametersAndValidate(postData);
-
-        File file = new File(getProviderRootDir() + File.separator + postData.getFilepath());
+        File file = new File(getProviderRootDir() + File.separator + filePath);
         try {
-            if (FilenameUtils.getExtension(file.getName()).equals("zip")) {
-                String parentDir = file.getParent();
-                FileUtils.unzipFile(parentDir, new FileInputStream(file));
-            }
+            String parentDir = file.getParent();
+            FileUtils.unzipFile(parentDir, new FileInputStream(file));
         } catch (Exception e) {
-            throw new BusinessApiException("Error unziping file: " + postData.getFilepath() + ". " + e.getMessage());
+            if (deleteOnError) {
+                suppressFile(filePath);
+            }
+            throw new BusinessApiException("Error unziping file: " + filePath + ". " + e.getMessage());
         }
     }
 
