@@ -188,6 +188,11 @@ public class FilesApi extends BaseApi {
         }
 
         File file = new File(getProviderRootDir() + File.separator + filePath);
+        if (!FileUtils.isValidZip(file)) {
+            suppressFile(filePath);
+            throw new BusinessApiException("The zipped file is invalid ! ");
+        }
+
         try {
             String parentDir = file.getParent();
             FileUtils.unzipFile(parentDir, new FileInputStream(file));
@@ -198,6 +203,7 @@ public class FilesApi extends BaseApi {
             throw new BusinessApiException("Error unziping file: " + filePath + ". " + e.getMessage());
         }
     }
+    
 
     public void suppressFile(String filePath) throws BusinessApiException {
         String filename = getProviderRootDir() + File.separator + filePath;
