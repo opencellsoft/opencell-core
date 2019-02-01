@@ -31,7 +31,6 @@ import org.slf4j.Logger;
  * @lastModifiedVersion 5.3.1
  */
 @WebServlet("/inbound/*")
-@ServletSecurity(@HttpConstraint(rolesAllowed = "apiAccess"))
 public class InboundServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1551787937225264581L;
