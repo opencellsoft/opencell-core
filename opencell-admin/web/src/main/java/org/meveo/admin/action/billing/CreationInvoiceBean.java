@@ -612,6 +612,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             }
 
             entity.setDetailedInvoice(isDetailed());
+            entity.setBillingAccount(billingAccount);
 
             invoiceService.assignInvoiceNumber(entity);
             super.saveOrUpdate(false);
