@@ -606,7 +606,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 if (customerAccount != null) {
                     Customer customer = customerAccount.getCustomer();
                     if (customer != null) {
-                        invoiceCopy.setSeller(customer.getSeller());
+                        entity.setSeller(customer.getSeller());
                     }
                 }
             }
