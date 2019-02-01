@@ -63,7 +63,9 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -87,6 +89,7 @@ import org.primefaces.model.LazyDataModel;
  *
  * @author Edward P. Legaspi
  * @author Said Ramli
+ * @author Tien Lan PHUNG
  * @lastModifiedVersion 5.1
  */
 @Named
@@ -497,6 +500,15 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
         try {
             invoiceCopy = (Invoice) BeanUtils.cloneBean(entity);
+            BillingAccount billingAccount = billingAccountService.findByCode(invoiceCopy.getBillingAccount().getCode());
+            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+            if (customerAccount != null) {
+                Customer customer = customerAccount.getCustomer();
+                if (customer != null) {
+                    invoiceCopy.setSeller(customer.getSeller());
+                }
+            }
+            
             invoiceCopy.setInvoiceAgregates(new ArrayList<InvoiceAgregate>());
             getPersistenceService().create(invoiceCopy);
             
@@ -588,7 +600,17 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     @Override
     public String saveOrUpdate(boolean killConversation) {
         try {
-            entity.setBillingAccount(getFreshBA());
+            BillingAccount billingAccount = getFreshBA();
+            if (billingAccount != null) {
+                CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+                if (customerAccount != null) {
+                    Customer customer = customerAccount.getCustomer();
+                    if (customer != null) {
+                        invoiceCopy.setSeller(customer.getSeller());
+                    }
+                }
+            }
+
             entity.setDetailedInvoice(isDetailed());
 
             invoiceService.assignInvoiceNumber(entity);
