@@ -6,6 +6,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 
+import org.jfree.util.Log;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 
@@ -32,12 +33,13 @@ public class IbanConverter implements Converter {
 	@Override
 	public String getAsString(FacesContext context, UIComponent component, Object value) {
 		String iban = value.toString();
-		if (iban != null && isMaskingIbanEnabled()) {
-			int ibanLength = iban.length();
+		int ibanLength = iban.length();
+		if (iban != null && isMaskingIbanEnabled() && ibanLength > 6) {
 			String fisrtCaracters = iban.substring(0, 4);
 			String lastCaracters = iban.substring(ibanLength - 2, ibanLength);
 			return fisrtCaracters + new String(new char[ibanLength - 6]).replace("\0", "X") + lastCaracters;
 		} else {
+			Log.info("the iban masking is disabled");
 			return iban;
 		}
 	}
