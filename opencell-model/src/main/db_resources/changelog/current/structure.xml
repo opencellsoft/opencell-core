@@ -1098,4 +1098,10 @@
         <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="ar_account_operation" constraintName="fk_ao_subscription_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
     </changeSet>
+    <changeSet id="#3199_20190130" author="khalid.horri">
+        <addColumn tableName="crm_custom_field_tmpl">
+            <column name="nb_decimal" type="int4"/>
+            <column name="rounding_mode" type="varchar(50)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

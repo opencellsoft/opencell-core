@@ -43,14 +43,12 @@ import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.commons.utils.EjbUtils;
-import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.commons.utils.StringUtils;
+import org.meveo.commons.utils.*;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.catalog.IImageUpload;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
@@ -82,7 +80,8 @@ import org.slf4j.LoggerFactory;
  * @author Wassim Drira
  * @author Said Ramli
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  * 
  **/
 public abstract class BaseApi {
@@ -641,7 +640,7 @@ public abstract class BaseApi {
         } else if (cfDto.getDateValue() != null) {
             return cfDto.getDateValue();
         } else if (cfDto.getDoubleValue() != null) {
-            return cfDto.getDoubleValue();
+            return getDoubleValue(cfDto, cft);
         } else if (cfDto.getLongValue() != null) {
             return cfDto.getLongValue();
         } else if (cfDto.getEntityReferenceValue() != null) {
@@ -1379,4 +1378,17 @@ public abstract class BaseApi {
         return null;
     }
 
+    /**
+     * Rounding the double values.
+     * @param cfDto the customFieldDto
+     * @param cft The customFieldTemplate
+     * @return A rounded bigDecimal number.
+     */
+    public Object getDoubleValue(CustomFieldDto cfDto, CustomFieldTemplate cft) {
+        BigDecimal value = new BigDecimal(cfDto.getDoubleValue());
+        RoundingModeEnum roundingMode = cft.getRoundingMode() != null? cft.getRoundingMode():RoundingModeEnum.NEAREST;
+        Integer nbDecimal = (cft.getNbDecimal() != null && cft.getNbDecimal()!=0)?cft.getNbDecimal(): NumberUtils.DEFAULT_NUMBER_DIGITS_DECIMAL;
+        value = NumberUtils.round(value, nbDecimal, roundingMode.getRoundingMode());
+        return value.doubleValue();
+    }
 }

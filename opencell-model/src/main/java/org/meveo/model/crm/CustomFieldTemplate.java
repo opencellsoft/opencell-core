@@ -43,6 +43,7 @@ import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
@@ -58,7 +59,8 @@ import org.meveo.model.shared.DateUtils;
  * 
  * @author Andrius Karpavicius
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  **/
 @Entity
 @ModuleItem
@@ -299,6 +301,18 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Column(name = "display_format", length = 80)
     @Size(max = 80)
     private String displayFormat;
+    /**
+     * Number of digits in decimal part, if the fieldType is double.
+     */
+    @Column(name = "nb_decimal")
+    private Integer nbDecimal;
+
+    /**
+     * Rounding mode, Possible values {@link RoundingModeEnum}.
+     */
+    @Column(name = "rounding_mode", length = 50)
+    @Enumerated(EnumType.STRING)
+    private RoundingModeEnum roundingMode;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -952,6 +966,36 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     public void setDisplayFormat(String displayFormat) {
         this.displayFormat = displayFormat;
     }
-    
-    
+
+    /**
+     * Gets the number of digits in decimal part.
+     * @return number of digits.
+     */
+    public Integer getNbDecimal() {
+        return nbDecimal;
+    }
+
+    /**
+     * Sets number of digits in decimal part.
+     * @param nbDecimal the number of digits.
+     */
+    public void setNbDecimal(Integer nbDecimal) {
+        this.nbDecimal = nbDecimal;
+    }
+
+    /**
+     * Gets the rounding mode.
+     * @return the rounding mode.
+     */
+    public RoundingModeEnum getRoundingMode() {
+        return roundingMode;
+    }
+
+    /**
+     * Sets the rounding mode.
+     * @param roundingMode rounding mode.
+     */
+    public void setRoundingMode(RoundingModeEnum roundingMode) {
+        this.roundingMode = roundingMode;
+    }
 }

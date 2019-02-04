@@ -439,6 +439,13 @@ public class CustomFieldTemplateApi extends BaseApi {
             cft.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getLanguageDescriptions(), cft.getDescriptionI18n()));
         }
 
+        if (dto.getNbDecimal() != null){
+            cft.setNbDecimal(dto.getNbDecimal());
+        }
+        if(dto.getRoundingMode() != null){
+            cft.setRoundingMode(dto.getRoundingMode());
+        }
+
         return cft;
     }
 

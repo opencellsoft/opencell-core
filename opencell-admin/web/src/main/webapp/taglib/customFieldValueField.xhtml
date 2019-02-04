@@ -78,7 +78,14 @@
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DOUBLE}">
         <h:outputText value="#{field.doubleValue}" styleClass="field-value" rendered="#{! edit or disabled}" />
         <p:inputText value="#{field.doubleValue}" required="#{cft.valueRequired and !hasInheritedValue}" rendered="#{edit and !disabled}" label="#{cft.description}">
-            <!--f:convertNumber minFractionDigits="2" /-->
+            <f:converter converterId="bigDecimalXDigitsConverter" />
+            <c:if test="#{cft.nbDecimal!=null}">
+                <f:attribute name="nbDecimal" value="#{cft.nbDecimal}"></f:attribute>
+            </c:if>
+            <c:if test="#{cft.roundingMode!=null}">
+                <f:attribute name="roundingMode" value="#{cft.roundingMode}"></f:attribute>
+            </c:if>
+
             <c:if test="#{cft.minValue!=null and cft.maxValue!=null}">
                 <f:validateLongRange minimum="#{cft.minValue}" maximum="#{cft.maxValue}" />
             </c:if>
