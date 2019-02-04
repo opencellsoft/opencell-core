@@ -519,8 +519,8 @@
 										<hftl:formField label="#{messages['invoice.ccedEmails']}" id="ccedEmails" field="ccedEmails"
 														disabled="#{!subscriptionBean.entity.electronicBilling}"/>
 										<hftl:formField label="#{messages['invoice.mailingType']}" id="mailingType" field="mailingType" noSelectionLabel="false"
-														disabled="#{!subscriptionBean.entity.electronicBilling}"/>
-										<hftl:formField required="#{subscriptionBean.entity.electronicBilling}" id="emailTemplateId" label="#{messages['emailTemplate']}" field="emailTemplate" valueLabelField="code"
+														disabled="#{!subscriptionBean.entity.electronicBilling}" listenerUpdate=":subscriptionTab:subscriptionFormId:informationTab:emailTemplateId"/>
+										<hftl:formField required="#{ not empty subscriptionBean.entity.mailingType}" id="emailTemplateId" label="#{messages['emailTemplate']}" field="emailTemplate" valueLabelField="code"
                                                         popup="true"
                                                         popupId="searchEmailTemplatePopup"/>
 

@@ -297,8 +297,8 @@
 														label="#{messages['billingAccount.electronicBilling']}"
 														field="electronicBilling" isMessage="true" listenerUpdate="emailField emailTemplateId"/>
 												<hftl:formField label="#{messages['invoice.ccedEmails']}" id="ccedEmails" field="ccedEmails"/>
-												<hftl:formField label="#{messages['invoice.mailingType']}" id="mailingType" field="mailingType" noSelectionLabel="false"/>
-												<hftl:formField required="#{billingAccountBean.entity.electronicBilling==true}" id="emailTemplateId" label="#{messages['emailTemplate']}" field="emailTemplate" valueLabelField="code"
+												<hftl:formField label="#{messages['invoice.mailingType']}" listenerUpdate="emailTemplateId" id="mailingType" field="mailingType" noSelectionLabel="false"/>
+												<hftl:formField required="#{not empty billingAccountBean.entity.mailingType}"  id="emailTemplateId" label="#{messages['emailTemplate']}" field="emailTemplate" valueLabelField="code"
 																popup="true"
 																popupId="searchEmailTemplatePopup"/>
 											</p:fieldset>
