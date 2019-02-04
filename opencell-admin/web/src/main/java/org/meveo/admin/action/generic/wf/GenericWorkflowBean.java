@@ -19,15 +19,19 @@
 package org.meveo.admin.action.generic.wf;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -35,10 +39,12 @@ import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.Auditable;
+import org.meveo.model.generic.wf.GWFTransition;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.generic.wf.GWFTransitionService;
 import org.meveo.service.generic.wf.GenericWorkflowService;
 
 /**
@@ -58,17 +64,29 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
     @Inject
     private GenericWorkflowService genericWorkflowService;
 
+    @Inject
+    private GWFTransitionService gWFTransitionService;
+
     private WFStatus selectedWFStatus;
 
+    private transient GWFTransition gWFTransition = new GWFTransition();
+
     private boolean editWFStatus = false;
+
+    private boolean showDetailPage = false;
+
+    public GenericWorkflowBean() {
+        super(GenericWorkflow.class);
+    }
 
     @Override
     protected IPersistenceService<GenericWorkflow> getPersistenceService() {
         return genericWorkflowService;
     }
 
-    public GenericWorkflowBean() {
-        super(GenericWorkflow.class);
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("transitions");
     }
 
     /**
@@ -94,6 +112,133 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         super.saveOrUpdate(killConversation);
         return null;
+    }
+
+    public Map<String, String> getTransitionStatuses() {
+        Map<String, String> statusMap = new TreeMap<>();
+
+        for (WFStatus wfStatus : entity.getStatuses()) {
+            statusMap.put(wfStatus.getCode(), wfStatus.getCode());
+        }
+
+        return statusMap;
+    }
+
+    @ActionMethod
+    public void duplicateWfTransition(GWFTransition gWFTransition) {
+        try {
+            this.gWFTransition = gWFTransitionService.duplicate(gWFTransition, entity);
+
+            // Set max priority +1
+            int priority = 1;
+            if (entity.getTransitions().size() > 0) {
+                for (GWFTransition gWFTransitionInList : entity.getTransitions()) {
+                    if (GWFTransitionBean.CATCH_ALL_PRIORITY != gWFTransitionInList.getPriority() && priority <= gWFTransitionInList.getPriority()) {
+                        priority = gWFTransitionInList.getPriority() + 1;
+                    }
+                }
+            }
+
+            this.gWFTransition.setPriority(priority);
+
+        } catch (Exception e) {
+            log.error("Failed to duplicate WF transition!", e);
+            messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
+        }
+    }
+
+    @ActionMethod
+    public void deleteWfTransition(GWFTransition transitionToDelete) {
+        try {
+            gWFTransitionService.remove(transitionToDelete.getId());
+            entity = genericWorkflowService.refreshOrRetrieve(entity);
+            messages.info(new BundleKey("messages", "delete.successful"));
+        } catch (Exception e) {
+            log.info("Failed to delete!", e);
+            messages.error(new BundleKey("messages", "error.delete.unexpected"));
+        }
+    }
+
+    public void moveUpTransition(GWFTransition selectedWfTransition) throws BusinessException {
+        cancelTransitionDetail();
+
+        int index = entity.getTransitions().indexOf(selectedWfTransition);
+        if (index > 0) {
+            GWFTransition upWfTransition = entity.getTransitions().get(index);
+            int priorityUp = upWfTransition.getPriority();
+            GWFTransition downWfTransition = entity.getTransitions().get(index - 1);
+            GWFTransition needUpdate = gWFTransitionService.refreshOrRetrieve(upWfTransition);
+            needUpdate.setPriority(downWfTransition.getPriority());
+            gWFTransitionService.update(needUpdate);
+            needUpdate = gWFTransitionService.refreshOrRetrieve(downWfTransition);
+            needUpdate.setPriority(priorityUp);
+            gWFTransitionService.update(needUpdate);
+            entity.getTransitions().get(index).setPriority(downWfTransition.getPriority());
+            entity.getTransitions().get(index - 1).setPriority(priorityUp);
+            Collections.swap(entity.getTransitions(), index, index - 1);
+            messages.info(new BundleKey("messages", "update.successful"));
+        }
+    }
+
+    public void moveDownTransition(GWFTransition selectedWfTransition) throws BusinessException {
+        cancelTransitionDetail();
+
+        int index = entity.getTransitions().indexOf(selectedWfTransition);
+        if (index < entity.getTransitions().size() - 1) {
+            GWFTransition upWfTransition = entity.getTransitions().get(index);
+            int priorityUp = upWfTransition.getPriority();
+            GWFTransition downWfTransition = entity.getTransitions().get(index + 1);
+            GWFTransition needUpdate = gWFTransitionService.findById(upWfTransition.getId(), true);
+            needUpdate.setPriority(downWfTransition.getPriority());
+            gWFTransitionService.update(needUpdate);
+            needUpdate = gWFTransitionService.findById(downWfTransition.getId(), true);
+            needUpdate.setPriority(priorityUp);
+            gWFTransitionService.update(needUpdate);
+            entity.getTransitions().get(index).setPriority(downWfTransition.getPriority());
+            entity.getTransitions().get(index + 1).setPriority(priorityUp);
+            Collections.swap(entity.getTransitions(), index, index + 1);
+            messages.info(new BundleKey("messages", "update.successful"));
+        }
+    }
+
+    public void cancelTransitionDetail() {
+        this.gWFTransition = new GWFTransition();
+        showDetailPage = false;
+    }
+
+    public void saveWfTransition() throws BusinessException {
+        if (gWFTransition.getId() != null) {
+            GWFTransition wfTrs = gWFTransitionService.findById(gWFTransition.getId());
+            wfTrs.setFromStatus(gWFTransition.getFromStatus());
+            wfTrs.setToStatus(gWFTransition.getToStatus());
+            wfTrs.setConditionEl(gWFTransition.getConditionEl());
+            wfTrs.setDescription(gWFTransition.getDescription());
+            wfTrs.setActionScript(gWFTransition.getActionScript());
+
+            gWFTransitionService.update(wfTrs);
+
+            messages.info(new BundleKey("messages", "update.successful"));
+        } else {
+
+            gWFTransition.setGenericWorkflow(entity);
+            gWFTransitionService.create(gWFTransition);
+
+            entity.getTransitions().add(gWFTransition);
+            messages.info(new BundleKey("messages", "save.successful"));
+        }
+
+        cancelTransitionDetail();
+    }
+
+    public void newTransition() {
+        showDetailPage = true;
+        List<GWFTransition> wfTransitionList = entity.getTransitions();
+        if (CollectionUtils.isNotEmpty(wfTransitionList)) {
+            GWFTransition lastWFTransition = wfTransitionList.get(wfTransitionList.size() - 1);
+            gWFTransition.setPriority(lastWFTransition.getPriority() + 1);
+        } else {
+            gWFTransition.setPriority(1);
+        }
     }
 
     public void saveOrUpdateWFStatus() throws BusinessException {
@@ -152,5 +297,21 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
 
     public void setEditWFStatus(boolean editWFStatus) {
         this.editWFStatus = editWFStatus;
+    }
+
+    public GWFTransition getgWFTransition() {
+        return gWFTransition;
+    }
+
+    public void setgWFTransition(GWFTransition gWFTransition) {
+        this.gWFTransition = gWFTransition;
+    }
+
+    public boolean isShowDetailPage() {
+        return showDetailPage;
+    }
+
+    public void setShowDetailPage(boolean showDetailPage) {
+        this.showDetailPage = showDetailPage;
     }
 }

@@ -1091,11 +1091,38 @@
         </addColumn>
     </changeSet>
     
-    <changeSet id="#44_20190114" author="AmineBenAicha">
+    <changeSet id="#3948_20190114" author="AmineBenAicha">
     	<addColumn tableName="ar_account_operation">
             <column name="subscription_id" type="bigint"/>
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="ar_account_operation" constraintName="fk_ao_subscription_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+    </changeSet>
+    
+    <changeSet id="#3948_20190131" author="AmineBenAicha">
+    	<dropColumn tableName="wf_generic_workflow" columnName="transition_script_id" />
+    	
+    	<createSequence sequenceName="wf_generic_transition_seq" />
+        <createTable tableName="wf_generic_transition">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_generic_transition_pkey" />
+            </column>
+            <column name="uuid" type="varchar(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="from_status" type="varchar(255)" />
+            <column name="to_status" type="varchar(255)" />
+            <column name="priority" type="int4" />
+            <column name="description" type="varchar(255)" />
+            <column name="generic_wf_id" type="bigint" />
+            <column name="action_script_id" type="bigint" />
+            <column name="condition_el" type="varchar(2000)" />
+            
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_generic_transition" constraintName="fk_transition_generic_wf" deferrable="false" initiallyDeferred="false"
+            onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
+        <addForeignKeyConstraint baseColumnNames="action_script_id" baseTableName="wf_generic_transition" constraintName="fk_wf_transition_script" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
 </databaseChangeLog>

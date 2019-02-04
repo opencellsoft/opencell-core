@@ -75,7 +75,8 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
             businessEntityService.setEntityClass(clazz);
             BusinessEntity businessEntity = businessEntityService.findByCode(workflowInstance.getEntityInstanceCode());
 
-            ScriptInstance scriptInstance = genericWorkflow.getTransitionScript();
+            // ScriptInstance scriptInstance = genericWorkflow.getTransitionScript();
+            ScriptInstance scriptInstance = null;
             String scriptCode = scriptInstance.getCode();
             ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
             Map<String, Object> methodContext = new HashMap<String, Object>();

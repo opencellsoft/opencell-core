@@ -26,9 +26,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -38,7 +37,6 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
-import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * Generic Workflow for entity data processing
@@ -70,18 +68,18 @@ public class GenericWorkflow extends EnableBusinessEntity {
     private List<WFStatus> statuses = new ArrayList<>();
 
     /**
+     * A list of transitions making up worklfow
+     */
+    @OneToMany(mappedBy = "genericWorkflow", fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE })
+    @OrderBy("priority ASC")
+    private List<GWFTransition> transitions = new ArrayList<>();
+
+    /**
      * Should worklfow history be tracked
      */
     @Type(type = "numeric_boolean")
     @Column(name = "enable_history")
     private boolean enableHistory;
-
-    /**
-     * The transition script
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "transition_script_id")
-    private ScriptInstance transitionScript;
 
     public String getTargetEntityClass() {
         return targetEntityClass;
@@ -115,11 +113,11 @@ public class GenericWorkflow extends EnableBusinessEntity {
         this.enableHistory = enableHistory;
     }
 
-    public ScriptInstance getTransitionScript() {
-        return transitionScript;
+    public List<GWFTransition> getTransitions() {
+        return transitions;
     }
 
-    public void setTransitionScript(ScriptInstance transitionScript) {
-        this.transitionScript = transitionScript;
+    public void setTransitions(List<GWFTransition> transitions) {
+        this.transitions = transitions;
     }
 }
