@@ -42,7 +42,7 @@ import org.meveo.commons.utils.NumberUtils;
  * 
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
- * @lastModifiedDate 7.0
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @Table(name = "cat_usage_charge_template")
