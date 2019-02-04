@@ -38,14 +38,14 @@ public class DunningDocument extends BusinessEntity implements IWFEntity {
     /**
      * Unpaid invoices associated to this dunning document
      */
-    @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<RecordedInvoice> dueInvoices;
 
     /**
      * payments done withing the dunning process
      * associated with this dunning doc
      */
-    @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Payment> payments;
 
     public CustomerAccount getCustomerAccount() {
@@ -106,7 +106,7 @@ public class DunningDocument extends BusinessEntity implements IWFEntity {
     public BigDecimal getPaidAmount() {
     	BigDecimal paidAmount = BigDecimal.ZERO;
     	if (payments != null && !payments.isEmpty()) {
-    		for (AccountOperation payment : payments) {
+    		for (Payment payment : payments) {
     			paidAmount = paidAmount.add(payment.getAmount());
 			}
     	}
