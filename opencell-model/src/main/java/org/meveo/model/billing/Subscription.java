@@ -31,11 +31,14 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.*;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
@@ -95,7 +98,7 @@ import java.util.List;
         @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
-public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity {
+public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable {
 
     private static final long serialVersionUID = 1L;
 
@@ -291,6 +294,18 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     @Column(name = "rating_group", length = 50)
     private String ratingGroup;
+
+    /**
+     * Instance of discount plans.
+     */
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<DiscountPlanInstance> discountPlanInstances;
+
+    /**
+     * Applicable discount plan. Replaced by discountPlanInstances. Now used only in GUI.
+     */
+    @Transient
+    private DiscountPlan discountPlan;
 
     /**
      * List of dunning docs accociated with this subcription
@@ -641,7 +656,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
             this.setEndAgreementDate(this.subscribedTillDate);
         }
     }
-    
+
     private boolean isToBeTerminatedWithFutureDate() {
         return this.subscriptionRenewal.getTerminationReason() != null && !this.subscriptionRenewal.isAutoRenew() && this.subscribedTillDate != null
                 && subscriptionRenewal.getEndOfTermAction() == EndOfTermActionEnum.TERMINATE;
@@ -886,5 +901,30 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     public void setElectronicBilling(boolean electronicBilling) {
         this.electronicBilling = electronicBilling;
+    }
+    public List<DiscountPlanInstance> getDiscountPlanInstances() {
+        return discountPlanInstances;
+    }
+
+    @Override
+    public List<DiscountPlanInstance> getAllDiscountPlanInstances() {
+        return this.getDiscountPlanInstances();
+    }
+
+    @Override
+    public void addDiscountPlanInstances(DiscountPlanInstance discountPlanInstance) {
+        this.getDiscountPlanInstances().add(discountPlanInstance);
+    }
+
+    public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstances) {
+        this.discountPlanInstances = discountPlanInstances;
+    }
+
+    public DiscountPlan getDiscountPlan() {
+        return discountPlan;
+    }
+
+    public void setDiscountPlan(DiscountPlan discountPlan) {
+        this.discountPlan = discountPlan;
     }
 }

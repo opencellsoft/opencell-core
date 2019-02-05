@@ -1863,9 +1863,18 @@ $$ LANGUAGE plpgsql;
                 <constraints nullable="false" />
             </column>
             <column name="discount_plan_id" type="bigint">
-                <constraints nullable="false" />
+                <constraints nullable="true" />
             </column>
         </createTable>
         <addPrimaryKey columnNames="offer_tmpl_id, discount_plan_id" constraintName="cat_offer_tmpl_discount_plan_pkey" tableName="cat_offer_tmpl_discount_plan" />
+
+        <addColumn tableName="billing_discount_plan_instance">
+            <column name="subscription_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <dropNotNullConstraint tableName="billing_discount_plan_instance" columnName="billing_account_id"/>
+        <addForeignKeyConstraint constraintName="billing_discount_plan_instance_bs_fk" referencedTableName="billing_subscription" baseColumnNames="subscription_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id" />
+
     </changeSet>
 </databaseChangeLog>

@@ -33,11 +33,10 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionRenewal;
+import org.meveo.model.billing.*;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.InitialTermTypeEnum;
-import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
@@ -91,9 +90,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
     private OfferTemplateService offerTemplateService;
 
     @Inject
+    private DiscountPlanInstanceService discountPlanInstanceService;
+
+
+    @Inject
     private AuditableFieldService auditableFieldService;
 
-    
+
     @MeveoAudit
     @Override
     public void create(Subscription subscription) throws BusinessException {
@@ -278,13 +281,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     private Subscription terminateSubscriptionWithFutureDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason) throws BusinessException {
-        
+
     	subscription.setSubscribedTillDate(terminationDate);
     	SubscriptionRenewal subscriptionRenewal = subscription.getSubscriptionRenewal();
-    	
+
     	subscriptionRenewal.setTerminationReason(terminationReason);
     	subscriptionRenewal.setInitialTermType(InitialTermTypeEnum.FIXED);
-    	subscriptionRenewal.setAutoRenew(false);		
+    	subscriptionRenewal.setAutoRenew(false);
     	subscriptionRenewal.setEndOfTermAction(EndOfTermActionEnum.TERMINATE);
 		
 		subscription = update(subscription);
@@ -584,4 +587,20 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
+    public Subscription instantiateDiscountPlan(Subscription entity, DiscountPlan dp) throws BusinessException {
+        if(!entity.getOffer().getAllowedDiscountPlans().contains(dp)){
+            throw new BusinessException("DiscountPlan " + dp .getCode() +" is not allowed in this offer.");
+        }
+        BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
+        for(DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()){
+            if(dp.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
+                throw new BusinessException("DiscountPlan " + dp.getCode() + " is already instantiated in Billing Account "+ billingAccount.getCode() +".");
+            }
+        }
+        return (Subscription) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null);
+    }
+
+    public void terminateDiscountPlan(Subscription entity, DiscountPlanInstance dpi) throws BusinessException {
+        discountPlanInstanceService.terminateDiscountPlan(entity,dpi);
+    }
 }
