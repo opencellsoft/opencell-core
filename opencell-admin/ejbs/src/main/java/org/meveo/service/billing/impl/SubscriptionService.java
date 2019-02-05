@@ -18,6 +18,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +27,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
@@ -33,6 +35,7 @@ import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
@@ -46,6 +49,8 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -409,4 +414,129 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		entity.setSubscriptionRenewal(new SubscriptionRenewal());
 	}
 
+	/**
+     * Subscription balance due.
+     *
+     * @param subscription the Subscription
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
+    public BigDecimal subscriptionBalanceDue(Subscription subscription, Date to) throws BusinessException {
+        log.info("subscriptionBalanceDue  subscription:" + (subscription == null ? "null" : subscription.getCode()) + " toDate:" + to);
+        return computeBalance(subscription, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+    }
+
+    /**
+     * Subscription balance exigible without litigation.
+     *
+     * @param subscription the Subscription
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
+    public BigDecimal subscriptionBalanceExigibleWithoutLitigation(Subscription subscription, Date to) throws BusinessException {
+        log.info("subscriptionBalanceExigibleWithoutLitigation  subscription:" + (subscription == null ? "null" : subscription.getCode()) + " toDate:" + to);
+        return computeBalance(subscription, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
+    }
+
+    /**
+     * Compute balance.
+     *
+     * @param subscription the Subscription
+     * @param to the to
+     * @param isDue the is due
+     * @param status the status
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
+    private BigDecimal computeBalance(Subscription subscription, Date to, boolean isDue, MatchingStatusEnum... status) throws BusinessException {
+        return computeBalance(subscription, to, false, isDue, status);
+    }
+
+    /**
+     * Computes a balance given a subscription. to and isDue parameters are ignored when isFuture is true.
+     * 
+     * @param subscription of the customer
+     * @param to compare the invoice due or transaction date here
+     * @param isFuture includes the future due or transaction date
+     * @param isDue if true filter via dueDate else transactionDate
+     * @param status can be a list of MatchingStatusEnum
+     * @return the computed balance
+     * @throws BusinessException when an error in computation is encoutered
+     */
+    private BigDecimal computeBalance(Subscription subscription, Date to, boolean isFuture, boolean isDue, MatchingStatusEnum... status) throws BusinessException {
+        log.trace("start computeBalance subscription:{}, toDate:{}, isDue:{}", (subscription == null ? "null" : subscription.getCode()), to, isDue);
+        if (subscription == null) {
+            log.warn("Error when subscription is null!");
+            throw new BusinessException("subscription is null");
+        }
+        if (!isFuture && to == null) {
+            log.warn("Error when toDate is null!");
+            throw new BusinessException("toDate is null");
+        }
+        BigDecimal balance = null, balanceDebit = null, balanceCredit = null;
+        try {
+            balanceDebit = computeOccAmount(subscription, OperationCategoryEnum.DEBIT, isFuture, isDue, to, status);
+            balanceCredit = computeOccAmount(subscription, OperationCategoryEnum.CREDIT, isFuture, isDue, to, status);
+            if (balanceDebit == null) {
+                balanceDebit = BigDecimal.ZERO;
+            }
+            if (balanceCredit == null) {
+                balanceCredit = BigDecimal.ZERO;
+            }
+            balance = balanceDebit.subtract(balanceCredit);
+            ParamBean param = paramBeanFactory.getInstance();
+            int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
+            balance = balance.multiply(new BigDecimal(balanceFlag));
+            log.debug("end computeBalance subscription code:{} , balance:{}", subscription.getCode(), balance);
+        } catch (Exception e) {
+            throw new BusinessException("Internal error");
+        }
+        return balance;
+
+    }
+
+    /**
+     * Compute occ amount.
+     *
+     * @param subscription the Subscription
+     * @param operationCategoryEnum the operation category enum
+     * @param isFuture the is future
+     * @param isDue the is due
+     * @param to the to
+     * @param status the status
+     * @return the big decimal
+     * @throws Exception the exception
+     */
+    private BigDecimal computeOccAmount(Subscription subscription, OperationCategoryEnum operationCategoryEnum, boolean isFuture, boolean isDue, Date to,
+            MatchingStatusEnum... status) throws Exception {
+        BigDecimal balance = null;
+        QueryBuilder queryBuilder = new QueryBuilder("select sum(unMatchingAmount) from AccountOperation");
+        queryBuilder.addCriterionEnum("transactionCategory", operationCategoryEnum);
+
+        if (!isFuture) {
+            if (isDue) {
+                queryBuilder.addCriterion("dueDate", "<=", to, false);
+
+            } else {
+                queryBuilder.addCriterion("transactionDate", "<=", to, false);
+            }
+        }
+
+        queryBuilder.addCriterionEntity("subscription", subscription);
+        if (status.length == 1) {
+            queryBuilder.addCriterionEnum("matchingStatus", status[0]);
+        } else {
+            queryBuilder.startOrClause();
+            for (MatchingStatusEnum st : status) {
+                queryBuilder.addCriterionEnum("matchingStatus", st);
+            }
+            queryBuilder.endOrClause();
+        }
+        log.debug("query={}", queryBuilder.getSqlString());
+        Query query = queryBuilder.getQuery(getEntityManager());
+        balance = (BigDecimal) query.getSingleResult();
+        return balance;
+    }
 }

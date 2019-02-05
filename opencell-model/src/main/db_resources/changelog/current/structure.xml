@@ -988,7 +988,6 @@
         <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_other_transaction_origin" referencedTableName="ar_other_transaction" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="original_ot_id" />
         <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_other_transaction" referencedTableName="ar_other_transaction" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="new_ot_id" />
         <addForeignKeyConstraint constraintName="fk_ar_payment_ventilation_ar_account_operation" referencedTableName="ar_account_operation" referencedColumnNames="id" baseTableName="ar_payment_ventilation" baseColumnNames="account_operation_id" />
-
     </changeSet>
 
     <changeSet id="#3650_20181220" author="AmineBenAicha">
@@ -1083,6 +1082,21 @@
 
     <changeSet id="#3970 - Change of RT description database field from varchar to text" author="mounir.boukayoua">
         <modifyDataType tableName="billing_rated_transaction" columnName="description" newDataType="${type.text}"/>
+    </changeSet>
+
+    <changeSet id="#3842_20190111 - Trigger next charge" author="EdwardPLegaspi">
+        <addColumn tableName="cat_usage_charge_template">
+            <column name="trigger_next_charge" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="trigger_next_charge_el" type="${type.text}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#44_20190114" author="AmineBenAicha">
+    	<addColumn tableName="ar_account_operation">
+            <column name="subscription_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="ar_account_operation" constraintName="fk_ao_subscription_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
     </changeSet>
 
     <changeSet id="#2947_20181231_add_emailing_invoice_invoice_type" author="Khalid HORRI">

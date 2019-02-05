@@ -27,6 +27,10 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.slf4j.Logger;
 
+/**
+ * @author HORRI Khalid
+ * @lastModifiedVersion 6.0
+ */
 @Stateless
 public class SubscriptionStatusJobBean extends BaseJobBean {
 
@@ -35,14 +39,14 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 
 	@Inject
 	private SubscriptionService subscriptionService;
-	
+
 	@Inject
 	private ServiceInstanceService serviceInstanceService;
 
 	@Inject
 	@EndOfTerm
 	protected Event<Subscription> endOfTermEventProducer;
-	
+
 	@Inject
 	@EndOfTerm
 	protected Event<ServiceInstance> serviceEndOfTermEventProducer;
@@ -63,22 +67,25 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 					|| subscription.getStatus() == SubscriptionStatusEnum.CREATED)) {
 
 				if (subscription.getSubscriptionRenewal().isAutoRenew()) {
-					Calendar calendar = new GregorianCalendar();
-					calendar.setTime(subscription.getSubscribedTillDate());
-					calendar.add(subscription.getSubscriptionRenewal().getRenewForUnit().getCalendarField(), getNumberOfMonths(subscription, untillDate));
-					subscription.setSubscribedTillDate(calendar.getTime());
-					subscription.setRenewed(true);
-					subscription.setRenewalNotifiedDate(null);
+					Date subscribedTillDate = subscription.getSubscribedTillDate();
+					while (subscribedTillDate.before(untillDate)) {
+						Calendar calendar = new GregorianCalendar();
+						calendar.setTime(subscription.getSubscribedTillDate());
+						calendar.add(subscription.getSubscriptionRenewal().getRenewForUnit().getCalendarField(), subscription.getSubscriptionRenewal().getRenewFor());
+						subscription.setSubscribedTillDate(calendar.getTime());
+						subscription.setRenewed(true);
+						subscription.setRenewalNotifiedDate(null);
 
-					if (subscription.getSubscriptionRenewal().isExtendAgreementPeriodToSubscribedTillDate()) {
-						subscription.setEndAgreementDate(subscription.getSubscribedTillDate());
+						if (subscription.getSubscriptionRenewal().isExtendAgreementPeriodToSubscribedTillDate()) {
+							subscription.setEndAgreementDate(subscription.getSubscribedTillDate());
+						}
+
+						subscription = subscriptionService.update(subscription);
+
+						log.debug("Subscription {} has beed renewed to date {} with end agreement date of {}", subscription.getCode(), subscription.getSubscribedTillDate(),
+								subscription.getEndAgreementDate());
+						subscribedTillDate = subscription.getSubscribedTillDate();
 					}
-
-					subscription = subscriptionService.update(subscription);
-
-					log.debug("Subscription {} has beed renewed to date {} with end agreement date of {}",
-							subscription.getCode(), subscription.getSubscribedTillDate(),
-							subscription.getEndAgreementDate());
 
 				} else if (subscription.getSubscriptionRenewal().getEndOfTermAction() == EndOfTermActionEnum.SUSPEND) {
 					subscriptionService.subscriptionSuspension(subscription,
@@ -104,14 +111,6 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 			log.error("Failed to process status of subscription {} ", subscriptionId, e);
 			result.registerError("Failed to process status of subscription " + subscriptionId + ":" + e.getMessage());
 		}
-	}
-
-	private int getNumberOfMonths(Subscription subscription, Date untillDate) {
-		if (untillDate == null) {
-			return subscription.getSubscriptionRenewal().getRenewFor();
-		}
-		int nbrMonths = DateUtils.monthsBetween(subscription.getSubscribedTillDate(), untillDate);
-		return nbrMonths + 1;
 	}
 
 	@JpaAmpNewTx
