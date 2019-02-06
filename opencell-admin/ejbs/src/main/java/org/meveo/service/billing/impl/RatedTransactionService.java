@@ -387,22 +387,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         // Determine which discount plan items apply to this invoice
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
 
-        if ((billingAccount.getDiscountPlanInstances() != null) && !billingAccount.getDiscountPlanInstances().isEmpty()) {
-            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-			for (DiscountPlanInstance dpi : billingAccount.getDiscountPlanInstances()) {
-				if (!dpi.isEffective(invoice.getInvoiceDate())) {
-					continue;
-				}
-				if (dpi.getDiscountPlan().isActive()) {
-					List<DiscountPlanItem> discountPlanItems = dpi.getDiscountPlan().getDiscountPlanItems();
-					for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-						if (discountPlanItem.isActive() && matchDiscountPlanItemExpression(
-								discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice, dpi)) {
-							applicableDiscountPlanItems.add(discountPlanItem);
-						}
-					}
-				}
-			}
+        Subscription subscription = invoice.getSubscription();
+        CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+
+        if (subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
+            applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
+        }
+        if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
+            applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
 
         // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates
@@ -635,6 +627,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
     }
 
+    private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount,List<DiscountPlanInstance> discountPlanInstances, Invoice invoice, CustomerAccount customerAccount)
+            throws BusinessException {
+        List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
+        for (DiscountPlanInstance dpi : discountPlanInstances) {
+            if (!dpi.isEffective(invoice.getInvoiceDate())) {
+                continue;
+            }
+            if (dpi.getDiscountPlan().isActive()) {
+                List<DiscountPlanItem> discountPlanItems = dpi.getDiscountPlan().getDiscountPlanItems();
+                for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+                    if (discountPlanItem.isActive() && matchDiscountPlanItemExpression(
+                            discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice, dpi)) {
+                        applicableDiscountPlanItems.add(discountPlanItem);
+                    }
+                }
+            }
+        }
+        return applicableDiscountPlanItems;
+    }
+
     /**
      * Check if Billing account has any not yet billed Rated transactions
      * 
@@ -859,6 +871,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         if (expression.indexOf("dpi") >= 0) {
             userMap.put("dpi", dpi);
+        }
+        if (expression.indexOf("su") >= 0) {
+            userMap.put("su", invoice.getSubscription());
         }
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {
