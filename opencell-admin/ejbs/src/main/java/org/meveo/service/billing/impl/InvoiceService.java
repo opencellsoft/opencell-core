@@ -2239,8 +2239,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public boolean sendByEmail(Invoice invoice, MailingTypeEnum mailingTypeEnum, String overrideEmail) throws BusinessException {
         try {
+            if (invoice == null) {
+                log.error("The invoice to be sent by Email is null!!");
+                return false;
+            }
             invoice = refreshOrRetrieve(invoice);
             if (invoice.getPdfFilename() == null) {
+                log.warn("The Pdf for the invoice is not generated!!");
                 return false;
             }
             List<String> to = new ArrayList<>();
@@ -2250,6 +2255,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             String fileName = getFullPdfFilePath(invoice, false);
             File attachment = new File(fileName);
             if (!attachment.exists()) {
+                log.warn("No Pdf file exists for the invoice " + invoice.getInvoiceNumber());
                 return false;
             }
             files.add(attachment);
@@ -2257,7 +2263,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             MailingTypeEnum mailingType = invoice.getInvoiceType().getMailingType();
             BillingAccount billingAccount = invoice.getBillingAccount();
             Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
-            to.add(billingAccount.getContactInformation().getEmail());
+            if (billingAccount.getContactInformation() != null) {
+                to.add(billingAccount.getContactInformation().getEmail());
+            }
             if (billingAccount.getCcedEmails() != null) {
                 cc.addAll(Arrays.asList(billingAccount.getCcedEmails().split(",")));
             }
@@ -2301,6 +2309,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 cc.clear();
             }
             if (to.isEmpty() || emailTemplate == null) {
+                log.warn("No Email or  EmailTemplate is configured to receive the invoice!!");
+                return false;
+            }
+            if (seller == null || seller.getContactInformation() == null) {
+                log.warn("The Seller or it's contact information is null!!");
                 return false;
             }
             if (electronicBilling && mailingTypeEnum.equals(mailingType)) {
@@ -2313,6 +2326,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             return false;
         } catch (Exception e) {
+            log.error(e.getMessage(),e);
             throw new BusinessException(e.getMessage(), e);
         }
     }
