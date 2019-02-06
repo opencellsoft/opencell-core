@@ -25,8 +25,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -34,7 +32,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.scripts.ScriptInstance;
@@ -43,9 +40,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @ExportIdentifier({ "uuid" })
 @Table(name = "wf_generic_transition", uniqueConstraints = @UniqueConstraint(columnNames = { "uuid" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "wf_generic_transition_seq"), })
-@NamedQueries({
-        @NamedQuery(name = "GWFTransition.listByFromStatus", query = "SELECT gwft FROM GWFTransition gwft where (gwft.fromStatus=:fromStatusValue or gwft.fromStatus='*') and genericWorkflow=:genericWorkflowValue order by priority ASC") })
+        @Parameter(name = "sequence_name", value = "wf_generic_transition_seq") })
 public class GWFTransition extends BaseEntity implements Comparable<GWFTransition> {
 
     private static final long serialVersionUID = 1L;
@@ -189,27 +184,6 @@ public class GWFTransition extends BaseEntity implements Comparable<GWFTransitio
         this.actionScript = actionScript;
     }
 
-    public String getCombinedEl() {
-
-        StringBuffer combinedEl = new StringBuffer();
-        final String AND = " AND ";
-        StringBuffer combinedDecisionRuleEL = new StringBuffer();
-        String trimmedEl = "";
-        String elWithoutBrackets = "";
-        if (!StringUtils.isBlank(conditionEl)) {
-            trimmedEl = conditionEl.trim();
-            if (trimmedEl != null && trimmedEl.indexOf("{") >= 0 && trimmedEl.indexOf("}") >= 0) {
-                elWithoutBrackets = trimmedEl.substring(2, trimmedEl.length() - 1);
-            }
-        }
-        if (StringUtils.isBlank(elWithoutBrackets)) {
-            return combinedDecisionRuleEL.substring(5);
-        } else if (trimmedEl != null && combinedDecisionRuleEL.toString().startsWith(AND)) {
-            combinedEl.append(trimmedEl.substring(0, trimmedEl.length() - 1)).append(combinedDecisionRuleEL).append("}");
-        }
-        return combinedEl.toString();
-    }
-
     @Override
     public int hashCode() {
         return 961 + ("WFTransition" + id).hashCode();
@@ -250,7 +224,7 @@ public class GWFTransition extends BaseEntity implements Comparable<GWFTransitio
 
     @Override
     public String toString() {
-        return String.format("WFTransition [fromStatus=%s, toStatus=%s, priority=%s, conditionEl=%s, combinedEl=%s]", fromStatus, toStatus, priority, conditionEl, getCombinedEl());
+        return String.format("WFTransition [fromStatus=%s, toStatus=%s, priority=%s, conditionEl=%s]", fromStatus, toStatus, priority, conditionEl);
     }
 
     public String clearUuid() {

@@ -23,24 +23,30 @@ import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
 import static org.meveo.admin.job.GenericWorkflowJob.WF_INS;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.generic.wf.GWFTransition;
 import org.meveo.model.generic.wf.GenericWorkflow;
+import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstance;
+import org.meveo.model.generic.wf.WorkflowInstanceHistory;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
@@ -49,49 +55,115 @@ import org.meveo.service.script.ScriptInterface;
 public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
     @Inject
-    private BusinessEntityService businessEntityService;
+    private ScriptInstanceService scriptInstanceService;
 
     @Inject
-    private ScriptInstanceService scriptInstanceService;
+    private GWFTransitionService gWFTransitionService;
+
+    @Inject
+    private WFStatusService wfStatusService;
+
+    @Inject
+    private WorkflowInstanceService workflowInstanceService;
+
+    @Inject
+    private WorkflowInstanceHistoryService workflowInstanceHistoryService;
 
     static Set<Class<?>> WORKFLOWED_CLASSES = ReflectionUtils.getClassesAnnotatedWith(WorkflowedEntity.class, "org.meveo");
 
-    public List<Class<?>> getAllWorkflowedClass() {
+    public List<Class<?>> getAllWorkflowedClazz() {
         List<Class<?>> result = new ArrayList<>(WORKFLOWED_CLASSES);
         return result;
     }
 
-    /**
-     * 
-     * @param workflowInstance
-     * @param genericWorkflow
-     * @throws BusinessException
-     */
-    public void executeTransitionScript(WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
+    public List<GenericWorkflow> findByBusinessEntity(BusinessEntity entity) {
+        return list().stream().filter(g -> {
+            String qualifiedName = g.getTargetEntityClass();
+            Class<?> clazz = null;
+            try {
+                clazz = Class.forName(qualifiedName);
+            } catch (ClassNotFoundException e) {
+                return false;
+            }
+            return clazz.isInstance(entity);
+        }).collect(Collectors.toList());
+    }
+
+    public List<GenericWorkflow> findByfindByTargetEntityClass(String targetEntityClass) {
+        List<GenericWorkflow> genericWorkflows = (List<GenericWorkflow>) getEntityManager().createNamedQuery("GenericWorkflow.findByTargetEntityClass", GenericWorkflow.class)
+            .setParameter("targetEntityClass", targetEntityClass).getResultList();
+        return genericWorkflows;
+    }
+
+    public WorkflowInstance executeWorkflow(WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
         log.debug("Executing generic workflow script:{} on instance {}", genericWorkflow.getCode(), workflowInstance);
         try {
-            String qualifiedName = genericWorkflow.getTargetEntityClass();
-            Class<BusinessEntity> clazz = (Class<BusinessEntity>) Class.forName(qualifiedName);
-            businessEntityService.setEntityClass(clazz);
-            BusinessEntity businessEntity = businessEntityService.findByCode(workflowInstance.getEntityInstanceCode());
 
-            // ScriptInstance scriptInstance = genericWorkflow.getTransitionScript();
-            ScriptInstance scriptInstance = null;
-            String scriptCode = scriptInstance.getCode();
-            ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
-            Map<String, Object> methodContext = new HashMap<String, Object>();
-            methodContext.put(GENERIC_WF, genericWorkflow);
-            methodContext.put(WF_INS, workflowInstance);
-            methodContext.put(IWF_ENTITY, (IWFEntity) businessEntity);
-            methodContext.put(Script.CONTEXT_ACTION, scriptCode);
-            if (script == null) {
-                log.error("Script is null");
-                throw new BusinessException("script is null");
+            IWFEntity iwfEntity = (IWFEntity) workflowInstanceService.getBusinessEntity(workflowInstance);
+            WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
+            String currentStatus = currentWFStatus != null ? currentWFStatus.getCode() : null;
+            log.trace("Actual status: {}", currentStatus);
+            List<GWFTransition> listByFromStatus = gWFTransitionService.listByFromStatus(currentStatus, genericWorkflow);
+
+            for (GWFTransition gWFTransition : listByFromStatus) {
+
+                if (matchExpression(gWFTransition.getConditionEl(), iwfEntity)) {
+
+                    log.debug("Processing transition: {} on entity {}", gWFTransition, workflowInstance);
+                    WorkflowInstanceHistory wfHistory = new WorkflowInstanceHistory();
+                    if (genericWorkflow.isEnableHistory()) {
+                        wfHistory.setActionDate(new Date());
+                        wfHistory.setWorkflowInstance(workflowInstance);
+                        wfHistory.setFromStatus(gWFTransition.getFromStatus());
+                        wfHistory.setToStatus(gWFTransition.getToStatus());
+                        wfHistory.setTransitionName(gWFTransition.getDescription());
+                        wfHistory.setWorkflowInstance(workflowInstance);
+
+                        workflowInstanceHistoryService.create(wfHistory);
+                    }
+
+                    if (gWFTransition.getActionScript() != null) {
+                        ScriptInstance scriptInstance = gWFTransition.getActionScript();
+                        String scriptCode = scriptInstance.getCode();
+                        ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
+                        Map<String, Object> methodContext = new HashMap<String, Object>();
+                        methodContext.put(GENERIC_WF, genericWorkflow);
+                        methodContext.put(WF_INS, workflowInstance);
+                        methodContext.put(IWF_ENTITY, iwfEntity);
+                        methodContext.put(Script.CONTEXT_ACTION, scriptCode);
+                        if (script == null) {
+                            log.error("Script is null");
+                            throw new BusinessException("script is null");
+                        }
+                        script.execute(methodContext);
+                    }
+
+                    WFStatus toStatus = wfStatusService.findByCodeAndGWF(gWFTransition.getToStatus(), genericWorkflow);
+                    workflowInstance.setCurrentStatus(toStatus);
+
+                    log.trace("Entity status will be updated to {}. Entity {}", workflowInstance, gWFTransition.getToStatus());
+                    workflowInstance = workflowInstanceService.update(workflowInstance);
+                    return workflowInstance;
+                }
             }
-            script.execute(methodContext);
         } catch (Exception e) {
             log.error("Failed to execute generic workflow {} on {}", genericWorkflow.getCode(), workflowInstance, e);
             throw new BusinessException(e);
         }
+
+        return workflowInstance;
+    }
+
+    private boolean matchExpression(String expression, Object object) throws BusinessException {
+
+        if (StringUtils.isBlank(expression)) {
+            return true;
+        }
+        Map<Object, Object> userMap = new HashMap<>();
+        if (expression.indexOf("entity") >= 0) {
+            userMap.put("entity", object);
+        }
+
+        return ValueExpressionWrapper.evaluateToBooleanOneVariable(expression, "entity", object);
     }
 }

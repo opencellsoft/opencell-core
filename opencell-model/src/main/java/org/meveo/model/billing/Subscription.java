@@ -56,7 +56,9 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
@@ -74,6 +76,7 @@ import org.meveo.model.shared.DateUtils;
  * @lastModifiedVersion 5.3
  */
 @Entity
+@WorkflowedEntity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SUB", inheritCFValuesFrom = { "offer", "userAccount" })
 @ExportIdentifier({ "code" })
@@ -85,7 +88,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
-public class Subscription extends BusinessCFEntity implements IBillableEntity {
+public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity {
 
     private static final long serialVersionUID = 1L;
 

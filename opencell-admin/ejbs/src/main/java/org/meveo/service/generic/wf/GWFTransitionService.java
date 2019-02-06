@@ -18,15 +18,40 @@
  */
 package org.meveo.service.generic.wf;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.generic.wf.GWFTransition;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.service.base.PersistenceService;
 
+import com.google.common.collect.Maps;
+
 @Stateless
 public class GWFTransitionService extends PersistenceService<GWFTransition> {
+
+    public List<GWFTransition> listByFromStatus(String fromStatus, GenericWorkflow genericWorkflow) {
+
+        Map<String, Object> params = Maps.newHashMap();
+        String criteria;
+
+        if (StringUtils.isBlank(fromStatus)) {
+            criteria = "fromStatus is null";
+        } else {
+            criteria = "fromStatus=:fromStatusValue";
+            params.put("fromStatusValue", fromStatus);
+        }
+
+        String query = "From GWFTransition where " + criteria + " and genericWorkflow=:genericWorkflowValue order by priority ASC";
+
+        params.put("genericWorkflowValue", genericWorkflow);
+
+        return (List<GWFTransition>) executeSelectQuery(query, params);
+    }
 
     public synchronized GWFTransition duplicate(GWFTransition entity, GenericWorkflow genericWorkflow) throws BusinessException {
         entity = refreshOrRetrieve(entity);

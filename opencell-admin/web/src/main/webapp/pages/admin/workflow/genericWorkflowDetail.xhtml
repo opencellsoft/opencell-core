@@ -143,6 +143,8 @@
                                     <h:outputText value="#{messages['commons.actions']}" />
                                 </f:facet>
 
+								<p:commandButton id="editDunningPlanTransitionLink" update=":tabView:dunningPlanTransition_panel" action="#{genericWorkflowBean.editgWFTransition(entity)}"
+                                    icon="ui-icon-document" />
                                 <p:commandButton id="duplicateDunningPlanTransitionLink" update=":tabView:dunningPlanTransition_panel" action="#{genericWorkflowBean.duplicateWfTransition(entity)}"
                                     icon="ui-icon-plus" />
                                 <p:commandButton id="deleteDunningPlanTransitionLink" action="#{genericWorkflowBean.deleteWfTransition(entity)}" icon="ui-icon-trash" update=":tabView:genericWFFormId :tabView:dunningPlanTransition_panel" />
@@ -169,7 +171,7 @@
                                         edit="#{genericWorkflowBean.edit}" listValues="#{genericWorkflowBean.transitionStatuses}" />
 
                                     <hftl:formField label="#{messages['dunningPlan.conditionEl']}" field="conditionEl" textArea="true" rows="1" maxlength="2000"
-                                        edit="#{genericWorkflowBean.edit}" required="false" />
+                                        edit="#{genericWorkflowBean.edit}" required="true" />
 
                                     <hftl:formField label="#{messages['transition.description']}" field="description" required="true" edit="#{genericWorkflowBean.edit}" />
 

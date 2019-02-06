@@ -26,6 +26,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -47,7 +49,9 @@ import org.meveo.model.ModuleItem;
 @ExportIdentifier({ "code" })
 @Table(name = "wf_generic_workflow", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "wf_generic_workflow_seq"), })
+        @Parameter(name = "sequence_name", value = "wf_generic_workflow_seq") })
+@NamedQueries({
+    @NamedQuery(name = "GenericWorkflow.findByTargetEntityClass", query = "From GenericWorkflow where targetEntityClass=:targetEntityClass") })
 public class GenericWorkflow extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -70,7 +74,7 @@ public class GenericWorkflow extends EnableBusinessEntity {
     /**
      * A list of transitions making up worklfow
      */
-    @OneToMany(mappedBy = "genericWorkflow", fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE })
+    @OneToMany(mappedBy = "genericWorkflow", fetch = FetchType.EAGER, cascade = { CascadeType.REMOVE })
     @OrderBy("priority ASC")
     private List<GWFTransition> transitions = new ArrayList<>();
 

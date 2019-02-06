@@ -96,7 +96,7 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
      * @return A list of classnames
      */
     public List<String> autocompleteClassNames(String query) {
-        List<Class<?>> allWFClass = genericWorkflowService.getAllWorkflowedClass();
+        List<Class<?>> allWFClass = genericWorkflowService.getAllWorkflowedClazz();
         List<String> classNames = new ArrayList<>();
         for (Class<?> clazz : allWFClass) {
             if (StringUtils.isBlank(query) || clazz.getName().toLowerCase().contains(query.toLowerCase())) {
@@ -140,11 +140,18 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
             }
 
             this.gWFTransition.setPriority(priority);
+            editgWFTransition(this.gWFTransition);
 
         } catch (Exception e) {
             log.error("Failed to duplicate WF transition!", e);
             messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
         }
+    }
+
+    @ActionMethod
+    public void editgWFTransition(GWFTransition transitionToEdit) {
+        this.gWFTransition = transitionToEdit;
+        showDetailPage = true;
     }
 
     @ActionMethod

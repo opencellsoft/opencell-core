@@ -27,24 +27,32 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.EnableBusinessEntity;
+import org.meveo.model.ExportIdentifier;
 
 /**
  * Workflow instance linked to business entity
  */
 @Entity
-@Table(name = "wf_instance")
+@ExportIdentifier({ "code" })
+@Table(name = "wf_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "generic_wf_id", "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "wf_instance_seq"), })
-public class WorkflowInstance extends BaseEntity {
+        @Parameter(name = "sequence_name", value = "wf_instance_seq") })
+public class WorkflowInstance extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 1L;
+
+    @Column(name = "target_entity_class", nullable = false)
+    private String targetEntityClass;
 
     /**
      * Generic Workflow
@@ -54,23 +62,25 @@ public class WorkflowInstance extends BaseEntity {
     private GenericWorkflow genericWorkflow;
 
     /**
-     * Affected entity instance code
-     */
-    @Column(name = "entity_instance_code", nullable = false)
-    private String entityInstanceCode;
-
-    /**
-     * Workflow status from
+     * Workflow status
      */
     @OneToOne
-    @JoinColumn(name = "wf_status_id")
-    private WFStatus wfStatus;
+    @JoinColumn(name = "current_wf_status_id")
+    private WFStatus currentStatus;
 
     /**
      * A list of workflow instance hitories
      */
     @OneToMany(mappedBy = "workflowInstance", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WorkflowInstanceHistory> wfHistories = new ArrayList<>();
+
+    public String getTargetEntityClass() {
+        return targetEntityClass;
+    }
+
+    public void setTargetEntityClass(String targetEntityClass) {
+        this.targetEntityClass = targetEntityClass;
+    }
 
     public GenericWorkflow getGenericWorkflow() {
         return genericWorkflow;
@@ -80,20 +90,12 @@ public class WorkflowInstance extends BaseEntity {
         this.genericWorkflow = genericWorkflow;
     }
 
-    public String getEntityInstanceCode() {
-        return entityInstanceCode;
+    public WFStatus getCurrentStatus() {
+        return currentStatus;
     }
 
-    public void setEntityInstanceCode(String entityInstanceCode) {
-        this.entityInstanceCode = entityInstanceCode;
-    }
-
-    public WFStatus getWfStatus() {
-        return wfStatus;
-    }
-
-    public void setWfStatus(WFStatus wfStatus) {
-        this.wfStatus = wfStatus;
+    public void setCurrentStatus(WFStatus currentStatus) {
+        this.currentStatus = currentStatus;
     }
 
     public List<WorkflowInstanceHistory> getWfHistories() {
