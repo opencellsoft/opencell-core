@@ -93,7 +93,6 @@
                                     valueLabelField="descriptionOrCode" listBean="#{customerCategoryListBean}" componentWidth="30" />
                                 <hftl:formField id="sellers" label="#{messages['offerTemplate.seller']}" field="sellers" listType="selectCheckbox"
                                     valueLabelField="descriptionOrCode" listBean="#{sellerListBean}" componentWidth="100" />  
-                                    <hftl:formField  label="#{messages['subscription.autoEndOfEngagement']}" field="autoEndOfEngagement" newLine="true" />  
                             </h:panelGrid>
                         </p:panelGrid>
 
@@ -108,6 +107,7 @@
                                 <hftl:formField label="#{messages['subscription.initialyActiveForUnit']}" field="subscriptionRenewal" childField="initialyActiveForUnit"
                                     required="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor!=null}"
                                     disabled="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor==null}" listenerUpdate="subscriptionRenewal" />
+                                <hftl:formField  label="#{messages['subscription.autoEndOfEngagement']}" field="autoEndOfEngagement" />
                                 <h:panelGroup rendered="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor!=null}">
                                     <hftl:formField label="#{messages['subscription.autoRenew']}" field="subscriptionRenewal" childField="autoRenew" required="true"
                                         listenerUpdate="subscriptionRenewal" newLine="true" />
