@@ -1098,4 +1098,11 @@
         <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="ar_account_operation" constraintName="fk_ao_subscription_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
     </changeSet>
+    
+    <changeSet id="#3888_20190123 - TriggeredEDR improvements" author="EdwardPLegaspi">
+    	<addColumn tableName="cat_triggered_edr">
+    		<column name="triggered_edr_script_instance_id" type="bigint" />
+    		<column name="opencell_instance_el" type="${type.text}" />
+    	</addColumn>
+    </changeSet>
 </databaseChangeLog>
