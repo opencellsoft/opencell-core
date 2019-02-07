@@ -735,7 +735,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
                 
                 for (Map.Entry<InvoiceType, List<RatedTransaction>> entry : mapInvTypeRT.entrySet()) {
-                    InvoiceType invoiceType = invoiceTypeService.findById(entry.getKey().getId(), true);
+                    InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey().getCode());
                     List<RatedTransaction> ratedTransactionSelection = entry.getValue();
                     Invoice invoice = new Invoice();
                     invoice.setSeller(ratedTransactionGroup.getSeller());
