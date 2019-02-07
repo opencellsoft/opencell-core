@@ -34,8 +34,11 @@ public class GetListChannelsAndSegmentsResponseDto extends BaseResponse {
         return channels;
     }
 
+    
     /**
-     * @param channel list
+     * Sets the channels.
+     *
+     * @param channels the new channels
      */
     public void setChannels(List<ChannelDto> channels) {
         this.channels = channels;
@@ -49,7 +52,9 @@ public class GetListChannelsAndSegmentsResponseDto extends BaseResponse {
     }
 
     /**
-     * @param segment list
+     * Sets the segments.
+     *
+     * @param segments the new segments
      */
     public void setSegments(List<OfferTemplateCategoryDto> segments) {
         this.segments = segments;

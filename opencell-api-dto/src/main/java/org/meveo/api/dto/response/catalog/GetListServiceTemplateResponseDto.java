@@ -38,7 +38,7 @@ public class GetListServiceTemplateResponseDto extends SearchResponse {
     /**
      * Sets the list product template.
      *
-     * @param listProductTemplate the new list product template
+     * @param listServiceTemplate the new list service template
      */
     public void setListServiceTemplate(List<ServiceTemplateDto> listServiceTemplate) {
         this.listServiceTemplate = listServiceTemplate;

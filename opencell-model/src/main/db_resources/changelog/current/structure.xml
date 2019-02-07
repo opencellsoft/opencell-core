@@ -1085,6 +1085,21 @@
         <modifyDataType tableName="billing_rated_transaction" columnName="description" newDataType="${type.text}"/>
     </changeSet>
 
+    <changeSet id="#3842_20190111 - Trigger next charge" author="EdwardPLegaspi">
+        <addColumn tableName="cat_usage_charge_template">
+            <column name="trigger_next_charge" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="trigger_next_charge_el" type="${type.text}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#44_20190114" author="AmineBenAicha">
+    	<addColumn tableName="ar_account_operation">
+            <column name="subscription_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="ar_account_operation" constraintName="fk_ao_subscription_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+    </changeSet>
+
     <changeSet id="#3879 - dunning model" author="mboukayoua" dbms="postgresql">
         <createTable tableName="dunning_document">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
