@@ -88,7 +88,7 @@
 										value="#{messages['dunning.document.amountWithTax']}" />
 									<h:panelGroup layout="block" styleClass="formFieldItem2Lines">
 										<h:outputText
-											value="#{dunningDocumentBean.entity.amountWithTax}"
+											value="#{dunningDocumentBean.entity.getAmountWithTax()}"
 											styleClass="field-value"
 											converter="bigDecimal4DigitsConverter" />
 									</h:panelGroup>
@@ -111,31 +111,22 @@
 								dataModel="#{recordedInvoiceBean.getDueInvoices(dunningDocumentBean.entity)}"
 								label="#{messages['dunning.document.unpaid.invoices.title']}"
 								disabled="true" deleteManyButton="false" exportToXml="false"
-								formId="dueinvoices_form">
-
-								<p:column style="width:30px">
-									<p:rowToggler />
-								</p:column>
+								formId="dueinvoices_form" checkMany="false" exportXlsxButton="false">
 
 								<hftl:column label="#{messages['invoice.invoiceDate']}"
 									isDate="true" field="invoiceDate" />
 								<hftl:column label="#{messages['invoice.dueDate']}"
 									isDate="true" field="dueDate" />
+								<hftl:column label="#{messages['invoice.amountWithoutTax']}"
+									field="amountWithoutTax" converterParam="4digits" />
 								<hftl:column label="#{messages['invoice.amountWithTax']}"
-									field="amountWithTax" converterParam="4digits" />
-
+									field="amount" converterParam="4digits" />
 								<hftl:actionsColumn renderViewLink="true"
 									editView="/pages/billing/invoices/invoiceDetail.xhtml"
 									renderEditLink="false" renderDeleteLink="false"
-									backView="backToBaFromInvoice"
-									backEntityId="#{dunningDocumentBean.objectId}" backTab="0"
-									backMainTab="2">
-									<h:commandLink
-										action="#{recordednvoiceBean.downloadPdfInvoice(entity.id)}"
-										rendered="#{invoiceBean.isPdfInvoiceAlreadyGenerated(entity.id)}">
-										<h:graphicImage value="/img/pdf.gif"
-											style="border:0; margin-top:2px" />
-									</h:commandLink>
+									backView="backToDunningDocFromInvoice"
+									backEntityId="#{dunningDocumentBean.objectId}"
+									backTab="#{dunningDocumentBean.activeTab}">
 								</hftl:actionsColumn>
 							</hftl:dataList>
 						</p:fieldset>
@@ -144,12 +135,8 @@
 								dataModel="#{paymentBean.getDunningPayments(dunningDocumentBean.entity)}"
 								label="#{messages['dunning.document.payments.title']}"
 								disabled="true" deleteManyButton="false" exportToXml="false"
-								formId="payements_form">
-
-								<p:column style="width:30px">
-									<p:rowToggler />
-								</p:column>
-
+								formId="payements_form" checkMany="false" exportXlsxButton="false">
+								
 								<hftl:column
 									label="#{messages['accountOperation.transactionDate']}"
 									field="transactionDate" isDate="true" />
@@ -157,8 +144,6 @@
 									field="reference" />
 								<hftl:column label="#{messages['accountOperation.amount']}"
 									field="amount" />
-								<hftl:column label="#{messages['accountOperation.depositDate']}"
-									field="depositDate" isDate="true" />
 								<hftl:column
 									label="#{messages['accountOperation.paymentMethod']}"
 									field="paymentMethod" />
@@ -166,19 +151,12 @@
 									label="#{messages['accountOperation.occDescription']}"
 									field="occDescription" />
 
-								<hftl:actionsColumn renderViewLink="true"
-									editView="/pages/billing/invoices/invoiceDetail.xhtml"
-									renderEditLink="false" renderDeleteLink="false"
-									backView="backToBaFromInvoice"
-									backEntityId="#{dunningDocumentBean.objectId}" backTab="0"
-									backMainTab="2">
-									<h:commandLink
-										action="#{recordednvoiceBean.downloadPdfInvoice(entity.id)}"
-										rendered="#{invoiceBean.isPdfInvoiceAlreadyGenerated(entity.id)}">
-										<h:graphicImage value="/img/pdf.gif"
-											style="border:0; margin-top:2px" />
-									</h:commandLink>
-								</hftl:actionsColumn>
+								<hftl:actionsColumn width="15%" renderDeleteLink="false"
+									editView="/pages/payments/accountOperations/showPayment.xhtml"
+									backView="backToDunningDocFromOcc"
+									backEntityId="#{dunningDocumentBean.objectId}"
+									backTab="#{dunningDocumentBean.activeTab}"
+									renderViewLink="true" />
 							</hftl:dataList>
 						</p:fieldset>
 					</p:tab>

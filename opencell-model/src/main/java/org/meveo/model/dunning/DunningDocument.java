@@ -1,6 +1,7 @@
 package org.meveo.model.dunning;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Where;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
@@ -12,6 +13,7 @@ import org.meveo.model.payments.RecordedInvoice;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,15 +40,17 @@ public class DunningDocument extends BusinessEntity implements IWFEntity {
     /**
      * Unpaid invoices associated to this dunning document
      */
-    @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<RecordedInvoice> dueInvoices;
+    @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.LAZY, orphanRemoval = true)
+    @Where(clause = "transaction_type='I'")
+    private List<RecordedInvoice> dueInvoices = new ArrayList<>();
 
     /**
      * payments done withing the dunning process
      * associated with this dunning doc
      */
-    @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<Payment> payments;
+    @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.LAZY, orphanRemoval = true)
+    @Where(clause = "transaction_type='P'")
+    private List<Payment> payments = new ArrayList<>();
 
     public CustomerAccount getCustomerAccount() {
         return customerAccount;
@@ -82,34 +86,16 @@ public class DunningDocument extends BusinessEntity implements IWFEntity {
     
     @Transient
     public BigDecimal getAmountWithoutTax() {
-    	BigDecimal amountWithoutTax = BigDecimal.ZERO;
-    	if (dueInvoices != null && !dueInvoices.isEmpty()) {
-    		for (RecordedInvoice recordedInvoice : dueInvoices) {
-    			amountWithoutTax = amountWithoutTax.add(recordedInvoice.getAmountWithoutTax());
-			}
-    	}
-    	return amountWithoutTax;
+		return dueInvoices.stream().map(RecordedInvoice::getAmountWithoutTax).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
     
     @Transient
     public BigDecimal getAmountWithTax() {
-    	BigDecimal amountWithTax = BigDecimal.ZERO;
-    	if (dueInvoices != null && !dueInvoices.isEmpty()) {
-    		for (RecordedInvoice recordedInvoice : dueInvoices) {
-    			amountWithTax = amountWithTax.add(recordedInvoice.getAmount());
-			}
-    	}
-    	return amountWithTax;
+    	return dueInvoices.stream().map(RecordedInvoice::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
     
     @Transient
     public BigDecimal getPaidAmount() {
-    	BigDecimal paidAmount = BigDecimal.ZERO;
-    	if (payments != null && !payments.isEmpty()) {
-    		for (Payment payment : payments) {
-    			paidAmount = paidAmount.add(payment.getAmount());
-			}
-    	}
-    	return paidAmount;
+    	return payments.stream().map(Payment::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }
