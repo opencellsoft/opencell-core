@@ -1134,4 +1134,9 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#4010_20190206" author="anasseh">
+            <modifyDataType tableName="wf_history_action" columnName="result" newDataType="${type.text}"/>
+   </changeSet>
+
 </databaseChangeLog>
