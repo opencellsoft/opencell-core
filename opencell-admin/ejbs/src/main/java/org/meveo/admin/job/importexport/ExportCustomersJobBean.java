@@ -35,8 +35,8 @@ import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class ExportCustomersJobBean {
@@ -85,8 +85,10 @@ public class ExportCustomersJobBean {
         }
         try {
             JAXBUtils.marshaller(sellers, new File(dir + File.separator + "CUSTOMER_" + timestamp + ".xml"));
+            result.registerSucces();
         } catch (JAXBException e) {
             log.error("Failed to export customers job", e);
+            result.registerError(e.getMessage());
         }
 
     }

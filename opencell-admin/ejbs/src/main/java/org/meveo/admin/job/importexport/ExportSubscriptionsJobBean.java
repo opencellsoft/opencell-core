@@ -34,7 +34,8 @@ import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class ExportSubscriptionsJobBean {
@@ -76,8 +77,10 @@ public class ExportSubscriptionsJobBean {
         subscriptions = subscriptionsToDto(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
         try {
             JAXBUtils.marshaller(subscriptions, new File(dir + File.separator + "SUB_" + timestamp + ".xml"));
+            result.registerSucces();
         } catch (JAXBException e) {
             log.error("Failed to export subscriptions job", e);
+            result.registerError(e.getMessage());
         }
 
     }

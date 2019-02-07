@@ -35,7 +35,8 @@ import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class ExportAccountsJobBean {
@@ -77,8 +78,10 @@ public class ExportAccountsJobBean {
         billingAccounts = billingAccountsToDto(bas, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
         try {
             JAXBUtils.marshaller(billingAccounts, new File(dir + File.separator + "ACCOUNT_" + timestamp + ".xml"));
+            result.registerSucces();
         } catch (JAXBException e) {
             log.error("Failed to export accounts job", e);
+            result.registerError(e.getMessage());
         }
 
     }
