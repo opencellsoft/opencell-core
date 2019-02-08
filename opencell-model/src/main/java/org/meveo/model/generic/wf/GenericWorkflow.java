@@ -50,8 +50,7 @@ import org.meveo.model.ModuleItem;
 @Table(name = "wf_generic_workflow", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "wf_generic_workflow_seq") })
-@NamedQueries({
-    @NamedQuery(name = "GenericWorkflow.findByTargetEntityClass", query = "From GenericWorkflow where targetEntityClass=:targetEntityClass") })
+@NamedQueries({ @NamedQuery(name = "GenericWorkflow.findByTargetEntityClass", query = "From GenericWorkflow where targetEntityClass=:targetEntityClass") })
 public class GenericWorkflow extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -72,6 +71,12 @@ public class GenericWorkflow extends EnableBusinessEntity {
     private List<WFStatus> statuses = new ArrayList<>();
 
     /**
+     * Defaut status for workflow instances
+     */
+    @Column(name = "init_status", nullable = false)
+    private String initStatus;
+
+    /**
      * A list of transitions making up worklfow
      */
     @OneToMany(mappedBy = "genericWorkflow", fetch = FetchType.EAGER, cascade = { CascadeType.REMOVE })
@@ -83,7 +88,7 @@ public class GenericWorkflow extends EnableBusinessEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "enable_history")
-    private boolean enableHistory;
+    private boolean enableHistory = true;
 
     public String getTargetEntityClass() {
         return targetEntityClass;
@@ -123,5 +128,13 @@ public class GenericWorkflow extends EnableBusinessEntity {
 
     public void setTransitions(List<GWFTransition> transitions) {
         this.transitions = transitions;
+    }
+
+    public String getInitStatus() {
+        return initStatus;
+    }
+
+    public void setInitStatus(String initStatus) {
+        this.initStatus = initStatus;
     }
 }

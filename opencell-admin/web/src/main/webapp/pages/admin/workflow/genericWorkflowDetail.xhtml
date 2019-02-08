@@ -66,6 +66,10 @@
 							doNotShowOnNew="true" allowEdit="false" field="disabled"
 							isMessage="true" newLine="true" />
 
+						<hftl:formField label="#{messages['generic.wf.initStatus']}" field="initStatus" required="true" isMessage="true"
+                             listValues="#{genericWorkflowBean.transitionStatuses}"
+                             rendered="${!empty(genericWorkflowBean.transitionStatuses)}" />
+
 						<h:panelGroup>
 							<p:dataTable id="wfStatusTable"
 								value="#{genericWorkflowBean.entity.statuses}" var="wfStatus"
