@@ -1098,11 +1098,40 @@
         <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="ar_account_operation" constraintName="fk_ao_subscription_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
     </changeSet>
-    
+
     <changeSet id="#3888_20190123 - TriggeredEDR improvements" author="EdwardPLegaspi">
     	<addColumn tableName="cat_triggered_edr">
     		<column name="triggered_edr_script_instance_id" type="bigint" />
     		<column name="opencell_instance_el" type="${type.text}" />
     	</addColumn>
+    </changeSet>
+
+    <changeSet id="#3879 - dunning model" author="mboukayoua" dbms="postgresql">
+        <createTable tableName="dunning_document">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_dunning_document_sequence" />
+            </column>
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="customer_account_id" type="bigint" >
+                <constraints nullable="false" foreignKeyName="fk_dunning_document_ca" references="ar_customer_account(id)"/>
+            </column>
+            <column name="billing_subscription_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_dunning_document_subscription" references="billing_subscription(id)"/>
+            </column>
+        </createTable>
+        <createSequence sequenceName="dunning_document_seq"/>
+        <addColumn tableName="ar_account_operation">
+            <column name="dunning_document_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_ar_account_operation_dunning_document" references="dunning_document(id)" />
+            </column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>
