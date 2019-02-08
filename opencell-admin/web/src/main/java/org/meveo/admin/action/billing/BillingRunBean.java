@@ -171,7 +171,6 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
 
             entity.setStatus(BillingRunStatusEnum.NEW);
             entity.setProcessDate(new Date());
-            entity.setLastTransactionDate(DateUtils.setDateToEndOfDay(entity.getLastTransactionDate()));
 
             customFieldDataEntryBean.saveCustomFieldsToEntity((ICustomFieldEntity) entity, true);
             billingRunService.create(entity);
