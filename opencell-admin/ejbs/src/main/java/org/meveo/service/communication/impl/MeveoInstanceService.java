@@ -122,7 +122,7 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
      try {
          ResteasyClient client = new ResteasyClientProxyBuilder().build();
          ResteasyWebTarget target = client.target(baseurl + url);
-         log.debug("call {} with body:{}",baseurl + url,body);
+         log.debug("call {} with body:{}", (baseurl + url), body);
          BasicAuthentication basicAuthentication = new BasicAuthentication(username, password);
          target.register(basicAuthentication);
 

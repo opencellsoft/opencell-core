@@ -63,6 +63,7 @@ import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.rating.EDR;
@@ -283,6 +284,12 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
      */
     @Column(name = "rating_group", length = 50)
     private String ratingGroup;
+
+    /**
+     * List of dunning docs accociated with this subcription
+     */
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    private List<DunningDocument> dunningDocuments;
 
 
     @ManyToOne()
@@ -679,7 +686,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     /**
      * update AutoRenewDate when AutoRenew change
-     *
+     * 
      * @param subscriptionOld
      */
     public void updateAutoRenewDate(Subscription subscriptionOld) {

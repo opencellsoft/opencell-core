@@ -226,6 +226,788 @@
         </insert>
     </changeSet>
 
+    <changeSet id="#3679_20190131 - Missing Reports" author="Edward P. Legaspi">
+    	<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-12, 0, 0, now(), 'org.meveo.service.script.presale.AgedBalanceReporting', 'Aged Balance Reporting Script', 'JAVA', '
+package org.meveo.service.script.presale;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.time.DateUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.script.finance.ReportExtractScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author anasseh
+ * @corrector jpviegas
+ */
+public class AgedBalanceReporting extends ReportExtractScript {
+
+    private static final Logger log = LoggerFactory.getLogger(AgedBalanceReporting.class);
+
+    private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(CustomerAccountService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> executeContext) throws BusinessException {
+        try {
+            log.debug("execute executeContext:{}", executeContext);
+
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("sysdate30", DateUtils.addDays(new Date(), -30));
+            params.put("sysdate60", DateUtils.addDays(new Date(), -60));
+            params.put("sysdate90", DateUtils.addDays(new Date(), -90));
+
+            String query = "Select ao.customerAccount.id , "
+                    + "sum (case when ao.dueDate <= current_date() and ao.dueDate >:sysdate30 then  ao.amount else 0 end ) as sum_0_30, "
+                    + "sum (case when ao.dueDate <=:sysdate30 and ao.dueDate >:sysdate60 then  ao.amount else 0 end ) as sum_30_60, "
+                    + "sum (case when ao.dueDate <=:sysdate60 and ao.dueDate >:sysdate90 then  ao.amount else 0 end ) as sum_60_90, "
+                    + "sum (case when ao.dueDate <=:sysdate90  then  ao.amount else 0 end ) as sum_90_up "
+                    + "from AccountOperation ao where ao.transactionCategory = ''DEBIT''  group by ao.customerAccount";
+
+            List<Object[]> rows = (List<Object[]>)  customerAccountService.executeSelectQuery(query,params);
+            log.debug("execute rows size:{}", rows == null ? null : rows.size());
+            String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR));
+            String filename = String.valueOf(executeContext.get(ReportExtractScript.FILENAME));
+
+            CsvBuilder csvBuilder = new CsvBuilder(";", false);
+            String[] header = { "CA_DESC", "C_DESC","DEBT_TIER_0_30_DAYS","DEBT_TIER_30_60_DAYS","DEBT_TIER_60_90_DAYS","DEBT_TIER_90_DAYS" };
+            csvBuilder.appendValues(header);
+            csvBuilder.startNewLine();
+            for (Object[] row : rows) {
+                CustomerAccount ca = customerAccountService.findById(((Long)row[0]));
+                csvBuilder.appendValue(ca.getDescription());
+                csvBuilder.appendValue(ca.getCustomer().getDescription());
+                csvBuilder.appendValue(round((BigDecimal)row[1]));
+                csvBuilder.appendValue(round((BigDecimal)row[2]));
+                csvBuilder.appendValue(round((BigDecimal)row[3]));
+                csvBuilder.appendValue(round((BigDecimal)row[4]));
+                csvBuilder.startNewLine();
+            }
+            csvBuilder.toFile(dirOutput + File.separator + filename);
+            log.debug("execute file generated:{}", dirOutput + File.separator + filename);
+
+        } catch (Exception e) {
+            log.error("Error on AgedBalanceReporting:", e);
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    private String round(BigDecimal amount) {
+        if(amount == null) {
+            return "";
+        }
+        if (amount.scale() > 4) {
+            String amountAsString = "" + amount;
+            amount = new BigDecimal(amount.longValue() + "." + amountAsString.substring(amountAsString.indexOf(".") + 1).substring(0, 4));
+        }
+        amount = amount.setScale(2, RoundingMode.UP);
+        return amount.toPlainString();
+    }
+}
+        ');]]></sql>
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-27" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="AgedBalanceReport" />
+            <column name="description" value="Aged Balance Report" />
+            <column name="category" value="AgedBalance"></column>
+            <column name="script_type" value="JAVA"></column>
+            <column name="filename_format" value="AgedBalanceReporting-[yyyy_MM_dd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="AgedBalanceReport_UUID"></column>
+            <column name="script_instance_id" value="-12"></column>
+        </insert>
+
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-13, 0, 0, now(), 'org.meveo.service.script.presale.CustomerRevenuReporting', 'Customer Revenu Reporting Script', 'JAVA', '
+            	package org.meveo.service.script.presale;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.script.finance.ReportExtractScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author anasseh
+ *
+ */
+public class CustomerRevenuReporting extends ReportExtractScript {
+
+    private static final Logger log = LoggerFactory.getLogger(CustomerRevenuReporting.class);
+
+    private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(CustomerAccountService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> executeContext) throws BusinessException {
+        try {
+            log.debug("execute executeContext:{}", executeContext);
+
+            Date startDate = (Date) executeContext.get(ReportExtractScript.START_DATE);
+            Date endDate = (Date) executeContext.get(ReportExtractScript.END_DATE);
+
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("startDateIN", startDate);
+            params.put("endDateIN", endDate);
+            String query = "Select ao.customerAccount.id , sum (ao.amount) as sum_amount from AccountOperation ao where ao.transactionCategory = ''DEBIT'' and ao.dueDate >=:startDateIN "
+                    + "and ao.dueDate <:endDateIN  group by ao.customerAccount order by sum_amount desc";
+
+
+            List<Object[]> aos = (List<Object[]>)  customerAccountService.executeSelectQuery(query,params);
+            log.debug("execute aos size:{}", aos == null ? null : aos.size());
+            String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR));
+            String filename = String.valueOf(executeContext.get(CustomerRevenuReporting.FILENAME));
+
+            CsvBuilder csvBuilder = new CsvBuilder(";", false);
+            String[] header = { "CA_DESC", "C_DESC","SUM_REVENUE" };
+            csvBuilder.appendValues(header);
+            csvBuilder.startNewLine();
+            for (Object[] ao : aos) {
+                CustomerAccount ca = customerAccountService.findById(((Long)ao[0]));
+                csvBuilder.appendValue(ca.getDescription());
+                csvBuilder.appendValue(ca.getCustomer().getDescription());
+                csvBuilder.appendValue(round((BigDecimal)ao[1]));
+                csvBuilder.startNewLine();
+            }
+            csvBuilder.toFile(dirOutput + File.separator + filename);
+            log.debug("execute file generated:{}", dirOutput + File.separator + filename);
+
+        } catch (Exception e) {
+            log.error("Error on CustomerRevenuReporting:", e);
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    private String round(BigDecimal amount) {
+        if(amount == null) {
+            return "";
+        }
+        if (amount.scale() > 4) {
+            String amountAsString = "" + amount;
+            amount = new BigDecimal(amount.longValue() + "." + amountAsString.substring(amountAsString.indexOf(".") + 1).substring(0, 4));
+        }
+        amount = amount.setScale(2, RoundingMode.UP);
+        return amount.toPlainString();
+    }
+}
+        ');]]></sql>
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-28" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="CustomerRevenuReport" />
+            <column name="description" value="Customers revenu Report" />
+            <column name="category" value="revenu"></column>
+            <column name="script_type" value="JAVA"></column>
+            <column name="filename_format" value="CustomerRevenuReporting-[yyyy_MM_dd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="CustomerRevenuReport_UUID"></column>
+            <column name="script_instance_id" value="-13"></column>
+        </insert>
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-28"></column>
+            <column name="params_key" value="START_DATE"></column>
+            <column name="params" value="31/01/2015"></column>
+        </insert>
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-28"></column>
+            <column name="params_key" value="END_DATE"></column>
+            <column name="params" value="31/01/2019"></column>
+        </insert>
+
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-14, 0, 0, now(), 'org.meveo.service.script.presale.CustomerPerDunningReporting', 'Customer Per Dunnning Reporting Script', 'JAVA', '
+            	            	package org.meveo.service.script.presale;
+
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.script.finance.ReportExtractScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author anasseh
+ *
+ */
+public class CustomerPerDunningReporting extends ReportExtractScript {
+
+    private static final Logger log = LoggerFactory.getLogger(CustomerPerDunningReporting.class);
+
+    private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(CustomerAccountService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> executeContext) throws BusinessException {
+        try {
+            log.debug("execute executeContext:{}", executeContext);
+            List<CustomerAccount> rows = (List<CustomerAccount>) customerAccountService.executeSelectQuery("from CustomerAccount ca order by ca.dunningLevel", null);
+            log.debug("execute rows size:{}", rows == null ? null : rows.size());
+            String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR));
+            String filename = String.valueOf(executeContext.get(CustomerPerDunningReporting.FILENAME));
+
+            CsvBuilder csvBuilder = new CsvBuilder(";", false);
+            String[] header = { "CA_DESC", "C_DESC", "LEVEL" };
+            csvBuilder.appendValues(header);
+            csvBuilder.startNewLine();
+            for (CustomerAccount ca : rows) {
+                csvBuilder.appendValue(ca.getDescription());
+                csvBuilder.appendValue(ca.getCustomer().getDescription());
+                csvBuilder.appendValue("" + ca.getDunningLevel());
+                csvBuilder.startNewLine();
+            }
+            csvBuilder.toFile(dirOutput + File.separator + filename);
+            log.debug("execute file generated:{}", dirOutput + File.separator + filename);
+
+        } catch (Exception e) {
+            log.error("Error on CustomerPerDunningReporting:", e);
+            throw new BusinessException(e.getMessage());
+        }
+    }
+}
+        ');]]></sql>
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-29" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="CustomersPerDunningReport" />
+            <column name="description" value="Customer per dunning level" />
+            <column name="category" value="Dunning"></column>
+            <column name="script_type" value="JAVA"></column>
+            <column name="filename_format" value="CustomersPerDunning-[yyyy_MM_dd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="CustomersPerDunningReport_UUID"></column>
+            <column name="script_instance_id" value="-14"></column>
+        </insert>
+
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-15, 0, 0, now(), 'org.meveo.service.script.presale.CustomerPerOfferReporting', 'Customer Per Offer Reporting Script', 'JAVA', '
+            	                        	package org.meveo.service.script.presale;
+
+import java.io.File;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.script.finance.ReportExtractScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author anasseh
+ *
+ */
+public class CustomerPerOfferReporting extends ReportExtractScript {
+
+    private static final Logger log = LoggerFactory.getLogger(CustomerPerOfferReporting.class);
+
+    private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(SubscriptionService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> executeContext) throws BusinessException {
+        try {
+            log.debug("execute executeContext:{}", executeContext);
+
+            Date startDate = (Date) executeContext.get(ReportExtractScript.START_DATE);
+            String offerCode = (String) executeContext.get("OFFER_CODE");
+
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("subDateIN", startDate);
+            String query = "Select distinct sub.offer, sub.userAccount from Subscription sub where sub.subscriptionDate >:subDateIN ";
+            if (!StringUtils.isBlank(offerCode)) {
+                query += " and sub.offer.code =:offCodeIN ";
+                params.put("offCodeIN", offerCode);
+            }
+
+            List<Object[]> rows = (List<Object[]>) subscriptionService.executeSelectQuery(query  + "order by sub.offer.code",params);
+            log.debug("execute rows size:{}", rows == null ? null : rows.size());
+            String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR));
+            String filename = String.valueOf(executeContext.get(CustomerPerOfferReporting.FILENAME));
+
+            CsvBuilder csvBuilder = new CsvBuilder(";", false);
+            String[] header = { "OFF_CODE", "OFF_DESC", "UA_DESC",  "BA_DESC",  "CA_DESC", "C_DESC" };
+            csvBuilder.appendValues(header);
+            csvBuilder.startNewLine();
+            for (Object[] row : rows) {
+                csvBuilder.appendValue(((OfferTemplate)row[0]).getCode());
+                csvBuilder.appendValue(((OfferTemplate)row[0]).getDescription());
+                csvBuilder.appendValue(((UserAccount)row[1]).getDescription());
+                csvBuilder.appendValue(((UserAccount)row[1]).getBillingAccount().getDescription());
+                csvBuilder.appendValue(((UserAccount)row[1]).getBillingAccount().getCustomerAccount().getDescription());
+                csvBuilder.appendValue(((UserAccount)row[1]).getBillingAccount().getCustomerAccount().getCustomer().getDescription());
+                csvBuilder.startNewLine();
+            }
+            csvBuilder.toFile(dirOutput + File.separator + filename);
+            log.debug("execute file generated:{}", dirOutput + File.separator + filename);
+
+        } catch (Exception e) {
+            log.error("Error on CustomerPerOfferReporting:", e);
+            throw new BusinessException(e.getMessage());
+        }
+    }
+}
+        ');]]></sql>
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-30" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="CustomersPerOfferReport" />
+            <column name="description" value="List of customer with revenue sorted by decreasing revenue (in a period)" />
+            <column name="category" value="accounts"></column>
+            <column name="script_type" value="JAVA"></column>
+            <column name="filename_format" value="CustomersPerOffer-[yyyy_MM_dd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="CustomersPerOfferReport_UUID"></column>
+            <column name="script_instance_id" value="-15"></column>
+        </insert>
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-30"></column>
+            <column name="params_key" value="START_DATE"></column>
+            <column name="params" value="31/01/2015"></column>
+        </insert>
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-30"></column>
+            <column name="params_key" value="OFFER_CODE"></column>
+            <column name="params" value=""></column>
+        </insert>
+
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-16, 0, 0, now(), 'org.meveo.service.script.presale.KPIAgedBalanceReporting', 'KPI Aged Balance Reporting Script', 'JAVA', '
+            	package org.meveo.service.script.presale;
+
+import java.io.File;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.time.DateUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.script.finance.ReportExtractScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author anasseh
+ */
+public class KPIAgedBalanceReporting extends ReportExtractScript {
+
+    private static final Logger log = LoggerFactory.getLogger(KPIAgedBalanceReporting.class);
+
+    private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(CustomerAccountService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> executeContext) throws BusinessException {
+        try {
+            log.debug("execute executeContext:{}", executeContext);
+            String query = "Select count(distinct ao.customerAccount.id) "
+                    + "from AccountOperation ao where ao.transactionCategory = ''DEBIT''  and  ao.dueDate <=:dateTo and ao.dueDate >:dateFrom ";
+
+            Map<String, Object> params = new HashMap<String, Object>();
+
+            params.put("dateFrom", DateUtils.addDays(new Date(), -30));
+            params.put("dateTo", new Date());
+            List<Long> count_now_30 = (List<Long>) customerAccountService.executeSelectQuery(query, params);
+
+            params.put("dateFrom", DateUtils.addDays(new Date(), -60));
+            params.put("dateTo", DateUtils.addDays(new Date(), -30));
+            List<Long> count_30_60 = (List<Long>) customerAccountService.executeSelectQuery(query, params);
+
+            params.put("dateFrom", DateUtils.addDays(new Date(), -90));
+            params.put("dateTo", DateUtils.addDays(new Date(), -60));
+            List<Long> count_60_90 = (List<Long>) customerAccountService.executeSelectQuery(query, params);
+
+            params.put("dateFrom", new Date(1));
+            params.put("dateTo", DateUtils.addDays(new Date(), -90));
+            List<Long> count_90_up = (List<Long>) customerAccountService.executeSelectQuery(query, params);
+
+            String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR));
+            String filename = String.valueOf(executeContext.get(ReportExtractScript.FILENAME));
+
+            CsvBuilder csvBuilder = new CsvBuilder(";", false);
+            String[] header = { "DEBT_TIER", "Number of accounts" };
+            csvBuilder.appendValues(header);
+            csvBuilder.startNewLine();
+
+            csvBuilder.appendValue("0_30_days");
+            csvBuilder.appendValue("" + count_now_30.get(0));
+            csvBuilder.startNewLine();
+
+            csvBuilder.appendValue("30_60_days");
+            csvBuilder.appendValue("" + count_30_60.get(0));
+            csvBuilder.startNewLine();
+
+            csvBuilder.appendValue("60_90_days");
+            csvBuilder.appendValue("" + count_60_90.get(0));
+            csvBuilder.startNewLine();
+
+            csvBuilder.appendValue("90_days_up");
+            csvBuilder.appendValue("" + count_90_up.get(0));
+            csvBuilder.startNewLine();
+
+            csvBuilder.toFile(dirOutput + File.separator + filename);
+            log.debug("execute file generated:{}", dirOutput + File.separator + filename);
+
+        } catch (Exception e) {
+            log.error("Error on AgedBalanceReporting:", e);
+            throw new BusinessException(e.getMessage());
+        }
+    }
+}
+        ');]]></sql>
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-31" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="KPIAgedBalanceReporting" />
+            <column name="description" value="KPI Aged Balance" />
+            <column name="category" value="AgedBalance"></column>
+            <column name="script_type" value="JAVA"></column>
+            <column name="filename_format" value="KPIAgedBalanceReporting-[yyyy_MM_dd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="KPIAgedBalanceReporting_UUID"></column>
+            <column name="script_instance_id" value="-16"></column>
+        </insert>
+
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-17, 0, 0, now(), 'org.meveo.service.script.presale.KPICustomerRevenuReporting', 'KPI Customer Revenu Report Script', 'JAVA', '
+            	package org.meveo.service.script.presale;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.script.finance.ReportExtractScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author anasseh
+ *
+ */
+public class KPICustomerRevenuReporting extends ReportExtractScript {
+
+    private static final Logger log = LoggerFactory.getLogger(KPICustomerRevenuReporting.class);
+
+    private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(CustomerAccountService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> executeContext) throws BusinessException {
+        try {
+            log.debug("execute executeContext:{}", executeContext);
+
+            Date startDate = (Date) executeContext.get(ReportExtractScript.START_DATE);
+            Date endDate = (Date) executeContext.get(ReportExtractScript.END_DATE);
+
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("startDateIN", startDate);
+            params.put("endDateIN", endDate);
+            String query = "Select ao.customerAccount.id , sum (ao.amount) as sum_amount from AccountOperation ao where ao.transactionCategory = ''DEBIT'' and ao.dueDate >=:startDateIN "
+                    + "and ao.dueDate <:endDateIN  group by ao.customerAccount order by sum_amount ";
+
+            List<Object[]> rows = (List<Object[]>) customerAccountService.executeSelectQuery(query, params);
+            log.debug("execute columns size:{}", rows == null ? null : rows.size());
+            String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR));
+            String filename = String.valueOf(executeContext.get(KPICustomerRevenuReporting.FILENAME));
+            long cpt0_50000 = 0;
+            long cpt50000_100000 = 0;
+            long cpt100000_500000 = 0;
+            long cpt500000_1000000 = 0;
+            long cpt1000000Up = 0;
+            CsvBuilder csvBuilder = new CsvBuilder(";", false);
+            String[] header = { "RANGE", "NB_CUSTOMERS" };
+            csvBuilder.appendValues(header);
+            csvBuilder.startNewLine();
+
+            for (Object[] row : rows) {
+                log.info("(BigDecimal) row[1]:"+(BigDecimal) row[1]);
+                if (((BigDecimal) row[1]).compareTo(new BigDecimal(50000)) < 0) {
+                    cpt0_50000++;
+                    continue;
+                }
+                if (((BigDecimal) row[1]).compareTo(new BigDecimal(100000)) < 0) {
+                    cpt50000_100000++;
+                    continue;
+                }
+                if (((BigDecimal) row[1]).compareTo(new BigDecimal(500000)) < 0) {
+                    cpt100000_500000++;
+                    continue;
+                }
+                if (((BigDecimal) row[1]).compareTo(new BigDecimal(1000000)) < 0) {
+                    cpt500000_1000000++;
+                    continue;
+                }
+                if (((BigDecimal) row[1]).compareTo(new BigDecimal(1000000)) >= 0) {
+                    cpt1000000Up++;
+                    continue;
+                }
+
+            }
+            csvBuilder.appendValue("0<50000");
+            csvBuilder.appendValue("" + cpt0_50000);
+            csvBuilder.startNewLine();
+            csvBuilder.appendValue("50000<100000");
+            csvBuilder.appendValue("" + cpt50000_100000);
+            csvBuilder.startNewLine();
+            csvBuilder.appendValue("100000<500000");
+            csvBuilder.appendValue("" + cpt100000_500000);
+            csvBuilder.startNewLine();
+            csvBuilder.appendValue("500000<1000000");
+            csvBuilder.appendValue("" + cpt500000_1000000);
+            csvBuilder.startNewLine();
+            csvBuilder.appendValue("1000000<");
+            csvBuilder.appendValue("" + cpt1000000Up);
+            csvBuilder.startNewLine();
+
+            csvBuilder.toFile(dirOutput + File.separator + filename);
+            log.debug("execute file generated:{}", dirOutput + File.separator + filename);
+
+        } catch (Exception e) {
+            log.error("Error on KPICustomerRevenuReporting:", e);
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    private String round(BigDecimal amount) {
+        if (amount == null) {
+            return "";
+        }
+        if (amount.scale() > 4) {
+            String amountAsString = "" + amount;
+            amount = new BigDecimal(amount.longValue() + "." + amountAsString.substring(amountAsString.indexOf(".") + 1).substring(0, 4));
+        }
+        amount = amount.setScale(2, RoundingMode.UP);
+        return amount.toPlainString();
+    }
+}
+        ');]]></sql>
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-32" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="KPICustomerRevenuReporting" />
+            <column name="description" value="KPI Customers revenu" />
+            <column name="category" value="revenu"></column>
+            <column name="script_type" value="JAVA"></column>
+            <column name="filename_format" value="KPICustomerRevenuReporting-[yyyy_MM_dd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="KPICustomerRevenuReporting_UUID"></column>
+            <column name="script_instance_id" value="-17"></column>
+        </insert>
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-32"></column>
+            <column name="params_key" value="START_DATE"></column>
+            <column name="params" value="31/01/2015"></column>
+        </insert>
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-32"></column>
+            <column name="params_key" value="END_DATE"></column>
+            <column name="params" value="31/01/2019"></column>
+        </insert>
+
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-18, 0, 0, now(), 'org.meveo.service.script.presale.KPICustomerPerDunningReporting', 'KPI Customer Per Dunning Reporting Script', 'JAVA', '
+            	/**
+ *
+ */
+package org.meveo.service.script.presale;
+
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.script.finance.ReportExtractScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author anasseh
+ *
+ */
+public class KPICustomerPerDunningReporting extends ReportExtractScript {
+
+    private static final Logger log = LoggerFactory.getLogger(KPICustomerPerDunningReporting.class);
+
+    private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(CustomerAccountService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> executeContext) throws BusinessException {
+        try {
+            log.debug("execute executeContext:{}", executeContext);
+            List<Object[]> rows = (List<Object[]>) customerAccountService.executeSelectQuery("Select ca.dunningLevel , count(ca) from CustomerAccount ca group by ca.dunningLevel order by ca.dunningLevel", null);
+            log.debug("execute rows size:{}", rows == null ? null : rows.size());
+            String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR));
+            String filename = String.valueOf(executeContext.get(KPICustomerPerDunningReporting.FILENAME));
+
+            CsvBuilder csvBuilder = new CsvBuilder(";", false);
+            String[] header = { "DUNNING_LEVEL", "Number of accounts" };
+            csvBuilder.appendValues(header);
+            csvBuilder.startNewLine();
+            for (Object[] row : rows) {
+                csvBuilder.appendValue(""+row[0]);
+                csvBuilder.appendValue(""+row[1]);
+                csvBuilder.startNewLine();
+            }
+            csvBuilder.toFile(dirOutput + File.separator + filename);
+            log.debug("execute file generated:{}", dirOutput + File.separator + filename);
+
+        } catch (Exception e) {
+            log.error("Error on KPICustomerPerDunningReporting:", e);
+            throw new BusinessException(e.getMessage());
+        }
+    }
+}
+        ');]]></sql>
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-33" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="KPICustomersPerDunningReport" />
+            <column name="description" value="Number of customer per Dunning level" />
+            <column name="category" value="Dunning"></column>
+            <column name="script_type" value="JAVA"></column>
+            <column name="filename_format" value="KPICustomersPerDunning-[yyyy_MM_dd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="KPICustomersPerDunningReport_UUID"></column>
+            <column name="script_instance_id" value="-18"></column>
+        </insert>
+
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-19, 0, 0, now(), 'org.meveo.service.script.presale.KPICustomerPerOfferReporting', 'KPI Customer Per Offer Reporting Script', 'JAVA', '
+            	/**
+ *
+ */
+package org.meveo.service.script.presale;
+
+import java.io.File;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.script.finance.ReportExtractScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author anasseh
+ *
+ */
+public class KPICustomerPerOfferReporting extends ReportExtractScript {
+
+    private static final Logger log = LoggerFactory.getLogger(KPICustomerPerOfferReporting.class);
+
+    private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(SubscriptionService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> executeContext) throws BusinessException {
+        try {
+            log.debug("execute executeContext:{}", executeContext);
+
+            Date startDate = (Date) executeContext.get(ReportExtractScript.START_DATE);
+            String offerCode = (String) executeContext.get("OFFER_CODE");
+
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("subDateIN", startDate);
+            String query = "Select offer, count(sub) from Subscription sub,OfferTemplate offer where sub.subscriptionDate >:subDateIN " + " and sub.offer = offer";
+            if (!StringUtils.isBlank(offerCode)) {
+                query += " and offer.code =:offCodeIN ";
+                params.put("offCodeIN", offerCode);
+            }
+            List<Object[]> subs = (List<Object[]>) subscriptionService.executeSelectQuery(query +" group by offer", params);
+            log.debug("execute subs size:{}", subs == null ? null : subs.size());
+            String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR));
+            String filename = String.valueOf(executeContext.get(KPICustomerPerOfferReporting.FILENAME));
+
+            CsvBuilder csvBuilder = new CsvBuilder(";", false);
+            String[] header = { "OFF_CODE", "OFF_DESC", "Nb of user accounts" };
+            csvBuilder.appendValues(header);
+            csvBuilder.startNewLine();
+            for (Object[] sub : subs) {
+                csvBuilder.appendValue(((OfferTemplate) sub[0]).getCode());
+                csvBuilder.appendValue(((OfferTemplate) sub[0]).getDescription());
+                csvBuilder.appendValue("" + (Long) sub[1]);
+                csvBuilder.startNewLine();
+            }
+            csvBuilder.toFile(dirOutput + File.separator + filename);
+            log.debug("execute file generated:{}", dirOutput + File.separator + filename);
+
+        } catch (Exception e) {
+            log.error("Error on KPICustomerPerOfferReporting:", e);
+            throw new BusinessException(e.getMessage());
+        }
+    }
+}
+        ');]]></sql>
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-34" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="KPICustomersPerOfferReport" />
+            <column name="description" value="Number of customer per revenue tier (in a period)" />
+            <column name="category" value="accounts"></column>
+            <column name="script_type" value="JAVA"></column>
+            <column name="filename_format" value="KPICustomersPerOffer-[yyyy_MM_dd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="KPICustomersPerOfferReport_UUID"></column>
+            <column name="script_instance_id" value="-19"></column>
+        </insert>
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-34"></column>
+            <column name="params_key" value="START_DATE"></column>
+            <column name="params" value="31/01/2017"></column>
+        </insert>
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-34"></column>
+            <column name="params_key" value="OFFER_CODE"></column>
+            <column name="params" value=""></column>
+        </insert>
+    </changeSet>
+
     <changeSet id="2947_20190110" author="horriKhalid">
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-18" />
