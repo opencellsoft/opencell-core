@@ -349,7 +349,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public void remove(E entity) throws BusinessException {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-        entity = findById((Long) entity.getId());
+        entity = retrieveIfNotManaged(entity);
         if (entity != null) {
             getEntityManager().remove(entity);
             if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {

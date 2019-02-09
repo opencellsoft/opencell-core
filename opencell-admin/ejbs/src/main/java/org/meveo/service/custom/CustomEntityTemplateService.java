@@ -19,6 +19,7 @@
 package org.meveo.service.custom;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.MapUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
@@ -223,5 +225,60 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         } else {
             return super.findByCode(code);
         }
+    }
+
+    /**
+     * Get a list of custom entity templates that use custom tables as implementation
+     * 
+     * @return A list of custom entity templates
+     */
+    @SuppressWarnings("unchecked")
+    public List<CustomEntityTemplate> listCustomTableTemplates() {
+
+        if (useCETCache) {
+            List<CustomEntityTemplate> cets = new ArrayList<>();
+            for (CustomEntityTemplate customEntityTemplate : customFieldsCache.getCustomEntityTemplates()) {
+                if (customEntityTemplate.isStoreAsTable()) {
+                    cets.add(customEntityTemplate);
+                }
+            }
+            return cets;
+
+        } else {
+            return super.list(new PaginationConfiguration(MapUtils.putAll(new HashMap<String, Object>(), new Object[] { "storeAsTable", true })));
+        }
+    }
+
+    /**
+     * Find a custom entity template that uses a given custom table as implementation
+     * 
+     * @param dbTablename Database table name
+     * @return A custom entity template
+     */
+    public CustomEntityTemplate findByDbTablename(String dbTablename) {
+
+        List<CustomEntityTemplate> cets = listCustomTableTemplates();
+
+        for (CustomEntityTemplate cet : cets) {
+            if (cet.getDbTablename().equalsIgnoreCase(dbTablename)) {
+                return cet;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find a custom entity template that uses a given custom table as implementation
+     * 
+     * @param codeOrDbTablename Custom entity code or a corresponding database table name
+     * @return A custom entity template
+     */
+    public CustomEntityTemplate findByCodeOrDbTablename(String codeOrDbTablename) {
+
+        CustomEntityTemplate cet = findByCode(codeOrDbTablename);
+        if (cet != null) {
+            return cet;
+        }
+        return findByDbTablename(codeOrDbTablename);
     }
 }

@@ -18,7 +18,7 @@
     <ui:define name="body">
 
         <p:growl id="growl" showDetail="true" sticky="false" autoUpdate="true" />
-        
+
         <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
 
         <h:form id="crumbmenuForm">
@@ -33,26 +33,26 @@
 
             <c:forEach items="#{customTableBean.fields}" var="field">
                 <c:if test="#{field.fieldType eq CustomFieldTypeEnum.STRING}">
-                    <hftl:searchTextField id="#{field.code}" backingBean="#{customTableBean}" field="#{field.code}" label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
-                        maxlength="#{field.maxValue}" />
+                    <hftl:searchTextField id="#{field.dbFieldname}" backingBean="#{customTableBean}" field="#{field.dbFieldname}"
+                        label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" maxlength="#{field.maxValue}" />
                 </c:if>
                 <c:if test="#{field.fieldType eq CustomFieldTypeEnum.DATE}">
-                    <hftl:searchDateField id="#{field.code}" backingBean="#{customTableBean}" field="#{field.code}" label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
-                        datePattern="#{paramBean.dateFormat}" rangeSearch="true" componentWidth="25" />
+                    <hftl:searchDateField id="#{field.dbFieldname}" backingBean="#{customTableBean}" field="#{field.dbFieldname}"
+                        label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" datePattern="#{paramBean.dateFormat}" rangeSearch="true" componentWidth="25" />
                 </c:if>
                 <c:if test="#{field.fieldType eq CustomFieldTypeEnum.DOUBLE}">
-                    <hftl:searchNumberField id="#{field.code}" converterId="javax.faces.Double" backingBean="#{customTableBean}" field="${field.code}"
+                    <hftl:searchNumberField id="#{field.dbFieldname}" converterId="javax.faces.Double" backingBean="#{customTableBean}" field="${field.dbFieldname}"
                         label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" componentWidth="25" rangeSearch="true" />
                 </c:if>
                 <c:if test="#{field.fieldType eq CustomFieldTypeEnum.LONG}">
-                    <hftl:searchNumberField id="#{field.code}" converterId="javax.faces.Long" backingBean="#{customTableBean}" field="${field.code}"
+                    <hftl:searchNumberField id="#{field.dbFieldname}" converterId="javax.faces.Long" backingBean="#{customTableBean}" field="${field.dbFieldname}"
                         label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" componentWidth="25" rangeSearch="true" />
                 </c:if>
 
                 <c:if test="#{field.fieldType eq CustomFieldTypeEnum.LIST}">
-                    <hftl:decorateFormField fieldId="#{field.code}" label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" componentWidth="25">
-                        <p:selectOneMenu id="#{field.code}" value="#{customTableBean.filters[field.code]}" placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
-                            label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}">
+                    <hftl:decorateFormField fieldId="#{field.dbFieldname}" label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" componentWidth="25">
+                        <p:selectOneMenu id="#{field.dbFieldname}" value="#{customTableBean.filters[field.dbFieldname]}"
+                            placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}">
                             <f:selectItem itemValue="#{null}" itemLabel="" />
                             <f:selectItems value="#{field.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
                         </p:selectOneMenu>
@@ -65,28 +65,33 @@
             <h:form id="ctForm">
                 <p:dataTable id="ctSearchResults_omitFromSubmit" value="#{customTableBean.dataModel}" var="entity" lazy="true" widgetVar="ctTable"
                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" paginator="true" rows="10"
-                    rowsPerPageTemplate="10,15,20,50" resizableColumns="true" styleClass="custom-grid" reflow="true" editable="#{customTableBean.edit}" editMode="cell">
+                    rowsPerPageTemplate="10,15,20,50" resizableColumns="true" styleClass="custom-grid" reflow="true" editable="#{customTableBean.edit}" editMode="cell"
+                    selection="#{customTableBean.selectedValues}">
                     <p:ajax event="cellEdit" listener="#{customTableBean.onCellEdit}" update=":growl" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />/>
+    
+                    <p:column id="multiSelect" selectionMode="multiple" width="4%" exportable="false" toggleable="false" />
                     <p:column headerText="id" sortBy="#{id}">
                         <h:outputText value="#{entity['id']}" />
                     </p:column>
                     <p:columns value="#{customTableBean.fields}" var="field" headerText="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}">
                         <p:cellEditor>
                             <f:facet name="output">
-                                <h:outputText id="#{entity[field.code]}_out_date" value="#{entity[field.code]}" styleClass="field-value" rendered="#{field.fieldType eq CustomFieldTypeEnum.DATE}">
+                                <h:outputText id="#{entity[field.dbFieldname]}_out_date" value="#{entity[field.dbFieldname]}" styleClass="field-value"
+                                    rendered="#{field.fieldType eq CustomFieldTypeEnum.DATE}">
                                     <f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
                                 </h:outputText>
-                                <h:outputText id="#{entity[field.code]}_out" value="#{entity[field.code]}" styleClass="field-value" rendered="#{field.fieldType ne CustomFieldTypeEnum.DATE}" />
+                                <h:outputText id="#{entity[field.dbFieldname]}_out" value="#{entity[field.dbFieldname]}" styleClass="field-value"
+                                    rendered="#{field.fieldType ne CustomFieldTypeEnum.DATE}" />
                             </f:facet>
                             <f:facet name="input">
-                                <p:inputText id="#{field.code}_in_string" value="#{entity[field.code]}" placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
+                                <p:inputText id="#{field.dbFieldname}_in_string" value="#{entity[field.dbFieldname]}" placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
                                     label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="30" maxlength="#{field.maxValue}" required="#{field.valueRequired}"
                                     rendered="#{field.fieldType eq CustomFieldTypeEnum.STRING}" />
-                                <p:calendar id="#{field.code}_in_date" value="#{entity[field.code]}" placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
+                                <p:calendar id="#{field.dbFieldname}_in_date" value="#{entity[field.dbFieldname]}" placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
                                     label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" showButtonPanel="true" pattern="#{paramBean.dateFormat}"
                                     required="#{field.valueRequired}" rendered="#{field.fieldType eq CustomFieldTypeEnum.DATE}" />
 
-                                <p:inputText id="#{field.code}_in_dbl" value="#{entity[field.code]}" required="#{field.valueRequired}"
+                                <p:inputText id="#{field.dbFieldname}_in_dbl" value="#{entity[field.dbFieldname]}" required="#{field.valueRequired}"
                                     placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
                                     rendered="#{field.fieldType eq CustomFieldTypeEnum.DOUBLE}">
                                     <f:convertNumber minFractionDigits="2" />
@@ -100,7 +105,7 @@
                                         <f:validateLongRange maximum="#{field.maxValue}" />
                                     </c:if>
                                 </p:inputText>
-                                <p:inputText id="#{field.code}_in_long" value="#{entity[field.code]}" required="#{field.valueRequired}"
+                                <p:inputText id="#{field.dbFieldname}_in_long" value="#{entity[field.dbFieldname]}" required="#{field.valueRequired}"
                                     placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
                                     rendered="#{field.fieldType eq CustomFieldTypeEnum.LONG}">
                                     <f:convertNumber integerOnly="true" />
@@ -114,7 +119,7 @@
                                         <f:validateLongRange maximum="#{field.maxValue}" />
                                     </c:if>
                                 </p:inputText>
-                                <p:selectOneMenu id="#{field.code}_in_list" value="#{entity[field.code]}" required="#{field.valueRequired}"
+                                <p:selectOneMenu id="#{field.dbFieldname}_in_list" value="#{entity[field.dbFieldname]}" required="#{field.valueRequired}"
                                     placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
                                     rendered="#{field.fieldType eq CustomFieldTypeEnum.LIST}">
                                     <f:selectItem itemValue="#{null}" itemLabel="" />
@@ -123,6 +128,12 @@
                             </f:facet>
                         </p:cellEditor>
                     </p:columns>
+                    <p:column headerText="#{messages['commons.actions']}" exportable="false">
+                        <p:commandButton id="deletelink" icon="ui-icon-trash" action="#{customTableBean.delete(entity['id'])}" rendered="#{customTableBean.edit}"
+                            update=":ctForm:ctSearchResults_omitFromSubmit">
+                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
 
                     <c:if test="#{customTableBean.edit}">
                         <f:facet name="footer" layout="block">
@@ -130,18 +141,18 @@
                             <hf:namingContainer id="addNewFields" rendered="#{customTableBean.edit}">
                                 <c:forEach items="#{customTableBean.fields}" var="field">
                                     <c:if test="#{field.fieldType eq CustomFieldTypeEnum.STRING}">
-                                        <p:inputText id="#{field.code}" value="#{customTableBean.newValues[field.code]}"
+                                        <p:inputText id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}"
                                             placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
                                             label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="30" maxlength="#{field.maxValue}" required="#{field.valueRequired}" />
                                     </c:if>
                                     <c:if test="#{field.fieldType eq CustomFieldTypeEnum.DATE}">
-                                        <p:calendar id="#{field.code}" value="#{customTableBean.newValues[field.code]}"
+                                        <p:calendar id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}"
                                             placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
                                             label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" showButtonPanel="true" pattern="#{paramBean.dateFormat}"
                                             required="#{field.valueRequired}" style="margin-left:5px" />
                                     </c:if>
                                     <c:if test="#{field.fieldType eq CustomFieldTypeEnum.DOUBLE}">
-                                        <p:inputText id="#{field.code}" value="#{customTableBean.newValues[field.code]}" required="#{field.valueRequired}"
+                                        <p:inputText id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}" required="#{field.valueRequired}"
                                             placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
                                             label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}">
                                             <f:convertNumber minFractionDigits="2" />
@@ -157,7 +168,7 @@
                                         </p:inputText>
                                     </c:if>
                                     <c:if test="#{field.fieldType eq CustomFieldTypeEnum.LONG}">
-                                        <p:inputText id="#{field.code}" value="#{customTableBean.newValues[field.code]}" required="#{field.valueRequired}"
+                                        <p:inputText id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}" required="#{field.valueRequired}"
                                             placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
                                             label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}">
                                             <f:convertNumber integerOnly="true" />
@@ -174,7 +185,7 @@
                                     </c:if>
 
                                     <c:if test="#{field.fieldType eq CustomFieldTypeEnum.LIST}">
-                                        <p:selectOneMenu id="#{field.code}" value="#{customTableBean.newValues[field.code]}" required="#{field.valueRequired}"
+                                        <p:selectOneMenu id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}" required="#{field.valueRequired}"
                                             placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
                                             label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}">
                                             <f:selectItem itemValue="#{null}" itemLabel="" />
@@ -184,14 +195,54 @@
                                 </c:forEach>
 
                                 <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update=":ctForm:ctSearchResults_omitFromSubmit"
-                                    action="#{customTableBean.addValueToMap()}" style="margin-left:20px">
+                                    action="#{customTableBean.addNewValues()}" style="margin-left:20px">
                                     <p:resetInput target="addNewFields" />
                                 </p:commandButton>
+
                             </hf:namingContainer>
+
+                            <p:commandButton value="#{messages['customTable.import']}" onclick="PF('importDialog').show()" icon="fa fa-arrow-up" type="button" immediate="true" process="@this" />
+
+                            <p:commandButton id="deleteMany" value="#{messages['commons.deleteMultiple']}" action="#{customTableBean.deleteMany()}" icon="ui-icon-trash"
+                                update=":ctForm:ctSearchResults_omitFromSubmit">
+                                <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDeleteMultiple']}" icon="ui-icon-alert" />
+                            </p:commandButton>
                         </f:facet>
                     </c:if>
                 </p:dataTable>
             </h:form>
+
+            <p:dialog modal="true" closeOnEscape="true" widgetVar="importDialog" header="#{messages['customTable.importFile.header']}" draggable="false" closable="true" resizable="false" width="600px">
+
+                <hftl:decorateFormPanel formId="importForm">
+                    <ui:define name="fields">
+
+                        <hftl:decorateFormField fieldId="includeIdField" label="#{messages['customTable.includeIdField']}" componentWidth="50" displayOneLine="true" labelWidth="60">
+                            <p:selectBooleanCheckbox id="includeIdField" value="#{customTableBean.includeIdField}">
+                                <p:ajax update="csvFileFormat" event="change" process="@this" />
+                            </p:selectBooleanCheckbox>
+                        </hftl:decorateFormField>
+
+                        <hftl:decorateFormField fieldId="appendImportedData" label="#{messages['customTable.appendImportedData']}" componentWidth="50" displayOneLine="true" labelWidth="60">
+                            <p:selectBooleanCheckbox id="appendImportedData" value="#{customTableBean.appendImportedData}">
+                                <p:ajax event="change" process="@this" />
+                            </p:selectBooleanCheckbox>
+                        </hftl:decorateFormField>
+
+                        <hftl:decorateFormField fieldId="csvFileFormat" label="#{messages['customTable.csvFileFormat']}" componentWidth="50" newLine="true">
+                            <h:outputText id="csvFileFormat" value="#{customTableBean.csvFileFormat }" styleClass="field-value" />
+                        </hftl:decorateFormField>
+
+                        <hftl:decorateFormField label="" componentWidth="100" newLine="true">
+                            <p:fileUpload id="import_file" widgetVar="fileUploadWidget" fileUploadListener="#{customTableBean.handleFileUpload}" allowTypes="/(\.|\/)(csv)$/" auto="false"
+                                update="@this :ctForm:ctSearchResults_omitFromSubmit" label="#{messages['customTable.importFile.selectFile']}" uploadLabel="#{messages['export.importFile.upload']}"
+                                fileLimit="1" fileLimitMessage="#{messages['customFieldTemplate.importFile.fileLimitMessage']}" multiple="false"
+                                oncomplete="PF('fileUploadWidget').reset(); PF('importDialog').hide()">
+                            </p:fileUpload>
+                        </hftl:decorateFormField>
+                    </ui:define>
+                </hftl:decorateFormPanel>
+            </p:dialog>
         </p:panel>
     </ui:define>
 

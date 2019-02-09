@@ -15,7 +15,6 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 
-
 /**
  * The Class CustomEntityTemplateDto.
  *
@@ -29,10 +28,17 @@ public class CustomEntityTemplateDto extends EnableBusinessDto {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6633504145323452803L;
 
-    /** The code. */
+    /**
+     * The name
+     */
     @XmlAttribute(required = true)
-    /** The name. */
     private String name;
+
+    /**
+     * Store as a separate table
+     */
+    @XmlAttribute
+    private Boolean storeAsTable;
 
     /** The fields. */
     @XmlElementWrapper(name = "fields")
@@ -62,12 +68,15 @@ public class CustomEntityTemplateDto extends EnableBusinessDto {
         super(cet);
 
         setName(cet.getName());
+        if (cet.isStoreAsTable()) {
+            setStoreAsTable(true);
+        }
 
         if (cetFields != null) {
             List<CustomFieldTemplateDto> fields = new ArrayList<CustomFieldTemplateDto>();
             for (CustomFieldTemplate cft : cetFields) {
                 fields.add(new CustomFieldTemplateDto(cft));
-    }
+            }
             setFields(fields);
         }
 
@@ -75,7 +84,7 @@ public class CustomEntityTemplateDto extends EnableBusinessDto {
             List<EntityCustomActionDto> actions = new ArrayList<EntityCustomActionDto>();
             for (EntityCustomAction action : cetActions) {
                 actions.add(new EntityCustomActionDto(action));
-    }
+            }
             setActions(actions);
         }
     }
@@ -96,6 +105,20 @@ public class CustomEntityTemplateDto extends EnableBusinessDto {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return Shall data be stored in a separate db table
+     */
+    public Boolean getStoreAsTable() {
+        return storeAsTable;
+    }
+
+    /**
+     * @param storeAsTable Shall data be stored in a separate db table
+     */
+    public void setStoreAsTable(Boolean storeAsTable) {
+        this.storeAsTable = storeAsTable;
     }
 
     /**
@@ -134,7 +157,9 @@ public class CustomEntityTemplateDto extends EnableBusinessDto {
         this.actions = actions;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override

@@ -88,7 +88,7 @@ public class FlatFileProcessingJob extends Job {
                 f.mkdirs();
                 log.debug("inputDir {} creation ok", inputDir);
             }
-            File[] files = FileUtils.getFilesForParsing(inputDir, fileExtensions);
+            File[] files = FileUtils.listFiles(inputDir, fileExtensions);
             if (files == null || files.length == 0) {
                 String msg = String.format("there is no file in %s with extension %s", inputDir, fileExtensions);
                 log.debug(msg);

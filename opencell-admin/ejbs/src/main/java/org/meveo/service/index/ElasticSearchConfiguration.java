@@ -24,6 +24,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.customEntities.CustomTableRecord;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.ApplicationProvider;
 
@@ -76,9 +77,9 @@ public class ElasticSearchConfiguration implements Serializable {
     private Map<String, String> customFieldTemplates = new HashMap<>();
 
     /**
-     * Contains custom entity template data model
+     * Contains mapping rules for custom entity templates
      */
-    private String customEntityTemplate = null;
+    private Map<String, String> customEntityTemplates = new HashMap<>();
 
     // @Inject
     // private Logger log;
@@ -94,6 +95,8 @@ public class ElasticSearchConfiguration implements Serializable {
      * @throws JsonProcessingException Json processing exception.
      */
     public void loadConfiguration() throws JsonProcessingException, IOException {
+
+        upsertMap = new HashSet<>();
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(this.getClass().getClassLoader().getResourceAsStream("elasticSearchConfiguration.json"));
@@ -121,6 +124,10 @@ public class ElasticSearchConfiguration implements Serializable {
                     upsertMap.add(classname);
                 }
             }
+        }
+
+        if (upsertMap.isEmpty()) {
+            upsertMap = null;
         }
 
         // Load entity field mapping to JSON
@@ -161,8 +168,9 @@ public class ElasticSearchConfiguration implements Serializable {
 
         // Load customEntity field mapping template - only the first one is used.
         Iterator<Entry<String, JsonNode>> cetTemplateInfos = node.get("cetTemplates").fields();
-        if (cetTemplateInfos.hasNext()) {
-            customEntityTemplate = cetTemplateInfos.next().getValue().toString();
+        while (cetTemplateInfos.hasNext()) {
+            Entry<String, JsonNode> cetTemplateInfo = cetTemplateInfos.next();
+            customEntityTemplates.put(cetTemplateInfo.getKey(), cetTemplateInfo.getValue().toString());
         }
     }
 
@@ -185,7 +193,7 @@ public class ElasticSearchConfiguration implements Serializable {
     @SuppressWarnings("rawtypes")
     public String getIndex(Class<? extends ISearchable> clazzToConvert) {
 
-        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
+        String indexPrefix = BaseEntity.cleanUpAndLowercaseCodeOrId(appProvider.getCode());
 
         Class clazz = clazzToConvert;
         while (clazz != null && !ISearchable.class.equals(clazz)) {
@@ -222,7 +230,7 @@ public class ElasticSearchConfiguration implements Serializable {
      */
     public Set<String> getIndexes() {
 
-        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
+        String indexPrefix = BaseEntity.cleanUpAndLowercaseCodeOrId(appProvider.getCode());
 
         Set<String> indexNames = new HashSet<>();
 
@@ -243,6 +251,8 @@ public class ElasticSearchConfiguration implements Serializable {
         String cetCode = null;
         if (entity instanceof CustomEntityInstance) {
             cetCode = ((CustomEntityInstance) entity).getCetCode();
+        } else if (entity instanceof CustomTableRecord) {
+            cetCode = ((CustomTableRecord) entity).getCetCode();
         }
         return getType(entity.getClass(), cetCode);
     }
@@ -263,7 +273,12 @@ public class ElasticSearchConfiguration implements Serializable {
                 String type = typeMap.get(clazz.getSimpleName());
 
                 if (type.startsWith("#")) {
-                    return ValueExpressionWrapper.evaluateToStringIgnoreErrors(type, "cetCode", ElasticClient.cleanUpCode(cetCode));
+                    if (CustomTableRecord.class.isAssignableFrom(clazzToConvert)) {
+                        cetCode = BaseEntity.cleanUpAndLowercaseCodeOrId(cetCode);
+                    } else {
+                        cetCode = BaseEntity.cleanUpCodeOrId(cetCode);
+                    }
+                    return ValueExpressionWrapper.evaluateToStringIgnoreErrors(type, "cetCode", cetCode);
 
                 } else {
                     return type;
@@ -299,10 +314,30 @@ public class ElasticSearchConfiguration implements Serializable {
      * @param entity ISearchable entity to be stored/indexed in Elastic Search
      * @return True if upsert should be used
      */
-    @SuppressWarnings("rawtypes")
     public boolean isDoUpsert(ISearchable entity) {
 
-        Class clazz = entity.getClass();
+        if (upsertMap == null) {
+            return false;
+        }
+
+        return isDoUpsert(entity.getClass());
+    }
+
+    /**
+     * Determine if upsert (update if exist or create is not exist) should be done instead of just update in Elastic Search for a given entity. Assume False if nothing found in
+     * configuration.
+     * 
+     * @param entityClass ISearchable entity to be stored/indexed in Elastic Search
+     * @return True if upsert should be used
+     */
+    @SuppressWarnings("rawtypes")
+    public boolean isDoUpsert(Class<? extends ISearchable> entityClass) {
+
+        if (upsertMap == null) {
+            return false;
+        }
+
+        Class clazz = entityClass;
 
         while (clazz != null && !ISearchable.class.equals(clazz)) {
             if (upsertMap.contains(clazz.getSimpleName())) {
@@ -359,21 +394,26 @@ public class ElasticSearchConfiguration implements Serializable {
      * Get a field mapping configuration for a given custom field template
      * 
      * @param cft Custom field template
+     * @param cleanupFieldname Should field name (customFieldTemplate.code) be cleanedup - lowercased and spaces replaced by '_'
      * @return Field mapping JSON string
      */
-    public String getCustomFieldMapping(CustomFieldTemplate cft) {
+    public String getCustomFieldMapping(CustomFieldTemplate cft, boolean cleanupFieldname) {
 
         for (Entry<String, String> fieldTemplate : customFieldTemplates.entrySet()) {
             if (ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(fieldTemplate.getKey(), "cft", cft)) {
 
+                String fieldname = cft.getCode();
+                if (cleanupFieldname) {
+                    fieldname = BaseEntity.cleanUpAndLowercaseCodeOrId(fieldname);
+                }
                 // Change index property to "no" from "analyzed" or "not_analyzed"
                 if (cft.getIndexType() == CustomFieldIndexTypeEnum.STORE_ONLY) {
-                    return fieldTemplate.getValue().replace("not_analyzed", "no").replace("analyzed", "no").replace("<fieldName>", cft.getCode());
+                    return fieldTemplate.getValue().replace("not_analyzed", "no").replace("analyzed", "no").replace("<fieldName>", fieldname);
                     // Change index property "analyzed" to "not_analyzed"
                 } else if (cft.getIndexType() == CustomFieldIndexTypeEnum.INDEX_NOT_ANALYZE) {
-                    return fieldTemplate.getValue().replace("analyzed", "not_analyzed").replace("<fieldName>", cft.getCode());
+                    return fieldTemplate.getValue().replace("\"analyzed\"", "\"not_analyzed\"").replace("<fieldName>", fieldname);
                 } else {
-                    return fieldTemplate.getValue().replace("<fieldName>", cft.getCode());
+                    return fieldTemplate.getValue().replace("<fieldName>", fieldname);
                 }
             }
         }
@@ -387,6 +427,11 @@ public class ElasticSearchConfiguration implements Serializable {
      * @return Field mapping JSON string
      */
     public String getCetMapping(CustomEntityTemplate cet) {
-        return customEntityTemplate;
+
+        if (cet.isStoreAsTable()) {
+            return customEntityTemplates.get("cet_as_table");
+        } else {
+            return customEntityTemplates.get("cet_as_cei");
+        }
     }
 }
