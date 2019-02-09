@@ -19,6 +19,8 @@
 package org.meveo.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 
 import javax.persistence.Access;
@@ -97,11 +99,43 @@ public abstract class BaseEntity implements Serializable, IEntity, IJPAVersioned
      */
     @Override
     public boolean equals(Object obj) {
-        throw new IllegalStateException("Equals method was not overriden in "+ getClass().getName());
+        throw new IllegalStateException("Equals method was not overriden in " + getClass().getName());
     }
 
     @Override
     public String toString() {
         return String.format("id=%s", id);
+    }
+
+    /**
+     * Clean up code/identifier value. Replace spaces with '_'.
+     * 
+     * @param codeOrId Code or identifier value
+     * @return Modifier code/identifier value
+     */
+    public static String cleanUpCodeOrId(Object codeOrId) {
+
+        if (codeOrId instanceof Long) {
+            return codeOrId.toString();
+        } else if (codeOrId instanceof BigDecimal) {
+            return Long.toString(((BigDecimal) codeOrId).longValue());
+        } else if (codeOrId instanceof BigInteger) {
+            return ((BigInteger) codeOrId).toString();
+        } else {
+            codeOrId = ((String) codeOrId).replace(' ', '_');
+            return (String) codeOrId;
+        }
+    }
+
+    /**
+     * Clean up code/identifier value (Replace spaces with '_') and lowercase it
+     * 
+     * @param codeOrId Code or identifier value
+     * @return Modifier code/identifier value
+     */
+    public static String cleanUpAndLowercaseCodeOrId(Object codeOrId) {
+
+        codeOrId = cleanUpCodeOrId(codeOrId).toLowerCase();
+        return (String) codeOrId;
     }
 }

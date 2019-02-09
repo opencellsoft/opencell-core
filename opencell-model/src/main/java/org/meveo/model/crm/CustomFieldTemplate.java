@@ -38,6 +38,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -296,9 +297,18 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
 
+    /**
+     * Value display format - pattern
+     */
     @Column(name = "display_format", length = 80)
     @Size(max = 80)
     private String displayFormat;
+
+    /**
+     * Database field name - derived from code
+     */
+    @Transient
+    private String dbFieldname;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -729,7 +739,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      * @return Date period matching calendar's dates
      */
     public DatePeriod getDatePeriod(Date date) {
-		if (isVersionable() && getCalendar() != null && date != null) {
+        if (isVersionable() && getCalendar() != null && date != null) {
             return new DatePeriod(getCalendar().previousCalendarDate(date), getCalendar().nextCalendarDate(date));
         }
         return null;
@@ -952,6 +962,26 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     public void setDisplayFormat(String displayFormat) {
         this.displayFormat = displayFormat;
     }
-    
-    
+
+    /**
+     * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
+     * 
+     * @return Database field name
+     */
+    public String getDbFieldname() {
+        if (dbFieldname == null && code != null) {
+            dbFieldname = CustomFieldTemplate.getDbFieldname(code);
+        }
+        return dbFieldname;
+    }
+
+    /**
+     * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
+     * 
+     * @param code Field code
+     * @return Database field name
+     */
+    public static String getDbFieldname(String code) {
+        return BaseEntity.cleanUpAndLowercaseCodeOrId(code);
+    }
 }

@@ -1,8 +1,14 @@
 package org.meveo.admin.action.admin.custom;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -14,6 +20,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
@@ -21,7 +28,9 @@ import org.meveo.service.custom.CustomTableService;
 import org.meveo.util.view.NativeTableBasedDataModel;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.UploadedFile;
 
 @Named
 @ViewScoped
@@ -52,6 +61,12 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     private Map<String, Object> newValues = new HashMap<String, Object>();
 
+    private boolean includeIdField;
+
+    private boolean appendImportedData;
+
+    private List<Map<String, Object>> selectedValues;
+
     public CustomTableBean() {
         super(CustomEntityTemplate.class);
     }
@@ -60,12 +75,13 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
     public CustomEntityTemplate initEntity() {
         super.initEntity();
 
-        customTableName = entity.getCode();
+        customTableName = entity.getDbTablename();
 
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity.getAppliesTo());
         if (cfts != null) {
             fields = cfts.values();
         }
+
         return entity;
     }
 
@@ -180,14 +196,125 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
      * @throws BusinessException General exception
      */
     @ActionMethod
-    public void addValueToMap() throws BusinessException {
-        customTableService.create(customTableName, newValues);
+    public void addNewValues() throws BusinessException {
+
+        Map<String, Object> convertedValues = CustomTableService.convertValues(newValues, fields, false);
+
+        customTableService.create(customTableName, convertedValues);
         messages.info(new BundleKey("messages", "customTable.valuesSaved"));
         newValues = new HashMap<>();
         customTableBasedDataModel = null;
     }
 
-    // Bellow is implementation when value changes are saved in bulk
+    /**
+     * Handle a file upload and import the file
+     * 
+     * @param event File upload event
+     * @throws BusinessException
+     * @throws IOException
+     */
+    @ActionMethod
+    public void handleFileUpload(FileUploadEvent event) throws BusinessException, IOException {
+        UploadedFile file = event.getFile();
+
+        if (file == null) {
+            messages.warn(new BundleKey("messages", "customTable.importFile.fileRequired"));
+            return;
+        }
+
+        int importedLinesTotal = customTableService.importData(entity, fields, file.getInputstream(), includeIdField, appendImportedData);
+
+        messages.info(new BundleKey("messages", "customTable.importFile.importedLines"), importedLinesTotal);
+    }
+
+    public boolean isIncludeIdField() {
+        return includeIdField;
+    }
+
+    public void setIncludeIdField(boolean includeIdField) {
+        this.includeIdField = includeIdField;
+    }
+
+    public boolean isAppendImportedData() {
+        return appendImportedData;
+    }
+
+    public void setAppendImportedData(boolean appendImportedData) {
+        this.appendImportedData = appendImportedData;
+    }
+
+    public List<Map<String, Object>> getSelectedValues() {
+        return selectedValues;
+    }
+
+    public void setSelectedValues(List<Map<String, Object>> selectedValues) {
+        this.selectedValues = selectedValues;
+    }
+
+    /**
+     * Construct a CSV file format (header) for file import
+     * 
+     * @return CSV file field order
+     */
+    public String getCsvFileFormat() {
+        StringBuffer format = new StringBuffer();
+
+        boolean first = true;
+        if (includeIdField) {
+            format.append(NativePersistenceService.FIELD_ID);
+            first = false;
+        }
+
+        for (CustomFieldTemplate field : fields) {
+            if (!first) {
+                format.append(",");
+            }
+            format.append(field.getCode());
+            first = false;
+        }
+
+        return format.toString();
+    }
+
+    @Override
+    @ActionMethod
+    public void delete(Long id) throws BusinessException {
+        customTableService.remove(customTableName, id);
+        customTableBasedDataModel = null;
+        messages.info(new BundleKey("messages", "delete.successful"));
+    }
+
+    @Override
+    @ActionMethod
+    public void deleteMany() throws BusinessException {
+
+        if (selectedValues == null || selectedValues.isEmpty()) {
+            messages.info(new BundleKey("messages", "delete.entitities.noSelection"));
+            return;
+        }
+        Set<Long> ids = new HashSet<>();
+
+        for (Map<String, Object> values : selectedValues) {
+
+            Object id = values.get(NativePersistenceService.FIELD_ID);
+            if (id instanceof String) {
+                id = Long.parseLong((String) id);
+            } else if (id instanceof BigDecimal) {
+                id = ((BigDecimal) id).longValue();
+            } else if (id instanceof BigInteger) {
+                id = ((BigInteger) id).longValue();
+            }
+
+            ids.add((long) id);
+
+        }
+
+        customTableService.remove(customTableName, ids);
+        customTableBasedDataModel = null;
+        messages.info(new BundleKey("messages", "delete.entitities.successful"));
+    }
+
+    // Bellow is implementation when value changes are accumulated and saved in bulk
     //
     //
     // private List<Map<String, Object>> dirtyValues = new ArrayList<>();
@@ -202,7 +329,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
     // public void onCellEdit(CellEditEvent event) {
     // DataTable o = (DataTable) event.getSource();
     // Map<String, Object> mapValue = (Map<String, Object>) o.getRowData();
-    // Long id = (Long) mapValue.get("id");
+    // Long id = (Long) mapValue.get(NativePersistenceService.FIELD_ID);
     // if (!dirtyIds.contains(id)) {
     // dirtyIds.add(id);
     // dirtyValues.add(mapValue);

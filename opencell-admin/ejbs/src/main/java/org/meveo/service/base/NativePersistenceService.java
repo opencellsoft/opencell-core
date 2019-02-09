@@ -19,6 +19,8 @@
 package org.meveo.service.base;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -33,12 +35,18 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IdentifiableEnum;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -49,45 +57,105 @@ import org.meveo.model.IdentifiableEnum;
  */
 public class NativePersistenceService extends BaseService {
 
+    /**
+     * ID field name
+     */
+    public static String FIELD_ID = "id";
+
+    /**
+     * Disabled field name
+     */
+    public static String FIELD_DISABLED = "disabled";
+
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
+    /**
+     * Find record by its identifier
+     * 
+     * @param tableName Table name
+     * @param id Identifier
+     * @return A map of values with field name as a map key and field value as a map value
+     */
+    @SuppressWarnings("unchecked")
     public Map<String, Object> findById(String tableName, Long id) {
 
-        return null;
+        try {
+
+            Session session = getEntityManager().unwrap(Session.class);
+            SQLQuery query = session.createSQLQuery("select * from " + tableName + " e where id=:id");
+            query.setParameter("id", id);
+            query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
+
+            Map<String, Object> values = (Map<String, Object>) query.uniqueResult();
+
+            return values;
+
+        } catch (Exception e) {
+            log.error("Failed to retrieve values from table by id {}/{} sql {}", tableName, id, e);
+            throw e;
+        }
     }
 
     /**
-     * Insert a new record into a table
+     * Insert values into table
      * 
-     * @param tableName Table name to update
-     * @param value Values
+     * @param tableName Table name to insert values to
+     * @param values Values to insert
      * @throws BusinessException General exception
      */
-    public void create(String tableName, Map<String, Object> value) throws BusinessException {
+    public Long create(String tableName, Map<String, Object> values) throws BusinessException {
+
+        Long id = create(tableName, values, true);
+
+        return id;
+    }
+
+    /**
+     * Insert a new record into a table. If returnId=True values parameter will be updated with 'id' field value.
+     * 
+     * @param tableName Table name to update
+     * @param values Values
+     * @param returnId Should identifier be returned - does a lookup in DB by matching same values. If True values will be updated with 'id' field value.
+     * @throws BusinessException General exception
+     */
+    protected Long create(String tableName, Map<String, Object> values, boolean returnId) throws BusinessException {
 
         StringBuffer sql = new StringBuffer();
         try {
+
+            // Change ID field data type to long
+            Object id = values.get(FIELD_ID);
+            if (id != null && id instanceof String) {
+                id = Long.parseLong((String) id);
+                values.put(FIELD_ID, id);
+            }
+
             sql.append("insert into ").append(tableName);
             StringBuffer fields = new StringBuffer();
             StringBuffer fieldValues = new StringBuffer();
+            StringBuffer findIdFields = new StringBuffer();
 
             boolean first = true;
-            for (String fieldName : value.keySet()) {
-                if (fieldName.equals("id")) {
+            for (String fieldName : values.keySet()) {
+                // Ignore a null ID field
+                if (fieldName.equals(FIELD_ID) && values.get(fieldName) == null) {
                     continue;
                 }
 
                 if (!first) {
                     fields.append(",");
                     fieldValues.append(",");
+                    findIdFields.append(" and ");
                 }
                 fields.append(fieldName);
-                if (value.get(fieldName) == null) {
+                if (values.get(fieldName) == null) {
                     fieldValues.append("NULL");
+                    findIdFields.append(fieldName).append(" IS NULL");
                 } else {
                     fieldValues.append(":").append(fieldName);
+                    findIdFields.append(fieldName).append("=:").append(fieldName);
                 }
                 first = false;
             }
@@ -95,35 +163,67 @@ public class NativePersistenceService extends BaseService {
             sql.append(" (").append(fields).append(") values (").append(fieldValues).append(")");
 
             Query query = getEntityManager().createNativeQuery(sql.toString());
-            for (String fieldName : value.keySet()) {
-                if (fieldName.equals("id") || value.get(fieldName) == null) {
+            for (String fieldName : values.keySet()) {
+                if (values.get(fieldName) == null) {
                     continue;
                 }
-                query.setParameter(fieldName, value.get(fieldName));
+                query.setParameter(fieldName, values.get(fieldName));
             }
             query.executeUpdate();
 
+            // Find the identifier of the last inserted record
+            if (returnId) {
+                if (id != null) {
+                    return (Long) id;
+                }
+
+                query = getEntityManager().createNativeQuery("select id from " + tableName + " where " + findIdFields + " order by id desc").setMaxResults(1);
+                for (String fieldName : values.keySet()) {
+                    if (values.get(fieldName) == null) {
+                        continue;
+                    }
+                    query.setParameter(fieldName, values.get(fieldName));
+                }
+
+                id = query.getSingleResult();
+                if (id instanceof BigDecimal) {
+                    id = ((BigDecimal) id).longValue();
+                } else if (id instanceof BigInteger) {
+                    id = ((BigInteger) id).longValue();
+                }
+                values.put(FIELD_ID, id);
+
+                return (Long) id;
+
+            } else {
+                return null;
+            }
+
         } catch (Exception e) {
-            log.error("Failed to insert values into table {} {} sql {}", tableName, value, sql, e);
+            log.error("Failed to insert values into OR find ID of table {} {} sql {}", tableName, values, sql, e);
             throw e;
         }
     }
 
     /**
-     * Update a record in a table
+     * Update a record in a table. Record is identified by an "id" field value.
      * 
      * @param tableName Table name to update
-     * @param value Values
+     * @param value Values. Values must contain an "id" (FIELD_ID) field.
      * @throws BusinessException General exception
      */
     public void update(String tableName, Map<String, Object> value) throws BusinessException {
+
+        if (value.get(FIELD_ID) == null) {
+            throw new BusinessException("'id' field value not provided to update values in native table");
+        }
 
         StringBuffer sql = new StringBuffer();
         try {
             sql.append("update ").append(tableName).append(" set ");
             boolean first = true;
             for (String fieldName : value.keySet()) {
-                if (fieldName.equals("id")) {
+                if (fieldName.equals(FIELD_ID)) {
                     continue;
                 }
 
@@ -155,7 +255,7 @@ public class NativePersistenceService extends BaseService {
     }
 
     /**
-     * Update a record in a table
+     * Update field value in a table
      * 
      * @param tableName Table name to update
      * @param id Record identifier
@@ -179,31 +279,106 @@ public class NativePersistenceService extends BaseService {
         }
     }
 
+    /**
+     * Disable a record
+     * 
+     * @param tableName Table name to update
+     * @param id Record identifier
+     * @throws BusinessException General exception
+     */
     public void disable(String tableName, Long id) throws BusinessException {
 
         getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id=" + id).executeUpdate();
     }
 
+    /**
+     * Disable multiple records
+     * 
+     * @param tableName Table name to update
+     * @param ids A list of record identifiers
+     * @throws BusinessException General exception
+     */
+    public void disable(String tableName, Set<Long> ids) throws BusinessException {
+
+        getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id in :ids").setParameter("ids", ids).executeUpdate();
+    }
+
+    /**
+     * Enable a record
+     * 
+     * @param tableName Table name to update
+     * @param id Record identifier
+     * @throws BusinessException General exception
+     */
     public void enable(String tableName, Long id) throws BusinessException {
 
         getEntityManager().createNativeQuery("update " + tableName + " set disabled=0 where id=" + id).executeUpdate();
     }
 
+    /**
+     * Enable multiple records
+     * 
+     * @param tableName Table name to update
+     * @param ids A list of record identifiers
+     * @throws BusinessException General exception
+     */
+    public void enable(String tableName, Set<Long> ids) throws BusinessException {
+
+        getEntityManager().createNativeQuery("update " + tableName + " set disabled=0 where id in :ids").setParameter("ids", ids).executeUpdate();
+    }
+
+    /**
+     * Delete a record
+     * 
+     * @param tableName Table name to update
+     * @param id Record identifier
+     * @throws BusinessException General exception
+     */
     public void remove(String tableName, Long id) throws BusinessException {
 
-        getEntityManager().createNativeQuery("delete from" + tableName + " where id=" + id).executeUpdate();
+        getEntityManager().createNativeQuery("delete from " + tableName + " where id=" + id).executeUpdate();
     }
 
+    /**
+     * Delete multiple records
+     * 
+     * @param tableName Table name to update
+     * @param ids A set of record identifiers
+     * @throws BusinessException General exception
+     */
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
-        getEntityManager().createNativeQuery("delete from" + tableName + " where id in:ids").setParameter("ids", ids).executeUpdate();
+        getEntityManager().createNativeQuery("delete from " + tableName + " where id in:ids").setParameter("ids", ids).executeUpdate();
 
     }
 
+    /**
+     * Delete all records
+     * 
+     * @param tableName Table name to update
+     * @throws BusinessException General exception
+     */
+    public void remove(String tableName) throws BusinessException {
+        getEntityManager().createNativeQuery("delete from " + tableName).executeUpdate();
+
+    }
+
+    /**
+     * Retrieve values from a table
+     * 
+     * @param tableName Table name to query
+     * @return A list of map of values with field name as map's key and field value as map's value
+     */
     public List<Map<String, Object>> list(String tableName) {
 
         return list(tableName, null);
     }
 
+    /**
+     * Retrieve ONLY enabled values from a table
+     * 
+     * @param tableName Table name to query
+     * @return A list of map of values with field name as map's key and field value as map's value
+     */
     public List<Map<String, Object>> listActive(String tableName) {
 
         Map<String, Object> filters = new HashMap<>();
@@ -556,8 +731,8 @@ public class NativePersistenceService extends BaseService {
         for (Map<String, Object> value : values) {
 
             // New record
-            if (value.get("id") == null) {
-                create(tableName, value);
+            if (value.get(FIELD_ID) == null) {
+                create(tableName, value, false);
 
                 // Existing record
             } else {
@@ -573,5 +748,174 @@ public class NativePersistenceService extends BaseService {
      */
     public EntityManager getEntityManager() {
         return emWrapper.getEntityManager();
+    }
+
+    /**
+     * Convert value of unknown data type to a target data type. A value of type list is considered as already converted value, as would come only from WS.
+     * 
+     * @param value Value to convert
+     * @param targetClass Target data type class to convert to
+     * @param expectedList Is return value expected to be a list. If value is not a list and is a string a value will be parsed as comma separated string and each value will be
+     *        converted accordingly. If a single value is passed, it will be added to a list.
+     * @return A converted data type
+     * @throws InvalidParameterException
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    protected static Object castValue(Object value, Class targetClass, boolean expectedList) throws ValidationException {
+
+        // log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
+        // value != null ? value.getClass().isArray() : null);
+
+        // Nothing to cast - same data type
+        if (targetClass.isAssignableFrom(value.getClass()) && !expectedList) {
+            return value;
+
+            // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
+        } else if (expectedList) {
+            if (value instanceof List || value instanceof Set || value.getClass().isArray()) {
+                return value;
+
+                // Parse comma separated string
+            } else if (value instanceof String) {
+                List valuesConverted = new ArrayList<>();
+                String[] valueItems = ((String) value).split(",");
+                for (String valueItem : valueItems) {
+                    Object valueConverted = castValue(valueItem, targetClass, false);
+                    if (valueConverted != null) {
+                        valuesConverted.add(valueConverted);
+                    } else {
+                        throw new ValidationException("Filter value " + value + " does not match " + targetClass.getSimpleName());
+                    }
+                }
+                return valuesConverted;
+
+                // A single value list
+            } else {
+                Object valueConverted = castValue(value, targetClass, false);
+                if (valueConverted != null) {
+                    return Arrays.asList(valueConverted);
+                } else {
+                    throw new ValidationException("Filter value " + value + " does not match " + targetClass.getSimpleName());
+                }
+            }
+        }
+
+        Number numberVal = null;
+        BigDecimal bdVal = null;
+        String stringVal = null;
+        Boolean booleanVal = null;
+        Date dateVal = null;
+        List listVal = null;
+
+        if (value instanceof Number) {
+            numberVal = (Number) value;
+        } else if (value instanceof BigDecimal) {
+            bdVal = (BigDecimal) value;
+        } else if (value instanceof Boolean) {
+            booleanVal = (Boolean) value;
+        } else if (value instanceof Date) {
+            dateVal = (Date) value;
+        } else if (value instanceof String) {
+            stringVal = (String) value;
+        } else if (value instanceof List) {
+            listVal = (List) value;
+        } else {
+            throw new ValidationException("Unrecognized data type for value " + value + " type " + value.getClass());
+        }
+
+        try {
+            if (targetClass == String.class) {
+                if (stringVal != null || listVal != null) {
+                    return value;
+                } else {
+                    return value.toString();
+                }
+
+            } else if (targetClass == Boolean.class || (targetClass.isPrimitive() && targetClass.getName().equals("boolean"))) {
+                if (booleanVal != null) {
+                    return value;
+                } else {
+                    return Boolean.parseBoolean(value.toString());
+                }
+
+            } else if (targetClass == Date.class) {
+                if (dateVal != null || listVal != null) {
+                    return value;
+                } else if (numberVal != null) {
+                    return new Date(numberVal.longValue());
+                } else if (stringVal != null) {
+                    // first try with date and time and then only with date format
+                    Date date = DateUtils.parseDateWithPattern(stringVal, DateUtils.DATE_TIME_PATTERN);
+                    if (date == null) {
+                        date = DateUtils.parseDateWithPattern(stringVal, DateUtils.DATE_PATTERN);
+                    }
+                    return date;
+                }
+
+            } else if (targetClass.isEnum()) {
+                if (listVal != null || targetClass.isAssignableFrom(value.getClass())) {
+                    return value;
+                } else if (stringVal != null) {
+                    Enum enumVal = ReflectionUtils.getEnumFromString((Class<? extends Enum>) targetClass, stringVal);
+                    if (enumVal != null) {
+                        return enumVal;
+                    }
+                }
+
+            } else if (targetClass == Integer.class || (targetClass.isPrimitive() && targetClass.getName().equals("int"))) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return Integer.parseInt(stringVal);
+                }
+
+            } else if (targetClass == Long.class || (targetClass.isPrimitive() && targetClass.getName().equals("long"))) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return Long.parseLong(stringVal);
+                }
+
+            } else if (targetClass == Byte.class || (targetClass.isPrimitive() && targetClass.getName().equals("byte"))) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return Byte.parseByte(stringVal);
+                }
+
+            } else if (targetClass == Short.class || (targetClass.isPrimitive() && targetClass.getName().equals("short"))) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return Short.parseShort(stringVal);
+                }
+
+            } else if (targetClass == Double.class || (targetClass.isPrimitive() && targetClass.getName().equals("double"))) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return Double.parseDouble(stringVal);
+                }
+
+            } else if (targetClass == Float.class || (targetClass.isPrimitive() && targetClass.getName().equals("float"))) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return Float.parseFloat(stringVal);
+                }
+
+            } else if (targetClass == BigDecimal.class) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return new BigDecimal(stringVal);
+                }
+
+            }
+
+        } catch (NumberFormatException e) {
+            // Swallow - validation will take care of it later
+        }
+        return null;
     }
 }

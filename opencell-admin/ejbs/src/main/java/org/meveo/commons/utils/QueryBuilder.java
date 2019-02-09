@@ -701,7 +701,7 @@ public class QueryBuilder {
      * @return instance of Query.
      */
     public Query getQuery(EntityManager em) {
-        applyPagination(paginationSortAlias);
+        applyOrdering(paginationSortAlias);
 
         Query result = em.createQuery(q.toString());
         applyPagination(result);
@@ -720,12 +720,12 @@ public class QueryBuilder {
      * @return instance of Query.
      */
     public SQLQuery getNativeQuery(EntityManager em, boolean convertToMap) {
-        applyPagination(paginationSortAlias);
+        applyOrdering(paginationSortAlias);
 
         Session session = em.unwrap(Session.class);
         SQLQuery result = session.createSQLQuery(q.toString());
         applyPagination(result);
-        
+
         if (convertToMap) {
             result.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
         }
@@ -743,7 +743,7 @@ public class QueryBuilder {
      * @return typed query instance
      */
     public TypedQuery<Long> getIdQuery(EntityManager em) {
-        applyPagination(paginationSortAlias);
+        applyOrdering(paginationSortAlias);
 
         String from = "from ";
         String s = "select " + (alias != null ? alias + "." : "") + "id " + q.toString().substring(q.indexOf(from));
@@ -792,7 +792,6 @@ public class QueryBuilder {
         }
         return result;
     }
-    
 
     /**
      * Convert to a query to count number of records matched: "select .. from" is changed to "select count(*) from". To be used with NATIVE query in conjunction with
@@ -863,9 +862,11 @@ public class QueryBuilder {
     }
 
     /**
+     * Apply ordering to the query
+     * 
      * @param alias alias of column?
      */
-    private void applyPagination(String alias) {
+    private void applyOrdering(String alias) {
         if (paginationConfiguration == null) {
             return;
         }

@@ -227,7 +227,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
                 for (File physicalLibDir : deploymentDir.listFiles()) {
                     if (physicalLibDir.isDirectory()) {
-                        for (File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")) {
+                        for (File f : FileUtils.listFiles(physicalLibDir, "jar", "*")) {
                             classpath += f.getCanonicalPath() + File.pathSeparator;
                         }
                     }
