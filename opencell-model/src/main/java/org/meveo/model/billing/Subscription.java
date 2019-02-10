@@ -155,6 +155,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, H
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
     @Embedded
+    @AuditTarget(type = AuditChangeType.TR)
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
 
     /**
