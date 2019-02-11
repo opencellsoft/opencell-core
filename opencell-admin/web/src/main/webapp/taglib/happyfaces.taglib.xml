@@ -177,7 +177,11 @@
     <tag>
      <tag-name>displayWorkflowsHistory</tag-name>
         <source>displayWorkflowsHistory.xhtml</source>
-    </tag>    
+    </tag>
+    <tag>
+     <tag-name>displayGenericWFsHistory</tag-name>
+        <source>displayGenericWFsHistory.xhtml</source>
+    </tag>
     <tag>
      <tag-name>displayGenericWFsHistory</tag-name>
         <source>displayGenericWFsHistory.xhtml</source>

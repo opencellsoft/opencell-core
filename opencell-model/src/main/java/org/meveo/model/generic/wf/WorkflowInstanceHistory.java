@@ -25,10 +25,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -40,24 +40,29 @@ import org.meveo.model.BaseEntity;
 @Entity
 @Table(name = "wf_instance_history")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "wf_instance_history_seq"), })
+        @Parameter(name = "sequence_name", value = "wf_instance_history_seq") })
 public class WorkflowInstanceHistory extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * Workflow status from
+     * Workflow status change - from status
      */
-    @OneToOne
-    @JoinColumn(name = "wf_status_from", updatable = false)
-    private WFStatus wfStatusFrom;
+    @Column(name = "from_status")
+    private String fromStatus;
 
     /**
-     * Workflow status to
+     * Workflow status change - to status
      */
-    @OneToOne
-    @JoinColumn(name = "wf_status_to", updatable = false)
-    private WFStatus wfStatusTo;
+    @Column(name = "to_status")
+    private String toStatus;
+
+    /**
+     * Transition name
+     */
+    @Column(name = "transition_name")
+    @NotNull
+    private String transitionName;
 
     /**
      * Action date
@@ -73,27 +78,6 @@ public class WorkflowInstanceHistory extends BaseEntity {
     @JoinColumn(name = "wf_instance_id")
     private WorkflowInstance workflowInstance;
 
-    /**
-     * A event comment
-     */
-    private String event;
-
-    public WFStatus getWfStatusFrom() {
-        return wfStatusFrom;
-    }
-
-    public void setWfStatusFrom(WFStatus wfStatusFrom) {
-        this.wfStatusFrom = wfStatusFrom;
-    }
-
-    public WFStatus getWfStatusTo() {
-        return wfStatusTo;
-    }
-
-    public void setWfStatusTo(WFStatus wfStatusTo) {
-        this.wfStatusTo = wfStatusTo;
-    }
-
     public Date getActionDate() {
         return actionDate;
     }
@@ -102,19 +86,35 @@ public class WorkflowInstanceHistory extends BaseEntity {
         this.actionDate = actionDate;
     }
 
-    public String getEvent() {
-        return event;
-    }
-
-    public void setEvent(String event) {
-        this.event = event;
-    }
-
     public WorkflowInstance getWorkflowInstance() {
         return workflowInstance;
     }
 
     public void setWorkflowInstance(WorkflowInstance workflowInstance) {
         this.workflowInstance = workflowInstance;
+    }
+
+    public String getFromStatus() {
+        return fromStatus;
+    }
+
+    public void setFromStatus(String fromStatus) {
+        this.fromStatus = fromStatus;
+    }
+
+    public String getToStatus() {
+        return toStatus;
+    }
+
+    public void setToStatus(String toStatus) {
+        this.toStatus = toStatus;
+    }
+
+    public String getTransitionName() {
+        return transitionName;
+    }
+
+    public void setTransitionName(String transitionName) {
+        this.transitionName = transitionName;
     }
 }

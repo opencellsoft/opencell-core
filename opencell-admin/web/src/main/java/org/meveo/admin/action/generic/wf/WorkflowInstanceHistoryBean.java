@@ -85,11 +85,12 @@ public class WorkflowInstanceHistoryBean extends BaseBean<WorkflowInstanceHistor
      * This method is called from some businessEntityDetail's page.
      * 
      * @param entity Entity object
+     * @param clazz of Entity
      * @return List of Workflow instance
      */
 
-    public List<WorkflowInstance> getWorkflowInstances(BusinessEntity entity) {
-        return workflowInstanceService.findByEntityInstanceCode(entity.getCode());
+    public List<WorkflowInstance> getWorkflowInstances(BusinessEntity entity, Class<?> clazz) {
+        return workflowInstanceService.findByCodeAndClazz(entity.getCode(), clazz);
     }
 
     /**
