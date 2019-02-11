@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
@@ -74,5 +75,16 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
         entity = update(entity);
 
         return entity;
+    }
+
+    public GWFTransition findWFTransitionByUUID(String uuid) {
+        GWFTransition gwfTransition = null;
+        try {
+            gwfTransition = (GWFTransition) getEntityManager().createQuery("from " + GWFTransition.class.getSimpleName() + " where uuid=:uuid").setParameter("uuid", uuid)
+                .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+        return gwfTransition;
     }
 }
