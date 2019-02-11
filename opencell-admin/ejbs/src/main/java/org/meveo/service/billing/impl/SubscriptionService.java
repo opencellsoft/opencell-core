@@ -539,4 +539,31 @@ public class SubscriptionService extends BusinessService<Subscription> {
         balance = (BigDecimal) query.getSingleResult();
         return balance;
     }
+
+    /**
+    * Returns all subscriptions to the given offer by code
+    *
+    * @param offerCode code of the Offer to search
+    * @param sortBy sort criteria
+    * @param sortOrder sort order
+    * @return list of Subscription
+    */
+    public List<Subscription> listByOffer(String offerCode, String sortBy, SortOrder sortOrder) {
+        QueryBuilder qb = new QueryBuilder(Subscription.class, "c");
+        qb.addCriterionEntity("offer.code", offerCode);
+
+        boolean ascending = true;
+        if (sortOrder != null) {
+            ascending = sortOrder.equals(SortOrder.ASCENDING);
+        }
+        qb.addOrderCriterion(sortBy, ascending);
+
+        try {
+            return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.trace("No subscription found for offer code " + offerCode, e);
+            return null;
+        }
+    }
+
 }
