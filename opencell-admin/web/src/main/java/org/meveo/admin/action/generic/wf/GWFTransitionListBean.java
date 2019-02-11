@@ -16,20 +16,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.generic.wf;
+package org.meveo.admin.action.generic.wf;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Named;
 
-import org.meveo.model.generic.wf.GenericWorkflow;
-import org.meveo.model.generic.wf.WFStatus;
-import org.meveo.service.base.BusinessService;
+@Named
+@ConversationScoped
+public class GWFTransitionListBean extends GWFTransitionBean {
 
-@Stateless
-public class WFStatusService extends BusinessService<WFStatus> {
-
-    public WFStatus findByCodeAndGWF(String statusCode, GenericWorkflow genericWorkflow) {
-        WFStatus wFStatus = getEntityManager().createNamedQuery("WFStatus.findByCodeAndGWF", WFStatus.class).setParameter("code", statusCode)
-            .setParameter("genericWorkflow", genericWorkflow).getSingleResult();
-        return wFStatus;
-    }
+    private static final long serialVersionUID = 8408828513467146633L;
 }

@@ -16,20 +16,42 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.generic.wf;
+package org.meveo.api.dto.generic.wf;
 
-import javax.ejb.Stateless;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
-import org.meveo.model.generic.wf.GenericWorkflow;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.generic.wf.WFStatus;
-import org.meveo.service.base.BusinessService;
 
-@Stateless
-public class WFStatusService extends BusinessService<WFStatus> {
+/**
+ * The Class GWFTransitionDto
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+public class WFStatusDto extends BusinessEntityDto {
 
-    public WFStatus findByCodeAndGWF(String statusCode, GenericWorkflow genericWorkflow) {
-        WFStatus wFStatus = getEntityManager().createNamedQuery("WFStatus.findByCodeAndGWF", WFStatus.class).setParameter("code", statusCode)
-            .setParameter("genericWorkflow", genericWorkflow).getSingleResult();
-        return wFStatus;
+    private static final long serialVersionUID = 6770111692852172654L;
+
+    /** The uuid. */
+    @XmlElement(required = false)
+    private String uuid;
+
+    public WFStatusDto(WFStatus wfStatus) {
+        super(wfStatus);
+        this.uuid = wfStatus.getUuid();
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    @Override
+    public String toString() {
+        return "WFStatusDto [uuid=" + uuid + ", id=" + id + ", code=" + code + ", description=" + description + ", updatedCode=" + updatedCode + "]";
     }
 }

@@ -65,8 +65,7 @@ public class WorkflowInstanceHistoryService extends PersistenceService<WorkflowI
     public List<WorkflowInstanceHistory> findByEntityInstanceCode(String entityInstanceCode) {
 
         Map<String, Object> params = Maps.newHashMap();
-        String query = "From WorkflowInstanceHistory where workflowInstance.entityInstanceCode = :entityInstanceCode"
-                + " order by workflowInstance.genericWorkflow.code, actionDate desc";
+        String query = "From WorkflowInstanceHistory where workflowInstance.code = :entityInstanceCode order by workflowInstance.genericWorkflow.code, actionDate desc";
         params.put("entityInstanceCode", entityInstanceCode);
 
         return (List<WorkflowInstanceHistory>) executeSelectQuery(query, params);

@@ -33,6 +33,8 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
@@ -44,12 +46,13 @@ import org.meveo.model.order.Order;
  * @author Andrius Karpavicius
  */
 @Entity
+@WorkflowedEntity
 @ExportIdentifier({ "code" })
 @CustomFieldEntity(cftCodePrefix = "QUOTE")
 @Table(name = "ord_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_quote_seq"), })
-public class Quote extends BusinessCFEntity {
+public class Quote extends BusinessCFEntity implements IWFEntity {
 
     private static final long serialVersionUID = -9060067698650286828L;
 
