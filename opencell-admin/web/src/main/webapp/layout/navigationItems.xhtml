@@ -289,8 +289,15 @@
 
 	</p:submenu>
 	
-	<p:submenu id="menurecouvrement" label="#{messages['menu.Recouvrement']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">
+	<!-- <p:submenu id="menurecouvrement" label="#{messages['menu.Recouvrement']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">
 		<p:menuitem id="dunningWF" outcome="dunning_workflows" value="#{messages['dunningProcess.title']}" />
+	</p:submenu> -->
+	
+	<p:submenu id="workflows" label="#{messages['menu.workflow']}" rendered="#{currentUser.hasRole('administrationVisualization')}">
+		<p:menuitem id="genericWorkflows" value="#{messages['menu.generic.workflows']}"
+			outcome="genericWorkflows" />
+		<p:menuitem id="genericWfsHistory" value="#{messages['menu.generic.workflowHistory']}"
+			outcome="genericWfsHistory" />
 	</p:submenu>
 	
 	<p:submenu id="finance" label="#{messages['menu.finance']}" rendered="#{currentUser.hasRole('financeVisualization') or currentUser.hasRole('financeManagement') }">
@@ -366,7 +373,7 @@
 		</p:submenu>
 			
 		<p:menuitem id="filters" outcome="filters" value="#{messages['menu.filters']}" />
-		<p:submenu id="workflows" label="#{messages['menu.workflow']}">
+		<!-- <p:submenu id="workflows" label="#{messages['menu.workflow']}">
 			<p:submenu id="generic_workflow" label="#{messages['menu.generic.workflow']}">
 				<p:menuitem id="genericWorkflows" value="#{messages['menu.generic.workflows']}"
 					outcome="genericWorkflows" />
@@ -378,7 +385,7 @@
 			<p:menuitem id="workflowHistory"
 				value="#{messages['menu.workflowHistory']}"
 				outcome="workflowHistory" />
-		</p:submenu>
+		</p:submenu> -->
 		<p:submenu id="notifications"
 			label="#{messages['menu.notifications']}" outcome="notifications">
 			<p:menuitem id="internalNotifications"

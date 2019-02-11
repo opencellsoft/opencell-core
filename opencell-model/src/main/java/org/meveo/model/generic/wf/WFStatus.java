@@ -25,6 +25,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -42,7 +44,9 @@ import org.meveo.model.ExportIdentifier;
 @ExportIdentifier({ "uuid" })
 @Table(name = "wf_status", uniqueConstraints = @UniqueConstraint(columnNames = { "uuid" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "wf_status_seq"), })
+        @Parameter(name = "sequence_name", value = "wf_status_seq") })
+@NamedQueries({
+    @NamedQuery(name = "WFStatus.findByCodeAndGWF", query = "From WFStatus where code=:code and genericWorkflow=:genericWorkflow") })
 public class WFStatus extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
