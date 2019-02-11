@@ -121,7 +121,7 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.COUNTER_DEDUCED);
             } else if (clazzStr.equals(Subscription.class.getName()) || clazzStr.equals(ServiceInstance.class.getName())) {
                 if (clazzStr.equals(Subscription.class.getName())) {
-                    events.add(NotificationEventTypeEnum.TR_UPDATED);
+                    events.add(NotificationEventTypeEnum.RENEWAL_UPDATED);
                 }
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.END_OF_TERM);

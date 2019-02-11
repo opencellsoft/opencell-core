@@ -8,5 +8,5 @@ package org.meveo.model.audit.hibernate;
  * @since 5.3
  */
 public enum AuditChangeType {
-    STATUS, TR;
+    STATUS, SUBSCRIPTION_RENEWAL;
 }

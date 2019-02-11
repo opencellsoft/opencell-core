@@ -410,15 +410,8 @@ public class DefaultObserver {
     private void trUpdatedEvent(BaseEntity entity, FieldAudit field) throws BusinessException {
         if (entity != null) {
             log.debug("observe a dirty tr of entity {} with id {}", entity.getClass().getName(), entity.getId());
-            if (field.getPreviousState() != null &&
-                    (
-                            (((SubscriptionRenewal)(field.getPreviousState())).isAutoRenew() && ((SubscriptionRenewal)(field.getCurrentState())).isAutoRenew() == false)
-                            ||
-                            (((SubscriptionRenewal)(field.getCurrentState())).isAutoRenew() && ((SubscriptionRenewal)(field.getPreviousState())).isAutoRenew() == false)
-                    ))
-            {
-                checkEvent(NotificationEventTypeEnum.TR_UPDATED, field);
-            }
+            checkEvent(NotificationEventTypeEnum.RENEWAL_UPDATED, field);
+
         }
     }
 
@@ -430,7 +423,7 @@ public class DefaultObserver {
                     if (field.getAuditType() == AuditChangeType.STATUS) {
                         statusUpdatedEvent((BaseEntity) entry.getKey(), field);
                     }
-                    if (field.getAuditType() == AuditChangeType.TR) {
+                    if (field.getAuditType() == AuditChangeType.SUBSCRIPTION_RENEWAL) {
                         trUpdatedEvent((BaseEntity) entry.getKey(), field);
                     }
                 }
