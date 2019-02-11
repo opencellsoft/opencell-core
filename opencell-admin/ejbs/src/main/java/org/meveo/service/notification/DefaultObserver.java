@@ -29,6 +29,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.audit.hibernate.AuditChangeType;
+import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.EmailNotification;
@@ -409,7 +410,15 @@ public class DefaultObserver {
     private void trUpdatedEvent(BaseEntity entity, FieldAudit field) throws BusinessException {
         if (entity != null) {
             log.debug("observe a dirty tr of entity {} with id {}", entity.getClass().getName(), entity.getId());
-            checkEvent(NotificationEventTypeEnum.TR_UPDATED, field);
+            if (field.getPreviousState() != null &&
+                    (
+                            (((SubscriptionRenewal)(field.getPreviousState())).isAutoRenew() && ((SubscriptionRenewal)(field.getCurrentState())).isAutoRenew() == false)
+                            ||
+                            (((SubscriptionRenewal)(field.getCurrentState())).isAutoRenew() && ((SubscriptionRenewal)(field.getPreviousState())).isAutoRenew() == false)
+                    ))
+            {
+                checkEvent(NotificationEventTypeEnum.TR_UPDATED, field);
+            }
         }
     }
 
