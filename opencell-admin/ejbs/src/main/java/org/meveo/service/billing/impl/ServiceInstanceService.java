@@ -66,7 +66,7 @@ import org.meveo.service.script.service.ServiceModelScriptService;
  * @author akadid abdelmounaim
  * @author Said Ramli
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
@@ -801,18 +801,19 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     /**
      * Get a list of service ids that are about to expire or have expired already
-     * 
+     *
+     * @param untillDate the subscription till date
      * @return A list of service ids
      */
-    public List<Long> getSubscriptionsToRenewOrNotify() {
+    public List<Long> getSubscriptionsToRenewOrNotify(Date untillDate) {
         List<Long> ids = getEntityManager().createNamedQuery("ServiceInstance.getExpired", Long.class) //
-            .setParameter("date", new Date()) //
+            .setParameter("date", untillDate) //
             .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
             .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
             .getResultList();
 
         ids.addAll(getEntityManager().createNamedQuery("ServiceInstance.getToNotifyExpiration", Long.class) //
-            .setParameter("date", new Date()) //
+            .setParameter("date", untillDate) //
             .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
             .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
             .getResultList());
