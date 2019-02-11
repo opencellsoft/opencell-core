@@ -1099,7 +1099,7 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
     </changeSet>
     
-    <changeSet id="#3948_20190131" author="AmineBenAicha">
+    <changeSet id="#3650_20190131" author="AmineBenAicha">
     	<!-- Update table wf_generic_workflow -->
     	<dropColumn tableName="wf_generic_workflow" columnName="transition_script_id" />
     	
@@ -1172,5 +1172,12 @@
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="wf_instance_id" baseTableName="wf_instance_history" constraintName="fk_history_wf_instance" deferrable="false" initiallyDeferred="false"
             onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_instance" />
+            
+        <!-- Update table wf_generic_workflow -->
+        <addColumn tableName="wf_generic_workflow">
+            <column name="init_status" type="varchar(255)">
+            	<constraints nullable="false" />
+            </column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

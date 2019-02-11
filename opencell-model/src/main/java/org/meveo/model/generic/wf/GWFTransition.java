@@ -95,7 +95,7 @@ public class GWFTransition extends BaseEntity implements Comparable<GWFTransitio
     @JoinColumn(name = "action_script_id")
     private ScriptInstance actionScript;
 
-    /*
+    /**
      * Expression to check if transition applies
      */
     @Column(name = "condition_el", length = 2000)

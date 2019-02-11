@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.generic.wf.GenericWorkflow;
+import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.PersistenceService;
@@ -38,6 +39,9 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
 
     @Inject
     private BusinessEntityService businessEntityService;
+
+    @Inject
+    private WFStatusService wfStatusService;
 
     public List<WorkflowInstance> findByCodeAndClazz(String entityInstanceCode, Class<?> clazz) {
 
@@ -77,6 +81,10 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
         linkedWFIns.setCode(e.getCode());
         linkedWFIns.setTargetEntityClass(genericWorkflow.getTargetEntityClass());
         linkedWFIns.setGenericWorkflow(genericWorkflow);
+
+        WFStatus currentStatus = wfStatusService.findByCodeAndGWF(genericWorkflow.getInitStatus(), genericWorkflow);
+        linkedWFIns.setCurrentStatus(currentStatus);
+
         create(linkedWFIns);
     }
 }

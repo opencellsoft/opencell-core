@@ -255,7 +255,13 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
                 FacesContext.getCurrentInstance().validationFailed();
                 return;
             }
+
+            if (entity.getStatuses().isEmpty()) {
+                entity.setInitStatus(selectedWFStatus.getCode());
+            }
+
             entity.getStatuses().add(selectedWFStatus);
+
             messages.info(new BundleKey("messages", "generic.wf.saved"));
         } else {
             Auditable auditable = selectedWFStatus.getAuditable();
