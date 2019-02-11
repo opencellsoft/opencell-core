@@ -126,5 +126,8 @@
             <f:selectItems value="#{cft.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
         </p:selectOneMenu>
     </c:if>
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
+        <p:selectBooleanButton rendered="#{edit and !disabled}" value="#{field.booleanValue}" onLabel="#{messages['commons.yes']}" offLabel="#{messages['commons.no']}" />
+    </c:if>
 </ui:composition>
 </html>
