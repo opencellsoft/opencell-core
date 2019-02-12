@@ -83,14 +83,35 @@ public class ExportCustomersJobBean {
             List<Customer> customers = customerService.listBySellerCode(seller.getCode());
             seller.setCustomers(customersToDto(customers));
         }
+        int nbItems = sellers.getSeller() != null ? sellers.getSeller().size() : 0;
+        result.setNbItemsToProcess(nbItems);
         try {
             JAXBUtils.marshaller(sellers, new File(dir + File.separator + "CUSTOMER_" + timestamp + ".xml"));
-            result.registerSucces();
+            result.setNbItemsCorrectlyProcessed(nbItems);
+            logResult();
         } catch (JAXBException e) {
             log.error("Failed to export customers job", e);
-            result.registerError(e.getMessage());
+            result.getErrors().add(e.getMessage());
+            result.setReport(e.getMessage());
+            result.setNbItemsProcessedWithError(nbItems);
         }
 
+    }
+
+    private void logResult() {
+        if (sellers.getSeller() != null) {
+            int nbItems;
+            for (org.meveo.model.jaxb.customer.Seller seller : sellers.getSeller()) {
+                nbItems = seller.getCustomers() != null && seller.getCustomers().getCustomer() != null ? seller.getCustomers().getCustomer().size() : 0;
+                log.info("Number of processed customers for the seller {} in ExportCustomersJob is : {}", seller.getCode(), nbItems);
+                if (nbItems > 0) {
+                    for (org.meveo.model.jaxb.customer.Customer customer : seller.getCustomers().getCustomer()) {
+                        nbItems = customer.getCustomerAccounts() != null && customer.getCustomerAccounts().getCustomerAccount() != null ? customer.getCustomerAccounts().getCustomerAccount().size() : 0;
+                        log.info("Number of processed customerAccounts for the customer {} in ExportCustomersJob is : {}", customer.getCode(), nbItems);
+                    }
+                }
+            }
+        }
     }
 
     private Customers customersToDto(List<org.meveo.model.crm.Customer> customerList) {

@@ -75,14 +75,29 @@ public class ExportSubscriptionsJobBean {
         String timestamp = sdf.format(new Date());
         List<org.meveo.model.billing.Subscription> subs = subscriptionService.list();
         subscriptions = subscriptionsToDto(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
+        int nbItems = subscriptions.getSubscription() != null ? subscriptions.getSubscription().size() : 0;
+        result.setNbItemsToProcess(nbItems);
         try {
             JAXBUtils.marshaller(subscriptions, new File(dir + File.separator + "SUB_" + timestamp + ".xml"));
-            result.registerSucces();
+            result.setNbItemsCorrectlyProcessed(nbItems);
+            logResult();
         } catch (JAXBException e) {
             log.error("Failed to export subscriptions job", e);
-            result.registerError(e.getMessage());
+            result.getErrors().add(e.getMessage());
+            result.setReport(e.getMessage());
+            result.setNbItemsProcessedWithError(nbItems);
         }
 
+    }
+
+    private void logResult() {
+        if (subscriptions.getSubscription() != null) {
+            int nbItems;
+            for (Subscription subscription : subscriptions.getSubscription()) {
+                nbItems = subscription.getAccesses() != null && subscription.getAccesses().getAccess() != null ? subscription.getAccesses().getAccess().size() : 0;
+                log.info("Number of processed accessePoints for the subscription {} in ExportSubscriptionsJob is : {}", subscription.getCode(), nbItems);
+            }
+        }
     }
 
     private Subscriptions subscriptionsToDto(List<org.meveo.model.billing.Subscription> subs, String dateFormat, Long jobInstanceId) {
