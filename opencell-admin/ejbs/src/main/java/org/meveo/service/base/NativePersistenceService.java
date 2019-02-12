@@ -127,8 +127,12 @@ public class NativePersistenceService extends BaseService {
 
             // Change ID field data type to long
             Object id = values.get(FIELD_ID);
-            if (id != null && id instanceof String) {
-                id = Long.parseLong((String) id);
+            if (id != null) {
+                if (id instanceof String) {
+                    id = Long.parseLong((String) id);
+                } else if (id instanceof BigInteger) {
+                    id = ((BigInteger) id).longValue();
+                }
                 values.put(FIELD_ID, id);
             }
 

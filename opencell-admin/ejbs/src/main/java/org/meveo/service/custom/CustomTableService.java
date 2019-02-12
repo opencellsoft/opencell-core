@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections4.MapUtils;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.hibernate.SQLQuery;
 import org.meveo.admin.exception.BusinessException;
@@ -460,12 +461,30 @@ public class CustomTableService extends NativePersistenceService {
             return new ArrayList<>();
         }
 
+        log.error("AKK search result is {}", searchResult.toString());
+
         List<Map<String, Object>> responseValues = new ArrayList<>();
 
         searchResult.getHits().forEach(hit -> {
-            Map<String, Object> value = new HashMap<>(hit.getSource());
-            value.put(NativePersistenceService.FIELD_ID, hit.getId());
-            responseValues.add(value);
+            Map<String, Object> values = new HashMap<>();
+            responseValues.add(values);
+
+            values.put(NativePersistenceService.FIELD_ID, hit.getId());
+
+            if (hit.getFields() != null) {
+                for (SearchHitField field : hit.getFields().values()) {
+                    if (field.getValues() != null) {
+                        if (field.getValues().size() > 1) {
+                            values.put(field.getName(), field.getValues());
+                        } else {
+                            values.put(field.getName(), field.getValue());
+                        }
+                    }
+                }
+            
+            } else if (hit.getSource() != null) {
+                values.putAll(hit.getSource());
+            }
         });
 
         log.debug("AKK ES search result values are {}", responseValues);
@@ -507,8 +526,7 @@ public class CustomTableService extends NativePersistenceService {
     public Object getValue(String cetCodeOrTablename, String fieldToReturn, Date date, Object... queryValues) throws BusinessException {
 
         Map<String, Object> values = MapUtils.putAll(new HashMap<String, Object>(), queryValues);
-        values.put("fromRange valid_from", date);
-        values.put("toRange valid_to", date);
+        values.put("minmaxRange valid_from valid_to", date);
 
         List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.ASC }, new String[] { fieldToReturn });
 
@@ -552,6 +570,7 @@ public class CustomTableService extends NativePersistenceService {
     public Map<String, Object> getValues(String cetCodeOrTablename, Date date, Object... queryValues) throws BusinessException {
 
         Map<String, Object> values = MapUtils.putAll(new HashMap<String, Object>(), queryValues);
+        values.put("minmaxRange valid_from valid_to", date);
 
         List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.ASC }, null);
 
@@ -667,6 +686,9 @@ public class CustomTableService extends NativePersistenceService {
             for (Entry<String, Object> valueEntry : values.entrySet()) {
 
                 String key = valueEntry.getKey();
+                if (key.equals(FIELD_ID)) {
+                    continue;
+                }
                 if (valueEntry.getValue() == null && !discardNull) {
                     valuesConverted.put(key, null);
 
@@ -678,7 +700,7 @@ public class CustomTableService extends NativePersistenceService {
 
                     Class dataClass = fields.get(fieldName);
                     if (dataClass == null) {
-                        throw new ValidationException("No field definition " + fieldName + "was found");
+                        throw new ValidationException("No field definition " + fieldName + " was found");
                     }
                     Object value = castValue(valueEntry.getValue(), dataClass, false);
 
