@@ -18,17 +18,24 @@
  */
 package org.meveo.model.payments;
 
+import org.meveo.model.dunning.DunningDocument;
+
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @Entity
 @DiscriminatorValue(value = "P")
 public class Payment extends AccountOperation {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * if a payment is done as part of a dunning process
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dunning_document_id")
+    private DunningDocument dunningDocument;
 
     /**
      * Number assigned by the Operator bank
@@ -47,6 +54,22 @@ public class Payment extends AccountOperation {
      */
     @Column(name = "comment", columnDefinition = "LONGTEXT")
     private String comment;
+
+    /**
+     * get the  associated dunning doc if exists
+     * @return
+     */
+    public DunningDocument getDunningDocument() {
+        return dunningDocument;
+    }
+
+    /**
+     * set the dunning doc of the payment
+     * @param dunningDocument
+     */
+    public void setDunningDocument(DunningDocument dunningDocument) {
+        this.dunningDocument = dunningDocument;
+    }
 
     /**
      * @return the paymentOrder

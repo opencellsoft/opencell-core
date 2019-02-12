@@ -16,11 +16,14 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * A rule for new EDR creation for a processed EDR
  * 
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
@@ -137,6 +140,21 @@ public class TriggeredEDRTemplate extends BusinessEntity {
     @Column(name = "param_4_el_sp", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String param4ElSpark;
+    
+    /**
+     * Expression to compute the OpencellInstance code so the instance on which the EDR is triggered can be inferred from the Offer or whatever.
+     * It overrides the value on meveoInstance.
+     */
+    @Column(name = "opencell_instance_el", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String opencellInstanceEL;
+    
+    /**
+     * Script to run
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "triggered_edr_script_instance_id")
+    private ScriptInstance triggeredEdrScript;
 
     /**
      * @return Expression to evaluate subscription code
@@ -346,5 +364,37 @@ public class TriggeredEDRTemplate extends BusinessEntity {
      */
     public void setParam4ElSpark(String param4ElSpark) {
         this.param4ElSpark = param4ElSpark;
+    }
+
+    /**
+     * Get an EL expression.
+     * @return Expression to evaluate the Opencell instance.
+     */
+    public String getOpencellInstanceEL() {
+        return opencellInstanceEL;
+    }
+
+    /**
+     * Set the EL expression
+     * @param opencellInstanceEL Expression to evaluate the Opencell instance.
+     */
+    public void setOpencellInstanceEL(String opencellInstanceEL) {
+        this.opencellInstanceEL = opencellInstanceEL;
+    }
+
+    /**
+     * Get the script executed after TriggeredEdr construction.
+     * @return {@link ScriptInstance}
+     */
+    public ScriptInstance getTriggeredEdrScript() {
+        return triggeredEdrScript;
+    }
+
+    /**
+     * Set the script executed after TriggeredEdr construction.
+     * @param scriptInstance {@link ScriptInstance}
+     */
+    public void setTriggeredEdrScript(ScriptInstance triggeredEdrScript) {
+        this.triggeredEdrScript = triggeredEdrScript;
     }
 }

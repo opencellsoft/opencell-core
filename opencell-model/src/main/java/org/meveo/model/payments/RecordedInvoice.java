@@ -18,6 +18,8 @@
  */
 package org.meveo.model.payments;
 
+import org.meveo.model.dunning.DunningDocument;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,6 +59,13 @@ public class RecordedInvoice extends AccountOperation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pay_schdl_inst_item_id")
     private PaymentScheduleInstanceItem paymentScheduleInstanceItem;
+
+    /**
+     * if an invoice becomes unpaid then, it's associated with a dunning doc
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dunning_document_id")
+    private DunningDocument dunningDocument;
 
     public Date getProductionDate() {
         return productionDate;
@@ -109,5 +118,21 @@ public class RecordedInvoice extends AccountOperation {
     public void setPaymentScheduleInstanceItem(PaymentScheduleInstanceItem paymentScheduleInstanceItem) {
         this.paymentScheduleInstanceItem = paymentScheduleInstanceItem;
     }
+
+    /**
+     * @return dunning doc
+     */
+    public DunningDocument getDunningDocument() {
+        return dunningDocument;
+    }
+
+    /**
+     *
+     * @param dunningDocument dunning Document
+     */
+    public void setDunningDocument(DunningDocument dunningDocument) {
+        this.dunningDocument = dunningDocument;
+    }
+
 
 }

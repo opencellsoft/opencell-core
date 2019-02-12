@@ -14,8 +14,10 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.async.GenericWorkflowAsync;
 import org.meveo.admin.async.SubListCreator;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WorkflowInstance;
@@ -24,6 +26,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.generic.wf.GenericWorkflowService;
+import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -34,6 +37,9 @@ public class GenericWorkflowJobBean extends BaseJobBean {
 
     @Inject
     private GenericWorkflowService genericWorkflowService;
+
+    @Inject
+    private WorkflowInstanceService workflowInstanceService;
 
     @Inject
     private GenericWorkflowAsync genericWorkflowAsync;
@@ -66,8 +72,18 @@ public class GenericWorkflowJobBean extends BaseJobBean {
                 waitingMillis = new Long(0);
             }
 
-            GenericWorkflow genericWf = genericWorkflowService.findByCode(genericWfCode, Arrays.asList("wfInstances"));
-            List<WorkflowInstance> wfInstances = genericWf.getWfInstances();
+            GenericWorkflow genericWf = genericWorkflowService.findByCode(genericWfCode);
+            if (genericWf == null) {
+                throw new BusinessException(String.format("No Workflow found with code = [%s]", genericWfCode));
+            }
+
+            // Create wf instances
+            List<BusinessEntity> entities = workflowInstanceService.findEntitiesWithoutWFInstance(genericWf);
+            for (BusinessEntity entity : entities) {
+                workflowInstanceService.create(entity, genericWf);
+            }
+
+            List<WorkflowInstance> wfInstances = genericWorkflowService.findByCode(genericWfCode, Arrays.asList("wfInstances")).getWfInstances();
             log.debug("wfInstances:" + wfInstances.size());
             result.setNbItemsToProcess(wfInstances.size());
 

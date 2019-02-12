@@ -261,7 +261,7 @@
 
                                 <hftl:customFields backingBean="#{customerAccountBean}" messagesId=":parentTab:formCustomerAccount:messages" />
                                 <hftl:displayWorkflowsHistory entity="#{customerAccountBean.entity}" />
-                                <hftl:displayGenericWFsHistory entity="#{customerAccountBean.entity}" />
+                                <hftl:displayGenericWFsHistory entity="#{customerAccountBean.entity}" clazz="#{customerAccountBean.clazz}" />
 
                             </p:tabView>
                             <ui:param name="buttons" value="true"/>
@@ -385,6 +385,53 @@
                             </ui:define>
                         </hftl:dataList>
 
+                    </p:tab>
+                    <p:tab id="dunningDocs" title="#{messages['customerAccount.dunning.documents']}" rendered="#{not empty customerAccountBean.entity.id}">
+                        <hftl:dataList resultsId="dunningDocs"  backingBean="#{dunningDocumentBean}" dataModel="#{dunningDocumentBean.getDunningDocuments(customerAccountBean.entity)}"
+                                       label="#{messages['accountOperation.title']}" disabled="true" deleteManyButton="false" exportToXml="false">
+                            <p:column width="19%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['customerAccount.dunning.documents.creation']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.auditable.created}">
+                                	<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
+								</h:outputText>
+                            </p:column>
+
+                            <p:column width="19%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['customerAccount.dunning.documents.update']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.auditable.updated}">
+									<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
+								</h:outputText>
+                            </p:column>
+
+                            <p:column width="19%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['customerAccount.dunning.nbr.dueinvoices']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.dueInvoices.size()}" />
+                            </p:column>
+                            <p:column width="19%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['customerAccount.dunning.amountWithTax']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.amountWithTax}" converter="bigDecimal4DigitsConverter"/>
+                            </p:column>
+                            <p:column width="19%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['customerAccount.dunning.paidAmount']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.paidAmount}" converter="bigDecimal4DigitsConverter"/>
+                            </p:column>
+                            <hftl:actionsColumn renderViewLink="true"
+                                                editView="/pages/payments/customerAccounts/dunningDocumentDetail.xhtml"
+                                                renderEditLink="false" renderDeleteLink="false"
+                                                backView="backToBaFromInvoice" backEntityId="#{entity.id}"
+                                                backTab="0" backMainTab="2">
+                            </hftl:actionsColumn>
+                        </hftl:dataList>
                     </p:tab>
                 </p:tabView>
 
