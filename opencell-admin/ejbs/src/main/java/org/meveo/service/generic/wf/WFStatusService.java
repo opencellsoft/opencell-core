@@ -20,10 +20,16 @@ package org.meveo.service.generic.wf;
 
 import javax.ejb.Stateless;
 
+import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
 public class WFStatusService extends BusinessService<WFStatus> {
 
+    public WFStatus findByCodeAndGWF(String statusCode, GenericWorkflow genericWorkflow) {
+        WFStatus wFStatus = getEntityManager().createNamedQuery("WFStatus.findByCodeAndGWF", WFStatus.class).setParameter("code", statusCode)
+            .setParameter("genericWorkflow", genericWorkflow).getSingleResult();
+        return wFStatus;
+    }
 }

@@ -638,6 +638,20 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		</redirect>
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>backToDunningDocFromInvoice</from-outcome>
+		<to-view-id>/pages/payments/customerAccounts/dunningDocumentDetail.xhtml</to-view-id>
+		<redirect include-view-params="true">
+		    <view-param>
+				<name>objectId</name>
+				<value>#{invoiceBean.backEntityId}</value>
+			</view-param>
+			<view-param>
+				<name>tab</name>
+				<value>#{invoiceBean.backTab}</value>
+			</view-param>
+		</redirect>
+	</navigation-case>
+	<navigation-case>
 		<from-outcome>invoices</from-outcome>
 		<to-view-id>/pages/billing/invoices/invoices.xhtml</to-view-id>
 		<redirect />
@@ -1064,7 +1078,20 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 			</view-param>
 		</redirect>
 	</navigation-case>
-	
+	<navigation-case>
+		<from-outcome>backToDunningDocFromOcc</from-outcome>
+		<to-view-id>/pages/payments/customerAccounts/dunningDocumentDetail.xhtm</to-view-id>
+		<redirect include-view-params="true">
+		    <view-param>
+				<name>objectId</name>
+				<value>#{accountOperationBean.backEntityId}</value>
+			</view-param>
+			<view-param>
+				<name>tab</name>
+				<value>#{accountOperationBean.backTab}</value>
+			</view-param>
+		</redirect>
+	</navigation-case>
 
 	<navigation-case>
 		<from-outcome>crmAccounts</from-outcome>

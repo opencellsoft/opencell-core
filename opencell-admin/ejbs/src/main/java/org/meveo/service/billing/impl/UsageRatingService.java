@@ -52,6 +52,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRRejectReasonEnum;
@@ -62,6 +63,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
+import org.meveo.service.script.catalog.TriggeredEdrScriptService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -130,6 +132,9 @@ public class UsageRatingService implements Serializable {
     
     @Inject
     private UsageChargeTemplateService usageChargeTemplateService;
+    
+    @Inject
+    private TriggeredEdrScriptService triggeredEdrScriptService;
 
     private Map<String, String> descriptionMap = new HashMap<>();
 
@@ -454,65 +459,84 @@ public class UsageRatingService implements Serializable {
      */
 	private void triggerEDR(ChargeTemplate chargeTemplate, WalletOperation walletOperation, EDR edr)
 			throws BusinessException {
-		for (TriggeredEDRTemplate triggeredEDR : chargeTemplate.getEdrTemplates()) {
-			if (triggeredEDR.getConditionEl() == null || "".equals(triggeredEDR.getConditionEl())
-					|| evaluateBooleanExpression(triggeredEDR.getConditionEl(), edr, walletOperation)) {
-				if (triggeredEDR.getMeveoInstance() == null) {
-					EDR newEdr = new EDR();
-					newEdr.setCreated(new Date());
-					newEdr.setEventDate(edr.getEventDate());
-					newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
-					newEdr.setOriginRecord("" + walletOperation.getId());
-					newEdr.setParameter1(evaluateStringExpression(triggeredEDR.getParam1El(), edr, walletOperation));
-					newEdr.setParameter2(evaluateStringExpression(triggeredEDR.getParam2El(), edr, walletOperation));
-					newEdr.setParameter3(evaluateStringExpression(triggeredEDR.getParam3El(), edr, walletOperation));
-					newEdr.setParameter4(evaluateStringExpression(triggeredEDR.getParam4El(), edr, walletOperation));
-					newEdr.setQuantity(new BigDecimal(
-							evaluateDoubleExpression(triggeredEDR.getQuantityEl(), edr, walletOperation)));
-					newEdr.setStatus(EDRStatusEnum.OPEN);
-					Subscription sub = edr.getSubscription();
-					if (!StringUtils.isBlank(triggeredEDR.getSubscriptionEl())) {
-						String subCode = evaluateStringExpression(triggeredEDR.getSubscriptionEl(), edr,
-								walletOperation);
-						sub = subscriptionService.findByCode(subCode);
-						if (sub == null) {
-							throw new SubscriptionNotFoundException("could not find subscription for code =" + subCode
-									+ " (EL=" + triggeredEDR.getSubscriptionEl() + ") in triggered EDR with code "
-									+ triggeredEDR.getCode());
-						}
+		for (TriggeredEDRTemplate triggeredEDRTemplate : chargeTemplate.getEdrTemplates()) {
+            if (triggeredEDRTemplate.getConditionEl() == null || "".equals(triggeredEDRTemplate.getConditionEl()) || evaluateBooleanExpression(triggeredEDRTemplate.getConditionEl(), edr, walletOperation)) {
+                
+                MeveoInstance meveoInstance = null;
+                
+                if (triggeredEDRTemplate.getMeveoInstance() != null) {
+                    meveoInstance = triggeredEDRTemplate.getMeveoInstance();
+                }
+                if (!StringUtils.isBlank(triggeredEDRTemplate.getOpencellInstanceEL())) {
+                    String opencellInstanceCode = evaluateStringExpression(triggeredEDRTemplate.getOpencellInstanceEL(), edr, walletOperation);
+                    meveoInstance = meveoInstanceService.findByCode(opencellInstanceCode);
+                }
+                
+                if (meveoInstance == null) {
+                    EDR newEdr = new EDR();
+                    newEdr.setCreated(new Date());
+                    newEdr.setEventDate(edr.getEventDate());
+                    newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
+                    newEdr.setOriginRecord("" + walletOperation.getId());
+                    newEdr.setParameter1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), edr, walletOperation));
+                    newEdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), edr, walletOperation));
+                    newEdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), edr, walletOperation));
+                    newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), edr, walletOperation));
+                    newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), edr, walletOperation)));
+                    newEdr.setStatus(EDRStatusEnum.OPEN);
+                    Subscription sub = edr.getSubscription();
+                    
+                    if (!StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
+                        String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), edr, walletOperation);
+                        sub = subscriptionService.findByCode(subCode);
+                        if (sub == null) {
+                            throw new SubscriptionNotFoundException("could not find subscription for code =" + subCode + " (EL=" + triggeredEDRTemplate.getSubscriptionEl()
+                                    + ") in triggered EDR with code " + triggeredEDRTemplate.getCode());
+                        }
+                    }
+                    newEdr.setSubscription(sub);
+                    log.info("trigger EDR from code {}", triggeredEDRTemplate.getCode());
+                    
+                    if (triggeredEDRTemplate.getTriggeredEdrScript() != null) {
+                        newEdr = triggeredEdrScriptService.updateEdr(triggeredEDRTemplate.getTriggeredEdrScript().getCode(), newEdr);
+                    }
+                    
+                    edrService.create(newEdr);
+                    
+                } else {
+                	if (StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
+						throw new BusinessException("TriggeredEDRTemplate.subscriptionEl must not be null and must point to an existing Access.");
 					}
-					newEdr.setSubscription(sub);
-					log.info("trigger EDR from code {}", triggeredEDR.getCode());
-					edrService.create(newEdr);
-					
-				} else {
-					CDR cdr = new CDR();
-					String subCode = evaluateStringExpression(triggeredEDR.getSubscriptionEl(), edr, walletOperation);
-					cdr.setAccess_id(subCode);
-					cdr.setTimestamp(edr.getEventDate());
-					cdr.setParam1(evaluateStringExpression(triggeredEDR.getParam1El(), edr, walletOperation));
-					cdr.setParam2(evaluateStringExpression(triggeredEDR.getParam2El(), edr, walletOperation));
-					cdr.setParam3(evaluateStringExpression(triggeredEDR.getParam3El(), edr, walletOperation));
-					cdr.setParam4(evaluateStringExpression(triggeredEDR.getParam4El(), edr, walletOperation));
-					cdr.setQuantity(new BigDecimal(
-							evaluateDoubleExpression(triggeredEDR.getQuantityEl(), edr, walletOperation)));
+                	
+                    CDR cdr = new CDR();
+                    String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), edr, walletOperation);
+                    cdr.setAccess_id(subCode);
+                    cdr.setTimestamp(edr.getEventDate());
+                    cdr.setParam1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), edr, walletOperation));
+                    cdr.setParam2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), edr, walletOperation));
+                    cdr.setParam3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), edr, walletOperation));
+                    cdr.setParam4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), edr, walletOperation));
+                    cdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), edr, walletOperation)));
 
-					String url = "api/rest/billing/mediation/chargeCdr";
-					Response response = meveoInstanceService.callTextServiceMeveoInstance(url,
-							triggeredEDR.getMeveoInstance(), cdr.toCsv());
-					ActionStatus actionStatus = response.readEntity(ActionStatus.class);
-					log.debug("response {}", actionStatus);
+                    String url = "api/rest/billing/mediation/chargeCdr";
+                    Response response = meveoInstanceService.callTextServiceMeveoInstance(url, meveoInstance, cdr.toCsv());
+                    ActionStatus actionStatus = response.readEntity(ActionStatus.class);
+                    log.debug("response {}", actionStatus);
 
 					if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+						log.error("RemoteCharging with status={}", actionStatus.getErrorCode());
 						throw new ChargingEdrOnRemoteInstanceErrorException(
-								"Error charging Edr on remote instance Code " + actionStatus.getErrorCode() + ", info "
+								"Error charging Edr on remote instance code " + actionStatus.getErrorCode() + ", info "
 										+ actionStatus.getMessage());
-					} else if (actionStatus != null) {
-						throw new ChargingEdrOnRemoteInstanceErrorException("Error charging Edr");
+
+					} else if (actionStatus == null) {
+						log.error("RemoteCharging: No response code from API.");
+						throw new ChargingEdrOnRemoteInstanceErrorException(
+								"Error charging Edr. No response code from API.");
 					}
-				}
-			}
-		}
+                }
+            }
+        }
 	}
 
     /**
@@ -649,7 +673,7 @@ public class UsageRatingService implements Serializable {
                     continue;
                 }
 
-                log.debug("Found matching charge instance: id=" + usageChargeInstance.getId());
+				log.debug("Found matching charge instance: id={}", usageChargeInstance.getId());
 
                 WalletOperation walletOperation = new WalletOperation();
                 edrIsRated = rateEDRonChargeAndCounters(walletOperation, edr, usageChargeInstance, isVirtual);

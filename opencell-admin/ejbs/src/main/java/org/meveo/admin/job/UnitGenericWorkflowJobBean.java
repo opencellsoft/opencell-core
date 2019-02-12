@@ -29,10 +29,10 @@ public class UnitGenericWorkflowJobBean {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
         try {
-            genericWorkflowService.executeTransitionScript(workflowInstance, genericWorkflow);
+            genericWorkflowService.executeWorkflow(workflowInstance, genericWorkflow);
             result.registerSucces();
         } catch (Exception e) {
-            log.error("Failed to unit transition script for {}", workflowInstance, e);
+            log.error("Failed to unit generic workflow for {}", workflowInstance, e);
             result.registerError(workflowInstance.getClass().getName() + workflowInstance.getId(), e.getMessage());
         }
     }

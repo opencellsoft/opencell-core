@@ -59,6 +59,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
