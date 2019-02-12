@@ -2,7 +2,9 @@ package org.meveo.service.index;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder.Operator;
 import org.elasticsearch.search.sort.SortOrder;
@@ -401,7 +404,12 @@ public class ElasticClient {
                     bulkRequest.add(client.prepareUpdate(change.getIndex(), change.getType(), change.getId()).setDoc(change.getSource()).setUpsert(change.getSource()));
 
                 } else if (change.getAction() == ElasticSearchAction.DELETE) {
-                    bulkRequest.add(client.prepareDelete(change.getIndex(), change.getType(), change.getId()));
+                    
+                    if (change.getId()!=null){                    
+                        bulkRequest.add(client.prepareDelete(change.getIndex(), change.getType(), change.getId()));
+                    } else {
+                        // need to drop the type/index and recreate it again
+                    }
                 }
             }
 
@@ -589,6 +597,10 @@ public class ElasticClient {
      * <li>terms. Match any of the values (terms) supplied without analyzing them first. Multiple terms are separated by '|' character</li>
      * <li>closestMatch. Do a closest match to the value provided. E.g. Search by value '1234' will try to match '1234', '123', '12', '1' values in this order. Note: A descending
      * ordering by this field will be added automatically to the query.</li>
+     * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=fiel.value. Applies to date and number type fields.</li>
+     * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value&lt;=value</li>
+     * <li>minmaxRange. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields.</li>
+     * <li>minmaxOptionalRange. Similar to minmaxRange. The value is in between two field values with either them being optional. TWO fieldnames must be specified.</li>
      * </ul>
      *
      * @param queryValues Fields and values to match
@@ -652,53 +664,9 @@ public class ElasticClient {
         if (queryValues.isEmpty()) {
             reqBuilder.setQuery(QueryBuilders.matchAllQuery());
 
-        } else if (queryValues.size() == 1) {
-            Entry<String, ?> fieldValue = queryValues.entrySet().iterator().next();
-
-            String[] fieldInfo = fieldValue.getKey().split(" ");
-            String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
-            String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
-
-            if (fieldName.contains(",")) {
-                reqBuilder.setQuery(QueryBuilders.multiMatchQuery(fieldValue.getValue(), StringUtils.stripAll(fieldName.split(","))));
-
-            } else if ("term".equals(condition)) {
-                reqBuilder.setQuery(QueryBuilders.termQuery(fieldName, fieldValue.getValue()));
-
-            } else if ("terms".equals(condition)) {
-                String valueTxt = fieldValue.getValue().toString();
-                String[] values = valueTxt.split("\\|");
-                reqBuilder.setQuery(QueryBuilders.termsQuery(fieldName, values));
-
-            } else if ("closestMatch".equals(condition)) {
-
-                String valueTxt = fieldValue.getValue().toString();
-
-                int valueLength = valueTxt.length();
-                String[] values = new String[valueLength];
-
-                for (int i = valueLength - 1; i >= 0; i--) {
-                    values[i] = valueTxt.substring(0, i + 1);
-                }
-
-                reqBuilder.setQuery(QueryBuilders.termsQuery(fieldName, values));
-                sortFields = new String[] { fieldName };
-                sortOrders = new SortOrder[] { SortOrder.DESC };
-
-            } else if ("fromRange".equals(condition)) {
-
-                reqBuilder.setQuery(QueryBuilders.rangeQuery(fieldName).gte(fieldValue.getValue()));
-
-            } else if ("toRange".equals(condition)) {
-
-                reqBuilder.setQuery(QueryBuilders.rangeQuery(fieldName).lt(fieldValue.getValue()));
-
-            } else {
-                reqBuilder.setQuery(QueryBuilders.matchQuery(fieldName, fieldValue.getValue()));
-            }
-
         } else {
 
+            QueryBuilder queryBuilder = null;
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
             for (Entry<String, ?> fieldValue : queryValues.entrySet()) {
@@ -706,21 +674,24 @@ public class ElasticClient {
                 String[] fieldInfo = fieldValue.getKey().split(" ");
                 String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
                 String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
+                String fieldName2 = fieldInfo.length == 3 ? fieldInfo[2] : null;
+
+                Object filterValue = fieldValue.getValue();
 
                 if (fieldName.contains(",")) {
-                    boolQuery.must(QueryBuilders.multiMatchQuery(fieldValue.getValue(), StringUtils.stripAll(fieldName.split(","))));
+                    queryBuilder = QueryBuilders.multiMatchQuery(filterValue, StringUtils.stripAll(fieldName.split(",")));
 
                 } else if ("term".equals(condition)) {
-                    boolQuery.must(QueryBuilders.termQuery(fieldName, fieldValue.getValue()));
+                    queryBuilder = QueryBuilders.termQuery(fieldName, filterValue);
 
                 } else if ("terms".equals(condition)) {
-                    String valueTxt = fieldValue.getValue().toString();
+                    String valueTxt = filterValue.toString();
                     String[] values = valueTxt.split("\\|");
-                    boolQuery.must(QueryBuilders.termsQuery(fieldName, values));
+                    queryBuilder = QueryBuilders.termsQuery(fieldName, values);
 
                 } else if ("closestMatch".equals(condition)) {
 
-                    String valueTxt = fieldValue.getValue().toString();
+                    String valueTxt = filterValue.toString();
 
                     int valueLength = valueTxt.length();
                     String[] values = new String[valueLength];
@@ -729,23 +700,53 @@ public class ElasticClient {
                         values[i] = valueTxt.substring(0, i + 1);
                     }
 
-                    boolQuery.must(QueryBuilders.termsQuery(fieldName, values));
+                    queryBuilder = QueryBuilders.termsQuery(fieldName, values);
                     sortFields = new String[] { fieldName };
                     sortOrders = new SortOrder[] { SortOrder.DESC };
 
                 } else if ("fromRange".equals(condition)) {
 
-                    boolQuery.must(QueryBuilders.rangeQuery(fieldName).gte(fieldValue.getValue()));
+                    queryBuilder = QueryBuilders.rangeQuery(fieldName).gte(filterValue);
 
                 } else if ("toRange".equals(condition)) {
 
-                    boolQuery.must(QueryBuilders.rangeQuery(fieldName).lt(fieldValue.getValue()));
+                    queryBuilder = QueryBuilders.rangeQuery(fieldName).lt(filterValue);
+
+                    // The value is in between two field values
+                } else if ("minmaxRange".equals(condition)) {
+                    if (filterValue instanceof Number) {
+                        queryBuilder = QueryBuilders.boolQuery();
+                        ((BoolQueryBuilder) queryBuilder).must(QueryBuilders.rangeQuery(fieldName).lte(filterValue));
+                        ((BoolQueryBuilder) queryBuilder).must(QueryBuilders.rangeQuery(fieldName2).gte(filterValue));
+                    } else if (filterValue instanceof Date) {
+                        Date dateValue = (Date) filterValue;
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(dateValue);
+                        int year = c.get(Calendar.YEAR);
+                        int month = c.get(Calendar.MONTH);
+                        int date = c.get(Calendar.DATE);
+                        c.set(year, month, date, 0, 0, 0);
+                        dateValue = c.getTime();
+
+                        queryBuilder = QueryBuilders.boolQuery();
+                        ((BoolQueryBuilder) queryBuilder).must(QueryBuilders.rangeQuery(fieldName).lte(dateValue));
+                        ((BoolQueryBuilder) queryBuilder).must(QueryBuilders.rangeQuery(fieldName2).gte(dateValue));
+                    }
 
                 } else {
-                    boolQuery.must(QueryBuilders.matchQuery(fieldName, fieldValue.getValue()));
+                    queryBuilder = QueryBuilders.matchQuery(fieldName, filterValue);
+                }
+
+                if (queryValues.size() == 1) {
+                    reqBuilder.setQuery(queryBuilder);
+                } else {
+                    boolQuery.must(queryBuilder);
                 }
             }
-            reqBuilder.setQuery(boolQuery);
+
+            if (queryValues.size() > 1) {
+                reqBuilder.setQuery(boolQuery);
+            }
         }
 
         // Add sorting if requested

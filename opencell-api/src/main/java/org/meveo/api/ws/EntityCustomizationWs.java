@@ -214,7 +214,7 @@ public interface EntityCustomizationWs extends IBaseWs {
     /**
      * Remove an existing data from a custom table
      * 
-     * @param dto Custom table data. 'id' field is used to identify an existing record.
+     * @param dto Custom table data. 'id' field is used to identify an existing record. If no 'id' values are passed, will delete all the records in a table.
      * @return Request processing status
      */
     @WebMethod

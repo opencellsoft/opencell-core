@@ -106,16 +106,14 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     }
 
     @Override
-    public void remove(Long id) throws BusinessException {
-
-        CustomEntityTemplate cet = findById(id);
+    public void remove(CustomEntityTemplate cet) throws BusinessException {
 
         Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
 
         for (CustomFieldTemplate cft : fields.values()) {
             customFieldTemplateService.remove(cft.getId());
         }
-        super.remove(id);
+        super.remove(cet);
 
         customFieldsCache.removeCustomEntityTemplate(cet);
     }

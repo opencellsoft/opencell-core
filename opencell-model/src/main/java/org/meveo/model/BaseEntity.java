@@ -115,6 +115,10 @@ public abstract class BaseEntity implements Serializable, IEntity, IJPAVersioned
      */
     public static String cleanUpCodeOrId(Object codeOrId) {
 
+        if (codeOrId == null) {
+            return null;
+        }
+
         if (codeOrId instanceof Long) {
             return codeOrId.toString();
         } else if (codeOrId instanceof BigDecimal) {
@@ -134,6 +138,10 @@ public abstract class BaseEntity implements Serializable, IEntity, IJPAVersioned
      * @return Modifier code/identifier value
      */
     public static String cleanUpAndLowercaseCodeOrId(Object codeOrId) {
+
+        if (codeOrId == null) {
+            return null;
+        }
 
         codeOrId = cleanUpCodeOrId(codeOrId).toLowerCase();
         return (String) codeOrId;

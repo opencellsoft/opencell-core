@@ -112,4 +112,17 @@ public class ScriptInstanceWsImpl extends BaseWs implements ScriptInstanceWs {
 
         return result;
     }
+
+    @Override
+    public ActionStatus execute(String code) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            scriptInstanceApi.execute(code, null);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
 }
