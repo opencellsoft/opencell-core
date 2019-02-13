@@ -31,6 +31,7 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
+import org.meveo.commons.exceptions.PaymentException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
@@ -44,6 +45,7 @@ import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
+import org.meveo.model.payments.PaymentErrorEnum;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentHistory;
@@ -60,7 +62,8 @@ import org.meveo.service.base.PersistenceService;
  * 
  * @author Edward P. Legaspi
  * @author anasseh
- * @lastModifiedVersion 5.2
+ * @author Said Ramli
+ * @lastModifiedVersion 5.3
  */
 @Stateless
 public class PaymentService extends PersistenceService<Payment> {
@@ -271,18 +274,18 @@ public class PaymentService extends PersistenceService<Payment> {
             preferredMethod = customerAccount.getPreferredPaymentMethod();
             if (!isNewCard) {
                 if (preferredMethod == null) {
-                    throw new BusinessException("There no payment method for customerAccount:" + customerAccount.getCode());
+                    throw new PaymentException(PaymentErrorEnum.NO_PAY_METHOD_FOR_CA, "There no payment method for customerAccount:" + customerAccount.getCode());
                 }
             }
             GatewayPaymentInterface gatewayPaymentInterface = null;
             PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, preferredMethod, cardType);
             if (matchedPaymentGatewayForTheCA == null) {
-                throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
+                throw new PaymentException(PaymentErrorEnum.NO_PAY_GATEWAY_FOR_CA, "No payment gateway for customerAccount:" + customerAccount.getCode());
             }
 
             if (paymentGateway != null) {
                 if (!paymentGateway.getCode().equals(matchedPaymentGatewayForTheCA.getCode())) {
-                    throw new BusinessException(
+                    throw new PaymentException(PaymentErrorEnum.PAY_GATEWAY_NOT_COMPATIBLE_FOR_CA,
                         "Cant process payment for the customerAccount:" + customerAccount.getCode() + " with the selected paymentGateway:" + paymentGateway.getCode());
                 }
             } else {
@@ -291,7 +294,7 @@ public class PaymentService extends PersistenceService<Payment> {
             gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
             if (PaymentMethodEnum.CARD == paymentMethodType) {
                 if (!(preferredMethod instanceof CardPaymentMethod)) {
-                    throw new BusinessException("Can not process payment card as prefered payment method is " + preferredMethod.getPaymentType());
+                    throw new PaymentException(PaymentErrorEnum.PAY_CARD_CANNOT_BE_PREFERED, "Can not process payment card as prefered payment method is " + preferredMethod.getPaymentType());
                 }
                 // If card payment method is currently not valid, find a valid
                 // one and mark it as preferred or throw an exception
@@ -300,7 +303,7 @@ public class PaymentService extends PersistenceService<Payment> {
                     if (preferredMethod != null) {
                         customerAccount = customerAccountService.update(customerAccount);
                     } else {
-                        throw new BusinessException("There is no currently valid payment method for customerAccount:" + customerAccount.getCode());
+                        throw new PaymentException(PaymentErrorEnum.PAY_CB_INVALID, "There is no currently valid payment method for customerAccount:" + customerAccount.getCode());
                     }
                 }
                 if (isPayment) {
@@ -320,10 +323,10 @@ public class PaymentService extends PersistenceService<Payment> {
             }
             if (PaymentMethodEnum.DIRECTDEBIT == paymentMethodType) {
                 if (!(preferredMethod instanceof DDPaymentMethod)) {
-                    throw new BusinessException("Can not process payment sepa as prefered payment method is " + preferredMethod.getPaymentType());
+                    throw new PaymentException(PaymentErrorEnum.PAY_METHOD_IS_NOT_DD, "Can not process payment sepa as prefered payment method is " + preferredMethod.getPaymentType());
                 }
                 if (StringUtils.isBlank(((DDPaymentMethod) preferredMethod).getMandateIdentification())) {
-                    throw new BusinessException("Can not process payment sepa as Mandate is blank");
+                    throw new PaymentException(PaymentErrorEnum.PAY_SEPA_MANDATE_BLANK, "Can not process payment sepa as Mandate is blank");
                 }
                 if (isPayment) {
                     doPaymentResponseDto = gatewayPaymentInterface.doPaymentSepa(((DDPaymentMethod) preferredMethod), ctsAmount, null);
@@ -372,16 +375,26 @@ public class PaymentService extends PersistenceService<Payment> {
             paymentHistoryService.addHistory(customerAccount, aoPaymentId == null ? null : findById(aoPaymentId), aoPaymentId == null ? null : refundService.findById(aoPaymentId),
                 ctsAmount, status, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(), errorType, operationCat, paymentGateway.getCode(), preferredMethod);
 
+        } catch (PaymentException e) {
+            log.error("PaymentException during payment AO:", e);
+            doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("Error during payment AO:", e);
-            if (doPaymentResponseDto == null) {
-                doPaymentResponseDto = new PaymentResponseDto();
-            }
-            doPaymentResponseDto.setErrorMessage(e.getMessage());
-            doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
-            paymentHistoryService.addHistory(customerAccount, null, null, ctsAmount, PaymentStatusEnum.ERROR, null, e.getMessage(), PaymentErrorTypeEnum.ERROR, operationCat,
-                paymentGateway.getCode(), preferredMethod);
+            doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, null, e.getMessage());
         }
+        return doPaymentResponseDto;
+    }
+
+    private PaymentResponseDto processPaymentException(CustomerAccount customerAccount, Long ctsAmount, PaymentGateway paymentGateway, PaymentResponseDto doPaymentResponseDto,
+            PaymentMethod preferredMethod, OperationCategoryEnum operationCat, String code, String msg) throws BusinessException {
+        if (doPaymentResponseDto == null) {
+            doPaymentResponseDto = new PaymentResponseDto();
+        }
+        doPaymentResponseDto.setErrorMessage(msg);
+        doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
+        doPaymentResponseDto.setErrorCode(code);
+        paymentHistoryService.addHistory(customerAccount, null, null, ctsAmount, PaymentStatusEnum.ERROR, code, msg, PaymentErrorTypeEnum.ERROR, operationCat,
+            paymentGateway.getCode(), preferredMethod);
         return doPaymentResponseDto;
     }
 

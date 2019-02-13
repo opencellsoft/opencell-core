@@ -1091,7 +1091,7 @@
         </addColumn>
     </changeSet>
     
-    <changeSet id="#44_20190114" author="AmineBenAicha">
+    <changeSet id="#3948_20190114" author="AmineBenAicha">
     	<addColumn tableName="ar_account_operation">
             <column name="subscription_id" type="bigint"/>
         </addColumn>
@@ -1134,6 +1134,93 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#4010_20190206" author="anasseh">
+            <modifyDataType tableName="wf_history_action" columnName="result" newDataType="${type.text}"/>
+   </changeSet>
+
+   <changeSet id="#3650_20190131" author="AmineBenAicha">
+    	<!-- Update table wf_generic_workflow -->
+    	<dropColumn tableName="wf_generic_workflow" columnName="transition_script_id" />
+
+    	<!-- Create table wf_generic_transition -->
+    	<createSequence sequenceName="wf_generic_transition_seq" />
+        <createTable tableName="wf_generic_transition">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_generic_transition_pkey" />
+            </column>
+            <column name="uuid" type="varchar(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="from_status" type="varchar(255)" />
+            <column name="to_status" type="varchar(255)" />
+            <column name="priority" type="int4" />
+            <column name="description" type="varchar(255)" />
+            <column name="generic_wf_id" type="bigint" />
+            <column name="action_script_id" type="bigint" />
+            <column name="condition_el" type="varchar(2000)" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_generic_transition" constraintName="fk_transition_generic_wf" deferrable="false" initiallyDeferred="false"
+            onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
+        <addForeignKeyConstraint baseColumnNames="action_script_id" baseTableName="wf_generic_transition" constraintName="fk_wf_transition_script" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+
+        <!-- Update table wf_instance -->
+        <dropColumn tableName="wf_instance_history" columnName="wf_instance_id" />
+        <dropTable tableName="wf_instance" />
+		<createTable tableName="wf_instance">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_instance_pk" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_wf_instance_code"/>
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="target_entity_class" type="varchar(255)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="generic_wf_id" type="bigint" />
+            <column name="current_wf_status_id" type="bigint" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_instance" constraintName="fk_instance_generic_wf" deferrable="false" initiallyDeferred="false"
+            onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
+        <addForeignKeyConstraint baseColumnNames="current_wf_status_id" baseTableName="wf_instance" constraintName="fk_instance_wf_status" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
+        <addUniqueConstraint columnNames="generic_wf_id, code" constraintName="uk_generic_wf_id_code_wf_instance" deferrable="false" disabled="false" initiallyDeferred="false"
+        	tableName="wf_instance" />
+
+    	<!-- Update table wf_instance_history -->
+    	<dropColumn tableName="wf_instance_history" columnName="wf_status_from" />
+    	<dropColumn tableName="wf_instance_history" columnName="wf_status_to" />
+    	<dropColumn tableName="wf_instance_history" columnName="event" />
+    	<addColumn tableName="wf_instance_history">
+            <column name="from_status" type="varchar(255)" />
+            <column name="to_status" type="varchar(255)" />
+            <column name="transition_name" type="varchar(255)" />
+            <column name="wf_instance_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="wf_instance_id" baseTableName="wf_instance_history" constraintName="fk_history_wf_instance" deferrable="false" initiallyDeferred="false"
+            onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_instance" />
+
+        <!-- Update table wf_generic_workflow -->
+        <addColumn tableName="wf_generic_workflow">
+            <column name="init_status" type="varchar(255)">
+            	<constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
 
     <changeSet id="#2947_20181231_add_emailing_invoice_invoice_type" author="Khalid HORRI">
         <addColumn tableName="billing_invoice_type">

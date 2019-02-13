@@ -33,7 +33,9 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
@@ -54,13 +56,14 @@ import org.meveo.model.shared.Address;
  * @lastModifiedVersion 7.0
  */
 @Entity
+@WorkflowedEntity
 @ObservableEntity
 @ExportIdentifier({ "code" })
 @CustomFieldEntity(cftCodePrefix = "ORDER")
 @Table(name = "ord_order", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_order_seq"), })
-public class Order extends BusinessCFEntity implements IBillableEntity {
+public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntity {
 
     private static final long serialVersionUID = -9060067698650286828L;
 
