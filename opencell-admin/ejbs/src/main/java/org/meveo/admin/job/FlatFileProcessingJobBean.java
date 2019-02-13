@@ -89,13 +89,13 @@ public class FlatFileProcessingJobBean {
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, String inputDir, File file, String mappingConf, String scriptInstanceFlowCode, String recordVariableName,
+    public void execute(JobExecutionResultImpl result, String inputDir, String outDir, String archDir, String rejDir, File file, String mappingConf, String scriptInstanceFlowCode, String recordVariableName,
             Map<String, Object> context, String originFilename, String formatTransfo, String errorAction) {
         log.debug("Running for inputDir={}, scriptInstanceFlowCode={},formatTransfo={}, errorAction={}", inputDir, scriptInstanceFlowCode, formatTransfo, errorAction);
 
-        outputDir = inputDir + File.separator + "output";
-        rejectDir = inputDir + File.separator + "reject";
-        archiveDir = inputDir + File.separator + "archive";
+        outputDir = outDir != null ? outDir : inputDir + File.separator + "output";
+        rejectDir = rejDir != null ? rejDir : inputDir + File.separator + "reject";
+        archiveDir = archDir != null ? archDir :inputDir + File.separator + "archive";
 
         File f = new File(outputDir);
         if (!f.exists()) {
