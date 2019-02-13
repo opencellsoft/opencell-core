@@ -28,9 +28,10 @@ import org.meveo.model.rating.EDR;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
- * @since Aug 11, 2016 11:02:44 AM
  * @author Abdellatif BARI
+ * @author Mounir Bahije
  * @lastModifiedVersion 5.3
+ * @since Aug 11, 2016 11:02:44 AM
  */
 public abstract class BaseNotificationBean<T extends Notification> extends UpdateMapTypeFieldBean<T> {
 
@@ -45,11 +46,11 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
 
     /**
      * Autocomplete method for class filter field - search entity type classes with {@link ObservableEntity} or {@link NotifiableEntity} annotation
-     * 
+     *
      * @param query A partial class name (including a package)
      * @return A list of classnames
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> autocompleteClassNames(String query) {
 
         List<Class> classes = null;
@@ -64,9 +65,9 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
         String queryLc = query.toLowerCase();
         List<String> classNames = new ArrayList<String>();
         for (Class clazz : classes) {
-			if (Proxy.isProxyClass(clazz) || clazz.getName().contains("$$")) {
-				continue;
-			}
+            if (Proxy.isProxyClass(clazz) || clazz.getName().contains("$$")) {
+                continue;
+            }
             if (((clazz.isAnnotationPresent(Entity.class) && clazz.isAnnotationPresent(ObservableEntity.class)) || clazz.isAnnotationPresent(NotifiableEntity.class))
                     && clazz.getName().toLowerCase().contains(queryLc)) {
                 classNames.add(clazz.getName());
@@ -79,7 +80,7 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
 
     /**
      * Filter the event types of the notification by entity class
-     * 
+     *
      * @return A list of applicable event types
      */
     public List<NotificationEventTypeEnum> getNotificationEventTypeFilters() {
@@ -92,7 +93,7 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
 
     /**
      * Filter the event types of the notification by class
-     * 
+     *
      * @param clazzStr Class
      * @return A list of applicable event types
      */
@@ -107,7 +108,7 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
         List<NotificationEventTypeEnum> events = new ArrayList<NotificationEventTypeEnum>();
         if (hasObservableEntity(clazz)) {
             events.addAll(Arrays.asList(NotificationEventTypeEnum.CREATED, NotificationEventTypeEnum.UPDATED, NotificationEventTypeEnum.REMOVED, NotificationEventTypeEnum.DISABLED,
-                NotificationEventTypeEnum.ENABLED));
+                    NotificationEventTypeEnum.ENABLED));
             if (clazzStr.equals(WalletInstance.class.getName())) {
                 events.add(NotificationEventTypeEnum.LOW_BALANCE);
             } else if (clazzStr.equals(org.meveo.model.admin.User.class.getName())) {
@@ -119,13 +120,16 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
             } else if (clazzStr.equals(CounterPeriod.class.getName())) {
                 events.add(NotificationEventTypeEnum.COUNTER_DEDUCED);
             } else if (clazzStr.equals(Subscription.class.getName()) || clazzStr.equals(ServiceInstance.class.getName())) {
+                if (clazzStr.equals(Subscription.class.getName())) {
+                    events.add(NotificationEventTypeEnum.RENEWAL_UPDATED);
+                }
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.END_OF_TERM);
             }
         } else if (hasNotificableEntity(clazz)) {
             if (clazzStr.equals(MeveoFtpFile.class.getName())) {
                 events = Arrays.asList(NotificationEventTypeEnum.FILE_UPLOAD, NotificationEventTypeEnum.FILE_DOWNLOAD, NotificationEventTypeEnum.FILE_DELETE,
-                    NotificationEventTypeEnum.FILE_RENAME);
+                        NotificationEventTypeEnum.FILE_RENAME);
             } else if (clazzStr.equals(CDR.class.getName())) {
                 events.add(NotificationEventTypeEnum.REJECTED_CDR);
             }

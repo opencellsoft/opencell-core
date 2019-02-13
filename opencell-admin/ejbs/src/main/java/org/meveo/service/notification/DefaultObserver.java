@@ -29,6 +29,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.audit.hibernate.AuditChangeType;
+import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.EmailNotification;
@@ -66,9 +67,10 @@ import java.util.Map;
 
 /**
  * Handles events associated with CDRUD operations on entities
- * 
+ *
  * @author Andrius Karpavicius
  * @author Abdellatif BARI
+ * @author Mounir Bahije
  * @lastModifiedVersion 5.3
  */
 @Singleton
@@ -263,8 +265,8 @@ public class DefaultObserver {
 
     /**
      * Check and fire all matched notifications
-     * 
-     * @param type Notification type
+     *
+     * @param type          Notification type
      * @param entityOrEvent Entity or event triggered
      * @return True if at least one notification has been triggered
      * @throws BusinessException Business exception
@@ -350,18 +352,18 @@ public class DefaultObserver {
 
     public void businesException(@Observes BusinessExceptionEvent bee) {
         log.debug("BusinessExceptionEvent handler inactivated {}",
-            bee);/*
-                  * log.debug("Defaut observer : BusinessExceptionEvent {} ", bee); StringWriter errors = new StringWriter(); bee.getException().printStackTrace(new
-                  * PrintWriter(errors)); String meveoInstanceCode = ParamBean.getInstance().getProperty("monitoring.instanceCode", ""); int bodyMaxLegthByte =
-                  * Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.stackTrace.lengthInBytes", "9999")); String stackTrace = errors.toString(); String input =
-                  * "{" + "	  #meveoInstanceCode#: #" + meveoInstanceCode + "#," + "	  #subject#: #" + bee.getException().getMessage() + "#," + "	  #body#: #" +
-                  * StringUtils.truncate(stackTrace, bodyMaxLegthByte, true) + "#," + "	  #additionnalInfo1#: #" + LogExtractionService.getLogs( new Date(System.currentTimeMillis()
-                  * - Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.timeBefore_ms", "5000"))), new Date()) + "#," + "	  #additionnalInfo2#: ##," +
-                  * "	  #additionnalInfo3#: ##," + "	  #additionnalInfo4#: ##" + "}"; log.trace("Defaut observer : input {} ", input.replaceAll("#", "\""));
-                  * remoteInstanceNotifier.invoke(input.replaceAll("\"", "'").replaceAll("#", "\"").replaceAll("\\[", "(").replaceAll("\\]", ")"),
-                  * ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
-                  * 
-                  */
+                bee);/*
+         * log.debug("Defaut observer : BusinessExceptionEvent {} ", bee); StringWriter errors = new StringWriter(); bee.getException().printStackTrace(new
+         * PrintWriter(errors)); String meveoInstanceCode = ParamBean.getInstance().getProperty("monitoring.instanceCode", ""); int bodyMaxLegthByte =
+         * Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.stackTrace.lengthInBytes", "9999")); String stackTrace = errors.toString(); String input =
+         * "{" + "	  #meveoInstanceCode#: #" + meveoInstanceCode + "#," + "	  #subject#: #" + bee.getException().getMessage() + "#," + "	  #body#: #" +
+         * StringUtils.truncate(stackTrace, bodyMaxLegthByte, true) + "#," + "	  #additionnalInfo1#: #" + LogExtractionService.getLogs( new Date(System.currentTimeMillis()
+         * - Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.timeBefore_ms", "5000"))), new Date()) + "#," + "	  #additionnalInfo2#: ##," +
+         * "	  #additionnalInfo3#: ##," + "	  #additionnalInfo4#: ##" + "}"; log.trace("Defaut observer : input {} ", input.replaceAll("#", "\""));
+         * remoteInstanceNotifier.invoke(input.replaceAll("\"", "'").replaceAll("#", "\"").replaceAll("\\[", "(").replaceAll("\\]", ")"),
+         * ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
+         *
+         */
 
     }
 
@@ -405,6 +407,14 @@ public class DefaultObserver {
         }
     }
 
+    private void trUpdatedEvent(BaseEntity entity, FieldAudit field) throws BusinessException {
+        if (entity != null) {
+            log.debug("observe a dirty tr of entity {} with id {}", entity.getClass().getName(), entity.getId());
+            checkEvent(NotificationEventTypeEnum.RENEWAL_UPDATED, field);
+
+        }
+    }
+
     public void fieldsUpdated(@Observes Map<Object, List<FieldAudit>> event) throws BusinessException {
         if (event != null && !event.isEmpty()) {
             for (Map.Entry<Object, List<FieldAudit>> entry : event.entrySet()) {
@@ -412,6 +422,9 @@ public class DefaultObserver {
                 for (FieldAudit field : fields) {
                     if (field.getAuditType() == AuditChangeType.STATUS) {
                         statusUpdatedEvent((BaseEntity) entry.getKey(), field);
+                    }
+                    if (field.getAuditType() == AuditChangeType.SUBSCRIPTION_RENEWAL) {
+                        trUpdatedEvent((BaseEntity) entry.getKey(), field);
                     }
                 }
             }
