@@ -1,0 +1,9 @@
+{
+	"info": {
+		"_postman_id": "febed361-0eef-481d-94ea-cf0054e747d7",
+		"name": "Full-Rs-CRUD-Test-Entities",
+		"description": "Full-Rs-CRUD-Test-Entities suite, contains all API tests for regression tests.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": []
+}
