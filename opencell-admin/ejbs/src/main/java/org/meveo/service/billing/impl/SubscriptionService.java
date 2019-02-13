@@ -18,7 +18,10 @@
  */
 package org.meveo.service.billing.impl;
 
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -377,11 +380,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
     
 	public void activateInstantiatedService(Subscription sub) throws BusinessException {
-		for (ServiceInstance si : sub.getServiceInstances()) {
-			if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
-				serviceInstanceService.serviceActivation(si, null, null);
-			}
-		}
+    	// using a new ArrayList (cloning the original one) to avoid ConcurrentModificationException
+	    for (ServiceInstance si : new ArrayList<>(emptyIfNull(sub.getServiceInstances()))) {
+	        if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
+                serviceInstanceService.serviceActivation(si, null, null);
+            }
+	    }
 	}
  
     /**
