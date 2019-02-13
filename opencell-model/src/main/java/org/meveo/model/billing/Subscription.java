@@ -606,12 +606,12 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      * Auto update end of engagement date.
      */
     public void autoUpdateEndOfEngagementDate() {
-        if (this.status != SubscriptionStatusEnum.RESILIATED && !this.isTerminatedWithFutureDate() && BooleanUtils.isTrue(this.autoEndOfEngagement)) {
+        if (this.status != SubscriptionStatusEnum.RESILIATED && !this.isToBeTerminatedWithFutureDate() && BooleanUtils.isTrue(this.autoEndOfEngagement)) {
             this.setEndAgreementDate(this.subscribedTillDate);
         }
     }
     
-    private boolean isTerminatedWithFutureDate() {
+    private boolean isToBeTerminatedWithFutureDate() {
         return this.subscriptionRenewal.getTerminationReason() != null && !this.subscriptionRenewal.isAutoRenew() && this.subscribedTillDate != null
                 && subscriptionRenewal.getEndOfTermAction() == EndOfTermActionEnum.TERMINATE;
     }
