@@ -3,6 +3,7 @@ package org.meveo.admin.job;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -26,6 +27,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
@@ -50,6 +52,9 @@ public class FlatFileProcessingJobBean {
 
     @Inject
     private FlatFileProcessingAsync flatFileProcessingAsync;
+    
+    /** The Constant DATETIME_FORMAT. */
+    private static final String DATETIME_FORMAT = "dd_MM_yyyy-HHmmss";
 
     /** The file name. */
     String fileName;
@@ -180,8 +185,9 @@ public class FlatFileProcessingJobBean {
                 report += "\r\n " + e.getMessage();
                 log.error("Failed to process Record file {}", fileName, e);
                 result.registerError(e.getMessage());
-                FileUtils.moveFile(rejectDir, currentFile, fileName);
-
+                if (currentFile != null) {
+                    FileUtils.moveFile(rejectDir, currentFile, fileName);
+                }
             } finally {
                 try {
                     if (fileParser != null) {
@@ -201,7 +207,11 @@ public class FlatFileProcessingJobBean {
                     if (currentFile != null) {
                         // Move current CSV file to save directory, if his origin from an Excel transformation, else CSV file was deleted.
                         if (isCsvFromExcel == false) {
-                            FileUtils.moveFile(archiveDir, currentFile, fileName);
+                            String archivedName = fileName != null ? fileName : currentFile.getName();
+                            if((new File(archiveDir + File.separator + archivedName)).exists()) {
+                                archivedName += "_COPY_"+DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
+                            }
+                            FileUtils.moveFile(archiveDir, currentFile, archivedName);
                         } else {
                             currentFile.delete();
                         }
