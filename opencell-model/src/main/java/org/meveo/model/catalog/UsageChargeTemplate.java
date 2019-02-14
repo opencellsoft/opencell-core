@@ -126,7 +126,7 @@ public class UsageChargeTemplate extends ChargeTemplate {
     /**
      * Overrides the triggerNextCharge switch.
      */
-    @Column(name = "trigger_next_charge_el", length = 2000)
+    @Column(name = "trigger_next_charge_el", length = 2000, columnDefinition = "TEXT")
     @Size(max = 2000)
     protected String triggerNextChargeEL;
 
