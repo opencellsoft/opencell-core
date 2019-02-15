@@ -267,11 +267,14 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     private Subscription terminateSubscriptionWithFutureDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason) throws BusinessException {
+        
     	subscription.setSubscribedTillDate(terminationDate);
-		subscription.getSubscriptionRenewal().setTerminationReason(terminationReason);
-		subscription.getSubscriptionRenewal().setInitialTermType(InitialTermTypeEnum.FIXED);
-		subscription.getSubscriptionRenewal().setAutoRenew(false);		
-		subscription.getSubscriptionRenewal().setEndOfTermAction(EndOfTermActionEnum.TERMINATE);
+    	SubscriptionRenewal subscriptionRenewal = subscription.getSubscriptionRenewal();
+    	
+    	subscriptionRenewal.setTerminationReason(terminationReason);
+    	subscriptionRenewal.setInitialTermType(InitialTermTypeEnum.FIXED);
+    	subscriptionRenewal.setAutoRenew(false);		
+    	subscriptionRenewal.setEndOfTermAction(EndOfTermActionEnum.TERMINATE);
 		
 		subscription = update(subscription);
 		

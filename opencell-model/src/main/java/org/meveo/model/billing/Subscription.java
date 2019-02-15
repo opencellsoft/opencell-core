@@ -60,6 +60,7 @@ import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.dunning.DunningDocument;
@@ -605,9 +606,14 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      * Auto update end of engagement date.
      */
     public void autoUpdateEndOfEngagementDate() {
-        if (BooleanUtils.isTrue(this.autoEndOfEngagement)) {
+        if (this.status != SubscriptionStatusEnum.RESILIATED && !this.isToBeTerminatedWithFutureDate() && BooleanUtils.isTrue(this.autoEndOfEngagement)) {
             this.setEndAgreementDate(this.subscribedTillDate);
         }
+    }
+    
+    private boolean isToBeTerminatedWithFutureDate() {
+        return this.subscriptionRenewal.getTerminationReason() != null && !this.subscriptionRenewal.isAutoRenew() && this.subscribedTillDate != null
+                && subscriptionRenewal.getEndOfTermAction() == EndOfTermActionEnum.TERMINATE;
     }
 
     /**
