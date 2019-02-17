@@ -94,8 +94,8 @@ import org.meveo.service.script.billing.TaxScriptService;
  * @author Said Ramli
  * @author Abdelmounaim Akadid
  * @author Mounir Bahije
- *
- * @lastModifiedVersion 5.3
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3.2
  */
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
@@ -322,6 +322,37 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void appendInvoiceAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, List<RatedTransaction> ratedTransactions,
             Date firstTransactionDate, Date lastTransactionDate, boolean isInvoiceAdjustment, boolean isVirtual, BillingRun billingRun, boolean ignoreInvoicingThreshold) throws BusinessException {
+
+
+        setInvoiceAmounts(billingAccount, invoice, ratedTransactionFilter, ratedTransactions, firstTransactionDate, lastTransactionDate, isInvoiceAdjustment,
+                isVirtual, billingRun, ignoreInvoicingThreshold);
+
+        for (RatedTransaction ratedTransaction : ratedTransactions) {
+        	if(ratedTransaction.getWallet() == null) {
+        		invoice.getRatedTransactions().add(ratedTransaction);
+        	}
+        }
+    }
+
+    /**
+     * Set invoice amounts to an invoice. Only one of these should be provided: ratedTransactionFilter, ratedTransactions, orderNumber
+     *
+     * @param billingAccount Billing Account
+     * @param invoice Invoice to append invoice aggregates to
+     * @param ratedTransactionFilter Filter to use to filter rated transactions.
+     * @param ratedTransactions A list of rated transactions - used in conjunction with isVirtual=true
+     * @param firstTransactionDate First transaction date
+     * @param lastTransactionDate Last transaction date
+     * @param isInvoiceAdjustment Is this invoice adjustment
+     * @param isVirtual Is this a virtual invoice - invoice is not persisted, rated transactions are not persisted either
+     * @param ignoreInvoicingThreshold Is this a ignoreInvoicing threshold - used to test or not if Invoice amount below the threshold
+     * @throws BusinessException BusinessException
+     */
+    @SuppressWarnings({ "unchecked", "unused" })
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void setInvoiceAmounts(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, List<RatedTransaction> ratedTransactions,
+                                  Date firstTransactionDate, Date lastTransactionDate, boolean isInvoiceAdjustment, boolean isVirtual, BillingRun billingRun, boolean ignoreInvoicingThreshold) throws BusinessException {
 
         boolean entreprise = appProvider.isEntreprise();
         int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
@@ -695,16 +726,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             appendInvoiceDiscountAggregates(userAccount, isExonerated, invoice, taxInvoiceAgregateMap, isVirtual, billingRun);
         }
 
-        BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
-                : billingAccount.getInvoicingThreshold();
-        if (!ignoreInvoicingThreshold) {
-            if (invoicingThreshold != null && invoice.getAmountWithoutTax() != null) {
-                if (invoicingThreshold.compareTo(invoice.getAmountWithoutTax()) > 0) {
-                    throw new BusinessException("Invoice amount below the threshold");
-                }
-            }
-        }
-
         BigDecimal discountAmountWithoutTax = BigDecimal.ZERO;
         BigDecimal discountAmountTax = BigDecimal.ZERO;
         BigDecimal discountAmountWithTax = BigDecimal.ZERO;
@@ -722,6 +743,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         invoice.addAmountWithoutTax(discountAmountWithoutTax);
         invoice.addAmountTax(discountAmountTax);
         invoice.addAmountWithTax(discountAmountWithTax);
+
+
+        BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
+                : billingAccount.getInvoicingThreshold();
+
+        if (!ignoreInvoicingThreshold) {
+            BigDecimal amount = entreprise ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax();
+            if (invoicingThreshold != null && amount != null) {
+                if (invoicingThreshold.compareTo(amount) > 0) {
+                    throw new BusinessException("Invoice amount below the threshold");
+                }
+            }
+        }
 
         invoice.setAmountWithoutTax(round(invoice.getAmountWithoutTax(), invoiceRounding, invoiceRoundingMode));
         invoice.setAmountTax(round(invoice.getAmountTax(), invoiceRounding, invoiceRoundingMode));
@@ -743,12 +777,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             netToPay = invoice.getAmountWithTax().add(round(balance, invoiceRounding, invoiceRoundingMode));
         }
         invoice.setNetToPay(netToPay);
-        
-        for (RatedTransaction ratedTransaction : ratedTransactions) {
-        	if(ratedTransaction.getWallet() == null) {
-        		invoice.getRatedTransactions().add(ratedTransaction);
-        	}
-        }
     }
 
     /**

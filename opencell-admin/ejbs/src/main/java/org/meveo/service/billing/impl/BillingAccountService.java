@@ -47,6 +47,7 @@ import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -83,7 +84,7 @@ import org.meveo.service.order.OrderService;
  * @author Mounir Bahije
  * @author Khalid HORRI
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @lastModifiedVersion 5.3.2
  */
 @Stateless
 public class BillingAccountService extends AccountService<BillingAccount> {
@@ -109,6 +110,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
+
+    @Inject
+    private InvoiceService invoiceService;
 
     /**
      * Inits the billing account.
@@ -411,11 +415,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
         return null;
     }
-    
+
     /**
      * Update billing account total amounts.
      *
-     * @param entity entity
+     * @param entity     entity
      * @param billingRun the billing run
      * @return Updated entity
      * @throws BusinessException the business exception
@@ -425,53 +429,24 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public IBillableEntity updateEntityTotalAmounts(IBillableEntity entity, BillingRun billingRun) throws BusinessException {
         log.debug("updateEntityTotalAmounts  entity:" + entity.getId());
 
-        BillingAccount billingAccount = null;
         if (entity instanceof BillingAccount) {
             entity = findByCode(((BillingAccount) entity).getCode());
-            billingAccount = (BillingAccount) entity;
         }
 
         if (entity instanceof Subscription) {
             entity = subscriptionService.findByCode(((Subscription) entity).getCode());
-            billingAccount = ((Subscription) entity).getUserAccount() != null ? ((Subscription) entity).getUserAccount().getBillingAccount() : null;
         }
 
         if (entity instanceof Order) {
             entity = orderService.findByCode(((Order) entity).getCode());
-            if (((Order) entity).getUserAccounts() != null && !((Order) entity).getUserAccounts().isEmpty()) {
-                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ?
-                        (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() : null;
-            }
         }
 
-        entity = calculateInvoicing(entity, null, billingRun.getLastTransactionDate(), billingRun);
+        entity = invoiceService.setBillingRunAmounts(entity, billingRun, null, billingRun.getInvoiceDate(), null, billingRun.getLastTransactionDate(), false);
 
+        if (entity == null) {
+            return null;
+        }
         BigDecimal invoiceAmount = entity.getTotalInvoicingAmountWithoutTax();
-        if (invoiceAmount != null) {
-            BigDecimal invoicingThreshold = null;
-            if (billingAccount != null) {
-                invoicingThreshold = billingAccount.getInvoicingThreshold();
-            }
-            if (invoicingThreshold == null && billingRun.getBillingCycle() != null) {
-                invoicingThreshold = billingRun.getBillingCycle().getInvoicingThreshold();
-            }
-
-            if (invoicingThreshold != null) {
-                if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
-                    log.debug("updateEntityTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
-                            entity.getCode(), invoiceAmount, invoicingThreshold);
-                    return null;
-                } else {
-                    log.debug("updateEntityTotalAmounts  invoicingThreshold(out continue invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
-                            entity.getCode(), invoiceAmount, invoicingThreshold);
-                }
-            } else {
-                log.debug("updateBillingAccountTotalAmounts no invoicingThreshold to apply");
-            }
-
-            log.debug("set brAmount {} in BA {}", invoiceAmount, entity.getId());
-        }
-
         entity.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
 
         if (entity instanceof BillingAccount) {
