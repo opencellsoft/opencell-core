@@ -142,7 +142,8 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author Wassim Drira
  * @author Said Ramli
  * @author Mounir Bahije
- * @lastModifiedVersion 5.3
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3.2
  */
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
@@ -2218,4 +2219,177 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void nullifyInvoiceFileNames(BillingRun billingRun) {
         getEntityManager().createNamedQuery("Invoice.nullifyInvoiceFileNames").setParameter("billingRun", billingRun).executeUpdate();
     }      
+
+    /**
+     * Set invoice amounts.
+     *
+     * @param entity                 entity to be billed
+     * @param billingRun             billing run
+     * @param ratedTransactionFilter rated transaction filter
+     * @param invoiceDate            date of invoice
+     * @param firstTransactionDate   date of first transaction
+     * @param lastTransactionDate    date of last transaction
+     * @param isDraft                the is Draft
+     * @return created invoice
+     * @throws BusinessException business exception
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public IBillableEntity setBillingRunAmounts(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
+                                             Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) throws BusinessException {
+
+        if (firstTransactionDate == null) {
+            firstTransactionDate = new Date(0);
+        }
+
+        if (billingRun == null) {
+            if (invoiceDate == null) {
+                log.debug("invoiceDate must be set if billingRun is null");
+                return null;
+            }
+            if (StringUtils.isBlank(lastTransactionDate) && ratedTransactionFilter == null) {
+                log.debug("lastTransactionDate or ratedTransactionFilter must be set if billingRun is null");
+                return null;
+            }
+        } else {
+            lastTransactionDate = billingRun.getLastTransactionDate();
+            invoiceDate = billingRun.getInvoiceDate();
+        }
+
+
+        List<Invoice> invoiceList = new ArrayList<>();
+        EntityManager em = getEntityManager();
+
+        List<RatedTransactionGroup> ratedTransactionGroups = getRatedTransactionGroups(entity, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate);
+        if (ratedTransactionGroups.isEmpty()) {
+            log.debug(resourceMessages.getString("error.invoicing.noTransactions"));
+            return null;
+        }
+
+        for (RatedTransactionGroup ratedTransactionGroup : ratedTransactionGroups) {
+
+            BillingAccount billingAccount = billingAccountService.findById(ratedTransactionGroup.getBillingAccount().getId(), true);
+            List<RatedTransaction> ratedTransactions = ratedTransactionGroup.getRatedTransactions();
+
+            Map<InvoiceType, List<RatedTransaction>> mapInvTypeRT = new HashMap<InvoiceType, List<RatedTransaction>>();
+
+            BillingCycle billingCycle = ratedTransactionGroup.getBillingCycle();
+            if (billingCycle == null) {
+                billingCycle = billingAccount.getBillingCycle();
+            }
+            if (billingCycle == null) {
+                log.debug("Cant find the billing cycle");
+                return null;
+            }
+
+            billingCycle = billingCycleService.refreshOrRetrieve(billingCycle);
+            ScriptInstance scriptInstance = billingCycle.getScriptInstance();
+            if (scriptInstance != null) {
+                InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(billingCycle.getInvoiceType());
+                log.debug("start to execute script instance for billingCycle {}", billingCycle);
+                mapInvTypeRT = executeBCScript(billingRun, invoiceType, ratedTransactions, entity, scriptInstance.getCode());
+            } else {
+                InvoiceType invoiceType = null;
+                if (!StringUtils.isBlank(billingCycle.getInvoiceTypeEl())) {
+                    String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun);
+                    invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
+                }
+                if (isDraft) {
+                    invoiceType = invoiceTypeService.getDefaultDraft();
+                } else {
+                    if (invoiceType == null) {
+                        invoiceType = billingCycle.getInvoiceType();
+                    }
+                    if (invoiceType == null) {
+                        invoiceType = invoiceTypeService.getDefaultCommertial();
+                    }
+                }
+                mapInvTypeRT.put(invoiceType, ratedTransactions);
+            }
+
+            for (Map.Entry<InvoiceType, List<RatedTransaction>> entry : mapInvTypeRT.entrySet()) {
+                InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey().getCode());
+                List<RatedTransaction> ratedTransactionSelection = entry.getValue();
+                Invoice invoice = new Invoice();
+                invoice.setSeller(ratedTransactionGroup.getSeller());
+                invoice.setInvoiceType(invoiceType);
+                invoice.setBillingAccount(billingAccount);
+
+                if (billingRun != null) {
+                    invoice.setBillingRun(em.getReference(BillingRun.class, billingRun.getId()));
+                }
+                invoice.setInvoiceDate(invoiceDate);
+
+                PaymentMethod paymentMethod = null;
+
+                Order order = null;
+                if (entity instanceof Order) {
+                    order = (Order) entity;
+                    paymentMethod = order.getPaymentMethod();
+                }
+
+                if (entity instanceof Subscription) {
+                    invoice.setSubscription((Subscription) entity);
+                }
+
+                CustomerAccount customerAccount = customerAccountService.refreshOrRetrieve(billingAccount.getCustomerAccount());
+                if (paymentMethod == null) {
+                    paymentMethod = customerAccountService.getPreferredPaymentMethod(customerAccount.getId());
+                    // or this option: paymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
+                }
+
+                if (paymentMethod != null) {
+                    invoice.setPaymentMethodType(paymentMethod.getPaymentType());
+                    invoice.setPaymentMethod(paymentMethod);
+                }
+
+                Integer delay = billingCycle.getDueDateDelay();
+                if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
+                    delay = evaluateIntegerExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
+                } else {
+                    if (!StringUtils.isBlank(customerAccount.getDueDateDelayEL())) {
+                        delay = evaluateIntegerExpression(customerAccount.getDueDateDelayEL(), billingAccount, invoice, order);
+                    } else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
+                        delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice, order);
+                    }
+                }
+
+                Date dueDate = invoiceDate;
+                if (delay != null) {
+                    dueDate = DateUtils.addDaysToDate(invoiceDate, delay);
+                } else {
+                    log.debug("Due date delay is null");
+                    return null;
+                }
+                invoice.setDueDate(dueDate);
+
+                // compute dueBalance
+                int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
+                BigDecimal balanceDue = customerAccountService.customerAccountBalanceDue(billingAccount.getCustomerAccount(), new Date());
+                BigDecimal totalInvoiceBalance = customerAccountService.customerAccountFutureBalanceExigibleWithoutLitigation(billingAccount.getCustomerAccount());
+                invoice.setDueBalance(balanceDue.add(totalInvoiceBalance));
+                invoice.setDueBalance(invoice.getDueBalance().setScale(rounding, RoundingMode.HALF_UP));
+
+                try {
+                    ratedTransactionService.setInvoiceAmounts(billingAccount, invoice, ratedTransactionFilter, ratedTransactionSelection, firstTransactionDate,
+                            lastTransactionDate, false, false, billingRun, false);
+                    invoiceList.add(invoice);
+                } catch (BusinessException e) {
+                    log.error("Error when trying to set invoice amounts", e);
+                    return null;
+                }
+            }
+        }
+
+
+        BigDecimal amountWithoutTax = BigDecimal.ZERO;
+        BigDecimal amountWithTax = BigDecimal.ZERO;
+        for (Invoice invoice : invoiceList) {
+            amountWithoutTax = amountWithoutTax.add(invoice.getAmountWithoutTax());
+            amountWithTax = amountWithTax.add(invoice.getAmountWithTax());
+        }
+        entity.setTotalInvoicingAmountTax(amountWithTax.subtract(amountWithoutTax));
+        entity.setTotalInvoicingAmountWithoutTax(amountWithoutTax);
+        entity.setTotalInvoicingAmountWithTax(amountWithTax);
+        return entity;
+    }
 }
