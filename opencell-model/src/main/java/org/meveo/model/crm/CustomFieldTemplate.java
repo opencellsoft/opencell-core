@@ -561,6 +561,11 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         this.guiPosition = guiPosition;
     }
 
+    /**
+     * Parse GUIPosition field and return 'tab', 'fieldGroup' and 'field' item values as a map
+     * 
+     * @return A map with 'tab_pos', 'fieldGroup_pos' and 'field_pos' as keys
+     */
     public Map<String, String> getGuiPositionParsed() {
 
         if (guiPosition == null) {
@@ -584,6 +589,24 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         }
 
         return parsedInfo;
+    }
+
+    /**
+     * Get GUI 'field' position value in a GUIPosition value as in e.g. "tab:Configuration:0;fieldGroup:Purge counter periods:1;field:0"
+     * 
+     * @return GUI 'field' position value
+     */
+    public int getGUIFieldPosition() {
+        if (guiPosition != null) {
+            String position = getGuiPositionParsed().get(GroupedCustomFieldTreeItemType.field.positionTag + "_pos");
+            if (position != null) {
+                try {
+                    return Integer.parseInt(position);
+                } catch (NumberFormatException e) {
+                }
+            }
+        }
+        return 0;
     }
 
     public boolean isAllowEdit() {

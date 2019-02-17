@@ -40,6 +40,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -70,6 +71,9 @@ public class NativePersistenceService extends BaseService {
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
+
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
 
     /**
      * Find record by its identifier
@@ -765,7 +769,7 @@ public class NativePersistenceService extends BaseService {
      * @throws InvalidParameterException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected static Object castValue(Object value, Class targetClass, boolean expectedList) throws ValidationException {
+    protected Object castValue(Object value, Class targetClass, boolean expectedList) throws ValidationException {
 
         // log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
         // value != null ? value.getClass().isArray() : null);
@@ -851,7 +855,13 @@ public class NativePersistenceService extends BaseService {
                     // first try with date and time and then only with date format
                     Date date = DateUtils.parseDateWithPattern(stringVal, DateUtils.DATE_TIME_PATTERN);
                     if (date == null) {
+                        date = DateUtils.parseDateWithPattern(stringVal, paramBeanFactory.getInstance().getDateTimeFormat(appProvider.getCode()));
+                    }
+                    if (date == null) {
                         date = DateUtils.parseDateWithPattern(stringVal, DateUtils.DATE_PATTERN);
+                    }
+                    if (date == null) {
+                        date = DateUtils.parseDateWithPattern(stringVal, paramBeanFactory.getInstance().getDateFormat(appProvider.getCode()));
                     }
                     return date;
                 }

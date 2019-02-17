@@ -44,11 +44,13 @@
                 </p:column>
                 <p:column headerText="#{messages['commons.actions']}" width="12%">
                     <h:panelGroup rendered="#{node.type == 'tab'}">
-                        <p:commandButton id="editTabBtn" icon="ui-icon-document" oncomplete="PF('groupDialog').show()" update=":groupForm" action="#{customEntityTemplateBean.editFieldGrouping(node)}">
+                        <p:commandButton id="editTabBtn" icon="ui-icon-document" oncomplete="PF('groupDialog').show()" update=":groupForm" action="#{customEntityTemplateBean.editFieldGrouping(node)}"
+                            rendered="#{!customEntityTemplateBean.customTable}">
                             <!--                             <f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" /> -->
                         </p:commandButton>
 
-                        <p:commandButton id="addFieldGroupBtn" icon="ui-icon-contact" action="#{customEntityTemplateBean.newFieldGroup(node)}" oncomplete="PF('groupDialog').show()" update=":groupForm" />
+                        <p:commandButton id="addFieldGroupBtn" icon="ui-icon-contact" action="#{customEntityTemplateBean.newFieldGroup(node)}" oncomplete="PF('groupDialog').show()" update=":groupForm"
+                            rendered="#{!customEntityTemplateBean.customTable}" />
 
                         <p:commandButton id="addFieldInTabBtn" icon="ui-icon-plus" oncomplete="PF('cftDialog').show()" actionListener="#{customFieldTemplateBean.newEntity()}" update=":cftForm">
                             <f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" />
@@ -56,7 +58,8 @@
                             <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.guiPosition}" value="#{node.guiPositionForField}" />
                         </p:commandButton>
 
-                        <p:commandButton id="addActionInTabBtn" icon="ui-icon-play" oncomplete="PF('actionDialog').show()" actionListener="#{entityCustomActionBean.newEntity()}" update=":actionForm">
+                        <p:commandButton id="addActionInTabBtn" icon="ui-icon-play" oncomplete="PF('actionDialog').show()" actionListener="#{entityCustomActionBean.newEntity()}" update=":actionForm"
+                            rendered="#{!customEntityTemplateBean.customTable}">
                             <f:setPropertyActionListener target="#{entityCustomActionBean.backViewSave}" value="customizedEntity" />
                             <f:setPropertyActionListener target="#{entityCustomActionBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
                             <f:setPropertyActionListener target="#{entityCustomActionBean.entity.guiPosition}" value="#{node.guiPositionForAction}" />
@@ -116,7 +119,7 @@
                         </p:commandButton>
 
 
-                        <p:commandButton id="copylink" icon="ui-icon-copy" update=":copyCFTForm" oncomplete="PF('copyCFTDialog').show()">
+                        <p:commandButton id="copylink" icon="ui-icon-copy" update=":copyCFTForm" oncomplete="PF('copyCFTDialog').show()" rendered="#{!customEntityTemplateBean.customTable}">
                             <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
                         </p:commandButton>
 
@@ -170,10 +173,10 @@
                 </p:column>
                 <f:facet name="footer">
                     <p:commandButton id="addTab" value="#{messages['customizedEntities.addFieldGroup']}" oncomplete="PF('groupDialog').show()" actionListener="#{customEntityTemplateBean.newTab()}"
-                        update=":groupForm">
+                        update=":groupForm" rendered="#{!customEntityTemplateBean.customTable}">
                     </p:commandButton>
                     <p:commandButton id="addAction" value="#{messages['customizedEntities.addAction']}" oncomplete="PF('actionDialog').show()" actionListener="#{entityCustomActionBean.newEntity()}"
-                        update=":actionForm">
+                        update=":actionForm" rendered="#{!customEntityTemplateBean.customTable}">
                         <f:setPropertyActionListener target="#{entityCustomActionBean.backViewSave}" value="customizedEntity" />
                         <f:setPropertyActionListener target="#{entityCustomActionBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
                     </p:commandButton>
@@ -256,8 +259,7 @@
                 <h:panelGrid columns="2" columnClasses="Wid40 Responsive100 VAlignTop, Wid60 Responsive100 VAlignTop">
                     <h:panelGroup>
                         <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" componentWidth="100" size="56" />
-                        <hftl:decorateFormField label="#{messages['customFieldTemplate.dbFieldname']}"
-                            rendered="#{!customEntityTemplateBean.entity.transient and customEntityTemplateBean.customTable}">
+                        <hftl:decorateFormField label="#{messages['customFieldTemplate.dbFieldname']}" rendered="#{!customEntityTemplateBean.entity.transient and customEntityTemplateBean.customTable}">
                             <h:outputText value="#{customFieldTemplateBean.entity.dbFieldname}" />
                         </hftl:decorateFormField>
                         <hftl:formLanguageFields label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" size="50" maxlength="100" componentWidth="100" />

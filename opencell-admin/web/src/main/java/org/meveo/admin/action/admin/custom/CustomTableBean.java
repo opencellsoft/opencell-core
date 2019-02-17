@@ -3,12 +3,15 @@ package org.meveo.admin.action.admin.custom;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -17,6 +20,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -55,7 +59,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
     /**
      * Custom table fields. Come from custom fields defined in custom entity.
      */
-    private Collection<CustomFieldTemplate> fields;
+    private List<CustomFieldTemplate> fields;
 
     private LazyDataModel<Map<String, Object>> customTableBasedDataModel;
 
@@ -67,6 +71,8 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     private List<Map<String, Object>> selectedValues;
 
+    private Future<String> exportFuture;
+
     public CustomTableBean() {
         super(CustomEntityTemplate.class);
     }
@@ -77,9 +83,21 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
         customTableName = entity.getDbTablename();
 
+        // Get fields and sort them by GUI order
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity.getAppliesTo());
         if (cfts != null) {
-            fields = cfts.values();
+            fields = new ArrayList<>(cfts.values());
+
+            Collections.sort(fields, new Comparator<CustomFieldTemplate>() {
+
+                @Override
+                public int compare(CustomFieldTemplate cft1, CustomFieldTemplate cft2) {
+                    int pos1 = cft1.getGUIFieldPosition();
+                    int pos2 = cft2.getGUIFieldPosition();
+
+                    return pos1 - pos2;
+                }
+            });
         }
 
         return entity;
@@ -157,7 +175,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
     /**
      * @return Custom table fields
      */
-    public Collection<CustomFieldTemplate> getFields() {
+    public List<CustomFieldTemplate> getFields() {
         if (entity == null) {
             initEntity();
         }
@@ -198,7 +216,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
     @ActionMethod
     public void addNewValues() throws BusinessException {
 
-        Map<String, Object> convertedValues = CustomTableService.convertValues(newValues, fields, false);
+        Map<String, Object> convertedValues = customTableService.convertValues(newValues, fields, false);
 
         customTableService.create(customTableName, convertedValues);
         messages.info(new BundleKey("messages", "customTable.valuesSaved"));
@@ -312,6 +330,26 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         customTableService.remove(customTableName, ids);
         customTableBasedDataModel = null;
         messages.info(new BundleKey("messages", "delete.entitities.successful"));
+    }
+
+    @ActionMethod
+    public void exportData() {
+        exportFuture = null;
+
+        PaginationConfiguration config = new PaginationConfiguration(filters);
+
+        try {
+            exportFuture = customTableService.exportData(entity, config);
+            // messages.info(new BundleKey("messages", "customTable.exportFile.inProgress"));
+
+        } catch (Exception e) {
+            log.error("Failed to initialize custom table data export", e);
+            messages.info(new BundleKey("messages", "customTable.exportFile.startFailed"), e.getMessage());
+        }
+    }
+
+    public Future<String> getExportFuture() {
+        return exportFuture;
     }
 
     // Bellow is implementation when value changes are accumulated and saved in bulk
