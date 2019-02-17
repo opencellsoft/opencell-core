@@ -62,6 +62,9 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     @Inject
     private ElasticClient elasticClient;
 
+    @Inject
+    private CustomTableCreatorService customTableCreatorService;
+
     private static boolean useCETCache = true;
 
     @PostConstruct
@@ -75,6 +78,10 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         ParamBean paramBean = paramBeanFactory.getInstance();
         super.create(cet);
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
+
+        if (cet.isStoreAsTable()) {
+            customTableCreatorService.createTable(cet.getDbTablename());
+        }
 
         elasticClient.createCETMapping(cet);
 
@@ -115,7 +122,13 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         }
         super.remove(cet);
 
+        if (cet.isStoreAsTable()) {
+            customTableCreatorService.removeTable(cet.getDbTablename());
+        }
+
         customFieldsCache.removeCustomEntityTemplate(cet);
+
+        // Need to remove from ES
     }
 
     /**

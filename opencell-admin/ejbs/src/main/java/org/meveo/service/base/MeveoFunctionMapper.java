@@ -1597,19 +1597,23 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCTValue(String customTableCode, String fieldToReturn, String fieldName1, Object fieldValue1, String fieldName2, Object fieldValue2, String fieldName3,
             Object fieldValue3, String fieldName4, Object fieldValue4, String fieldName5, Object fieldValue5) throws BusinessException {
 
-        if (fieldName2 == null) {
-            return getCustomTableService().getValue(customTableCode, fieldToReturn, fieldName1, fieldValue1);
-        } else if (fieldName3 == null) {
-            return getCustomTableService().getValue(customTableCode, fieldToReturn, fieldName1, fieldValue1, fieldName2, fieldValue2);
-        } else if (fieldName4 == null) {
-            return getCustomTableService().getValue(customTableCode, fieldToReturn, fieldName1, fieldValue1, fieldName2, fieldValue2, fieldName3, fieldValue3);
-        } else if (fieldName5 == null) {
-            return getCustomTableService().getValue(customTableCode, fieldToReturn, fieldName1, fieldValue1, fieldName2, fieldValue2, fieldName3, fieldValue3, fieldName4,
-                fieldValue4);
-        } else {
-            return getCustomTableService().getValue(customTableCode, fieldToReturn, fieldName1, fieldValue1, fieldName2, fieldValue2, fieldName3, fieldValue3, fieldName4,
-                fieldValue4, fieldName5, fieldValue5);
+        Map<String, Object> queryValues = new HashMap<>();
+
+        queryValues.put(fieldName1, fieldValue1);
+
+        if (fieldName2 != null) {
+            queryValues.put(fieldName2, fieldValue2);
         }
+        if (fieldName3 != null) {
+            queryValues.put(fieldName3, fieldValue3);
+        }
+        if (fieldName4 != null) {
+            queryValues.put(fieldName4, fieldValue4);
+        }
+        if (fieldName5 != null) {
+            queryValues.put(fieldName5, fieldValue5);
+        }
+        return getCustomTableService().getValue(customTableCode, fieldToReturn, queryValues);
     }
 
     /**
@@ -1636,19 +1640,24 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCTValue(String customTableCode, String fieldToReturn, Date date, String fieldName1, Object fieldValue1, String fieldName2, Object fieldValue2,
             String fieldName3, Object fieldValue3, String fieldName4, Object fieldValue4, String fieldName5, Object fieldValue5) throws BusinessException {
 
-        if (fieldName2 == null) {
-            return getCustomTableService().getValue(customTableCode, fieldToReturn, date, fieldName1, fieldValue1);
-        } else if (fieldName3 == null) {
-            return getCustomTableService().getValue(customTableCode, fieldToReturn, date, fieldName1, fieldValue1, fieldName2, fieldValue2);
-        } else if (fieldName4 == null) {
-            return getCustomTableService().getValue(customTableCode, fieldToReturn, date, fieldName1, fieldValue1, fieldName2, fieldValue2, fieldName3, fieldValue3);
-        } else if (fieldName5 == null) {
-            return getCustomTableService().getValue(customTableCode, fieldToReturn, date, fieldName1, fieldValue1, fieldName2, fieldValue2, fieldName3, fieldValue3, fieldName4,
-                fieldValue4);
-        } else {
-            return getCustomTableService().getValue(customTableCode, fieldToReturn, date, fieldName1, fieldValue1, fieldName2, fieldValue2, fieldName3, fieldValue3, fieldName4,
-                fieldValue4, fieldName5, fieldValue5);
+        Map<String, Object> queryValues = new HashMap<>();
+
+        queryValues.put(fieldName1, fieldValue1);
+
+        if (fieldName2 != null) {
+            queryValues.put(fieldName2, fieldValue2);
         }
+        if (fieldName3 != null) {
+            queryValues.put(fieldName3, fieldValue3);
+        }
+        if (fieldName4 != null) {
+            queryValues.put(fieldName4, fieldValue4);
+        }
+        if (fieldName5 != null) {
+            queryValues.put(fieldName5, fieldValue5);
+        }
+
+        return getCustomTableService().getValue(customTableCode, fieldToReturn, date, queryValues);
     }
 
     /**
@@ -1673,18 +1682,23 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Map<String, Object> getCTValues(String customTableCode, String fieldName1, Object fieldValue1, String fieldName2, Object fieldValue2, String fieldName3,
             Object fieldValue3, String fieldName4, Object fieldValue4, String fieldName5, Object fieldValue5) throws BusinessException {
 
-        if (fieldName2 == null) {
-            return getCustomTableService().getValues(customTableCode, fieldName1, fieldValue1);
-        } else if (fieldName3 == null) {
-            return getCustomTableService().getValues(customTableCode, fieldName1, fieldValue1, fieldName2, fieldValue2);
-        } else if (fieldName4 == null) {
-            return getCustomTableService().getValues(customTableCode, fieldName1, fieldValue1, fieldName2, fieldValue2, fieldName3, fieldValue3);
-        } else if (fieldName5 == null) {
-            return getCustomTableService().getValues(customTableCode, fieldName1, fieldValue1, fieldName2, fieldValue2, fieldName3, fieldValue3, fieldName4, fieldValue4);
-        } else {
-            return getCustomTableService().getValues(customTableCode, fieldName1, fieldValue1, fieldName2, fieldValue2, fieldName3, fieldValue3, fieldName4, fieldValue4,
-                fieldName5, fieldValue5);
+        Map<String, Object> queryValues = new HashMap<>();
+
+        queryValues.put(fieldName1, fieldValue1);
+
+        if (fieldName2 != null) {
+            queryValues.put(fieldName2, fieldValue2);
         }
+        if (fieldName3 != null) {
+            queryValues.put(fieldName3, fieldValue3);
+        }
+        if (fieldName4 != null) {
+            queryValues.put(fieldName4, fieldValue4);
+        }
+        if (fieldName5 != null) {
+            queryValues.put(fieldName5, fieldValue5);
+        }
+        return getCustomTableService().getValues(customTableCode, queryValues);
     }
 
     /**
@@ -1710,17 +1724,22 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Map<String, Object> getCTValues(String customTableCode, Date date, String fieldName1, Object fieldValue1, String fieldName2, Object fieldValue2,
             String fieldName3, Object fieldValue3, String fieldName4, Object fieldValue4, String fieldName5, Object fieldValue5) throws BusinessException {
 
-        if (fieldName2 == null) {
-            return getCustomTableService().getValues(customTableCode, date, fieldName1, fieldValue1);
-        } else if (fieldName3 == null) {
-            return getCustomTableService().getValues(customTableCode, date, fieldName1, fieldValue1, fieldName2, fieldValue2);
-        } else if (fieldName4 == null) {
-            return getCustomTableService().getValues(customTableCode, date, fieldName1, fieldValue1, fieldName2, fieldValue2, fieldName3, fieldValue3);
-        } else if (fieldName5 == null) {
-            return getCustomTableService().getValues(customTableCode, date, fieldName1, fieldValue1, fieldName2, fieldValue2, fieldName3, fieldValue3, fieldName4, fieldValue4);
-        } else {
-            return getCustomTableService().getValues(customTableCode, date, fieldName1, fieldValue1, fieldName2, fieldValue2, fieldName3, fieldValue3, fieldName4, fieldValue4,
-                fieldName5, fieldValue5);
+        Map<String, Object> queryValues = new HashMap<>();
+
+        queryValues.put(fieldName1, fieldValue1);
+
+        if (fieldName2 != null) {
+            queryValues.put(fieldName2, fieldValue2);
         }
+        if (fieldName3 != null) {
+            queryValues.put(fieldName3, fieldValue3);
+        }
+        if (fieldName4 != null) {
+            queryValues.put(fieldName4, fieldValue4);
+        }
+        if (fieldName5 != null) {
+            queryValues.put(fieldName5, fieldValue5);
+        }
+        return getCustomTableService().getValues(customTableCode, date, queryValues);
     }
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>opencell-admin</artifactId>
@@ -35,8 +34,7 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.7</version>
 				<executions>
-					<!-- Copy message, authentication and other configuration files from 
-						configuration module for testing -->
+                    <!-- Copy message, authentication and other configuration files from configuration module for testing -->
 					<execution>
 						<id>copy-config-properties-file</id>
 						<phase>process-test-resources</phase>
@@ -143,8 +141,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -291,6 +288,25 @@
 			<version>1.0.0.Final</version>
 			<scope>provided</scope>
 		</dependency>
+
+        <!-- <dependency> -->
+        <!-- <groupId>org.javassist</groupId> -->
+        <!-- <artifactId>javassist</artifactId> -->
+        <!-- <scope>provided</scope> -->
+        <!-- </dependency> -->
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>3.6.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
 
 		<!-- End of libraries included in Jboss -->
 
@@ -645,10 +661,8 @@
 		</profile>
 
 		<profile>
-			<!-- An optional Arquillian testing profile that executes tests in your 
-				JBoss AS instance -->
-			<!-- This profile will start a new JBoss AS instance, and execute the 
-				test, shutting it down when done -->
+            <!-- An optional Arquillian testing profile that executes tests in your JBoss AS instance -->
+            <!-- This profile will start a new JBoss AS instance, and execute the test, shutting it down when done -->
 			<!-- Run with: mvn clean test -Parq-jbossas-managed -->
 			<id>arq-jbossas-managed</id>
 

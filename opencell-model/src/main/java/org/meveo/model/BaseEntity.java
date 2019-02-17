@@ -108,7 +108,7 @@ public abstract class BaseEntity implements Serializable, IEntity, IJPAVersioned
     }
 
     /**
-     * Clean up code/identifier value. Replace spaces with '_'.
+     * Clean up code/identifier value. Replace spaces and '-' with '_'.
      * 
      * @param codeOrId Code or identifier value
      * @return Modifier code/identifier value
@@ -127,6 +127,7 @@ public abstract class BaseEntity implements Serializable, IEntity, IJPAVersioned
             return ((BigInteger) codeOrId).toString();
         } else {
             codeOrId = ((String) codeOrId).replace(' ', '_');
+            codeOrId = ((String) codeOrId).replace('-', '_');
             return (String) codeOrId;
         }
     }

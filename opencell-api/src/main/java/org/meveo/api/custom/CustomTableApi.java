@@ -77,7 +77,7 @@ public class CustomTableApi extends BaseApi {
         List<Map<String, Object>> values = new ArrayList<>();
         dto.getValues().forEach(record -> values.add(record.getValues()));
 
-        customTableService.create(cet.getDbTablename(), CustomTableService.convertValues(values, cfts.values(), false));
+        customTableService.create(cet.getDbTablename(), customTableService.convertValues(values, cfts.values(), false));
 
     }
 
@@ -111,7 +111,7 @@ public class CustomTableApi extends BaseApi {
         List<Map<String, Object>> values = new ArrayList<>();
         dto.getValues().forEach(record -> values.add(record.getValues()));
 
-        customTableService.update(cet.getDbTablename(), CustomTableService.convertValues(values, cfts.values(), false));
+        customTableService.update(cet.getDbTablename(), customTableService.convertValues(values, cfts.values(), false));
     }
 
     /**
@@ -144,9 +144,9 @@ public class CustomTableApi extends BaseApi {
         for (CustomTableRecordDto record : dto.getValues()) {
 
             if (record.getValues().containsKey(NativePersistenceService.FIELD_ID)) {
-                customTableService.update(cet.getDbTablename(), CustomTableService.convertValues(record.getValues(), cfts.values(), false));
+                customTableService.update(cet.getDbTablename(), customTableService.convertValues(record.getValues(), cfts.values(), false));
             } else {
-                customTableService.create(cet.getDbTablename(), CustomTableService.convertValues(record.getValues(), cfts.values(), false));
+                customTableService.create(cet.getDbTablename(), customTableService.convertValues(record.getValues(), cfts.values(), false));
             }
         }
     }
@@ -184,7 +184,7 @@ public class CustomTableApi extends BaseApi {
             throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
         }
 
-        pagingAndFiltering.setFilters(CustomTableService.convertValues(pagingAndFiltering.getFilters(), cfts.values(), true));
+        pagingAndFiltering.setFilters(customTableService.convertValues(pagingAndFiltering.getFilters(), cfts.values(), true));
 
         PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, null, pagingAndFiltering, null);
 

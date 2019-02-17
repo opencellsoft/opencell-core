@@ -38,10 +38,10 @@
                 <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
                 <hftl:formField label="#{messages['customizedEntities.storeAsTable']}" field="storeAsTable" allowEdit="false" />
                 <hftl:decorateFormField label="#{messages['customizedEntities.dbTablename']}" rendered="#{!customEntityTemplateBean.entity.transient and customEntityTemplateBean.entity.storeAsTable}">
-                    <h:outputText value="#{customEntityTemplateBean.entity.dbTablename}" />
+                    <h:outputText value="#{customEntityTemplateBean.entity.dbTablename}" styleClass="field-value" />
                 </hftl:decorateFormField>
                 <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!customEntityTemplateBean.entity.transient}">
-                    <h:outputText value="#{customEntityTemplateBean.partOfModules}" />
+                    <h:outputText value="#{customEntityTemplateBean.partOfModules}" styleClass="field-value" />
                 </hftl:decorateFormField>
             </hftl:formPanel>
         </h:panelGroup>

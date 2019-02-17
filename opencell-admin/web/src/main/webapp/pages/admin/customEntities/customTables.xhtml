@@ -28,8 +28,45 @@
             </p:breadCrumb>
         </h:form>
 
-        <hftl:searchPanel backingBean="#{customTableBean}" renderNewButton="false" ajaxUpdateIds=":ctForm:ctSearchResults_omitFromSubmit">
 
+        <h:panelGroup id="exportSummary">
+            <h:form id="formExportSummary">
+                <h:panelGroup rendered="#{customTableBean.exportFuture!=null}">
+
+                    <p:poll interval="5" update="exportSummary" stop="#{customTableBean.exportFuture!=null and customTableBean.exportFuture.isDone()}" widgetVar="exportStatusPoll"
+                        onerror="PF('exportStatusPoll').stop()" />
+
+                    <h:panelGroup rendered="#{customTableBean.exportFuture!=null}">
+                        <h:panelGroup rendered="#{!customTableBean.exportFuture.isDone()}">
+                            <div class="ui-messages ui-widget">
+                                <div class="ui-messages-info ui-corner-all">
+                                    <span class="ui-messages-info-icon"></span>
+                                    <ul>
+                                        <li><h:outputText value="#{messages['customTable.exportFile.inProgress']}" styleClass="ui-messages-info-summary" /></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{customTableBean.exportFuture.isDone()}">
+
+                            <div class="ui-messages ui-widget">
+                                <div class="ui-messages-info ui-corner-all">
+                                    <span class="ui-messages-info-icon"></span>
+                                    <ul>
+                                        <li><h:outputText value="#{messages['customTable.exportFile.finished'].concat(customTableBean.exportFuture.get())}" styleClass="ui-messages-info-summary"
+                                                escape="false" /></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </h:form>
+        </h:panelGroup>
+
+
+        <hftl:searchPanel backingBean="#{customTableBean}" renderNewButton="false" ajaxUpdateIds=":ctForm:ctSearchResults_omitFromSubmit">
 
             <c:forEach items="#{customTableBean.fields}" var="field">
                 <c:if test="#{field.fieldType eq CustomFieldTypeEnum.STRING}">
@@ -78,22 +115,23 @@
                             <f:facet name="output">
                                 <h:outputText id="#{entity[field.dbFieldname]}_out_date" value="#{entity[field.dbFieldname]}" styleClass="field-value"
                                     rendered="#{field.fieldType eq CustomFieldTypeEnum.DATE}">
-                                    <f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
+                                    <f:convertDateTime type="date" pattern="#{field.displayFormat!=null? field.displayFormat:paramBean.dateFormat}" />
                                 </h:outputText>
                                 <h:outputText id="#{entity[field.dbFieldname]}_out" value="#{entity[field.dbFieldname]}" styleClass="field-value"
                                     rendered="#{field.fieldType ne CustomFieldTypeEnum.DATE}" />
                             </f:facet>
                             <f:facet name="input">
                                 <p:inputText id="#{field.dbFieldname}_in_string" value="#{entity[field.dbFieldname]}" placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
-                                    label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="30" maxlength="#{field.maxValue}" required="#{field.valueRequired}"
+                                    label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="20" maxlength="#{field.maxValue}" required="#{field.valueRequired}"
                                     rendered="#{field.fieldType eq CustomFieldTypeEnum.STRING}" />
                                 <p:calendar id="#{field.dbFieldname}_in_date" value="#{entity[field.dbFieldname]}" placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
-                                    label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" showButtonPanel="true" pattern="#{paramBean.dateFormat}"
-                                    required="#{field.valueRequired}" rendered="#{field.fieldType eq CustomFieldTypeEnum.DATE}" />
+                                    label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" showButtonPanel="true"
+                                    pattern="#{field.displayFormat!=null? field.displayFormat:paramBean.dateFormat}" required="#{field.valueRequired}"
+                                    rendered="#{field.fieldType eq CustomFieldTypeEnum.DATE}" size="15" />
 
                                 <p:inputText id="#{field.dbFieldname}_in_dbl" value="#{entity[field.dbFieldname]}" required="#{field.valueRequired}"
                                     placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
-                                    rendered="#{field.fieldType eq CustomFieldTypeEnum.DOUBLE}">
+                                    rendered="#{field.fieldType eq CustomFieldTypeEnum.DOUBLE}" size="10">
                                     <f:convertNumber minFractionDigits="2" />
                                     <c:if test="#{field.minValue!=null and field.maxValue!=null}">
                                         <f:validateLongRange minimum="#{field.minValue}" maximum="#{field.maxValue}" />
@@ -107,7 +145,7 @@
                                 </p:inputText>
                                 <p:inputText id="#{field.dbFieldname}_in_long" value="#{entity[field.dbFieldname]}" required="#{field.valueRequired}"
                                     placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
-                                    rendered="#{field.fieldType eq CustomFieldTypeEnum.LONG}">
+                                    rendered="#{field.fieldType eq CustomFieldTypeEnum.LONG}" size="10">
                                     <f:convertNumber integerOnly="true" />
                                     <c:if test="#{field.minValue!=null and field.maxValue!=null}">
                                         <f:validateLongRange minimum="#{field.minValue}" maximum="#{field.maxValue}" />
@@ -143,18 +181,18 @@
                                     <c:if test="#{field.fieldType eq CustomFieldTypeEnum.STRING}">
                                         <p:inputText id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}"
                                             placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
-                                            label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="30" maxlength="#{field.maxValue}" required="#{field.valueRequired}" />
+                                            label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="20" maxlength="#{field.maxValue}" required="#{field.valueRequired}" />
                                     </c:if>
                                     <c:if test="#{field.fieldType eq CustomFieldTypeEnum.DATE}">
                                         <p:calendar id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}"
                                             placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
-                                            label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" showButtonPanel="true" pattern="#{paramBean.dateFormat}"
-                                            required="#{field.valueRequired}" style="margin-left:5px" />
+                                            label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" showButtonPanel="true"
+                                            pattern="#{field.displayFormat!=null? field.displayFormat:paramBean.dateFormat}" required="#{field.valueRequired}" style="margin-left:5px" size="15" />
                                     </c:if>
                                     <c:if test="#{field.fieldType eq CustomFieldTypeEnum.DOUBLE}">
                                         <p:inputText id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}" required="#{field.valueRequired}"
                                             placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
-                                            label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}">
+                                            label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="10">
                                             <f:convertNumber minFractionDigits="2" />
                                             <c:if test="#{field.minValue!=null and field.maxValue!=null}">
                                                 <f:validateLongRange minimum="#{field.minValue}" maximum="#{field.maxValue}" />
@@ -170,7 +208,7 @@
                                     <c:if test="#{field.fieldType eq CustomFieldTypeEnum.LONG}">
                                         <p:inputText id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}" required="#{field.valueRequired}"
                                             placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
-                                            label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}">
+                                            label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="10">
                                             <f:convertNumber integerOnly="true" />
                                             <c:if test="#{field.minValue!=null and field.maxValue!=null}">
                                                 <f:validateLongRange minimum="#{field.minValue}" maximum="#{field.maxValue}" />
@@ -200,13 +238,19 @@
                                 </p:commandButton>
 
                             </hf:namingContainer>
+                            <h:panelGroup styleClass="clearLeft" style="margin-top:20px" layout="block">
+                                <p:commandButton value="#{messages['customTable.import']}" onclick="PF('importDialog').show()" icon="fa fa-arrow-up" type="button" immediate="true" process="@this" />
 
-                            <p:commandButton value="#{messages['customTable.import']}" onclick="PF('importDialog').show()" icon="fa fa-arrow-up" type="button" immediate="true" process="@this" />
+                                <p:commandButton action="#{customTableBean.exportData}" value="#{messages['customTable.export']}" icon="fa fa-arrow-down" process="@this" update=":growl :exportSummary"
+                                    rendered="#{customTableBean.exportFuture ==null or customTableBean.exportFuture.isDone()}">
+                                    <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['customTable.exportFile.confirmation']}" icon="ui-icon-alert" />
+                                </p:commandButton>
 
-                            <p:commandButton id="deleteMany" value="#{messages['commons.deleteMultiple']}" action="#{customTableBean.deleteMany()}" icon="ui-icon-trash"
-                                update=":ctForm:ctSearchResults_omitFromSubmit">
-                                <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDeleteMultiple']}" icon="ui-icon-alert" />
-                            </p:commandButton>
+                                <p:commandButton id="deleteMany" value="#{messages['commons.deleteMultiple']}" action="#{customTableBean.deleteMany()}" icon="ui-icon-trash"
+                                    update=":ctForm:ctSearchResults_omitFromSubmit">
+                                    <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDeleteMultiple']}" icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </h:panelGroup>
                         </f:facet>
                     </c:if>
                 </p:dataTable>
@@ -229,7 +273,7 @@
                             </p:selectBooleanCheckbox>
                         </hftl:decorateFormField>
 
-                        <hftl:decorateFormField fieldId="csvFileFormat" label="#{messages['customTable.csvFileFormat']}" componentWidth="50" newLine="true">
+                        <hftl:decorateFormField fieldId="csvFileFormat" label="#{messages['customTable.csvFileFormat']}" componentWidth="100" newLine="true">
                             <h:outputText id="csvFileFormat" value="#{customTableBean.csvFileFormat }" styleClass="field-value" />
                         </hftl:decorateFormField>
 

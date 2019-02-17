@@ -50795,19 +50795,21 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
-      <ws:create>
-         	<createScriptInstanceRequest>
+      <ws:createOrUpdate>
+         	<createOrUpdateScriptInstanceRequest>
             <type>JAVA</type>
             <script>
             <![CDATA[
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.custom.CustomTableService;
 import org.meveo.service.script.Script;
+import org.apache.commons.collections4.MapUtils;
 
 public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript extends Script {
 
@@ -50823,32 +50825,33 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
     @Override
     public void execute(Map<String, Object> methodContext) throws BusinessException {
 
-        Object[] queryValues = new Object[] { "closestMatch prefix", "123456789999887" };
-        String zone = (String) customTableService.getValue("CF_0_ct_zoning", "zone", queryValues);
+        Map<String,Object> queryValues = new HashMap<>();
+        queryValues.put( "closestMatch prefix", "123456789999887" );
+        String zone = (String) customTableService.getValue("${#Project#entityPrefix}_${#TestSuite#index}_ct_zoning", "zone", queryValues);
 
         if (!"Australia".equals(zone)) {
             throw new ValidationException("Expected zone Australia received " + zone);
         }
 
-        queryValues = new Object[] { "closestMatch prefix", "123456789999887" };
+        queryValues = MapUtils.putAll(new HashMap<String, Object>(), new Object[]{ "closestMatch prefix", "123456789999887" });
 
-        zone = (String) customTableService.getValue("CF_0_ct_zoning", "zone", DateUtils.parseDateWithPattern("2016-03-05", DateUtils.DATE_PATTERN), queryValues);
+        zone = (String) customTableService.getValue("${#Project#entityPrefix}_${#TestSuite#index}_ct_zoning", "zone", DateUtils.parseDateWithPattern("2016-03-05", DateUtils.DATE_PATTERN), queryValues);
 
         if (!"Australia West".equals(zone)) {
             throw new ValidationException("Expected zone Australia West received " + zone);
         }
 
-        queryValues = new Object[] { "minmaxRange hour_from hour_to", 15, "fromRange price", new BigDecimal(0.6), "toRange price", new BigDecimal(1.2) };
+        queryValues = MapUtils.putAll(new HashMap<String, Object>(), new Object[]{"minmaxRange hour_from hour_to", 15, "fromRange price", new BigDecimal(0.6), "toRange price", new BigDecimal(1.2)} );
 
-        Map<String, Object> values = customTableService.getValues("CF_0_ct_zoning", queryValues);
+        Map<String, Object> values = customTableService.getValues("${#Project#entityPrefix}_${#TestSuite#index}_ct_zoning", queryValues);
 
         if (values == null || "123".equals(values.get("prefix"))) {
             throw new ValidationException("Expected zone 123 received " + zone);
         }
 
-        queryValues = new Object[] { "minmaxRange hour_from hour_to", 15, "fromRange price", new BigDecimal(0.6), "toRange price", new BigDecimal(2) };
+        queryValues = MapUtils.putAll(new HashMap<String, Object>(), new Object[]{"minmaxRange hour_from hour_to", 15, "fromRange price", new BigDecimal(0.6), "toRange price", new BigDecimal(2)} );
 
-        values = customTableService.getValues("CF_0_ct_zoning", DateUtils.parseDateWithPattern("2018-05-09", DateUtils.DATE_PATTERN), queryValues);
+        values = customTableService.getValues("${#Project#entityPrefix}_${#TestSuite#index}_ct_zoning", DateUtils.parseDateWithPattern("2018-05-09", DateUtils.DATE_PATTERN), queryValues);
 
         if (values == null || "123887".equals(values.get("prefix"))) {
             throw new ValidationException("Expected zone 123887 received " + zone);
@@ -50858,8 +50861,8 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
 }
 		   ]]]]>><![CDATA[
             </script>
-         </createScriptInstanceRequest>
-      </ws:create>\r
+         </createOrUpdateScriptInstanceRequest>
+      </ws:createOrUpdate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="21abe68e-81c0-4569-8050-3cd97d268070" name="SOAP Response">
@@ -50867,6 +50870,15 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
                 <token>SUCCESS</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="f473d1e4-035e-408e-bb41-0138d1b59230" name="XPath Match">
+              <con:configuration>
+                <path>not(exists(//compilationErrors))</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -51044,6 +51056,12 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
             <con:wsaConfig mustUnderstand="NONE" version="200508"/>
             <con:wsrmConfig version="1.2"/>
           </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="delay" name="1000" id="b1c92f3f-f175-4dca-9974-3a9fb0195522">
+        <con:settings/>
+        <con:config>
+          <delay>1000</delay>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="Execute test script - ko" id="ca862313-3ccb-4f6f-b24b-526cd36b46d1">
