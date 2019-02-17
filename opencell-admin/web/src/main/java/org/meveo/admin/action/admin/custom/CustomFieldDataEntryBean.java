@@ -1700,13 +1700,24 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @return the custom field value or null in the error case
      */
     private Object getMapValue(CustomFieldTemplate cft, Map<String, Object> csvLine) {
-        Object value = (String) csvLine.get(CustomFieldValue.MAP_VALUE);
-        if (value == null) {
-            messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
-            FacesContext.getCurrentInstance().validationFailed();
-            return null;
+        switch (cft.getFieldType()){
+            case DOUBLE:
+                return Double.parseDouble((String) csvLine.get(CustomFieldValue.MAP_VALUE));
+            case LONG:
+                return Long.parseLong((String) csvLine.get(CustomFieldValue.MAP_VALUE));
+            case STRING:
+            case DATE:
+            case TEXT_AREA:
+            case ENTITY:
+            case CHILD_ENTITY:
+            case LIST:
+            case MULTI_VALUE:
+                return csvLine.get(CustomFieldValue.MAP_VALUE);
+            default:
+                messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return null;
         }
-        return value;
     }
 
     /**
