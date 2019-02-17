@@ -734,6 +734,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public void populateAccounts(UserAccount userAccount) {
+        userAccount.getBillingAccount().getDiscountPlanInstances().size();
         entity.setUserAccount(userAccount);
         if (userAccount != null && appProvider.isLevelDuplication()) {
             entity.setCode(userAccount.getCode());
@@ -1083,10 +1084,13 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public List<DiscountPlan> getAllowedDiscountPlans(){
-        List<DiscountPlan> allowedDiscountPlans = entity.getOffer().getAllowedDiscountPlans();
-        BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
-        billingAccount.getDiscountPlanInstances().forEach(dpi -> allowedDiscountPlans.remove(dpi.getDiscountPlan()));
-        return allowedDiscountPlans;
+        if(entity.getOffer() != null){
+            List<DiscountPlan> allowedDiscountPlans = entity.getOffer().getAllowedDiscountPlans();
+            BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
+            billingAccount.getDiscountPlanInstances().forEach(dpi -> allowedDiscountPlans.remove(dpi.getDiscountPlan()));
+            return allowedDiscountPlans;
+        }
+        return Collections.emptyList();
     }
 
 }

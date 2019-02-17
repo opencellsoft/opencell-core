@@ -240,7 +240,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
         try {
             result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, loadOfferServiceTemplate,
-                loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate));
+                loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate, false));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

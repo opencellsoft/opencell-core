@@ -12,6 +12,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.IDiscountable;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.service.base.PersistenceService;
@@ -28,6 +29,13 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 		qb.addCriterionEntity("billingAccount", ba);
 		qb.addCriterion("discountPlan.code", "=", code, true);
 
+		return (DiscountPlanInstance) qb.getQuery(getEntityManager()).getSingleResult();
+	}
+
+	public DiscountPlanInstance findBySubscriptionAndCode(Subscription subscription, String code) {
+		QueryBuilder qb = new QueryBuilder(DiscountPlanInstance.class, "dpi");
+		qb.addCriterionEntity("subscription", subscription);
+		qb.addCriterion("discountPlan.code", "=", code, true);
 		return (DiscountPlanInstance) qb.getQuery(getEntityManager()).getSingleResult();
 	}
 

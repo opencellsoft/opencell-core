@@ -256,7 +256,7 @@ public class BillingAccountApi extends AccountEntityApi {
 				}
 				
 				discountPlanService.detach(dp);
-				dp = copyFromDto(discountPlanDto, dp);
+				dp = DiscountPlanDto.copyFromDto(discountPlanDto, dp);
 				
 				// populate customFields
 	            try {
@@ -474,7 +474,7 @@ public class BillingAccountApi extends AccountEntityApi {
 				}
 				
 				discountPlanService.detach(dp);
-				dp = copyFromDto(discountPlanDto, dp);
+				dp = DiscountPlanDto.copyFromDto(discountPlanDto, dp);
 				
 				// populate customFields
 	            try {
@@ -495,23 +495,6 @@ public class BillingAccountApi extends AccountEntityApi {
 
         return billingAccount;
     }
-    
-	public DiscountPlan copyFromDto(DiscountPlanDto source, DiscountPlan target) {
-		if (source.getStartDate() != null) {
-			target.setStartDate(source.getStartDate());
-		}
-		if (source.getEndDate() != null) {
-			target.setEndDate(source.getEndDate());
-		}		
-		if (source.getDurationUnit() != null) {
-			target.setDurationUnit(source.getDurationUnit());
-		}
-		if (source.getDefaultDuration() != null) {
-			target.setDefaultDuration(source.getDefaultDuration());
-		}
-
-		return target;
-	}
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public BillingAccountDto find(String billingAccountCode) throws MeveoApiException {

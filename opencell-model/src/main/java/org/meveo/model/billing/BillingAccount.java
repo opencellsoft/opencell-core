@@ -643,6 +643,9 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     @Override
     public void addDiscountPlanInstances(DiscountPlanInstance discountPlanInstance) {
+        if(this.getDiscountPlanInstances() == null){
+            this.setDiscountPlanInstances(new ArrayList<>());
+        }
         this.getDiscountPlanInstances().add(discountPlanInstance);
     }
 

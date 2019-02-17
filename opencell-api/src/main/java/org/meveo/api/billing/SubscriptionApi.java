@@ -34,6 +34,7 @@ import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -62,16 +63,12 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
+import org.meveo.model.catalog.*;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
-import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.catalog.*;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.crm.Customer;
@@ -192,6 +189,12 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private CalendarService calendarService;
+
+    @Inject
+    private DiscountPlanInstanceService discountPlanInstanceService;
+
+    @Inject
+    private DiscountPlanService discountPlanService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -402,6 +405,46 @@ public class SubscriptionApi extends BaseApi {
                 applyProduct(dto);
             }
         }
+
+        // terminate discounts
+        if (postData.getDiscountPlansForTermination() != null) {
+            for (String dpiCode : postData.getDiscountPlansForTermination()) {
+                DiscountPlanInstance dpi = discountPlanInstanceService.findBySubscriptionAndCode(subscription,
+                        dpiCode);
+                if (dpi == null) {
+                    throw new EntityDoesNotExistsException(DiscountPlanInstance.class, dpiCode);
+                }
+                subscriptionService.terminateDiscountPlan(subscription, dpi);
+            }
+        }
+
+        // instantiate the discounts
+        if (postData.getDiscountPlansForInstantiation() != null) {
+            for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
+                DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
+                if (dp == null) {
+                    throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
+                }
+
+                discountPlanService.detach(dp);
+                dp = DiscountPlanDto.copyFromDto(discountPlanDto, dp);
+
+                // populate customFields
+                try {
+                    populateCustomFields(discountPlanDto.getCustomFields(), dp, false);
+                } catch (MissingParameterException | InvalidParameterException e) {
+                    log.error("Failed to associate custom field instance to an entity: {} {}", discountPlanDto.getCode(), e.getMessage());
+                    throw e;
+                } catch (Exception e) {
+                    log.error("Failed to associate custom field instance to an entity {}", discountPlanDto.getCode(), e);
+                    throw new MeveoApiException("Failed to associate custom field instance to an entity " + discountPlanDto.getCode());
+                }
+
+                subscriptionService.instantiateDiscountPlan(subscription, dp);
+            }
+
+        }
+
         return subscription;
     }
 
@@ -1136,6 +1179,12 @@ public class SubscriptionApi extends BaseApi {
 
                 dto.getProductInstances().add(new ProductInstanceDto(productInstance, customFieldsDTO));
             }
+        }
+        if (subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
+            dto.setDiscountPlanInstances(subscription.getDiscountPlanInstances().stream()
+                    .map(discountPlanInstance -> new DiscountPlanInstanceDto(discountPlanInstance,
+                            entityToDtoConverter.getCustomFieldsDTO(discountPlanInstance, CustomFieldInheritanceEnum.INHERIT_NONE)))
+                    .collect(Collectors.toList()));
         }
 
         dto.setAutoEndOfEngagement(subscription.getAutoEndOfEngagement());
@@ -2080,6 +2129,31 @@ public class SubscriptionApi extends BaseApi {
                 }
                 ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
                 applyProduct(dto);
+            }
+        }
+
+        // instantiate the discounts
+        if (postData.getDiscountPlansForInstantiation() != null) {
+            for (DiscountPlanDto discountPlanDto : postData.getDiscountPlansForInstantiation()) {
+                DiscountPlan dp = discountPlanService.findByCode(discountPlanDto.getCode());
+                if (dp == null) {
+                    throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanDto.getCode());
+                }
+
+                discountPlanService.detach(dp);
+                dp = DiscountPlanDto.copyFromDto(discountPlanDto, dp);
+
+                // populate customFields
+                try {
+                    populateCustomFields(discountPlanDto.getCustomFields(), dp, true);
+                } catch (MissingParameterException | InvalidParameterException e) {
+                    log.error("Failed to associate custom field instance to an entity: {} {}", discountPlanDto.getCode(), e.getMessage());
+                    throw e;
+                } catch (Exception e) {
+                    log.error("Failed to associate custom field instance to an entity {}", discountPlanDto.getCode(), e);
+                    throw new MeveoApiException("Failed to associate custom field instance to an entity " + discountPlanDto.getCode());
+                }
+                subscriptionService.instantiateDiscountPlan(subscription, dp);
             }
         }
         return subscription;

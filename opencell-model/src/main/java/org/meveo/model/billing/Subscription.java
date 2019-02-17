@@ -913,6 +913,9 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     @Override
     public void addDiscountPlanInstances(DiscountPlanInstance discountPlanInstance) {
+        if(this.getDiscountPlanInstances() == null){
+            this.setDiscountPlanInstances(new ArrayList<>());
+        }
         this.getDiscountPlanInstances().add(discountPlanInstance);
     }
 
