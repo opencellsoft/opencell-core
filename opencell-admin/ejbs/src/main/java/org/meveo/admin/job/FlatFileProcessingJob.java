@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -122,6 +123,7 @@ public class FlatFileProcessingJob extends Job {
                 }
                 if(this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER) != null) {
                     fileNameFilter = ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER));
+                    fileNameFilter = fileNameFilter.replaceAll(Pattern.quote("*"), "");
                 }
                 
                 

@@ -674,7 +674,7 @@ public final class FileUtils {
      */
     public static File[] getFilesForParsing(String sourceDirectory, ArrayList<String> extensions, String fileNameFilter) {
         if(StringUtils.isBlank(fileNameFilter) || "*".equals(fileNameFilter)) {
-            getFilesForParsing(sourceDirectory, extensions) ;
+            return getFilesForParsing(sourceDirectory, extensions) ;
         }
 
         File sourceDir = new File(sourceDirectory);
