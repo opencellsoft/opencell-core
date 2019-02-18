@@ -156,6 +156,20 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<to-view-id>/pages/admin/sellers/sellerDetail.xhtml</to-view-id>
 		<redirect />
 	</navigation-case>
+	<navigation-case>
+		<from-outcome>backToSellerFromOT</from-outcome>
+		<to-view-id>/pages/admin/sellers/sellerDetail.xhtml</to-view-id>
+		<redirect include-view-params="true">
+		    <view-param>
+				<name>objectId</name>
+				<value>#{sellerBean.backEntityId}</value>
+			</view-param>
+			<view-param>
+				<name>mainTab</name>
+				<value>#{sellerBean.backMainTab}</value>
+			</view-param>
+		</redirect>
+	</navigation-case>
 
 	<navigation-case>
 		<from-outcome>timerEntities</from-outcome>
@@ -630,6 +644,20 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		</redirect>
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>backToDunningDocFromInvoice</from-outcome>
+		<to-view-id>/pages/payments/customerAccounts/dunningDocumentDetail.xhtml</to-view-id>
+		<redirect include-view-params="true">
+		    <view-param>
+				<name>objectId</name>
+				<value>#{invoiceBean.backEntityId}</value>
+			</view-param>
+			<view-param>
+				<name>tab</name>
+				<value>#{invoiceBean.backTab}</value>
+			</view-param>
+		</redirect>
+	</navigation-case>
+	<navigation-case>
 		<from-outcome>invoices</from-outcome>
 		<to-view-id>/pages/billing/invoices/invoices.xhtml</to-view-id>
 		<redirect />
@@ -1056,7 +1084,20 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 			</view-param>
 		</redirect>
 	</navigation-case>
-	
+	<navigation-case>
+		<from-outcome>backToDunningDocFromOcc</from-outcome>
+		<to-view-id>/pages/payments/customerAccounts/dunningDocumentDetail.xhtm</to-view-id>
+		<redirect include-view-params="true">
+		    <view-param>
+				<name>objectId</name>
+				<value>#{accountOperationBean.backEntityId}</value>
+			</view-param>
+			<view-param>
+				<name>tab</name>
+				<value>#{accountOperationBean.backTab}</value>
+			</view-param>
+		</redirect>
+	</navigation-case>
 
 	<navigation-case>
 		<from-outcome>crmAccounts</from-outcome>
@@ -1160,6 +1201,26 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 	<navigation-case>
 		<from-outcome>workflowDetail</from-outcome>
 		<to-view-id>/pages/admin/workflow/workflowDetail.xhtml
+		</to-view-id>
+		<redirect include-view-params="true" />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>genericWorkflows</from-outcome>
+		<to-view-id>/pages/admin/workflow/genericWorkflows.xhtml</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>genericWorkflowsDetail</from-outcome>
+		<to-view-id>/pages/admin/workflow/genericWorkflowDetail.xhtml
+		</to-view-id>
+		<redirect include-view-params="true" />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>genericWfsHistory</from-outcome>
+		<to-view-id>/pages/admin/workflow/workflowInstanceHistories.xhtml</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>genericWfsDetail</from-outcome>
+		<to-view-id>/pages/admin/workflow/workflowInstanceHistoryDetail.xhtml
 		</to-view-id>
 		<redirect include-view-params="true" />
 	</navigation-case>
@@ -2301,6 +2362,17 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 	<navigation-case>
 		<from-outcome>accountingCodeDetail</from-outcome>
 		<to-view-id>/pages/billing/accountingCodes/accountingCodeDetail.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
+	
+	<navigation-case>
+		<from-outcome>generalLedgers</from-outcome>
+		<to-view-id>/pages/billing/generalLedgers/generalLedgers.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>generalLedgersDetail</from-outcome>
+		<to-view-id>/pages/billing/generalLedgers/generalLedgersDetail.xhtml</to-view-id>
 		<redirect />
 	</navigation-case>
 	

@@ -8,6 +8,8 @@ import org.meveo.api.catalog.ServiceTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.ServiceTemplateRs;
@@ -16,6 +18,8 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
+ * @author Youssef IZEM
+ * @lastModifiedVersion 5.4
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -110,6 +114,19 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
             serviceTemplateApi.enableOrDisable(code, false);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public GetListServiceTemplateResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        GetListServiceTemplateResponseDto result = new GetListServiceTemplateResponseDto();
+
+        try {
+            return serviceTemplateApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

@@ -161,17 +161,14 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         try {
 
             if (dunningExclusion) {
-                invoices = (List<RecordedInvoice>) getEntityManager()
-                        .createQuery("from " + RecordedInvoice.class.getSimpleName()
-                                + " where customerAccount.id=:customerAccountId and matchingStatus= " + MatchingStatusEnum.I + " order by dueDate")
-                        .setParameter("customerAccountId", customerAccount.getId())
-                        .getResultList();
+                invoices = (List<RecordedInvoice>) getEntityManager().createQuery("from " + RecordedInvoice.class.getSimpleName()
+                        + " where customerAccount.id=:customerAccountId and matchingStatus= " + MatchingStatusEnum.I + " order by dueDate")
+                    .setParameter("customerAccountId", customerAccount.getId()).getResultList();
             } else {
                 invoices = (List<RecordedInvoice>) getEntityManager()
-                        .createQuery("from " + RecordedInvoice.class.getSimpleName()
-                                + " where customerAccount.id=:customerAccountId and matchingStatus=:matchingStatus order by dueDate")
-                        .setParameter("customerAccountId", customerAccount.getId()).setParameter("matchingStatus", o)
-                        .getResultList();
+                    .createQuery(
+                        "from " + RecordedInvoice.class.getSimpleName() + " where customerAccount.id=:customerAccountId and matchingStatus=:matchingStatus order by dueDate")
+                    .setParameter("customerAccountId", customerAccount.getId()).setParameter("matchingStatus", o).getResultList();
             }
 
         } catch (Exception e) {
@@ -237,7 +234,6 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         return userMap;
     }
 
-
     /**
      * @param invoice invoice used to generate
      * @throws InvoiceExistException invoice exist exception
@@ -255,13 +251,14 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         BigDecimal remainingAmountTaxForRecordedIncoice = invoice.getAmountTax();
 
         boolean allowMultipleAOperInvoice = "true".equalsIgnoreCase(ParamBean.getInstance().getProperty("ao.generateMultipleAOperInvoice", "true"));
-        if(allowMultipleAOperInvoice) {
+        if (allowMultipleAOperInvoice) {
             for (CategoryInvoiceAgregate catAgregate : cats) {
                 BigDecimal remainingAmountWithoutTaxForCat = BigDecimal.ZERO;
                 BigDecimal remainingAmountWithTaxForCat = BigDecimal.ZERO;
                 BigDecimal remainingAmountTaxForCat = BigDecimal.ZERO;
                 for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : catAgregate.getSubCategoryInvoiceAgregates()) {
-                    if ((subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate() != null && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
+                    if ((subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate() != null
+                            && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
                             || (subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplateNegative() != null
                                     && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0)) {
                         RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = createRecordedInvoice(subCategoryInvoiceAgregate.getAmountWithoutTax(),
@@ -270,7 +267,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                                     : subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplateNegative(),
                             false);
                         recordedInvoiceCatAgregate.setSubCategoryInvoiceAgregate(subCategoryInvoiceAgregate);
-    
+
                         listRecordedInvoiceCatAgregate.add(recordedInvoiceCatAgregate);
                         remainingAmountWithoutTaxForRecordedIncoice = remainingAmountWithoutTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountWithoutTax());
                         remainingAmountWithTaxForRecordedIncoice = remainingAmountWithTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountWithTax());
@@ -284,17 +281,18 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 if ((catAgregate.getInvoiceCategory().getOccTemplate() != null && catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
                         || (catAgregate.getInvoiceCategory().getOccTemplateNegative() != null && catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0)) {
                     RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = createRecordedInvoice(remainingAmountWithoutTaxForCat, remainingAmountWithTaxForCat,
-                        remainingAmountTaxForCat, null, invoice, catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? catAgregate.getInvoiceCategory().getOccTemplate()
+                        remainingAmountTaxForCat, null, invoice,
+                        catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? catAgregate.getInvoiceCategory().getOccTemplate()
                                 : catAgregate.getInvoiceCategory().getOccTemplateNegative(),
                         false);
                     recordedInvoiceCatAgregate.setCategoryInvoiceAgregate(catAgregate);
                     listRecordedInvoiceCatAgregate.add(recordedInvoiceCatAgregate);
-    
+
                     remainingAmountWithoutTaxForRecordedIncoice = remainingAmountWithoutTaxForRecordedIncoice.subtract(remainingAmountWithoutTaxForCat);
                     remainingAmountWithTaxForRecordedIncoice = remainingAmountWithTaxForRecordedIncoice.subtract(remainingAmountWithTaxForCat);
                     remainingAmountTaxForRecordedIncoice = remainingAmountTaxForRecordedIncoice.subtract(remainingAmountTaxForCat);
                 }
-    
+
             }
         }
 
@@ -329,6 +327,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
         RecordedInvoice recordedInvoice = createRecordedInvoice(remainingAmountWithoutTaxForRecordedIncoice, remainingAmountWithTaxForRecordedIncoice,
             remainingAmountTaxForRecordedIncoice, invoice.getNetToPay(), invoice, occTemplate, true);
+
+        // Link the recorded invoice to subscription
+        recordedInvoice.setSubscription(invoice.getSubscription());
 
         create(recordedInvoice);
 

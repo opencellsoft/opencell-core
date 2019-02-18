@@ -27,7 +27,7 @@ import org.meveo.model.*;
 @Table(name = "billing_accounting_code")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_accounting_code_seq") })
-public class AccountingCode extends EnableBusinessCFEntity {
+public class AccountingCode extends EnableBusinessEntity{
 
     private static final long serialVersionUID = -8962374797036999750L;
 

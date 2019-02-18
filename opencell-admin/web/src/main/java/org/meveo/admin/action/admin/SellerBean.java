@@ -18,9 +18,6 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
