@@ -226,7 +226,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
             // Populate cache if record is not found in cache
             if (cet == null) {
                 cet = super.findByCode(code);
-                if (cet != null) {
+                if (cet != null && cet.isActive()) {
                     customFieldsCache.addUpdateCustomEntityTemplate(cet);
                 }
             }
@@ -291,5 +291,22 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
             return cet;
         }
         return findByDbTablename(codeOrDbTablename);
+    }
+
+    @Override
+    public CustomEntityTemplate disable(CustomEntityTemplate cet) throws BusinessException {
+
+        cet = super.disable(cet);
+        customFieldsCache.removeCustomEntityTemplate(cet);
+
+        return cet;
+    }
+
+    @Override
+    public CustomEntityTemplate enable(CustomEntityTemplate cet) throws BusinessException {
+
+        cet = super.enable(cet);
+        customFieldsCache.addUpdateCustomEntityTemplate(cet);
+        return cet;
     }
 }
