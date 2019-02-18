@@ -110,7 +110,7 @@
                     <p:column headerText="id" sortBy="#{id}">
                         <h:outputText value="#{entity['id']}" />
                     </p:column>
-                    <p:columns value="#{customTableBean.fields}" var="field" headerText="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}">
+                    <p:columns value="#{customTableBean.fields}" var="field" headerText="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" sortBy="#{field.dbFieldname}">
                         <p:cellEditor>
                             <f:facet name="output">
                                 <h:outputText id="#{entity[field.dbFieldname]}_out_date" value="#{entity[field.dbFieldname]}" styleClass="field-value"
@@ -260,12 +260,6 @@
 
                 <hftl:decorateFormPanel formId="importForm">
                     <ui:define name="fields">
-
-                        <hftl:decorateFormField fieldId="includeIdField" label="#{messages['customTable.includeIdField']}" componentWidth="50" displayOneLine="true" labelWidth="60">
-                            <p:selectBooleanCheckbox id="includeIdField" value="#{customTableBean.includeIdField}">
-                                <p:ajax update="csvFileFormat" event="change" process="@this" />
-                            </p:selectBooleanCheckbox>
-                        </hftl:decorateFormField>
 
                         <hftl:decorateFormField fieldId="appendImportedData" label="#{messages['customTable.appendImportedData']}" componentWidth="50" displayOneLine="true" labelWidth="60">
                             <p:selectBooleanCheckbox id="appendImportedData" value="#{customTableBean.appendImportedData}">

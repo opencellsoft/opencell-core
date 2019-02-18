@@ -84,14 +84,19 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         // Validate field types for custom table
         if (dto.getStoreAsTable() && dto.getFields() != null) {
+            int pos = 0;
             for (CustomFieldTemplateDto cftDto : dto.getFields()) {
 
-                // Default to 'Index but not analyze storage' and 'single' storeage type for custom tables
+                // Default to 'Index but not analyze storage', 'single' storage type and sequential field position for custom tables
                 if (cftDto.getIndexType() == null) {
                     cftDto.setIndexType(CustomFieldIndexTypeEnum.INDEX_NOT_ANALYZE);
                 }
                 if (cftDto.getStorageType() == null) {
                     cftDto.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+                }
+                if (cftDto.getGuiPosition() == null) {
+                    cftDto.setGuiPosition("tab:" + dto.getName() + ":0;field:" + pos);
+                    pos++;
                 }
 
                 if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE
@@ -143,6 +148,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         // Validate field types for custom table
         if (cet.isStoreAsTable() && dto.getFields() != null) {
+            int pos = 0;
             for (CustomFieldTemplateDto cftDto : dto.getFields()) {
 
                 // Default to 'Index but not analyze storage' and 'single' storeage type for custom tables
@@ -152,6 +158,10 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
                 //
                 if (cftDto.getStorageType() == null) {
                     cftDto.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+                }
+                if (cftDto.getGuiPosition() == null) {
+                    cftDto.setGuiPosition("tab:" + dto.getName() + ":0;field:" + pos);
+                    pos++;
                 }
 
                 if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE

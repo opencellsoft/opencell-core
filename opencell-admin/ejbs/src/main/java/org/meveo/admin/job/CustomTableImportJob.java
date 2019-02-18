@@ -172,7 +172,6 @@ public class CustomTableImportJob extends Job {
             String filename = file.getName();
 
             boolean appendImportedData = filename.contains(CustomTableService.FILE_APPEND);
-            boolean includeIdField = filename.contains(CustomTableService.FILE_INCLUDES_ID);
 
             List<CustomEntityTemplate> cets = customEntityTemplateService.listCustomTableTemplates();
             CustomEntityTemplate customTable = null;
@@ -189,7 +188,7 @@ public class CustomTableImportJob extends Job {
                     throw new BusinessException("No Custom table matched by name " + filename);
                 }
 
-                customTableService.importData(customTable, file, includeIdField, appendImportedData);
+                customTableService.importData(customTable, file, appendImportedData);
                 result.registerSucces();
                 FileUtils.moveFile(outputDir, file, filename);
 

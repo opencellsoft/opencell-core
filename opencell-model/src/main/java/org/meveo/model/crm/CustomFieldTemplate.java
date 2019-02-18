@@ -562,9 +562,9 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     }
 
     /**
-     * Parse GUIPosition field and return 'tab', 'fieldGroup' and 'field' item values as a map
+     * Parse GUIPosition field value e.g. 'tab:Configuration:0;fieldGroup:Price:5;field:0' and return 'tab', 'fieldGroup' and 'field' item values as a map
      * 
-     * @return A map with 'tab_pos', 'fieldGroup_pos' and 'field_pos' as keys
+     * @return A map with 'tab_pos', 'tab_name', 'fieldGroup_pos', 'fieldGroup_name' and 'field_pos' as keys
      */
     public Map<String, String> getGuiPositionParsed() {
 
