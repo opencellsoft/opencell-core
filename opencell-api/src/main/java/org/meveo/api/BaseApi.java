@@ -437,7 +437,7 @@ public abstract class BaseApi {
 
             // Validate that value is valid (min/max, regexp). When
             // value is a list or a map, check separately each value
-            if (!isEmpty && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.LONG
+            if (!isEmpty && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN || cft.getFieldType() == CustomFieldTypeEnum.LONG
                     || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY)) {
 
                 List valuesToCheck = new ArrayList<>();
@@ -532,6 +532,9 @@ public abstract class BaseApi {
                                     + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
                                     + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
                         }
+                    } else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+                    	Boolean booleanValue = null;
+                    	booleanValue = Boolean.valueOf(valueToCheck.toString());
 
                     } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
                         // Just in case, set CET code to whatever CFT definition
@@ -642,6 +645,8 @@ public abstract class BaseApi {
             return cfDto.getDateValue();
         } else if (cfDto.getDoubleValue() != null) {
             return cfDto.getDoubleValue();
+        } else if (cfDto.getBooleanValue() != null) {
+            return cfDto.getBooleanValue();
         } else if (cfDto.getLongValue() != null) {
             return cfDto.getLongValue();
         } else if (cfDto.getEntityReferenceValue() != null) {
