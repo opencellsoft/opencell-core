@@ -501,7 +501,7 @@ public class CustomTableService extends NativePersistenceService {
             }
         });
 
-        log.debug("AKK ES search result values are {}", responseValues);
+        // log.debug("AKK ES search result values are {}", responseValues);
         return responseValues;
     }
 
