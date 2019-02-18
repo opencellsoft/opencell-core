@@ -9,7 +9,6 @@ import org.meveo.service.script.Script;
  * This script is executed after {@link EDR} creation.
  * 
  * @author Edward P. Legaspi
- * @created 24 Jan 2019
  * @lastModifiedVersion 6.0
  */
 public class TriggeredEdrScript extends Script implements TriggeredEdrScriptInterface {
