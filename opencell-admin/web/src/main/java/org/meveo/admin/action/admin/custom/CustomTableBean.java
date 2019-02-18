@@ -65,8 +65,6 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     private Map<String, Object> newValues = new HashMap<String, Object>();
 
-    private boolean includeIdField;
-
     private boolean appendImportedData;
 
     private List<Map<String, Object>> selectedValues;
@@ -240,17 +238,9 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
             return;
         }
 
-        int importedLinesTotal = customTableService.importData(entity, fields, file.getInputstream(), includeIdField, appendImportedData);
+        int importedLinesTotal = customTableService.importData(entity, fields, file.getInputstream(), appendImportedData);
 
         messages.info(new BundleKey("messages", "customTable.importFile.importedLines"), importedLinesTotal);
-    }
-
-    public boolean isIncludeIdField() {
-        return includeIdField;
-    }
-
-    public void setIncludeIdField(boolean includeIdField) {
-        this.includeIdField = includeIdField;
     }
 
     public boolean isAppendImportedData() {
@@ -277,18 +267,11 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
     public String getCsvFileFormat() {
         StringBuffer format = new StringBuffer();
 
-        boolean first = true;
-        if (includeIdField) {
-            format.append(NativePersistenceService.FIELD_ID);
-            first = false;
-        }
+        format.append(NativePersistenceService.FIELD_ID).append("(optional)");
 
         for (CustomFieldTemplate field : fields) {
-            if (!first) {
-                format.append(",");
-            }
-            format.append(field.getCode());
-            first = false;
+            format.append(",");
+            format.append(field.getDbFieldname());
         }
 
         return format.toString();

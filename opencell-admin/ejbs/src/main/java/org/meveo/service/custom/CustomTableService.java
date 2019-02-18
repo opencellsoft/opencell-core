@@ -64,11 +64,6 @@ public class CustomTableService extends NativePersistenceService {
      */
     public static final String FILE_APPEND = "_append";
 
-    /**
-     * File prefix indicating that file contains 'id' field
-     */
-    public static final CharSequence FILE_INCLUDES_ID = "_id";
-
     @Inject
     private ElasticClient elasticClient;
 
@@ -288,7 +283,7 @@ public class CustomTableService extends NativePersistenceService {
             }
         });
 
-        ObjectWriter oWriter = getCSVWriter(fields, true);
+        ObjectWriter oWriter = getCSVWriter(fields);
 
         try (FileWriter fileWriter = new FileWriter(exportFile)) {
             do {
@@ -314,12 +309,11 @@ public class CustomTableService extends NativePersistenceService {
      * 
      * @param customEntityTemplate Custom table definition
      * @param file Data file
-     * @param includeIdField True if file includes 'id' field
      * @param append True if data should be appended to the existing data
      * @return Number of records imported
      * @throws BusinessException General business exception
      */
-    public int importData(CustomEntityTemplate customEntityTemplate, File file, boolean includeIdField, boolean append) throws BusinessException {
+    public int importData(CustomEntityTemplate customEntityTemplate, File file, boolean append) throws BusinessException {
 
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getAppliesTo());
 
@@ -328,7 +322,7 @@ public class CustomTableService extends NativePersistenceService {
         }
 
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            return importData(customEntityTemplate, new ArrayList<>(cfts.values()), inputStream, includeIdField, append);
+            return importData(customEntityTemplate, new ArrayList<>(cfts.values()), inputStream, append);
 
         } catch (IOException e) {
             throw new BusinessException(e);
@@ -341,13 +335,11 @@ public class CustomTableService extends NativePersistenceService {
      * @param customEntityTemplate Custom table definition
      * @param fields Custom table fields. Fields will be sorted by their GUI 'field' position.
      * @param inputStream Data stream
-     * @param includeIdField True if file includes 'id' field
      * @param append True if data should be appended to the existing data
      * @return Number of records imported
      * @throws BusinessException General business exception
      */
-    public int importData(CustomEntityTemplate customEntityTemplate, List<CustomFieldTemplate> fields, InputStream inputStream, boolean includeIdField, boolean append)
-            throws BusinessException {
+    public int importData(CustomEntityTemplate customEntityTemplate, List<CustomFieldTemplate> fields, InputStream inputStream, boolean append) throws BusinessException {
 
         if (fields == null || fields.isEmpty()) {
             throw new ValidationException("No fields are defined for custom table " + customEntityTemplate.getDbTablename(), "customTable.noFields");
@@ -369,7 +361,7 @@ public class CustomTableService extends NativePersistenceService {
         int importedLinesTotal = 0;
         List<Map<String, Object>> values = new ArrayList<Map<String, Object>>();
 
-        ObjectReader oReader = getCSVReader(fields, includeIdField);
+        ObjectReader oReader = getCSVReader(fields);
 
         // Delete current data first if in override mode
         if (!append) {
@@ -422,22 +414,19 @@ public class CustomTableService extends NativePersistenceService {
      * Get the CSV file reader. Schema is created from field's dbFieldname values.
      * 
      * @param fields Custom table fields definition
-     * @param includeIdField True if data includes ID field, which is not present in custom table field definitions
      * @return The CSV file reader
      */
-    private ObjectReader getCSVReader(Collection<CustomFieldTemplate> fields, boolean includeIdField) {
+    private ObjectReader getCSVReader(Collection<CustomFieldTemplate> fields) {
         CsvSchema.Builder builder = CsvSchema.builder();
 
-        if (includeIdField) {
-            builder.addColumn(NativePersistenceService.FIELD_ID, ColumnType.NUMBER);
-        }
+        builder.addColumn(NativePersistenceService.FIELD_ID, ColumnType.NUMBER);
 
         for (CustomFieldTemplate cft : fields) {
             builder.addColumn(cft.getDbFieldname(),
                 cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE ? ColumnType.NUMBER : ColumnType.STRING);
         }
 
-        CsvSchema schema = builder.build();
+        CsvSchema schema = builder.setUseHeader(true).setStrictHeaders(true).setReorderColumns(true).build();
         CsvMapper mapper = new CsvMapper();
         return mapper.readerFor(Map.class).with(schema);
     }
@@ -446,22 +435,19 @@ public class CustomTableService extends NativePersistenceService {
      * Get the CSV file writer. Schema is created from field's dbFieldname values.
      * 
      * @param fields Custom table fields definition
-     * @param includeIdField True if data includes ID field, which is not present in custom table field definitions
      * @return The CSV file reader
      */
-    private ObjectWriter getCSVWriter(Collection<CustomFieldTemplate> fields, boolean includeIdField) {
+    private ObjectWriter getCSVWriter(Collection<CustomFieldTemplate> fields) {
         CsvSchema.Builder builder = CsvSchema.builder();
 
-        if (includeIdField) {
-            builder.addColumn(NativePersistenceService.FIELD_ID, ColumnType.NUMBER);
-        }
+        builder.addColumn(NativePersistenceService.FIELD_ID, ColumnType.NUMBER);
 
         for (CustomFieldTemplate cft : fields) {
             builder.addColumn(cft.getDbFieldname(),
                 cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE ? ColumnType.NUMBER : ColumnType.STRING);
         }
 
-        CsvSchema schema = builder.build();
+        CsvSchema schema = builder.setUseHeader(true).build();
         CsvMapper mapper = new CsvMapper();
 
         return mapper.writerFor(Map.class).with(schema).with(new SimpleDateFormat(ParamBean.getInstance().getDateTimeFormat(appProvider.getCode())));
@@ -490,8 +476,6 @@ public class CustomTableService extends NativePersistenceService {
         if (searchResult == null) {
             return new ArrayList<>();
         }
-
-        log.error("AKK search result is {}", searchResult.toString());
 
         List<Map<String, Object>> responseValues = new ArrayList<>();
 
