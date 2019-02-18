@@ -663,4 +663,46 @@ public final class FileUtils {
 
         return encodedFile;
     }
+
+    /**
+     * Gets the files for parsing.
+     *
+     * @param sourceDirectory the source directory
+     * @param extensions the extensions
+     * @param fileNameFilter the file name key
+     * @return the files for parsing
+     */
+    public static File[] getFilesForParsing(String sourceDirectory, ArrayList<String> extensions, String fileNameFilter) {
+        if(StringUtils.isBlank(fileNameFilter) || "*".equals(fileNameFilter)) {
+            return getFilesForParsing(sourceDirectory, extensions) ;
+        }
+
+        File sourceDir = new File(sourceDirectory);
+        if (!sourceDir.exists() || !sourceDir.isDirectory()) {
+            logger.info(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
+            return null;
+        }
+        File[] files = sourceDir.listFiles(new FilenameFilter() {
+
+            public boolean accept(File dir, String name) {
+                if (extensions == null && (name.toUpperCase().contains(fileNameFilter.toUpperCase()))) {
+                    return true;
+                }
+                for (String extension : extensions) {
+                    if ((name.endsWith(extension) || "*".equals(extension)) && (name.toUpperCase().contains(fileNameFilter.toUpperCase()))) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+        });
+
+        if (files == null || files.length == 0) {
+            return null;
+        }
+
+        return files;
+    
+    }
 }
