@@ -73,7 +73,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Wassim Drira
  * @author Tien Lan PHUNG
  * @author Abdelmounaim Akadid 
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 7.0.0
  * 
  */
 @Stateless
@@ -856,7 +856,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         List<IBillableEntity> billableEntities = new ArrayList<>();
         
         if (!BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
-	        log.info("Will process {} entities of type {}", (entities != null ? entities.size() : 0), billingRun.getBillingCycle().getType());
+	        BillingCycle billingCycle = billingRun.getBillingCycle();
+	        BillingEntityTypeEnum type = null;
+	        if (billingCycle != null) {
+	            type = billingCycle.getType();
+	        }
+	        
+            log.info("Will process {} entities of type {}", (entities != null ? entities.size() : 0), type);
 	        if (entities != null && entities.size() > 0) {
 	            SubListCreator subListCreator = new SubListCreator(entities, (int) nbRuns);
 	            List<Future<List<IBillableEntity>>> asyncReturns = new ArrayList<Future<List<IBillableEntity>>>();

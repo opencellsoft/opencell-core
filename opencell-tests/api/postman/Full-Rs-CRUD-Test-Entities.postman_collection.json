@@ -1,0 +1,243 @@
+{
+	"info": {
+		"_postman_id": "fec0f7df-79f2-4513-98be-5161c93cd4b5",
+		"name": "Full-Rs-CRUD-Test-Entities",
+		"description": "Full-Rs-CRUD-Test-Entities suite, contains all API tests for regression tests.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Common Tests",
+			"item": [
+				{
+					"name": "check timestamp date",
+					"item": [
+						{
+							"name": "Customer - createOrUpdate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "21fa7237-4f20-4e50-97cb-365823479cf0",
+										"exec": [
+											"// testing success status",
+											"var jsonData = JSON.parse(responseBody);",
+											"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "f06b67cc-1b8f-47ff-9dcb-f281718cbf7a",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Proxy-Authorization",
+										"type": "text",
+										"value": "{{proxy.auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\" : \"customer\", \r\n\t\"customerCategory\" : \"CLIENT\",\r\n\t\"seller\" : \"SELLER_FR\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/customer/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"customer",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Customer - find by code and check  (created / update)  dates",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "21fa7237-4f20-4e50-97cb-365823479cf0",
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+											"",
+											"// testing that the date is returned as timestamp as it matchs today value",
+											"var moment = require('moment');",
+											"var today = moment().format(\"YYYY-MM-DD\");",
+											"console.log(\" today = \" + today);",
+											"",
+											"// if 'updated' present then check its value",
+											"var updated = jsonData.customer.auditable.updated; ",
+											"console.log(\" updated timestamp  = \" + updated);",
+											"if (updated) {",
+											"    tests[\"is.updated.today.timestamp\"] = moment(updated).format('YYYY-MM-DD') === today;",
+											"} else { // otherwise check the value of created",
+											"    var created = jsonData.customer.auditable.created;",
+											"    console.log(\" created timestamp  = \" + created);",
+											"    if (created) {",
+											"        tests[\"is.created.today.timestamp\"] = moment(created).format('YYYY-MM-DD') === today;",
+											"    }",
+											"}",
+											"",
+											"",
+											"",
+											"",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "f06b67cc-1b8f-47ff-9dcb-f281718cbf7a",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Proxy-Authorization",
+										"type": "text",
+										"value": "{{proxy.auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/customer?customerCode=customer",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"customer"
+									],
+									"query": [
+										{
+											"key": "customerCode",
+											"value": "customer"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "- Create or update a customer\n- Find the created / updated customer   \n- check that (create / update) date are well a timestamp having today value.",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f693b531-062e-44c8-9b35-32cc4088907d",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "c0e2aab6-9ec3-4dea-9046-3696be66ad0f",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		}
+	]
+}
