@@ -56,6 +56,8 @@ import org.meveo.model.rating.EDR;
  * Rated transaction - usually corresponds 1-1 to Wallet operation, but could also be cases with multiple RatedTransactions created from a single Wallet operation.
  * 
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @Table(name = "billing_rated_transaction")

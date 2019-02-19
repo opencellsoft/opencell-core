@@ -60,6 +60,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -85,11 +86,12 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 /**
  * Service class for WalletOperation entity
  * 
+ * @author Edward P. Legaspi
  * @author Wassim Drira
  * @author Phung tien lan
  * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class WalletOperationService extends BusinessService<WalletOperation> {
@@ -1062,8 +1064,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         try {
             ids = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceIds").setParameter("invoicingDate", invoicingDate).getResultList();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("listToInvoice error={} ", e.getMessage());
+            log.error("listToInvoice error={}", e.getMessage());
         }
         return ids;
     }
@@ -1482,5 +1483,101 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         return result;
     }
 
+	public List<AggregatedWalletOperation> listToInvoiceIdsWithGrouping(Date invoicingDate,
+			RatedTransactionsJobAggregationSetting aggregationSettings) {
+		String groupBy = "";
+		String id = "";
+		String dateAggregateSelect = "";
+		
+		if (aggregationSettings.isAggregateByDay()) {
+			// truncate by day
+			dateAggregateSelect += "extract(year from operation_date), extract(month from operation_date), extract(day from operation_date)";
+			groupBy += "extract(year from operation_date), extract(month from operation_date), extract(day from operation_date)";
+
+		} else {
+			// truncate by month
+			dateAggregateSelect += "extract(year from operation_date), extract(month from operation_date), 0";
+			groupBy += "extract(year from operation_date), extract(month from operation_date)";
+		}
+
+		switch (aggregationSettings.getAggregationLevel()) {
+		case BA:
+			groupBy += ", o.subscription.userAccount.billingAccount";
+			id = "o.subscription.userAccount.billingAccount.id";
+			break;
+		case UA:
+			groupBy += ", o.subscription.userAccount";
+			id = "o.subscription.userAccount.id";
+			break;
+		case SUB:
+			groupBy += ", o.subscription";
+			id = "o.subscription.id";
+			break;
+		case SI:
+			break;
+		case CI:
+			groupBy += ", o.chargeInstance";
+			id = "o.chargeInstance.id";
+			break;
+		case DESC:
+			groupBy += ", o.chargeInstance.id, o.description";
+			id = "o.chargeInstance.id";
+			break;
+		default:
+			groupBy += ", o.subscription.userAccount.billingAccount";
+			id = "o.subscription.userAccount.billingAccount.id";
+		}
+		
+		// additional criteria
+		if (aggregationSettings.isAggregateByOrder()) {
+			groupBy += ", o.orderNumber";
+		}
+		if (aggregationSettings.isAggregateByParam1()) {
+			groupBy += ", o.parameter1";
+		}
+		if (aggregationSettings.isAggregateByParam2()) {
+			groupBy += ", o.parameter2";
+		}
+		if (aggregationSettings.isAggregateByParam3()) {
+			groupBy += ", o.parameter3";
+		}
+		if (aggregationSettings.isAggregateByExtraParam()) {
+			groupBy += ", o.parameterExtra";
+		}
+
+		String strQuery = "SELECT new org.meveo.service.billing.impl.AggregatedWalletOperation(" //
+				+ "coalesce(recCharge.serviceInstance.id, usageCharge.serviceInstance.id, osCharge.subscriptionServiceInstance.id, osCharge.terminationServiceInstance.id)" //
+				+ dateAggregateSelect //
+				+ ", o.tax" //
+				+ ", o.invoiceSubCategory" //
+				+ ", " + id //
+				+ ", SUM(o.amountWithTax), SUM(o.amountWithoutTax), SUM(o.amountTax), SUM(o.unitAmountWithTax), SUM(o.unitAmountWithoutTax), SUM(o.unitAmountTax), SUM(o.quantity)" //
+				+ ")" + " FROM " + WalletOperation.class.getSimpleName() + " o" //
+				+ " LEFT OUTER JOIN o.chargeInstance recCharge" //
+				+ " LEFT OUTER JOIN o.chargeInstance osCharge" //
+				+ " LEFT OUTER JOIN o.chargeInstance usageCharge" //
+				+ " WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" //
+				+ " AND (TYPE(recCharge) = RecurringChargeInstance OR TYPE(osCharge) = OneShotChargeInstance OR TYPE(usageCharge) = UsageChargeInstance)" //
+				+ " GROUP BY o.tax, o.invoiceSubCategory, " + groupBy;
+
+		log.debug("aggregated query={}", strQuery);
+
+		Query query = getEntityManager().createQuery(strQuery);
+		query.setParameter("invoicingDate", invoicingDate);
+		
+		@SuppressWarnings("unchecked")
+		List<AggregatedWalletOperation> result = (List<AggregatedWalletOperation>) query.getResultList();
+
+		// batch update
+		strQuery = "UPDATE " + WalletOperation.class.getSimpleName() + " o SET status='"
+				+ WalletOperationStatusEnum.TREATED + "'" //
+				+ " WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN";
+		query = getEntityManager().createQuery(strQuery);
+		query.setParameter("invoicingDate", invoicingDate);
+		int affectedRecords = query.executeUpdate();
+		log.debug("updated record wo count={}", affectedRecords);
+		
+		return result;
+	}
     
 }

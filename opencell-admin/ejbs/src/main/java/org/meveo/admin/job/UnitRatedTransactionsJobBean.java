@@ -7,9 +7,15 @@ import javax.inject.Inject;
 
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.billing.impl.AggregatedWalletOperation;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
 import org.slf4j.Logger;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class UnitRatedTransactionsJobBean {
 
@@ -26,8 +32,23 @@ public class UnitRatedTransactionsJobBean {
 		try {
 			ratedTransactionService.createRatedTransaction(walletOperationId);
 			result.registerSucces();
+		
 		} catch (Exception e) {
 			log.error("Failed to rate transaction for wallet operation {}", walletOperationId, e);
+			result.registerError(e.getMessage());
+		}
+	}
+
+    @JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void execute(JobExecutionResultImpl result, AggregatedWalletOperation aggregatedWo, RatedTransactionsJobAggregationSetting aggregationSettings) {
+		log.debug("Running with aggregatedWo={}", aggregatedWo);
+		try {
+			ratedTransactionService.createRatedTransaction(aggregatedWo, aggregationSettings);
+			result.registerSucces();
+		
+		} catch (Exception e) {
+			log.error("Failed to rate transaction for aggregatedWo {}", aggregatedWo, e);
 			result.registerError(e.getMessage());
 		}
 	}

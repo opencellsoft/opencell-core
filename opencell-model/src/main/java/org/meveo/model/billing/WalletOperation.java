@@ -62,6 +62,8 @@ import org.meveo.model.rating.EDR;
  * Consumption operation
  * 
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @Table(name = "billing_wallet_operation")
@@ -122,7 +124,7 @@ public class WalletOperation extends BusinessEntity {
     private Date operationDate;
 
     /**
-     * Invoicing date if invoice date should be in a future and does not match teh billing cycle invoicing dates
+     * Invoicing date if invoice date should be in a future and does not match the billing cycle invoicing dates
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "invoicing_date")

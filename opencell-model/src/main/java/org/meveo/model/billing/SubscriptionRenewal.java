@@ -69,11 +69,16 @@ public class SubscriptionRenewal implements Serializable {
         }
     }
 
+    /**
+	 * The default subscription renewal term type. A subscription can be
+	 * automatically renewed on a period basis or on a fixed date.
+	 */
     public enum InitialTermTypeEnum {
         /**
          * Uses RenewalPeriodUnitEnum.
          */
         RECURRING,
+        
         /**
          * Uses date picker.
          */
@@ -152,6 +157,9 @@ public class SubscriptionRenewal implements Serializable {
     @Column(name = "renew_for")
     private Integer renewFor;
 
+    /**
+     * The instance of InitialTermTypeEnum for this subscription.
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "initial_term_type")
     private InitialTermTypeEnum initialTermType = InitialTermTypeEnum.RECURRING;
