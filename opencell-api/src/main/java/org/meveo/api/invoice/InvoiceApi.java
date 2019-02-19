@@ -42,6 +42,7 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -67,7 +68,8 @@ import org.primefaces.model.SortOrder;
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @author Abdelmounaim Akadid
- * @lastModifiedVersion 5.1
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class InvoiceApi extends BaseApi {
@@ -998,5 +1000,59 @@ public class InvoiceApi extends BaseApi {
         }
 
         return result;
+    }
+
+    /**
+     * Send the invoice by Email.
+     * @param invoiceDto The invoice DTO
+     * @param mailingType The mailing type
+     * @return True if sent, false else
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     * @throws BusinessException
+     */
+    public boolean sendByEmail(InvoiceDto invoiceDto, MailingTypeEnum mailingType) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+        if (StringUtils.isBlank(invoiceDto.getInvoiceId())) {
+            missingParameters.add("invoiceId");
+        }
+        handleMissingParameters();
+        Invoice invoice = invoiceService.findById(invoiceDto.getInvoiceId());
+        if (invoice == null) {
+            throw new EntityDoesNotExistsException(Invoice.class, invoiceDto.getInvoiceId());
+        }
+        if (MailingTypeEnum.AUTO.equals(mailingType) && invoice.isDontSend()) {
+            return false;
+        }
+        if (MailingTypeEnum.AUTO.equals(mailingType) && invoice.getInvoiceType().equals(invoiceTypeService.getDefaultDraft())) {
+            return false;
+        }
+        if (invoiceDto.isCheckAlreadySent() && !invoice.isAlreadySent()) {
+            return invoiceService.sendByEmail(invoice, mailingType, invoiceDto.getOverrideEmail());
+        }
+        if (!invoiceDto.isCheckAlreadySent() && MailingTypeEnum.MANUAL.equals(mailingType)) {
+            return invoiceService.sendByEmail(invoice, mailingType, invoiceDto.getOverrideEmail());
+        }
+        return false;
+
+    }
+
+    /**
+     * Send a list of invoices
+     * @param invoicesResult  the invoice result
+     * @return GenerateInvoiceResultDto
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     * @throws BusinessException
+     */
+    public List<GenerateInvoiceResultDto> sendByEmail(List<GenerateInvoiceResultDto> invoicesResult)
+            throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+        for (GenerateInvoiceResultDto invoiceResult : invoicesResult) {
+            invoiceResult.setCheckAlreadySent(true);
+            invoiceResult.setSentByEmail(false);
+            if (sendByEmail(invoiceResult, MailingTypeEnum.AUTO)) {
+                invoiceResult.setSentByEmail(true);
+            }
+        }
+        return invoicesResult;
     }
 }

@@ -51,6 +51,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.Email;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -63,6 +64,8 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.AccountOperation;
@@ -75,7 +78,8 @@ import org.meveo.model.shared.DateUtils;
  * @author Said Ramli
  * @author Abdellatif BARI
  * @author Mounir BAHIJE
- * @lastModifiedVersion 5.3
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @WorkflowedEntity
@@ -290,6 +294,29 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
     private List<DunningDocument> dunningDocuments;
+
+
+    @ManyToOne()
+    @JoinColumn(name = "email_template_id")
+    private EmailTemplate emailTemplate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mailing_type")
+    private MailingTypeEnum mailingType;
+
+    @Column(name = "cced_emails", length = 2000)
+    @Size(max = 2000)
+    private String ccedEmails;
+
+    @Column(name = "email", length = 255)
+    @Email
+    @Size(max = 255)
+    private String email;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "electronic_billing")
+    private boolean electronicBilling;
+
 
     /**
      * Extra Rated transactions to reach minimum invoice amount per subscription
@@ -776,5 +803,84 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     public void setAccountOperations(List<AccountOperation> accountOperations) {
         this.accountOperations = accountOperations;
+    }
+    /**
+     * Gets Email Template.
+     * @return Email Template.
+     */
+    public EmailTemplate getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    /**
+     * Sets Email template.
+     * @param emailTemplate the Email template.
+     */
+    public void setEmailTemplate(EmailTemplate emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    /**
+     * Gets Mailing Type.
+     * @return Mailing Type.
+     */
+    public MailingTypeEnum getMailingType() {
+        return mailingType;
+    }
+
+    /**
+     * Sets Mailing Type.
+     * @param mailingType mailing type
+     */
+    public void setMailingType(MailingTypeEnum mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    /**
+     * Gets cc Emails.
+     * @return cc Emails
+     */
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    /**
+     * Sets cc Emails.
+     * @param ccedEmails Cc Emails
+     */
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
+
+    /**
+     * Gets Email address.
+     * @return The Email address
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * Sets Email.
+     * @param email the Email address
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * Check id electronic billing is enabled.
+     * @return True if enabled, false else
+     */
+    public boolean getElectronicBilling() {
+        return electronicBilling;
+    }
+
+    /**
+     * Sets the electronic billing.
+     * @param electronicBilling True or False
+     */
+    public void setElectronicBilling(boolean electronicBilling) {
+        this.electronicBilling = electronicBilling;
     }
 }
