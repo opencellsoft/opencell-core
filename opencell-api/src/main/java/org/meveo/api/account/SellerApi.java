@@ -28,6 +28,7 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -48,7 +49,8 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.2
+ * @author Said Ramli
+ * @lastModifiedVersion 5.3.2
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -103,7 +105,6 @@ public class SellerApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-
         handleMissingParametersAndValidate(postData);
 
         if (sellerService.findByCode(postData.getCode()) != null) {
@@ -113,6 +114,7 @@ public class SellerApi extends BaseApi {
         Seller seller = new Seller();
         seller.setCode(postData.getCode());
         seller.setDescription(postData.getDescription());
+        
         if (postData.getInvoiceTypeSequences() != null) {
             for (Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet()) {
                 InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey());
@@ -136,59 +138,82 @@ public class SellerApi extends BaseApi {
            }
         }
         
-        if (postData.getContactInformation() != null) {
-            seller.setContactInformation(toContactInformation(postData.getContactInformation()));
-        }
-        
-        if (postData.getAddress() != null) {
-            seller.setAddress(toAddress(postData.getAddress()));
-        }
-        
-        // check trading entities
-        if (!StringUtils.isBlank(postData.getCurrencyCode())) {
-            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode());
-            if (tradingCurrency == null) {
-                throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrencyCode());
-            }
-
-            seller.setTradingCurrency(tradingCurrency);
-        }
-
-        if (!StringUtils.isBlank(postData.getCountryCode())) {
-            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode());
-            if (tradingCountry == null) {
-                throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
-            }
-
-            seller.setTradingCountry(tradingCountry);
-        }
-
-        if (!StringUtils.isBlank(postData.getLanguageCode())) {
-            TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode());
-            if (tradingLanguage == null) {
-                throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguageCode());
-            }
-
-            seller.setTradingLanguage(tradingLanguage);
-        }
-
-        // check parent seller
-        if (!StringUtils.isBlank(postData.getParentSeller())) {
-            Seller parentSeller = sellerService.findByCode(postData.getParentSeller());
-            if (parentSeller == null) {
-                throw new EntityDoesNotExistsException(Seller.class, postData.getParentSeller());
-            }
-
-            seller.setSeller(parentSeller);
-        }
+        // Contact informations
+        this.updateContactInformation(seller, postData.getContactInformation());
+        // Address 
+        this.updateAddress(seller, postData.getAddress());
+        // Trading Currency
+        this.updateTradingCurrency(seller, postData.getCurrencyCode());
+        // Trading Country
+        this.updateTradingCountry(seller, postData.getCountryCode());
+        // Trading Language
+        this.updateTradingLanguage(seller, postData.getLanguageCode());
+        // Parent seller
+        this.updateParentSeller(seller, postData.getParentSeller());
 
         if (businessAccountModel != null) {
             seller.setBusinessAccountModel(businessAccountModel);
         }
 
         // populate customFields
+        this.populateCustomFields(postData, checkCustomField, seller);
+        
+        sellerService.create(seller);
+        return seller;
+    }
+
+    /**
+     * Update the seller's address by the given addressDto.
+     *
+     * @param seller the seller
+     * @param addressDto the address dto
+     * @throws EntityDoesNotExistsException the entity does not exists exception
+     */
+    private void updateAddress(Seller seller, AddressDto addressDto) throws EntityDoesNotExistsException {
+        if (addressDto != null) { 
+            Address address = seller.getAddress();
+            if (address == null) {
+                address = new Address(); 
+                seller.setAddress(address);
+            }
+            final String address1 = addressDto.getAddress1();
+            if (address1 != null) {
+                address.setAddress1(address1); 
+            }
+            final String address2 = addressDto.getAddress2();
+            if (address2 != null) {
+                address.setAddress2(address1); 
+            }
+            final String address3 = addressDto.getAddress3();
+            if (address3 != null) {
+                address.setAddress3(address1); 
+            }
+            final String city = addressDto.getCity();
+            if (city != null) {
+                address.setCity(city); 
+            }
+            final String countryCode = addressDto.getCountry();
+            if (countryCode != null) {
+                Country country = countryService.findByCode(countryCode);
+                if (country == null) {
+                    throw new EntityDoesNotExistsException(Country.class, countryCode);
+                }
+                address.setCountry(country);
+            }
+            final String state = addressDto.getState();
+            if (state != null) {
+                address.setState(state); 
+            }
+            final String zipCpde = addressDto.getZipCode();
+            if (zipCpde != null) {
+                address.setZipCode(zipCpde); 
+            }
+        }
+    }
+
+    private void populateCustomFields(SellerDto postData, boolean checkCustomField, Seller seller) throws MeveoApiException {
         try {
-            populateCustomFields(postData.getCustomFields(), seller, true, checkCustomField);
+            super.populateCustomFields(postData.getCustomFields(), seller, true, checkCustomField);
         } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -196,53 +221,43 @@ public class SellerApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-
-        sellerService.create(seller);
-
-        return seller;
     }
     
     /**
-     * ContactInformationDto to ContactInformation
-     * 
-     * @param ContactInformationDto contactInformationDto
-     * @return ContactInformation contactInformation
-     * 
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
+     * Update the seller contact information by the given ContactInformationDto 
+     *
+     * @param seller the seller
+     * @param contactInformationDto the contact information dto
      */
-    private ContactInformation toContactInformation(ContactInformationDto contactInformationDto) {
-        ContactInformation contactInformation = new ContactInformation();
-        contactInformation.setEmail(contactInformationDto.getEmail());
-        contactInformation.setPhone(contactInformationDto.getPhone());
-        contactInformation.setMobile(contactInformationDto.getMobile());
-        contactInformation.setFax(contactInformationDto.getFax());
-        return contactInformation;        
-    }
-    
-    /**
-     * AddressDto to Address
-     * 
-     * @param AddressDto addressDto
-     * @return Address address
-     * 
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
-     */ 
-     private Address toAddress(AddressDto addressDto) {
-        Address address = new Address();
-        address.setAddress1(addressDto.getAddress1());
-        address.setAddress2(addressDto.getAddress2());
-        address.setAddress3(addressDto.getAddress3());
-        address.setCity(addressDto.getCity());        
-        if (!StringUtils.isBlank(addressDto.getCountry())) {
-            address.setCountry(countryService.findByCode(addressDto.getCountry()));
+    private void updateContactInformation(Seller seller, ContactInformationDto contactInformationDto) {
+        if (contactInformationDto != null) {
+            ContactInformation contactInformation = seller.getContactInformation();
+            if (contactInformation == null) {
+                contactInformation = new ContactInformation();
+                seller.setContactInformation(contactInformation);
+            }
+            
+            final String email = contactInformationDto.getEmail();
+            if (email != null) {
+                contactInformation.setEmail(email);
+            }
+            
+            final String phone = contactInformationDto.getPhone();
+            if (phone != null) {
+                contactInformation.setPhone(phone);
+            }
+            
+            final String mobile = contactInformationDto.getMobile();
+            if (mobile != null) {
+                contactInformation.setMobile(mobile);
+            }
+            
+            final String fax = contactInformationDto.getFax();
+            if (fax != null) {
+                contactInformation.setFax(fax);
+            } 
         }
-        address.setState(addressDto.getState());
-        address.setZipCode(addressDto.getZipCode());
-        return address;
     }
-
     
     public void update(SellerDto postData) throws MeveoApiException, BusinessException {
         update(postData, true);
@@ -279,7 +294,12 @@ public class SellerApi extends BaseApi {
             throw new EntityDoesNotExistsException(Seller.class, postData.getCode());
         }
         seller.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        seller.setDescription(postData.getDescription());
+        
+        final String description = postData.getDescription();
+        if (description != null) {
+            seller.setDescription(description); 
+        }
+        
         if (postData.getInvoiceTypeSequences() != null) {
             for (Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet()) {
                 InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey());
@@ -307,61 +327,19 @@ public class SellerApi extends BaseApi {
             }
         }
         
-        if (postData.getContactInformation() != null) {
-            seller.setContactInformation(toContactInformation(postData.getContactInformation()));
-        }
+        // Contact informations
+        this.updateContactInformation(seller, postData.getContactInformation());
+        // Address 
+        this.updateAddress(seller, postData.getAddress());
+        // Trading Currency
+        this.updateTradingCurrency(seller, postData.getCurrencyCode());
+        // Trading Country
+        this.updateTradingCountry(seller, postData.getCountryCode());
+        // Trading Language
+        this.updateTradingLanguage(seller, postData.getLanguageCode());
+        // Parent seller
+        this.updateParentSeller(seller, postData.getParentSeller());
         
-        if (postData.getAddress() != null) {
-            seller.setAddress(toAddress(postData.getAddress()));
-        }
-        
-        // check trading entities
-        if (!StringUtils.isBlank(postData.getCurrencyCode())) {
-            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode());
-            if (tradingCurrency == null) {
-                throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrencyCode());
-            }
-
-            seller.setTradingCurrency(tradingCurrency);
-
-        } else {
-            seller.setTradingCurrency(null);
-        }
-
-        if (!StringUtils.isBlank(postData.getCountryCode())) {
-            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode());
-            if (tradingCountry == null) {
-                throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
-            }
-
-            seller.setTradingCountry(tradingCountry);
-
-        } else {
-            seller.setTradingCountry(null);
-        }
-
-        if (!StringUtils.isBlank(postData.getLanguageCode())) {
-            TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode());
-            if (tradingLanguage == null) {
-                throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguageCode());
-            }
-
-            seller.setTradingLanguage(tradingLanguage);
-
-        } else {
-            seller.setTradingLanguage(null);
-        }
-
-        // check parent seller
-        if (!StringUtils.isBlank(postData.getParentSeller())) {
-            Seller parentSeller = sellerService.findByCode(postData.getParentSeller());
-            if (parentSeller == null) {
-                throw new EntityDoesNotExistsException(Seller.class, postData.getParentSeller());
-            }
-
-            seller.setSeller(parentSeller);
-        }
-
         if (businessAccountModel != null) {
             seller.setBusinessAccountModel(businessAccountModel);
         }
@@ -380,6 +358,50 @@ public class SellerApi extends BaseApi {
         seller = sellerService.update(seller);
 
         return seller;
+    }
+
+    private void updateParentSeller(Seller seller, final String parentSellerCode) throws EntityDoesNotExistsException {
+        if (parentSellerCode != null) {
+            Seller parentSeller = sellerService.findByCode(parentSellerCode);
+            if (parentSeller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, parentSellerCode);
+            }
+
+            seller.setSeller(parentSeller);
+        }
+    }
+
+    private void updateTradingLanguage(Seller seller, final String languageCode) throws EntityDoesNotExistsException {
+        if (languageCode != null) {
+            TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(languageCode);
+            if (tradingLanguage == null) {
+                throw new EntityDoesNotExistsException(TradingLanguage.class, languageCode);
+            }
+
+            seller.setTradingLanguage(tradingLanguage);
+        }
+    }
+
+    private void updateTradingCountry(Seller seller, String countryCode) throws EntityDoesNotExistsException {
+        if (countryCode != null) {
+            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode);
+            if (tradingCountry == null) {
+                throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
+            }
+
+            seller.setTradingCountry(tradingCountry);
+        }
+    }
+
+    private void updateTradingCurrency(Seller seller, String currencyCode) throws EntityDoesNotExistsException {
+        if (currencyCode != null) {
+            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode);
+            if (tradingCurrency == null) {
+                throw new EntityDoesNotExistsException(TradingCurrency.class, currencyCode);
+            }
+            
+            seller.setTradingCurrency(tradingCurrency);
+        }
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass=Seller.class))
