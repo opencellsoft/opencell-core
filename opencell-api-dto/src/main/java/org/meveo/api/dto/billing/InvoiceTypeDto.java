@@ -16,6 +16,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.communication.email.MailingTypeEnum;
 
 /**
  * The Class InvoiceTypeDto.
@@ -83,6 +84,10 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The use Self Sequence . */
     private boolean useSelfSequence = true;
+
+    private String mailingType;
+
+    private String emailTemplateCode;
 
     /**
      * Instantiates a new invoice type dto.
@@ -378,6 +383,22 @@ public class InvoiceTypeDto extends BusinessEntityDto {
      */
     public void setCustomInvoiceXmlScriptInstanceCode(String customInvoiceXmlScriptInstanceCode) {
         this.customInvoiceXmlScriptInstanceCode = customInvoiceXmlScriptInstanceCode;
+    }
+
+    public String getMailingType() {
+        return mailingType;
+    }
+
+    public void setMailingType(String mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    public String getEmailTemplateCode() {
+        return emailTemplateCode;
+    }
+
+    public void setEmailTemplateCode(String emailTemplateCode) {
+        this.emailTemplateCode = emailTemplateCode;
     }
 
     @Override

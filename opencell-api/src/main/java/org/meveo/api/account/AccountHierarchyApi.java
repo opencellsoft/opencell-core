@@ -1072,7 +1072,9 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setVatNo(postData.getVatNo());
         billingAccountDto.setDiscountPlansForInstantiation(postData.getDiscountPlansForInstantiation());
         billingAccountDto.setDiscountPlansForTermination(postData.getDiscountPlansForTermination());
-
+        billingAccountDto.setMailingType(postData.getMailingType());
+        billingAccountDto.setEmailTemplate(postData.getEmailTemplate());
+        billingAccountDto.setCcedEmails(postData.getCcedEmails());
         CustomFieldsDto cfsDto = new CustomFieldsDto();
         if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
             Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
