@@ -245,9 +245,10 @@
 									<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
 							     </p:fieldset>		
 							     
-							     <p:fieldset legend="#{messages['invoice.discounts']}" styleClass="clearLeft" >
+							     <p:fieldset legend="#{messages['invoice.discounts']}" styleClass="clearLeft">
 							     	<p:outputPanel id="discountPanel">
-								     	<h:panelGroup layout="block" styleClass="form-panel" style="margin-bottom: 10px">
+						     			<p:messages id="discountMessages"></p:messages>
+								     	<h:panelGroup styleClass="form-panel" style="margin-bottom: 10px; width: 100%">
 								     		<hftl:formField displayOneLine="false" listenerUpdate="instantiateDiscountPlanDialog" field="discountPlan" valueLabelField="code" listBean="#{discountPlanBean}" />
 								     		<p:commandButton style="float: left" rendered="#{billingAccountBean.edit}" value="#{messages['button.instanciateButton']}" type="button" onclick="PF('dlg_instantiateDiscountPlanDialog').show()"></p:commandButton>
 								     	</h:panelGroup>
@@ -297,7 +298,7 @@
 														label="#{messages['billingAccount.email']}">
 														<p:inputText id="email_select"
 															rendered="#{billingAccountBean.edit}"
-															value="#{billingAccountBean.entity.contactInformation.email}" size="20"
+															value="#{billingAccountBean.entity.contactInformationNullSafe.email}" size="20"
 															maxlength="100" converter="nullableStringConverter"
 															required="#{billingAccountBean.entity.electronicBilling == true}">
 															<o:validator validatorId="javax.faces.RegularExpression"
@@ -305,7 +306,7 @@
 																message="#{messages['validator.email.invalid']}" />
 														</p:inputText>
 														<h:outputText rendered="#{!billingAccountBean.edit}"
-															id="emailText" value="#{billingAccountBean.entity.contactInformation.email}" />
+															id="emailText" value="#{billingAccountBean.entity.contactInformationNullSafe.email}" />
 													</hftl:decorateFormField>
 												</h:panelGroup>
 												

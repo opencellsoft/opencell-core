@@ -12,6 +12,7 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
  * The Class TriggeredEdrTemplateDto.
  *
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 6.0
  */
 @XmlRootElement(name = "TriggeredEdrTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,6 +69,17 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
     private String param4ElSpark;
 
     /**
+     * Expression to compute the OpencellInstance code so the instance on which the EDR is triggered can be inferred from the Offer or whatever.
+     * It overrides the value on meveoInstance.
+     */
+    private String opencellInstanceEL;
+    
+    /**
+     * Script to run
+     */
+    private String triggeredEdrScript;
+
+    /**
      * Instantiates a new triggered edr template dto.
      */
     public TriggeredEdrTemplateDto() {
@@ -96,6 +108,10 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
         param3ElSpark = triggeredEDRTemplate.getParam3ElSpark();
         param4El = triggeredEDRTemplate.getParam4El();
         param4ElSpark = triggeredEDRTemplate.getParam4ElSpark();
+        opencellInstanceEL = triggeredEDRTemplate.getOpencellInstanceEL();
+        if (triggeredEDRTemplate.getTriggeredEdrScript() != null) {
+            triggeredEdrScript = triggeredEDRTemplate.getTriggeredEdrScript().getCode();
+        }
     }
 
     /**
@@ -315,5 +331,21 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
                 + param1El + ", param1ElSpark=" + param1ElSpark + ", param2El=" + param2El + ", param2ElSpark=" + param2ElSpark + ", param3El=" + param3El + ", param3ElSpark="
                 + param3ElSpark + ", param4El=" + param4El + ", param4ElSpark=" + param4ElSpark + ", id=" + id + ", code=" + code + ", description=" + description
                 + ", updatedCode=" + updatedCode + "]";
+    }
+
+    public String getOpencellInstanceEL() {
+        return opencellInstanceEL;
+    }
+
+    public void setOpencellInstanceEL(String opencellInstanceEL) {
+        this.opencellInstanceEL = opencellInstanceEL;
+    }
+
+    public String getTriggeredEdrScript() {
+        return triggeredEdrScript;
+    }
+
+    public void setTriggeredEdrScript(String triggeredEdrScript) {
+        this.triggeredEdrScript = triggeredEdrScript;
     }
 }

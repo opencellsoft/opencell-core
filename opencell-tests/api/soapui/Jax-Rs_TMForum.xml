@@ -3,7 +3,7 @@
   <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" id="862741d9-1cba-4f44-8645-23cbf90521aa" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/CatalogWs</con:endpoint>
     </con:endpoints>
     <con:operation id="9ba233dc-83dc-4922-bccb-c4730c741e6a" isOneWay="false" action="" name="createBusinessOfferModel" bindingOperationName="createBusinessOfferModel" type="Request-Response" outputName="createBusinessOfferModelResponse" inputName="createBusinessOfferModel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -264,7 +264,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="b93ebf67-a568-4bed-9036-80561b1b1cce" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="C:\andrius\projektai\seb\meveo\meveo-api\target\docs\application.wadl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache type="TEXT"/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}</con:endpoint>
     </con:endpoints>
     <con:resource name="/notification/jobTrigger" path="/notification/jobTrigger" id="76d053cc-cd47-4775-ac93-d2a021485b19">
@@ -14139,7 +14139,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="aa208489-a0b2-404c-8a77-c1350b4c83b3" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/AccountWs</con:endpoint>
     </con:endpoints>
     <con:operation id="4a0fc5f7-43d0-4617-8c84-40c762d59f2d" isOneWay="false" action="" name="addLitigation" bindingOperationName="addLitigation" type="Request-Response" outputName="addLitigationResponse" inputName="addLitigation" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -14340,7 +14340,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="6ccc8a8a-997f-4960-82f3-20becb05f389" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="3d36e78c-f4a2-4b54-8863-98f524934ea6" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -14415,7 +14415,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="3eeb0138-8c90-4a2b-acda-3f4f301cbb22" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/SubscriptionWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b1e4b0c4-088e-4ba2-bf3d-ebc7b9466bac" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -15094,7 +15094,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="bd759564-3e2e-45ca-bab9-b79fbda5ea37" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/InvoiceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="326ead8f-5c83-4cef-8fb7-5267078ab490" isOneWay="false" action="" name="cancelInvoice" bindingOperationName="cancelInvoice" type="Request-Response" outputName="cancelInvoiceResponse" inputName="cancelInvoice" receivesAttachments="false" sendsAttachments="false">
@@ -15139,7 +15139,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="42281280-a1aa-4328-a731-6528fdf162cd" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/opencell/JobWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/JobWs</con:endpoint>
     </con:endpoints>
     <con:operation id="9ac244b1-803a-4095-ae8f-dc679241da0d" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -15181,7 +15181,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="b1fb4e02-d2d2-44aa-b9ff-24c2f8902305" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/SettingsWs</con:endpoint>
     </con:endpoints>
     <con:operation id="cc243b0f-79ce-421e-a18e-7895d9b4ab85" isOneWay="false" action="" name="createBillingCycle" bindingOperationName="createBillingCycle" type="Request-Response" outputName="createBillingCycleResponse" inputName="createBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -17299,7 +17299,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="44d46c02-f9ad-42d5-bbf7-44c0678287e6" wadlVersion="http://wadl.dev.java.net/2009/02" name="Meveo TMForum - API - wildfly" type="rest" definitionUrl="578a0373-294f-4461-8912-aa35a4248d4f" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints/>
+    <con:definitionCache/><con:endpoints/>
   </con:interface>
   <con:testSuite id="6ac7964a-a9d0-431e-b680-b0c3aa92daed" name="Setup Authorization">
     <con:settings/>
@@ -21506,7 +21506,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>52aeb328-93fd-471b-b122-0f5cc377798a</con:value>
+              <con:value>89d9fb1b-7999-4940-8db5-444ebc3d9e53</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -22544,8 +22544,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="343b660b-dc01-44bf-b958-cb0b11dd46c5" name="XPath Match 11">
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE3']/terminationDate</path>
-                <content>2016-02-29T00:00:00${#Project#timezone}</content>
-                <allowWildcards>false</allowWildcards>
+                <content>2016-07-02T00:00:00*</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -22961,8 +22961,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="343b660b-dc01-44bf-b958-cb0b11dd46c5" name="XPath Match 11">
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE3']/terminationDate</path>
-                <content>2016-02-29T00:00:00${#Project#timezone}</content>
-                <allowWildcards>false</allowWildcards>
+                <content>2016-07-02T00:00:00*</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -23044,6 +23044,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="e2e583ed-a9a4-475f-865d-f8010bbaec3c" name="XPath Match 20">
+              <con:configuration>
+                <path>exists(//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2" and subscriptionDate=terminationDate])</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -25583,9 +25592,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
-            <con:parameters>
-              <entry key="quoteId" value="131a6d00-522e-4416-abd7-abcef4d30017" xmlns="http://eviware.com/soapui/config"/>
-            </con:parameters>
+            <con:parameters><entry key="quoteId" value="a3dfc782-430c-4bdd-a5be-d2bbb193f7d9" xmlns="http://eviware.com/soapui/config"/></con:parameters>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -26729,9 +26736,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
-            <con:parameters>
-              <entry key="quoteId" value="58bf735a-d31d-4d72-b816-f395926b90ca" xmlns="http://eviware.com/soapui/config"/>
-            </con:parameters>
+            <con:parameters><entry key="quoteId" value="598212f9-762c-45de-87a8-c0281136c0c5" xmlns="http://eviware.com/soapui/config"/></con:parameters>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -27781,9 +27786,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
-            <con:parameters>
-              <entry key="quoteId" value="8ba04513-65f7-455d-9b5a-a6bfe04e53f1" xmlns="http://eviware.com/soapui/config"/>
-            </con:parameters>
+            <con:parameters><entry key="quoteId" value="6340eedf-3265-4a38-acf7-be712024d40d" xmlns="http://eviware.com/soapui/config"/></con:parameters>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -27974,7 +27977,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>serviceId1</con:name>
-              <con:value>108</con:value>
+              <con:value>15</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -28113,14 +28116,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+              <con:configuration><token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
-               <endAgreementDate>2016-02-22T00:00:00${#Project#timezone}</endAgreementDate>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <endAgreementDate>2016-02-22T00:00:00${#Project#timezone}</endAgreementDate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
@@ -28235,11 +28234,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="4da8d02c-dd72-451e-9a00-c283cf640b1b" name="Contains 2">
-              <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -28268,6 +28263,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>\r
       <ws:execute>\r
          <jobInstanceInfo code="Sub_Status_Job">\r
+         <customFields>
+         <customField code="untilDate" description="untilDate">
+         		<dateValue>2016-07-01</dateValue>
+         </customField>
+         </customFields>
          </jobInstanceInfo>\r
       </ws:execute>\r
    </soapenv:Body>\r
@@ -28318,14 +28318,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+              <con:configuration><token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
-               <endAgreementDate>2019-01-25T00:00:00${#Project#timezone2}</endAgreementDate>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <endAgreementDate>2016-08-25T00:00:00${#Project#timezone2}</endAgreementDate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
@@ -28404,13 +28400,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
-              <con:configuration>
-                <path>//subscribedTillDate</path>
-                <content>2019-01-25T00:00:00${#Project#timezone2}</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+              <con:configuration><path>//subscribedTillDate</path><content>2016-08-25T00:00:00${#Project#timezone2}</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="179b3fbc-f6ba-4c63-b636-67f253b95948" name="XPath Match 8">
               <con:configuration>
@@ -28422,13 +28412,207 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
+              <con:configuration><path>//subscription/endAgreementDate</path><content>2016-08-25T00:00:00${#Project#timezone2}</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 10">
               <con:configuration>
-                <path>//subscription/endAgreementDate</path>
-                <content>2019-01-25T00:00:00${#Project#timezone2}</content>
+                <path>//subscription/subscriptionDate</path>
+                <content>2016-01-25T00:00:00*</content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d4e01ca9-33ed-44b9-821e-d7a7066e45e4">
+              <con:configuration/>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="8c5d35e5-99ca-4b06-9483-f33aad5e72b8" name="XPath Match 11">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="763c168a-5c44-4483-a6bb-a1e0f1f924ec" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Run Subscription status job untillDate is before" id="9944e520-c416-4139-9330-888d5e8856ec">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>JobWsSoapBinding</con:interface>
+          <con:operation>execute</con:operation>
+          <con:request name="Run Subscription status job untillDate is before" id="f44152d1-5d4d-4d57-ba38-7e8e3e881047">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/JobWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:execute>\r
+         <jobInstanceInfo code="Sub_Status_Job">\r
+         		<customFields>
+         <customField code="untilDate" description="untilDate">
+         		<dateValue>2016-08-10</dateValue>
+         </customField>
+         </customFields>
+         </jobInstanceInfo>\r
+      </ws:execute>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Subscription is the same" id="a3110395-2e9e-4599-93dd-f473768a4300">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>findSubscription</con:operation>
+          <con:request name="Find Subscription is the same" id="03614745-d791-4187-a28a-da9833308ae7">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
+            <con:assertion type="Simple Contains" id="b86be349-406a-41f7-ad57-8d656075c08f" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
+              <con:configuration><token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
+               <endAgreementDate>2016-08-25T00:00:00${#Project#timezone2}</endAgreementDate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
+                <content>Service CF value</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>Fifth|Fourth</key>
+      <value>
+        <stringValue>150</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>Fifth|Second</key>
+      <value>
+        <stringValue>100</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="703fdac6-6e44-4163-8caa-71c4066a55d1" name="XPath Match 5">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
+                <content>2016-01-27T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="537c0b5d-5e54-47eb-88d5-f3d3d00abd64" name="XPath Match 6">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
+                <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
+              <con:configuration>
+                <path>//renewalRule</path>
+                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialyActiveFor>3</initialyActiveFor>
+  <initialyActiveForUnit>MONTH</initialyActiveForUnit>
+  <autoRenew>true</autoRenew>
+  <endOfTermAction>TERMINATE</endOfTermAction>
+  <terminationReasonCode>TERM_REASON_1</terminationReasonCode>
+  <renewFor>2</renewFor>
+  <renewForUnit>MONTH</renewForUnit>
+  <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
+</renewalRule>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
+              <con:configuration><path>//subscribedTillDate</path><content>2016-08-25T00:00:00${#Project#timezone2}</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="179b3fbc-f6ba-4c63-b636-67f253b95948" name="XPath Match 8">
+              <con:configuration>
+                <path>//renewed</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
+              <con:configuration><path>//subscription/endAgreementDate</path><content>2016-08-25T00:00:00${#Project#timezone2}</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 10">
               <con:configuration>
@@ -28485,6 +28669,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>\r
       <ws:execute>\r
          <jobInstanceInfo code="Sub_Status_Job">\r
+         		<customFields>
+         <customField code="untilDate" description="untilDate">
+         		<dateValue>2016-09-01</dateValue>
+         </customField>
+         </customFields>
          </jobInstanceInfo>\r
       </ws:execute>\r
    </soapenv:Body>\r
@@ -28535,13 +28724,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+              <con:configuration><token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
@@ -28620,13 +28805,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
-              <con:configuration>
-                <path>//subscribedTillDate</path>
-                <content>2019-01-25T00:00:00${#Project#timezone2}</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+              <con:configuration><path>//subscribedTillDate</path><content>2016-10-25T00:00:00${#Project#timezone2}</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="179b3fbc-f6ba-4c63-b636-67f253b95948" name="XPath Match 8">
               <con:configuration>
@@ -28665,11 +28844,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="2300ebd1-09f2-4864-bad9-a18f705efde2" name="Contains 2">
-              <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -28701,7 +28876,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>\r
             <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>\r
             <subscriptionDate>2016-01-25</subscriptionDate>\r
-            <endAgreementDate>2016-08-25</endAgreementDate>\r
+            <endAgreementDate>2016-10-25</endAgreementDate>\r
             <services>\r
                <serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">\r
                   <status>ACTIVE</status>\r
@@ -28822,20 +28997,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
             <con:assertion type="Simple Contains" id="b86be349-406a-41f7-ad57-8d656075c08f" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
-              <con:configuration>
-                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+              <con:configuration><token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
@@ -28914,13 +29081,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
-              <con:configuration>
-                <path>//subscribedTillDate</path>
-                <content>2019-01-25T00:00:00${#Project#timezone2}</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+              <con:configuration><path>//subscribedTillDate</path><content>20*-*-25T00:00:00${#Project#timezone2}</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="179b3fbc-f6ba-4c63-b636-67f253b95948" name="XPath Match 8">
               <con:configuration>
@@ -28932,13 +29093,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
-              <con:configuration>
-                <path>//subscription/endAgreementDate</path>
-                <content>2016-08-25T00:00:00${#Project#timezone2}</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+              <con:configuration><path>//subscription/endAgreementDate</path><content>2016-10-25T00:00:00${#Project#timezone2}</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 10">
               <con:configuration>
@@ -29201,13 +29356,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
-              <con:configuration>
-                <path>//subscribedTillDate</path>
-                <content>2019-01-25T00:00:00${#Project#timezone2}</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+              <con:configuration><path>//subscribedTillDate</path><content>20*-*-25T00:00:00${#Project#timezone2}</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="179b3fbc-f6ba-4c63-b636-67f253b95948" name="XPath Match 8">
               <con:configuration>
@@ -29426,13 +29575,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
-              <con:configuration>
-                <path>//subscribedTillDate</path>
-                <content>2019-01-25T00:00:00${#Project#timezone2}</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+              <con:configuration><path>//subscribedTillDate</path><content>20*-*-25T00:00:00${#Project#timezone2}</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="179b3fbc-f6ba-4c63-b636-67f253b95948" name="XPath Match 8">
               <con:configuration>
@@ -30187,8 +30330,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="Find Subscription with offer renewal" id="ad314cfe-fc2e-4869-8f49-5254afc6d973">
+      </con:testStep><con:testStep type="request" name="Find Subscription with offer renewal" id="ad314cfe-fc2e-4869-8f49-5254afc6d973">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SubscriptionWsSoapBinding</con:interface>
@@ -30237,13 +30379,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
-      </con:testStep>
-      <con:properties/>
+      </con:testStep><con:properties/>
     </con:testCase>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>12</con:value>
+        <con:value>18</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -30304,7 +30445,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                },
                {
                   "name":"subscriptionDate",
-                  "value":"2016-02-27"
+                  "value":"2016-01-01"
                },
                {
                   "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
@@ -30513,58 +30654,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:sourceType>Response</con:sourceType>
             <con:sourceStep>Create Product order - 2 items</con:sourceStep>
             <con:sourcePath>$.id</con:sourcePath>
-            <con:targetType>Request</con:targetType>
-            <con:targetStep>GenerateInvoice</con:targetStep>
-            <con:targetPath>//targetCode</con:targetPath>
+            <con:targetType>orderNrThatCreatedSubscription</con:targetType>
+            <con:targetStep>#TestSuite#</con:targetStep>
+            <con:targetPath/>
             <con:type>JSONPATH</con:type>
             <con:targetTransferType>XPATH</con:targetTransferType>
-            <con:upgraded>true</con:upgraded>
-          </con:transfers>
-          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
-            <con:name>Set order number manual service termination</con:name>
-            <con:sourceType>Response</con:sourceType>
-            <con:sourceStep>Create Product order - 2 items</con:sourceStep>
-            <con:sourcePath>$.id</con:sourcePath>
-            <con:targetType>Request</con:targetType>
-            <con:targetStep>GenerateInvoice after manual activation</con:targetStep>
-            <con:targetPath>//targetCode</con:targetPath>
-            <con:type>JSONPATH</con:type>
-            <con:targetTransferType>XPATH</con:targetTransferType>
-            <con:upgraded>true</con:upgraded>
-          </con:transfers>
-          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
-            <con:name>Set order number manual subscription termination</con:name>
-            <con:sourceType>Response</con:sourceType>
-            <con:sourceStep>Create Product order - 2 items</con:sourceStep>
-            <con:sourcePath>$.id</con:sourcePath>
-            <con:targetType>Request</con:targetType>
-            <con:targetStep>GenerateInvoice after manual subscription termination</con:targetStep>
-            <con:targetPath>//targetCode</con:targetPath>
-            <con:type>JSONPATH</con:type>
-            <con:targetTransferType>XPATH</con:targetTransferType>
-            <con:upgraded>true</con:upgraded>
-          </con:transfers>
-          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
-            <con:name>Set order number manual activation</con:name>
-            <con:sourceType>Response</con:sourceType>
-            <con:sourceStep>Create Product order - 2 items</con:sourceStep>
-            <con:sourcePath>$.id</con:sourcePath>
-            <con:targetType>Request</con:targetType>
-            <con:targetStep>GenerateInvoice after manual activation</con:targetStep>
-            <con:targetPath>//targetCode</con:targetPath>
-            <con:type>JSONPATH</con:type>
-            <con:targetTransferType>XPATH</con:targetTransferType>
-            <con:upgraded>true</con:upgraded>
-          </con:transfers>
-          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
-            <con:name>Set order number after manual service termination</con:name>
-            <con:sourceType>Response</con:sourceType>
-            <con:sourceStep>Create Product order - 2 items</con:sourceStep>
-            <con:sourcePath>$.id</con:sourcePath>
-            <con:targetType>Request</con:targetType>
-            <con:targetStep>GenerateInvoice after manual service termination</con:targetStep>
-            <con:targetPath>//targetCode</con:targetPath>
-            <con:type>JSONPATH</con:type>
             <con:upgraded>true</con:upgraded>
           </con:transfers>
         </con:config>
@@ -30585,7 +30679,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>2c4f12c8-1f1e-42a9-a573-37cdeb700876</targetCode>
+            <targetCode>${#TestSuite#orderNrThatCreatedSubscription}</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -30655,8 +30749,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000010</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000015</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -30762,7 +30856,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>2c4f12c8-1f1e-42a9-a573-37cdeb700876</targetCode>
+            <targetCode>${#TestSuite#orderNrThatCreatedSubscription}</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -30858,7 +30952,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>2c4f12c8-1f1e-42a9-a573-37cdeb700876</targetCode>
+            <targetCode>${#TestSuite#orderNrThatCreatedSubscription}</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -30953,7 +31047,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>2c4f12c8-1f1e-42a9-a573-37cdeb700876</targetCode>
+            <targetCode>${#TestSuite#orderNrThatCreatedSubscription}</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -31023,8 +31117,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000011</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000016</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -31040,7 +31134,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="c11d6c95-7a14-4c1e-84fb-cef6cefc651d" name="XPath Match">
               <con:configuration>
                 <path>count(//ratedTransaction)</path>
-                <content>4</content>
+                <content>2</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -31051,6 +31145,58 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <token>&lt;paymentMethod>DIRECTDEBIT&lt;/paymentMethod></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="ff041be2-3305-4416-a7c3-98361cfd604a" name="XPath Match 1">
+              <con:configuration>
+                <path>//ratedTransaction[code="${#Project#baseEntityPrefix}_OST"]</path>
+                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <usageDate>2016-02-01T00:00:00*</usageDate>
+  <unitAmountWithoutTax>5.000000000000</unitAmountWithoutTax>
+  <unitAmountWithTax>5.250000000000</unitAmountWithTax>
+  <unitAmountTax>0.250000000000</unitAmountTax>
+  <quantity>2.000000000000</quantity>
+  <amountWithoutTax>10.000000000000</amountWithoutTax>
+  <amountWithTax>10.500000000000</amountWithTax>
+  <amountTax>0.500000000000</amountTax>
+  <code>${#Project#baseEntityPrefix}_OST</code>
+  <description>Termination charge</description>
+  <unityDescription>1</unityDescription>
+  <priceplanCode>${#Project#baseEntityPrefix}_OST</priceplanCode>
+  <doNotTriggerInvoicing>false</doNotTriggerInvoicing>
+  <taxCode>TAX_05</taxCode>
+  <taxPercent>5.000000000000</taxPercent>
+</ratedTransaction>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="b898cc33-aec0-467c-b6ea-b08aec9987e4" name="XPath Match 2">
+              <con:configuration>
+                <path>//ratedTransaction[code="${#Project#baseEntityPrefix}_REC1"]</path>
+                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <usageDate>2016-02-01T00:00:00*</usageDate>
+  <unitAmountWithoutTax>10.000000000000</unitAmountWithoutTax>
+  <unitAmountWithTax>10.500000000000</unitAmountWithTax>
+  <unitAmountTax>0.500000000000</unitAmountTax>
+  <quantity>-2.000000000000</quantity>
+  <amountWithoutTax>-20.000000000000</amountWithoutTax>
+  <amountWithTax>-21.000000000000</amountWithTax>
+  <amountTax>-1.000000000000</amountTax>
+  <code>${#Project#baseEntityPrefix}_REC1</code>
+  <description>Recurring charge</description>
+  <unityDescription>1</unityDescription>
+  <priceplanCode>${#Project#baseEntityPrefix}_REC1</priceplanCode>
+  <doNotTriggerInvoicing>false</doNotTriggerInvoicing>
+  <startDate>2016-02-01T00:00:00*</startDate>
+  <endDate>2016-03-01T00:00:00*</endDate>
+  <taxCode>TAX_05</taxCode>
+  <taxPercent>5.000000000000</taxPercent>
+</ratedTransaction>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -31165,7 +31311,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <targetCode>e3508b6d-607d-4eda-9a12-8c088791f0cf</targetCode>
+            <targetCode>242420cf-d663-4546-94ef-f713d93ea712</targetCode>
             <targetType>ORDER</targetType>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
@@ -31327,7 +31473,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>8c2836e4-b6fa-43e8-9672-79d880effcfd</targetCode>
+            <targetCode>7db8eff5-0d6a-4025-a068-e2fb0afd074f</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -31397,8 +31543,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000012</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000017</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -31542,7 +31688,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>89f08f5c-e8ca-44eb-bfd1-fce223fce29c</targetCode>
+            <targetCode>fcf187a8-2317-49c3-a8d9-451f6e548189</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -31612,8 +31758,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000013</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000018</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -31746,7 +31892,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>3e85c78b-bd4a-47e5-bc88-705f534e0e6f</targetCode>
+            <targetCode>391f9685-876d-4143-ab9d-e450b20f5731</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -31816,8 +31962,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000014</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000019</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -31833,8 +31979,175 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="46049da8-6791-4e75-b3e9-74423a1c5689" name="XPath Match">
               <con:configuration>
                 <path>count(//ratedTransaction)</path>
-                <content>2</content>
+                <content>1</content>
                 <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="5552ef98-8051-4b55-a267-971866332726" name="XPath Match 1">
+              <con:configuration>
+                <path>//ratedTransaction[code="TM_BASE2_OST"]</path>
+                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <usageDate>2016-02-29T00:00:00*</usageDate>
+  <unitAmountWithoutTax>5.000000000000</unitAmountWithoutTax>
+  <unitAmountWithTax>5.250000000000</unitAmountWithTax>
+  <unitAmountTax>0.250000000000</unitAmountTax>
+  <quantity>2.000000000000</quantity>
+  <amountWithoutTax>10.000000000000</amountWithoutTax>
+  <amountWithTax>10.500000000000</amountWithTax>
+  <amountTax>0.500000000000</amountTax>
+  <code>${#Project#baseEntityPrefix}_OST</code>
+  <description>Termination charge</description>
+  <unityDescription>1</unityDescription>
+  <priceplanCode>${#Project#baseEntityPrefix}_OST</priceplanCode>
+  <doNotTriggerInvoicing>false</doNotTriggerInvoicing>
+  <taxCode>TAX_05</taxCode>
+  <taxPercent>5.000000000000</taxPercent>
+</ratedTransaction>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="GenerateInvoice with order that created subscription" id="9beb9817-37fe-45de-81e4-dba5743f6610">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>InvoiceWsSoapBinding</con:interface>
+          <con:operation>generateInvoiceData</con:operation>
+          <con:request name="GenerateInvoice with order that created subscription" id="7e62d038-732c-4fef-a703-9048e8424c07">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/InvoiceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:generateInvoiceData>
+         <generateInvoiceRequest>
+            <targetCode>${#TestSuite#orderNrThatCreatedSubscription}</targetCode>
+            <targetType>ORDER</targetType>
+            <invoicingDate>2016-10-01T00:00:00</invoicingDate>
+         </generateInvoiceRequest>
+      </ws:generateInvoiceData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="1bc75f17-2661-416c-84be-e978469d0b48"/>
+            <con:assertion type="Simple Contains" id="b1c9508f-7951-43c5-a8c2-d4ef20c695cf" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="transfer" name="Set invoice number for invoice that created subscription" id="a46dc489-30c4-424f-80a3-24cdd8587eb0">
+        <con:settings/>
+        <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+            <con:name>Set invoice number to xml request</con:name>
+            <con:sourceType>Response</con:sourceType>
+            <con:sourceStep>GenerateInvoice with order that created subscription</con:sourceStep>
+            <con:sourcePath>//invoiceNumber</con:sourcePath>
+            <con:targetType>Request</con:targetType>
+            <con:targetStep>Get Invoice for order that created subscription</con:targetStep>
+            <con:targetPath>//invoiceNumber</con:targetPath>
+            <con:upgraded>true</con:upgraded>
+          </con:transfers>
+          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+            <con:name>Set invoice type to xml</con:name>
+            <con:sourceType>Response</con:sourceType>
+            <con:sourceStep>GenerateInvoice with order that created subscription</con:sourceStep>
+            <con:sourcePath>//invoiceTypeCode</con:sourcePath>
+            <con:targetType>Request</con:targetType>
+            <con:targetStep>Get Invoice for order that created subscription</con:targetStep>
+            <con:targetPath>//invoiceType</con:targetPath>
+            <con:upgraded>true</con:upgraded>
+          </con:transfers>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Get Invoice for order that created subscription" id="7e350285-01d6-4b81-a6c1-54f749213f5e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>InvoiceWsSoapBinding</con:interface>
+          <con:operation>findXMLInvoice</con:operation>
+          <con:request name="Get Invoice for order that created subscription" id="e544196a-93da-45c4-bcc2-45d2bff9c5b4">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/InvoiceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findInvoiceByIdOrType>
+         	<invoiceNumber>000000020</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
+         <includeTransations>true</includeTransations>
+      </ws:findInvoiceByIdOrType>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/>
+            <con:assertion type="Simple Contains" id="f7e29452-9309-4179-8e84-e2b4e1c8badb" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="aa448c6e-976e-44e8-9c32-c679cf855747" name="XPath Match">
+              <con:configuration>
+                <path>//ratedTransaction[code="${#Project#baseEntityPrefix}_REC1" and contains(usageDate,"2016-02-29")]</path>
+                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <usageDate>2016-02-29T00:00:00*</usageDate>
+  <unitAmountWithoutTax>10.000000000000</unitAmountWithoutTax>
+  <unitAmountWithTax>10.500000000000</unitAmountWithTax>
+  <unitAmountTax>0.500000000000</unitAmountTax>
+  <quantity>-0.070000000000</quantity>
+  <amountWithoutTax>-0.700000000000</amountWithoutTax>
+  <amountWithTax>-0.735000000000</amountWithTax>
+  <amountTax>-0.035000000000</amountTax>
+  <code>${#Project#baseEntityPrefix}_REC1</code>
+  <description>Recurring charge</description>
+  <unityDescription>1</unityDescription>
+  <priceplanCode>${#Project#baseEntityPrefix}_REC1</priceplanCode>
+  <doNotTriggerInvoicing>false</doNotTriggerInvoicing>
+  <startDate>2016-02-29T00:00:00*</startDate>
+  <endDate>2016-03-01T00:00:00*</endDate>
+  <taxCode>TAX_05</taxCode>
+  <taxPercent>5.000000000000</taxPercent>
+</ratedTransaction>]]></content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -31859,7 +32172,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>68</con:value>
+        <con:value>74</con:value>
+      </con:property>
+      <con:property>
+        <con:name>orderNrThatCreatedSubscription</con:name>
+        <con:value>777cf921-1d95-41eb-a520-02699c8c1b66</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -32593,7 +32910,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>63eeab13-6400-46bc-b8f6-8a1785905485</con:value>
+              <con:value>25be45a9-e654-486d-ac01-69c3de8de86b</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -32896,15 +33213,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>orderId1</con:name>
-        <con:value>6e5052ed-62ec-4486-900e-7b7165eed1ee</con:value>
+        <con:value>741434a5-ce72-4806-861f-b0935699030c</con:value>
       </con:property>
       <con:property>
         <con:name>orderId2</con:name>
-        <con:value>59b499cc-3b00-40d9-b08a-bdd8ea35c110</con:value>
+        <con:value>8f97e5e5-fd9c-43c1-85d7-463b45e069db</con:value>
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>47</con:value>
+        <con:value>53</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

@@ -164,8 +164,8 @@ public interface SubscriptionRs extends IBaseRs {
 
 
     @DELETE
-    @Path("/oneShotCharge/{oneShotChargeId}")
-    ActionStatus cancelOneShotCharge(@PathParam("oneShotChargeId") Long oneShotChargeId);
+    @Path("/oneShotCharge/{subscriptionCode}/{oneshotChargeCode}")
+    ActionStatus terminateOneShotCharge(@PathParam("subscriptionCode") String subscriptionCode, @PathParam("oneshotChargeCode") String oneshotChargeCode);
 
 
     /**
@@ -324,4 +324,14 @@ public interface SubscriptionRs extends IBaseRs {
     @POST
     @Path("/cancelSubscriptionRenewal/{subscriptionCode}")
     ActionStatus cancelSubscriptionRenewal(@PathParam("subscriptionCode") String subscriptionCode);
+
+    /**
+     * Create a subscription and activate services in a single transaction.
+     * 
+     * @param postData Subscription and services to activate data
+     * @return Request processing status
+     */
+    @POST
+    @Path("/subscribeAndActivateServices")
+    ActionStatus subscribeAndActivateServices(SubscriptionAndServicesToActivateRequestDto postData);
 }

@@ -342,6 +342,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
     }
+    
+    /**
+     * Returns {@link InvoiceTypeSellerSequence} from the nearest parent.
+     * @param invoiceType {@link InvoiceType}
+     * @param seller {@link Seller}
+     * @return {@link InvoiceTypeSellerSequence}
+     */
+	public InvoiceTypeSellerSequence getInvoiceTypeSellerSequence(InvoiceType invoiceType, Seller seller) {
+		InvoiceTypeSellerSequence sequence = invoiceType.getSellerSequenceByType(seller);
+
+		if (sequence == null && seller.getSeller() != null) {
+			sequence = getInvoiceTypeSellerSequence(invoiceType, seller.getSeller());
+		}
+
+		return sequence;
+	}
 
     /**
      * Assign invoice number to an invoice
@@ -362,21 +378,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         InvoiceSequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
-        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
-        if (seller != null) {
-            invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
-        }
-
         int sequenceSize = sequence.getSequenceSize();
+        
+        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
+        InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
         String prefix = invoiceType.getPrefixEL();
-        if (invoiceTypeSellerSequence != null) {
-            prefix = invoiceTypeSellerSequence.getPrefixEL();
-        }
-        if (prefix != null && !StringUtils.isBlank(prefix)) {
-            prefix = evaluatePrefixElExpression(prefix, invoice);
-        } else {
-            prefix = "";
-        }
+		if (invoiceTypeSellerSequencePrefix != null) {
+			prefix = invoiceTypeSellerSequencePrefix.getPrefixEL();
+
+		} else if (seller != null) {
+			invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
+			if (invoiceTypeSellerSequence != null) {
+				prefix = invoiceTypeSellerSequence.getPrefixEL();
+			}
+		}
+
+		if (prefix != null && !StringUtils.isBlank(prefix)) {
+			prefix = evaluatePrefixElExpression(prefix, invoice);
+
+		} else {
+			prefix = "";
+		}
 
         long nextInvoiceNb = sequence.getCurrentInvoiceNb();
         String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
@@ -622,8 +644,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             lastTransactionDate = billingRun.getLastTransactionDate();
             invoiceDate = billingRun.getInvoiceDate();
         }
-        
-		lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
+
+        lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
 
         // Store RTs, to reach minimum amount per invoice, to DB
         if (minAmountTransactions != null) {
@@ -862,7 +884,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactions, false, true);
-
+        invoice.setRatedTransactions(ratedTransactions);
         invoice.setTemporaryInvoiceNumber(UUID.randomUUID().toString());
 
         return invoice;
@@ -1057,8 +1079,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename);
             if ("true".equals(paramBeanFactory.getInstance().getProperty("invoice.pdf.addWaterMark", "true"))) {
-                if (invoice.getInvoiceType().getCode().equals(paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT")) || (invoice.isDraft() != null
-                        && invoice.isDraft())) {
+                if (invoice.getInvoiceType().getCode().equals(paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT"))
+                        || (invoice.isDraft() != null && invoice.isDraft())) {
                     PdfWaterMark.add(pdfFullFilename, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
                 }
             }
@@ -1768,7 +1790,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         if (lastTransactionDate == null) {
-            lastTransactionDate = new Date();
+            lastTransactionDate = invoiceDate;
         }
 
         if (entity.getBillingRun() != null && (entity.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)
@@ -1777,8 +1799,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new BusinessException("The entity is already in an billing run with status " + entity.getBillingRun().getStatus());
         }
 
-        // Create missing rated transactions up to an invoice date
-        ratedTransactionService.createRatedTransaction(entity, invoiceDate);
+        // Create missing rated transactions up to a last transaction date
+        ratedTransactionService.createRatedTransaction(entity, lastTransactionDate);
 
         ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entity, firstTransactionDate, lastTransactionDate);
         List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(),

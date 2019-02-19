@@ -84,13 +84,13 @@
 			outcome="terminationReasons"
 			value="#{messages['menu.terminationReason']}" />
 		<p:menuitem id="currencies"
-			rendered="#{currentUser.hasRole('superAdminManagement')}"
+			rendered="#{currentUser.hasRole('currencyManagement')}"
 			outcome="currencies" value="#{messages['menu.currencies']}" />
 		<p:menuitem id="languages"
-			rendered="#{currentUser.hasRole('superAdminManagement')}"
+			rendered="#{currentUser.hasRole('languageManagement')}"
 			outcome="languages" value="#{messages['menu.languages']}" />
 		<p:menuitem id="countries"
-			rendered="#{currentUser.hasRole('superAdminManagement')}"
+			rendered="#{currentUser.hasRole('countryManagement')}"
 			outcome="countries" value="#{messages['menu.countries']}" />
 		<p:menuitem id="meveoProperties"
 			rendered="#{currentUser.hasRole('superAdminManagement')}"
@@ -289,12 +289,20 @@
 
 	</p:submenu>
 	
-	<p:submenu id="menurecouvrement" label="#{messages['menu.Recouvrement']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">
+	<!-- <p:submenu id="menurecouvrement" label="#{messages['menu.Recouvrement']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">
 		<p:menuitem id="dunningWF" outcome="dunning_workflows" value="#{messages['dunningProcess.title']}" />
+	</p:submenu> -->
+	
+	<p:submenu id="workflows" label="#{messages['menu.workflow']}" rendered="#{currentUser.hasRole('administrationVisualization')}">
+		<p:menuitem id="genericWorkflows" value="#{messages['menu.generic.workflows']}"
+			outcome="genericWorkflows" />
+		<p:menuitem id="genericWfsHistory" value="#{messages['menu.generic.workflowHistory']}"
+			outcome="genericWfsHistory" />
 	</p:submenu>
 	
 	<p:submenu id="finance" label="#{messages['menu.finance']}" rendered="#{currentUser.hasRole('financeVisualization') or currentUser.hasRole('financeManagement') }">
 		<p:menuitem id="chartOfAccounts" outcome="accountingCodes" value="#{messages['menu.chartOfAccounts']}" rendered="#{currentUser.hasRole('financeVisualization')}" />
+		<p:menuitem id="generalLedgers" outcome="generalLedgers" value="#{messages['menu.generalLedgers']}" />
 		<p:menuitem id="revenueRecognitionRules" outcome="revenueRecognitionRules" value="#{messages['menu.revenueRecognitionRules']}" />				
 		<p:menuitem id="revenueSchedules" outcome="revenueSchedules" value="#{messages['menu.revenueSchedules']}" />
 		<p:menuitem id="reportExtracts" outcome="reportExtracts" value="#{messages['menu.reportExtracts']}" />
@@ -364,16 +372,20 @@
 			<p:menuitem id="scriptInstances" outcome="scriptInstances" value="#{messages['menu.scriptInstances']}" />
 		</p:submenu>
 			
-		<p:menuitem id="filters" outcome="filters"
-			value="#{messages['menu.filters']}" />
-		<p:submenu id="workflows" label="#{messages['menu.workflow']}"
-			outcome="workflows">
+		<p:menuitem id="filters" outcome="filters" value="#{messages['menu.filters']}" />
+		<!-- <p:submenu id="workflows" label="#{messages['menu.workflow']}">
+			<p:submenu id="generic_workflow" label="#{messages['menu.generic.workflow']}">
+				<p:menuitem id="genericWorkflows" value="#{messages['menu.generic.workflows']}"
+					outcome="genericWorkflows" />
+				<p:menuitem id="genericWfsHistory" value="#{messages['menu.generic.workflowHistory']}"
+					outcome="genericWfsHistory" />
+			</p:submenu>
 			<p:menuitem id="crud_workflows" value="#{messages['menu.workflow']}"
 				outcome="workflows" />
 			<p:menuitem id="workflowHistory"
 				value="#{messages['menu.workflowHistory']}"
 				outcome="workflowHistory" />
-		</p:submenu>
+		</p:submenu> -->
 		<p:submenu id="notifications"
 			label="#{messages['menu.notifications']}" outcome="notifications">
 			<p:menuitem id="internalNotifications"

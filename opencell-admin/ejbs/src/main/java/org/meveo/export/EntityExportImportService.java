@@ -78,7 +78,6 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 import org.meveo.admin.exception.BusinessException;
@@ -90,6 +89,7 @@ import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.commons.utils.XStreamCDATAConverter;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -2262,7 +2262,7 @@ public class EntityExportImportService implements Serializable {
 
             log.debug("Uplading {} file to a remote meveo instance {}", filename, remoteInstance.getCode());
 
-            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyClient client = new ResteasyClientProxyBuilder().build();
             ResteasyWebTarget target = client.target(remoteInstance.getUrl() + (remoteInstance.getUrl().endsWith("/") ? "" : "/") + "api/rest/importExport/importData");
 
             BasicAuthentication basicAuthentication = new BasicAuthentication(remoteInstance.getAuthUsername(), remoteInstance.getAuthPassword());
@@ -2315,7 +2315,7 @@ public class EntityExportImportService implements Serializable {
 
         log.debug("Checking status of import in remote meveo instance {} with execution id {}", remoteInstance.getCode(), executionId);
 
-        ResteasyClient client = new ResteasyClientBuilder().build();
+        ResteasyClient client = new ResteasyClientProxyBuilder().build();
         ResteasyWebTarget target = client
             .target(remoteInstance.getUrl() + (remoteInstance.getUrl().endsWith("/") ? "" : "/") + "api/rest/importExport/checkImportDataResult?executionId=" + executionId);
 

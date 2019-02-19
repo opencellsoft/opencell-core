@@ -30,7 +30,10 @@ import org.meveo.admin.parse.csv.CDR;
  */
 public interface CSVCDRParser {
 
-
+    /**
+     *
+     */
+    static final String CDR_FILE = "cdrFile";
     /**
      * @param CDRFile cdr file.
      */
