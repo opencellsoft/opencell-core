@@ -43,6 +43,26 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
     @Inject
     private WFStatusService wfStatusService;
 
+    public WorkflowInstance findByCodeAndGenericWorkflow(String entityInstanceCode, GenericWorkflow genericWorkflow) throws BusinessException {
+
+        Map<String, Object> params = Maps.newHashMap();
+        String query = "From WorkflowInstance wi where wi.code = :entityInstanceCode and wi.genericWorkflow = :genericWorkflow";
+        params.put("entityInstanceCode", entityInstanceCode);
+        params.put("genericWorkflow", genericWorkflow);
+
+        List<WorkflowInstance> wfInstances = (List<WorkflowInstance>) executeSelectQuery(query, params);
+
+        if (wfInstances.size() > 1) {
+            throw new BusinessException("Multiple instances result for entity " + entityInstanceCode);
+        }
+
+        if (!wfInstances.isEmpty()) {
+            return wfInstances.iterator().next();
+        }
+
+        return null;
+    }
+
     public List<WorkflowInstance> findByCodeAndClazz(String entityInstanceCode, Class<?> clazz) {
 
         Map<String, Object> params = Maps.newHashMap();

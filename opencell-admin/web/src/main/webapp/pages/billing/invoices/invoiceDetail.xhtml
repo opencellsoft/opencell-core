@@ -214,6 +214,9 @@
                             <p:commandButton rendered="#{invoiceBean.generateXmlBtnActive}" value="#{messages['invoice.generateXml']}" icon="ui-icon-refresh"
                                              disabled="#{invoiceBean.xmlInvoiceAlreadyGenerated}"
                                              action="#{invoiceBean.generateXmlInvoice}" update=":headerForm:messages :headerForm:tabView:attachments buttonGenerate"/>
+                            <p:commandButton value="#{messages['invoice.sendByEmail']}" icon="ui-icon-send"
+                                             disabled="#{!invoiceBean.pdfInvoiceAlreadyGenerated}"
+                                             action="#{invoiceBean.sendInvoiceByEmail}" update=":headerForm:messages"/>
                         </p:outputPanel>
 
                         <p:fieldset legend="#{messages['invoice.linkedInvoices']}">

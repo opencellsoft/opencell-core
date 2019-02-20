@@ -83,6 +83,8 @@ import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
@@ -107,6 +109,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
 
@@ -192,6 +195,9 @@ public class SubscriptionApi extends BaseApi {
 
     private ParamBean paramBean = ParamBean.getInstance();
 
+    @Inject
+    private EmailTemplateService emailTemplateService;
+
     /**
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
@@ -209,6 +215,14 @@ public class SubscriptionApi extends BaseApi {
         }
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
+        }
+        if (postData.getElectronicBilling() != null && postData.getElectronicBilling()) {
+            if (StringUtils.isBlank(postData.getEmail())) {
+                missingParameters.add("email");
+            }
+            if (postData.getMailingType()!=null && StringUtils.isBlank(postData.getEmailTemplate())) {
+                missingParameters.add("emailTemplate");
+            }
         }
 
         handleMissingParametersAndValidate(postData);
@@ -253,6 +267,8 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
+
+
         Subscription subscription = new Subscription();
 
         subscription.setCode(postData.getCode());
@@ -294,6 +310,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         subscription.setRatingGroup(postData.getRatingGroup());
 
+        populateElectronicBillingFields(postData,subscription);
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, true);
@@ -320,6 +337,36 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
+     *
+     * @param postData
+     * @param subscription
+     * @throws EntityDoesNotExistsException
+     */
+    private void populateElectronicBillingFields(SubscriptionDto postData, Subscription subscription) throws EntityDoesNotExistsException {
+        MailingTypeEnum mailingType = null;
+        if (postData.getMailingType() != null) {
+            mailingType = MailingTypeEnum.getByLabel(postData.getMailingType());
+        }
+
+        EmailTemplate emailTemplate = null;
+        if (postData.getEmailTemplate() != null) {
+            emailTemplate = emailTemplateService.findByCode(postData.getEmailTemplate());
+            if (emailTemplate == null) {
+                throw new EntityDoesNotExistsException(EmailTemplate.class, postData.getEmailTemplate());
+            }
+        }
+        if (postData.getElectronicBilling() == null) {
+            subscription.setElectronicBilling(false);
+        } else {
+            subscription.setElectronicBilling(postData.getElectronicBilling());
+        }
+        subscription.setEmail(postData.getEmail());
+        subscription.setMailingType(mailingType);
+        subscription.setEmailTemplate(emailTemplate);
+        subscription.setCcedEmails(postData.getCcedEmails());
+    }
+
+    /**
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
      * @param postData subscription Dto
@@ -333,6 +380,14 @@ public class SubscriptionApi extends BaseApi {
         }
         if (StringUtils.isBlank(postData.getSubscriptionDate())) {
             missingParameters.add("subscriptionDate");
+        }
+        if (postData.getElectronicBilling() != null && postData.getElectronicBilling()) {
+            if (StringUtils.isBlank(postData.getEmail())) {
+                missingParameters.add("email");
+            }
+            if (postData.getMailingType()!=null && StringUtils.isBlank(postData.getEmailTemplate())) {
+                missingParameters.add("emailTemplate");
+            }
         }
 
         handleMissingParametersAndValidate(postData);
@@ -378,6 +433,19 @@ public class SubscriptionApi extends BaseApi {
             subscription.setBillingCycle(billingCycle);
         }
 
+        MailingTypeEnum mailingType = null;
+        if (postData.getMailingType() != null) {
+            mailingType = MailingTypeEnum.valueOf(postData.getMailingType());
+        }
+
+        EmailTemplate emailTemplate = null;
+        if (postData.getEmailTemplate() != null) {
+            emailTemplate = emailTemplateService.findByCode(postData.getEmailTemplate());
+            if (emailTemplate == null) {
+                throw new EntityDoesNotExistsException(EmailTemplate.class, postData.getEmailTemplate());
+            }
+        }
+
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
@@ -402,6 +470,29 @@ public class SubscriptionApi extends BaseApi {
         }
         if (postData.getRatingGroup() != null) {
             subscription.setRatingGroup(postData.getRatingGroup());
+        }
+
+        if (postData.getElectronicBilling() != null) {
+            subscription.setElectronicBilling(postData.getElectronicBilling());
+        }
+        if (postData.getEmail() != null) {
+            subscription.setEmail(postData.getEmail());
+        }
+        if (mailingType != null) {
+            subscription.setMailingType(mailingType);
+        }
+        if (emailTemplate != null) {
+            subscription.setEmailTemplate(emailTemplate);
+        }
+        if (postData.getCcedEmails() != null) {
+            subscription.setCcedEmails(postData.getCcedEmails());
+        }
+        if (subscription.getElectronicBilling() && subscription.getEmail() == null) {
+            missingParameters.add("email");
+            if (subscription.getMailingType() != null && subscription.getEmailTemplate() == null) {
+                missingParameters.add("emailTemplate");
+            }
+            handleMissingParameters();
         }
         // populate customFields
         try {
@@ -1526,6 +1617,7 @@ public class SubscriptionApi extends BaseApi {
         if (StringUtils.isBlank(postData.getSubscriptionCode())) {
             missingParameters.add("subscriptionCode");
         }
+
 
         handleMissingParametersAndValidate(postData);
 

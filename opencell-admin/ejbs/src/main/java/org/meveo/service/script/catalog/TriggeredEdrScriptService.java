@@ -15,7 +15,6 @@ import org.meveo.service.script.ScriptInstanceService;
  * Takes care of {@link TriggeredEdrScript} related script method invocation.
  * 
  * @author Edward P. Legaspi
- * @created 24 Jan 2019
  * @lastModifiedVersion 6.0
  */
 @Stateless

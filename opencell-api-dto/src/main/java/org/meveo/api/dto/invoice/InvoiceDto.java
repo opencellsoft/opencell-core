@@ -160,6 +160,22 @@ public class InvoiceDto extends AuditableEntityDto {
     protected Boolean isDraft;
 
     /**
+     * Before sending the invoice, check if not already sent
+     */
+    protected boolean checkAlreadySent;
+
+    /**
+     * Override Email defined in the billing entity
+     */
+    protected String overrideEmail;
+
+    /**
+     * True if the invoice is sent, false otherwise
+     */
+    protected boolean sentByEmail;
+
+
+    /**
      * Instantiates a new invoice dto.
      */
     public InvoiceDto() {
@@ -743,5 +759,29 @@ public class InvoiceDto extends AuditableEntityDto {
 
     public void setDraft(Boolean draft) {
         this.isDraft = draft;
+    }
+
+    public boolean isCheckAlreadySent() {
+        return checkAlreadySent;
+    }
+
+    public void setCheckAlreadySent(boolean checkAlreadySent) {
+        this.checkAlreadySent = checkAlreadySent;
+    }
+
+    public String getOverrideEmail() {
+        return overrideEmail;
+    }
+
+    public void setOverrideEmail(String overrideEmail) {
+        this.overrideEmail = overrideEmail;
+    }
+
+    public boolean isSentByEmail() {
+        return sentByEmail;
+    }
+
+    public void setSentByEmail(boolean sentByEmail) {
+        this.sentByEmail = sentByEmail;
     }
 }

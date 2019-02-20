@@ -23,10 +23,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.generic.wf.WFStatus;
 
 /**
- * The Class GWFTransitionDto
+ * The Class WFStatusDto
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WFStatusDto extends BusinessEntityDto {
@@ -36,6 +37,16 @@ public class WFStatusDto extends BusinessEntityDto {
     /** The uuid. */
     @XmlElement(required = false)
     private String uuid;
+
+    public WFStatusDto() {
+        super();
+    }
+
+    public WFStatusDto(String code, String description) {
+        super();
+        this.code = code;
+        this.description = description;
+    }
 
     public WFStatusDto(WFStatus wfStatus) {
         super(wfStatus);
@@ -53,5 +64,17 @@ public class WFStatusDto extends BusinessEntityDto {
     @Override
     public String toString() {
         return "WFStatusDto [uuid=" + uuid + ", id=" + id + ", code=" + code + ", description=" + description + ", updatedCode=" + updatedCode + "]";
+    }
+
+    public WFStatus toWFStatus() {
+        WFStatus wfStatus = new WFStatus();
+        if (!StringUtils.isBlank(uuid)) {
+            wfStatus.setUuid(uuid);
+        }
+        wfStatus.setId(id);
+        wfStatus.setCode(code);
+        wfStatus.setDescription(description);
+
+        return wfStatus;
     }
 }

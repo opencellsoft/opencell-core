@@ -58,6 +58,12 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     private byte[] pdfInvoice;
 
     /**
+     * Indicate whether the invoice is sent by Email or no
+     */
+    private boolean sentByEmail;
+
+
+    /**
      * Instantiates a new creates the invoice response dto.
      */
     public CreateInvoiceResponseDto() {
@@ -280,4 +286,11 @@ public class CreateInvoiceResponseDto extends BaseResponse {
         this.netToPay = netToPay;
     }
 
+    public boolean isSentByEmail() {
+        return sentByEmail;
+    }
+
+    public void setSentByEmail(boolean sentByEmail) {
+        this.sentByEmail = sentByEmail;
+    }
 }

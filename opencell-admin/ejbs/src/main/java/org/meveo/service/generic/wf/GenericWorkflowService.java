@@ -89,12 +89,39 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
         }).collect(Collectors.toList());
     }
 
-    public List<GenericWorkflow> findByfindByTargetEntityClass(String targetEntityClass) {
+    public List<GenericWorkflow> findByTargetEntityClass(String targetEntityClass) {
         List<GenericWorkflow> genericWorkflows = (List<GenericWorkflow>) getEntityManager().createNamedQuery("GenericWorkflow.findByTargetEntityClass", GenericWorkflow.class)
             .setParameter("targetEntityClass", targetEntityClass).getResultList();
         return genericWorkflows;
     }
 
+    /**
+     * Execute workflow for Business Entity
+     * 
+     * @param businessEntity
+     * @param genericWorkflow
+     * @return
+     * @throws BusinessException
+     */
+    public WorkflowInstance executeWorkflow(BusinessEntity businessEntity, GenericWorkflow genericWorkflow) throws BusinessException {
+
+        WorkflowInstance workflowInstance = workflowInstanceService.findByCodeAndGenericWorkflow(businessEntity.getCode(), genericWorkflow);
+
+        if (workflowInstance == null) {
+            throw new BusinessException("No workflow instance for business entity " + businessEntity.getCode());
+        }
+
+        return executeWorkflow(workflowInstance, genericWorkflow);
+    }
+
+    /**
+     * Execute workflow for wf instance
+     * 
+     * @param workflowInstance
+     * @param genericWorkflow
+     * @return
+     * @throws BusinessException
+     */
     public WorkflowInstance executeWorkflow(WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
         log.debug("Executing generic workflow script:{} on instance {}", genericWorkflow.getCode(), workflowInstance);
         try {
