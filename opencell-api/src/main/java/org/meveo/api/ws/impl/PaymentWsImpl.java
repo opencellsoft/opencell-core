@@ -53,8 +53,15 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
  * The implementation for PaymentWs.
  * 
  * @author anasseh
+<<<<<<< HEAD
  * @author Edward Legaspi
  * @lastModifiedVersion 5.3
+||||||| parent of eb09dc2... Review Code #3947 add pagination on payment/customerPayment
+ * @lastModifiedVersion 5.0
+=======
+ * @author Youssef IZEM
+ * @lastModifiedVersion 5.0
+>>>>>>> eb09dc2... Review Code #3947 add pagination on payment/customerPayment
  */
 @SuppressWarnings("deprecation")
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
@@ -99,12 +106,12 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     }
 
     @Override
-    public CustomerPaymentsResponse list(String customerAccountCode) {
+    public CustomerPaymentsResponse list(String customerAccountCode, PagingAndFiltering pagingAndFiltering) {
         CustomerPaymentsResponse result = new CustomerPaymentsResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
+            result = paymentApi.getPaymentList(customerAccountCode, pagingAndFiltering);
             result.setBalance(paymentApi.getBalance(customerAccountCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
