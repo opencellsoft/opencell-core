@@ -46,18 +46,22 @@ public class GenericWorkflowDto extends EnableBusinessDto {
     @XmlElement(required = true)
     private String targetEntityClass;
 
+    /** The init status. */
+    @XmlElement(required = true)
+    private String initStatus;
+
     /** The list WF status dto. */
     @XmlElementWrapper(name = "statuses")
     @XmlElement(name = "status")
-    private List<WFStatusDto> listWFStatusDto = new ArrayList<>();
+    private List<WFStatusDto> statuses = new ArrayList<>();
 
     /** The list WF transition dto. */
     @XmlElementWrapper(name = "transitions")
     @XmlElement(name = "transition")
-    private List<GWFTransitionDto> listGWFTransitionDto;
+    private List<GWFTransitionDto> transitions;
 
     /** The enable history. */
-    private Boolean enableHistory = false;
+    private Boolean enableHistory = true;
 
     /**
      * Instantiates a new generic workflow dto.
@@ -75,15 +79,16 @@ public class GenericWorkflowDto extends EnableBusinessDto {
 
         this.targetEntityClass = genericWorkflow.getTargetEntityClass();
         this.enableHistory = genericWorkflow.isEnableHistory();
-        this.listGWFTransitionDto = new ArrayList<>();
+        this.initStatus = genericWorkflow.getInitStatus();
+        this.transitions = new ArrayList<>();
 
         for (WFStatus wfStatus : genericWorkflow.getStatuses()) {
             WFStatusDto wftdto = new WFStatusDto(wfStatus);
-            listWFStatusDto.add(wftdto);
+            statuses.add(wftdto);
         }
         for (GWFTransition wfTransition : genericWorkflow.getTransitions()) {
             GWFTransitionDto wftdto = new GWFTransitionDto(wfTransition);
-            listGWFTransitionDto.add(wftdto);
+            transitions.add(wftdto);
         }
     }
 
@@ -95,20 +100,28 @@ public class GenericWorkflowDto extends EnableBusinessDto {
         this.targetEntityClass = targetEntityClass;
     }
 
-    public List<WFStatusDto> getListWFStatusDto() {
-        return listWFStatusDto;
+    public String getInitStatus() {
+        return initStatus;
     }
 
-    public void setListWFStatusDto(List<WFStatusDto> listWFStatusDto) {
-        this.listWFStatusDto = listWFStatusDto;
+    public void setInitStatus(String initStatus) {
+        this.initStatus = initStatus;
     }
 
-    public List<GWFTransitionDto> getListGWFTransitionDto() {
-        return listGWFTransitionDto;
+    public List<WFStatusDto> getStatuses() {
+        return statuses;
     }
 
-    public void setListGWFTransitionDto(List<GWFTransitionDto> listGWFTransitionDto) {
-        this.listGWFTransitionDto = listGWFTransitionDto;
+    public void setStatuses(List<WFStatusDto> statuses) {
+        this.statuses = statuses;
+    }
+
+    public List<GWFTransitionDto> getTransitions() {
+        return transitions;
+    }
+
+    public void setTransitions(List<GWFTransitionDto> transitions) {
+        this.transitions = transitions;
     }
 
     public Boolean getEnableHistory() {
@@ -121,7 +134,7 @@ public class GenericWorkflowDto extends EnableBusinessDto {
 
     @Override
     public String toString() {
-        return "GenericWorkflowDto [targetEntityClass=" + targetEntityClass + ", statuses=" + listWFStatusDto + ", listGWFTransitionDto=" + listGWFTransitionDto
-                + ", enableHistory=" + enableHistory + ", id=" + id + ", code=" + code + ", description=" + description + ", updatedCode=" + updatedCode + "]";
+        return "GenericWorkflowDto [targetEntityClass=" + targetEntityClass + ", statuses=" + statuses + ", listGWFTransitionDto=" + transitions + ", enableHistory="
+                + enableHistory + ", id=" + id + ", code=" + code + ", description=" + description + ", updatedCode=" + updatedCode + "]";
     }
 }

@@ -392,7 +392,7 @@ public class TriggeredEDRTemplate extends BusinessEntity {
 
     /**
      * Set the script executed after TriggeredEdr construction.
-     * @param scriptInstance {@link ScriptInstance}
+     * @param triggeredEdrScript {@link ScriptInstance}
      */
     public void setTriggeredEdrScript(ScriptInstance triggeredEdrScript) {
         this.triggeredEdrScript = triggeredEdrScript;

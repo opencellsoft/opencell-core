@@ -52,6 +52,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -815,5 +816,14 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         return true;
     }
 
+    public void sendInvoiceByEmail() throws BusinessException {
+        entity = invoiceService.refreshOrRetrieve(entity);
+        if (invoiceService.sendByEmail(entity, MailingTypeEnum.MANUAL, null)) {
+            messages.info(new BundleKey("messages", "invoice.send.success"));
+        } else {
+            messages.error(new BundleKey("messages", "invoice.send.error"));
+        }
+
+    }
 
 }
