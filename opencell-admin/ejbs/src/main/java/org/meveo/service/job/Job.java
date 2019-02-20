@@ -110,11 +110,11 @@ public abstract class Job {
 
                 log.trace("Job {} of type {} executed. Persisting job execution results", jobInstance.getCode(), jobInstance.getJobTemplate());
 
-                boolean jobCompleted = jobExecutionService.persistResult(this, executionResult, jobInstance);
+                Boolean jobCompleted = jobExecutionService.persistResult(this, executionResult, jobInstance);
                 log.debug("Job {} of type {} execution finished. Job completed {}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobCompleted);
                 eventJobProcessed.fire(executionResult);
 
-                if (jobCompleted) {
+                if (jobCompleted != null && jobCompleted) {
                     MeveoUser lastCurrentUser = currentUser.unProxy();
                     jobExecutionService.executeNextJob(this, jobInstance, !jobCompleted, lastCurrentUser);
                 }
