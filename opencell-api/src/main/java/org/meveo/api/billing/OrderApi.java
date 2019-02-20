@@ -44,6 +44,8 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -65,6 +67,7 @@ import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
+import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.order.OrderItemService;
 import org.meveo.service.order.OrderService;
@@ -132,6 +135,9 @@ public class OrderApi extends BaseApi {
     @Inject
     private BillingCycleService billingCycleService;
 
+    @Inject
+    private EmailTemplateService emailTemplateService;
+
     /**
      * Register an order from TMForumApi.
      * 
@@ -148,6 +154,15 @@ public class OrderApi extends BaseApi {
         }
         if (productOrder.getOrderDate() == null) {
             missingParameters.add("orderDate");
+        }
+
+        if (productOrder.getElectronicBilling() != null && productOrder.getElectronicBilling()) {
+            if (org.meveo.commons.utils.StringUtils.isBlank(productOrder.getEmail())) {
+                missingParameters.add("email");
+            }
+            if (productOrder.getMailingType()!=null && org.meveo.commons.utils.StringUtils.isBlank(productOrder.getEmailTemplate())) {
+                missingParameters.add("emailTemplate");
+            }
         }
 
         handleMissingParameters();
@@ -197,6 +212,8 @@ public class OrderApi extends BaseApi {
         } else {
             order.setStatus(OrderStatusEnum.ACKNOWLEDGED);
         }
+
+        populateElectronicBillingFields(productOrder,order);
 
         for (ProductOrderItem productOrderItem : productOrder.getOrderItem()) {
 
@@ -353,6 +370,30 @@ public class OrderApi extends BaseApi {
         order = initiateWorkflow(order);
 
         return orderToDto(order);
+    }
+
+    private void populateElectronicBillingFields(ProductOrder productOrder, Order order) throws EntityDoesNotExistsException {
+        MailingTypeEnum mailingType = null;
+        if (productOrder.getMailingType() != null) {
+            mailingType = MailingTypeEnum.getByLabel(productOrder.getMailingType());
+        }
+
+        EmailTemplate emailTemplate = null;
+        if (productOrder.getEmailTemplate() != null) {
+            emailTemplate = emailTemplateService.findByCode(productOrder.getEmailTemplate());
+            if (emailTemplate == null) {
+                throw new EntityDoesNotExistsException(EmailTemplate.class, productOrder.getEmailTemplate());
+            }
+        }
+        if (productOrder.getElectronicBilling() == null) {
+            order.setElectronicBilling(false);
+        } else {
+            order.setElectronicBilling(productOrder.getElectronicBilling());
+        }
+        order.setEmail(productOrder.getEmail());
+        order.setMailingType(mailingType);
+        order.setEmailTemplate(emailTemplate);
+        order.setCcedEmails(productOrder.getCcedEmails());
     }
 
     /**

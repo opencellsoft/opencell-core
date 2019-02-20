@@ -103,6 +103,12 @@
 					dataModel="#{billingCycleBean.listBillingAccountBillingCycle()}"
 					updateField=":parentTab:formId:childTab:billingCycleSelectId :parentTab:formId:childTab:billingCycleSelectId_text">
 				</hftl:entityPopup>
+			<hftl:entityPopup id="searchEmailTemplatePopup" header="#{messages['emailTemplate']}"
+							  updateField=":parentTab:formId:childTab:emailTemplateId :parentTab:formId:childTab:emailTemplateId_text"
+							  selection="#{billingAccountBean.entity.emailTemplate}"
+							  backingBean="#{emailTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+							  column1Label="#{messages['businessEntity.code']}" column1="code"
+							  column2Label="#{messages['businessEntity.description']}" column2="description"></hftl:entityPopup>
 
 		</c:if>
 		
@@ -281,17 +287,25 @@
 														label="#{messages['billingAccount.terminationDate']}"
 														field="terminationDate" doNotShowOnNew="true" allowEdit="false" rendered="#{billingAccountBean.entity.terminationDate!=null}"/>
                                   </p:fieldset>
+
                                 </p:tab>
 
 										<p:tab id="tab1"
 											title="#{messages['billingAccount.tab.information']}">
-											
+											<p:fieldset legend="#{messages['invoice.electronicBilling']}" styleClass="clearBoth">
+												<hftl:formField
+														label="#{messages['billingAccount.electronicBilling']}"
+														field="electronicBilling" isMessage="true" listenerUpdate="emailField emailTemplateId"/>
+												<hftl:formField label="#{messages['invoice.ccedEmails']}" id="ccedEmails" field="ccedEmails"/>
+												<hftl:formField label="#{messages['invoice.mailingType']}" listenerUpdate="emailTemplateId" id="mailingType" field="mailingType" noSelectionLabel="false"/>
+												<hftl:formField required="#{not empty billingAccountBean.entity.mailingType}"  id="emailTemplateId" label="#{messages['emailTemplate']}" field="emailTemplate" valueLabelField="code"
+																popup="true"
+																popupId="searchEmailTemplatePopup"/>
+											</p:fieldset>
 											<p:fieldset
 												legend="#{messages['commons.contacts']}">
 		
-												<hftl:formField
-													label="#{messages['billingAccount.electronicBilling']}"
-													field="electronicBilling" isMessage="true" listenerUpdate="emailField" />
+
 		
 												<h:panelGroup id="emailField">
 													<hftl:decorateFormField fieldId="email_select"

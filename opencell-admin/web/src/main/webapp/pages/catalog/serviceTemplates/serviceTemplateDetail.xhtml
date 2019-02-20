@@ -281,7 +281,10 @@
 								<p:button id="buttonBack" value="#{messages['action.back']}"
 									outcome="#{serviceTemplateBean.back()}"
 									includeViewParams="true">
-									<f:param name="cid" value="#{conversation.id}" />
+									<c:if
+										test="#{javax.enterprise.context.conversation.id != null}">
+									<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+									</c:if>
 								</p:button>
 							</ui:define>
 						</hftl:formPanel>
@@ -376,12 +379,16 @@
 								<p:button id="buttonBack3" value="#{messages['action.back']}"
 									outcome="#{serviceTemplateBean.back()}"
 									includeViewParams="true">
-									<f:param name="cid" value="#{conversation.id}" />
+									<c:if
+										test="#{javax.enterprise.context.conversation.id != null}">
+									<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+									</c:if>
 								</p:button>
 							</ui:define>
 						</hftl:formPanel>
 					</p:panel>
 				</p:tab>
+				
 				<p:tab title="#{messages['serviceTemplate.terminationCharges']}"
 					id="tab4" rendered="#{serviceTemplateBean.entity.id!=null}">
 					<p:outputPanel id="invoiceTerminationCountries_MSG_panel">
@@ -468,7 +475,10 @@
 								<p:button id="buttonBack3" value="#{messages['action.back']}"
 									outcome="#{serviceTemplateBean.back()}"
 									includeViewParams="true">
-									<f:param name="cid" value="#{conversation.id}" />
+									<c:if
+										test="#{javax.enterprise.context.conversation.id != null}">
+									<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+									</c:if>
 								</p:button>
 							</ui:define>
 						</hftl:formPanel>
@@ -476,8 +486,8 @@
 
 				</p:tab>
 
-				<p:tab title="#{messages['serviceTemplate.usageCharges']}" id="tab5"
-					rendered="#{serviceTemplateBean.entity.id!=null}">
+				<p:tab title="#{messages['serviceTemplate.usageCharges']}" 
+				id="tab5" rendered="#{serviceTemplateBean.entity.id!=null}">
 					<p:outputPanel id="invoiceSubCategoryCountries_MSG_panel">
 						<h:graphicImage value="/img/msgerror.png" style="border:0"
 							rendered="#{validation.failed}" />
@@ -568,7 +578,10 @@
 								<p:button id="buttonBack5" value="#{messages['action.back']}"
 									outcome="#{serviceTemplateBean.back()}"
 									includeViewParams="true">
-									<f:param name="cid" value="#{conversation.id}" />
+									<c:if
+										test="#{javax.enterprise.context.conversation.id != null}">
+									<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+									</c:if>
 								</p:button>
 							</ui:define>
 						</hftl:formPanel>

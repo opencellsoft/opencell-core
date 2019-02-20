@@ -22,6 +22,8 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.scripts.ScriptInstance;
@@ -29,6 +31,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.billing.impl.InvoiceSequenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
 
@@ -64,7 +67,10 @@ public class InvoiceTypeApi extends BaseApi {
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
 
-	/**
+    @Inject
+    private EmailTemplateService emailTemplateService;
+
+    /**
 	 * Handle parameters.
 	 *
 	 * @param postData the post data
@@ -127,6 +133,16 @@ public class InvoiceTypeApi extends BaseApi {
 				invoiceTypesToApplies.add(tmpInvoiceType);
 			}
 		}
+        // Checking electronic billing fields
+        EmailTemplate emailTemplate = null;
+        MailingTypeEnum mailingType = null;
+        if (!StringUtils.isBlank(postData.getMailingType())) {
+            mailingType = MailingTypeEnum.getByLabel(postData.getMailingType());
+            emailTemplate = emailTemplateService.findByCode(postData.getEmailTemplateCode());
+            if (mailingType != null && emailTemplate == null) {
+                throw new EntityDoesNotExistsException(EmailTemplate.class, postData.getEmailTemplateCode());
+            }
+        }
 		InvoiceType invoiceType = new InvoiceType();
 		invoiceType.setCode(postData.getCode());
 
@@ -259,10 +275,30 @@ public class InvoiceTypeApi extends BaseApi {
 			}
 			invoiceType.setPrefixEL(invoiceTypeDto.getSequenceDto().getPrefixEL());
 		}
-		OCCTemplate occTemplate = null;		
-		if (!StringUtils.isBlank(invoiceTypeDto.getOccTemplateCode())) {			
+
+        MailingTypeEnum mailingType = null;
+        if (invoiceTypeDto.getMailingType() != null) {
+            mailingType = MailingTypeEnum.getByLabel(invoiceTypeDto.getMailingType());
+        }
+        if (mailingType != null) {
+            invoiceType.setMailingType(mailingType);
+        }
+
+        EmailTemplate emailTemplate = null;
+        if (invoiceTypeDto.getEmailTemplateCode() != null) {
+            emailTemplate = emailTemplateService.findByCode(invoiceTypeDto.getEmailTemplateCode());
+            if (emailTemplate == null) {
+                throw new EntityDoesNotExistsException(EmailTemplate.class, invoiceTypeDto.getEmailTemplateCode());
+            }
+        }
+        if (emailTemplate != null) {
+            invoiceType.setEmailTemplate(emailTemplate);
+        }
+
+		OCCTemplate occTemplate = null;
+		if (!StringUtils.isBlank(invoiceTypeDto.getOccTemplateCode())) {
 			occTemplate = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateCode());
-			if (occTemplate == null) {				
+			if (occTemplate == null) {
 				throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateCode());
 			}
 			invoiceType.setOccTemplate(occTemplate);
@@ -293,7 +329,7 @@ public class InvoiceTypeApi extends BaseApi {
 			invoiceType.setOccTemplateNegativeCodeEl(invoiceTypeDto.getOccTemplateNegativeCodeEl());
 		}
 
-		
+
 		if (!StringUtils.isBlank(invoiceTypeDto.getDescription())) {
 			invoiceType.setDescription(invoiceTypeDto.getDescription());
 		}
