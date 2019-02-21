@@ -444,6 +444,15 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     public BillingAccount instantiateDiscountPlan(BillingAccount entity, DiscountPlan dp) throws BusinessException {
+        for (UserAccount userAccount : entity.getUsersAccounts()){
+            for (Subscription subscription : userAccount.getSubscriptions()){
+                for(DiscountPlanInstance discountPlanInstance : subscription.getDiscountPlanInstances()){
+                    if(dp.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
+                        throw new BusinessException("DiscountPlan " + dp.getCode() + " is already instantiated in subscription "+ subscription.getCode() +".");
+                    }
+                }
+            }
+        }
         return (BillingAccount) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null);
     }
 

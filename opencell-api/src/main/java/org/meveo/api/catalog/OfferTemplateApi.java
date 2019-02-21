@@ -276,14 +276,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     private void processAllowedDiscountPlans(OfferTemplateDto postData, OfferTemplate offerTemplate) {
         List<DiscountPlanDto> allowedDiscountPlans = postData.getAllowedDiscountPlans();
-        List<DiscountPlan> existingAllowedDiscountPlans = offerTemplate.getAllowedDiscountPlans();
-        for (DiscountPlanDto dpDto : allowedDiscountPlans){
-
+        if(allowedDiscountPlans != null && !allowedDiscountPlans.isEmpty()){
+            offerTemplate.setAllowedDiscountPlans(allowedDiscountPlans
+                    .stream()
+                    .map(discountPlanDto -> discountPlanService.findByCode(discountPlanDto.getCode()))
+                    .collect(Collectors.toList()));
         }
-        offerTemplate.setAllowedDiscountPlans(allowedDiscountPlans
-                .stream()
-                .map(discountPlanDto -> discountPlanService.findByCode(discountPlanDto.getCode()))
-                .collect(Collectors.toList()));
     }
 
     private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {

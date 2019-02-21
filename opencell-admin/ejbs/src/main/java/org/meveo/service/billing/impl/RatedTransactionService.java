@@ -385,16 +385,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         // Determine which discount plan items apply to this invoice
-        List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
+        List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
+        List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
 
         Subscription subscription = invoice.getSubscription();
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
 
         if (subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
-            applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
+            subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
         }
         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
-            applicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
+            billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
 
         // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates
@@ -483,59 +484,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if ((amount != null) && !BigDecimal.ZERO.equals(amount)) {
 
                 // Add discount aggregates
-                for (DiscountPlanItem discountPlanItem : applicableDiscountPlanItems) {
+                for (DiscountPlanItem discountPlanItem : subscriptionApplicableDiscountPlanItems) {
+                    applyDiscount(billingAccount, invoice, isEnterprise, invoiceRounding, invoiceRoundingMode, discountAggregates, scAggregate, amount,
+                            amountCumulativeForTax, cAggregate, discountPlanItem);
 
-                    // Apply discount if matches the category, subcategory, or applies to any category
-                    if (((discountPlanItem.getInvoiceCategory() == null) && (discountPlanItem.getInvoiceSubCategory() == null))
-                            || ((discountPlanItem.getInvoiceSubCategory() != null)
-                                    && discountPlanItem.getInvoiceSubCategory().getId().equals(scAggregate.getInvoiceSubCategory().getId()))
-                            || ((discountPlanItem.getInvoiceCategory() != null) && (discountPlanItem.getInvoiceSubCategory() == null)
-                                    && discountPlanItem.getInvoiceCategory().getId().equals(scAggregate.getInvoiceSubCategory().getInvoiceCategory().getId()))) {
-                        BigDecimal discountPercent = discountPlanItem.getDiscountValue();
+                }
 
-                        if (discountPlanItem.getDiscountValueEL() != null) {
-                            discountPercent = evaluateDiscountPercentExpression(discountPlanItem.getDiscountValueEL(), scAggregate.getUserAccount(), scAggregate.getWallet(),
-                                invoice, amount);
-							log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
-									discountPercent, amount);
-                        }
+                // Add discount aggregates
+                for (DiscountPlanItem discountPlanItem : billingAccountApplicableDiscountPlanItems) {
+                    applyDiscount(billingAccount, invoice, isEnterprise, invoiceRounding, invoiceRoundingMode, discountAggregates, scAggregate, amount,
+                            amountCumulativeForTax, cAggregate, discountPlanItem);
 
-                        BigDecimal discountAmount;
-                        if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-            				discountAmount = amount.multiply(discountPercent.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
-            			} else {
-            				discountAmount = discountPlanItem.getDiscountValue().negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());;
-            			}
-
-                        if (discountAmount.compareTo(BigDecimal.ZERO) < 0) {
-                            SubCategoryInvoiceAgregate discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount,
-                                scAggregate.getUserAccount(), scAggregate.getWallet(), scAggregate.getTax(), scAggregate.getTaxPercent(), invoice, null);
-
-                            discountAggregate.updateAudit(currentUser);
-                            discountAggregate.setItemNumber(scAggregate.getItemNumber());
-                            discountAggregate.setCategoryInvoiceAgregate(cAggregate);
-
-                            discountAggregate.setDiscountAggregate(true);
-							if (discountPlanItem.getDiscountPlanItemType()
-									.equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-								discountAggregate.setDiscountPercent(discountPercent);
-							}
-                            discountAggregate.setDiscountPlanItem(discountPlanItem);
-                            discountAggregate.setDescription(discountPlanItem.getCode());
-
-                            amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, scAggregate.getTaxPercent(), isEnterprise, invoiceRounding,
-                                invoiceRoundingMode.getRoundingMode());
-
-                            discountAggregate.setAmountWithoutTax(amounts[0]);
-                            discountAggregate.setAmountWithTax(amounts[1]);
-                            discountAggregate.setAmountTax(amounts[2]);
-
-                            invoice.addInvoiceAggregate(discountAggregate);
-                            discountAggregates.add(discountAggregate);
-
-                            amountCumulativeForTax = amountCumulativeForTax.add(amounts[isEnterprise ? 0 : 1]);
-                        }
-                    }
                 }
 
                 // Add tax aggregate or update its amounts
@@ -624,6 +583,62 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 : billingAccount.getInvoicingThreshold();
         if ((invoicingThreshold != null) && (invoicingThreshold.compareTo(isEnterprise ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax()) > 0)) {
             throw new BusinessException("Invoice amount below the threshold");
+        }
+    }
+
+    private void applyDiscount(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise, int invoiceRounding, RoundingModeEnum invoiceRoundingMode,
+            List<SubCategoryInvoiceAgregate> discountAggregates, SubCategoryInvoiceAgregate scAggregate, BigDecimal amount, BigDecimal amountCumulativeForTax,
+            CategoryInvoiceAgregate cAggregate, DiscountPlanItem discountPlanItem) throws BusinessException {
+        BigDecimal[] amounts;// Apply discount if matches the category, subcategory, or applies to any category
+        if ((discountPlanItem.getInvoiceCategory() == null && discountPlanItem.getInvoiceSubCategory() == null)
+                || (discountPlanItem.getInvoiceSubCategory() != null
+                        && discountPlanItem.getInvoiceSubCategory().getId().equals(scAggregate.getInvoiceSubCategory().getId()))
+                || (discountPlanItem.getInvoiceCategory() != null && discountPlanItem.getInvoiceSubCategory() == null
+                        && discountPlanItem.getInvoiceCategory().getId().equals(scAggregate.getInvoiceSubCategory().getInvoiceCategory().getId()))) {
+            BigDecimal discountPercent = discountPlanItem.getDiscountValue();
+
+            if (discountPlanItem.getDiscountValueEL() != null) {
+                discountPercent = evaluateDiscountPercentExpression(discountPlanItem.getDiscountValueEL(), scAggregate.getUserAccount(), scAggregate.getWallet(),
+                    invoice, amount);
+                log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
+                        discountPercent, amount);
+            }
+
+            BigDecimal discountAmount;
+            if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+                discountAmount = amount.multiply(discountPercent.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
+            } else {
+                discountAmount = discountPlanItem.getDiscountValue().negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());;
+            }
+
+            if (discountAmount.compareTo(BigDecimal.ZERO) < 0) {
+                SubCategoryInvoiceAgregate discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount,
+                    scAggregate.getUserAccount(), scAggregate.getWallet(), scAggregate.getTax(), scAggregate.getTaxPercent(), invoice, null);
+
+                discountAggregate.updateAudit(currentUser);
+                discountAggregate.setItemNumber(scAggregate.getItemNumber());
+                discountAggregate.setCategoryInvoiceAgregate(cAggregate);
+
+                discountAggregate.setDiscountAggregate(true);
+                if (discountPlanItem.getDiscountPlanItemType()
+                        .equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+                    discountAggregate.setDiscountPercent(discountPercent);
+                }
+                discountAggregate.setDiscountPlanItem(discountPlanItem);
+                discountAggregate.setDescription(discountPlanItem.getCode());
+
+                amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, scAggregate.getTaxPercent(), isEnterprise, invoiceRounding,
+                    invoiceRoundingMode.getRoundingMode());
+
+                discountAggregate.setAmountWithoutTax(amounts[0]);
+                discountAggregate.setAmountWithTax(amounts[1]);
+                discountAggregate.setAmountTax(amounts[2]);
+
+                invoice.addInvoiceAggregate(discountAggregate);
+                discountAggregates.add(discountAggregate);
+
+                amountCumulativeForTax.add(amounts[isEnterprise ? 0 : 1]);
+            }
         }
     }
 
