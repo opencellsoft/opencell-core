@@ -190,8 +190,7 @@ public class PaymentApi extends BaseApi {
      * Get payment list by customer account code
      * 
      * @param customerAccountCode customer account code
-     * @param offset Retrieve from record number
-     * @param limit How many records to retrieve
+     * @param pagingAndFiltering
      * @return list of payment dto
      * @throws Exception exception.
      * @author akadid abdelmounaim
