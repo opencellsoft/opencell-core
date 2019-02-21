@@ -141,7 +141,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         handleMissingParameters();
 
-        CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCode());
+        CustomEntityTemplate cet = customEntityTemplateService.findByCodeNoCache(dto.getCode());
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCode());
         }
@@ -477,4 +477,41 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         return cet;
     }
 
+    @Override
+    public void enableOrDisable(String code, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        CustomEntityTemplate cet = customEntityTemplateService.findByCodeNoCache(code);
+        if (cet == null) {
+            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
+        }
+        if (enable) {
+            customEntityTemplateService.enable(cet);
+        } else {
+            customEntityTemplateService.disable(cet);
+        }
+    }
+
+    @Override
+    public void remove(String code) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        CustomEntityTemplate cet = customEntityTemplateService.findByCodeNoCache(code);
+
+        if (cet == null) {
+            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
+        }
+
+        customEntityTemplateService.remove(cet);
+    }
 }

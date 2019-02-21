@@ -24,7 +24,10 @@ import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.collections4.MapUtils;
@@ -69,6 +72,9 @@ public class CustomTableService extends NativePersistenceService {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @EJB
+    private CustomTableService customTableService;
 
     @Inject
     protected ParamBeanFactory paramBeanFactory;
@@ -313,6 +319,7 @@ public class CustomTableService extends NativePersistenceService {
      * @return Number of records imported
      * @throws BusinessException General business exception
      */
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public int importData(CustomEntityTemplate customEntityTemplate, File file, boolean append) throws BusinessException {
 
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getAppliesTo());
@@ -339,6 +346,7 @@ public class CustomTableService extends NativePersistenceService {
      * @return Number of records imported
      * @throws BusinessException General business exception
      */
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public int importData(CustomEntityTemplate customEntityTemplate, List<CustomFieldTemplate> fields, InputStream inputStream, boolean append) throws BusinessException {
 
         if (fields == null || fields.isEmpty()) {
@@ -378,7 +386,7 @@ public class CustomTableService extends NativePersistenceService {
                 if (importedLines >= 500) {
 
                     values = convertValues(values, fields, false);
-                    create(tableName, values, append);
+                    customTableService.create(tableName, values, append);
 
                     values.clear();
                     importedLines = 0;
@@ -393,7 +401,7 @@ public class CustomTableService extends NativePersistenceService {
 
             // Save to DB remaining records
             values = convertValues(values, fields, false);
-            create(tableName, values, append);
+            customTableService.create(tableName, values, append);
 
             // Repopulate ES index
             if (!append) {
