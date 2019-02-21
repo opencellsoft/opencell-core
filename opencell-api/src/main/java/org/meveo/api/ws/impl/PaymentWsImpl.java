@@ -52,16 +52,9 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
 /**
  * The implementation for PaymentWs.
  * 
- * @author anasseh
-<<<<<<< HEAD
  * @author Edward Legaspi
- * @lastModifiedVersion 5.3
-||||||| parent of eb09dc2... Review Code #3947 add pagination on payment/customerPayment
- * @lastModifiedVersion 5.0
-=======
  * @author Youssef IZEM
- * @lastModifiedVersion 5.0
->>>>>>> eb09dc2... Review Code #3947 add pagination on payment/customerPayment
+ * @lastModifiedVersion 5.3
  */
 @SuppressWarnings("deprecation")
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
