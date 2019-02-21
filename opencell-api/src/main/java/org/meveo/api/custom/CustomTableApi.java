@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +56,7 @@ public class CustomTableApi extends BaseApi {
      * @throws MeveoApiException API exception
      * @throws BusinessException General exception
      */
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void append(CustomTableDataDto dto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(dto.getCustomTableCode())) {
@@ -74,10 +77,28 @@ public class CustomTableApi extends BaseApi {
             throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
         }
 
+        int importedLines = 0;
         List<Map<String, Object>> values = new ArrayList<>();
-        dto.getValues().forEach(record -> values.add(record.getValues()));
 
-        customTableService.create(cet.getDbTablename(), customTableService.convertValues(values, cfts.values(), false));
+        for (CustomTableRecordDto record : dto.getValues()) {
+
+            // Save every 500 records
+            if (importedLines >= 500) {
+
+                values = customTableService.convertValues(values, cfts.values(), false);
+                customTableService.create(cet.getDbTablename(), values);
+
+                values.clear();
+                importedLines = 0;
+            }
+
+            values.add(record.getValues());
+            importedLines++;
+        }
+
+        // Save remaining records
+        values = customTableService.convertValues(values, cfts.values(), false);
+        customTableService.create(cet.getDbTablename(), values);
 
     }
 
@@ -88,6 +109,7 @@ public class CustomTableApi extends BaseApi {
      * @throws MeveoApiException API exception
      * @throws BusinessException General exception
      */
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void update(CustomTableDataDto dto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(dto.getCustomTableCode())) {
@@ -108,10 +130,28 @@ public class CustomTableApi extends BaseApi {
             throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
         }
 
+        int importedLines = 0;
         List<Map<String, Object>> values = new ArrayList<>();
-        dto.getValues().forEach(record -> values.add(record.getValues()));
 
-        customTableService.update(cet.getDbTablename(), customTableService.convertValues(values, cfts.values(), false));
+        for (CustomTableRecordDto record : dto.getValues()) {
+
+            // Update every 500 records
+            if (importedLines >= 500) {
+
+                values = customTableService.convertValues(values, cfts.values(), false);
+                customTableService.update(cet.getDbTablename(), values);
+
+                values.clear();
+                importedLines = 0;
+            }
+
+            values.add(record.getValues());
+            importedLines++;
+        }
+
+        // Update remaining records
+        values = customTableService.convertValues(values, cfts.values(), false);
+        customTableService.update(cet.getDbTablename(), values);
     }
 
     /**

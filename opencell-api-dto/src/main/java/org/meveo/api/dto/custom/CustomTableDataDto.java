@@ -1,7 +1,6 @@
 package org.meveo.api.dto.custom;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,8 +36,6 @@ public class CustomTableDataDto extends BaseEntityDto {
     @XmlElementWrapper(name = "records")
     @XmlElement(name = "record")
     private List<CustomTableRecordDto> values;
-    
-    private List<LinkedHashMap<String,Object>> rsvalues;
 
     /**
      * @return Custom table/custom entity template code
@@ -75,19 +72,9 @@ public class CustomTableDataDto extends BaseEntityDto {
 
         }
         values = new ArrayList<>();
-        rsvalues = new ArrayList<>() ;
 
         for (Map<String, Object> item : list) {
             values.add(new CustomTableRecordDto(item));
-            rsvalues.add((LinkedHashMap<String, Object>) item);
         }
-    }
-    
-    public List<LinkedHashMap<String, Object>> getRsvalues() {
-        return rsvalues;
-    }
-    
-    public void setRsvalues(List<LinkedHashMap<String, Object>> rsvalues) {
-        this.rsvalues = rsvalues;
     }
 }

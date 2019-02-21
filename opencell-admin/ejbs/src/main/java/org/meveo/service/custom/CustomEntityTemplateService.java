@@ -239,6 +239,16 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     }
 
     /**
+     * Get custom entity template by code without using cache (straight from DB)
+     * 
+     * @param code Custom entity code
+     * @return Custom entity template
+     */
+    public CustomEntityTemplate findByCodeNoCache(String code) {
+        return super.findByCode(code);
+    }
+
+    /**
      * Get a list of custom entity templates that use custom tables as implementation
      * 
      * @return A list of custom entity templates
