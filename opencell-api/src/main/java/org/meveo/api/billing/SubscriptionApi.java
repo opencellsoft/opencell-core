@@ -549,39 +549,27 @@ public class SubscriptionApi extends BaseApi {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
 
-        // check if exists
-        List<ServiceToActivateDto> serviceToActivateDtos = new ArrayList<>();
+        // Find instantiated or instantiate if not instantiated yet
+        List<ServiceInstance> serviceInstances = new ArrayList<>();
         for (ServiceToActivateDto serviceToActivateDto : activateServicesDto.getServicesToActivateDto().getService()) {
-
             if (StringUtils.isBlank(serviceToActivateDto.getSubscriptionDate())) {
                 missingParameters.add("SubscriptionDate");
                 handleMissingParameters();
             }
-            ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode());
-            if (serviceTemplate == null) {
-                throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
-            }
-            serviceToActivateDto.setServiceTemplate(serviceTemplate);
-            serviceToActivateDtos.add(serviceToActivateDto);
-        }
 
-        // Find instantiated or instantiate if not instantiated yet
-        List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
-        for (ServiceToActivateDto serviceToActivateDto : serviceToActivateDtos) {
-
-            ServiceTemplate serviceTemplate = serviceToActivateDto.getServiceTemplate();
+            //ServiceTemplate serviceTemplate = serviceToActivateDto.getServiceTemplate();
 
             ServiceInstance serviceInstance = null;
 
             if (paramBean.isServiceMultiInstantiation()) {
-                List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription,
+                List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceToActivateDto.getCode(), subscription,
                     InstanceStatusEnum.INACTIVE);
                 if (alreadyInstantiatedServices != null && !alreadyInstantiatedServices.isEmpty()) {
                     serviceInstance = alreadyInstantiatedServices.get(0);
                 }
 
             } else {
-                List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription,
+                List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceToActivateDto.getCode(), subscription,
                     InstanceStatusEnum.INACTIVE, InstanceStatusEnum.ACTIVE);
 
                 if (alreadyInstantiatedServices != null && !alreadyInstantiatedServices.isEmpty()) {
@@ -603,9 +591,11 @@ public class SubscriptionApi extends BaseApi {
 
             // Update instantiated service with info
             if (serviceInstance != null) {
-                log.debug("Found already instantiated service {} of {} for subscription {} quantity {}", serviceInstance.getId(), serviceTemplate.getCode(), subscription.getCode(),
+                log.debug("Found already instantiated service {} of {} for subscription {} quantity {}", serviceInstance.getId(), serviceInstance.getServiceTemplate().getCode(), subscription.getCode(),
                     serviceInstance.getQuantity());
-
+                if(serviceToActivateDto.getOverrideCode()!=null){
+                    serviceInstance.setCode(serviceToActivateDto.getOverrideCode());
+                }
                 if (serviceToActivateDto.getSubscriptionDate() != null) {
                     serviceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
                 }
@@ -623,12 +613,19 @@ public class SubscriptionApi extends BaseApi {
 
                 // Instantiate if it was not instantiated earlier
             } else if (serviceInstance == null) {
+                ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode());
+                if (serviceTemplate == null) {
+                    throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
+                }
 
                 log.debug("Will instantiate as part of activation service {} for subscription {} quantity {}", serviceTemplate.getCode(), subscription.getCode(),
                     serviceToActivateDto.getQuantity());
 
                 serviceInstance = new ServiceInstance();
                 serviceInstance.setCode(serviceTemplate.getCode());
+                if(serviceToActivateDto.getOverrideCode()!=null){
+                    serviceInstance.setCode(serviceToActivateDto.getOverrideCode());
+                }
                 if (!StringUtils.isBlank(serviceToActivateDto.getDescription())) {
                     serviceInstance.setDescription(serviceToActivateDto.getDescription());
                 } else {
@@ -799,7 +796,10 @@ public class SubscriptionApi extends BaseApi {
                 }
             }
             serviceInstance = new ServiceInstance();
-            serviceInstance.setCode(serviceTemplate.getCode());
+            serviceInstance.setCode(serviceToInstantiateDto.getOverrideCode());
+            if(serviceInstance.getCode()==null){
+                serviceInstance.setCode(serviceTemplate.getCode());
+            }
             serviceInstance.setDescription(serviceTemplate.getDescription());
             serviceInstance.setServiceTemplate(serviceTemplate);
             serviceInstance.setSubscription(subscription);
@@ -1641,6 +1641,10 @@ public class SubscriptionApi extends BaseApi {
 
             if (serviceToUpdateDto.getQuantity() != null) {
                 serviceToUpdate.setQuantity(serviceToUpdateDto.getQuantity());
+            }
+
+            if (serviceToUpdateDto.getOverrideCode() != null) {
+                serviceToUpdate.setCode(serviceToUpdateDto.getOverrideCode());
             }
 
             // populate customFields

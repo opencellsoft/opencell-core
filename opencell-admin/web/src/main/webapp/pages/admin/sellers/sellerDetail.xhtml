@@ -9,6 +9,10 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{sellerBean.preRenderView}" />	
+            <f:viewParam name="mainTab" value="#{sellerBean.activeMainTab}" />	
+            <f:viewParam name="tab" value="#{sellerBean.activeTab}" />
 			<f:viewParam name="objectId" value="#{sellerBean.objectId}" />
 		</f:metadata>
 	</ui:define>
@@ -66,13 +70,13 @@
 
 		<h:panelGroup styleClass="col2-set">
 			<h:panelGroup styleClass="width: 90%;float:center;">
-				<p:tabView id="parentTab">
+				<p:tabView id="parentTab" styleClass="tab-parent" activeIndex="#{sellerBean.activeMainTab}">
 					<p:tab id="seller" title="#{messages['seller.tab.seller']}">
 						<hftl:formPanel formId="sellerFormId" ajaxSubmit="true"
 							submitPartialProcess=":parentTab:sellerFormId:tabView"
 							label="#{messages['seller.title']}" backingBean="#{sellerBean}">
 							<p:tabView id="tabView"
-								activeIndex="#{customerAccountBean.activeTab}">
+								activeIndex="#{sellerBean.activeTab}">
 								<p:tab title="#{messages['seller.tab.seller']}" id="tab0">
 									<hftl:formField label="#{messages['businessEntity.code']}"
 										field="code" required="true" />
@@ -340,6 +344,14 @@
 								field="transactionDate" />
 							<hftl:searchField label="#{messages['otherTransaction.dueDate']}"
 								field="dueDate" />
+							<ui:param name="buttons" value="true" />
+							<ui:define name="buttons">								
+								<p:button value="#{messages['action.back']}"
+									outcome="generalLedgers" includeViewParams="true">
+									<f:param name="cid"
+										value="#{javax.enterprise.context.conversation.id}" />
+								</p:button>
+							</ui:define>
 						</hftl:searchPanel>
 
 						<hftl:dataList backingBean="#{otherTransactionBean}" edit="#{true}" checkMany="#{false}"
@@ -422,7 +434,7 @@
 						
 						        
 						        <p:button id="#{resultsId}ventilate" outcome="/pages/payments/otherTransactions/ventilateTransaction.xhtml"
-						                  value="#{messages['paymentVentilation.ventilations']}" rendered="#{entity.type eq 'OTG' and entity.transactionCategory eq 'CREDIT'}">
+						                  value="#{messages['paymentVentilation.buttonVentilate']}" rendered="#{entity.type eq 'OTG' and entity.transactionCategory eq 'CREDIT'}">
 						            <f:param name="otgId" value="#{entity.id}"/>
 						            <f:param name="edit" value="true"/>
 						            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
