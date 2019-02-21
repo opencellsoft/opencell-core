@@ -38,6 +38,7 @@ import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -704,5 +705,19 @@ public final class FileUtils {
 
         return files;
     
+    }
+    
+    /**
+     * Checks if the file param is valid zip
+     * 
+     * @param file
+     * @return
+     */
+    public static boolean isValidZip(final File file) {
+        try (ZipFile zipfile = new ZipFile(file);) {
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
