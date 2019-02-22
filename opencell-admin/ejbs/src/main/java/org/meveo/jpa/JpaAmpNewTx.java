@@ -9,7 +9,8 @@ import java.lang.annotation.Target;
 import javax.interceptor.InterceptorBinding;
 
 /**
- * Annotation to bind interceptor that in case of application managed persistence context, a new EM will be instantiated for the period of a method call
+ * Annotation to bind interceptor that in case of application managed persistence context (GUI and secodary tenants. See EntityManagerProvider.getEntityManager()), a new EM will be
+ * instantiated for the period of a method call
  * 
  * @author Andrius Karpavicius
  */

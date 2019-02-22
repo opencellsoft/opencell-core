@@ -29,11 +29,13 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
+import org.meveo.service.custom.DataImportExportStatistics;
 import org.meveo.util.view.NativeTableBasedDataModel;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.UploadedFile;
 
 @Named
@@ -69,7 +71,9 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     private List<Map<String, Object>> selectedValues;
 
-    private Future<String> exportFuture;
+    private Future<DataImportExportStatistics> exportFuture;
+
+    private Future<DataImportExportStatistics> importFuture;
 
     public CustomTableBean() {
         super(CustomEntityTemplate.class);
@@ -238,9 +242,15 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
             return;
         }
 
-        int importedLinesTotal = customTableService.importData(entity, fields, file.getInputstream(), appendImportedData);
+        try {
+            importFuture = customTableService.importDataAsync(entity, fields, file.getInputstream(), appendImportedData);
+            messages.info(new BundleKey("messages", "customTable.importFile.started"));
 
-        messages.info(new BundleKey("messages", "customTable.importFile.importedLines"), importedLinesTotal);
+        } catch (Exception e) {
+            log.error("Failed to initialize custom table data import", e);
+            messages.info(new BundleKey("messages", "customTable.importFile.startFailed"), e.getMessage());
+        }
+
     }
 
     public boolean isAppendImportedData() {
@@ -319,11 +329,11 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
     public void exportData() {
         exportFuture = null;
 
-        PaginationConfiguration config = new PaginationConfiguration(filters);
+        PaginationConfiguration config = new PaginationConfiguration(filters, "id", SortOrder.ASCENDING);
 
         try {
             exportFuture = customTableService.exportData(entity, config);
-            // messages.info(new BundleKey("messages", "customTable.exportFile.inProgress"));
+            messages.info(new BundleKey("messages", "customTable.exportFile.started"));
 
         } catch (Exception e) {
             log.error("Failed to initialize custom table data export", e);
@@ -331,8 +341,12 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         }
     }
 
-    public Future<String> getExportFuture() {
+    public Future<DataImportExportStatistics> getExportFuture() {
         return exportFuture;
+    }
+
+    public Future<DataImportExportStatistics> getImportFuture() {
+        return importFuture;
     }
 
     // Bellow is implementation when value changes are accumulated and saved in bulk
