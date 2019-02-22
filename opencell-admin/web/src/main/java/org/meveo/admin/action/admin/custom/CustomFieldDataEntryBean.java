@@ -254,17 +254,19 @@ public class CustomFieldDataEntryBean implements Serializable {
         GroupedCustomField groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
         groupedFieldTemplates.put(entity.getUuid(), groupedCustomField);
 
-        Map<String, List<CustomFieldValue>> cfValuesByCode = new HashMap<>();
         // Get custom field instances mapped by a CFT code if entity has any field defined
-        // if (!((IEntity) entity).isTransient() && customFieldTemplates != null && customFieldTemplates.size() > 0) {
-        // No longer checking for isTransient as for offer new version creation, CFs are duplicated, but entity is not persisted, offering to review it in GUI before saving it.
-        if (customFieldTemplates != null && customFieldTemplates.size() > 0 && ((ICustomFieldEntity) entity).getCfValues() != null
-                && ((ICustomFieldEntity) entity).getCfValues().getValuesByCode() != null) {
+        if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 
-            cfValuesByCode = prepareCFIForGUI(customFieldTemplates, ((ICustomFieldEntity) entity).getCfValues().getValuesByCode(), entity);
+            Map<String, List<CustomFieldValue>> cfValuesByCode = new HashMap<>();
+            if (((ICustomFieldEntity) entity).getCfValues() != null && ((ICustomFieldEntity) entity).getCfValues().getValuesByCode() != null) {
+                cfValuesByCode = ((ICustomFieldEntity) entity).getCfValues().getValuesByCode();
+            }
+
+            cfValuesByCode = prepareCFIForGUI(customFieldTemplates, cfValuesByCode, entity);
+
+            CustomFieldValueHolder entityFieldsValues = new CustomFieldValueHolder(customFieldTemplates, cfValuesByCode, entity);
+            fieldsValues.put(entity.getUuid(), entityFieldsValues);
         }
-        CustomFieldValueHolder entityFieldsValues = new CustomFieldValueHolder(customFieldTemplates, cfValuesByCode, entity);
-        fieldsValues.put(entity.getUuid(), entityFieldsValues);
     }
 
     /**
