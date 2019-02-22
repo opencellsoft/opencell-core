@@ -94,7 +94,7 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "job_done")
-    private boolean done = true;
+    private boolean done = false;
 
     /**
      * How job was launched
@@ -183,6 +183,7 @@ public class JobExecutionResultImpl extends BaseEntity {
     public void close(String report) {
         this.report = report;
         this.endDate = new Date();
+        this.done = true;
     }
 
     /**
@@ -192,6 +193,7 @@ public class JobExecutionResultImpl extends BaseEntity {
         this.endDate = new Date();
         this.addReport(getErrorsAString());
         this.addReport(getWarningAString());
+        this.done = true;
     }
 
     /**

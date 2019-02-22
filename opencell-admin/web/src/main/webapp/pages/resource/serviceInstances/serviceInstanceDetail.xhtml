@@ -35,14 +35,13 @@
             selection="#{serviceInstanceBean.entity.subscription}" updateField=":formId:tabView:subscriptionSelectedId :formId:tabView:subscriptionSelectedId_text">
         </hftl:entityPopup>
 
-        <hftl:formPanel label="#{messages['serviceInstance.panel']}" edit="#{serviceInstanceBean.entity.status eq 'INACTIVE' or serviceInstanceBean.entity.status eq 'ACTIVE' or serviceInstanceBean.entity.status eq 'SUSPENDED'}" showEditButton="#{serviceInstanceBean.entity.status eq 'INACTIVE' or serviceInstanceBean.entity.status eq 'ACTIVE' or serviceInstanceBean.entity.status eq 'SUSPENDED'}"  backingBean="#{serviceInstanceBean}" ajaxSubmit="true" submitPartialProcess=":formId:tabView"
+        <hftl:formPanel label="#{messages['serviceInstance.panel']}" edit="#{serviceInstanceBean.entity.status eq 'INACTIVE' or serviceInstanceBean.entity.status eq 'ACTIVE' or serviceInstanceBean.entity.status eq 'SUSPENDED'}" showEditButton="#{serviceInstanceBean.entity.status eq 'INACTIVE' or serviceInstanceBean.entity.status eq 'ACTIVE' or serviceInstanceBean.entity.status eq 'SUSPENDED'}"  backingBean="#{serviceInstanceBean}"
                 objectIdParamName="serviceInstanceId" showDeleteButton="#{serviceInstanceBean.entity.status eq 'INACTIVE'}">
 
             <p:tabView id="tabView" activeIndex="#{serviceInstanceBean.activeTab}">
                 <p:tab title="#{messages['commons.tab.information']}">
 
-                    <hftl:formField id="serviceSelectedId" label="#{messages['serviceInstance.code']}" field="serviceTemplate" valueLabelField="code" required="true" popup="true"
-                        popupId="serviceTemplatePopup" allowEdit="false" />
+                    <hftl:formField id="serviceSelectedId" label="#{messages['serviceInstance.code']}" field="code" valueLabelField="code" required="true" popup="false" allowEdit="true" />
 
                     <hftl:formField id="subscriptionSelectedId" label="#{messages['serviceInstance.subscription']}" field="subscription" valueLabelField="code" required="true"
                         popup="true" popupId="subscriptionPopup" allowEdit="false" />

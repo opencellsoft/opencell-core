@@ -33,7 +33,10 @@
     </c:if>
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
+        <p:selectBooleanCheckbox value="#{field.stringValue}" disabled="#{! edit or disabled}"/>
 
+    </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
         <h:outputText value="#{field.stringValue}" styleClass="field-value" rendered="#{! edit or disabled}" />
 
@@ -133,5 +136,6 @@
             <f:selectItems value="#{cft.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
         </p:selectOneMenu>
     </c:if>
+
 </ui:composition>
 </html>

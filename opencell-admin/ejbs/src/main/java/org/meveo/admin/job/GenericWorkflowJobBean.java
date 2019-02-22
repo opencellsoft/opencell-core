@@ -77,6 +77,11 @@ public class GenericWorkflowJobBean extends BaseJobBean {
                 throw new BusinessException(String.format("No Workflow found with code = [%s]", genericWfCode));
             }
 
+            if (!genericWf.isActive()) {
+                log.debug("The workflow " + genericWfCode + " is disabled, the job will exit.");
+                return;
+            }
+
             // Create wf instances
             List<BusinessEntity> entities = workflowInstanceService.findEntitiesWithoutWFInstance(genericWf);
             for (BusinessEntity entity : entities) {

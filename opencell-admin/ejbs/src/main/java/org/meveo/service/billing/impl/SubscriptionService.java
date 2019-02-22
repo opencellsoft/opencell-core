@@ -18,7 +18,10 @@
  */
 package org.meveo.service.billing.impl;
 
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -264,11 +267,14 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     private Subscription terminateSubscriptionWithFutureDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason) throws BusinessException {
+        
     	subscription.setSubscribedTillDate(terminationDate);
-		subscription.getSubscriptionRenewal().setTerminationReason(terminationReason);
-		subscription.getSubscriptionRenewal().setInitialTermType(InitialTermTypeEnum.FIXED);
-		subscription.getSubscriptionRenewal().setAutoRenew(false);		
-		subscription.getSubscriptionRenewal().setEndOfTermAction(EndOfTermActionEnum.TERMINATE);
+    	SubscriptionRenewal subscriptionRenewal = subscription.getSubscriptionRenewal();
+    	
+    	subscriptionRenewal.setTerminationReason(terminationReason);
+    	subscriptionRenewal.setInitialTermType(InitialTermTypeEnum.FIXED);
+    	subscriptionRenewal.setAutoRenew(false);		
+    	subscriptionRenewal.setEndOfTermAction(EndOfTermActionEnum.TERMINATE);
 		
 		subscription = update(subscription);
 		
@@ -377,11 +383,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
     
 	public void activateInstantiatedService(Subscription sub) throws BusinessException {
-		for (ServiceInstance si : sub.getServiceInstances()) {
-			if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
-				serviceInstanceService.serviceActivation(si, null, null);
-			}
-		}
+    	// using a new ArrayList (cloning the original one) to avoid ConcurrentModificationException
+	    for (ServiceInstance si : new ArrayList<>(emptyIfNull(sub.getServiceInstances()))) {
+	        if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
+                serviceInstanceService.serviceActivation(si, null, null);
+            }
+	    }
 	}
  
     /**
@@ -539,4 +546,31 @@ public class SubscriptionService extends BusinessService<Subscription> {
         balance = (BigDecimal) query.getSingleResult();
         return balance;
     }
+
+    /**
+    * Returns all subscriptions to the given offer by code
+    *
+    * @param offerCode code of the Offer to search
+    * @param sortBy sort criteria
+    * @param sortOrder sort order
+    * @return list of Subscription
+    */
+    public List<Subscription> listByOffer(String offerCode, String sortBy, SortOrder sortOrder) {
+        QueryBuilder qb = new QueryBuilder(Subscription.class, "c");
+        qb.addCriterionEntity("offer.code", offerCode);
+
+        boolean ascending = true;
+        if (sortOrder != null) {
+            ascending = sortOrder.equals(SortOrder.ASCENDING);
+        }
+        qb.addOrderCriterion(sortBy, ascending);
+
+        try {
+            return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.trace("No subscription found for offer code " + offerCode, e);
+            return null;
+        }
+    }
+
 }

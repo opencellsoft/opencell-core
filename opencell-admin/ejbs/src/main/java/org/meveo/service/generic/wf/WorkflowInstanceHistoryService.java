@@ -23,6 +23,8 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
@@ -69,5 +71,30 @@ public class WorkflowInstanceHistoryService extends PersistenceService<WorkflowI
         params.put("entityInstanceCode", entityInstanceCode);
 
         return (List<WorkflowInstanceHistory>) executeSelectQuery(query, params);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<WorkflowInstanceHistory> find(String entityInstanceCode, String workflowCode, String fromStatus, String toStatus) {
+
+        QueryBuilder queryBuilder = new QueryBuilder(WorkflowInstanceHistory.class, "wfih");
+        if (!StringUtils.isBlank(entityInstanceCode)) {
+            queryBuilder.addCriterion("wfih.workflowInstance.code", "=", entityInstanceCode, true);
+        }
+        if (!StringUtils.isBlank(workflowCode)) {
+            queryBuilder.addCriterion("wfih.workflowInstance.genericWorkflow.code", "=", workflowCode, true);
+        }
+        if (!StringUtils.isBlank(fromStatus)) {
+            queryBuilder.addCriterion("wfih.fromStatus", "=", fromStatus, true);
+        }
+        if (!StringUtils.isBlank(toStatus)) {
+            queryBuilder.addCriterion("wfih.toStatus", "=", toStatus, true);
+        }
+
+        try {
+            return (List<WorkflowInstanceHistory>) queryBuilder.getQuery(getEntityManager()).getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 }
