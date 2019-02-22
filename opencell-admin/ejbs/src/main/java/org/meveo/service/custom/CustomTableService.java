@@ -51,10 +51,12 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ElasticSearchClassInfo;
 
+import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
+import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.ColumnType;
@@ -145,7 +147,7 @@ public class CustomTableService extends NativePersistenceService {
      * @param updateES Should Elastic search be updated during record creation. If false, ES population must be done outside this call.
      * @throws BusinessException General exception
      */
-    private void create(String tableName, List<Map<String, Object>> values, boolean updateES) throws BusinessException {
+    public void create(String tableName, List<Map<String, Object>> values, boolean updateES) throws BusinessException {
 
         for (Map<String, Object> value : values) {
 
@@ -237,7 +239,7 @@ public class CustomTableService extends NativePersistenceService {
     @Override
     public void remove(String tableName) throws BusinessException {
         super.remove(tableName);
-        elasticClient.remove(CustomTableRecord.class, tableName, (Long) null, true);
+        // elasticClient.remove(CustomTableRecord.class, tableName, (Long) null, true);
     }
 
     /**
@@ -245,69 +247,78 @@ public class CustomTableService extends NativePersistenceService {
      * 
      * @param customEntityTemplate Custom table definition
      * @param config Pagination and search criteria
-     * @return A file name where the data will be exported to
+     * @return A future with a file name where the data will be exported to or an exception occurred
      * @throws BusinessException General exception
      */
     @Asynchronous
     @SuppressWarnings("unchecked")
-    public Future<String> exportData(CustomEntityTemplate customEntityTemplate, PaginationConfiguration config) throws BusinessException {
+    public Future<DataImportExportStatistics> exportData(CustomEntityTemplate customEntityTemplate, PaginationConfiguration config) throws BusinessException {
 
-        QueryBuilder queryBuilder = getQuery(customEntityTemplate.getDbTablename(), config);
+        try {
+            QueryBuilder queryBuilder = getQuery(customEntityTemplate.getDbTablename(), config);
 
-        SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
+            SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
 
-        int firstRow = 0;
-        int nrItemsFound = 0;
+            int firstRow = 0;
+            int nrItemsFound = 0;
 
-        ParamBean parambean = paramBeanFactory.getInstance();
-        String exportDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "exports" + File.separator;
+            ParamBean parambean = paramBeanFactory.getInstance();
+            String providerRoot = parambean.getChrootDir(currentUser.getProviderCode());
+            String exportDir = providerRoot + File.separator + "exports" + File.separator;
 
-        File exportsDirFile = new File(exportDir);
+            File exportsDirFile = new File(exportDir);
 
-        File exportFile = new File(exportDir + customEntityTemplate.getDbTablename() + "_id" + DateUtils.formatDateWithPattern(new Date(), "_yyyy-MM-dd_HH-mm-ss") + ".csv");
+            File exportFile = new File(exportDir + customEntityTemplate.getDbTablename() + DateUtils.formatDateWithPattern(new Date(), "_yyyy-MM-dd_HH-mm-ss") + ".csv");
 
-        if (!exportsDirFile.exists()) {
-            exportsDirFile.mkdirs();
-        }
-
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getAppliesTo());
-
-        if (cfts == null || cfts.isEmpty()) {
-            throw new ValidationException("No fields are defined for custom table " + customEntityTemplate.getDbTablename(), "customTable.noFields");
-        }
-
-        List<CustomFieldTemplate> fields = new ArrayList<>(cfts.values());
-
-        Collections.sort(fields, new Comparator<CustomFieldTemplate>() {
-
-            @Override
-            public int compare(CustomFieldTemplate cft1, CustomFieldTemplate cft2) {
-                int pos1 = cft1.getGUIFieldPosition();
-                int pos2 = cft2.getGUIFieldPosition();
-
-                return pos1 - pos2;
+            if (!exportsDirFile.exists()) {
+                exportsDirFile.mkdirs();
             }
-        });
 
-        ObjectWriter oWriter = getCSVWriter(fields);
+            Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getAppliesTo());
 
-        try (FileWriter fileWriter = new FileWriter(exportFile)) {
-            do {
-                queryBuilder.applyPagination(query, firstRow, 500);
-                List<Map<String, Object>> values = query.list();
-                nrItemsFound = values.size();
+            if (cfts == null || cfts.isEmpty()) {
+                throw new ValidationException("No fields are defined for custom table " + customEntityTemplate.getDbTablename(), "customTable.noFields");
+            }
 
-                oWriter.writeValues(fileWriter).writeAll(values);
+            List<CustomFieldTemplate> fields = new ArrayList<>(cfts.values());
 
-            } while (nrItemsFound == 500);
+            Collections.sort(fields, new Comparator<CustomFieldTemplate>() {
 
-        } catch (IOException e) {
-            log.error("Failed to write {} table data to a file {}", customEntityTemplate.getDbTablename(), exportFile.getAbsolutePath(), e);
-            throw new BusinessException(e);
+                @Override
+                public int compare(CustomFieldTemplate cft1, CustomFieldTemplate cft2) {
+                    int pos1 = cft1.getGUIFieldPosition();
+                    int pos2 = cft2.getGUIFieldPosition();
+
+                    return pos1 - pos2;
+                }
+            });
+
+            ObjectWriter oWriter = getCSVWriter(fields);
+
+            try (FileWriter fileWriter = new FileWriter(exportFile)) {
+
+                SequenceWriter sWriter = oWriter.writeValues(fileWriter);
+
+                do {
+                    queryBuilder.applyPagination(query, firstRow, 500);
+                    List<Map<String, Object>> values = query.list();
+                    nrItemsFound = values.size();
+                    firstRow = firstRow + 500;
+
+                    sWriter.writeAll(values);
+
+                } while (nrItemsFound == 500);
+
+            } catch (IOException e) {
+                log.error("Failed to write {} table data to a file {}", customEntityTemplate.getDbTablename(), exportFile.getAbsolutePath(), e);
+                throw new BusinessException(e);
+            }
+
+            return new AsyncResult<DataImportExportStatistics>(new DataImportExportStatistics(exportFile.getAbsolutePath().substring(providerRoot.length())));
+
+        } catch (Exception e) {
+            return new AsyncResult<DataImportExportStatistics>(new DataImportExportStatistics(e));
         }
-
-        return new AsyncResult<String>(exportFile.getAbsolutePath());
-
     }
 
     /**
@@ -333,6 +344,31 @@ public class CustomTableService extends NativePersistenceService {
 
         } catch (IOException e) {
             throw new BusinessException(e);
+        }
+    }
+
+    /**
+     * Import data into custom table in asynchronous mode
+     * 
+     * @param customEntityTemplate Custom table definition
+     * @param fields Custom table fields. Fields will be sorted by their GUI 'field' position.
+     * @param inputStream Data stream
+     * @param append True if data should be appended to the existing data
+     * @return A future with a number of records imported or exception occurred
+     * @throws BusinessException General business exception
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Future<DataImportExportStatistics> importDataAsync(CustomEntityTemplate customEntityTemplate, List<CustomFieldTemplate> fields, InputStream inputStream, boolean append)
+            throws BusinessException {
+
+        try {
+            log.error("AKK current user is {}", currentUser);
+            int itemsImported = importData(customEntityTemplate, fields, inputStream, append);
+            return new AsyncResult<DataImportExportStatistics>(new DataImportExportStatistics(itemsImported));
+
+        } catch (Exception e) {
+            return new AsyncResult<DataImportExportStatistics>(new DataImportExportStatistics(e));
         }
     }
 
@@ -373,7 +409,7 @@ public class CustomTableService extends NativePersistenceService {
 
         // Delete current data first if in override mode
         if (!append) {
-            remove(tableName);
+            customTableService.remove(tableName);
         }
 
         try (Reader reader = new InputStreamReader(inputStream)) {
@@ -458,7 +494,8 @@ public class CustomTableService extends NativePersistenceService {
         CsvSchema schema = builder.setUseHeader(true).build();
         CsvMapper mapper = new CsvMapper();
 
-        return mapper.writerFor(Map.class).with(schema).with(new SimpleDateFormat(ParamBean.getInstance().getDateTimeFormat(appProvider.getCode())));
+        return mapper.writerFor(Map.class).with(schema).with(new SimpleDateFormat(ParamBean.getInstance().getDateTimeFormat(appProvider.getCode())))
+            .with(Feature.WRITE_BIGDECIMAL_AS_PLAIN);
     }
 
     /**
