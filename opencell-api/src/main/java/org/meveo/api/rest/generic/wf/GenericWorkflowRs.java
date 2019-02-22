@@ -37,7 +37,7 @@ public interface GenericWorkflowRs extends IBaseRs {
     /**
      * Update an existing workflow
      * 
-     * @param workflowDto The workflow's data
+     * @param genericWorkflowDto The workflow's data
      * @return Request processing status
      */
     @PUT
