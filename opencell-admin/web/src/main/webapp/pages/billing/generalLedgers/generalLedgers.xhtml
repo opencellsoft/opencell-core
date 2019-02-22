@@ -17,7 +17,7 @@
 			</p:breadCrumb>
 		</h:form>	
 
-		<hftl:searchPanel label="#{messages['billingGeneralLedger.search']}" backingBean="#{generalLedgerListBean}">
+		<hftl:searchPanel label="#{messages['billingGeneralLedger.search']}" backingBean="#{generalLedgerListBean}" renderNewButton="false">
 			<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:searchField label="#{messages['businessEntity.description']}" id="description" field="description" />
 		</hftl:searchPanel>
