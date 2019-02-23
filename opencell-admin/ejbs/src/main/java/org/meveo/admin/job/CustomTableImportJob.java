@@ -128,7 +128,7 @@ public class CustomTableImportJob extends Job {
             }
 
         } catch (Exception e) {
-            log.error("Failed to run mediation", e);
+            log.error("Failed to run custom table data import", e);
             result.registerError(e.getMessage());
         }
     }
@@ -193,7 +193,7 @@ public class CustomTableImportJob extends Job {
                 FileUtils.moveFile(outputDir, file, filename);
 
             } catch (Exception e) {
-                log.error("Failed to import data from file {} into custom table", filename);
+                log.error("Failed to import data from file {} into custom table", filename, e);
                 result.registerError(filename, e.getMessage());
                 FileUtils.moveFile(rejectDir, file, filename);
             }

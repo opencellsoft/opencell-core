@@ -149,20 +149,18 @@ public class CustomTableService extends NativePersistenceService {
      */
     public void create(String tableName, List<Map<String, Object>> values, boolean updateES) throws BusinessException {
 
-        for (Map<String, Object> value : values) {
+        // Insert record to db, with ID returned, but flush to ES after the values are processed
+        if (updateES) {
 
-            // Return ID, but postpone ES flushing until all the values are processed
-            if (updateES) {
+            for (Map<String, Object> value : values) {
                 Long id = super.create(tableName, value, true); // Force to return ID as we need it to retrieve data for Elastic Search population
                 elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, value, false, false);
-
-            } else {
-                super.create(tableName, value, false);
             }
-        }
 
-        if (updateES) {
             elasticClient.flushChanges();
+
+        } else {
+            super.create(tableName, values);
         }
     }
 
@@ -239,7 +237,7 @@ public class CustomTableService extends NativePersistenceService {
     @Override
     public void remove(String tableName) throws BusinessException {
         super.remove(tableName);
-        // elasticClient.remove(CustomTableRecord.class, tableName, (Long) null, true);
+        elasticClient.remove(CustomTableRecord.class, tableName);
     }
 
     /**
@@ -333,14 +331,8 @@ public class CustomTableService extends NativePersistenceService {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public int importData(CustomEntityTemplate customEntityTemplate, File file, boolean append) throws BusinessException {
 
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getAppliesTo());
-
-        if (cfts == null || cfts.isEmpty()) {
-            throw new ValidationException("No fields are defined for custom table " + customEntityTemplate.getDbTablename(), "customTable.noFields");
-        }
-
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            return importData(customEntityTemplate, new ArrayList<>(cfts.values()), inputStream, append);
+            return importData(customEntityTemplate, inputStream, append);
 
         } catch (IOException e) {
             throw new BusinessException(e);
@@ -351,7 +343,6 @@ public class CustomTableService extends NativePersistenceService {
      * Import data into custom table in asynchronous mode
      * 
      * @param customEntityTemplate Custom table definition
-     * @param fields Custom table fields. Fields will be sorted by their GUI 'field' position.
      * @param inputStream Data stream
      * @param append True if data should be appended to the existing data
      * @return A future with a number of records imported or exception occurred
@@ -359,12 +350,11 @@ public class CustomTableService extends NativePersistenceService {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<DataImportExportStatistics> importDataAsync(CustomEntityTemplate customEntityTemplate, List<CustomFieldTemplate> fields, InputStream inputStream, boolean append)
-            throws BusinessException {
+    public Future<DataImportExportStatistics> importDataAsync(CustomEntityTemplate customEntityTemplate, InputStream inputStream, boolean append) throws BusinessException {
 
         try {
             log.error("AKK current user is {}", currentUser);
-            int itemsImported = importData(customEntityTemplate, fields, inputStream, append);
+            int itemsImported = importData(customEntityTemplate, inputStream, append);
             return new AsyncResult<DataImportExportStatistics>(new DataImportExportStatistics(itemsImported));
 
         } catch (Exception e) {
@@ -376,18 +366,20 @@ public class CustomTableService extends NativePersistenceService {
      * Import data into custom table
      * 
      * @param customEntityTemplate Custom table definition
-     * @param fields Custom table fields. Fields will be sorted by their GUI 'field' position.
      * @param inputStream Data stream
      * @param append True if data should be appended to the existing data
      * @return Number of records imported
      * @throws BusinessException General business exception
      */
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public int importData(CustomEntityTemplate customEntityTemplate, List<CustomFieldTemplate> fields, InputStream inputStream, boolean append) throws BusinessException {
+    public int importData(CustomEntityTemplate customEntityTemplate, InputStream inputStream, boolean append) throws BusinessException {
 
-        if (fields == null || fields.isEmpty()) {
+        // Custom table fields. Fields will be sorted by their GUI 'field' position.
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getAppliesTo());
+        if (cfts == null || cfts.isEmpty()) {
             throw new ValidationException("No fields are defined for custom table " + customEntityTemplate.getDbTablename(), "customTable.noFields");
         }
+        List<CustomFieldTemplate> fields = new ArrayList<>(cfts.values());
 
         Collections.sort(fields, new Comparator<CustomFieldTemplate>() {
 
@@ -412,6 +404,9 @@ public class CustomTableService extends NativePersistenceService {
             customTableService.remove(tableName);
         }
 
+        // Update ES in batch way might be faster - reconstructed from a table
+        boolean updateESImediately = false;
+
         try (Reader reader = new InputStreamReader(inputStream)) {
 
             MappingIterator<Map<String, Object>> mappingIterator = oReader.readValues(reader);
@@ -422,7 +417,7 @@ public class CustomTableService extends NativePersistenceService {
                 if (importedLines >= 500) {
 
                     values = convertValues(values, fields, false);
-                    customTableService.create(tableName, values, append);
+                    customTableService.create(tableName, values, updateESImediately);
 
                     values.clear();
                     importedLines = 0;
@@ -437,10 +432,10 @@ public class CustomTableService extends NativePersistenceService {
 
             // Save to DB remaining records
             values = convertValues(values, fields, false);
-            customTableService.create(tableName, values, append);
+            customTableService.create(tableName, values, updateESImediately);
 
-            // Repopulate ES index
-            if (!append) {
+            // Re-populate ES index
+            if (!updateESImediately) {
                 elasticClient.repopulate(currentUser, CustomTableRecord.class, customEntityTemplate.getCode());
             }
 
@@ -448,6 +443,88 @@ public class CustomTableService extends NativePersistenceService {
             throw new ValidationException("Invalid file format", "message.upload.fail.invalidFormat", e);
 
         } catch (IOException e) {
+            throw new BusinessException(e);
+        }
+
+        return importedLinesTotal;
+    }
+
+    /**
+     * Import data into custom table
+     * 
+     * @param customEntityTemplate Custom table definition
+     * @param values A list of records to import. Each record is a map of values with field name as a map key and field value as a value.
+     * @param append True if data should be appended to the existing data
+     * @return Number of records imported
+     * @throws BusinessException General business exception
+     */
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public int importData(CustomEntityTemplate customEntityTemplate, List<Map<String, Object>> values, boolean append) throws BusinessException {
+
+        // Custom table fields. Fields will be sorted by their GUI 'field' position.
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getAppliesTo());
+        if (cfts == null || cfts.isEmpty()) {
+            throw new ValidationException("No fields are defined for custom table " + customEntityTemplate.getDbTablename(), "customTable.noFields");
+        }
+        List<CustomFieldTemplate> fields = new ArrayList<>(cfts.values());
+
+        Collections.sort(fields, new Comparator<CustomFieldTemplate>() {
+
+            @Override
+            public int compare(CustomFieldTemplate cft1, CustomFieldTemplate cft2) {
+                int pos1 = cft1.getGUIFieldPosition();
+                int pos2 = cft2.getGUIFieldPosition();
+
+                return pos1 - pos2;
+            }
+        });
+
+        String tableName = customEntityTemplate.getDbTablename();
+        int importedLines = 0;
+        int importedLinesTotal = 0;
+        List<Map<String, Object>> valuesPartial = new ArrayList<Map<String, Object>>();
+
+        // Delete current data first if in override mode
+        if (!append) {
+            customTableService.remove(tableName);
+        }
+
+        // By default will update ES immediately. If more than 100 records are being updated, ES will be updated in batch way - reconstructed from a table
+        boolean updateESImediately = append;
+        if (values.size() > 100) {
+            updateESImediately = false;
+        }
+
+        try {
+
+            for (Map<String, Object> value : values) {
+
+                // Save to DB every 500 records
+                if (importedLines >= 500) {
+
+                    valuesPartial = convertValues(valuesPartial, fields, false);
+                    customTableService.create(tableName, valuesPartial, updateESImediately);
+
+                    valuesPartial.clear();
+                    importedLines = 0;
+                }
+
+                valuesPartial.add(value);
+
+                importedLines++;
+                importedLinesTotal++;
+            }
+
+            // Save to DB remaining records
+            valuesPartial = convertValues(valuesPartial, fields, false);
+            customTableService.create(tableName, valuesPartial, updateESImediately);
+
+            // Repopulate ES index
+            if (!updateESImediately) {
+                elasticClient.repopulate(currentUser, CustomTableRecord.class, customEntityTemplate.getCode());
+            }
+
+        } catch (Exception e) {
             throw new BusinessException(e);
         }
 

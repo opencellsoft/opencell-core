@@ -568,7 +568,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
         try {
 
-            customTableApi.append(dto);
+            customTableApi.create(dto);
 
         } catch (Exception e) {
             processException(e, result);

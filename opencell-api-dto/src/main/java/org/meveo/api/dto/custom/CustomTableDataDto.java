@@ -31,6 +31,12 @@ public class CustomTableDataDto extends BaseEntityDto {
     private String customTableCode;
 
     /**
+     * Should data be overwritten (deleted all data first) instead of appended to existing values. Defaults to false if omitted.
+     */
+    @XmlAttribute
+    private Boolean overrwrite;
+
+    /**
      * A list of values with field name as map's key and field value as map's value
      */
     @XmlElementWrapper(name = "records")
@@ -49,6 +55,20 @@ public class CustomTableDataDto extends BaseEntityDto {
      */
     public void setCustomTableCode(String customTableCode) {
         this.customTableCode = customTableCode;
+    }
+
+    /**
+     * @return Should data be overwritten (deleted all data first) instead of appended to existing values. Defaults to false if null.
+     */
+    public Boolean getOverrwrite() {
+        return overrwrite;
+    }
+
+    /**
+     * @param overrwrite Should data be overwritten (deleted all data first) instead of appended to existing values.
+     */
+    public void setOverrwrite(Boolean overrwrite) {
+        this.overrwrite = overrwrite;
     }
 
     /**

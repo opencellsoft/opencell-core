@@ -50,14 +50,14 @@ public class CustomTableApi extends BaseApi {
     private CustomFieldTemplateService customFieldTemplateService;
 
     /**
-     * Create new records in a custom table
+     * Create new records in a custom table with an option of deleting existing data first
      * 
      * @param dto Values to add
      * @throws MeveoApiException API exception
      * @throws BusinessException General exception
      */
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void append(CustomTableDataDto dto) throws MeveoApiException, BusinessException {
+    public void create(CustomTableDataDto dto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(dto.getCustomTableCode())) {
             missingParameters.add("customTableCode");
@@ -68,37 +68,22 @@ public class CustomTableApi extends BaseApi {
 
         handleMissingParameters();
 
+        if (dto.getOverrwrite() == null) {
+            dto.setOverrwrite(false);
+        }
+
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCustomTableCode());
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCustomTableCode());
         }
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
-        if (cfts == null || cfts.isEmpty()) {
-            throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
-        }
 
-        int importedLines = 0;
         List<Map<String, Object>> values = new ArrayList<>();
 
         for (CustomTableRecordDto record : dto.getValues()) {
-
-            // Save every 500 records
-            if (importedLines >= 500) {
-
-                values = customTableService.convertValues(values, cfts.values(), false);
-                customTableService.create(cet.getDbTablename(), values);
-
-                values.clear();
-                importedLines = 0;
-            }
-
             values.add(record.getValues());
-            importedLines++;
         }
 
-        // Save remaining records
-        values = customTableService.convertValues(values, cfts.values(), false);
-        customTableService.create(cet.getDbTablename(), values);
+        customTableService.importData(cet, values, !dto.getOverrwrite());
 
     }
 
