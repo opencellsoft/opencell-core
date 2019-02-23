@@ -243,7 +243,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         }
 
         try {
-            importFuture = customTableService.importDataAsync(entity, fields, file.getInputstream(), appendImportedData);
+            importFuture = customTableService.importDataAsync(entity,  file.getInputstream(), appendImportedData);
             messages.info(new BundleKey("messages", "customTable.importFile.started"));
 
         } catch (Exception e) {

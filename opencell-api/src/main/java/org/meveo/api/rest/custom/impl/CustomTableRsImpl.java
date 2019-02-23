@@ -33,7 +33,7 @@ public class CustomTableRsImpl extends BaseRs implements CustomTableRs {
 
         try {
 
-            customTableApi.append(dto);
+            customTableApi.create(dto);
 
         } catch (Exception e) {
             processException(e, result);

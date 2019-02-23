@@ -20,12 +20,17 @@ package org.meveo.service.base;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -114,6 +119,97 @@ public class NativePersistenceService extends BaseService {
         Long id = create(tableName, values, true);
 
         return id;
+    }
+
+    /**
+     * Insert multiple values into table. Uses a prepared statement.
+     * 
+     * NOTE: The sql statement is determined by the fields passed in the first value, so its important that either all values have the same fields (order does not matter), or first
+     * value has the maximum number of fields
+     * 
+     * @param tableName Table name to insert values to
+     * @param values A list of values to insert
+     * @throws BusinessException General exception
+     */
+    public void create(String tableName, List<Map<String, Object>> values) throws BusinessException {
+
+        if (values == null || values.isEmpty()) {
+            return;
+        }
+
+        StringBuffer sql = new StringBuffer();
+        Map<String, Object> firstValue = values.get(0);
+
+        sql.append("insert into ").append(tableName);
+        StringBuffer fields = new StringBuffer();
+        StringBuffer fieldValues = new StringBuffer();
+        List<String> fieldNames = new LinkedList<>();
+
+        boolean first = true;
+        for (String fieldName : firstValue.keySet()) {
+
+            if (!first) {
+                fields.append(",");
+                fieldValues.append(",");
+            }
+            fieldNames.add(fieldName);
+            fields.append(fieldName);
+            fieldValues.append("?");
+            first = false;
+        }
+
+        sql.append(" (").append(fields).append(") values (").append(fieldValues).append(")");
+
+        Session hibernateSession = getEntityManager().unwrap(Session.class);
+
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+            @Override
+            public void execute(Connection connection) throws SQLException {
+
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql.toString())) {
+
+                    Object fieldValue = null;
+                    int i = 1;
+                    for (Map<String, Object> value : values) {
+
+                        i = 1;
+                        for (String fieldName : fieldNames) {
+                            fieldValue = value.get(fieldName);
+
+                            if (fieldValue == null) {
+                                preparedStatement.setNull(i, Types.NULL);
+                            } else if (fieldValue instanceof String) {
+                                preparedStatement.setString(i, (String) fieldValue);
+                            } else if (fieldValue instanceof Long) {
+                                preparedStatement.setLong(i, (Long) fieldValue);
+                            } else if (fieldValue instanceof Double) {
+                                preparedStatement.setDouble(i, (Double) fieldValue);
+                            } else if (fieldValue instanceof BigInteger) {
+                                preparedStatement.setInt(i, ((BigInteger) fieldValue).intValue());
+                            } else if (fieldValue instanceof BigDecimal) {
+                                preparedStatement.setBigDecimal(i, (BigDecimal) fieldValue);
+                            } else if (fieldValue instanceof Date) {
+                                preparedStatement.setDate(i, new java.sql.Date(((Date) fieldValue).getTime()));
+                            }
+
+                            i++;
+                        }
+
+                        preparedStatement.addBatch();
+                        // Batch size: 20
+                        if (i % 20 == 0) {
+                            preparedStatement.executeBatch();
+                        }
+                        i++;
+                    }
+                    preparedStatement.executeBatch();
+                } catch (SQLException e) {
+                    log.error("Failed to bulk insert with sql {}", sql, e);
+                    throw e;
+                }
+            }
+        });
     }
 
     /**

@@ -66,7 +66,8 @@ public class ElasticClient {
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
     public static int DEFAULT_SEARCH_PAGE_SIZE = 10;
-    public static int INDEX_POPULATE_PAGE_SIZE = 100;
+    public static int INDEX_POPULATE_PAGE_SIZE = 1000;
+    public static int INDEX_POPULATE_CT_PAGE_SIZE = 10000;
 
     @Inject
     private Logger log;
@@ -374,6 +375,39 @@ public class ElasticClient {
     }
 
     /**
+     * Remove ALL entities from Elastic Search. NOTE: Changes are propagated immediately.
+     *
+     * @param entityClass Entity class to remove from Elastic Search
+     * @param cetCode Custom entity template code
+     */
+    public void remove(Class<? extends ISearchable> entityClass, String cetCode) {
+
+        if (!esConnection.isEnabled()) {
+            return;
+        }
+
+        String index = null;
+        String type = null;
+        String id = null;
+        try {
+
+            index = esConfiguration.getIndex(entityClass);
+            // Not interested in storing and indexing this entity in Elastic Search
+            if (index == null) {
+                return;
+            }
+
+            type = esConfiguration.getType(entityClass, cetCode);
+
+            // TODO add code to remove
+            flushChanges();
+
+        } catch (Exception e) {
+            log.error("Failed to queue document delete from Elastic Search to {}/{}/{}", ReflectionUtils.getCleanClassName(entityClass.getSimpleName()), index, type, id, e);
+        }
+    }
+
+    /**
      * Process pending changes to Elastic Search
      */
     public void flushChanges() {
@@ -404,8 +438,8 @@ public class ElasticClient {
                     bulkRequest.add(client.prepareUpdate(change.getIndex(), change.getType(), change.getId()).setDoc(change.getSource()).setUpsert(change.getSource()));
 
                 } else if (change.getAction() == ElasticSearchAction.DELETE) {
-                    
-                    if (change.getId()!=null){                    
+
+                    if (change.getId() != null) {
                         bulkRequest.add(client.prepareDelete(change.getIndex(), change.getType(), change.getId()));
                     } else {
                         // need to drop the type/index and recreate it again
@@ -830,11 +864,11 @@ public class ElasticClient {
                         boolean hasMore = true;
 
                         while (hasMore) {
-                            int found = elasticSearchIndexPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), from, statistics);
+                            int found = elasticSearchIndexPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), from, INDEX_POPULATE_CT_PAGE_SIZE, statistics);
 
-                            from = from + INDEX_POPULATE_PAGE_SIZE;
+                            from = from + INDEX_POPULATE_CT_PAGE_SIZE;
                             totalProcessed = totalProcessed + found;
-                            hasMore = found == INDEX_POPULATE_PAGE_SIZE;
+                            hasMore = found == INDEX_POPULATE_CT_PAGE_SIZE;
                         }
 
                         log.info("Finished populating Elastic Search with data from {} table. Processed {} records.", cet.getDbTablename(), totalProcessed);
@@ -850,7 +884,7 @@ public class ElasticClient {
                     boolean hasMore = true;
 
                     while (hasMore) {
-                        int found = elasticSearchIndexPopulationService.populateIndex(classname, from, statistics);
+                        int found = elasticSearchIndexPopulationService.populateIndex(classname, from, INDEX_POPULATE_PAGE_SIZE, statistics);
 
                         from = from + INDEX_POPULATE_PAGE_SIZE;
                         totalProcessed = totalProcessed + found;
@@ -872,11 +906,11 @@ public class ElasticClient {
     }
 
     /**
-     * Delete and repopulate data for a given entity class/custom entity code. NOTE: does not change the index structure.
+     * Delete (does not delete now) and repopulate data for a given entity class/custom entity code. NOTE: does not change the index structure.
      * 
      * @param lastCurrentUser Current user
      * @param entityClass Entity class to rebuild
-     * @param cetCode Custom entity template to rebuild
+     * @param cetCode Custom entity template to rebuild. Applies only to custom tables. Custom entity instances are rebuild all together.
      * @return Reindexing statistics
      * @throws BusinessException General exception
      */
@@ -892,13 +926,15 @@ public class ElasticClient {
             return new AsyncResult<ReindexingStatistics>(statistics);
         }
 
+        // TODO should delete all data
+
         log.info("Start to repopulate Elastic Search for {}/{}", entityClass, cetCode);
 
         try {
 
             // Repopulate index from DB
 
-            if (CustomEntityInstance.class.isAssignableFrom(entityClass) || CustomTableRecord.class.isAssignableFrom(entityClass)) {
+            if (CustomTableRecord.class.isAssignableFrom(entityClass)) {
 
                 CustomEntityTemplate cet = customEntityTemplateService.findByCode(cetCode);
 
@@ -909,11 +945,11 @@ public class ElasticClient {
                 boolean hasMore = true;
 
                 while (hasMore) {
-                    int found = elasticSearchIndexPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), from, statistics);
+                    int found = elasticSearchIndexPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), from, INDEX_POPULATE_CT_PAGE_SIZE, statistics);
 
-                    from = from + INDEX_POPULATE_PAGE_SIZE;
+                    from = from + INDEX_POPULATE_CT_PAGE_SIZE;
                     totalProcessed = totalProcessed + found;
-                    hasMore = found == INDEX_POPULATE_PAGE_SIZE;
+                    hasMore = found == INDEX_POPULATE_CT_PAGE_SIZE;
                 }
 
                 log.info("Finished populating Elastic Search with data from {} table. Processed {} records.", cet.getDbTablename(), totalProcessed);
@@ -928,7 +964,7 @@ public class ElasticClient {
                 boolean hasMore = true;
 
                 while (hasMore) {
-                    int found = elasticSearchIndexPopulationService.populateIndex(classname, from, statistics);
+                    int found = elasticSearchIndexPopulationService.populateIndex(classname, from, INDEX_POPULATE_PAGE_SIZE, statistics);
 
                     from = from + INDEX_POPULATE_PAGE_SIZE;
                     totalProcessed = totalProcessed + found;

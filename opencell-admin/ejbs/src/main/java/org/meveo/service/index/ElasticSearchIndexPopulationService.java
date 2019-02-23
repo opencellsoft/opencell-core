@@ -115,20 +115,21 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      *
      * @param classname Entity classname
      * @param from Populate starting record number
+     * @param pageSize Number of records to retrieve
      * @param statistics Statistics to add progress info to
      * @return Number of items added
      */
     @SuppressWarnings("unchecked")
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public int populateIndex(String classname, int from, ReindexingStatistics statistics) {
+    public int populateIndex(String classname, int from, int pageSize, ReindexingStatistics statistics) {
 
         Set<String> cftIndexable = new HashSet<>();
         Set<String> cftNotIndexable = new HashSet<>();
 
         Query query = getEntityManager().createQuery("select e from " + classname + " e");
         query.setFirstResult(from);
-        query.setMaxResults(ElasticClient.INDEX_POPULATE_PAGE_SIZE);
+        query.setMaxResults(pageSize);
 
         List<? extends ISearchable> entities = query.getResultList();
         int found = entities.size();
@@ -620,19 +621,20 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      *
      * @param tableName Native table name
      * @param from Populate starting record number
+     * @param pageSize Number of records to retrieve
      * @param statistics Statistics to add progress info to
      * @return Number of items added
      */
     @SuppressWarnings("unchecked")
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public int populateIndexFromNativeTable(String tableName, int from, ReindexingStatistics statistics) {
+    public int populateIndexFromNativeTable(String tableName, int from, int pageSize, ReindexingStatistics statistics) {
 
         Session session = getEntityManager().unwrap(Session.class);
         SQLQuery query = session.createSQLQuery("select * from " + tableName + " e");
         query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
         query.setFirstResult(from);
-        query.setMaxResults(ElasticClient.INDEX_POPULATE_PAGE_SIZE);
+        query.setMaxResults(pageSize);
 
         List<Map<String, Object>> entities = query.list();
         int found = entities.size();
@@ -651,7 +653,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         // Prepare bulk request
         BulkRequestBuilder bulkRequest = esConnection.getClient().prepareBulk();
 
-        // Convert entities to map of values and supplement it with custom field values if applicable and add to a bulk request
+        // Add map of values
         for (Map<String, Object> values : entities) {
             bulkRequest.add(new IndexRequest(index, type, BaseEntity.cleanUpCodeOrId(values.get(NativePersistenceService.FIELD_ID))).source(values));
         }
