@@ -147,7 +147,21 @@ public class BillingAccountDto extends AccountDto {
 	@XmlElementWrapper(name = "discountPlanInstances")
 	@XmlElement(name = "discountPlanInstance")
     private List<DiscountPlanInstanceDto> discountPlanInstances;
-    
+
+    /**
+     * Mailing type
+     */
+	private String mailingType;
+
+    /**
+     * Email Template code
+     */
+	private String emailTemplate;
+
+    /**
+     * a list of emails separated by comma
+     */
+	private String ccedEmails;
     /**
      * Instantiates a new billing account dto.
      */
@@ -667,4 +681,52 @@ public class BillingAccountDto extends AccountDto {
 	public void setDiscountPlansForTermination(List<String> discountPlansForTermination) {
 		this.discountPlansForTermination = discountPlansForTermination;
 	}
+
+    /**
+     * Gets the mailing type
+     * @return mailing type
+     */
+	public String getMailingType() {
+        return mailingType;
+    }
+
+    /**
+     * Sets the mailing type.
+     * @param mailingType mailing type
+     */
+    public void setMailingType(String mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    /**
+     * Gets the Email template code.
+     * @return Email template code
+     */
+    public String getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    /**
+     * Sets Email template code.
+     * @param emailTemplate
+     */
+    public void setEmailTemplate(String emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    /**
+     * Gets cc emails.
+     * @return cc emails
+     */
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    /**
+     * Sets cc Emails.
+     * @param ccedEmails
+     */
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
 }
