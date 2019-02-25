@@ -1,5 +1,6 @@
 package org.meveo.api.dto.response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -12,10 +13,11 @@ import org.meveo.api.dto.payment.PaymentDto;
  * The Class CustomerPaymentsResponse.
  * 
  * @author anasseh
+ * 
  */
 @XmlRootElement(name = "CustomerPaymentsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerPaymentsResponse extends BaseResponse {
+public class CustomerPaymentsResponse extends SearchResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -5831455659437348223L;
@@ -49,6 +51,18 @@ public class CustomerPaymentsResponse extends BaseResponse {
      */
     public void setCustomerPaymentDtoList(List<PaymentDto> customerPaymentDtoList) {
         this.customerPaymentDtoList = customerPaymentDtoList;
+    }
+    
+    /**
+     * Adds payment dto to the paymentDto list
+     * 
+     * @param paymentDro
+     */
+    public void addPaymentDto(PaymentDto paymentDro) {
+        if (customerPaymentDtoList == null) {
+            customerPaymentDtoList = new ArrayList<>();
+        }
+        customerPaymentDtoList.add(paymentDro);
     }
 
     /**

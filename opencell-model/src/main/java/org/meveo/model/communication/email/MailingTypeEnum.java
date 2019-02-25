@@ -2,13 +2,12 @@ package org.meveo.model.communication.email;
 
 /**
  * An Enumeration for invoice mailing behavior:
- *
  * If mailingType is "auto", automatically send the invoice after PDF is produced and when invoice.alreadySent is false.
  * If mailingType is "batch", the Job SendInvoiceJob  sends the invoice when PDF is available and invoice.alreadySent is false.
  * If mailingType is "manual", only the GUI action and API can send the invoice.
  *
  * @author HORRI Khalid
- * @lastModifiedVersion 7.0
+ * @lastModefiedVersion 7.0
  */
 public enum MailingTypeEnum {
 

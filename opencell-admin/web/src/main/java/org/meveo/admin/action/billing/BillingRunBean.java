@@ -32,7 +32,6 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
@@ -87,7 +86,8 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
      * 
      * @return billing run
      */
-    public BillingRun initEntity() {
+    @Override
+	public BillingRun initEntity() {
         BillingRun billingRun = super.initEntity();
         getPersistenceService().refresh(billingRun);
 
@@ -97,10 +97,10 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
                 billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
             }
 
-            if (billingRun != null && billingRun.getId() != null && preReport != null && preReport) {
+            if ((billingRun != null) && (billingRun.getId() != null) && (preReport != null) && preReport) {
                 PreInvoicingReportsDTO preInvoicingReportsDTO = billingRunService.generatePreInvoicingReports(billingRun);
                 billingRun.setPreInvoicingReports(preInvoicingReportsDTO);
-            } else if (billingRun != null && billingRun.getId() != null && postReport != null && postReport) {
+            } else if ((billingRun != null) && (billingRun.getId() != null) && (postReport != null) && postReport) {
                 PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService.generatePostInvoicingReports(billingRun);
                 billingRun.setPostInvoicingReports(postInvoicingReportsDTO);
             }
@@ -173,7 +173,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
             entity.setStatus(BillingRunStatusEnum.NEW);
             entity.setProcessDate(new Date());
 
-            customFieldDataEntryBean.saveCustomFieldsToEntity((ICustomFieldEntity) entity, true);
+            customFieldDataEntryBean.saveCustomFieldsToEntity(entity, true);
             billingRunService.create(entity);
             
             return "billingRuns";
@@ -223,7 +223,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
     public String cancelInvoicing() {
         try {
             entity = billingRunService.refreshOrRetrieve(entity);
-            entity.setStatus(BillingRunStatusEnum.CANCELED);
+            entity.setStatus(BillingRunStatusEnum.CANCELLED);
             entity = billingRunService.update(entity);
             return "billingRuns";
         } catch (Exception e) {
@@ -236,7 +236,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
     public String cancelConfirmedInvoicing() {
         try {
             entity = billingRunService.refreshOrRetrieve(entity);
-            entity.setStatus(BillingRunStatusEnum.CANCELED);
+            entity.setStatus(BillingRunStatusEnum.CANCELLED);
             billingRunService.cleanBillingRun(entity);
             entity = billingRunService.update(entity);
             return "billingRuns";
