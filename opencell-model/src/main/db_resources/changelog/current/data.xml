@@ -1334,6 +1334,10 @@ ORDER BY
             <column name="permission_id" valueNumeric="-47"/>
         </insert>
         <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-7"/>
+            <column name="permission_id" valueNumeric="-34"/>
+        </insert>
+        <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-8"/>
             <column name="permission_id" valueNumeric="-101"/>
         </insert>
@@ -1360,6 +1364,10 @@ ORDER BY
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-8"/>
             <column name="permission_id" valueNumeric="-65"/>
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-8"/>
+            <column name="permission_id" valueNumeric="-62"/>
         </insert>
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-8"/>
@@ -1429,10 +1437,10 @@ ORDER BY
             <column name="role_id" valueNumeric="-8"/>
             <column name="permission_id" valueNumeric="-89"/>
         </insert>
-        <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="-8"/>
-            <column name="permission_id" valueNumeric="-35"/>
-        </insert>
+        <!--<insert tableName="adm_role_permission">-->
+            <!--<column name="role_id" valueNumeric="-8"/>-->
+            <!--<column name="permission_id" valueNumeric="-35"/>-->
+        <!--</insert>-->
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-8"/>
             <column name="permission_id" valueNumeric="-72"/>
