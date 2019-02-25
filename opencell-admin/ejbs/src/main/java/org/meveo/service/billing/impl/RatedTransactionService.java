@@ -937,12 +937,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * Create a {@link RatedTransaction} from a group of wallet operations.
      * @param aggregatedWo aggregated wallet operations
      * @param aggregatedSettings aggregation settings of wallet operations
+     * @param invoicingDate the invoicing date
      * @return created {@link RatedTransaction}
      * @throws BusinessException Exception when RT is not create successfully
      * @see WalletOperation
      */
-	public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, RatedTransactionsJobAggregationSetting aggregatedSettings) throws BusinessException {
-		return createRatedTransaction(aggregatedWo, aggregatedSettings, false);
+	public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, RatedTransactionsJobAggregationSetting aggregatedSettings, Date invoicingDate) throws BusinessException {
+		return createRatedTransaction(aggregatedWo, aggregatedSettings, invoicingDate, false);
 	}
 
 	/**
@@ -950,10 +951,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	 * @param aggregatedWo aggregated wallet operations
 	 * @param aggregationSettings aggregation settings of wallet operations
 	 * @param isVirtual is virtual
+	 * @param invoicingDate the invoicing date
 	 * @return  {@link RatedTransaction}
 	 * @throws BusinessException Exception when RT is not create successfully
 	 */
-	public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, RatedTransactionsJobAggregationSetting aggregationSettings, boolean isVirtual)
+	public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, RatedTransactionsJobAggregationSetting aggregationSettings, Date invoicingDate, boolean isVirtual)
 			throws BusinessException {
 		RatedTransaction ratedTransaction = new RatedTransaction();
 
@@ -963,6 +965,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		Subscription sub = null;
 		ServiceInstance si = null;
 		ChargeInstance ci = null;
+		WalletOperation wo = null;
+		String code = null;
+		String description = null;
+		InvoiceSubCategory isc = null;
 		
 		Calendar cal = Calendar.getInstance();
 		if (aggregationSettings.isAggregateByDay()) {
@@ -973,22 +979,30 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			ratedTransaction.setUsageDate(cal.getTime());
 
 		}
+
+		isc = invoiceSubCategoryService.refreshOrRetrieve(aggregatedWo.getInvoiceSubCategory());
 		
 		switch (aggregationSettings.getAggregationLevel()) {
 		case BA:
 			ba = billingAccountService.findById(aggregatedWo.getId());
 			seller = ba.getCustomerAccount().getCustomer().getSeller();
+			code = isc.getCode();
+			description = isc.getDescription();
 			break;
 		case UA:
 			ua = userAccountService.findById(aggregatedWo.getId());
 			ba = ua.getBillingAccount();
 			seller = ba.getCustomerAccount().getCustomer().getSeller();
+			code = isc.getCode();
+			description = isc.getDescription();
 			break;
 		case SUB:
 			sub = subscriptionService.findById(aggregatedWo.getId());
 			ua = sub.getUserAccount();
 			ba = ua.getBillingAccount();
 			seller = sub.getSeller();
+			code = isc.getCode();
+			description = isc.getDescription();
 			break;
 		case SI:
 			si = serviceInstanceService.findById(aggregatedWo.getId());
@@ -996,14 +1010,36 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			ua = sub.getUserAccount();
 			ba = ua.getBillingAccount();
 			seller = sub.getSeller();
+			code = si.getCode();
+			description = si.getDescription();
 			break;
 		case CI:
-		case DESC:
 			ci = (ChargeInstance) chargeInstanceService.findById(aggregatedWo.getId());
 			sub = ci.getSubscription();
 			ua = sub.getUserAccount();
 			ba = ua.getBillingAccount();
 			seller = sub.getSeller();
+			code = ci.getCode();
+			description = ci.getDescription();
+			break;
+		case DESC:
+			wo = walletOperationService.findById(aggregatedWo.getId());
+			ci = wo.getChargeInstance();
+			sub = wo.getSubscription();
+			ua = sub.getUserAccount();
+			ba = wo.getBillingAccount();
+			seller = wo.getSeller();
+			code = wo.getCode();
+			description = wo.getDescription();
+			ratedTransaction.setOfferCode(wo.getOfferCode());
+			ratedTransaction.setParameter1(wo.getParameter1());
+			ratedTransaction.setParameter2(wo.getParameter2());
+			ratedTransaction.setParameter3(wo.getParameter3());
+			ratedTransaction.setParameterExtra(wo.getParameterExtra());
+			ratedTransaction.setWallet(wo.getWallet());
+			ratedTransaction.setUnityDescription(wo.getInputUnitDescription());
+			ratedTransaction.setRatingUnitDescription(wo.getRatingUnitDescription());
+			ratedTransaction.setPriceplan(wo.getPriceplan());
 			break;
 			
 		default:
@@ -1011,8 +1047,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			seller = ba.getCustomerAccount().getCustomer().getSeller();
 		}
 		
-		ratedTransaction.setTax(aggregatedWo.getTax());
-		ratedTransaction.setInvoiceSubCategory(aggregatedWo.getInvoiceSubCategory());
+		Tax tax = taxService.refreshOrRetrieve(aggregatedWo.getTax());
+		
+		ratedTransaction.setCode(code);
+		ratedTransaction.setDescription(description);
+		ratedTransaction.setTax(tax);
+		ratedTransaction.setTaxPercent(tax.getPercent());
+		ratedTransaction.setInvoiceSubCategory(isc);
 		ratedTransaction.setSeller(seller);
 		ratedTransaction.setBillingAccount(ba);
 		ratedTransaction.setUserAccount(ua);
@@ -1023,10 +1064,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		ratedTransaction.setAmountWithoutTax(aggregatedWo.getAmountWithoutTax());
 		ratedTransaction.setUnitAmountWithTax(aggregatedWo.getUnitAmountWithTax());
 		ratedTransaction.setUnitAmountTax(aggregatedWo.getUnitAmountTax());
-		ratedTransaction.setUnitAmountWithoutTax(aggregatedWo.getUnitAmountWithoutTax());		
+		ratedTransaction.setUnitAmountWithoutTax(aggregatedWo.getUnitAmountWithoutTax());
+		ratedTransaction.setQuantity(aggregatedWo.getQuantity());
 
 		if (!isVirtual) {
 			create(ratedTransaction);
+
+			WalletOperationAggregator woa = new WalletOperationAggregator(aggregationSettings);
+			String strQuery = woa.listWoQuery(aggregatedWo.getId());
+			Query query = getEntityManager().createQuery(strQuery);
+			query.setParameter("invoicingDate", invoicingDate);
+			List<WalletOperation> walletOps = (List<WalletOperation>) query.getResultList();
+			for (WalletOperation tempWo : walletOps) {
+				tempWo.setRatedTransaction(ratedTransaction);
+			}
 		}
 
 		return ratedTransaction;

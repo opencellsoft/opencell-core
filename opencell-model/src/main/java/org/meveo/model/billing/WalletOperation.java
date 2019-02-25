@@ -369,6 +369,14 @@ public class WalletOperation extends BusinessEntity {
     @JoinColumn(name = "subscription_id")
     protected Subscription subscription;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rated_transaction_id")
+    protected RatedTransaction ratedTransaction;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_instance_id")
+    private ServiceInstance serviceInstance;
+
     /**
      * Billing account
      */
@@ -423,9 +431,25 @@ public class WalletOperation extends BusinessEntity {
         return chargeInstance;
     }
 
-    public void setChargeInstance(ChargeInstance chargeInstance) {
-        this.chargeInstance = chargeInstance;
-    }
+	public void setChargeInstance(ChargeInstance chargeInstance) {
+		if (chargeInstance instanceof RecurringChargeInstance) {
+			setServiceInstance(((RecurringChargeInstance) chargeInstance).getServiceInstance());
+
+		} else if (chargeInstance instanceof OneShotChargeInstance) {
+			OneShotChargeInstance os = ((OneShotChargeInstance) chargeInstance);
+			if (os.getSubscriptionServiceInstance() != null) {
+				setServiceInstance(os.getSubscriptionServiceInstance());
+
+			} else {
+				setServiceInstance(os.getTerminationServiceInstance());
+			}
+
+		} else if (chargeInstance instanceof UsageChargeInstance) {
+			setServiceInstance(((UsageChargeInstance) chargeInstance).getServiceInstance());
+		}
+
+		this.chargeInstance = chargeInstance;
+	}
 
     public Currency getCurrency() {
         return currency;
@@ -828,4 +852,20 @@ public class WalletOperation extends BusinessEntity {
         amountWithTax = amounts[1];
         amountTax = amounts[2];
     }
+
+	public RatedTransaction getRatedTransaction() {
+		return ratedTransaction;
+	}
+
+	public void setRatedTransaction(RatedTransaction ratedTransaction) {
+		this.ratedTransaction = ratedTransaction;
+	}
+
+	public ServiceInstance getServiceInstance() {
+		return serviceInstance;
+	}
+
+	public void setServiceInstance(ServiceInstance serviceInstance) {
+		this.serviceInstance = serviceInstance;
+	}
 }

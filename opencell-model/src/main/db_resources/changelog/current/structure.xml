@@ -1221,4 +1221,23 @@
         </addColumn>
     </changeSet>
 
+	<changeSet id="#3794_20190221 - Aggregate WO"
+		author="EdwardPLegaspi">
+		<addColumn tableName="billing_wallet_operation">
+			<column name="rated_transaction_id" type="bigint" />
+			<column name="service_instance_id" type="bigint"></column>
+		</addColumn>
+
+		<addForeignKeyConstraint
+			constraintName="fk_wallet_operation_rated_transaction"
+			referencedTableName="billing_rated_transaction"
+			baseColumnNames="rated_transaction_id"
+			baseTableName="billing_wallet_operation" referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			constraintName="fk_wallet_operation_service_instance"
+			referencedTableName="billing_service_instance"
+			baseColumnNames="service_instance_id"
+			baseTableName="billing_wallet_operation" referencedColumnNames="id" />
+	</changeSet>
+
 </databaseChangeLog>

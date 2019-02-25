@@ -1,5 +1,7 @@
 package org.meveo.admin.job;
 
+import java.util.Date;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -41,10 +43,10 @@ public class UnitRatedTransactionsJobBean {
 
     @JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, AggregatedWalletOperation aggregatedWo, RatedTransactionsJobAggregationSetting aggregationSettings) {
+	public void execute(JobExecutionResultImpl result, AggregatedWalletOperation aggregatedWo, RatedTransactionsJobAggregationSetting aggregationSettings, Date invoicingDate) {
 		log.debug("Running with aggregatedWo={}", aggregatedWo);
 		try {
-			ratedTransactionService.createRatedTransaction(aggregatedWo, aggregationSettings);
+			ratedTransactionService.createRatedTransaction(aggregatedWo, aggregationSettings, invoicingDate);
 			result.registerSucces();
 		
 		} catch (Exception e) {
