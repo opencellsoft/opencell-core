@@ -3,6 +3,7 @@
  */
 package org.meveo.admin.async;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -75,7 +76,7 @@ public class RatedTransactionAsync {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
 	public Future<String> launchAndForget(List<AggregatedWalletOperation> nextWorkSet, JobExecutionResultImpl result,
-			MeveoUser lastCurrentUser, RatedTransactionsJobAggregationSetting aggregationSettings) {
+			MeveoUser lastCurrentUser, RatedTransactionsJobAggregationSetting aggregationSettings, Date invoicingDate) {
 		
     	currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -83,7 +84,7 @@ public class RatedTransactionAsync {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
-            unitRatedTransactionsJobBean.execute(result, aggregatedWo, aggregationSettings);
+            unitRatedTransactionsJobBean.execute(result, aggregatedWo, aggregationSettings, invoicingDate);
         }
         return new AsyncResult<>("OK");
 	}

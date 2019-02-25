@@ -1,9 +1,11 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.WalletOperation;
 
 /**
  * Aggregated wallet operation.
@@ -77,17 +79,22 @@ public class AggregatedWalletOperation {
 	 * Use when aggregating by day.
 	 */
 	private Integer day;
-
+	
 	/**
-	 * Id of the service instance.
+	 * Id of the seller.
 	 */
-	private Long serviceInstanceId;
+	private Long sellerId;
+	
+	/**
+	 * List of wallet operations.
+	 */
+	private List<WalletOperation> walletOperations;
 
-	public AggregatedWalletOperation(Long serviceInstanceId, Integer year, Integer month, Integer day, Tax tax,
-			InvoiceSubCategory invoiceSubCategory, Long id, BigDecimal amountWithTax, BigDecimal amountWithoutTax,
-			BigDecimal amountTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountWithoutTax,
-			BigDecimal unitAmountTax, BigDecimal quantity) {
-		this.serviceInstanceId = serviceInstanceId;
+	public AggregatedWalletOperation(Long sellerId, Integer year, Integer month, Integer day,
+			Tax tax, InvoiceSubCategory invoiceSubCategory, Long id, BigDecimal amountWithTax,
+			BigDecimal amountWithoutTax, BigDecimal amountTax, BigDecimal unitAmountWithTax,
+			BigDecimal unitAmountWithoutTax, BigDecimal unitAmountTax, BigDecimal quantity) {
+		this.sellerId = sellerId;
 		this.year = year;
 		this.month = month;
 		this.day = day;
@@ -211,12 +218,20 @@ public class AggregatedWalletOperation {
 		this.day = day;
 	}
 
-	public Long getServiceInstanceId() {
-		return serviceInstanceId;
+	public Long getSellerId() {
+		return sellerId;
 	}
 
-	public void setServiceInstanceId(Long serviceInstanceId) {
-		this.serviceInstanceId = serviceInstanceId;
+	public void setSellerId(Long sellerId) {
+		this.sellerId = sellerId;
+	}
+
+	public List<WalletOperation> getWalletOperations() {
+		return walletOperations;
+	}
+
+	public void setWalletOperations(List<WalletOperation> walletOperations) {
+		this.walletOperations = walletOperations;
 	}
 
 }

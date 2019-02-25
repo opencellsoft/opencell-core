@@ -123,7 +123,8 @@ public class RatedTransactionsJobBean extends BaseJobBean {
 
 	private void executeWithAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis,
 			RatedTransactionsJobAggregationSetting aggregationSetting) throws Exception {
-		List<AggregatedWalletOperation> aggregatedWo = walletOperationService.listToInvoiceIdsWithGrouping(new Date(),
+		Date invoicingDate = new Date();
+		List<AggregatedWalletOperation> aggregatedWo = walletOperationService.listToInvoiceIdsWithGrouping(invoicingDate,
 				aggregationSetting);
 
 		if (aggregatedWo == null || aggregatedWo.isEmpty()) {
@@ -141,7 +142,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
 			asyncReturns.add(
 					ratedTransactionAsync.launchAndForget(
 							(List<AggregatedWalletOperation>) subListCreator.getNextWorkSet(), result, lastCurrentUser,
-							aggregationSetting));
+							aggregationSetting, invoicingDate));
 			try {
 				Thread.sleep(waitingMillis.longValue());
 
@@ -153,6 +154,8 @@ public class RatedTransactionsJobBean extends BaseJobBean {
 		for (Future<String> futureItsNow : asyncReturns) {
 			futureItsNow.get();
 		}
+		
+		walletOperationService.updateAggregatedWalletOperations(invoicingDate);
 	}
 
 }
