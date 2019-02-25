@@ -856,7 +856,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         List<IBillableEntity> billableEntities = new ArrayList<>();
         
         if (!BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
-	        log.info("Will process {} entities of type {}", (entities != null ? entities.size() : 0), billingRun.getBillingCycle().getType());
+	        BillingCycle billingCycle = billingRun.getBillingCycle();
+	        BillingEntityTypeEnum type = null;
+	        if (billingCycle != null) {
+	            type = billingCycle.getType();
+	        }
+	        
+            log.info("Will process {} entities of type {}", (entities != null ? entities.size() : 0), type);
 	        if (entities != null && entities.size() > 0) {
 	            SubListCreator subListCreator = new SubListCreator(entities, (int) nbRuns);
 	            List<Future<List<IBillableEntity>>> asyncReturns = new ArrayList<Future<List<IBillableEntity>>>();
