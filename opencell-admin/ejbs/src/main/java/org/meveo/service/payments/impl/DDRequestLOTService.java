@@ -97,6 +97,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
     @Inject
     private DDRequestItemService ddRequestItemService;
     
+    @Inject
+    private PaymentService paymentService;
+    
     /**
      * Creates the payment.
      *
@@ -312,7 +315,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
                     log.info("invoice: {}  balanceDue:{}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
                 } else {
                     automatedPayment = createPaymentOrRefund(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
-                        ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), ddrequestItem.getReference(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
+                        ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), "ddItem"+ddrequestItem.getId(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
                         DateUtils.addDaysToDate(new Date(), ArConfig.getDateValueAfter()), ddRequestLOT.getSendDate(), ddRequestLOT.getSendDate(),
                         ddrequestItem.getAccountOperations(), true, MatchingTypeEnum.A_DERICT_DEBIT);
                     ddrequestItem.setAutomatedPayment(automatedPayment);
@@ -399,16 +402,11 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
      * @throws BusinessException the business exception
      */
     public void rejectPayment(DDRequestItem ddRequestItem, String rejectCause) throws BusinessException {
-
         AutomatedPayment automatedPayment = ddRequestItem.getAutomatedPayment();
-        if (automatedPayment.getMatchingAmounts() == null || automatedPayment.getMatchingAmounts().isEmpty()) {
+        if (automatedPayment == null || automatedPayment.getMatchingAmounts() == null || automatedPayment.getMatchingAmounts().isEmpty()) {
             throw new BusinessException("ddRequestItem id :" + ddRequestItem.getId() + " Callback not expected");
         }
-        matchingCodeService.unmatching(automatedPayment.getMatchingAmounts().get(0).getMatchingCode().getId());
-
-        automatedPayment.setMatchingStatus(MatchingStatusEnum.R);
-        automatedPayment.setComment(rejectCause);
-        automatedPaymentService.updateNoCheck(automatedPayment);
+    	paymentService.paymentCallback(automatedPayment.getReference(), PaymentStatusEnum.REJECTED, rejectCause, rejectCause);
     }
 
     /**
