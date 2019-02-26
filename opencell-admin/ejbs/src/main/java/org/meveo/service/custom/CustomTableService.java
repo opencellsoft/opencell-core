@@ -41,6 +41,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -136,28 +137,30 @@ public class CustomTableService extends NativePersistenceService {
      */
     public void create(String tableName, List<Map<String, Object>> values) throws BusinessException {
 
-        create(tableName, values, true);
+        for (Map<String, Object> value : values) {
+            Long id = super.create(tableName, value, true); // Force to return ID as we need it to retrieve data for Elastic Search population
+            elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, value, false, false);
+        }
+
+        elasticClient.flushChanges();
     }
 
     /**
-     * Insert multiple values into table
+     * Insert multiple values into table with optionally not updating ES. Will execute in a new transaction
      * 
      * @param tableName Table name to insert values to
      * @param values Values to insert
      * @param updateES Should Elastic search be updated during record creation. If false, ES population must be done outside this call.
      * @throws BusinessException General exception
      */
-    public void create(String tableName, List<Map<String, Object>> values, boolean updateES) throws BusinessException {
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createInNewTx(String tableName, List<Map<String, Object>> values, boolean updateES) throws BusinessException {
 
         // Insert record to db, with ID returned, but flush to ES after the values are processed
         if (updateES) {
 
-            for (Map<String, Object> value : values) {
-                Long id = super.create(tableName, value, true); // Force to return ID as we need it to retrieve data for Elastic Search population
-                elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, value, false, false);
-            }
-
-            elasticClient.flushChanges();
+            create(tableName, values);
 
         } else {
             super.create(tableName, values);
@@ -417,7 +420,7 @@ public class CustomTableService extends NativePersistenceService {
                 if (importedLines >= 500) {
 
                     values = convertValues(values, fields, false);
-                    customTableService.create(tableName, values, updateESImediately);
+                    customTableService.createInNewTx(tableName, values, updateESImediately);
 
                     values.clear();
                     importedLines = 0;
@@ -432,7 +435,7 @@ public class CustomTableService extends NativePersistenceService {
 
             // Save to DB remaining records
             values = convertValues(values, fields, false);
-            customTableService.create(tableName, values, updateESImediately);
+            customTableService.createInNewTx(tableName, values, updateESImediately);
 
             // Re-populate ES index
             if (!updateESImediately) {
@@ -499,11 +502,11 @@ public class CustomTableService extends NativePersistenceService {
 
             for (Map<String, Object> value : values) {
 
-                // Save to DB every 500 records
-                if (importedLines >= 500) {
+                // Save to DB every 1000 records
+                if (importedLines >= 1000) {
 
                     valuesPartial = convertValues(valuesPartial, fields, false);
-                    customTableService.create(tableName, valuesPartial, updateESImediately);
+                    customTableService.createInNewTx(tableName, valuesPartial, updateESImediately);
 
                     valuesPartial.clear();
                     importedLines = 0;
@@ -517,7 +520,7 @@ public class CustomTableService extends NativePersistenceService {
 
             // Save to DB remaining records
             valuesPartial = convertValues(valuesPartial, fields, false);
-            customTableService.create(tableName, valuesPartial, updateESImediately);
+            customTableService.createInNewTx(tableName, valuesPartial, updateESImediately);
 
             // Repopulate ES index
             if (!updateESImediately) {
@@ -607,7 +610,7 @@ public class CustomTableService extends NativePersistenceService {
 
             values.put(NativePersistenceService.FIELD_ID, hit.getId());
 
-            if (hit.getFields() != null) {
+            if (hit.getFields() != null && hit.getFields().values() != null && !hit.getFields().values().isEmpty()) {
                 for (SearchHitField field : hit.getFields().values()) {
                     if (field.getValues() != null) {
                         if (field.getValues().size() > 1) {
@@ -677,15 +680,16 @@ public class CustomTableService extends NativePersistenceService {
      * Get field values of the first record matching search criteria
      * 
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
+     * @param fieldsToReturn Field values to return. Optional. If not provided all fields will be returned.
      * @param queryValues Search criteria with condition/field name as a key and field value as a value
-     * @return A map of values with field name as a key and field value as a value
+     * @return A map of values with field name as a key and field value as a value. Note field value is always of String data type.
      * @throws BusinessException General exception
      */
-    public Map<String, Object> getValues(String cetCodeOrTablename, Map<String, Object> queryValues) throws BusinessException {
+    public Map<String, Object> getValues(String cetCodeOrTablename, String[] fieldsToReturn, Map<String, Object> queryValues) throws BusinessException {
 
         Map<String, Object> values = new HashMap<>(queryValues);
 
-        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.ASC }, null);
+        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.ASC }, fieldsToReturn);
 
         if (results == null || results.isEmpty()) {
             return null;
@@ -698,17 +702,18 @@ public class CustomTableService extends NativePersistenceService {
      * Get field values of the first record matching search criteria for a given date. Applicable to custom tables that contain 'valid_from' and 'valid_to' fields
      * 
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
+     * @param fieldsToReturn Field values to return. Optional. If not provided all fields will be returned.
      * @param date Record validity date, as expressed by 'valid_from' and 'valid_to' fields, to match
-     * @param queryValues Search criteria with condition/field name as a key and field value as a value
+     * @param queryValues Search criteria with condition/field name as a key and field value as a value. Note field value is always of String data type.
      * @return A map of values with field name as a key and field value as a value
      * @throws BusinessException General exception
      */
-    public Map<String, Object> getValues(String cetCodeOrTablename, Date date, Map<String, Object> queryValues) throws BusinessException {
+    public Map<String, Object> getValues(String cetCodeOrTablename, String[] fieldsToReturn, Date date, Map<String, Object> queryValues) throws BusinessException {
 
         Map<String, Object> values = new HashMap<>(queryValues);
         values.put("minmaxRange valid_from valid_to", date);
 
-        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.ASC }, null);
+        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.ASC }, fieldsToReturn);
 
         if (results == null || results.isEmpty()) {
             return null;

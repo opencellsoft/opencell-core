@@ -1698,7 +1698,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
         if (fieldName5 != null) {
             queryValues.put(fieldName5, fieldValue5);
         }
-        return getCustomTableService().getValues(customTableCode, queryValues);
+        return getCustomTableService().getValues(customTableCode, null, queryValues);
     }
 
     /**
@@ -1740,6 +1740,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         if (fieldName5 != null) {
             queryValues.put(fieldName5, fieldValue5);
         }
-        return getCustomTableService().getValues(customTableCode, date, queryValues);
+        return getCustomTableService().getValues(customTableCode, null, date, queryValues);
     }
 }

@@ -45,7 +45,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -53,6 +53,7 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import org.meveo.util.MeveoParamBean;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -78,7 +79,8 @@ public class NativePersistenceService extends BaseService {
     private EntityManagerWrapper emWrapper;
 
     @Inject
-    protected ParamBeanFactory paramBeanFactory;
+    @MeveoParamBean
+    protected ParamBean paramBean;
 
     /**
      * Find record by its identifier
@@ -171,6 +173,7 @@ public class NativePersistenceService extends BaseService {
 
                     Object fieldValue = null;
                     int i = 1;
+                    int itemsProcessed = 0;
                     for (Map<String, Object> value : values) {
 
                         i = 1;
@@ -187,6 +190,8 @@ public class NativePersistenceService extends BaseService {
                                 preparedStatement.setDouble(i, (Double) fieldValue);
                             } else if (fieldValue instanceof BigInteger) {
                                 preparedStatement.setInt(i, ((BigInteger) fieldValue).intValue());
+                            } else if (fieldValue instanceof Integer) {
+                                preparedStatement.setInt(i, ((Integer) fieldValue).intValue());
                             } else if (fieldValue instanceof BigDecimal) {
                                 preparedStatement.setBigDecimal(i, (BigDecimal) fieldValue);
                             } else if (fieldValue instanceof Date) {
@@ -197,13 +202,15 @@ public class NativePersistenceService extends BaseService {
                         }
 
                         preparedStatement.addBatch();
+
                         // Batch size: 20
-                        if (i % 20 == 0) {
+                        if (itemsProcessed % 500 == 0) {
                             preparedStatement.executeBatch();
                         }
-                        i++;
+                        itemsProcessed++;
                     }
                     preparedStatement.executeBatch();
+
                 } catch (SQLException e) {
                     log.error("Failed to bulk insert with sql {}", sql, e);
                     throw e;
@@ -951,13 +958,13 @@ public class NativePersistenceService extends BaseService {
                     // first try with date and time and then only with date format
                     Date date = DateUtils.parseDateWithPattern(stringVal, DateUtils.DATE_TIME_PATTERN);
                     if (date == null) {
-                        date = DateUtils.parseDateWithPattern(stringVal, paramBeanFactory.getInstance().getDateTimeFormat(appProvider.getCode()));
+                        date = DateUtils.parseDateWithPattern(stringVal, paramBean.getDateTimeFormat());
                     }
                     if (date == null) {
                         date = DateUtils.parseDateWithPattern(stringVal, DateUtils.DATE_PATTERN);
                     }
                     if (date == null) {
-                        date = DateUtils.parseDateWithPattern(stringVal, paramBeanFactory.getInstance().getDateFormat(appProvider.getCode()));
+                        date = DateUtils.parseDateWithPattern(stringVal, paramBean.getDateFormat());
                     }
                     return date;
                 }
