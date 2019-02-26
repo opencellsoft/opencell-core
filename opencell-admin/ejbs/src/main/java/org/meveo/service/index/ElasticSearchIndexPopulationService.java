@@ -651,8 +651,6 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Object[] populateIndexFromNativeTable(String tableName, Object fromId, int pageSize, ReindexingStatistics statistics) {
 
-        long startTime = System.currentTimeMillis();
-
         Session session = getEntityManager().unwrap(Session.class);
         SQLQuery query = session.createSQLQuery("select * from " + tableName + " e where e.id>" + fromId + " order by e.id");
         query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
@@ -662,8 +660,6 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         List<Map<String, Object>> entities = query.list();
 
         int found = entities.size();
-
-        long oneTime = System.currentTimeMillis();
 
         log.trace("Repopulating Elastic Search with records {}/+{} of {} table", fromId, found, tableName);
 
@@ -679,8 +675,6 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         // Prepare bulk request
         BulkRequestBuilder bulkRequest = esConnection.getClient().prepareBulk();
 
-        long twoTime = System.currentTimeMillis();
-
         Object lastId = null;
         // Add map of values
         for (Map<String, Object> values : entities) {
@@ -688,14 +682,10 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             bulkRequest.add(new IndexRequest(index, type, BaseEntity.cleanUpCodeOrId(lastId)).source(values));
         }
 
-        long threeTime = System.currentTimeMillis();
-
         // Execute bulk request
 
         int failedRequests = 0;
         BulkResponse bulkResponse = bulkRequest.get();
-
-        long fourTime = System.currentTimeMillis();
 
         if (bulkResponse.hasFailures()) {
             for (BulkItemResponse bulkItemResponse : bulkResponse.getItems()) {
@@ -706,10 +696,6 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                 }
             }
         }
-
-        // log.error("AKK populate ES times: retrieve {}, prepareBulk {}, add values {}, execute {}, parse response {}", oneTime - startTime, twoTime - oneTime, threeTime -
-        // twoTime,
-        // fourTime - threeTime, System.currentTimeMillis() - fourTime);
 
         statistics.updateStatstics(tableName, found, failedRequests);
         return new Object[] { found, lastId };
