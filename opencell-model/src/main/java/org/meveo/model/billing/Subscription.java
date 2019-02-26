@@ -51,16 +51,24 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.Email;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 
@@ -70,9 +78,11 @@ import org.meveo.model.shared.DateUtils;
  * @author Said Ramli
  * @author Abdellatif BARI
  * @author Mounir BAHIJE
- * @lastModifiedVersion 5.3
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  */
 @Entity
+@WorkflowedEntity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SUB", inheritCFValuesFrom = { "offer", "userAccount" })
 @ExportIdentifier({ "code" })
@@ -84,7 +94,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
-public class Subscription extends BusinessCFEntity implements IBillableEntity {
+public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -161,6 +171,12 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @JoinColumn(name = "user_account_id", nullable = false)
     @NotNull
     private UserAccount userAccount;
+
+    /**
+     * Account operations associated with a Subscription
+     */
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AccountOperation> accountOperations = new ArrayList<>();
 
     /**
      * End agreement date
@@ -266,12 +282,41 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
-    
+
     /**
      * String value matched in the usageRatingJob to group the EDRs for rating.
      */
     @Column(name = "rating_group", length = 50)
     private String ratingGroup;
+
+    /**
+     * List of dunning docs accociated with this subcription
+     */
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    private List<DunningDocument> dunningDocuments;
+
+
+    @ManyToOne()
+    @JoinColumn(name = "email_template_id")
+    private EmailTemplate emailTemplate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mailing_type")
+    private MailingTypeEnum mailingType;
+
+    @Column(name = "cced_emails", length = 2000)
+    @Size(max = 2000)
+    private String ccedEmails;
+
+    @Column(name = "email", length = 255)
+    @Email
+    @Size(max = 255)
+    private String email;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "electronic_billing")
+    private boolean electronicBilling;
+
 
     /**
      * Extra Rated transactions to reach minimum invoice amount per subscription
@@ -588,9 +633,14 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
      * Auto update end of engagement date.
      */
     public void autoUpdateEndOfEngagementDate() {
-        if (BooleanUtils.isTrue(this.autoEndOfEngagement)) {
+        if (this.status != SubscriptionStatusEnum.RESILIATED && !this.isToBeTerminatedWithFutureDate() && BooleanUtils.isTrue(this.autoEndOfEngagement)) {
             this.setEndAgreementDate(this.subscribedTillDate);
         }
+    }
+    
+    private boolean isToBeTerminatedWithFutureDate() {
+        return this.subscriptionRenewal.getTerminationReason() != null && !this.subscriptionRenewal.isAutoRenew() && this.subscribedTillDate != null
+                && subscriptionRenewal.getEndOfTermAction() == EndOfTermActionEnum.TERMINATE;
     }
 
     /**
@@ -636,24 +686,25 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     /**
      * create AutoRenewDate
      */
-    public void createAutoRenewDate(){
+    public void createAutoRenewDate() {
         SubscriptionRenewal subscriptionRenewal = this.getSubscriptionRenewal();
         if (subscriptionRenewal != null) {
-                subscriptionRenewal.setAutoRenewDate(new Date());
+            subscriptionRenewal.setAutoRenewDate(new Date());
         }
-	}
+    }
 
     /**
      * update AutoRenewDate when AutoRenew change
+     * 
      * @param subscriptionOld
      */
-    public void updateAutoRenewDate(Subscription subscriptionOld){
+    public void updateAutoRenewDate(Subscription subscriptionOld) {
         SubscriptionRenewal subscriptionRenewalOld = subscriptionOld.getSubscriptionRenewal();
         SubscriptionRenewal subscriptionRenewalNew = this.getSubscriptionRenewal();
         boolean autoRenewOld = subscriptionRenewalOld.isAutoRenew();
         boolean autoRenewNew = subscriptionRenewalNew.isAutoRenew();
         if (autoRenewOld != autoRenewNew) {
-        if (subscriptionRenewalNew != null) {
+            if (subscriptionRenewalNew != null) {
                 subscriptionRenewalNew.setAutoRenewDate(new Date());
             }
         }
@@ -730,12 +781,106 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
 
-	public String getRatingGroup() {
-		return ratingGroup;
-	}
+    public String getRatingGroup() {
+        return ratingGroup;
+    }
 
-	public void setRatingGroup(String ratingGroup) {
-		this.ratingGroup = ratingGroup;
-	}
+    public void setRatingGroup(String ratingGroup) {
+        this.ratingGroup = ratingGroup;
+    }
 
+    public List<EDR> getEdrs() {
+        return edrs;
+    }
+
+    public void setEdrs(List<EDR> edrs) {
+        this.edrs = edrs;
+    }
+
+    public List<AccountOperation> getAccountOperations() {
+        return accountOperations;
+    }
+
+    public void setAccountOperations(List<AccountOperation> accountOperations) {
+        this.accountOperations = accountOperations;
+    }
+    /**
+     * Gets Email Template.
+     * @return Email Template.
+     */
+    public EmailTemplate getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    /**
+     * Sets Email template.
+     * @param emailTemplate the Email template.
+     */
+    public void setEmailTemplate(EmailTemplate emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    /**
+     * Gets Mailing Type.
+     * @return Mailing Type.
+     */
+    public MailingTypeEnum getMailingType() {
+        return mailingType;
+    }
+
+    /**
+     * Sets Mailing Type.
+     * @param mailingType mailing type
+     */
+    public void setMailingType(MailingTypeEnum mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    /**
+     * Gets cc Emails.
+     * @return cc Emails
+     */
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    /**
+     * Sets cc Emails.
+     * @param ccedEmails Cc Emails
+     */
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
+
+    /**
+     * Gets Email address.
+     * @return The Email address
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * Sets Email.
+     * @param email the Email address
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * Check id electronic billing is enabled.
+     * @return True if enabled, false else
+     */
+    public boolean getElectronicBilling() {
+        return electronicBilling;
+    }
+
+    /**
+     * Sets the electronic billing.
+     * @param electronicBilling True or False
+     */
+    public void setElectronicBilling(boolean electronicBilling) {
+        this.electronicBilling = electronicBilling;
+    }
 }

@@ -30,6 +30,7 @@ import org.meveo.service.finance.RevenueRecognitionRuleService;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 7.0
  **/
 @Stateless
 public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, UsageChargeTemplateDto> {
@@ -91,6 +92,8 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+        chargeTemplate.setTriggerNextCharge(postData.getTriggerNextCharge());
+        chargeTemplate.setTriggerNextChargeEL(postData.getTriggerNextChargeEL());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -181,6 +184,8 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+        chargeTemplate.setTriggerNextCharge(postData.getTriggerNextCharge());
+        chargeTemplate.setTriggerNextChargeEL(postData.getTriggerNextChargeEL());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -235,7 +240,7 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
             handleMissingParameters();
         }
 
-        UsageChargeTemplateDto result = new UsageChargeTemplateDto();
+        UsageChargeTemplateDto result;
 
         // check if code already exists
         UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, Arrays.asList("invoiceSubCategory"));

@@ -3,6 +3,7 @@ package org.meveo.admin.job;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -26,6 +27,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
@@ -50,6 +52,9 @@ public class FlatFileProcessingJobBean {
 
     @Inject
     private FlatFileProcessingAsync flatFileProcessingAsync;
+    
+    /** The Constant DATETIME_FORMAT. */
+    private static final String DATETIME_FORMAT = "dd_MM_yyyy-HHmmss";
 
     /** The file name. */
     String fileName;
@@ -89,13 +94,13 @@ public class FlatFileProcessingJobBean {
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, String inputDir, File file, String mappingConf, String scriptInstanceFlowCode, String recordVariableName,
+    public void execute(JobExecutionResultImpl result, String inputDir, String outDir, String archDir, String rejDir, File file, String mappingConf, String scriptInstanceFlowCode, String recordVariableName,
             Map<String, Object> context, String originFilename, String formatTransfo, String errorAction) {
         log.debug("Running for inputDir={}, scriptInstanceFlowCode={},formatTransfo={}, errorAction={}", inputDir, scriptInstanceFlowCode, formatTransfo, errorAction);
 
-        outputDir = inputDir + File.separator + "output";
-        rejectDir = inputDir + File.separator + "reject";
-        archiveDir = inputDir + File.separator + "archive";
+        outputDir = outDir != null ? outDir : inputDir + File.separator + "output";
+        rejectDir = rejDir != null ? rejDir : inputDir + File.separator + "reject";
+        archiveDir = archDir != null ? archDir :inputDir + File.separator + "archive";
 
         File f = new File(outputDir);
         if (!f.exists()) {
@@ -130,7 +135,7 @@ public class FlatFileProcessingJobBean {
                     isCsvFromExcel = true;
                     ExcelToCsv excelToCsv = new ExcelToCsv();
                     excelToCsv.convertExcelToCSV(file.getAbsolutePath(), file.getParent(), ";");
-                    FileUtils.moveFile(archiveDir, file, fileName);
+                    moveFile(archiveDir, file, fileName);
                     file = new File(inputDir + File.separator + fileName.replaceAll(".xlsx", ".csv").replaceAll(".xls", ".csv"));
                 }
                 currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
@@ -180,8 +185,9 @@ public class FlatFileProcessingJobBean {
                 report += "\r\n " + e.getMessage();
                 log.error("Failed to process Record file {}", fileName, e);
                 result.registerError(e.getMessage());
-                FileUtils.moveFile(rejectDir, currentFile, fileName);
-
+                if (currentFile != null) {
+                    moveFile(rejectDir, currentFile, fileName);
+                }
             } finally {
                 try {
                     if (fileParser != null) {
@@ -201,7 +207,7 @@ public class FlatFileProcessingJobBean {
                     if (currentFile != null) {
                         // Move current CSV file to save directory, if his origin from an Excel transformation, else CSV file was deleted.
                         if (isCsvFromExcel == false) {
-                            FileUtils.moveFile(archiveDir, currentFile, fileName);
+                            moveFile(archiveDir,currentFile,fileName);                            
                         } else {
                             currentFile.delete();
                         }
@@ -236,6 +242,21 @@ public class FlatFileProcessingJobBean {
     }
 
     /**
+     * Move file.
+     *
+     * @param dest the destination
+     * @param file the file
+     * @param name the file name
+     */
+    private void moveFile(String dest, File file, String name) {
+        String destName = name;
+        if((new File(dest + File.separator + name)).exists()) {
+            destName += "_COPY_"+DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
+        }
+        FileUtils.moveFile(dest, file, destName);        
+    }
+
+    /**
      * Gets the parser type from the mapping conf.
      *
      * @param mappingConf the mapping conf
@@ -260,6 +281,9 @@ public class FlatFileProcessingJobBean {
     private void outputRecord(String lineRecord) throws FileNotFoundException {
         if (outputFileWriter == null) {
             File outputFile = new File(outputDir + File.separator + fileName + ".processed");
+            if(outputFile.exists()) {
+                outputFile = new File(outputDir + File.separator + fileName + "_COPY_"+DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT)+".processed");
+            }
             outputFileWriter = new PrintWriter(outputFile);
             outputFileWriter.print(lineRecord);
         } else {
@@ -277,6 +301,9 @@ public class FlatFileProcessingJobBean {
     private void rejectRecord(String lineRecord, String reason) {
         if (rejectFileWriter == null) {
             File rejectFile = new File(rejectDir + File.separator + fileName + ".rejected");
+            if(rejectFile.exists()) {
+                rejectFile = new File(rejectDir + File.separator + fileName + "_COPY_"+DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT)+".rejected");
+            }
             try {
                 rejectFileWriter = new PrintWriter(rejectFile);
                 rejectFileWriter.print(lineRecord + "=>" + reason);

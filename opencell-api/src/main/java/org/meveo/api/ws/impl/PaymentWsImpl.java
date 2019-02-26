@@ -52,8 +52,8 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
 /**
  * The implementation for PaymentWs.
  * 
- * @author anasseh
  * @author Edward Legaspi
+ * @author Youssef IZEM
  * @lastModifiedVersion 5.3
  */
 @SuppressWarnings("deprecation")
@@ -99,12 +99,12 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     }
 
     @Override
-    public CustomerPaymentsResponse list(String customerAccountCode) {
+    public CustomerPaymentsResponse list(String customerAccountCode, PagingAndFiltering pagingAndFiltering) {
         CustomerPaymentsResponse result = new CustomerPaymentsResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
+            result = paymentApi.getPaymentList(customerAccountCode, pagingAndFiltering);
             result.setBalance(paymentApi.getBalance(customerAccountCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());

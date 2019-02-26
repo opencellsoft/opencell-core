@@ -37,7 +37,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @Entity
 @Cacheable
 @CustomFieldEntity(cftCodePrefix = "DISCOUNT_PLAN_ITEM", inheritCFValuesFrom = { "discountPlan" })
-@ExportIdentifier({ "discount_plan_id", "code" })
+@ExportIdentifier({ "discountPlan.code", "code" })
 @Table(name = "cat_discount_plan_item", uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "discount_plan_id", "code" }) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

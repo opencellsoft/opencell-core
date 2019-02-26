@@ -103,6 +103,12 @@
 					dataModel="#{billingCycleBean.listBillingAccountBillingCycle()}"
 					updateField=":parentTab:formId:childTab:billingCycleSelectId :parentTab:formId:childTab:billingCycleSelectId_text">
 				</hftl:entityPopup>
+			<hftl:entityPopup id="searchEmailTemplatePopup" header="#{messages['emailTemplate']}"
+							  updateField=":parentTab:formId:childTab:emailTemplateId :parentTab:formId:childTab:emailTemplateId_text"
+							  selection="#{billingAccountBean.entity.emailTemplate}"
+							  backingBean="#{emailTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+							  column1Label="#{messages['businessEntity.code']}" column1="code"
+							  column2Label="#{messages['businessEntity.description']}" column2="description"></hftl:entityPopup>
 
 		</c:if>
 		
@@ -245,9 +251,10 @@
 									<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
 							     </p:fieldset>		
 							     
-							     <p:fieldset legend="#{messages['invoice.discounts']}" styleClass="clearLeft" >
+							     <p:fieldset legend="#{messages['invoice.discounts']}" styleClass="clearLeft">
 							     	<p:outputPanel id="discountPanel">
-								     	<h:panelGroup layout="block" styleClass="form-panel" style="margin-bottom: 10px">
+						     			<p:messages id="discountMessages"></p:messages>
+								     	<h:panelGroup styleClass="form-panel" style="margin-bottom: 10px; width: 100%">
 								     		<hftl:formField displayOneLine="false" listenerUpdate="instantiateDiscountPlanDialog" field="discountPlan" valueLabelField="code" listBean="#{discountPlanBean}" />
 								     		<p:commandButton style="float: left" rendered="#{billingAccountBean.edit}" value="#{messages['button.instanciateButton']}" type="button" onclick="PF('dlg_instantiateDiscountPlanDialog').show()"></p:commandButton>
 								     	</h:panelGroup>
@@ -280,24 +287,32 @@
 														label="#{messages['billingAccount.terminationDate']}"
 														field="terminationDate" doNotShowOnNew="true" allowEdit="false" rendered="#{billingAccountBean.entity.terminationDate!=null}"/>
                                   </p:fieldset>
+
                                 </p:tab>
 
 										<p:tab id="tab1"
 											title="#{messages['billingAccount.tab.information']}">
-											
+											<p:fieldset legend="#{messages['invoice.electronicBilling']}" styleClass="clearBoth">
+												<hftl:formField
+														label="#{messages['billingAccount.electronicBilling']}"
+														field="electronicBilling" isMessage="true" listenerUpdate="emailField emailTemplateId"/>
+												<hftl:formField label="#{messages['invoice.ccedEmails']}" id="ccedEmails" field="ccedEmails"/>
+												<hftl:formField label="#{messages['invoice.mailingType']}" listenerUpdate="emailTemplateId" id="mailingType" field="mailingType" noSelectionLabel="false"/>
+												<hftl:formField required="#{not empty billingAccountBean.entity.mailingType}"  id="emailTemplateId" label="#{messages['emailTemplate']}" field="emailTemplate" valueLabelField="code"
+																popup="true"
+																popupId="searchEmailTemplatePopup"/>
+											</p:fieldset>
 											<p:fieldset
 												legend="#{messages['commons.contacts']}">
 		
-												<hftl:formField
-													label="#{messages['billingAccount.electronicBilling']}"
-													field="electronicBilling" isMessage="true" listenerUpdate="emailField" />
+
 		
 												<h:panelGroup id="emailField">
 													<hftl:decorateFormField fieldId="email_select"
 														label="#{messages['billingAccount.email']}">
 														<p:inputText id="email_select"
 															rendered="#{billingAccountBean.edit}"
-															value="#{billingAccountBean.entity.contactInformation.email}" size="20"
+															value="#{billingAccountBean.entity.contactInformationNullSafe.email}" size="20"
 															maxlength="100" converter="nullableStringConverter"
 															required="#{billingAccountBean.entity.electronicBilling == true}">
 															<o:validator validatorId="javax.faces.RegularExpression"
@@ -305,7 +320,7 @@
 																message="#{messages['validator.email.invalid']}" />
 														</p:inputText>
 														<h:outputText rendered="#{!billingAccountBean.edit}"
-															id="emailText" value="#{billingAccountBean.entity.contactInformation.email}" />
+															id="emailText" value="#{billingAccountBean.entity.contactInformationNullSafe.email}" />
 													</hftl:decorateFormField>
 												</h:panelGroup>
 												

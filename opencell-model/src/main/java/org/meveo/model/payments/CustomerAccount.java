@@ -47,10 +47,13 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.shared.ContactInformation;
 
@@ -61,6 +64,7 @@ import org.meveo.model.shared.ContactInformation;
  * @lastModifiedVersion 5.2
  */
 @Entity
+@WorkflowedEntity
 @CustomFieldEntity(cftCodePrefix = "CA", inheritCFValuesFrom = "customer")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CA")
@@ -72,7 +76,7 @@ import org.meveo.model.shared.ContactInformation;
         @NamedQuery(name = "CustomerAccount.listCAIdsForRefund", query = "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='CREDIT' and "
                 + "                   ao.type not in ('P','AP') and ao.matchingStatus ='O' and ca.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and ao.customerAccount.id = ca.id and "
                 + "                   pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN group by ca.id having sum(ao.unMatchingAmount) <> 0") })
-public class CustomerAccount extends AccountEntity {
+public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
@@ -121,6 +125,12 @@ public class CustomerAccount extends AccountEntity {
      */
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AccountOperation> accountOperations = new ArrayList<>();
+
+    /**
+     * List of ca's dunning docs
+     */
+    @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    List<DunningDocument> dunningDocuments = new ArrayList<>();
 
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
@@ -298,6 +308,14 @@ public class CustomerAccount extends AccountEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<DunningDocument> getDunningDocuments() {
+        return dunningDocuments;
+    }
+
+    public void setDunningDocuments(List<DunningDocument> dunningDocuments) {
+        this.dunningDocuments = dunningDocuments;
     }
 
     public List<ActionDunning> getActionDunnings() {

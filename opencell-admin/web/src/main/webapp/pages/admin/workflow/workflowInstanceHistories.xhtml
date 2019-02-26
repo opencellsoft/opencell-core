@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{workflowInstanceHistoryListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+
+        <hftl:entityPopup id="workflowPopup" header="#{messages['generic.wf.title']}" backingBean="#{genericWorkflowBean}" searchField1Label="#{messages['businessEntity.code']}"
+            searchField1="code" searchField2Label="#{messages['businessEntity.description']}" searchField2="description" column1Label="#{messages['businessEntity.code']}"
+            column1="code" column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{workflowInstanceHistoryListBean.filters['workflowInstance.genericWorkflow']}"
+            updateField=":searchForm:workflowId">
+        </hftl:entityPopup>
+
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                <p:menuitem outcome="genericWfsHistory" value="#{messages['menu.generic.workflowHistory']}" />
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:searchPanel backingBean="#{workflowInstanceHistoryListBean}" renderNewButton="false">
+            <hftl:searchField label="#{messages['generic.wf.title']}" id="workflowId" field="workflowInstance.genericWorkflow" valueLabelField="code" popup="true" popupId="workflowPopup" />
+            <hftl:searchField label="#{messages['workflowHistory.actionDate']}" field="actionDate" />
+            <hftl:searchField label="#{messages['workflowHistory.fromStatus']}" field="fromStatus" />
+            <hftl:searchField label="#{messages['workflowHistory.toStatus']}" field="toStatus" />
+            <hftl:searchField label="#{messages['workflowHistory.transitionName']}" field="transitionName" />
+            <hftl:searchField label="#{messages['workflowHistory.entityInstanceCode']}" field="workflowInstance.code" />
+        </hftl:searchPanel>
+
+        <hftl:dataList backingBean="#{workflowInstanceHistoryListBean}" sortBy="actionDate">
+            <hftl:column label="#{messages['workflowHistory.actionDate']}" field="actionDate" />
+            <hftl:column label="#{messages['workflowHistory.entityInstanceCode']}" field="workflowInstance.code" />
+            <hftl:column label="#{messages['generic.wf.targetEntityClass']}" field="workflowInstance.targetEntityClass" />
+            <hftl:column label="#{messages['workflowHistory.fromStatus']}" field="fromStatus" />
+            <hftl:column label="#{messages['workflowHistory.toStatus']}" field="toStatus" />
+            <hftl:column label="#{messages['workflowHistory.transitionName']}" field="transitionName" />
+            <hftl:column label="#{messages['generic.wf.title']}" field="workflowInstance.genericWorkflow.code" />
+            <hftl:column label="#{messages['workflowHistory.creator']}" field="workflowInstance.genericWorkflow.auditable.creator" />
+            <hftl:actionsColumn renderViewLink="true" renderDeleteLink="false" width="35" permission="#{currentUser.hasRole('administrationVisualization')}" />
+        </hftl:dataList>
+
+    </ui:define>
+
+</ui:composition>

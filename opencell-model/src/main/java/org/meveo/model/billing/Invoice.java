@@ -59,6 +59,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -350,6 +351,20 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
      */
     @Column(name = "due_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal dueBalance;
+
+    /**
+     * Check if the invoice already sent
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "already_sent")
+    private boolean alreadySent;
+
+    /**
+     * Dont send the invoice if true.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "dont_send")
+    private boolean dontSend;
 
     /**
      * Seller that invoice was issued to
@@ -943,5 +958,21 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
      */
     public void setDraft(Boolean draft) {
         this.draft = draft;
+    }
+
+    public boolean isAlreadySent() {
+        return alreadySent;
+    }
+
+    public void setAlreadySent(boolean alreadySent) {
+        this.alreadySent = alreadySent;
+    }
+
+    public boolean isDontSend() {
+        return dontSend;
+    }
+
+    public void setDontSend(boolean dontSend) {
+        this.dontSend = dontSend;
     }
 }

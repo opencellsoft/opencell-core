@@ -196,7 +196,7 @@ public class CalendarApi extends BaseApi {
             if (postData.getHolidays() != null && postData.getHolidays().size() > 0) {
                 List<CalendarHoliday> holidays = new ArrayList<CalendarHoliday>();
                 for (CalendarHolidayDto holiday : postData.getHolidays()) {
-                    if(!isHolidayPeriodValid(holiday.getHolidayBegin()) || !isHolidayPeriodValid(holiday.getHolidayBegin())) {
+                    if(!isHolidayPeriodValid(holiday.getHolidayBegin()) || !isHolidayPeriodValid(holiday.getHolidayEnd())) {
                         throw new BusinessApiException(INVALID_HOLIDAY_PERIOD);
                     }
                     holidays.add(new CalendarHoliday(calendar, holiday.getHolidayBegin(), holiday.getHolidayEnd()));

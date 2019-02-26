@@ -160,13 +160,12 @@ public class ProviderService extends PersistenceService<Provider> {
      * 
      * @param provider New provider data to refresh with
      */
-    private void refreshAppProvider(Provider thisProvider) {
-    	Provider provider = findById(thisProvider.getId());    	
-    	
+    private void refreshAppProvider(Provider provider) {
         try {
             BeanUtils.copyProperties(appProvider, provider);
+            
         } catch (IllegalAccessException | InvocationTargetException e) {
-            log.error("Failed to update alProvider fields");
+            log.error("Failed to update appProvider fields");
         }
 
         appProvider.setCurrency(provider.getCurrency() != null ? provider.getCurrency() : null);

@@ -51,23 +51,29 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 
 /**
  * Billing account
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  */
 @Entity
+@WorkflowedEntity
 @CustomFieldEntity(cftCodePrefix = "BA", inheritCFValuesFrom = "customerAccount")
 @ExportIdentifier({ "code" })
 @Table(name = "billing_billing_account")
 @DiscriminatorValue(value = "ACCT_BA")
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listIdsByBillingRunId", query = "SELECT b.id FROM BillingAccount b where b.billingRun.id=:billingRunId"),
         @NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId") })
-public class BillingAccount extends AccountEntity implements IBillableEntity {
+public class BillingAccount extends AccountEntity implements IBillableEntity, IWFEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) BillingAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
@@ -297,6 +303,27 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
      */
     @Transient
     private DiscountPlan discountPlan;
+    /**
+     * Email Template
+     */
+    @ManyToOne()
+    @JoinColumn(name = "email_template_id")
+    private EmailTemplate emailTemplate;
+
+    /**
+     * Mailing type can be Manual, Auto, Batch
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mailing_type")
+    private MailingTypeEnum mailingType;
+
+    /**
+     * A list of emails separated by comma, That can be used a cc
+     */
+    @Column(name = "cced_emails", length = 2000)
+    @Size(max = 2000)
+    private String ccedEmails;
+
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -628,4 +655,51 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 		this.discountPlan = discountPlan;
 	}
 
+    /**
+     * Gets Email Template.
+     * @return Email Template.
+     */
+    public EmailTemplate getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    /**
+     * Sets Email template.
+     * @param emailTemplate the Email template.
+     */
+    public void setEmailTemplate(EmailTemplate emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    /**
+     * Gets Mailing Type.
+     * @return Mailing Type.
+     */
+    public MailingTypeEnum getMailingType() {
+        return mailingType;
+    }
+
+    /**
+     * Sets Mailing Type
+     * @param mailingType mailing type
+     */
+    public void setMailingType(MailingTypeEnum mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    /**
+     * Gets cc Emails
+     * @return
+     */
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    /**
+     * Sets cc Emails
+     * @param ccedEmails Cc Emails
+     */
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
 }

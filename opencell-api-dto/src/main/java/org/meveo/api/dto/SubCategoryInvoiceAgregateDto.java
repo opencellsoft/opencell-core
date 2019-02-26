@@ -122,7 +122,7 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
                 ratedTransactions.add(new RatedTransactionDto(ratedTransaction));
             }
 
-            ratedTransactions.sort(Comparator.comparing(RatedTransactionDto::getUsageDate).thenComparing(RatedTransactionDto::getAmountWithTax));
+            ratedTransactions.sort(Comparator.comparing(RatedTransactionDto::getUsageDate).thenComparing(RatedTransactionDto::getAmountWithTax).thenComparing(RatedTransactionDto::getCode));
         }
     }
 
