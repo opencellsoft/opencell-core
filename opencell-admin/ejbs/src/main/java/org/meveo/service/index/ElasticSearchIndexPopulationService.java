@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -127,7 +128,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         Set<String> cftIndexable = new HashSet<>();
         Set<String> cftNotIndexable = new HashSet<>();
 
-        Query query = getEntityManager().createQuery("select e from " + classname + " e");
+        Query query = getEntityManager().createQuery("select e from " + classname + " e order by e.id");
         query.setFirstResult(from);
         query.setMaxResults(pageSize);
 
@@ -617,32 +618,95 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Populate index with data of a given entity class
+     * Get a number of records in a given db table
+     * 
+     * @param tableName Native table name
+     * @return Number of records
+     */
+    public int getRecordCountInNativeTable(String tableName) {
+
+        Object count = getEntityManager().createNativeQuery("select count(*) from " + tableName).getSingleResult();
+
+        if (count instanceof BigInteger) {
+            return ((BigInteger) count).intValue();
+        } else if (count instanceof Long) {
+            return ((Long) count).intValue();
+        } else {
+            return (Integer) count;
+        }
+    }
+
+    /**
+     * Populate index with data of a given db table
      *
      * @param tableName Native table name
      * @param from Populate starting record number
-     * @param pageSize Number of records to retrieve
+     * @param pageSize Number of records to retrieve. Value of -1 will retrieve all remaining records
      * @param statistics Statistics to add progress info to
      * @return Number of items added
      */
     @SuppressWarnings("unchecked")
+    // @Asynchronous
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public int populateIndexFromNativeTable(String tableName, int from, int pageSize, ReindexingStatistics statistics) {
 
-        Session session = getEntityManager().unwrap(Session.class);
-        SQLQuery query = session.createSQLQuery("select * from " + tableName + " e");
-        query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
-        query.setFirstResult(from);
-        query.setMaxResults(pageSize);
+        long startTime = System.currentTimeMillis();
 
+        Session session = getEntityManager().unwrap(Session.class);
+        SQLQuery query = session.createSQLQuery("select * from " + tableName + " e order by e.id");
+        query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);        
+        query.setFirstResult(from);
+        if (pageSize > -1) {
+            query.setMaxResults(pageSize);
+        }
         List<Map<String, Object>> entities = query.list();
+
+        // List<Map<String, Object>> entities = new ArrayList<>();
+        // Session hibernateSession = getEntityManager().unwrap(Session.class);
+        //
+        // hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+        //
+        // @Override
+        // public void execute(Connection connection) throws SQLException {
+        //
+        // try (Statement stmt = connection.createStatement();) {
+        //
+        // ResultSet rs = stmt.executeQuery("select * from " + tableName + (pageSize > -1 ? " limit " + pageSize : "") + (from > 0 ? " offset " + from : ""));
+        //
+        // ResultSetMetaData rsmd = rs.getMetaData();
+        // int columnCount = rsmd.getColumnCount();
+        //
+        // String[] columns = new String[columnCount];
+        // // The column count starts from 1
+        // for (int i = 1; i <= columnCount; i++) {
+        // columns[i - 1] = rsmd.getColumnName(i);
+        // }
+        //
+        // Map<String, Object> values = null;
+        // while (rs.next()) {
+        // values = new HashMap<>();
+        // for (int i = 0; i < columnCount; i++) {
+        // values.put(columns[i], rs.getObject(i + 1));
+        // }
+        // entities.add(values);
+        // }
+        //
+        // } catch (Exception e) {
+        // log.error("Failed to retrieve values from native table {}", tableName);
+        // }
+        // }
+        // });
+
         int found = entities.size();
+
+        long oneTime = System.currentTimeMillis();
 
         log.trace("Repopulating Elastic Search with records {}-{} of {} table", from, from + found, tableName);
 
         if (entities.isEmpty()) {
             return 0;
+            // return new AsyncResult<Integer>(0);
         }
 
         String index = esConfiguration.getIndex(CustomTableRecord.class);
@@ -653,24 +717,37 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         // Prepare bulk request
         BulkRequestBuilder bulkRequest = esConnection.getClient().prepareBulk();
 
+        long twoTime = System.currentTimeMillis();
+
         // Add map of values
         for (Map<String, Object> values : entities) {
             bulkRequest.add(new IndexRequest(index, type, BaseEntity.cleanUpCodeOrId(values.get(NativePersistenceService.FIELD_ID))).source(values));
         }
 
+        long threeTime = System.currentTimeMillis();
+
         // Execute bulk request
 
         int failedRequests = 0;
         BulkResponse bulkResponse = bulkRequest.get();
-        for (BulkItemResponse bulkItemResponse : bulkResponse.getItems()) {
-            if (bulkItemResponse.getFailureMessage() != null) {
-                log.error("Failed to add document to Elastic Search for {}/{}/{} reason: {}", bulkItemResponse.getIndex(), bulkItemResponse.getType(), bulkItemResponse.getId(),
-                    bulkItemResponse.getFailureMessage(), bulkItemResponse.getFailure().getCause());
-                failedRequests++;
+
+        long fourTime = System.currentTimeMillis();
+
+        if (bulkResponse.hasFailures()) {
+            for (BulkItemResponse bulkItemResponse : bulkResponse.getItems()) {
+                if (bulkItemResponse.getFailureMessage() != null) {
+                    log.error("Failed to add document to Elastic Search for {}/{}/{} reason: {}", bulkItemResponse.getIndex(), bulkItemResponse.getType(), bulkItemResponse.getId(),
+                        bulkItemResponse.getFailureMessage(), bulkItemResponse.getFailure().getCause());
+                    failedRequests++;
+                }
             }
         }
 
+        log.error("AKK populate ES times: retrieve {}, prepareBulk {}, add values {}, execute {}, parse response {}", oneTime - startTime, twoTime - oneTime, threeTime - twoTime,
+            fourTime - threeTime, System.currentTimeMillis() - fourTime);
+
         statistics.updateStatstics(tableName, found, failedRequests);
         return found;
+        // return new AsyncResult<Integer>(found);
     }
 }

@@ -3,7 +3,7 @@ package org.meveo.admin.util;
 import java.io.Serializable;
 import java.util.Locale;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -48,8 +48,8 @@ public class ComponentResources implements Serializable {
     }
 
     @Produces
-    @ApplicationScoped
-    @Named
+    @RequestScoped
+    @Named("paramBean")
     @MeveoParamBean
     public ParamBean getParamBean() {
         return paramBeanFactory.getInstance();

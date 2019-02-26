@@ -855,24 +855,45 @@ public class ElasticClient {
 
                     List<CustomEntityTemplate> cets = customEntityTemplateService.listCustomTableTemplates();
 
+                    int nrThreads = Runtime.getRuntime().availableProcessors();
+                    log.trace("Will run Elastic Search repopulation from native table on {} threads", nrThreads);
+
                     for (CustomEntityTemplate cet : cets) {
 
                         log.info("Start to populate Elastic Search with data from {} table", cet.getDbTablename());
 
                         int from = 0;
+
+                        int recordCount = elasticSearchIndexPopulationService.getRecordCountInNativeTable(cet.getDbTablename());
+                        int recordsRemaining = recordCount;
                         int totalProcessed = 0;
-                        boolean hasMore = true;
 
-                        while (hasMore) {
-                            int found = elasticSearchIndexPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), from, INDEX_POPULATE_CT_PAGE_SIZE, statistics);
+                        while (recordsRemaining > 0) {
 
+                            int processed = elasticSearchIndexPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), from,
+                                recordsRemaining > INDEX_POPULATE_CT_PAGE_SIZE ? INDEX_POPULATE_CT_PAGE_SIZE : -1, statistics);
+
+                            // Future<Integer> future = elasticSearchIndexPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), from,
+                            // recordsRemaining > INDEX_POPULATE_CT_PAGE_SIZE ? INDEX_POPULATE_CT_PAGE_SIZE : -1, statistics);
+
+                            totalProcessed = totalProcessed + processed;
                             from = from + INDEX_POPULATE_CT_PAGE_SIZE;
-                            totalProcessed = totalProcessed + found;
-                            hasMore = found == INDEX_POPULATE_CT_PAGE_SIZE;
+                            recordsRemaining = recordsRemaining - INDEX_POPULATE_CT_PAGE_SIZE;
+
+                            //
+                            // try {
+                            // future.get();
+                            //
+                            // } catch (InterruptedException e) {
+                            // // It was cancelled from outside - no interest
+                            //
+                            // } catch (ExecutionException e) {
+                            // Throwable cause = e.getCause();
+                            // log.error("Failed to populate Elastic Search in async way", cause);
+                            // }
                         }
 
                         log.info("Finished populating Elastic Search with data from {} table. Processed {} records.", cet.getDbTablename(), totalProcessed);
-
                     }
 
                 } else {
@@ -941,15 +962,35 @@ public class ElasticClient {
                 log.info("Start to populate Elastic Search with data from {} table", cet.getDbTablename());
 
                 int from = 0;
+
+                int nrThreads = Runtime.getRuntime().availableProcessors();
+                log.trace("Will run Elastic Search repopulation from native table on {} threads", nrThreads);
+
+                int recordCount = elasticSearchIndexPopulationService.getRecordCountInNativeTable(cet.getDbTablename());
+                int recordsRemaining = recordCount;
                 int totalProcessed = 0;
-                boolean hasMore = true;
+                while (recordsRemaining > 0) {
 
-                while (hasMore) {
-                    int found = elasticSearchIndexPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), from, INDEX_POPULATE_CT_PAGE_SIZE, statistics);
+                    int processed = elasticSearchIndexPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), from,
+                        recordsRemaining > INDEX_POPULATE_CT_PAGE_SIZE ? INDEX_POPULATE_CT_PAGE_SIZE : -1, statistics);
 
+                    // Future<Integer> future = elasticSearchIndexPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), from,
+                    // recordsRemaining > INDEX_POPULATE_CT_PAGE_SIZE ? INDEX_POPULATE_CT_PAGE_SIZE : -1, statistics);
+
+                    totalProcessed = totalProcessed + processed;
                     from = from + INDEX_POPULATE_CT_PAGE_SIZE;
-                    totalProcessed = totalProcessed + found;
-                    hasMore = found == INDEX_POPULATE_CT_PAGE_SIZE;
+                    recordsRemaining = recordsRemaining - INDEX_POPULATE_CT_PAGE_SIZE;
+
+                    // try {
+                    // future.get();
+                    //
+                    // } catch (InterruptedException e) {
+                    // // It was cancelled from outside - no interest
+                    //
+                    // } catch (ExecutionException e) {
+                    // Throwable cause = e.getCause();
+                    // log.error("Failed to populate Elastic Search in async way", cause);
+                    // }
                 }
 
                 log.info("Finished populating Elastic Search with data from {} table. Processed {} records.", cet.getDbTablename(), totalProcessed);
