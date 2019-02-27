@@ -166,7 +166,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 			</view-param>
 			<view-param>
 				<name>mainTab</name>
-				<value>#{sellerBean.backMainTab}</value>
+				<value>1</value>
 			</view-param>
 		</redirect>
 	</navigation-case>
