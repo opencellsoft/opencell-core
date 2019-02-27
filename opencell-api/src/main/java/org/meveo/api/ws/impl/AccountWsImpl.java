@@ -513,11 +513,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public CustomerListResponse findAccountHierarchy(AccountHierarchyDto postData) {
+    public CustomerListResponse findAccountHierarchy(AccountHierarchyDto postData, Boolean calculateBalances) {
         CustomerListResponse result = new CustomerListResponse();
 
         try {
-            result.setCustomers(accountHierarchyApi.find(postData));
+            result.setCustomers(accountHierarchyApi.find(postData, calculateBalances));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
