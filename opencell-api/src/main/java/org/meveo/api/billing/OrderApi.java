@@ -149,18 +149,18 @@ public class OrderApi extends BaseApi {
      */
     public ProductOrder createProductOrder(ProductOrder productOrder, Long quoteId) throws BusinessException, MeveoApiException {
 
-        if (productOrder.getOrderItem() == null || productOrder.getOrderItem().isEmpty()) {
+        if ((productOrder.getOrderItem() == null) || productOrder.getOrderItem().isEmpty()) {
             missingParameters.add("orderItem");
         }
         if (productOrder.getOrderDate() == null) {
             missingParameters.add("orderDate");
         }
 
-        if (productOrder.getElectronicBilling() != null && productOrder.getElectronicBilling()) {
+        if ((productOrder.getElectronicBilling() != null) && productOrder.getElectronicBilling()) {
             if (org.meveo.commons.utils.StringUtils.isBlank(productOrder.getEmail())) {
                 missingParameters.add("email");
             }
-            if (productOrder.getMailingType()!=null && org.meveo.commons.utils.StringUtils.isBlank(productOrder.getEmailTemplate())) {
+            if ((productOrder.getMailingType()!=null) && org.meveo.commons.utils.StringUtils.isBlank(productOrder.getEmailTemplate())) {
                 missingParameters.add("emailTemplate");
             }
         }
@@ -196,7 +196,7 @@ public class OrderApi extends BaseApi {
             order.setBillingCycle(billingCycle);
         }
 
-        if (productOrder.getPaymentMethods() != null && !productOrder.getPaymentMethods().isEmpty()) {
+        if ((productOrder.getPaymentMethods() != null) && !productOrder.getPaymentMethods().isEmpty()) {
             PaymentMethod paymentMethod = productOrder.getPaymentMethods().get(0).fromDto(null, currentUser);
             order.setPaymentMethod(paymentMethod);
         }
@@ -224,7 +224,7 @@ public class OrderApi extends BaseApi {
 
             // Validate billing account
             List<org.tmf.dsmapi.catalog.resource.order.BillingAccount> billingAccount = productOrderItem.getBillingAccount();
-            if (billingAccount == null || billingAccount.isEmpty()) {
+            if ((billingAccount == null) || billingAccount.isEmpty()) {
                 throw new MissingParameterException("billingAccount for order item " + productOrderItem.getId());
             }
 
@@ -295,7 +295,7 @@ public class OrderApi extends BaseApi {
                 orderItem.setStatus(OrderStatusEnum.ACKNOWLEDGED);
             }
 
-            if (productOrderItem.getProduct() != null && productOrderItem.getProduct().getPlace() != null && productOrderItem.getProduct().getPlace().getAddress() != null) {
+            if ((productOrderItem.getProduct() != null) && (productOrderItem.getProduct().getPlace() != null) && (productOrderItem.getProduct().getPlace().getAddress() != null)) {
                 Address shippingAddress = new Address();
                 shippingAddress.setAddress1(productOrderItem.getProduct().getPlace().getAddress().getAddress1());
                 shippingAddress.setAddress2(productOrderItem.getProduct().getPlace().getAddress().getAddress2());
@@ -330,7 +330,7 @@ public class OrderApi extends BaseApi {
 
             List<Product> products = new ArrayList<>();
             products.add(productOrderItem.getProduct());
-            if (productOfferings.size() > 1 && productOrderItem.getProduct().getProductRelationship() != null
+            if ((productOfferings.size() > 1) && (productOrderItem.getProduct().getProductRelationship() != null)
                     && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
                 for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
                     products.add(productRelationship.getProduct());
@@ -343,7 +343,7 @@ public class OrderApi extends BaseApi {
             for (Product product : products) {
                 // Validate that product ID was provided when modifying or deleting a product
                 // ordered
-                if (product.getId() == null && (orderItem.getAction() == OrderItemActionEnum.MODIFY || orderItem.getAction() == OrderItemActionEnum.DELETE)) {
+                if ((product.getId() == null) && ((orderItem.getAction() == OrderItemActionEnum.MODIFY) || (orderItem.getAction() == OrderItemActionEnum.DELETE))) {
                     throw new MissingParameterException("product.id");
                 }
             }
@@ -441,9 +441,9 @@ public class OrderApi extends BaseApi {
         }
 
         log.info("Processing order {}", order.getCode());
-
+        
         order.setStartDate(new Date());
-
+        
         for (org.meveo.model.order.OrderItem orderItem : order.getOrderItems()) {
             processOrderItem(order, orderItem);
         }
@@ -560,7 +560,7 @@ public class OrderApi extends BaseApi {
         List<Product> products = new ArrayList<>();
         List<Product> services = new ArrayList<>();
         int index = 1;
-        if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
+        if ((productOrderItem.getProduct().getProductRelationship() != null) && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
             for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
                 if (index < orderItem.getOrderItemProductOfferings().size()) {
                     products.add(productRelationship.getProduct());
@@ -646,7 +646,7 @@ public class OrderApi extends BaseApi {
         int index = 1;
         List<Product> services = new ArrayList<>();
         List<Product> products = new ArrayList<>();
-        if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
+        if ((productOrderItem.getProduct().getProductRelationship() != null) && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
             for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
                 if (index < orderItem.getOrderItemProductOfferings().size()) {
                     products.add(productRelationship.getProduct());
@@ -746,7 +746,7 @@ public class OrderApi extends BaseApi {
     @SuppressWarnings("rawtypes")
     private CustomFieldsDto extractCustomFields(Product product, Class appliesToClass) {
 
-        if (product.getProductCharacteristic() == null || product.getProductCharacteristic().isEmpty()) {
+        if ((product.getProductCharacteristic() == null) || product.getProductCharacteristic().isEmpty()) {
             return null;
         }
 
@@ -755,7 +755,7 @@ public class OrderApi extends BaseApi {
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(EntityCustomizationUtils.getAppliesTo(appliesToClass, null));
 
         for (ProductCharacteristic characteristic : product.getProductCharacteristic()) {
-            if (characteristic.getName() != null && cfts.containsKey(characteristic.getName())) {
+            if ((characteristic.getName() != null) && cfts.containsKey(characteristic.getName())) {
 
                 CustomFieldTemplate cft = cfts.get(characteristic.getName());
                 CustomFieldDto cftDto = entityToDtoConverter.customFieldToDTO(characteristic.getName(), CustomFieldValue.parseValueFromString(cft, characteristic.getValue()),
@@ -795,7 +795,7 @@ public class OrderApi extends BaseApi {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public Object getProductCharacteristic(Product product, String code, Class valueClass, Object defaultValue) {
 
-        if (product.getProductCharacteristic() == null || product.getProductCharacteristic().isEmpty()) {
+        if ((product.getProductCharacteristic() == null) || product.getProductCharacteristic().isEmpty()) {
             return defaultValue;
         }
 
@@ -860,7 +860,7 @@ public class OrderApi extends BaseApi {
             serviceInstanceDto.setCode(serviceCode);
 
             if (terminationDate != null) {
-                if (StringUtils.isBlank(serviceCode) && serviceId == null) {
+                if (StringUtils.isBlank(serviceCode) && (serviceId == null)) {
                     throw new MissingParameterException("serviceCode or serviceId");
                 }
 
@@ -879,7 +879,7 @@ public class OrderApi extends BaseApi {
                 // if (serviceFound != null && !serviceFound.isEmpty()) {
                 // continue;
                 // }
-                if (subscription != null && subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty()) {
+                if ((subscription != null) && (subscription.getServiceInstances() != null) && !subscription.getServiceInstances().isEmpty()) {
                     boolean flag = false;
                     for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
                         if (serviceCode.equals(serviceInstance.getCode()) && serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
@@ -894,8 +894,10 @@ public class OrderApi extends BaseApi {
 
                 serviceInstanceDto.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct,
                     OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class, new BigDecimal(1)));
+                
+                //subscription date in service takes the subscription date
                 serviceInstanceDto.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
-                    Date.class, DateUtils.setTimeToZero(new Date())));
+                    Date.class, DateUtils.setTimeToZero(subscriptionDto.getSubscriptionDate())));
                 serviceInstanceDto.setRateUntilDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.RATE_UNTIL_DATE.getCharacteristicName(),
                     Date.class, DateUtils.setTimeToZero(new Date())));
 
@@ -968,7 +970,7 @@ public class OrderApi extends BaseApi {
 
         Order order = orderService.findByCode(orderId);
 
-        if (order.getStatus() == OrderStatusEnum.IN_CREATION || order.getStatus() == OrderStatusEnum.ACKNOWLEDGED) {
+        if ((order.getStatus() == OrderStatusEnum.IN_CREATION) || (order.getStatus() == OrderStatusEnum.ACKNOWLEDGED)) {
             orderService.remove(order);
         }
     }
@@ -1052,7 +1054,7 @@ public class OrderApi extends BaseApi {
         List<Product> services = new ArrayList<>();
         if (productOrderItem != null) {
             int index = 1;
-            if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
+            if ((productOrderItem.getProduct().getProductRelationship() != null) && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
                 for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
                     if (index < orderItem.getOrderItemProductOfferings().size()) {
                         products.add(productRelationship.getProduct());
@@ -1070,7 +1072,7 @@ public class OrderApi extends BaseApi {
 
         Integer initialyActiveFor = (Integer) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR.getCharacteristicName(),
             Integer.class, null);
-        if (initialyActiveFor == null && (offerTemplate.getSubscriptionRenewal() == null || offerTemplate.getSubscriptionRenewal().getInitialyActiveFor() == null)) {
+        if ((initialyActiveFor == null) && ((offerTemplate.getSubscriptionRenewal() == null) || (offerTemplate.getSubscriptionRenewal().getInitialyActiveFor() == null))) {
             return;
 
             // Default the values from an offer
