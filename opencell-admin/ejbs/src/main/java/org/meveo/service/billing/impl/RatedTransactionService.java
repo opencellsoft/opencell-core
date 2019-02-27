@@ -451,6 +451,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             BigDecimal amount = isEnterprise ? scAggregate.getAmountWithoutTax() : scAggregate.getAmountWithTax();
             BigDecimal amountCumulativeForTax = amount;
+            BigDecimal discountedAmountCumulative = amount;
 
             // Create category aggregates or update their amounts
 
@@ -483,17 +484,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             if ((amount != null) && !BigDecimal.ZERO.equals(amount)) {
 
-                // Add discount aggregates
+                // Add discount aggregates for subscription
                 for (DiscountPlanItem discountPlanItem : subscriptionApplicableDiscountPlanItems) {
-                    applyDiscount(billingAccount, invoice, isEnterprise, invoiceRounding, invoiceRoundingMode, discountAggregates, scAggregate, amount,
-                            amountCumulativeForTax, cAggregate, discountPlanItem);
+                    discountAggregates.addAll(getDiscountAggregates(billingAccount, invoice, isEnterprise, invoiceRounding, invoiceRoundingMode, scAggregate, amount,
+                            amountCumulativeForTax, discountedAmountCumulative, cAggregate, discountPlanItem));
 
                 }
 
-                // Add discount aggregates
+                // Add discount aggregates for billingAccount
                 for (DiscountPlanItem discountPlanItem : billingAccountApplicableDiscountPlanItems) {
-                    applyDiscount(billingAccount, invoice, isEnterprise, invoiceRounding, invoiceRoundingMode, discountAggregates, scAggregate, amount,
-                            amountCumulativeForTax, cAggregate, discountPlanItem);
+                    discountAggregates.addAll(getDiscountAggregates(billingAccount, invoice, isEnterprise, invoiceRounding, invoiceRoundingMode, scAggregate, discountedAmountCumulative,
+                            amountCumulativeForTax, discountedAmountCumulative, cAggregate, discountPlanItem));
 
                 }
 
@@ -586,9 +587,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
     }
 
-    private void applyDiscount(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise, int invoiceRounding, RoundingModeEnum invoiceRoundingMode,
-            List<SubCategoryInvoiceAgregate> discountAggregates, SubCategoryInvoiceAgregate scAggregate, BigDecimal amount, BigDecimal amountCumulativeForTax,
-            CategoryInvoiceAgregate cAggregate, DiscountPlanItem discountPlanItem) throws BusinessException {
+    private List<SubCategoryInvoiceAgregate> getDiscountAggregates(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise, int invoiceRounding, RoundingModeEnum invoiceRoundingMode,
+            SubCategoryInvoiceAgregate scAggregate, BigDecimal amount, BigDecimal amountCumulativeForTax,
+            BigDecimal discountedAmountCumulative, CategoryInvoiceAgregate cAggregate, DiscountPlanItem discountPlanItem) throws BusinessException {
+        List<SubCategoryInvoiceAgregate> discountAggregates =new ArrayList<>();
         BigDecimal[] amounts;// Apply discount if matches the category, subcategory, or applies to any category
         if ((discountPlanItem.getInvoiceCategory() == null && discountPlanItem.getInvoiceSubCategory() == null)
                 || (discountPlanItem.getInvoiceSubCategory() != null
@@ -638,8 +640,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 discountAggregates.add(discountAggregate);
 
                 amountCumulativeForTax.add(amounts[isEnterprise ? 0 : 1]);
+                discountedAmountCumulative = amountCumulativeForTax;
             }
         }
+        return discountAggregates;
     }
 
     private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount,List<DiscountPlanInstance> discountPlanInstances, Invoice invoice, CustomerAccount customerAccount)
