@@ -1007,4 +1007,14 @@ public class KPICustomerPerOfferReporting extends ReportExtractScript {
             <column name="params" value=""></column>
         </insert>
     </changeSet>
+    <changeSet author="KhalidHorri" id="3986_20190207_add_job_permission">
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-114" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-115" />
+        </insert>
+    </changeSet>
 </databaseChangeLog>
