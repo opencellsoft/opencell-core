@@ -300,6 +300,12 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Size(max = 80)
     private String displayFormat;
 
+    /**
+     * Should field be not manageable in GUI, irrelevant of any other settings
+     */
+    @Transient
+    private boolean hideInGUI;
+
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
     }
@@ -729,7 +735,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      * @return Date period matching calendar's dates
      */
     public DatePeriod getDatePeriod(Date date) {
-		if (isVersionable() && getCalendar() != null && date != null) {
+        if (isVersionable() && getCalendar() != null && date != null) {
             return new DatePeriod(getCalendar().previousCalendarDate(date), getCalendar().nextCalendarDate(date));
         }
         return null;
@@ -952,6 +958,18 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     public void setDisplayFormat(String displayFormat) {
         this.displayFormat = displayFormat;
     }
-    
-    
+
+    /**
+     * @return Should field be not manageable in GUI, irrelevant of any other settings
+     */
+    public boolean isHideInGUI() {
+        return hideInGUI;
+    }
+
+    /**
+     * @param hideInGUI Should field be not manageable in GUI, irrelevant of any other settings
+     */
+    public void setHideInGUI(boolean hideInGUI) {
+        this.hideInGUI = hideInGUI;
+    }
 }

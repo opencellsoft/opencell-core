@@ -65,9 +65,12 @@
 		<c:if
 			test="#{cft.storageType eq CustomFieldStorageTypeEnum.LIST or cft.storageType eq CustomFieldStorageTypeEnum.MAP}">
 			<p:dataTable id="#{idPrefix}_customFields_omitFromSubmit"
-				lazy="false" value="#{field.mapValuesForGUI}" var="mapValues"
+				lazy="true" value="#{customFieldDataEntryBean.getValueDataset(field, cft.storageType)}" var="mapValues"
 				editable="#{edit and !disabled}" editMode="cell" reflow="false"
-				resizableColumns="true" rowIndexVar="rowIndex">
+				resizableColumns="true" rowIndexVar="rowIndex" paginator="true"
+                rows="10" styleClass="custom-grid" paginatorAlwaysVisible="false"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="10,20,30">
 
 				<p:ajax event="cellEdit" update="#{messagesId} #{updateOnAddEdit}"
 					partialSubmit="true"
@@ -204,7 +207,7 @@
 
 		<c:if test="#{cft.storageType eq CustomFieldStorageTypeEnum.MATRIX}">
 			<p:dataTable id="#{idPrefix}_customFields_omitFromSubmit"
-				lazy="false" value="#{field.matrixValuesForGUI}" var="mapValues"
+				lazy="true" value="#{customFieldDataEntryBean.getValueDataset(field, cft.storageType)}" var="mapValues"
 				editable="#{edit and !disabled}" editMode="cell" reflow="false"
 				resizableColumns="true" rowIndexVar="rowIndex" paginator="true"
 				rows="10" styleClass="custom-grid" paginatorAlwaysVisible="false"
