@@ -639,7 +639,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 invoice.addInvoiceAggregate(discountAggregate);
                 discountAggregates.add(discountAggregate);
 
-                amountCumulativeForTax.add(amounts[isEnterprise ? 0 : 1]);
+                amountCumulativeForTax = amountCumulativeForTax.add(amounts[isEnterprise ? 0 : 1]);
                 discountedAmountCumulative = amountCumulativeForTax;
             }
         }
