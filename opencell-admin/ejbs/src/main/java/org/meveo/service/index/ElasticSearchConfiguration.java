@@ -1,7 +1,13 @@
 package org.meveo.service.index;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,6 +22,8 @@ import javax.ejb.Singleton;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.logging.Logger;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ISearchable;
@@ -96,10 +104,27 @@ public class ElasticSearchConfiguration implements Serializable {
      */
     public void loadConfiguration() throws JsonProcessingException, IOException {
 
+        JsonNode node = null;
         upsertMap = new HashSet<>();
 
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readTree(this.getClass().getClassLoader().getResourceAsStream("elasticSearchConfiguration.json"));
+
+        ParamBean paramBean = ParamBean.getInstance();
+        String configFileParam = paramBean.getProperty("elasticsearch.config.file.path", "");
+
+        if (!StringUtils.isEmpty(configFileParam)) {
+            String rootDir = paramBean.getProperty("providers.rootDir", "");
+            String providerDir = paramBean.getProperty("provider.rootDir", "");
+            Path configFilePath = Paths.get(rootDir + File.separator + providerDir + File.separator + configFileParam);
+
+            if (!Files.exists(configFilePath, LinkOption.NOFOLLOW_LINKS)) {
+                throw new FileNotFoundException("The ES config file [" + configFileParam + "] does not exist in the provider root dir.");
+            }
+            node = mapper.readTree(configFilePath.toFile());
+
+        } else {
+            node = mapper.readTree(this.getClass().getClassLoader().getResourceAsStream("elasticSearchConfiguration.json"));
+        }
 
         // Load entity mapping to index, type and update type
         Iterator<Entry<String, JsonNode>> entityMappings = node.get("entityMapping").fields();

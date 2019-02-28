@@ -34,6 +34,10 @@ public class ServiceToUpdateDto implements Serializable {
     @XmlAttribute()
     private String code;
 
+    /** The Service Instance code. */
+    @XmlAttribute
+    private String overrideCode;
+
     /** Description. */
     @XmlAttribute()
     private String description;
@@ -85,6 +89,24 @@ public class ServiceToUpdateDto implements Serializable {
      */
     public void setCode(String code) {
         this.code = code;
+    }
+
+    /**
+     * Gets the service instance code.
+     *
+     * @return the overrideCode
+     */
+    public String getOverrideCode() {
+        return overrideCode;
+    }
+
+    /**
+     * Sets the service instance code.
+     *
+     * @param overrideCode the service instance code.
+     */
+    public void setOverrideCode(String overrideCode) {
+        this.overrideCode = overrideCode;
     }
 
     /**

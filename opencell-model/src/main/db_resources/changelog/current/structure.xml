@@ -1222,6 +1222,60 @@
     </changeSet>
 
 
+    <changeSet id="#2947_20181231_add_emailing_invoice_invoice_type" author="Khalid HORRI">
+        <addColumn tableName="billing_invoice_type">
+            <column name="mailing_type" type="varchar(255)"></column>
+            <column name="email_template_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_account">
+            <column name="mailing_type" type="varchar(255)"></column>
+            <column name="cced_emails" type="varchar(2000)"></column>
+            <column name="email_template_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_subscription">
+            <column name="mailing_type" type="varchar(255)"></column>
+            <column name="cced_emails" type="varchar(2000)"></column>
+            <column name="email" type="varchar(255)"></column>
+            <column name="electronic_billing" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email_template_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="ord_order">
+            <column name="mailing_type" type="varchar(255)"></column>
+            <column name="cced_emails" type="varchar(2000)"></column>
+            <column name="email" type="varchar(255)"></column>
+            <column name="electronic_billing" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email_template_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="already_sent" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dont_send" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="billing_invoice_type" constraintName="fk_inv_email_template" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
+
+        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="billing_billing_account" constraintName="fk_ba_email_template" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
+
+        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="billing_subscription" constraintName="fk_sub_email_template" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
+
+        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="ord_order" constraintName="fk_ordr_email_template" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
+
+    </changeSet>
+
     <changeSet id="#3607_20190123" author="andrius.karpavicius">
         <addColumn tableName="cust_cet">
             <column name="store_as_table" type="${type.boolean}" defaultValueNumeric="0"/>

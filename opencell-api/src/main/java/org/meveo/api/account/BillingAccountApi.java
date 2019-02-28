@@ -42,6 +42,8 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -57,6 +59,7 @@ import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
@@ -112,6 +115,9 @@ public class BillingAccountApi extends AccountEntityApi {
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
 
+    @Inject
+    private EmailTemplateService emailTemplateService;
+
     public void create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
     }
@@ -141,6 +147,9 @@ public class BillingAccountApi extends AccountEntityApi {
             if (StringUtils.isBlank(postData.getEmail())) {
                 missingParameters.add("email");
             }
+            if (postData.getMailingType()!=null && StringUtils.isBlank(postData.getEmailTemplate())) {
+                missingParameters.add("emailTemplate");
+            }
         }
 
         handleMissingParametersAndValidate(postData);
@@ -169,6 +178,21 @@ public class BillingAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
         }
 
+        MailingTypeEnum mailingType = null;
+        if (postData.getMailingType() != null) {
+            mailingType = MailingTypeEnum.getByLabel(postData.getMailingType());
+        }
+
+        EmailTemplate emailTemplate = null;
+        if (postData.getEmailTemplate() != null) {
+            emailTemplate = emailTemplateService.findByCode(postData.getEmailTemplate());
+            if (emailTemplate == null) {
+                throw new EntityDoesNotExistsException(EmailTemplate.class, postData.getEmailTemplate());
+            }
+        }
+
+
+
         BillingAccount billingAccount = new BillingAccount();
         
         if (!StringUtils.isBlank(postData.getPhone())) {
@@ -178,7 +202,6 @@ public class BillingAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getEmail())) {
         	postData.getContactInformation().setEmail(postData.getEmail());
         }
-        
         populate(postData, billingAccount);
 
         billingAccount.setCustomerAccount(customerAccount);
@@ -199,6 +222,9 @@ public class BillingAccountApi extends AccountEntityApi {
         } else {
             billingAccount.setElectronicBilling(postData.getElectronicBilling());
         }
+        billingAccount.setMailingType(mailingType);
+        billingAccount.setEmailTemplate(emailTemplate);
+        billingAccount.setCcedEmails(postData.getCcedEmails());
         billingAccount.setExternalRef1(postData.getExternalRef1());
         billingAccount.setExternalRef2(postData.getExternalRef2());
 
@@ -276,6 +302,19 @@ public class BillingAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(BillingAccount.class, postData.getCode());
         }
 
+        MailingTypeEnum mailingType = null;
+        if (postData.getMailingType() != null) {
+            mailingType = MailingTypeEnum.getByLabel(postData.getMailingType());
+        }
+
+        EmailTemplate emailTemplate = null;
+        if (postData.getEmailTemplate() != null) {
+            emailTemplate = emailTemplateService.findByCode(postData.getEmailTemplate());
+            if (emailTemplate == null) {
+                throw new EntityDoesNotExistsException(EmailTemplate.class, postData.getEmailTemplate());
+            }
+        }
+
         if (postData.getCustomerAccount() != null) {
             CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount());
             if (customerAccount == null) {
@@ -349,9 +388,20 @@ public class BillingAccountApi extends AccountEntityApi {
         if (postData.getEmail() != null) {
             billingAccount.getContactInformation().setEmail(postData.getEmail());
         }
-
+        if (mailingType != null) {
+            billingAccount.setMailingType(mailingType);
+        }
+        if (emailTemplate != null) {
+            billingAccount.setEmailTemplate(emailTemplate);
+        }
+        if (postData.getCcedEmails() != null) {
+            billingAccount.setCcedEmails(postData.getCcedEmails());
+        }
         if (billingAccount.getElectronicBilling() && billingAccount.getContactInformation().getEmail() == null) {
             missingParameters.add("email");
+            if (billingAccount.getMailingType() != null && billingAccount.getEmailTemplate() == null) {
+                missingParameters.add("emailTemplate");
+            }
             handleMissingParameters();
         }
 

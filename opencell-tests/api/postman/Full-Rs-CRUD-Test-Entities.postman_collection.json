@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "fec0f7df-79f2-4513-98be-5161c93cd4b5",
+		"_postman_id": "ecf80cc4-92da-4b5d-9cb5-919635beb010",
 		"name": "Full-Rs-CRUD-Test-Entities",
 		"description": "Full-Rs-CRUD-Test-Entities suite, contains all API tests for regression tests.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -236,6 +236,1216 @@
 						}
 					],
 					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "Generic Workflow CRUD",
+			"item": [
+				{
+					"name": "Create with all vals",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"gwf_Test_API_1\",\r\n  \"description\": \"Generic workflow created from API REST 1\",\r\n  \"targetEntityClass\" : \"org.meveo.model.payments.CustomerAccount\",\r\n  \"initStatus\" : \"S0\",\r\n  \"status\" : [\r\n  \t\t{\r\n  \t\t\t\"code\" : \"S0\",\r\n  \t\t\t\"description\" : \"S0 desc\"\r\n  \t\t},\r\n  \t\t{\r\n  \t\t\t\"code\" : \"S1\",\r\n  \t\t\t\"description\" : \"S1 desc\"\r\n  \t\t},\r\n  \t\t{\r\n  \t\t\t\"code\" : \"S2\",\r\n  \t\t\t\"description\" : \"S2 desc\"\r\n  \t\t}\r\n  \t],\r\n  \t\"transition\" : [\r\n  \t\t{\r\n  \t\t\t\"fromStatus\" : \"S0\",\r\n  \t\t\t\"toStatus\" : \"S1\",\r\n  \t\t\t\"conditionEl\" : \"#{true}\",\r\n  \t\t\t\"description\" : \"trans 1\",\r\n  \t\t\t\"actionScriptCode\" : \"ACCOUNT_OPS\"\r\n  \t\t},\r\n  \t\t{\r\n  \t\t\t\"fromStatus\" : \"S1\",\r\n  \t\t\t\"toStatus\" : \"S2\",\r\n  \t\t\t\"conditionEl\" : \"#{true}\",\r\n  \t\t\t\"description\" : \"trans 2\"\r\n  \t\t},\r\n  \t\t{\r\n  \t\t\t\"fromStatus\" : \"S2\",\r\n  \t\t\t\"toStatus\" : \"S0\",\r\n  \t\t\t\"conditionEl\" : \"#{true}\",\r\n  \t\t\t\"description\" : \"trans 3\"\r\n  \t\t}\r\n  \t]\r\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create with min vals",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"gwf_Test_API_2\",\r\n  \"description\": \"Generic workflow created from API REST 2\",\r\n  \"targetEntityClass\" : \"org.meveo.model.payments.CustomerAccount\",\r\n  \"status\" : [\r\n  \t\t{\r\n  \t\t\t\"code\" : \"S0\",\r\n  \t\t\t\"description\" : \"S0 desc\"\r\n  \t\t},\r\n  \t\t{\r\n  \t\t\t\"code\" : \"S1\",\r\n  \t\t\t\"description\" : \"S1 desc\"\r\n  \t\t},\r\n  \t\t{\r\n  \t\t\t\"code\" : \"S2\",\r\n  \t\t\t\"description\" : \"S2 desc\"\r\n  \t\t}\r\n  \t],\r\n  \t\"initStatus\" : \"S0\"\r\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create with constraint exception",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.status === \"FAIL\";",
+									"tests[\"errorCode\"] = jsonData.errorCode === \"MISSING_PARAMETER\";"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"gwf_Test_API_3\",\r\n  \"description\": \"Generic workflow created from API REST 3\",\r\n  \"targetEntityClass\" : \"org.meveo.model.payments.CustomerAccount\",\r\n  \"status\" : [\r\n  \t\t{\r\n  \t\t\t\"code\" : \"S0\",\r\n  \t\t\t\"description\" : \"S0 desc\"\r\n  \t\t},\r\n  \t\t{\r\n  \t\t\t\"code\" : \"S1\",\r\n  \t\t\t\"description\" : \"S1 desc\"\r\n  \t\t},\r\n  \t\t{\r\n  \t\t\t\"code\" : \"S2\",\r\n  \t\t\t\"description\" : \"S2 desc\"\r\n  \t\t}\r\n  \t]\r\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+									"",
+									"pm.test(\"response must be valid and have a body and not empty\", function () {",
+									"     // assert that the status code is 200",
+									"     pm.response.to.be.ok; // info, success, redirection, clientError, serverError, are other variants",
+									"     // assert that the response has a valid JSON body",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; // this assertion also checks if a body exists, so the above check is not needed",
+									"     ",
+									"     pm.expect(jsonData.workflow).to.be.an('array').that.is.not.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find all vals",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"     // assert that the status code is 200",
+									"     pm.response.to.be.ok; // info, success, redirection, clientError, serverError, are other variants",
+									"     // assert that the response has a valid JSON body",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; // this assertion also checks if a body exists, so the above check is not needed",
+									"     ",
+									"     pm.expect(jsonData.genericWorkflow).to.deep.include({code: 'gwf_Test_API_1'});",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow?code=gwf_Test_API_1",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "gwf_Test_API_1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find all vals 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"     // assert that the status code is 200",
+									"     pm.response.to.be.ok; // info, success, redirection, clientError, serverError, are other variants",
+									"     // assert that the response has a valid JSON body",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; // this assertion also checks if a body exists, so the above check is not needed",
+									"     ",
+									"     pm.expect(jsonData.genericWorkflow).to.deep.include({code: 'gwf_Test_API_2'});",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow?code=gwf_Test_API_2",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "gwf_Test_API_2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find all vals 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.failed\"] = jsonData.status === \"FAIL\";",
+									"tests[\"errorCode\"] = jsonData.errorCode === \"ENTITY_DOES_NOT_EXISTS_EXCEPTION\";"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow?code=gwf_Test_API_3",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "gwf_Test_API_3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"gwf_Test_API_1\",\r\n  \"description\": \"Generic workflow created from API REST update\",\r\n  \"targetEntityClass\" : \"org.meveo.model.payments.CustomerAccount\",\r\n  \"transition\" : [\r\n  \t\t{\r\n  \t\t\t\"uuid\": \"957bcca3-4d45-46ea-b77a-d3be5f9febf8\",\r\n  \t\t\t\"fromStatus\" : \"S0\",\r\n  \t\t\t\"toStatus\" : \"S1\",\r\n  \t\t\t\"conditionEl\" : \"#{true}\",\r\n  \t\t\t\"description\" : \"trans 1\",\r\n  \t\t\t\"actionScriptCode\" : \"ACCOUNT_OPS\"\r\n  \t\t},\r\n  \t\t{\r\n  \t\t\t\"fromStatus\" : \"S1\",\r\n  \t\t\t\"toStatus\" : \"S2\",\r\n  \t\t\t\"conditionEl\" : \"#{true}\",\r\n  \t\t\t\"description\" : \"trans 2\"\r\n  \t\t},\r\n  \t\t{\r\n  \t\t\t\"fromStatus\" : \"S2\",\r\n  \t\t\t\"toStatus\" : \"S0\",\r\n  \t\t\t\"conditionEl\" : \"#{true}\",\r\n  \t\t\t\"description\" : \"trans 3\"\r\n  \t\t}\r\n  \t],\r\n  \t\"initStatus\" : \"S2\"\r\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find new vals",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"     // assert that the status code is 200",
+									"     pm.response.to.be.ok; // info, success, redirection, clientError, serverError, are other variants",
+									"     // assert that the response has a valid JSON body",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; // this assertion also checks if a body exists, so the above check is not needed",
+									"     ",
+									"     pm.expect(jsonData.genericWorkflow).to.deep.include({code: 'gwf_Test_API_1', description : 'Generic workflow created from API REST update', initStatus : 'S2'});",
+									"     pm.expect(jsonData.genericWorkflow.transition).to.have.lengthOf(3);",
+									"     ",
+									"     var transitions = jsonData.genericWorkflow.transition;",
+									"     pm.expect(transitions).to.deep.include({",
+									"                \"uuid\": \"957bcca3-4d45-46ea-b77a-d3be5f9febf8\",",
+									"                \"fromStatus\": \"S0\",",
+									"                \"toStatus\": \"S1\",",
+									"                \"conditionEl\": \"#{true}\",",
+									"                \"priority\": 1,",
+									"                \"description\": \"trans 1\",",
+									"                \"actionScriptCode\": \"ACCOUNT_OPS\"",
+									"            });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow?code=gwf_Test_API_1",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "gwf_Test_API_1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow/gwf_Test_API_2",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow",
+								"gwf_Test_API_2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find deleted vals",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.failed\"] = jsonData.status === \"FAIL\";",
+									"tests[\"errorCode\"] = jsonData.errorCode === \"ENTITY_DOES_NOT_EXISTS_EXCEPTION\";",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow?code=gwf_Test_API_2",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "gwf_Test_API_2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Disable",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow/gwf_Test_API_1/disable",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow",
+								"gwf_Test_API_1",
+								"disable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find disabled",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"     // assert that the status code is 200",
+									"     pm.response.to.be.ok; // info, success, redirection, clientError, serverError, are other variants",
+									"     // assert that the response has a valid JSON body",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; // this assertion also checks if a body exists, so the above check is not needed",
+									"     ",
+									"     pm.expect(jsonData.genericWorkflow).to.deep.include({disabled: true});",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow?code=gwf_Test_API_1",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "gwf_Test_API_1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enable",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow/gwf_Test_API_1/enable",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow",
+								"gwf_Test_API_1",
+								"enable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find enabled",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4b2baa86-81bb-4414-b637-37372ac5abd3",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"is.success\"] = jsonData.actionStatus.status === \"SUCCESS\";",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"     // assert that the status code is 200",
+									"     pm.response.to.be.ok; // info, success, redirection, clientError, serverError, are other variants",
+									"     // assert that the response has a valid JSON body",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json; // this assertion also checks if a body exists, so the above check is not needed",
+									"     ",
+									"     pm.expect(jsonData.genericWorkflow).to.deep.include({disabled: false});",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/admin/genericWorkflow?code=gwf_Test_API_1",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"admin",
+								"genericWorkflow"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "gwf_Test_API_1"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

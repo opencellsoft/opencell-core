@@ -296,7 +296,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate() != null ? subscription.getSubscriptionDate() : new Date());
         }
         serviceInstance.setStatus(InstanceStatusEnum.INACTIVE);
-        serviceInstance.setCode(serviceTemplate.getCode());
+        if(serviceInstance.getCode()==null){
+            serviceInstance.setCode(serviceTemplate.getCode());
+        }
         if (!StringUtils.isBlank(descriptionOverride)) {
             serviceInstance.setDescription(descriptionOverride);
         } else {

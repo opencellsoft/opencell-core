@@ -27,6 +27,13 @@
             backingBean="#{scriptInstanceBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['businessEntity.description']}" column2="description">
         </hftl:entityPopup>
+        <hftl:entityPopup id="searchEmailTemplatePopup" header="#{messages['emailTemplate']}"
+                          updateField=":formInvoiceType:emailTemplateId :formInvoiceType:emailTemplateId_text"
+                          selection="#{invoiceTypeBean.entity.emailTemplate}"
+                          backingBean="#{emailTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+                          column1Label="#{messages['businessEntity.code']}" column1="code"
+                          column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
@@ -50,6 +57,10 @@
             <hftl:formField label="#{messages['invoiceType.prefix']}" field="prefixEL" id="prefix" textArea="true" rows="1" maxlength="2000" />
             <hftl:formField label="#{messages['invoiceType.invoiceSequence']}" id="invoiceSequenceSelectedId" field="invoiceSequence" valueLabelField="code" popup="true" popupId="searchInvoiceSequencePopup"
                 required="true" />
+            <hftl:formField label="#{messages['invoice.mailingType']}" listenerUpdate="emailTemplateId" field="mailingType" disabled="false" noSelectionLabel="false"/>
+            <hftl:formField id="emailTemplateId" required="#{invoiceTypeBean.entity.mailingType!=null}" label="#{messages['emailTemplate']}" field="emailTemplate"
+                            valueLabelField="code" popup="true"
+                            popupId="searchEmailTemplatePopup"/>
             <hftl:formField label="#{messages['invoiceType.appliesTo']}" field="appliesTo" listType="pickUpList" valueLabelField="code" dualListModel="#{invoiceTypeBean.dualListModel}" newLine="true"
                 id="appliesTo" />
             <hftl:formField label="#{messages['invoiceType.pdfFilenameEl']}" field="pdfFilenameEL" textArea="true" rows="1" maxlength="2000" />
@@ -57,7 +68,8 @@
             
             <hftl:formField label="#{messages['invoiceType.occTemplateEL']}" field="occTemplateCodeEl" textArea="true" rows="1" maxlength="2000" />
             <hftl:formField label="#{messages['invoiceType.occTemplateNegativeEL']}" field="occTemplateNegativeCodeEl" textArea="true" rows="1" maxlength="2000" />
-            
+
+
             <h:panelGroup rendered="#{not empty invoiceTypeBean.entity.id}">
                 <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;" value="#{invoiceTypeBean.entity.sellerSequence}"
                     var="sellerSeq" paginator="false" resizableColumns="true">

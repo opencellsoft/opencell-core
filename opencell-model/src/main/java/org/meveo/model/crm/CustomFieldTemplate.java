@@ -305,6 +305,12 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     private String displayFormat;
 
     /**
+     * Should field be not manageable in GUI, irrelevant of any other settings
+     */
+    @Transient
+    private boolean hideInGUI;
+
+    /**
      * Database field name - derived from code
      */
     @Transient
@@ -987,6 +993,20 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     }
 
     /**
+     * @return Should field be not manageable in GUI, irrelevant of any other settings
+     */
+    public boolean isHideInGUI() {
+        return hideInGUI;
+    }
+
+    /**
+     * @param hideInGUI Should field be not manageable in GUI, irrelevant of any other settings
+     */
+    public void setHideInGUI(boolean hideInGUI) {
+        this.hideInGUI = hideInGUI;
+    }
+
+    /**
      * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
      * 
      * @return Database field name
@@ -997,6 +1017,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         }
         return dbFieldname;
     }
+
 
     /**
      * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
