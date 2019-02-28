@@ -67,17 +67,32 @@ public class RatedTransactionsJobBean extends BaseJobBean {
 				aggregationSetting.setAggregateByDay((boolean) this.getParamOrCFValue(jobInstance, "aggregateByDay"));
 				aggregationSetting.setAggregationLevel(AggregationLevelEnum
 						.valueOf(((String) this.getParamOrCFValue(jobInstance, "aggregationLevel"))));
-				aggregationSetting
-						.setAggregateByOrder((boolean) this.getParamOrCFValue(jobInstance, "aggregateByOrder"));
-				aggregationSetting
-						.setAggregateByParam1((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam1"));
-				aggregationSetting
-						.setAggregateByParam2((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam2"));
-				aggregationSetting
-						.setAggregateByParam3((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam3"));
-				aggregationSetting.setAggregateByExtraParam(
-						(boolean) this.getParamOrCFValue(jobInstance, "aggregateByExtraParam"));
+				try {
+					aggregationSetting
+							.setAggregateByOrder((boolean) this.getParamOrCFValue(jobInstance, "aggregateByOrder"));
 
+				} catch (NullPointerException e) {
+				}
+				try {
+					aggregationSetting
+							.setAggregateByParam1((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam1"));
+				} catch (NullPointerException e) {
+				}
+				try {
+					aggregationSetting
+							.setAggregateByParam2((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam2"));
+				} catch (NullPointerException e) {
+				}
+				try {
+					aggregationSetting
+							.setAggregateByParam3((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam3"));
+				} catch (NullPointerException e) {
+				}
+				try {
+					aggregationSetting.setAggregateByExtraParam(
+							(boolean) this.getParamOrCFValue(jobInstance, "aggregateByExtraParam"));
+				} catch (NullPointerException e) {
+				}
 			} catch (Exception e) {
 				nbRuns = 1L;
 				waitingMillis = 0L;

@@ -1486,7 +1486,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	public List<AggregatedWalletOperation> listToInvoiceIdsWithGrouping(Date invoicingDate,
 			RatedTransactionsJobAggregationSetting aggregationSettings) {
 		
-		WalletOperationAggregator woa = new WalletOperationAggregator(aggregationSettings);
+		WalletOperationAggregatorQueryBuilder woa = new WalletOperationAggregatorQueryBuilder(aggregationSettings);
 		
 		String strQuery = woa.getGroupQuery();
 		log.debug("aggregated query={}", strQuery);

@@ -50,11 +50,6 @@ public enum CustomFieldTypeEnum {
      */
     CHILD_ENTITY(true, EntityReferenceWrapper.class),
 
-	/**
-     * Boolean value
-     */
-    BOOLEAN(false, Boolean.class),
-
     /**
      * Multi value (map) type value
      */

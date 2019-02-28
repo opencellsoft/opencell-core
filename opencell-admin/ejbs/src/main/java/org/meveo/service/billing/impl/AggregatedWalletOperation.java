@@ -18,7 +18,7 @@ public class AggregatedWalletOperation {
 	/**
 	 * Id of the aggregated entity
 	 */
-	private Long id;
+	private Object id;
 
 	/**
 	 * Amount with tax
@@ -79,21 +79,47 @@ public class AggregatedWalletOperation {
 	 * Use when aggregating by day.
 	 */
 	private Integer day;
-	
+
 	/**
 	 * Id of the seller.
 	 */
 	private Long sellerId;
+
+	/**
+	 * Parameter1.
+	 */
+	private String parameter1;
+
+	/**
+	 * Parameter2.
+	 */
+	private String parameter2;
+
+	/**
+	 * Parameter3.
+	 */
+	private String parameter3;
+
+	/**
+	 * Extra Parameter. This parameter is only use when charging a usage.
+	 */
+	private String parameterExtra;
 	
+	/**
+	 * The order number.
+	 */
+	private String orderNumber;
+
 	/**
 	 * List of wallet operations.
 	 */
 	private List<WalletOperation> walletOperations;
 
-	public AggregatedWalletOperation(Long sellerId, Integer year, Integer month, Integer day,
-			Tax tax, InvoiceSubCategory invoiceSubCategory, Long id, BigDecimal amountWithTax,
-			BigDecimal amountWithoutTax, BigDecimal amountTax, BigDecimal unitAmountWithTax,
-			BigDecimal unitAmountWithoutTax, BigDecimal unitAmountTax, BigDecimal quantity) {
+	public AggregatedWalletOperation(Long sellerId, Integer year, Integer month, Integer day, Tax tax,
+			InvoiceSubCategory invoiceSubCategory, Object id, BigDecimal amountWithTax, BigDecimal amountWithoutTax,
+			BigDecimal amountTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountWithoutTax,
+			BigDecimal unitAmountTax, BigDecimal quantity, String orderNumber, String parameter1, String parameter2, String parameter3,
+			String parameterExtra) {
 		this.sellerId = sellerId;
 		this.year = year;
 		this.month = month;
@@ -108,17 +134,38 @@ public class AggregatedWalletOperation {
 		this.unitAmountWithoutTax = unitAmountWithoutTax;
 		this.unitAmountTax = unitAmountTax;
 		this.quantity = quantity;
+		this.orderNumber = orderNumber;
+		this.parameter1 = parameter1;
+		this.parameter2 = parameter2;
+		this.parameter3 = parameter3;
+		this.parameterExtra = parameterExtra;
 	}
 
 	public AggregatedWalletOperation() {
 
 	}
 
-	public Long getId() {
+	private Long getComputedId() {
+		String strId = getId().toString();
+		strId = strId.substring(0, strId.indexOf('|'));
+
+		return Long.parseLong(strId);
+	}
+
+	public String getComputedDescription() {
+		String strId = getId().toString();
+		return strId.substring(strId.indexOf('|') + 1);
+	}
+
+	public Long getIdAsLong() {
+		return id.toString().contains("|") ? getComputedId() : Long.parseLong(id.toString());
+	}
+
+	public Object getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Object id) {
 		this.id = id;
 	}
 
@@ -232,6 +279,46 @@ public class AggregatedWalletOperation {
 
 	public void setWalletOperations(List<WalletOperation> walletOperations) {
 		this.walletOperations = walletOperations;
+	}
+
+	public String getParameter1() {
+		return parameter1;
+	}
+
+	public void setParameter1(String parameter1) {
+		this.parameter1 = parameter1;
+	}
+
+	public String getParameter2() {
+		return parameter2;
+	}
+
+	public void setParameter2(String parameter2) {
+		this.parameter2 = parameter2;
+	}
+
+	public String getParameter3() {
+		return parameter3;
+	}
+
+	public void setParameter3(String parameter3) {
+		this.parameter3 = parameter3;
+	}
+
+	public String getParameterExtra() {
+		return parameterExtra;
+	}
+
+	public void setParameterExtra(String parameterExtra) {
+		this.parameterExtra = parameterExtra;
+	}
+
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
 	}
 
 }
