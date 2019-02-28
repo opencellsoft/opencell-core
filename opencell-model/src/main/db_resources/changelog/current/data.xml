@@ -1031,5 +1031,18 @@ public class KPICustomerPerOfferReporting extends ReportExtractScript {
             <column name="permission_id" valueNumeric="-115" />
         </insert>
     </changeSet>
+    <changeSet id="3139_20190225" author="horriKhalid">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-19" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2019-02-25 00:00:00.000" />
+            <column name="job_category" value="INVOICING" />
+            <column name="job_template" value="BillingRunJob" />
+            <column name="code" value="BillingRunJob" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-2" />
+            <column name="uuid" value="JOB_BillingRunJob" />
+        </insert>
+    </changeSet>
 
 </databaseChangeLog>

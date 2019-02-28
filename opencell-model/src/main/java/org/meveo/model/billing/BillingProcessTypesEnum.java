@@ -20,7 +20,7 @@ package org.meveo.model.billing;
 
 public enum BillingProcessTypesEnum {
 
-    AUTOMATIC(1, "BillingRunStatusEnum.automatic"), MANUAL(2, "BillingRunStatusEnum.manual");
+    AUTOMATIC(1, "BillingRunStatusEnum.automatic"), MANUAL(2, "BillingRunStatusEnum.manual"), FULL_AUTOMATIC(3, "BillingRunStatusEnum.fullAtomatic");
 
     private Integer id;
     private String label;
