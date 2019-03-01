@@ -81,7 +81,7 @@
             <h:form id="formImportSummary">
                 <h:panelGroup rendered="#{customTableBean.importFuture!=null}">
 
-                    <p:remoteCommand name="updateData" update=":ctForm:ctSearchResults_omitFromSubmit" />
+                    <p:remoteCommand name="updateData" update=":ctForm:ctSearchResults" />
 
                     <p:poll interval="5" update="importSummary" stop="#{customTableBean.importFuture!=null and customTableBean.importFuture.isDone()}" widgetVar="importStatusPoll"
                         onerror="PF('importStatusPoll').stop()" onsuccess="updateData()" />
@@ -126,7 +126,7 @@
         </h:panelGroup>
 
 
-        <hftl:searchPanel backingBean="#{customTableBean}" renderNewButton="false" ajaxUpdateIds=":ctForm:ctSearchResults_omitFromSubmit">
+        <hftl:searchPanel backingBean="#{customTableBean}" renderNewButton="false" ajaxUpdateIds=":ctForm:ctSearchResults">
 
             <c:forEach items="#{customTableBean.fields}" var="field">
                 <c:if test="#{field.fieldType eq CustomFieldTypeEnum.STRING}">
@@ -160,11 +160,12 @@
 
         <p:panel width="100">
             <h:form id="ctForm">
-                <p:dataTable id="ctSearchResults_omitFromSubmit" value="#{customTableBean.dataModel}" var="entity" lazy="true" widgetVar="ctTable"
+                <p:dataTable id="ctSearchResults" value="#{customTableBean.dataModel}" var="entity" lazy="true" widgetVar="ctTable"
                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" paginator="true" rows="10"
                     rowsPerPageTemplate="10,15,20,50" resizableColumns="true" styleClass="custom-grid" reflow="true" editable="#{customTableBean.edit}" editMode="cell"
                     selection="#{customTableBean.selectedValues}" sortBy="id">
                     <p:ajax event="cellEdit" listener="#{customTableBean.onCellEdit}" update=":growl" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />/>
+                    <p:ajax event="cellEditCancel"  partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />/>
     
                     <p:column id="multiSelect" selectionMode="multiple" width="4%" exportable="false" toggleable="false" />
                     <p:column headerText="id" sortBy="#{id}">
@@ -233,7 +234,7 @@
                     </p:columns>
                     <p:column headerText="#{messages['commons.actions']}" exportable="false">
                         <p:commandButton id="deletelink" icon="ui-icon-trash" action="#{customTableBean.delete(entity['id'])}" rendered="#{customTableBean.edit}"
-                            update=":ctForm:ctSearchResults_omitFromSubmit">
+                            update=":ctForm:ctSearchResults" process="@this" immediate="true">
                             <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
                         </p:commandButton>
                     </p:column>
@@ -299,7 +300,7 @@
                                     </c:if>
                                 </c:forEach>
 
-                                <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update=":ctForm:ctSearchResults_omitFromSubmit"
+                                <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update=":ctForm:ctSearchResults"
                                     action="#{customTableBean.addNewValues()}" style="margin-left:20px">
                                     <p:resetInput target="addNewFields" />
                                 </p:commandButton>
@@ -313,8 +314,9 @@
                                     <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['customTable.exportFile.confirmation']}" icon="ui-icon-alert" />
                                 </p:commandButton>
 
-                                <p:commandButton id="deleteMany" value="#{messages['commons.deleteMultiple']}" action="#{customTableBean.deleteMany()}" icon="ui-icon-trash" immediate="true"
-                                    process="@this" update=":ctForm:ctSearchResults_omitFromSubmit">
+                                <p:commandButton id="deleteMany" value="#{messages['commons.deleteMultiple']}" action="#{customTableBean.deleteMany()}" icon="ui-icon-trash"
+                                    process=":ctForm:ctSearchResults" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])"
+                                    update=":ctForm:ctSearchResults">
                                     <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDeleteMultiple']}" icon="ui-icon-alert" />
                                 </p:commandButton>
                             </h:panelGroup>
