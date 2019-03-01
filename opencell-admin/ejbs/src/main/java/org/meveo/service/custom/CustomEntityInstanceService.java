@@ -38,4 +38,24 @@ public class CustomEntityInstanceService extends BusinessService<CustomEntityIns
 
         return qb.getQuery(getEntityManager()).getResultList();
     }
+    
+	public List<CustomEntityInstance> listByCet(String cetCode) {
+        return listByCet(cetCode, null);
+    }
+    
+    @SuppressWarnings("unchecked")
+	public List<CustomEntityInstance> listByCet(String cetCode, Boolean active) {
+        QueryBuilder qb = new QueryBuilder(getEntityClass(), "cei", null);
+        qb.addCriterion("cei.cetCode", "=", cetCode, true);
+        
+        if(active != null) {
+        	qb.addBooleanCriterion("disabled", !active);
+        }
+        try {
+            return (List<CustomEntityInstance>) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("No CustomEntityInstances by cetCode {} found", cetCode);
+            return null;
+        }
+    }
 }

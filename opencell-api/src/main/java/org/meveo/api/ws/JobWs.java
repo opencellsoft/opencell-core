@@ -8,13 +8,16 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.job.JobCategoriesResponseDto;
 import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
+import org.meveo.api.dto.response.job.JobInstanceListResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
 
 /**
  * @author Edward P. Legaspi
+ * @author Adnane Boubia
  * @lastModifiedVersion 5.0
  */
 @WebService
@@ -106,5 +109,15 @@ public interface JobWs extends IBaseWs {
      */
     @WebMethod
     JobCategoriesResponseDto listCategories();
+    
+    /**
+     * List job instances
+     * 
+     * @param mergedCF Should inherited custom field values be included. Deprecated in v. 4.7.2 Use pagingAndFiltering.fields="inheritedCF" instead
+     * @param pagingAndFiltering Paging and filtering criteria
+     * @return List of job instances
+     */
+    @WebMethod
+    JobInstanceListResponseDto list(@Deprecated @WebParam(name = "mergedCF") Boolean mergedCF, @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
 }

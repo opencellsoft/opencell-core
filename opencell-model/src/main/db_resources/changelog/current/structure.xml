@@ -951,7 +951,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="order_num" type="varchar(500)" />
-            <column name="cf_values" type="${type.json}"/>
+            <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}"></column>
 			<column name="general_ledger_id" type="bigint" />
             <column name="accounting_code_id" type="bigint"></column>
@@ -1138,11 +1138,11 @@
     <changeSet id="#4010_20190206" author="anasseh">
             <modifyDataType tableName="wf_history_action" columnName="result" newDataType="${type.text}"/>
    </changeSet>
-
+   
    <changeSet id="#3650_20190131" author="AmineBenAicha">
     	<!-- Update table wf_generic_workflow -->
     	<dropColumn tableName="wf_generic_workflow" columnName="transition_script_id" />
-
+    	
     	<!-- Create table wf_generic_transition -->
     	<createSequence sequenceName="wf_generic_transition_seq" />
         <createTable tableName="wf_generic_transition">
@@ -1165,7 +1165,7 @@
             onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
         <addForeignKeyConstraint baseColumnNames="action_script_id" baseTableName="wf_generic_transition" constraintName="fk_wf_transition_script" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
-
+        
         <!-- Update table wf_instance -->
         <dropColumn tableName="wf_instance_history" columnName="wf_instance_id" />
         <dropTable tableName="wf_instance" />
@@ -1199,7 +1199,7 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
         <addUniqueConstraint columnNames="generic_wf_id, code" constraintName="uk_generic_wf_id_code_wf_instance" deferrable="false" disabled="false" initiallyDeferred="false"
         	tableName="wf_instance" />
-
+    
     	<!-- Update table wf_instance_history -->
     	<dropColumn tableName="wf_instance_history" columnName="wf_status_from" />
     	<dropColumn tableName="wf_instance_history" columnName="wf_status_to" />
@@ -1212,7 +1212,7 @@
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="wf_instance_id" baseTableName="wf_instance_history" constraintName="fk_history_wf_instance" deferrable="false" initiallyDeferred="false"
             onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_instance" />
-
+            
         <!-- Update table wf_generic_workflow -->
         <addColumn tableName="wf_generic_workflow">
             <column name="init_status" type="varchar(255)">
@@ -1275,4 +1275,11 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
 
     </changeSet>
+
+    <changeSet id="#3607_20190123" author="andrius.karpavicius">
+        <addColumn tableName="cust_cet">
+            <column name="store_as_table" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>        
+    </changeSet>
+    
 </databaseChangeLog>

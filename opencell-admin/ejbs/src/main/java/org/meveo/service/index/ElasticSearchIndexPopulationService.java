@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +32,8 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.proxy.HibernateProxy;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -44,7 +47,7 @@ import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.Auditable;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
@@ -54,6 +57,9 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.customEntities.CustomTableRecord;
+import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
@@ -109,34 +115,35 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * Populate index with data of a given entity class
      *
      * @param classname Entity classname
-     * @param from Populate starting record number
+     * @param fromId Populate starting record id
+     * @param pageSize Number of records to retrieve
      * @param statistics Statistics to add progress info to
-     * @return Number of items added
+     * @return An array consisting of: Number of items added and last identifier processed
      */
     @SuppressWarnings("unchecked")
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public int populateIndex(String classname, int from, ReindexingStatistics statistics) {
+    public Object[] populateIndex(String classname, Object fromId, int pageSize, ReindexingStatistics statistics) {
 
         Set<String> cftIndexable = new HashSet<>();
         Set<String> cftNotIndexable = new HashSet<>();
 
-        Query query = getEntityManager().createQuery("select e from " + classname + " e");
-        query.setFirstResult(from);
-        query.setMaxResults(ElasticClient.INDEX_POPULATE_PAGE_SIZE);
+        Query query = getEntityManager().createQuery("select e from " + classname + " e where e.id>" + fromId + " order by e.id");
+        query.setMaxResults(pageSize);
 
-        List<? extends BusinessEntity> entities = query.getResultList();
+        List<? extends ISearchable> entities = query.getResultList();
         int found = entities.size();
 
-        log.trace("Repopulating Elastic Search with records {}-{} of {} entity", from, from + found, classname);
+        log.trace("Repopulating Elastic Search with records {}/+{} of {} entity", fromId, found, classname);
 
         if (entities.isEmpty()) {
-            return 0;
+            return new Object[] { 0, null };
         }
 
         String index = esConfiguration.getIndex(entities.get(0));
         String type = null;
-        String id = null;
+        Object lastId = null;
+        String idForES = null;
 
         // Process results
 
@@ -147,11 +154,12 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         for (ISearchable entity : entities) {
 
             type = esConfiguration.getType(entity);
-            id = ElasticClient.cleanUpCode(ElasticClient.buildId(entity));
+            lastId = entity.getId();
+            idForES = BaseEntity.cleanUpCodeOrId(ElasticClient.buildId(entity));
 
             Map<String, Object> valueMap = convertEntityToJson(entity, cftIndexable, cftNotIndexable);
 
-            bulkRequest.add(new IndexRequest(index, type, id).source(valueMap));
+            bulkRequest.add(new IndexRequest(index, type, idForES).source(valueMap));
         }
 
         // Execute bulk request
@@ -167,7 +175,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         }
 
         statistics.updateStatstics(classname, found, failedRequests);
-        return found;
+        return new Object[] { found, lastId };
     }
 
     private EntityManager getEntityManager() {
@@ -184,6 +192,11 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> convertEntityToJson(ISearchable entity, Set<String> cftIndexable, Set<String> cftNotIndexable) {
+
+        // A special case where values are already present as a map
+        if (entity instanceof CustomTableRecord) {
+            return ((CustomTableRecord) entity).getValues();
+        }
 
         Map<String, Object> jsonValueMap = new HashMap<String, Object>();
 
@@ -280,8 +293,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         }
 
         // Set custom field values if applicable
-		if (entity instanceof ICustomFieldEntity && ((ICustomFieldEntity) entity).getCfValues() != null
-				&& ((ICustomFieldEntity) entity).getCfValuesAsValues() != null) {
+        if (entity instanceof ICustomFieldEntity && ((ICustomFieldEntity) entity).getCfValues() != null && ((ICustomFieldEntity) entity).getCfValuesAsValues() != null) {
 
             ICustomFieldEntity cfEntity = (ICustomFieldEntity) entity;
 
@@ -307,7 +319,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                             cftIndexable.add(entity.getClass().getName() + "_" + cfCode);
                         }
                         jsonValueMap.put(cfCode, value);
-                        
+
                     } else if (cftNotIndexable != null) {
                         cftNotIndexable.add(entity.getClass().getName() + "_" + cfCode);
                     }
@@ -386,7 +398,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      */
     public void dropIndexes() throws BusinessException {
 
-        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
+        String indexPrefix = BaseEntity.cleanUpAndLowercaseCodeOrId(appProvider.getCode());
 
         log.debug("Dropping all Elastic Search indexes with prefix {}", indexPrefix);
         String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
@@ -425,7 +437,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createIndexes() throws BusinessException {
 
-        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
+        String indexPrefix = BaseEntity.cleanUpAndLowercaseCodeOrId(appProvider.getCode());
 
         log.debug("Creating Elastic Search indexes with prefix {}", indexPrefix);
         String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
@@ -482,14 +494,16 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      */
     public void createCETMapping(CustomEntityTemplate cet) throws BusinessException {
 
-        String index = esConfiguration.getIndex(CustomEntityInstance.class);
+        Class<? extends ISearchable> instanceClass = cet.isStoreAsTable() ? CustomTableRecord.class : CustomEntityInstance.class;
+        String index = esConfiguration.getIndex(instanceClass);
+
         // Not interested in storing and indexing this entity in Elastic Search
         if (index == null) {
             log.warn("No matching index found for CET {}", cet);
             return;
         }
 
-        String type = esConfiguration.getType(CustomEntityInstance.class, cet.getCode());
+        String type = esConfiguration.getType(instanceClass, cet.getCode());
 
         String fieldMappingJson = esConfiguration.getCetMapping(cet);
         if (fieldMappingJson == null) {
@@ -534,12 +548,6 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             return;
         }
 
-        String fieldMappingJson = esConfiguration.getCustomFieldMapping(cft);
-        if (fieldMappingJson == null) {
-            log.warn("No matching field mapping found for CFT {}", cft);
-            return;
-        }
-
         Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
         Class entityClass = null;
         String entityCode = null;
@@ -554,8 +562,30 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             log.error("Could not find a matching entity class for {}", cft);
             return;
 
-        } else if (!BusinessEntity.class.isAssignableFrom(entityClass)) {
-            log.trace("Entity class {} matched for {} is not BusinessEntity and is not tracked by Elastic Search", entityClass, cft);
+        } else if (!ISearchable.class.isAssignableFrom(entityClass)) {
+            log.trace("Entity class {} matched for {} is not ISearchable and is not tracked by Elastic Search", entityClass, cft);
+            return;
+        }
+
+        // For Custom tables (CFT is linked to CustomEntityInstance, but corresponding CustomEntityTemplate.storeAsTable=true)
+        // CFT fieldname should be cleanedup and lowercased.
+        // Entity class should be changed to CustomTableRecord
+        boolean cleanupCFTFieldname = false;
+        if (entityClass.isAssignableFrom(CustomEntityInstance.class)) {
+            CustomEntityTemplate cet = customEntityTemplateService.findByCode(entityCode);
+            if (cet == null) {
+                log.trace("Custom entity template {} was not found", entityCode);
+                return;
+            }
+            if (cet.isStoreAsTable()) {
+                entityClass = CustomTableRecord.class;
+                cleanupCFTFieldname = true;
+            }
+        }
+
+        String fieldMappingJson = esConfiguration.getCustomFieldMapping(cft, cleanupCFTFieldname);
+        if (fieldMappingJson == null) {
+            log.warn("No matching field mapping found for CFT {}", cft);
             return;
         }
 
@@ -573,7 +603,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         ResteasyWebTarget target = client.target(uri + "/" + index + "/_mapping/" + type);
 
         Response response = target.request().put(javax.ws.rs.client.Entity.entity(fieldMappingJson, MediaType.APPLICATION_JSON_TYPE));
-        response.close();
+
         if (response.getStatus() != HttpURLConnection.HTTP_OK) {
 
             String updateIndexResponse = response.readEntity(String.class);
@@ -583,7 +613,91 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             throw new BusinessException(
                 "Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
         } else {
-            log.error("Updated {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
+            log.info("Updated {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
+            response.close();
         }
+    }
+
+    /**
+     * Get a number of records in a given db table
+     * 
+     * @param tableName Native table name
+     * @return Number of records
+     */
+    public int getRecordCountInNativeTable(String tableName) {
+
+        Object count = getEntityManager().createNativeQuery("select count(*) from " + tableName).getSingleResult();
+
+        if (count instanceof BigInteger) {
+            return ((BigInteger) count).intValue();
+        } else if (count instanceof Long) {
+            return ((Long) count).intValue();
+        } else {
+            return (Integer) count;
+        }
+    }
+
+    /**
+     * Populate index with data of a given db table
+     *
+     * @param tableName Native table name
+     * @param fromId Populate starting record id
+     * @param pageSize Number of records to retrieve. Value of -1 will retrieve all remaining records
+     * @param statistics Statistics to add progress info to
+     * @return An array consisting of: Number of items added and last identifier processed
+     */
+    @SuppressWarnings("unchecked")
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Object[] populateIndexFromNativeTable(String tableName, Object fromId, int pageSize, ReindexingStatistics statistics) {
+
+        Session session = getEntityManager().unwrap(Session.class);
+        SQLQuery query = session.createSQLQuery("select * from " + tableName + " e where e.id>" + fromId + " order by e.id");
+        query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
+        if (pageSize > -1) {
+            query.setMaxResults(pageSize);
+        }
+        List<Map<String, Object>> entities = query.list();
+
+        int found = entities.size();
+
+        log.trace("Repopulating Elastic Search with records {}/+{} of {} table", fromId, found, tableName);
+
+        if (entities.isEmpty()) {
+            return new Object[] { 0, null };
+        }
+
+        String index = esConfiguration.getIndex(CustomTableRecord.class);
+        String type = esConfiguration.getType(CustomTableRecord.class, tableName);
+
+        // Process results
+
+        // Prepare bulk request
+        BulkRequestBuilder bulkRequest = esConnection.getClient().prepareBulk();
+
+        Object lastId = null;
+        // Add map of values
+        for (Map<String, Object> values : entities) {
+            lastId = values.get(NativePersistenceService.FIELD_ID);
+            bulkRequest.add(new IndexRequest(index, type, BaseEntity.cleanUpCodeOrId(lastId)).source(values));
+        }
+
+        // Execute bulk request
+
+        int failedRequests = 0;
+        BulkResponse bulkResponse = bulkRequest.get();
+
+        if (bulkResponse.hasFailures()) {
+            for (BulkItemResponse bulkItemResponse : bulkResponse.getItems()) {
+                if (bulkItemResponse.getFailureMessage() != null) {
+                    log.error("Failed to add document to Elastic Search for {}/{}/{} reason: {}", bulkItemResponse.getIndex(), bulkItemResponse.getType(), bulkItemResponse.getId(),
+                        bulkItemResponse.getFailureMessage(), bulkItemResponse.getFailure().getCause());
+                    failedRequests++;
+                }
+            }
+        }
+
+        statistics.updateStatstics(tableName, found, failedRequests);
+        return new Object[] { found, lastId };
     }
 }

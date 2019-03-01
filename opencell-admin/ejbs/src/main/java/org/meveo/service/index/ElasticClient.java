@@ -2,7 +2,9 @@ package org.meveo.service.index;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder.Operator;
 import org.elasticsearch.search.sort.SortOrder;
@@ -34,11 +37,13 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.customEntities.CustomTableRecord;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -61,7 +66,8 @@ public class ElasticClient {
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
     public static int DEFAULT_SEARCH_PAGE_SIZE = 10;
-    public static int INDEX_POPULATE_PAGE_SIZE = 100;
+    public static int INDEX_POPULATE_PAGE_SIZE = 1000;
+    public static int INDEX_POPULATE_CT_PAGE_SIZE = 10000;
 
     @Inject
     private Logger log;
@@ -147,7 +153,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = cleanUpCode(buildId(entity));
+            id = BaseEntity.cleanUpCodeOrId(buildId(entity));
 
             ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.UPDATE, index, type, id, entity.getClass(), fieldsToUpdate);
             queuedChanges.addChange(change);
@@ -184,7 +190,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = cleanUpCode(buildId(entity));
+            id = BaseEntity.cleanUpCodeOrId(buildId(entity));
             boolean upsert = esConfiguration.isDoUpsert(entity);
 
             ElasticSearchAction action = upsert ? ElasticSearchAction.UPSERT : partialUpdate ? ElasticSearchAction.UPDATE : ElasticSearchAction.ADD_REPLACE;
@@ -198,6 +204,53 @@ public class ElasticClient {
 
         } catch (Exception e) {
             log.error("Failed to queue document store to Elastic Search to {}/{}/{}", ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()), index, type, id, e);
+        }
+    }
+
+    /**
+     * Store and index entity/values in Elastic Search
+     *
+     * @param entityClass Entity class to store in Elastic Search
+     * @param cetCode Custom entity template code
+     * @param identifier Record identifier
+     * @param values Values to store
+     * @param partialUpdate Should it be treated as partial update instead of replace if document exists. This value can be overridden in elasticSearchConfiguration.json to always
+     *        do upsert.
+     * @param immediate True if changes should be propagated immediately to Elastic search. False - changes will be queued until JPA flush event
+     */
+    public void createOrUpdate(Class<? extends ISearchable> entityClass, String cetCode, Object identifier, Map<String, Object> values, boolean partialUpdate, boolean immediate) {
+
+        if (!esConnection.isEnabled()) {
+            return;
+        }
+
+        String index = null;
+        String type = null;
+        String id = null;
+        try {
+
+            index = esConfiguration.getIndex(entityClass);
+            // Not interested in storing and indexing this entity in Elastic Search
+            if (index == null) {
+                return;
+            }
+
+            type = esConfiguration.getType(entityClass, cetCode);
+            id = BaseEntity.cleanUpCodeOrId(identifier);
+            boolean upsert = esConfiguration.isDoUpsert(entityClass);
+
+            ElasticSearchAction action = upsert ? ElasticSearchAction.UPSERT : partialUpdate ? ElasticSearchAction.UPDATE : ElasticSearchAction.ADD_REPLACE;
+
+            ElasticSearchChangeset change = new ElasticSearchChangeset(action, index, type, id, entityClass, values);
+            queuedChanges.addChange(change);
+            log.trace("Queueing Elastic Search document changes {}", change);
+
+            if (immediate) {
+                flushChanges();
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to queue document store to Elastic Search to {}/{}/{}", ReflectionUtils.getCleanClassName(entityClass.getSimpleName()), index, type, id, e);
         }
     }
 
@@ -224,7 +277,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = cleanUpCode(buildId(entity));
+            id = BaseEntity.cleanUpCodeOrId(buildId(entity));
 
             ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, index, type, id, entity.getClass(), null);
             queuedChanges.addChange(change);
@@ -233,6 +286,124 @@ public class ElasticClient {
 
         } catch (Exception e) {
             log.error("Failed to queue document delete from Elastic Search to {}/{}/{}", ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()), index, type, id, e);
+        }
+    }
+
+    /**
+     * Remove entity from Elastic Search
+     *
+     * @param entityClass Entity class to remove from Elastic Search
+     * @param cetCode Custom entity template code
+     * @param identifier Record identifier. Optional. Will delete all data of that type if not provided.
+     * @param immediate True if changes should be propagated immediately to Elastic search. False - changes will be queued until JPA flush event
+     */
+    public void remove(Class<? extends ISearchable> entityClass, String cetCode, Long identifier, boolean immediate) {
+
+        if (!esConnection.isEnabled()) {
+            return;
+        }
+
+        String index = null;
+        String type = null;
+        String id = null;
+        try {
+
+            index = esConfiguration.getIndex(entityClass);
+            // Not interested in storing and indexing this entity in Elastic Search
+            if (index == null) {
+                return;
+            }
+
+            type = esConfiguration.getType(entityClass, cetCode);
+            id = BaseEntity.cleanUpCodeOrId(identifier);
+
+            ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, index, type, id, entityClass, null);
+            queuedChanges.addChange(change);
+
+            log.trace("Queueing Elastic Search document changes {}", change);
+
+            if (immediate) {
+                flushChanges();
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to queue document delete from Elastic Search to {}/{}/{}", ReflectionUtils.getCleanClassName(entityClass.getSimpleName()), index, type, id, e);
+        }
+    }
+
+    /**
+     * Remove entities from Elastic Search
+     *
+     * @param entityClass Entity class to remove from Elastic Search
+     * @param cetCode Custom entity template code
+     * @param identifiers Record identifiers
+     * @param immediate True if changes should be propagated immediately to Elastic search. False - changes will be queued until JPA flush event
+     */
+    public void remove(Class<? extends ISearchable> entityClass, String cetCode, Set<Long> identifiers, boolean immediate) {
+
+        if (!esConnection.isEnabled()) {
+            return;
+        }
+
+        String index = null;
+        String type = null;
+        String id = null;
+        try {
+
+            index = esConfiguration.getIndex(entityClass);
+            // Not interested in storing and indexing this entity in Elastic Search
+            if (index == null) {
+                return;
+            }
+
+            type = esConfiguration.getType(entityClass, cetCode);
+            for (Object identifier : identifiers) {
+                id = BaseEntity.cleanUpCodeOrId(identifier);
+
+                ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, index, type, id, entityClass, null);
+                queuedChanges.addChange(change);
+                log.trace("Queueing Elastic Search document changes {}", change);
+            }
+
+            if (immediate) {
+                flushChanges();
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to queue document delete from Elastic Search to {}/{}/{}", ReflectionUtils.getCleanClassName(entityClass.getSimpleName()), index, type, id, e);
+        }
+    }
+
+    /**
+     * Remove ALL entities from Elastic Search. NOTE: Changes are propagated immediately.
+     *
+     * @param entityClass Entity class to remove from Elastic Search
+     * @param cetCode Custom entity template code
+     */
+    public void remove(Class<? extends ISearchable> entityClass, String cetCode) {
+
+        if (!esConnection.isEnabled()) {
+            return;
+        }
+
+        String index = null;
+        String type = null;
+        String id = null;
+        try {
+
+            index = esConfiguration.getIndex(entityClass);
+            // Not interested in storing and indexing this entity in Elastic Search
+            if (index == null) {
+                return;
+            }
+
+            type = esConfiguration.getType(entityClass, cetCode);
+
+            // TODO add code to remove
+            flushChanges();
+
+        } catch (Exception e) {
+            log.error("Failed to queue document delete from Elastic Search to {}/{}/{}", ReflectionUtils.getCleanClassName(entityClass.getSimpleName()), index, type, id, e);
         }
     }
 
@@ -267,7 +438,12 @@ public class ElasticClient {
                     bulkRequest.add(client.prepareUpdate(change.getIndex(), change.getType(), change.getId()).setDoc(change.getSource()).setUpsert(change.getSource()));
 
                 } else if (change.getAction() == ElasticSearchAction.DELETE) {
-                    bulkRequest.add(client.prepareDelete(change.getIndex(), change.getType(), change.getId()));
+
+                    if (change.getId() != null) {
+                        bulkRequest.add(client.prepareDelete(change.getIndex(), change.getType(), change.getId()));
+                    } else {
+                        // need to drop the type/index and recreate it again
+                    }
                 }
             }
 
@@ -293,17 +469,18 @@ public class ElasticClient {
     }
 
     /**
-     * Execute a search compatible primefaces data table component search
+     * Execute a search compatible primefaces data table component search. See other search methods for documentation on search implementation. A search by query/full text search
+     * will be used if paginationConfig.fullTextFilter value is provided.
      *
      * @param paginationConfig Query, pagination and sorting configuration
      * @param classnamesOrCetCodes An array of full classnames or CET codes
-     * @return Json result
-     * @throws BusinessException business exception
+     * @return Search result
+     * @throws BusinessException General business exception
      */
-    public String search(PaginationConfiguration paginationConfig, String[] classnamesOrCetCodes) throws BusinessException {
+    public SearchResponse search(PaginationConfiguration paginationConfig, String[] classnamesOrCetCodes) throws BusinessException {
 
         if (!esConnection.isEnabled()) {
-            return "{}";
+            return null;
         }
 
         SortOrder sortOrder = (paginationConfig.getOrdering() == null || paginationConfig.getOrdering() == org.primefaces.model.SortOrder.UNSORTED) ? null
@@ -324,7 +501,11 @@ public class ElasticClient {
     }
 
     /**
-     * Execute a search on all fields (_all field)
+     * Execute a search:
+     * <ul>
+     * <li>on all fields (_all field) when searching by a single word/phrase - full text search</li>
+     * <li>search by a query containing boolean expressions and field:value pairs. Consult Elastic search documentation for a format.</li>
+     * </ul>
      *
      * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
      * @param category - search by category that is directly taken from the name of the entity found in entityMapping. property of elasticSearchConfiguration.json. e.g. Customer,
@@ -335,14 +516,14 @@ public class ElasticClient {
      * @param sortOrders Sorting orders
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
      * @param classInfo Entity classes to match
-     * @return Json result
-     * @throws BusinessException business exception
+     * @return Search result
+     * @throws BusinessException General business exception
      */
-    public String search(String query, String category, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields,
+    public SearchResponse search(String query, String category, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields,
             List<ElasticSearchClassInfo> classInfo) throws BusinessException {
 
         if (!esConnection.isEnabled()) {
-            return "{}";
+            return null;
         }
 
         Set<String> indexes = null;
@@ -355,7 +536,7 @@ public class ElasticClient {
 
         // None of the classes are stored in Elastic Search, return empty json
         if (indexes.isEmpty()) {
-            return "{}";
+            return null;
         }
 
         Set<String> types = null;
@@ -426,29 +607,52 @@ public class ElasticClient {
 
         SearchResponse response = reqBuilder.execute().actionGet();
 
-        String result = response.toString();
-        // log.trace("Data retrieved from Elastic Search in full text search is {}", result);
-        return result;
+        // log.trace("Data retrieved from Elastic Search in full text search is {}", response.toString());
+        return response;
     }
 
     /**
-     * Execute a search on given fields for given values
+     * Execute a search on given fields for given query values
+     * 
+     * 
+     * Query format (key = Query key, value = search pattern or value).
+     * 
+     * Query key can be:
+     * <ul>
+     * <li>&lt;condition&gt; &lt;fieldname1&gt; &lt;fieldname2&gt; ... &lt;fieldnameN&gt;. Value is a value to apply in condition</li>
+     * <li>&lt;fieldname1&gt;,&lt;fieldname2&gt;,&lt;fieldnameN&gt;. Value is a value to apply in condition. Matchis done on any of the listed fields.
+     * </ul>
+     * 
+     * A union between different query items is AND.
+     * 
+     * Following conditions are supported:
+     * <ul>
+     * <li>term. Do not analyze the value (term) supplied. See term query in Elastic search documentation</li>
+     * <li>terms. Match any of the values (terms) supplied without analyzing them first. Multiple terms are separated by '|' character</li>
+     * <li>closestMatch. Do a closest match to the value provided. E.g. Search by value '1234' will try to match '1234', '123', '12', '1' values in this order. Note: A descending
+     * ordering by this field will be added automatically to the query.</li>
+     * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=field value. Applies to date and number type fields.</li>
+     * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value&lt;value</li>
+     * <li>minmaxRange. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields.</li>
+     * <li>minmaxOptionalRange. Similar to minmaxRange. The value is in between two field values with either them being optional. TWO fieldnames must be specified.</li>
+     * </ul>
      *
      * @param queryValues Fields and values to match
-     * @param from Pagination - starting record
-     * @param size Pagination - number of records per page
-     * @param sortFields - Fields to sort by. If omitted, will sort by score.
+     * @param from Pagination - starting record. Defaults to 0.
+     * @param size Pagination - number of records per page. Defaults to DEFAULT_SEARCH_PAGE_SIZE.
+     * @param sortFields - Fields to sort by. If omitted, will sort by score. If search query contains a 'closestMatch' expression, sortFields and sortOrder will be overwritten
+     *        with a corresponding field and descending order.
      * @param sortOrders Sorting orders
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
      * @param classInfo Entity classes to match
-     * @return Json result
-     * @throws BusinessException business exception
+     * @return Search result
+     * @throws BusinessException General business exception
      */
-    public String search(Map<String, ?> queryValues, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields,
+    public SearchResponse search(Map<String, ?> queryValues, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields,
             List<ElasticSearchClassInfo> classInfo) throws BusinessException {
 
         if (!esConnection.isEnabled()) {
-            return "{}";
+            return null;
         }
 
         Set<String> indexes = null;
@@ -461,7 +665,7 @@ public class ElasticClient {
 
         // None of the classes are stored in Elastic Search, return empty json
         if (indexes.isEmpty()) {
-            return "{}";
+            return null;
         }
 
         Set<String> types = null;
@@ -494,45 +698,9 @@ public class ElasticClient {
         if (queryValues.isEmpty()) {
             reqBuilder.setQuery(QueryBuilders.matchAllQuery());
 
-        } else if (queryValues.size() == 1) {
-            Entry<String, ?> fieldValue = queryValues.entrySet().iterator().next();
-
-            String[] fieldInfo = fieldValue.getKey().split(" ");
-            String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
-            String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
-
-            if (fieldName.contains(",")) {
-                reqBuilder.setQuery(QueryBuilders.multiMatchQuery(fieldValue.getValue(), StringUtils.stripAll(fieldName.split(","))));
-
-            } else if ("term".equals(condition)) {
-                reqBuilder.setQuery(QueryBuilders.termQuery(fieldName, fieldValue.getValue()));
-
-            } else if ("terms".equals(condition)) {
-                String valueTxt = fieldValue.getValue().toString();
-                String[] values = valueTxt.split("\\|");
-                reqBuilder.setQuery(QueryBuilders.termsQuery(fieldName, values));
-
-            } else if ("closestMatch".equals(condition)) {
-
-                String valueTxt = fieldValue.getValue().toString();
-
-                int valueLength = valueTxt.length();
-                String[] values = new String[valueLength];
-
-                for (int i = valueLength - 1; i >= 0; i--) {
-                    values[i] = valueTxt.substring(0, i + 1);
-                }
-
-                reqBuilder.setQuery(QueryBuilders.termsQuery(fieldName, values));
-                sortFields = new String[] { fieldName };
-                sortOrders = new SortOrder[] { SortOrder.DESC };
-
-            } else {
-                reqBuilder.setQuery(QueryBuilders.matchQuery(fieldName, fieldValue.getValue()));
-            }
-
         } else {
 
+            QueryBuilder queryBuilder = null;
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
             for (Entry<String, ?> fieldValue : queryValues.entrySet()) {
@@ -540,21 +708,24 @@ public class ElasticClient {
                 String[] fieldInfo = fieldValue.getKey().split(" ");
                 String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
                 String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
+                String fieldName2 = fieldInfo.length == 3 ? fieldInfo[2] : null;
+
+                Object filterValue = fieldValue.getValue();
 
                 if (fieldName.contains(",")) {
-                    boolQuery.must(QueryBuilders.multiMatchQuery(fieldValue.getValue(), StringUtils.stripAll(fieldName.split(","))));
+                    queryBuilder = QueryBuilders.multiMatchQuery(filterValue, StringUtils.stripAll(fieldName.split(",")));
 
                 } else if ("term".equals(condition)) {
-                    boolQuery.must(QueryBuilders.termQuery(fieldName, fieldValue.getValue()));
+                    queryBuilder = QueryBuilders.termQuery(fieldName, filterValue);
 
                 } else if ("terms".equals(condition)) {
-                    String valueTxt = fieldValue.getValue().toString();
+                    String valueTxt = filterValue.toString();
                     String[] values = valueTxt.split("\\|");
-                    boolQuery.must(QueryBuilders.termsQuery(fieldName, values));
+                    queryBuilder = QueryBuilders.termsQuery(fieldName, values);
 
                 } else if ("closestMatch".equals(condition)) {
 
-                    String valueTxt = fieldValue.getValue().toString();
+                    String valueTxt = filterValue.toString();
 
                     int valueLength = valueTxt.length();
                     String[] values = new String[valueLength];
@@ -563,15 +734,53 @@ public class ElasticClient {
                         values[i] = valueTxt.substring(0, i + 1);
                     }
 
-                    boolQuery.must(QueryBuilders.termsQuery(fieldName, values));
+                    queryBuilder = QueryBuilders.termsQuery(fieldName, values);
                     sortFields = new String[] { fieldName };
                     sortOrders = new SortOrder[] { SortOrder.DESC };
 
+                } else if ("fromRange".equals(condition)) {
+
+                    queryBuilder = QueryBuilders.rangeQuery(fieldName).gte(filterValue);
+
+                } else if ("toRange".equals(condition)) {
+
+                    queryBuilder = QueryBuilders.rangeQuery(fieldName).lt(filterValue);
+
+                    // The value is in between two field values
+                } else if ("minmaxRange".equals(condition)) {
+                    if (filterValue instanceof Number) {
+                        queryBuilder = QueryBuilders.boolQuery();
+                        ((BoolQueryBuilder) queryBuilder).must(QueryBuilders.rangeQuery(fieldName).lte(filterValue));
+                        ((BoolQueryBuilder) queryBuilder).must(QueryBuilders.rangeQuery(fieldName2).gte(filterValue));
+                    } else if (filterValue instanceof Date) {
+                        Date dateValue = (Date) filterValue;
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(dateValue);
+                        int year = c.get(Calendar.YEAR);
+                        int month = c.get(Calendar.MONTH);
+                        int date = c.get(Calendar.DATE);
+                        c.set(year, month, date, 0, 0, 0);
+                        dateValue = c.getTime();
+
+                        queryBuilder = QueryBuilders.boolQuery();
+                        ((BoolQueryBuilder) queryBuilder).must(QueryBuilders.rangeQuery(fieldName).lte(dateValue));
+                        ((BoolQueryBuilder) queryBuilder).must(QueryBuilders.rangeQuery(fieldName2).gte(dateValue));
+                    }
+
                 } else {
-                    boolQuery.must(QueryBuilders.matchQuery(fieldName, fieldValue.getValue()));
+                    queryBuilder = QueryBuilders.matchQuery(fieldName, filterValue);
+                }
+
+                if (queryValues.size() == 1) {
+                    reqBuilder.setQuery(queryBuilder);
+                } else {
+                    boolQuery.must(queryBuilder);
                 }
             }
-            reqBuilder.setQuery(boolQuery);
+
+            if (queryValues.size() > 1) {
+                reqBuilder.setQuery(boolQuery);
+            }
         }
 
         // Add sorting if requested
@@ -589,9 +798,8 @@ public class ElasticClient {
 
         SearchResponse response = reqBuilder.execute().actionGet();
 
-        String result = response.toString();
-        // log.trace("Data retrieved from Elastic Search in full text search is {}", result);
-        return result;
+        // log.trace("Data retrieved from Elastic Search in full text search is {}", response.toString());
+        return response;
     }
 
     /**
@@ -607,6 +815,13 @@ public class ElasticClient {
         return esConnection.isEnabled();
     }
 
+    /**
+     * Delete and recrete Elastic search index structure and populate it with data
+     * 
+     * @param lastCurrentUser Current user
+     * @return Reindexing statistics
+     * @throws BusinessException General exception
+     */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Future<ReindexingStatistics> cleanAndReindex(MeveoUser lastCurrentUser) throws BusinessException {
@@ -636,24 +851,143 @@ public class ElasticClient {
             // Process each class
             for (String classname : esConfiguration.getEntityClassesManaged()) {
 
+                if (classname.equals(CustomTableRecord.class.getSimpleName())) {
+
+                    List<CustomEntityTemplate> cets = customEntityTemplateService.listCustomTableTemplates();
+
+                    int nrThreads = Runtime.getRuntime().availableProcessors();
+                    log.trace("Will run Elastic Search repopulation from native table on {} threads", nrThreads);
+
+                    for (CustomEntityTemplate cet : cets) {
+
+                        log.info("Start to populate Elastic Search with data from {} table", cet.getDbTablename());
+
+                        Object fromId = 0;
+
+                        int recordCount = elasticSearchIndexPopulationService.getRecordCountInNativeTable(cet.getDbTablename());
+                        int recordsRemaining = recordCount;
+                        int totalProcessed = 0;
+
+                        while (recordsRemaining > 0) {
+
+                            Object[] processedInfo = elasticSearchIndexPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), fromId,
+                                recordsRemaining > INDEX_POPULATE_CT_PAGE_SIZE ? INDEX_POPULATE_CT_PAGE_SIZE : -1, statistics);
+
+                            totalProcessed = totalProcessed + (int) processedInfo[0];
+                            fromId = processedInfo[1];
+                            recordsRemaining = recordsRemaining - INDEX_POPULATE_CT_PAGE_SIZE;
+
+                        }
+
+                        log.info("Finished populating Elastic Search with data from {} table. Processed {} records.", cet.getDbTablename(), totalProcessed);
+                    }
+
+                } else {
+
+                    log.info("Start to populate Elastic Search with data from {} entity", classname);
+
+                    Object fromId = -1000;
+                    int totalProcessed = 0;
+                    boolean hasMore = true;
+
+                    while (hasMore) {
+                        Object[] processedInfo = elasticSearchIndexPopulationService.populateIndex(classname, fromId, INDEX_POPULATE_PAGE_SIZE, statistics);
+
+                        totalProcessed = totalProcessed + (int) processedInfo[0];
+                        fromId = processedInfo[1];
+                        hasMore = (int) processedInfo[0] == INDEX_POPULATE_PAGE_SIZE;
+                    }
+
+                    log.info("Finished populating Elastic Search with data from {} entity. Processed {} records.", classname, totalProcessed);
+                }
+            }
+
+            log.info("Finished repopulating Elastic Search");
+
+        } catch (Exception e) {
+            log.error("Failed to repopulate Elastic Search", e);
+            statistics.setException(e);
+        }
+
+        return new AsyncResult<ReindexingStatistics>(statistics);
+    }
+
+    /**
+     * Delete (does not delete now) and repopulate data for a given entity class/custom entity code. NOTE: does not change the index structure.
+     * 
+     * @param lastCurrentUser Current user
+     * @param entityClass Entity class to rebuild
+     * @param cetCode Custom entity template to rebuild. Applies only to custom tables. Custom entity instances are rebuild all together.
+     * @return Reindexing statistics
+     * @throws BusinessException General exception
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public Future<ReindexingStatistics> repopulate(MeveoUser lastCurrentUser, Class<? extends ISearchable> entityClass, String cetCode) throws BusinessException {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+        ReindexingStatistics statistics = new ReindexingStatistics();
+
+        if (!esConnection.isEnabled()) {
+            return new AsyncResult<ReindexingStatistics>(statistics);
+        }
+
+        // TODO should delete all data
+
+        log.info("Start to repopulate Elastic Search for {}/{}", entityClass, cetCode);
+
+        try {
+
+            // Repopulate index from DB
+
+            if (CustomTableRecord.class.isAssignableFrom(entityClass)) {
+
+                CustomEntityTemplate cet = customEntityTemplateService.findByCode(cetCode);
+
+                log.info("Start to populate Elastic Search with data from {} table", cet.getDbTablename());
+
+                Object fromId = 0;
+
+                int nrThreads = Runtime.getRuntime().availableProcessors();
+                log.trace("Will run Elastic Search repopulation from native table on {} threads", nrThreads);
+
+                int recordCount = elasticSearchIndexPopulationService.getRecordCountInNativeTable(cet.getDbTablename());
+                int recordsRemaining = recordCount;
+                int totalProcessed = 0;
+                while (recordsRemaining > 0) {
+
+                    Object[] processedInfo = elasticSearchIndexPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), fromId,
+                        recordsRemaining > INDEX_POPULATE_CT_PAGE_SIZE ? INDEX_POPULATE_CT_PAGE_SIZE : -1, statistics);
+
+                    totalProcessed = totalProcessed + (int) processedInfo[0];
+                    fromId = processedInfo[1];
+                    recordsRemaining = recordsRemaining - INDEX_POPULATE_CT_PAGE_SIZE;
+                }
+
+                log.info("Finished populating Elastic Search with data from {} table. Processed {} records.", cet.getDbTablename(), totalProcessed);
+
+            } else {
+                String classname = ReflectionUtils.getCleanClassName(entityClass.getSimpleName());
+
                 log.info("Start to populate Elastic Search with data from {} entity", classname);
 
-                int from = 0;
+                Object fromId = -1000;
                 int totalProcessed = 0;
                 boolean hasMore = true;
 
                 while (hasMore) {
-                    int found = elasticSearchIndexPopulationService.populateIndex(classname, from, statistics);
+                    Object[] processedInfo = elasticSearchIndexPopulationService.populateIndex(classname, fromId, INDEX_POPULATE_PAGE_SIZE, statistics);
 
-                    from = from + INDEX_POPULATE_PAGE_SIZE;
-                    totalProcessed = totalProcessed + found;
-                    hasMore = found == INDEX_POPULATE_PAGE_SIZE;
+                    totalProcessed = totalProcessed + (int) processedInfo[0];
+                    fromId = processedInfo[1];
+                    hasMore = (int) processedInfo[0] == INDEX_POPULATE_PAGE_SIZE;
                 }
 
                 log.info("Finished populating Elastic Search with data from {} entity. Processed {} records.", classname, totalProcessed);
             }
 
-            log.info("Finished repopulating Elastic Search");
+            log.info("Finished repopulating Elastic Search for {}/{}", entityClass, cetCode);
 
         } catch (Exception e) {
             log.error("Failed to repopulate Elastic Search", e);
@@ -705,18 +1039,6 @@ public class ElasticClient {
         }
 
         elasticSearchIndexPopulationService.updateCFMapping(cft);
-    }
-
-    protected static String cleanUpCode(String code) {
-
-        code = code.replace(' ', '_');
-        return code;
-    }
-
-    protected static String cleanUpAndLowercaseCode(String code) {
-
-        code = cleanUpCode(code).toLowerCase();
-        return code;
     }
 
     /**
@@ -773,14 +1095,24 @@ public class ElasticClient {
                 // Try first matching the CET name as is
                 CustomEntityTemplate cet = cfCache.getCustomEntityTemplate(classnameOrCetCode);
                 if (cet != null) {
-                    classInfo = new ElasticSearchClassInfo(CustomEntityInstance.class, classnameOrCetCode);
+                    if (cet.isStoreAsTable()) {
+                        classInfo = new ElasticSearchClassInfo(CustomTableRecord.class, BaseEntity.cleanUpAndLowercaseCodeOrId(classnameOrCetCode));
+                    } else {
+                        classInfo = new ElasticSearchClassInfo(CustomEntityInstance.class, classnameOrCetCode);
+                    }
 
-                    // If still not matched - try how code is stored in ES with spaces cleanedup
+                    // If still not matched - try how code is stored in ES with spaces cleanedup or cleaned up and lowercased if its a custom table
                 } else {
+                    String classnameOrCetCodeCL = BaseEntity.cleanUpAndLowercaseCodeOrId(classnameOrCetCode);
                     Collection<CustomEntityTemplate> cets = cfCache.getCustomEntityTemplates();
                     for (CustomEntityTemplate cetToClean : cets) {
-                        if (cleanUpCode(cetToClean.getCode()).equals(classnameOrCetCode)) {
-                            classInfo = new ElasticSearchClassInfo(CustomEntityInstance.class, cetToClean.getCode());
+                        if (BaseEntity.cleanUpAndLowercaseCodeOrId(cetToClean.getCode()).equals(classnameOrCetCodeCL)) {
+                            if (cetToClean.isStoreAsTable()) {
+                                classInfo = new ElasticSearchClassInfo(CustomTableRecord.class, classnameOrCetCodeCL); // cet.getDbTableName() should be same as
+                                                                                                                       // classnameOrCetCodeCL
+                            } else {
+                                classInfo = new ElasticSearchClassInfo(CustomEntityInstance.class, cetToClean.getCode());
+                            }
                         }
                         break;
                     }
@@ -793,6 +1125,8 @@ public class ElasticClient {
     protected static String buildId(ISearchable entity) {
         if (entity instanceof BusinessEntity) {
             return entity.getCode();
+        } else if (entity instanceof CustomTableRecord) {
+            return ((CustomTableRecord) entity).getId().toString();
         } else {
             return entity.getCode() + "__" + entity.getId();
         }

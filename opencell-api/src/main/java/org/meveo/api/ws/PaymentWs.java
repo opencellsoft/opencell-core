@@ -62,10 +62,11 @@ public interface PaymentWs extends IBaseWs {
      * List.
      *
      * @param customerAccountCode the customer account code
+     * @param pagingAndFiltering
      * @return the customer payments response
      */
     @WebMethod
-    public CustomerPaymentsResponse list(@WebParam(name = "customerAccountCode") String customerAccountCode);
+    public CustomerPaymentsResponse list(@WebParam(name = "customerAccountCode") String customerAccountCode, PagingAndFiltering pagingAndFiltering);
 
     /**
      * create a ddrequestLotOp by dto

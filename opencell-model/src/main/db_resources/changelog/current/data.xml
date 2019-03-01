@@ -225,7 +225,7 @@
             <column name="permission" value="createJob"/>
         </insert>
     </changeSet>
-
+    
     <changeSet id="#3679_20190131 - Missing Reports" author="Edward P. Legaspi">
     	<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-12, 0, 0, now(), 'org.meveo.service.script.presale.AgedBalanceReporting', 'Aged Balance Reporting Script', 'JAVA', '
 package org.meveo.service.script.presale;
@@ -261,25 +261,25 @@ public class AgedBalanceReporting extends ReportExtractScript {
     public void execute(Map<String, Object> executeContext) throws BusinessException {
         try {
             log.debug("execute executeContext:{}", executeContext);
-
+          
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("sysdate30", DateUtils.addDays(new Date(), -30));
             params.put("sysdate60", DateUtils.addDays(new Date(), -60));
             params.put("sysdate90", DateUtils.addDays(new Date(), -90));
-
+           
             String query = "Select ao.customerAccount.id , "
                     + "sum (case when ao.dueDate <= current_date() and ao.dueDate >:sysdate30 then  ao.amount else 0 end ) as sum_0_30, "
                     + "sum (case when ao.dueDate <=:sysdate30 and ao.dueDate >:sysdate60 then  ao.amount else 0 end ) as sum_30_60, "
                     + "sum (case when ao.dueDate <=:sysdate60 and ao.dueDate >:sysdate90 then  ao.amount else 0 end ) as sum_60_90, "
                     + "sum (case when ao.dueDate <=:sysdate90  then  ao.amount else 0 end ) as sum_90_up "
                     + "from AccountOperation ao where ao.transactionCategory = ''DEBIT''  group by ao.customerAccount";
-
+          
             List<Object[]> rows = (List<Object[]>)  customerAccountService.executeSelectQuery(query,params);
             log.debug("execute rows size:{}", rows == null ? null : rows.size());
             String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR));
             String filename = String.valueOf(executeContext.get(ReportExtractScript.FILENAME));
 
-            CsvBuilder csvBuilder = new CsvBuilder(";", false);
+            CsvBuilder csvBuilder = new CsvBuilder(";", false);          
             String[] header = { "CA_DESC", "C_DESC","DEBT_TIER_0_30_DAYS","DEBT_TIER_30_60_DAYS","DEBT_TIER_60_90_DAYS","DEBT_TIER_90_DAYS" };
             csvBuilder.appendValues(header);
             csvBuilder.startNewLine();
@@ -287,10 +287,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 CustomerAccount ca = customerAccountService.findById(((Long)row[0]));
                 csvBuilder.appendValue(ca.getDescription());
                 csvBuilder.appendValue(ca.getCustomer().getDescription());
-                csvBuilder.appendValue(round((BigDecimal)row[1]));
-                csvBuilder.appendValue(round((BigDecimal)row[2]));
-                csvBuilder.appendValue(round((BigDecimal)row[3]));
-                csvBuilder.appendValue(round((BigDecimal)row[4]));
+                csvBuilder.appendValue(round((BigDecimal)row[1]));    
+                csvBuilder.appendValue(round((BigDecimal)row[2]));    
+                csvBuilder.appendValue(round((BigDecimal)row[3]));   
+                csvBuilder.appendValue(round((BigDecimal)row[4]));   
                 csvBuilder.startNewLine();
             }
             csvBuilder.toFile(dirOutput + File.separator + filename);
@@ -307,7 +307,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             return "";
         }
         if (amount.scale() > 4) {
-            String amountAsString = "" + amount;
+            String amountAsString = "" + amount;            
             amount = new BigDecimal(amount.longValue() + "." + amountAsString.substring(amountAsString.indexOf(".") + 1).substring(0, 4));
         }
         amount = amount.setScale(2, RoundingMode.UP);
@@ -328,7 +328,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="uuid" value="AgedBalanceReport_UUID"></column>
             <column name="script_instance_id" value="-12"></column>
         </insert>
-
+        
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-13, 0, 0, now(), 'org.meveo.service.script.presale.CustomerRevenuReporting', 'Customer Revenu Reporting Script', 'JAVA', '
             	package org.meveo.service.script.presale;
 
@@ -366,20 +366,20 @@ public class CustomerRevenuReporting extends ReportExtractScript {
 
             Date startDate = (Date) executeContext.get(ReportExtractScript.START_DATE);
             Date endDate = (Date) executeContext.get(ReportExtractScript.END_DATE);
-
+          
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("startDateIN", startDate);
             params.put("endDateIN", endDate);
             String query = "Select ao.customerAccount.id , sum (ao.amount) as sum_amount from AccountOperation ao where ao.transactionCategory = ''DEBIT'' and ao.dueDate >=:startDateIN "
                     + "and ao.dueDate <:endDateIN  group by ao.customerAccount order by sum_amount desc";
-
-
+          
+            
             List<Object[]> aos = (List<Object[]>)  customerAccountService.executeSelectQuery(query,params);
             log.debug("execute aos size:{}", aos == null ? null : aos.size());
             String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR));
             String filename = String.valueOf(executeContext.get(CustomerRevenuReporting.FILENAME));
 
-            CsvBuilder csvBuilder = new CsvBuilder(";", false);
+            CsvBuilder csvBuilder = new CsvBuilder(";", false);          
             String[] header = { "CA_DESC", "C_DESC","SUM_REVENUE" };
             csvBuilder.appendValues(header);
             csvBuilder.startNewLine();
@@ -387,7 +387,7 @@ public class CustomerRevenuReporting extends ReportExtractScript {
                 CustomerAccount ca = customerAccountService.findById(((Long)ao[0]));
                 csvBuilder.appendValue(ca.getDescription());
                 csvBuilder.appendValue(ca.getCustomer().getDescription());
-                csvBuilder.appendValue(round((BigDecimal)ao[1]));
+                csvBuilder.appendValue(round((BigDecimal)ao[1]));               
                 csvBuilder.startNewLine();
             }
             csvBuilder.toFile(dirOutput + File.separator + filename);
@@ -404,7 +404,7 @@ public class CustomerRevenuReporting extends ReportExtractScript {
             return "";
         }
         if (amount.scale() > 4) {
-            String amountAsString = "" + amount;
+            String amountAsString = "" + amount;            
             amount = new BigDecimal(amount.longValue() + "." + amountAsString.substring(amountAsString.indexOf(".") + 1).substring(0, 4));
         }
         amount = amount.setScale(2, RoundingMode.UP);
@@ -435,7 +435,7 @@ public class CustomerRevenuReporting extends ReportExtractScript {
             <column name="params_key" value="END_DATE"></column>
             <column name="params" value="31/01/2019"></column>
         </insert>
-
+        
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-14, 0, 0, now(), 'org.meveo.service.script.presale.CustomerPerDunningReporting', 'Customer Per Dunnning Reporting Script', 'JAVA', '
             	            	package org.meveo.service.script.presale;
 
@@ -503,7 +503,7 @@ public class CustomerPerDunningReporting extends ReportExtractScript {
             <column name="uuid" value="CustomersPerDunningReport_UUID"></column>
             <column name="script_instance_id" value="-14"></column>
         </insert>
-
+        
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-15, 0, 0, now(), 'org.meveo.service.script.presale.CustomerPerOfferReporting', 'Customer Per Offer Reporting Script', 'JAVA', '
             	                        	package org.meveo.service.script.presale;
 
@@ -548,13 +548,13 @@ public class CustomerPerOfferReporting extends ReportExtractScript {
                 query += " and sub.offer.code =:offCodeIN ";
                 params.put("offCodeIN", offerCode);
             }
-
+            
             List<Object[]> rows = (List<Object[]>) subscriptionService.executeSelectQuery(query  + "order by sub.offer.code",params);
             log.debug("execute rows size:{}", rows == null ? null : rows.size());
             String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR));
             String filename = String.valueOf(executeContext.get(CustomerPerOfferReporting.FILENAME));
 
-            CsvBuilder csvBuilder = new CsvBuilder(";", false);
+            CsvBuilder csvBuilder = new CsvBuilder(";", false);           
             String[] header = { "OFF_CODE", "OFF_DESC", "UA_DESC",  "BA_DESC",  "CA_DESC", "C_DESC" };
             csvBuilder.appendValues(header);
             csvBuilder.startNewLine();
@@ -600,7 +600,7 @@ public class CustomerPerOfferReporting extends ReportExtractScript {
             <column name="params_key" value="OFFER_CODE"></column>
             <column name="params" value=""></column>
         </insert>
-
+        
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-16, 0, 0, now(), 'org.meveo.service.script.presale.KPIAgedBalanceReporting', 'KPI Aged Balance Reporting Script', 'JAVA', '
             	package org.meveo.service.script.presale;
 
@@ -633,7 +633,7 @@ public class KPIAgedBalanceReporting extends ReportExtractScript {
             log.debug("execute executeContext:{}", executeContext);
             String query = "Select count(distinct ao.customerAccount.id) "
                     + "from AccountOperation ao where ao.transactionCategory = ''DEBIT''  and  ao.dueDate <=:dateTo and ao.dueDate >:dateFrom ";
-
+            
             Map<String, Object> params = new HashMap<String, Object>();
 
             params.put("dateFrom", DateUtils.addDays(new Date(), -30));
@@ -699,7 +699,7 @@ public class KPIAgedBalanceReporting extends ReportExtractScript {
             <column name="uuid" value="KPIAgedBalanceReporting_UUID"></column>
             <column name="script_instance_id" value="-16"></column>
         </insert>
-
+        
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-17, 0, 0, now(), 'org.meveo.service.script.presale.KPICustomerRevenuReporting', 'KPI Customer Revenu Report Script', 'JAVA', '
             	package org.meveo.service.script.presale;
 
@@ -841,10 +841,10 @@ public class KPICustomerRevenuReporting extends ReportExtractScript {
             <column name="params_key" value="END_DATE"></column>
             <column name="params" value="31/01/2019"></column>
         </insert>
-
+        
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-18, 0, 0, now(), 'org.meveo.service.script.presale.KPICustomerPerDunningReporting', 'KPI Customer Per Dunning Reporting Script', 'JAVA', '
             	/**
- *
+ * 
  */
 package org.meveo.service.script.presale;
 
@@ -911,10 +911,10 @@ public class KPICustomerPerDunningReporting extends ReportExtractScript {
             <column name="uuid" value="KPICustomersPerDunningReport_UUID"></column>
             <column name="script_instance_id" value="-18"></column>
         </insert>
-
+        
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-19, 0, 0, now(), 'org.meveo.service.script.presale.KPICustomerPerOfferReporting', 'KPI Customer Per Offer Reporting Script', 'JAVA', '
             	/**
- *
+ * 
  */
 package org.meveo.service.script.presale;
 
@@ -1021,5 +1021,31 @@ public class KPICustomerPerOfferReporting extends ReportExtractScript {
             <column name="uuid" value="JOB_SendInvoiceJob" />
         </insert>
     </changeSet>
+    <changeSet author="KhalidHorri" id="3986_20190207_add_job_permission">
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-114" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-115" />
+        </insert>
+    </changeSet>
 
+    
+    <changeSet id="#3607_20190123" author="andrius.karpavicius">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-19" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
+            <column name="created" valueDate="2015-03-19 00:04:19.913" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="CustomTableImportJob" />
+            <column name="code" value="Custom_table_data_import_Job" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-1" />
+            <column name="uuid" value="Custom_table_data_import_Job" />
+        </insert>
+    </changeSet>
+    
 </databaseChangeLog>
