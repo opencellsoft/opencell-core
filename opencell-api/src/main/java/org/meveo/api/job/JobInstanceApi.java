@@ -280,7 +280,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
     /**
      * Convert jobInstance entity to dto
      * 
-     * @param job instance of JobInstance to be mapped
+     * @param jobInstance of JobInstance to be mapped
      * @return instance of JobInstanceDto.
      */
     public JobInstanceDto JobInstanceToDto(JobInstance jobInstance) {
@@ -290,7 +290,8 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
     /**
      * Convert jobInstance dto to entity
      *
-     * @param JobInstance instance of JobInstance to be mapped
+     * @param jobInstance instance of JobInstance to be mapped
+     * @param inheritCF the inherit CF
      * @return instance of JobInstanceDto
      */
     public JobInstanceDto JobInstanceToDto(JobInstance jobInstance, CustomFieldInheritanceEnum inheritCF) {
