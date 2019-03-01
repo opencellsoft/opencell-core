@@ -666,16 +666,18 @@ public final class FileUtils {
             return null;
         }
 
-        String fileNameFilterUpper = fileNameFilter != null ? fileNameFilterUpper = fileNameFilter.toUpperCase() : null;
+        String fileNameFilterUpper = fileNameFilter != null ? fileNameFilter.toUpperCase() : null;
 
         File[] files = sourceDir.listFiles(new FilenameFilter() {
 
             public boolean accept(File dir, String name) {
-                if (extensions == null && (name.toUpperCase().contains(fileNameFilterUpper))) {
+
+                String nameUpper = name.toUpperCase();
+                if (extensions == null && (nameUpper.contains(fileNameFilterUpper))) {
                     return true;
                 }
                 for (String extension : extensions) {
-                    if ((name.endsWith(extension) || "*".equals(extension)) && (name.toUpperCase().contains(fileNameFilterUpper))) {
+                    if ((name.endsWith(extension) || "*".equals(extension)) && (nameUpper.contains(fileNameFilterUpper))) {
                         return true;
                     }
                 }
