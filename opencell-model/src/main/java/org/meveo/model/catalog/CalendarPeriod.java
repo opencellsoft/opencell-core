@@ -121,13 +121,19 @@ public class CalendarPeriod extends Calendar {
         calendarToReturn.setTime(getInitDate());
 
         int i = 1;
+
         while (date.compareTo(calendar.getTime()) >= 0) {
             Date oldDate = calendar.getTime();
             calendar.add(periodUnit, periodLength);
             if (date.compareTo(oldDate) >= 0 && date.compareTo(calendar.getTime()) < 0) {
                 calendarToReturn.add(periodUnit, i);
+                truncateDateTime(calendar);
                 truncateDateTime(calendarToReturn);
-                return calendarToReturn.getTime();
+                if (periodUnit == java.util.Calendar.MONTH ) {
+                    return calendarToReturn.getTime();
+                } else {
+                    return calendar.getTime();
+                }
             }
 
             i++;
