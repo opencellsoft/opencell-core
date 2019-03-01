@@ -635,7 +635,7 @@ public class CustomTableService extends NativePersistenceService {
      * 
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param fieldToReturn Field value to return
-     * @param queryValues Search criteria with condition/field name as a key and field value as a value
+     * @param queryValues Search criteria with condition/field name as a key and field value as a value. See ElasticClient.search() for a query format.
      * @return A field value
      * @throws BusinessException General exception
      */
@@ -658,7 +658,7 @@ public class CustomTableService extends NativePersistenceService {
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param fieldToReturn Field value to return
      * @param date Record validity date, as expressed by 'valid_from' and 'valid_to' fields, to match
-     * @param queryValues Search criteria with condition/field name as a key and field value as a value
+     * @param queryValues Search criteria with condition/field name as a key and field value as a value. See ElasticClient.search() for a query format.
      * @return A field value
      * @throws BusinessException General exception
      */
@@ -681,7 +681,7 @@ public class CustomTableService extends NativePersistenceService {
      * 
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param fieldsToReturn Field values to return. Optional. If not provided all fields will be returned.
-     * @param queryValues Search criteria with condition/field name as a key and field value as a value
+     * @param queryValues Search criteria with condition/field name as a key and field value as a value. See ElasticClient.search() for a query format.
      * @return A map of values with field name as a key and field value as a value. Note field value is always of String data type.
      * @throws BusinessException General exception
      */
@@ -704,8 +704,8 @@ public class CustomTableService extends NativePersistenceService {
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param fieldsToReturn Field values to return. Optional. If not provided all fields will be returned.
      * @param date Record validity date, as expressed by 'valid_from' and 'valid_to' fields, to match
-     * @param queryValues Search criteria with condition/field name as a key and field value as a value. Note field value is always of String data type.
-     * @return A map of values with field name as a key and field value as a value
+     * @param queryValues Search criteria with condition/field name as a key and field value as a value. See ElasticClient.search() for a query format.
+     * @return A map of values with field name as a key and field value as a value. Note field value is always of String data type.
      * @throws BusinessException General exception
      */
     public Map<String, Object> getValues(String cetCodeOrTablename, String[] fieldsToReturn, Date date, Map<String, Object> queryValues) throws BusinessException {

@@ -631,8 +631,8 @@ public class ElasticClient {
      * <li>terms. Match any of the values (terms) supplied without analyzing them first. Multiple terms are separated by '|' character</li>
      * <li>closestMatch. Do a closest match to the value provided. E.g. Search by value '1234' will try to match '1234', '123', '12', '1' values in this order. Note: A descending
      * ordering by this field will be added automatically to the query.</li>
-     * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=fiel.value. Applies to date and number type fields.</li>
-     * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value&lt;=value</li>
+     * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=field value. Applies to date and number type fields.</li>
+     * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value&lt;value</li>
      * <li>minmaxRange. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields.</li>
      * <li>minmaxOptionalRange. Similar to minmaxRange. The value is in between two field values with either them being optional. TWO fieldnames must be specified.</li>
      * </ul>
