@@ -277,22 +277,26 @@ public class GroupedCustomField implements Serializable {
             if (cfFieldOrOrg.getType().equals(GroupedCustomFieldTreeItemType.field)) {
                 CustomFieldTemplate cft = (CustomFieldTemplate) cfFieldOrOrg.getData();
                 try {
-                    if ((!cft.isDisabled() || (cft.isDisabled() && !cfValueHolder.isAnyFieldEmptyForGui(cft))) && (!newEntity || (newEntity && !cft.isHideOnNew()))
+                    if (!cft.isHideInGUI() && (!cft.isDisabled() || (cft.isDisabled() && !cfValueHolder.isAnyFieldEmptyForGui(cft)))
+                            && (!newEntity || (newEntity && !cft.isHideOnNew()))
                             && ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity)) {
                         hasVisibleCustomFields = true;
                         return hasVisibleCustomFields;
                     }
-                } catch (BusinessException e) { }
+                } catch (BusinessException e) {
+                }
             } else if (cfFieldOrOrg.getType().equals(GroupedCustomFieldTreeItemType.fieldGroup)) {
                 for (GroupedCustomField cfField : cfFieldOrOrg.getChildren()) {
                     CustomFieldTemplate cft = (CustomFieldTemplate) cfField.getData();
                     try {
-                        if ((!cft.isDisabled() || (cft.isDisabled() && !cfValueHolder.isAnyFieldEmptyForGui(cft))) && (!newEntity || (newEntity && !cft.isHideOnNew()))
+                        if (!cft.isHideInGUI() && (!cft.isDisabled() || (cft.isDisabled() && !cfValueHolder.isAnyFieldEmptyForGui(cft)))
+                                && (!newEntity || (newEntity && !cft.isHideOnNew()))
                                 && ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity)) {
                             hasVisibleCustomFields = true;
                             return hasVisibleCustomFields;
                         }
-                    } catch (BusinessException e) { }
+                    } catch (BusinessException e) {
+                    }
                 }
             }
         }
