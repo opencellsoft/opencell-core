@@ -2,6 +2,7 @@ package org.meveo.api.rest.job;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -15,14 +16,17 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.job.JobCategoriesResponseDto;
 import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
+import org.meveo.api.dto.response.job.JobInstanceListResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
  * @author Edward P. Legaspi
+ * @author Adnane Boubia
  * @lastModifiedVersion 5.0
  **/
 @Path("/job")
@@ -50,6 +54,7 @@ public interface JobRs extends IBaseRs {
     @POST
     @Path("/stop")
     ActionStatus stop(@PathParam("jobInstanceCode") String jobInstanceCode);
+    
     /**
      * Create a new job instance
      * 
@@ -100,6 +105,21 @@ public interface JobRs extends IBaseRs {
     @Path("/{jobInstanceCode}")
     ActionStatus remove(@PathParam("jobInstanceCode") String jobInstanceCode);
 
+    /**
+     * Deprecated in v.4.7.2 Use /list instead.
+     * 
+     * @param offset offset
+     * @param limit number of elements in response
+     * @param mergedCF true if return
+     * @param sortBy sortby field
+     * @param sortOrder ASC/DESC
+     * @return list of all subscriptions.
+     */
+    @GET
+    @Path("/list")
+    JobInstanceListResponseDto list(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
+            @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    
     // timer
 
     /**

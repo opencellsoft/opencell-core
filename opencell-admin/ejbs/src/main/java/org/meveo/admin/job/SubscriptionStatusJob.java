@@ -28,7 +28,8 @@ import org.meveo.service.job.Job;
  * 
  * @author Andrius Karpavicius
  * @author Khalid HORRI
- * @lastModifiedVersion 5.3
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class SubscriptionStatusJob extends Job {
@@ -66,12 +67,12 @@ public class SubscriptionStatusJob extends Job {
         }
         
         try {
-            List<Long> serviceIds = serviceInstanceService.getSubscriptionsToRenewOrNotify();
+            List<Long> serviceIds = serviceInstanceService.getSubscriptionsToRenewOrNotify(untilDate);
             for (Long serviceId : serviceIds) {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                     break;
                 }
-                subscriptionStatusJobBean.updateServiceInstanceStatus(result, serviceId);
+                subscriptionStatusJobBean.updateServiceInstanceStatus(result, serviceId, untilDate);
             }
 
         } catch (Exception e) {

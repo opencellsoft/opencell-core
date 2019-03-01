@@ -29,7 +29,8 @@ import org.slf4j.Logger;
 
 /**
  * @author HORRI Khalid
- * @lastModifiedVersion 6.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class SubscriptionStatusJobBean extends BaseJobBean {
@@ -115,25 +116,27 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateServiceInstanceStatus(JobExecutionResultImpl result, Long serviceId) {
+	public void updateServiceInstanceStatus(JobExecutionResultImpl result, Long serviceId, Date untillDate) {
 		try {
 			ServiceInstance serviceInstance = serviceInstanceService.findById(serviceId);
 			// Handle subscription renewal or termination
 			if (serviceInstance.isSubscriptionExpired() && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
 
 				if (serviceInstance.getServiceRenewal().isAutoRenew()) {
-					Calendar calendar = new GregorianCalendar();
-					calendar.setTime(serviceInstance.getSubscribedTillDate());
-					calendar.add(serviceInstance.getServiceRenewal().getRenewForUnit().getCalendarField(),
-							serviceInstance.getServiceRenewal().getRenewFor());
-					serviceInstance.setSubscribedTillDate(calendar.getTime());
+
+					while (serviceInstance.getSubscribedTillDate() != null && serviceInstance.getSubscribedTillDate().before(untillDate)) {
+						Calendar calendar = new GregorianCalendar();
+						calendar.setTime(serviceInstance.getSubscribedTillDate());
+						calendar.add(serviceInstance.getServiceRenewal().getRenewForUnit().getCalendarField(),
+								serviceInstance.getServiceRenewal().getRenewFor());
+						serviceInstance.setSubscribedTillDate(calendar.getTime());
+					}
+
 					serviceInstance.setRenewed(true);
 					serviceInstance.setRenewalNotifiedDate(null);
-
 					if (serviceInstance.getServiceRenewal().isExtendAgreementPeriodToSubscribedTillDate()) {
 						serviceInstance.setEndAgreementDate(serviceInstance.getSubscribedTillDate());
 					}
-
 					serviceInstance = serviceInstanceService.update(serviceInstance);
 
 					log.debug("ServiceInstance {} has beed renewed to date {} with end agreement date of {}",
