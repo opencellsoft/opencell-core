@@ -1124,7 +1124,7 @@
                 <constraints nullable="false" foreignKeyName="fk_dunning_document_ca" references="ar_customer_account(id)"/>
             </column>
             <column name="billing_subscription_id" type="bigint">
-                <constraints nullable="false" foreignKeyName="fk_dunning_document_subscription" references="billing_subscription(id)"/>
+                <constraints nullable="true" foreignKeyName="fk_dunning_document_subscription" references="billing_subscription(id)"/>
             </column>
         </createTable>
         <createSequence sequenceName="dunning_document_seq"/>
