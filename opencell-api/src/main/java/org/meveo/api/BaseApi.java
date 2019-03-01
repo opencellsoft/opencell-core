@@ -329,76 +329,75 @@ public abstract class BaseApi {
 
         if (customFieldTemplates != null) {
 
-        for (CustomFieldTemplate cft : customFieldTemplates.values()) {
-            if (cft.isDisabled() || (!cft.isValueRequired() && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
-                continue;
-            }
-
-            // Does not apply at this moment
-            if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
-                    || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
-                continue;
-            }
-
-            boolean hasValue = entity.hasCfValue(cft.getCode());
-
-            // When no instance was found
-            if (!hasValue) {
-
-                // Need to instantiate default value either from inherited value or from a default value when cft.isInheritedAsDefaultValue()==true
-                if (isNewEntity && cft.isUseInheritedAsDefaultValue()) {
-                    Object value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
-                    hasValue = value != null;
+            for (CustomFieldTemplate cft : customFieldTemplates.values()) {
+                if (cft.isDisabled() || (!cft.isValueRequired() && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
+                    continue;
                 }
 
-                // If no value was created, then check if there is any inherited value, as in case of versioned values, value could be set in some other period, and required
-                // field validation should pass even though current period wont have any value
+                // Does not apply at this moment
+                if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
+                        || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
+                    continue;
+                }
+
+                boolean hasValue = entity.hasCfValue(cft.getCode());
+
+                // When no instance was found
                 if (!hasValue) {
-                    if (cft.isVersionable()) {
-                        hasValue = customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode());
-                    } else {
-                        Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
+
+                    // Need to instantiate default value either from inherited value or from a default value when cft.isInheritedAsDefaultValue()==true
+                    if (isNewEntity && cft.isUseInheritedAsDefaultValue()) {
+                        Object value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
                         hasValue = value != null;
                     }
 
-                    if (!hasValue && isNewEntity && cft.getDefaultValue() != null) { // No need to check for !cft.isInheritedAsDefaultValue() as it was checked above
-                        Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode());
-                        hasValue = value != null;
+                    // If no value was created, then check if there is any inherited value, as in case of versioned values, value could be set in some other period, and required
+                    // field validation should pass even though current period wont have any value
+                    if (!hasValue) {
+                        if (cft.isVersionable()) {
+                            hasValue = customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode());
+                        } else {
+                            Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
+                            hasValue = value != null;
+                        }
+
+                        if (!hasValue && isNewEntity && cft.getDefaultValue() != null) { // No need to check for !cft.isInheritedAsDefaultValue() as it was checked above
+                            Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode());
+                            hasValue = value != null;
+                        }
                     }
-                }
 
-                if (!hasValue && cft.isValueRequired()) {
-                    missingParameters.add(cft.getCode());
-                }
-
-                // When instance, or multiple instances in case of versioned values, were found
-                // in case of empty value, check that inherited value is available or instantiate it from an inherited value if needed
-            } else {
-
-                boolean emptyValue = entity.hasCFValueNotEmpty(cft.getCode());
-
-                if (emptyValue) {
-                    Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
-
-                    if (isNewEntity && !emptyValue && ((value == null && cft.getDefaultValue() != null) || cft.isUseInheritedAsDefaultValue())) {
-                        value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
-                    }
-                    if (value == null && cft.isValueRequired()) {
+                    if (!hasValue && cft.isValueRequired()) {
                         missingParameters.add(cft.getCode());
                     }
+
+                    // When instance, or multiple instances in case of versioned values, were found
+                    // in case of empty value, check that inherited value is available or instantiate it from an inherited value if needed
+                } else {
+
+                    boolean emptyValue = entity.hasCFValueNotEmpty(cft.getCode());
+
+                    if (emptyValue) {
+                        Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
+
+                        if (isNewEntity && !emptyValue && ((value == null && cft.getDefaultValue() != null) || cft.isUseInheritedAsDefaultValue())) {
+                            value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
+                        }
+                        if (value == null && cft.isValueRequired()) {
+                            missingParameters.add(cft.getCode());
+                        }
+                    }
                 }
             }
-        }
         }
 
         handleMissingParameters();
     }
-    
+
     protected void validateAndConvertCustomFields(List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity) throws MeveoApiException {
-        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity); 
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
         this.validateAndConvertCustomFields(customFieldTemplates, customFieldDtos, true, false, entity);
     }
-
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void validateAndConvertCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, boolean checkCustomFields,
@@ -603,7 +602,7 @@ public abstract class BaseApi {
             throw new InvalidParameterException(sb.toString());
         }
     }
-    
+
     /**
      * From DTO.
      *
@@ -619,8 +618,7 @@ public abstract class BaseApi {
         }
         return values;
     }
-    
-    
+
     /**
      * Get a value converted from DTO a proper Map, List, EntityWrapper, Date, Long, Double or String value.
      * 
@@ -652,7 +650,6 @@ public abstract class BaseApi {
         }
         return null;
     }
-    
 
     /**
      * Get a value converted from DTO a proper Map, List, EntityWrapper, Date, Long, Double or String value.
@@ -1101,7 +1098,7 @@ public abstract class BaseApi {
     protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering,
             Class targetClass) throws InvalidParameterException {
 
-        if (pagingAndFiltering != null) {
+        if (pagingAndFiltering != null && targetClass != null) {
             pagingAndFiltering.setFilters(convertFilters(targetClass, pagingAndFiltering.getFilters()));
         }
 
@@ -1206,6 +1203,7 @@ public abstract class BaseApi {
             if (value instanceof List || value instanceof Set || value.getClass().isArray()) {
                 return value;
 
+                // Parse comma separated string
             } else if (value instanceof String) {
                 List valuesConverted = new ArrayList<>();
                 String[] valueItems = ((String) value).split(",");
@@ -1219,6 +1217,7 @@ public abstract class BaseApi {
                 }
                 return valuesConverted;
 
+                // A single value list
             } else {
                 Object valueConverted = castFilterValue(value, targetClass, false);
                 if (valueConverted != null) {

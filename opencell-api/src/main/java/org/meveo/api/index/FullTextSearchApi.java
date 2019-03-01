@@ -7,6 +7,7 @@ import java.util.concurrent.Future;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.sort.SortOrder;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
@@ -53,7 +54,13 @@ public class FullTextSearchApi extends BaseApi {
 
         List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
 
-        return elasticClient.search(query, null, from, size, null, null, null, classInfo);
+        SearchResponse searchResult = elasticClient.search(query, null, from, size, null, null, null, classInfo);
+
+        if (searchResult != null) {
+            return searchResult.toString();
+        } else {
+            return "{}";
+        }
     }
 
     public String search(String[] classnamesOrCetCodes, Map<String, String> queryValues, Integer from, Integer size) throws MissingParameterException, BusinessException {
@@ -66,7 +73,13 @@ public class FullTextSearchApi extends BaseApi {
 
         List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
 
-        return elasticClient.search(queryValues, from, size, null, null, null, classInfo);
+        SearchResponse searchResult = elasticClient.search(queryValues, from, size, null, null, null, classInfo);
+
+        if (searchResult != null) {
+            return searchResult.toString();
+        } else {
+            return "{}";
+        }
     }
 
     /**
@@ -94,7 +107,13 @@ public class FullTextSearchApi extends BaseApi {
 
         handleMissingParameters();
 
-        return elasticClient.search(query, category, from, size, sortField != null ? new String[] { sortField } : null, sortOrder != null ? new SortOrder[] { sortOrder } : null,
-            null, null);
+        SearchResponse searchResult = elasticClient.search(query, category, from, size, sortField != null ? new String[] { sortField } : null,
+            sortOrder != null ? new SortOrder[] { sortOrder } : null, null, null);
+
+        if (searchResult != null) {
+            return searchResult.toString();
+        } else {
+            return "{}";
+        }
     }
 }

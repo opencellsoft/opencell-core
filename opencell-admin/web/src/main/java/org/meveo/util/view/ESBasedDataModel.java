@@ -18,22 +18,18 @@
  */
 package org.meveo.util.view;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.action.search.SearchResponse;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.service.index.ElasticClient;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Data model implementation to query Elastic search and provide results to primefaces datatable component.
@@ -120,10 +116,10 @@ public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>
         PaginationConfiguration paginationConfig = new PaginationConfiguration(first, pageSize, getSearchCriteria(), getFullTextSearchValue(loadingFilters), null, sortField,
             sortOrder);
 
-        String dataJson = retrieveData(paginationConfig);
+        SearchResponse searchResult = retrieveData(paginationConfig);
 
-        setRowCount(parseRowCount(dataJson));
-        return parseData(dataJson);
+        setRowCount(parseRowCount(searchResult));
+        return parseData(searchResult);
 
     }
 
@@ -193,84 +189,65 @@ public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>
      * Perform search in Elastic Search
      * 
      * @param paginationConfig PaginationConfiguration data holds filtering/pagination information
-     * @return A Json string with search results
+     * @return Search results
      */
-    private String retrieveData(PaginationConfiguration paginationConfig) {
+    private SearchResponse retrieveData(PaginationConfiguration paginationConfig) {
         try {
 
-            String dataJson = getElasticClientImpl().search(paginationConfig, getSearchScope());
+            SearchResponse searchResult = getElasticClientImpl().search(paginationConfig, getSearchScope());
 
-            return dataJson;
+            return searchResult;
 
         } catch (Exception e) {
             Logger log = LoggerFactory.getLogger(getClass());
             log.error("Failed to search in ES with {}", paginationConfig, e);
         }
-        return "{}";
+        return new SearchResponse();
     }
 
     /**
-     * Parse number of hits from json string returned by search in Elastic Search
+     * Parse number of hits from search results returned by search in Elastic Search
      * 
-     * @param dataJson Json as returned by search in Elastic Search
+     * @param searchResult Search response as returned by search in Elastic Search
      * @return Number of records
      */
-    private int parseRowCount(String dataJson) {
-        if (StringUtils.isEmpty(dataJson) || dataJson.equals("{}")) {
+    private int parseRowCount(SearchResponse searchResult) {
+        if (searchResult == null) {
             return 0;
         }
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        try {
-            JsonNode node = mapper.readTree(dataJson);
-            return node.get("hits").get("total").asInt();
-        } catch (IOException e) {
-            Logger log = LoggerFactory.getLogger(getClass());
-            log.error("Failed to parse json {}", dataJson);
-        }
-        return 0;
+        return new Long(searchResult.getHits().getTotalHits()).intValue();
     }
 
     /**
-     * Parse data from json string returned by search in Elastic Search
+     * Parse data from search results returned by search in Elastic Search
      * 
-     * @param dataJson Json as returned by search in Elastic Search
+     * @param searchResult Search response as returned by search in Elastic Search
      * @return Records found converted to a map of values
      */
-    @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> parseData(String dataJson) {
+    private List<Map<String, Object>> parseData(SearchResponse searchResult) {
 
         List<Map<String, Object>> results = new ArrayList<>();
 
-        if (StringUtils.isEmpty(dataJson) || dataJson.equals("{}")) {
+        if (searchResult == null) {
             return results;
         }
 
-        ObjectMapper mapper = new ObjectMapper();
+        searchResult.getHits().forEach(hit -> {
 
-        try {
-            Iterator<JsonNode> hitsIterator = mapper.readTree(dataJson).get("hits").get("hits").elements();
-            while (hitsIterator.hasNext()) {
-                JsonNode node = hitsIterator.next();
-                String source = node.get("_source").toString();
-                Map<String, Object> result = mapper.readValue(source, Map.class);
-                result.put(RECORD_ID, node.get("_id").textValue());
-                result.put(RECORD_TYPE, node.get("_type").textValue());
-                result.put(RECORD_SCORE, node.get("_score").doubleValue());
+            Map<String, Object> result = new HashMap<>(hit.getSource());
+            result.put(RECORD_ID, hit.getId());
+            result.put(RECORD_TYPE, hit.getType());
+            result.put(RECORD_SCORE, new Float(hit.getScore()).doubleValue());
 
-                results.add(result);
-            }
+            results.add(result);
+        });
 
-        } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(getClass());
-            log.error("Failed to parse json {}", dataJson);
-        }
         return results;
     }
 
     /**
      * A method to mock List/Set/Collection size property, so it is easy to be used in EL expressions.
+     * 
      * @return rows size
      */
     public Integer size() {
@@ -306,10 +283,8 @@ public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>
     }
 
     /**
-     * Get search criteria for data searching.
-     * Search criteria is a map with filter criteria name as a key and value as a value. 
-     * Criteria name consist of [&lt;condition&gt; ]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and &lt;field name&gt; is an entity
-     * attribute name.
+     * Get search criteria for data searching. Search criteria is a map with filter criteria name as a key and value as a value. Criteria name consist of [&lt;condition&gt;
+     * ]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and &lt;field name&gt; is an entity attribute name.
      * 
      * @return Map of search criteria
      */
