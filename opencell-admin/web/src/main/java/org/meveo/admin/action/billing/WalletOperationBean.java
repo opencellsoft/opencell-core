@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Produces;
 import javax.faces.view.ViewScoped;
@@ -131,26 +132,26 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 			filters.remove("offerTemplate");
 		}
 		if (filters.containsKey("billingRun")) {
-			List<Long> walletOperationIds=new ArrayList<Long>();
-			BillingRun br=(BillingRun)filters.get("billingRun");
-			List<RatedTransaction> ListRated=ratedTransactionService.getRatedTransactionsByBillingRun(br);
-			if(ListRated.size()>0 && !ListRated.isEmpty()){
-			for(RatedTransaction rated : ListRated){
-				walletOperationIds.add(rated.getWalletOperationId());
-			} 
-			   StringBuffer wpIds=new StringBuffer();
-			   String sep="";
-			   for(Long ids:walletOperationIds){
-			    wpIds.append(sep);
-			    wpIds.append(ids.toString());
-			    sep=",";
-			   }
-			   filters.put("inList id", wpIds);
-			  }
-			else{
+			List<Long> walletOperationIds = new ArrayList<Long>();
+			BillingRun br = (BillingRun) filters.get("billingRun");
+			List<RatedTransaction> listRated = ratedTransactionService.getRatedTransactionsByBillingRun(br);
+			if (!listRated.isEmpty()) {
+				for (RatedTransaction rated : listRated) {
+					walletOperationIds.addAll(
+							rated.getWalletOperations().stream().map(o -> o.getId()).collect(Collectors.toList()));
+				}
+				StringBuilder wpIds = new StringBuilder();
+				String sep = "";
+				for (Long ids : walletOperationIds) {
+					wpIds.append(sep);
+					wpIds.append(ids.toString());
+					sep = ",";
+				}
+				filters.put("inList id", wpIds);
+			} else {
 				return null;
 			}
-			 filters.remove("billingRun");
+			filters.remove("billingRun");
 		}
 	
 		return super.getLazyDataModel();

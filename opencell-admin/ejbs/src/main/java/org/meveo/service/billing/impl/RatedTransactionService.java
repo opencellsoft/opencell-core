@@ -840,7 +840,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	public int reratedByWalletOperationId(Long id) throws UnrolledbackBusinessException {
 		int result = 0;
 		List<RatedTransaction> ratedTransactions = getEntityManager()
-				.createNamedQuery("RatedTransaction.listByWalletOperationId", RatedTransaction.class)
+				.createNamedQuery("WalletOperation.listRatedTransactionByWalletOperationId", RatedTransaction.class)
 				.setParameter("walletOperationId", id).getResultList();
 		for (RatedTransaction ratedTransaction : ratedTransactions) {
 			BillingRun billingRun = ratedTransaction.getBillingRun();

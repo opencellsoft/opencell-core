@@ -73,7 +73,12 @@ import org.meveo.model.rating.EDR;
 @DiscriminatorColumn(name = "operation_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
 @NamedQueries({
-        @NamedQuery(name = "WalletOperation.listToInvoice", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
+		@NamedQuery(name = "WalletOperation.listRatedTransactionByWalletOperationId", query = "SELECT o.ratedTransaction FROM WalletOperation o where o.id=:walletOperationId"),
+		@NamedQuery(name = "WalletOperation.getRatedTransactionsBilled", query = "SELECT o.id FROM WalletOperation o "
+                + " WHERE o.ratedTransaction.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED" + " AND o.id IN :walletIdList"),
+		@NamedQuery(name = "WalletOperation.listByRatedTransactionId", query = "SELECT o FROM WalletOperation o WHERE o.ratedTransaction.id=:ratedTransactionId"),
+		
+		@NamedQuery(name = "WalletOperation.listToInvoice", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
                 + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
         @NamedQuery(name = "WalletOperation.listToInvoiceByUA", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
                 + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.wallet.userAccount=:userAccount"),

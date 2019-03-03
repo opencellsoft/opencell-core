@@ -528,16 +528,23 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     /**
-     * Retate billing run transactions.
+     * Rerate billing run transactions.
      *
      * @param billingRun the billing run
      * @throws BusinessException the business exception
      */
-    public void retateBillingRunTransactions(BillingRun billingRun) throws BusinessException {
+    public void rerateBillingRunTransactions(BillingRun billingRun) throws BusinessException {
         for (RatedTransaction ratedTransaction : billingRun.getRatedTransactions()) {
-            WalletOperation walletOperation = walletOperationService.findById(ratedTransaction.getWalletOperationId());
-            walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE);
-            walletOperationService.update(walletOperation);
+        	List<WalletOperation> walletOperations = getEntityManager()
+    				.createNamedQuery("WalletOperation.listByRatedTransactionId", WalletOperation.class)
+    				.setParameter("ratedTransactionId", ratedTransaction.getId()).getResultList();
+        	
+			if (!walletOperations.isEmpty()) {
+				for (WalletOperation walletOperation : walletOperations) {
+					walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE);
+					walletOperationService.update(walletOperation);
+				}
+			}
         }
     }
 

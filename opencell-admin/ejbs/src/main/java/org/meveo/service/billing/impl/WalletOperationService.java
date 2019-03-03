@@ -1318,7 +1318,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     public int updateToRerate(List<Long> walletIdList) {
         int walletsOpToRerate = 0;
         @SuppressWarnings("unchecked")
-        List<Long> ratedTransactionsBilled = (List<Long>) getEntityManager().createNamedQuery("RatedTransaction.getRatedTransactionsBilled")
+        List<Long> ratedTransactionsBilled = (List<Long>) getEntityManager().createNamedQuery("WalletOperation.getRatedTransactionsBilled")
             .setParameter("walletIdList", walletIdList).getResultList();
         walletIdList.removeAll(ratedTransactionsBilled);
         if (walletIdList.size() > 0 && !walletIdList.isEmpty()) {

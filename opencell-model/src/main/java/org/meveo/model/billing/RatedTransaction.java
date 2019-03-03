@@ -34,7 +34,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -55,8 +54,11 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.rating.EDR;
 
 /**
- * Rated transaction - usually corresponds 1-1 to Wallet operation, but could also be cases with multiple RatedTransactions created from a single Wallet operation.
- * 
+ * Rated transaction - usually corresponds 1-1 to Wallet operation.
+ * <p>
+ * Starting from version 7.0 a RatedTransaction can be linked to several WalletOperation.
+ * </p>
+ * @see WalletOperation
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
  * @lastModifiedVersion 7.0
@@ -65,7 +67,7 @@ import org.meveo.model.rating.EDR;
 @Table(name = "billing_rated_transaction")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), })
-@NamedQueries({ @NamedQuery(name = "RatedTransaction.listByWalletOperationId", query = "SELECT r FROM RatedTransaction r where r.walletOperationId=:walletOperationId"),
+		@NamedQueries({
         @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and invoice is not null order by usageDate desc "),
 
         @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumber", query = "SELECT r FROM RatedTransaction r where "
@@ -138,10 +140,8 @@ import org.meveo.model.rating.EDR;
                 + "SET r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED " + "where r.invoice is null"
                 + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN " + " and r.doNotTriggerInvoicing=false" + " AND r.usageDate<:lastTransactionDate "
                 + " and r.billingAccount=:billingAccount"),
-        @NamedQuery(name = "RatedTransaction.getRatedTransactionsBilled", query = "SELECT r.walletOperationId FROM RatedTransaction r "
-                + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED" + " AND r.walletOperationId IN :walletIdList"),
-        @NamedQuery(name = "RatedTransaction.setStatusToCanceled", query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED"
-                + " where rt.walletOperationId IN :notBilledWalletIdList"),
+        @NamedQuery(name = "RatedTransaction.setStatusToCanceled", query = "UPDATE WalletOperation o set o.ratedTransaction.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED"
+                + " where o.id IN :notBilledWalletIdList"),
         @NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory "),
         @NamedQuery(name = "RatedTransaction.deleteInvoice", query = "UPDATE RatedTransaction r "
                 + "set r.invoice=null,r.invoiceAgregateF=null,r.invoiceAgregateR=null,r.invoiceAgregateT=null,r.billingRun=null,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN where r.invoice=:invoice"),
@@ -190,19 +190,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @JoinColumn(name = "seller_id", nullable = false)
     @NotNull
     private Seller seller;
-
-    /**
-     * Wallet operation identifier
-     */
-    @Column(name = "wallet_operation_id")
-    private Long walletOperationId;
-
-    /**
-     * Wallet operation
-     */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wallet_operation_id", insertable = false, updatable = false)
-    private WalletOperation walletOperationEntity;
 
     /**
      * Billing run that invoiced this Rated transaction
@@ -447,22 +434,16 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
      */
     @Transient
     private OfferTemplate offerTemplate;
-
-    /**
-     * Corresponding Wallet operation
-     */
-    @Transient
-    private WalletOperation walletOperation;
-
+    
     public RatedTransaction() {
         super();
     }
 
     public RatedTransaction(RatedTransaction ratedTransaction) {
+    	this.setWalletOperations(ratedTransaction.getWalletOperations());
         this.setWallet(ratedTransaction.getWallet());
         this.setBillingAccount(ratedTransaction.getBillingAccount());
         this.setUserAccount(ratedTransaction.getUserAccount());
-        this.setWalletOperationId(ratedTransaction.getWalletOperationId());
         this.setChargeInstance(ratedTransaction.getChargeInstance());
         this.setUsageDate(ratedTransaction.getUsageDate());
         this.setInvoiceSubCategory(ratedTransaction.getInvoiceSubCategory());
@@ -544,8 +525,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
         this.code = walletOperation.getCode();
         this.description = walletOperation.getDescription();
-        this.walletOperationId = walletOperation.getId();
-        this.walletOperation = walletOperation;
         this.chargeInstance = walletOperation.getChargeInstance();
         this.usageDate = walletOperation.getOperationDate();
         this.unitAmountWithoutTax = walletOperation.getUnitAmountWithoutTax();
@@ -719,14 +698,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     public void setDoNotTriggerInvoicing(boolean doNotTriggerInvoicing) {
         this.doNotTriggerInvoicing = doNotTriggerInvoicing;
-    }
-
-    public Long getWalletOperationId() {
-        return walletOperationId;
-    }
-
-    public void setWalletOperationId(Long walletOperationId) {
-        this.walletOperationId = walletOperationId;
     }
 
     /**
@@ -925,19 +896,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     public void setOfferTemplate(OfferTemplate offerTemplate) {
         this.offerTemplate = offerTemplate;
     }
-
-    public WalletOperation getWalletOperation() {
-        return walletOperation;
-    }
-
-    public void setWalletOperation(WalletOperation walletOperation) {
-        this.walletOperation = walletOperation;
-    }
-
-    public WalletOperation getWalletOperationEntity() {
-        return walletOperationEntity;
-    }
-
+    
     @Override
     public boolean equals(Object obj) {
 

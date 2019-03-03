@@ -1275,7 +1275,8 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template"/>
 
     </changeSet>
-    <changeSet id="#3794_20190221 - Aggregate WO"
+
+	<changeSet id="#3794_20190221 - Aggregate WO"
 		author="EdwardPLegaspi">
 		<addColumn tableName="billing_wallet_operation">
 			<column name="rated_transaction_id" type="bigint" />
@@ -1292,5 +1293,14 @@
 			referencedTableName="billing_service_instance"
 			baseColumnNames="service_instance_id"
 			baseTableName="billing_wallet_operation" referencedColumnNames="id" />
+
+		<sql>UPDATE billing_wallet_operation o SET
+			rated_transaction_id=(SELECT
+			r.id FROM billing_rated_transaction r WHERE r.wallet_operation_id=o.id
+			LIMIT 1);
+		</sql>
+		<dropColumn tableName="billing_rated_transaction">
+			<column name="wallet_operation_id"></column>
+		</dropColumn>
 	</changeSet>
 </databaseChangeLog>
