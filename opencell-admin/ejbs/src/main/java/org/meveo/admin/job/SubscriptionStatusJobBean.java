@@ -1,5 +1,6 @@
 package org.meveo.admin.job;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -16,6 +17,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -52,7 +54,8 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 			if (subscription.isSubscriptionExpired() && (subscription.getStatus() == SubscriptionStatusEnum.ACTIVE
 					|| subscription.getStatus() == SubscriptionStatusEnum.CREATED)) {
 
-				if (subscription.getSubscriptionRenewal().isAutoRenew()) {
+			    SubscriptionRenewal subscriptionRenewal = subscription.getSubscriptionRenewal();
+				if (subscriptionRenewal.isAutoRenew()) {
 					Calendar calendar = new GregorianCalendar();
 					calendar.setTime(subscription.getSubscribedTillDate());
 					calendar.add(subscription.getSubscriptionRenewal().getRenewForUnit().getCalendarField(),
@@ -70,13 +73,18 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 					log.debug("Subscription {} has beed renewed to date {} with end agreement date of {}",
 							subscription.getCode(), subscription.getSubscribedTillDate(),
 							subscription.getEndAgreementDate());
+					
+					// Fire "end of term" notification if daysNotifyRenewal != null and daysNotifyRenewal = 0
+					Integer daysNotifyRenewal = subscriptionRenewal.getDaysNotifyRenewal();
+					if (daysNotifyRenewal != null && daysNotifyRenewal.intValue() == BigDecimal.ZERO.intValue()) {
+					    endOfTermEventProducer.fire(subscription); 
+					}
 
-				} else if (subscription.getSubscriptionRenewal().getEndOfTermAction() == EndOfTermActionEnum.SUSPEND) {
+				} else if (subscriptionRenewal.getEndOfTermAction() == EndOfTermActionEnum.SUSPEND) {
 					subscriptionService.subscriptionSuspension(subscription,
 							subscription.getSubscribedTillDate());
 
-				} else if (subscription.getSubscriptionRenewal()
-						.getEndOfTermAction() == EndOfTermActionEnum.TERMINATE) {
+				} else if (subscriptionRenewal.getEndOfTermAction() == EndOfTermActionEnum.TERMINATE) {
 					subscriptionService.terminateSubscription(subscription,
 							subscription.getSubscribedTillDate(),
 							subscription.getSubscriptionRenewal().getTerminationReason(), null);
