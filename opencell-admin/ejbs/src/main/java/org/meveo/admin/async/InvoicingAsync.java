@@ -17,9 +17,11 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -42,6 +44,10 @@ public class InvoicingAsync {
     /** The invoice service. */
     @Inject
     private InvoiceService invoiceService;
+
+    /** The billing run extension service. */
+    @Inject
+    private BillingRunExtensionService billingRunExtensionService;
 
     /** The log. */
     @Inject
@@ -117,17 +123,20 @@ public class InvoicingAsync {
     /**
      * Assign invoice number and increment BA invoice dates async. One invoice at a time in a separate transaction.
      *
+     * @param billingRun the billing run to process
      * @param invoiceIds the invoice ids
      * @param invoicesToNumberInfo the invoices to number info
+     * @param isForced is forced action
      * @param jobInstanceId the job instance id
+     * @param result the Job execution result
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return the future
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo, Long jobInstanceId,
-            MeveoUser lastCurrentUser) {
+    public Future<String> assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(BillingRun billingRun, List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo,
+            boolean isForced, Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -137,8 +146,18 @@ public class InvoicingAsync {
             }
             try {
                 invoiceService.assignInvoiceNumberAndIncrementBAInvoiceDate(invoiceId, invoicesToNumberInfo);
+
+                if (!isForced) {
+                    billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
+                    invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
+                }
+
             } catch (Exception e) {
                 log.error("Failed to increment invoice date for invoice {}", invoiceId, e);
+
+                if (result != null) {
+                    result.registerWarning("Failed when assign invoice number to invoice " + invoiceId + " : " + e.getMessage());
+                }
             }
         }
         return new AsyncResult<String>("OK");
