@@ -44,6 +44,7 @@ import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
@@ -59,7 +60,8 @@ import org.meveo.model.shared.DateUtils;
  * 
  * @author Andrius Karpavicius
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  **/
 @Entity
 @ModuleItem
@@ -303,6 +305,18 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Column(name = "display_format", length = 80)
     @Size(max = 80)
     private String displayFormat;
+    /**
+     * Number of digits in decimal part, if the fieldType is double.
+     */
+    @Column(name = "nb_decimal")
+    private Integer nbDecimal;
+
+    /**
+     * Rounding mode, Possible values {@link RoundingModeEnum}.
+     */
+    @Column(name = "rounding_mode", length = 50)
+    @Enumerated(EnumType.STRING)
+    private RoundingModeEnum roundingMode;
 
     /**
      * Should field be not manageable in GUI, irrelevant of any other settings
@@ -569,7 +583,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Parse GUIPosition field value e.g. 'tab:Configuration:0;fieldGroup:Price:5;field:0' and return 'tab', 'fieldGroup' and 'field' item values as a map
-     * 
+     *
      * @return A map with 'tab_pos', 'tab_name', 'fieldGroup_pos', 'fieldGroup_name' and 'field_pos' as keys
      */
     public Map<String, String> getGuiPositionParsed() {
@@ -599,7 +613,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Get GUI 'field' position value in a GUIPosition value as in e.g. "tab:Configuration:0;fieldGroup:Purge counter periods:1;field:0"
-     * 
+     *
      * @return GUI 'field' position value
      */
     public int getGUIFieldPosition() {
@@ -1008,7 +1022,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
-     * 
+     *
      * @return Database field name
      */
     public String getDbFieldname() {
@@ -1021,11 +1035,43 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
-     * 
+     *
      * @param code Field code
      * @return Database field name
      */
     public static String getDbFieldname(String code) {
         return BaseEntity.cleanUpAndLowercaseCodeOrId(code);
+    }
+
+    /**
+     * Gets the number of digits in decimal part.
+     * @return number of digits.
+     */
+    public Integer getNbDecimal() {
+        return nbDecimal;
+    }
+
+    /**
+     * Sets number of digits in decimal part.
+     * @param nbDecimal the number of digits.
+     */
+    public void setNbDecimal(Integer nbDecimal) {
+        this.nbDecimal = nbDecimal;
+    }
+
+    /**
+     * Gets the rounding mode.
+     * @return the rounding mode.
+     */
+    public RoundingModeEnum getRoundingMode() {
+        return roundingMode;
+    }
+
+    /**
+     * Sets the rounding mode.
+     * @param roundingMode rounding mode.
+     */
+    public void setRoundingMode(RoundingModeEnum roundingMode) {
+        this.roundingMode = roundingMode;
     }
 }
