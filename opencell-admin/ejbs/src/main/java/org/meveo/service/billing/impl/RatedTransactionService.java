@@ -488,20 +488,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                     && discountPlanItem.getInvoiceSubCategory().getId().equals(scAggregate.getInvoiceSubCategory().getId()))
                             || (discountPlanItem.getInvoiceCategory() != null && discountPlanItem.getInvoiceSubCategory() == null
                                     && discountPlanItem.getInvoiceCategory().getId().equals(scAggregate.getInvoiceSubCategory().getInvoiceCategory().getId()))) {
-                        BigDecimal discountPercent = discountPlanItem.getDiscountValue();
+                        BigDecimal discountValue = discountPlanItem.getDiscountValue();
 
                         if (discountPlanItem.getDiscountValueEL() != null) {
-                            discountPercent = evaluateDiscountPercentExpression(discountPlanItem.getDiscountValueEL(), scAggregate.getUserAccount(), scAggregate.getWallet(),
+                            discountValue = evaluateDiscountPercentExpression(discountPlanItem.getDiscountValueEL(), scAggregate.getUserAccount(), scAggregate.getWallet(),
                                 invoice, amount);
 							log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
-									discountPercent, amount);
+									discountValue, amount);
                         }
 
                         BigDecimal discountAmount;
                         if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-            				discountAmount = amount.multiply(discountPercent.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
+            				discountAmount = amount.multiply(discountValue.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
             			} else {
-            				discountAmount = discountPlanItem.getDiscountValue().negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());;
+            				discountAmount = discountValue.negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());;
             			}
 
                         if (discountAmount.compareTo(BigDecimal.ZERO) < 0) {
@@ -515,7 +515,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                             discountAggregate.setDiscountAggregate(true);
 							if (discountPlanItem.getDiscountPlanItemType()
 									.equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-								discountAggregate.setDiscountPercent(discountPercent);
+								discountAggregate.setDiscountPercent(discountValue);
 							}
                             discountAggregate.setDiscountPlanItem(discountPlanItem);
                             discountAggregate.setDescription(discountPlanItem.getCode());
