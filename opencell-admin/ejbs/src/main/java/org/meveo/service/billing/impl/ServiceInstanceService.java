@@ -558,12 +558,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 if (applyAgreement && endAgreementDate != null && terminationDate.before(endAgreementDate)) {
                     if (endAgreementDate.before(nextChargeDate)) {
                         recurringChargeInstance.setTerminationDate(endAgreementDate);
-                        walletOperationService.applyReimbursment(recurringChargeInstance);
+                        walletOperationService.applyReimbursment(recurringChargeInstance,orderNumber);
                     }
 
                 } else if (terminationDate.before(storedNextChargeDate)) {
                     recurringChargeInstance.setTerminationDate(terminationDate);
-                    walletOperationService.applyReimbursment(recurringChargeInstance);
+                    walletOperationService.applyReimbursment(recurringChargeInstance,orderNumber);
                 }
 
             }
