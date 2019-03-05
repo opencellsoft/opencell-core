@@ -764,7 +764,7 @@
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>9.4.1211</version>
+                    <version>42.2.5</version>
                     <scope>provided</scope>
                 </dependency>
                 <dependency>
@@ -777,6 +777,10 @@
                             <groupId>org.liquibase</groupId>
                             <artifactId>liquibase-core</artifactId>
                         </exclusion>
+                        <exclusion>
+                            <groupId>postgresql</groupId>
+                            <artifactId>postgresql</artifactId>
+                        </exclusion>                        
                     </exclusions>
                 </dependency>
             </dependencies>
