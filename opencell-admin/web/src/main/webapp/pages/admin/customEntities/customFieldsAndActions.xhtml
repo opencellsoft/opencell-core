@@ -44,11 +44,13 @@
                 </p:column>
                 <p:column headerText="#{messages['commons.actions']}" width="12%">
                     <h:panelGroup rendered="#{node.type == 'tab'}">
-                        <p:commandButton id="editTabBtn" icon="ui-icon-document" oncomplete="PF('groupDialog').show()" update=":groupForm" action="#{customEntityTemplateBean.editFieldGrouping(node)}">
+                        <p:commandButton id="editTabBtn" icon="ui-icon-document" oncomplete="PF('groupDialog').show()" update=":groupForm" action="#{customEntityTemplateBean.editFieldGrouping(node)}"
+                            rendered="#{!customEntityTemplateBean.customTable}">
                             <!--                             <f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" /> -->
                         </p:commandButton>
 
-                        <p:commandButton id="addFieldGroupBtn" icon="ui-icon-contact" action="#{customEntityTemplateBean.newFieldGroup(node)}" oncomplete="PF('groupDialog').show()" update=":groupForm" />
+                        <p:commandButton id="addFieldGroupBtn" icon="ui-icon-contact" action="#{customEntityTemplateBean.newFieldGroup(node)}" oncomplete="PF('groupDialog').show()" update=":groupForm"
+                            rendered="#{!customEntityTemplateBean.customTable}" />
 
                         <p:commandButton id="addFieldInTabBtn" icon="ui-icon-plus" oncomplete="PF('cftDialog').show()" actionListener="#{customFieldTemplateBean.newEntity()}" update=":cftForm">
                             <f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" />
@@ -56,7 +58,8 @@
                             <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.guiPosition}" value="#{node.guiPositionForField}" />
                         </p:commandButton>
 
-                        <p:commandButton id="addActionInTabBtn" icon="ui-icon-play" oncomplete="PF('actionDialog').show()" actionListener="#{entityCustomActionBean.newEntity()}" update=":actionForm">
+                        <p:commandButton id="addActionInTabBtn" icon="ui-icon-play" oncomplete="PF('actionDialog').show()" actionListener="#{entityCustomActionBean.newEntity()}" update=":actionForm"
+                            rendered="#{!customEntityTemplateBean.customTable}">
                             <f:setPropertyActionListener target="#{entityCustomActionBean.backViewSave}" value="customizedEntity" />
                             <f:setPropertyActionListener target="#{entityCustomActionBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
                             <f:setPropertyActionListener target="#{entityCustomActionBean.entity.guiPosition}" value="#{node.guiPositionForAction}" />
@@ -116,12 +119,12 @@
                         </p:commandButton>
 
 
-                        <p:commandButton id="copylink" icon="ui-icon-copy" update=":copyCFTForm" oncomplete="PF('copyCFTDialog').show()">
+                        <p:commandButton id="copylink" icon="ui-icon-copy" update=":copyCFTForm" oncomplete="PF('copyCFTDialog').show()" rendered="#{!customEntityTemplateBean.customTable}">
                             <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
                         </p:commandButton>
 
                         <p:remoteCommand id="remoteDeleteButton" actionListener="#{customFieldTemplateBean.delete}" action="#{customEntityTemplateBean.removeField(node)}" name="fieldsDoDelete"
-                           update="@form" />
+                            update="@form" />
                         <p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="fieldsDoDelete()">
                             <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
                             <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
@@ -170,10 +173,10 @@
                 </p:column>
                 <f:facet name="footer">
                     <p:commandButton id="addTab" value="#{messages['customizedEntities.addFieldGroup']}" oncomplete="PF('groupDialog').show()" actionListener="#{customEntityTemplateBean.newTab()}"
-                        update=":groupForm">
+                        update=":groupForm" rendered="#{!customEntityTemplateBean.customTable}">
                     </p:commandButton>
                     <p:commandButton id="addAction" value="#{messages['customizedEntities.addAction']}" oncomplete="PF('actionDialog').show()" actionListener="#{entityCustomActionBean.newEntity()}"
-                        update=":actionForm">
+                        update=":actionForm" rendered="#{!customEntityTemplateBean.customTable}">
                         <f:setPropertyActionListener target="#{entityCustomActionBean.backViewSave}" value="customizedEntity" />
                         <f:setPropertyActionListener target="#{entityCustomActionBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
                     </p:commandButton>
@@ -184,7 +187,7 @@
                     <!--                         </p:commandButton> -->
                 </f:facet>
             </p:treeTable>
-        
+
             <!--  Field related confirmation widgets -->
 
             <p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmCanotDelete']}" header="" severity="alert"
@@ -195,8 +198,7 @@
             </p:confirmDialog>
 
             <!-- Action related widgets -->
-            <p:remoteCommand id="remoteDeleteActionButton" actionListener="#{entityCustomActionBean.delete}" action="#{customEntityTemplateBean.refreshActions}" name="actionsDoDelete"
-                 update="@form" />
+            <p:remoteCommand id="remoteDeleteActionButton" actionListener="#{entityCustomActionBean.delete}" action="#{customEntityTemplateBean.refreshActions}" name="actionsDoDelete" update="@form" />
         </p:panel>
 
     </h:form>
@@ -257,25 +259,28 @@
                 <h:panelGrid columns="2" columnClasses="Wid40 Responsive100 VAlignTop, Wid60 Responsive100 VAlignTop">
                     <h:panelGroup>
                         <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" componentWidth="100" size="56" />
+                        <hftl:decorateFormField label="#{messages['customFieldTemplate.dbFieldname']}" rendered="#{!customEntityTemplateBean.entity.transient and customEntityTemplateBean.customTable}">
+                            <h:outputText value="#{customFieldTemplateBean.entity.dbFieldname}" />
+                        </hftl:decorateFormField>
                         <hftl:formLanguageFields label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" size="50" maxlength="100" componentWidth="100" />
                     </h:panelGroup>
 
                     <h:panelGroup>
                         <hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="30"
                             listenerUpdate="listValuesField defaultValueField displayFormat entityClazzField validations versioning storageType_enum matrixColumns childEntityFields protectableField"
-                            actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="updateDefaultValues" allowEdit="false" />
+                            actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="updateDefaultValues" listValues="#{customEntityTemplateBean.fieldTypes}" allowEdit="false" />
                         <!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" componentWidth="20" edit="false" /> -->
                         <!--                 <hftl:formField label="#{messages['customFieldTemplate.guipos']}" field="guiPosition" componentWidth="20" edit="false" /> -->
                         <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" required="true" componentWidth="30"
                             listenerUpdate="@this defaultValueField mapKeyTypeField matrixColumns" actionListenerBean="#{customFieldTemplateBean}" allowEdit="false"
-                            actionListenerMethod="updateDefaultValues" />
-						<h:panelGroup id="protectableField">
-						   <c:if test="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}">
-						   	 <hftl:formField label="#{messages['customFieldTemplate.protectable']}" field="protectable" isMessage="true" componentWidth="30" />
-						   </c:if>
-						</h:panelGroup>
+                            actionListenerMethod="updateDefaultValues" rendered="#{!customEntityTemplateBean.customTable}" />
+                        <h:panelGroup id="protectableField" rendered="#{!customEntityTemplateBean.customTable}">
+                            <c:if test="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}">
+                                <hftl:formField label="#{messages['customFieldTemplate.protectable']}" field="protectable" isMessage="true" componentWidth="30" />
+                            </c:if>
+                        </h:panelGroup>
 
-						<h:panelGroup id="mapKeyTypeField">
+                        <h:panelGroup id="mapKeyTypeField">
                             <hftl:formField label="#{messages['customFieldTemplate.mapKeyType']}" field="mapKeyType" required="true" componentWidth="30"
                                 listValues="#{CustomFieldMapKeyEnum.enumValuesForKey}" rendered="#{customFieldTemplateBean.entity.storageType == 'MAP'}" />
                         </h:panelGroup>
@@ -285,15 +290,16 @@
                                 rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.DATE and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.ENTITY and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY and customFieldTemplateBean.entity.storageType == 'SINGLE'}"
                                 newLine="true" />
                             <hftl:formField label="#{messages['customFieldTemplate.useInheritedAsDefaultValue']}" field="useInheritedAsDefaultValue" componentWidth="40"
-                                rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.DATE and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.ENTITY and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY and customFieldTemplateBean.entity.storageType == 'SINGLE'}" />
+                                rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.DATE and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.ENTITY and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY and customFieldTemplateBean.entity.storageType == 'SINGLE' and !customEntityTemplateBean.customTable}" />
                         </h:panelGroup>
 
-						<h:panelGroup id="displayFormat">
-							<hftl:formField label="#{messages['customFieldTemplate.displayFormat']}" field="displayFormat" componentWidth="60" size="80" 
-								rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LONG or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DATE}" />
+                        <h:panelGroup id="displayFormat">
+                            <hftl:formField label="#{messages['customFieldTemplate.displayFormat']}" field="displayFormat" componentWidth="60" size="80"
+                                rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LONG or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DATE}" />
                         </h:panelGroup>
-                        
-                        <hftl:formField label="#{messages['customFieldTemplate.tags']}" field="tags" componentWidth="100" textArea="true" maxlength="2000" rows="1" />
+
+                        <hftl:formField label="#{messages['customFieldTemplate.tags']}" field="tags" componentWidth="100" textArea="true" maxlength="2000" rows="1"
+                            rendered="#{!customEntityTemplateBean.customTable}" />
 
                         <h:panelGroup id="entityClazzField">
                             <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="90" maxlength="255"
@@ -302,7 +308,6 @@
                                 newLine="true" componentWidth="100" listenerUpdate="childEntityFields" actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="resetChildEntityFields"
                                 rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.ENTITY or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CHILD_ENTITY}" />
                         </h:panelGroup>
-
                     </h:panelGroup>
 
                 </h:panelGrid>
@@ -390,32 +395,33 @@
                     </p:fieldset>
                 </h:panelGroup>
 
-                <p:fieldset id="validations" legend="#{messages['customFieldTemplate.validations']}" styleClass="validations clearfix">
-                    <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="10" />
-                    <hftl:formField label="#{messages['customFieldTemplate.hideOnNew']}" field="hideOnNew" isMessage="true" componentWidth="8" />
-                    <hftl:formField label="#{messages['customFieldTemplate.allowEdit']}" field="allowEdit" isMessage="true" componentWidth="7" />
-                    <hftl:formField label="#{messages['customFieldTemplate.applicableOnEl']}" field="applicableOnEl" textArea="true" maxlength="2000" rows="1" />
-                    <hftl:formField label="#{messages['customFieldTemplate.minValue']}" field="minValue" negativeValue="true" componentWidth="15"
-                        rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LONG or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE}" />
-                    <hftl:formField label="#{messages[customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING?'customFieldTemplate.maxValueTxt':'customFieldTemplate.maxValue']}"
-                        field="maxValue" required="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}"
-                        negativeValue="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.STRING}"
-                        rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LONG or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}"
-                        componentWidth="15" />
-                    <hftl:formField label="#{messages['customFieldTemplate.regExp']}" field="regExp" rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}" size="29"
-                        componentWidth="19" />
-                    <hftl:formField label="#{messages['customFieldTemplate.nbDecimal']}" field="nbDecimal"
-                                    rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE}" />
-                    <hftl:formField label="#{messages['customFieldTemplate.roundingMode']}" field="roundingMode"
-                                    rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE}" />
-                </p:fieldset>
-
-
+                <h:panelGroup id="validations">
+                    <p:fieldset legend="#{messages['customFieldTemplate.validations']}" styleClass="validations clearfix">
+                        <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="10" />
+                        <hftl:formField label="#{messages['customFieldTemplate.hideOnNew']}" field="hideOnNew" isMessage="true" componentWidth="8" rendered="#{!customEntityTemplateBean.customTable}" />
+                        <hftl:formField label="#{messages['customFieldTemplate.allowEdit']}" field="allowEdit" isMessage="true" componentWidth="7" rendered="#{!customEntityTemplateBean.customTable}" />
+                        <hftl:formField label="#{messages['customFieldTemplate.applicableOnEl']}" field="applicableOnEl" textArea="true" maxlength="2000" rows="1"
+                            rendered="#{!customEntityTemplateBean.customTable}" />
+                        <hftl:formField label="#{messages['customFieldTemplate.minValue']}" field="minValue" negativeValue="true" componentWidth="15"
+                            rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LONG or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE}" />
+                        <hftl:formField label="#{messages[customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING?'customFieldTemplate.maxValueTxt':'customFieldTemplate.maxValue']}"
+                            field="maxValue" required="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}"
+                            negativeValue="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.STRING}"
+                            rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LONG or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}"
+                            componentWidth="15" />
+                        <hftl:formField label="#{messages['customFieldTemplate.regExp']}" field="regExp" rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}" size="29"
+                            componentWidth="19" />
+                        <hftl:formField label="#{messages['customFieldTemplate.nbDecimal']}" field="nbDecimal"
+                                        rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE}" />
+                        <hftl:formField label="#{messages['customFieldTemplate.roundingMode']}" field="roundingMode"
+                                        rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE}" />
+                    </p:fieldset>
+                </h:panelGroup>
                 <p:fieldset legend="#{messages['customFieldTemplate.versioningAndCaching']}" styleClass="clearfix versioning-and-caching">
                     <!-- 					<hftl:formField label="#{messages['customFieldTemplate.cacheValue']}" field="cacheValue" isMessage="true" componentWidth="15" /> -->
-                    <hftl:formField label="#{messages['customFieldTemplate.indexType']}" field="indexType" required="false" allowEdit="#{customFieldTemplateBean.entity.indexType==null}"
-                        componentWidth="10" />
-                    <h:panelGroup id="versioning">
+                    <hftl:formField label="#{messages['customFieldTemplate.indexType']}" field="indexType" allowEdit="#{customFieldTemplateBean.entity.indexType==null}" componentWidth="10"
+                        required="#{customEntityTemplateBean.customTable}" />
+                    <h:panelGroup id="versioning" rendered="#{!customEntityTemplateBean.customTable}">
                         <hftl:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="true" componentWidth="15"
                             listenerUpdate=":cftForm:versionableFields" rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}" />
                         <h:panelGroup id="versionableFields" rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}">
@@ -439,8 +445,8 @@
                 </hftl:decorateFormField>
                 <ui:param name="buttons" value="true" />
                 <ui:define name="buttons">
-                    <hf:formButtons backingBean="#{customFieldTemplateBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true" killConversationOnBack="false"  killConversationOnSave="false"
-                        showEditButton="false" showDeleteButton="false">
+                    <hf:formButtons backingBean="#{customFieldTemplateBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true" killConversationOnBack="false"
+                        killConversationOnSave="false" showEditButton="false" showDeleteButton="false">
                         <p:remoteCommand action="#{customEntityTemplateBean.refreshFields}" name="refreshFields" update=":fieldsForm:fields" />
                         <p:commandButton value="#{messages['action.save']}" onclick="delayDisable(this);"
                             oncomplete="if (args &amp;&amp; !args.validationFailed){refreshFields();PF('cftDialog').hide();}" actionListener="#{customFieldTemplateBean.saveOrUpdateForPopup}"
@@ -502,7 +508,8 @@
             </h:panelGrid>
             <ui:param name="buttons" value="true" />
             <ui:define name="buttons">
-                <hf:formButtons backingBean="#{entityCustomActionBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true" killConversationOnBack="false" killConversationOnSave="false">
+                <hf:formButtons backingBean="#{entityCustomActionBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true" killConversationOnBack="false"
+                    killConversationOnSave="false">
                     <p:commandButton value="#{messages['commons.disable']}" rendered="#{not empty entityCustomActionBean.entity.id and entityCustomActionBean.entity.active}"
                         actionListener="#{customEntityTemplateBean.refreshFields}" action="#{entityCustomActionBean.disable}" update="@form :fieldsForm:fields">
                         <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />

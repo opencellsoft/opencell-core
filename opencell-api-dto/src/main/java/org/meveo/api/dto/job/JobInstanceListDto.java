@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * The Class JobInstanceListDto.
  * 
  * @author Adnane Boubia
+ * @lastModifiedVersion 7.0.0
  */
 @XmlRootElement(name = "JobInstanceListDto")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -42,7 +43,7 @@ public class JobInstanceListDto implements Serializable {
     /**
      * Sets the job instances.
      *
-     * @param job instance the new job instances
+     * @param jobInstance the new job instances
      */
     public void setJobInstances(List<JobInstanceDto> jobInstance) {
         this.jobInstance = jobInstance;

@@ -15,6 +15,8 @@ import org.meveo.api.rest.custom.CustomEntityInstanceRs;
 import org.meveo.api.rest.impl.BaseRs;
 
 /**
+ * Rest API implementation for custom entity instance management
+ * 
  * @author Andrius Karpavicius
  **/
 @RequestScoped

@@ -21,12 +21,11 @@ package org.meveo.util.view;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.action.search.SearchResponse;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.local.IPersistenceService;
@@ -35,9 +34,6 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyDataModel<T> {
 
@@ -62,8 +58,9 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
 
         // Do a regular search
         if (fullTextSearchValue == null) {
-            
-            PaginationConfiguration paginationConfig = new PaginationConfiguration(first, pageSize, getSearchCriteria(loadingFilters), null, getListFieldsToFetchImpl(), sortField, sortOrder);
+
+            PaginationConfiguration paginationConfig = new PaginationConfiguration(first, pageSize, getSearchCriteria(loadingFilters), null, getListFieldsToFetchImpl(), sortField,
+                sortOrder);
 
             setRowCount(countRecords(paginationConfig));
 
@@ -135,32 +132,28 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
      */
     private ElasticSearchResults retrieveDataFromES(PaginationConfiguration paginationConfig) {
 
-        String dataJson = null;
+        SearchResponse searchResult = null;
         try {
-            dataJson = getElasticClientImpl().search(paginationConfig, new String[] { getPersistenceServiceImpl().getEntityClass().getName() });
+            searchResult = getElasticClientImpl().search(paginationConfig, new String[] { getPersistenceServiceImpl().getEntityClass().getName() });
 
-            if (StringUtils.isEmpty(dataJson) || dataJson.equals("{}")) {
+            if (searchResult == null) {
                 return new ElasticSearchResults(0);
             }
 
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(dataJson);
-
-            // Parse number of hits
-            int rowCount = node.get("hits").get("total").asInt();
+            // Get number of hits
+            int rowCount = new Long(searchResult.getHits().getTotalHits()).intValue();
             List<String> codes = new ArrayList<>();
 
-            Iterator<JsonNode> hitsIterator = node.get("hits").get("hits").elements();
-            while (hitsIterator.hasNext()) {
-                JsonNode recordNode = hitsIterator.next();
-                String entityCode = recordNode.get("fields").get(ESBasedDataModel.RECORD_CODE).get(0).textValue();
-                codes.add(entityCode);
-            }
+            searchResult.getHits().forEach(hit -> {
+                codes.add(hit.getSource().get(ESBasedDataModel.RECORD_CODE).toString());
+                // codes.add(hit.getFields().get(ESBasedDataModel.RECORD_CODE).getValue());
+            });
+
             return new ElasticSearchResults(rowCount, codes);
 
         } catch (Exception e) {
             Logger log = LoggerFactory.getLogger(getClass());
-            log.error("Failed to search in ES with {} or parse data retrieved {}", paginationConfig, dataJson, e);
+            log.error("Failed to search in ES with {} or parse data retrieved {}", paginationConfig, searchResult, e);
         }
         return new ElasticSearchResults(0);
     }
@@ -239,29 +232,26 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
     }
 
     /**
-     * Get search criteria for data searching.&lt;br/&gt;
-     * Search criteria is a map with filter criteria name as a key and value as a value. &lt;br/&gt;
-     * Criteria name consist of [&lt;condition&gt; ]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and &lt;field name&gt; is an entity
+     * Get search criteria for data searching.&lt;br/&gt; Search criteria is a map with filter criteria name as a key and value as a value. &lt;br/&gt; Criteria name consist of
+     * [&lt;condition&gt; ]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and &lt;field name&gt; is an entity
      * attribute name.
      *
      * @param filters the filters
      * @return the search criteria
      */
-    protected  Map<String, Object> getSearchCriteria(Map<String, Object> filters) {
+    protected Map<String, Object> getSearchCriteria(Map<String, Object> filters) {
         return getSearchCriteria();
     }
-    
 
     /**
-     * Get search criteria for data searching.&lt;br/&gt;
-     * Search criteria is a map with filter criteria name as a key and value as a value. &lt;br/&gt;
-     * Criteria name consist of [&lt;condition&gt; ]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and &lt;field name&gt; is an entity
+     * Get search criteria for data searching.&lt;br/&gt; Search criteria is a map with filter criteria name as a key and value as a value. &lt;br/&gt; Criteria name consist of
+     * [&lt;condition&gt; ]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and &lt;field name&gt; is an entity
      * attribute name.
      * 
      * @return Map of search criteria
      */
     protected abstract Map<String, Object> getSearchCriteria();
-    
+
     /**
      * Method that returns concrete PersistenceService. That service is then used for operations on concrete entities (eg. save, delete etc).
      * 

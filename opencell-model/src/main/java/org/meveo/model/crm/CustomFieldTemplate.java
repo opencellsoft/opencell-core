@@ -38,6 +38,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -298,6 +299,9 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
 
+    /**
+     * Value display format - pattern
+     */
     @Column(name = "display_format", length = 80)
     @Size(max = 80)
     private String displayFormat;
@@ -319,6 +323,12 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      */
     @Transient
     private boolean hideInGUI;
+
+    /**
+     * Database field name - derived from code
+     */
+    @Transient
+    private String dbFieldname;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -571,6 +581,11 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         this.guiPosition = guiPosition;
     }
 
+    /**
+     * Parse GUIPosition field value e.g. 'tab:Configuration:0;fieldGroup:Price:5;field:0' and return 'tab', 'fieldGroup' and 'field' item values as a map
+     *
+     * @return A map with 'tab_pos', 'tab_name', 'fieldGroup_pos', 'fieldGroup_name' and 'field_pos' as keys
+     */
     public Map<String, String> getGuiPositionParsed() {
 
         if (guiPosition == null) {
@@ -594,6 +609,24 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         }
 
         return parsedInfo;
+    }
+
+    /**
+     * Get GUI 'field' position value in a GUIPosition value as in e.g. "tab:Configuration:0;fieldGroup:Purge counter periods:1;field:0"
+     *
+     * @return GUI 'field' position value
+     */
+    public int getGUIFieldPosition() {
+        if (guiPosition != null) {
+            String position = getGuiPositionParsed().get(GroupedCustomFieldTreeItemType.field.positionTag + "_pos");
+            if (position != null) {
+                try {
+                    return Integer.parseInt(position);
+                } catch (NumberFormatException e) {
+                }
+            }
+        }
+        return 0;
     }
 
     public boolean isAllowEdit() {
@@ -985,6 +1018,29 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      */
     public void setHideInGUI(boolean hideInGUI) {
         this.hideInGUI = hideInGUI;
+    }
+
+    /**
+     * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
+     *
+     * @return Database field name
+     */
+    public String getDbFieldname() {
+        if (dbFieldname == null && code != null) {
+            dbFieldname = CustomFieldTemplate.getDbFieldname(code);
+        }
+        return dbFieldname;
+    }
+
+
+    /**
+     * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
+     *
+     * @param code Field code
+     * @return Database field name
+     */
+    public static String getDbFieldname(String code) {
+        return BaseEntity.cleanUpAndLowercaseCodeOrId(code);
     }
 
     /**

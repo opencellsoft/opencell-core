@@ -11,6 +11,7 @@ import org.meveo.api.dto.response.SearchResponse;
  * The Class JobInstanceListResponseDto.
  * 
  * @author Adnane Boubia
+ * @lastModifiedVersion 7.0.0
  */
 @XmlRootElement(name = "JobInstanceListResponseDto")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -37,7 +38,7 @@ public class JobInstanceListResponseDto extends SearchResponse {
     /**
      * Sets the job instances.
      *
-     * @param job instances the new job instances
+     * @param jobInstances the new job instances
      */
     public void setJobInstances(JobInstanceListDto jobInstances) {
         this.jobInstances = jobInstances;

@@ -35,7 +35,8 @@ import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class ExportAccountsJobBean {
@@ -75,12 +76,29 @@ public class ExportAccountsJobBean {
         String timestamp = sdf.format(new Date());
         List<org.meveo.model.billing.BillingAccount> bas = billingAccountService.list();
         billingAccounts = billingAccountsToDto(bas, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
+        int nbItems = billingAccounts.getBillingAccount() != null ? billingAccounts.getBillingAccount().size() : 0;
+        result.setNbItemsToProcess(nbItems);
         try {
             JAXBUtils.marshaller(billingAccounts, new File(dir + File.separator + "ACCOUNT_" + timestamp + ".xml"));
+            result.setNbItemsCorrectlyProcessed(nbItems);
+            logResult();
         } catch (JAXBException e) {
             log.error("Failed to export accounts job", e);
+            result.getErrors().add(e.getMessage());
+            result.setReport(e.getMessage());
+            result.setNbItemsProcessedWithError(nbItems);
         }
 
+    }
+
+    private void logResult() {
+        if (billingAccounts.getBillingAccount() != null) {
+            int nbItems;
+            for (BillingAccount billingAccount : billingAccounts.getBillingAccount()) {
+                nbItems = billingAccount.getUserAccounts() != null && billingAccount.getUserAccounts().getUserAccount() != null ? billingAccount.getUserAccounts().getUserAccount().size() : 0;
+                log.info("Number of processed userAccounts for the billingAccount {} in ExportAccountsJob is : {}", billingAccount.getCode(), nbItems);
+            }
+        }
     }
 
     private BillingAccounts billingAccountsToDto(List<org.meveo.model.billing.BillingAccount> bas, String dateFormat, Long jobInstanceId) {

@@ -67,9 +67,9 @@ public class EntityManagerProvider {
     private static boolean isMultiTenancyEnabled = ParamBean.isMultitenancyEnabled();
 
     /**
-     * Instantiates an Entity manager for use in GUI exclusively. Will consider a tenant that currently connected user belongs to
+     * Instantiates an Entity manager for use CDI injection. Will consider a tenant that currently connected user belongs to.
      * 
-     * @return Entity manager
+     * @return Entity manager instance
      */
     @Produces
     @RequestScoped
@@ -116,7 +116,7 @@ public class EntityManagerProvider {
     }
 
     /**
-     * Get entity manager for a given provider
+     * Get entity manager for a given provider. Entity manager produced from a entity manager factory will join a transaction.
      * 
      * @param providerCode Provider code
      * @return Entity manager instance
@@ -138,6 +138,34 @@ public class EntityManagerProvider {
             currentEntityManagerFinal.joinTransaction();
             return method.invoke(currentEntityManagerFinal, args);
         });
+    }
+
+    /**
+     * Get entity manager for use in Bean managed transactions. Entity manager produced from a entity manager factory will NOT join a transaction. Will consider a tenant that
+     * currently connected user belongs to.
+     * 
+     * @return Get entity manager for a given provider. Entity manager produced from a entity manager factory will join a transaction
+     */
+    public EntityManager getEntityManagerWoutJoinedTransactions() {
+        String providerCode = currentUserProvider.getCurrentUserProviderCode();
+
+        log.trace("Produce EM for provider {}", providerCode);
+
+        if (providerCode == null || !isMultiTenancyEnabled) {
+
+            // Create an container managed persistence context main provider, for API and JOBs
+            if (FacesContext.getCurrentInstance() == null) {
+                return emfForJobs;
+
+                // Create an application managed persistence context main provider, for GUI
+            } else {
+                return emf.createEntityManager();
+            }
+        }
+
+        // Create an application managed persistence context for provider
+        return createEntityManager(providerCode);
+
     }
 
     private EntityManager createEntityManager(String providerCode) {
