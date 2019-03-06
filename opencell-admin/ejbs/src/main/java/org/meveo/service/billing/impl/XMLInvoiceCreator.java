@@ -718,7 +718,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element userAccountTag = doc.createElement("userAccount");
         userAccountTag.setAttribute("description", "-");
         userAccountTag.appendChild(getMinAmountRTCategories(doc, ratedTransactions, enterprise, rounding, roundingMode, billingAccountLanguage));
-        userAccountsTag.appendChild(userAccountTag);
+        if (displayDetail) {
+            userAccountsTag.appendChild(userAccountTag);
+        }
         
     }
 

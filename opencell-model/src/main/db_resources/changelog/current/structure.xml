@@ -2117,6 +2117,6 @@
     </changeSet>
 
     <changeSet id="#3970 - Change of RT description database field from varchar to text" author="mounir.boukayoua">
-        <modifyDataType tableName="billing_rated_transaction" columnName="description" newDataType="${type.text}"/>
+        <modifyDataType tableName="billing_rated_transaction" columnName="description" newDataType="${type.longText}"/>
     </changeSet>
 </databaseChangeLog>
