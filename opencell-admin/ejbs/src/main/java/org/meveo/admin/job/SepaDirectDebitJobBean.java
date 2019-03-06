@@ -122,13 +122,15 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
             DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
             List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder,paymentOrRefundEnum);
 
-            if (ddrequestOps != null) {
+            if (CollectionUtils.isNotEmpty(ddrequestOps)) { 
                 log.info("ddrequestOps found:" + ddrequestOps.size());
                 result.setNbItemsToProcess(ddrequestOps.size());
 
             } else {
-                log.info("ddrequestOps null");
+                final String msg = "ddrequestOps IS EMPTY !";
+                log.info(msg);
                 result.setNbItemsToProcess(0);
+                result.registerWarning(msg);
                 return;
             }
 
