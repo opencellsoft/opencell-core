@@ -50843,18 +50843,18 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
 
         queryValues = MapUtils.putAll(new HashMap<String, Object>(), new Object[]{"minmaxRange hour_from hour_to", 15, "fromRange price", new BigDecimal(0.6), "toRange price", new BigDecimal(1.2)} );
 
-        Map<String, Object> values = customTableService.getValues("${#Project#entityPrefix}_${#TestSuite#index}_ct_zoning", queryValues);
+        Map<String, Object> values = customTableService.getValues("${#Project#entityPrefix}_${#TestSuite#index}_ct_zoning", null, queryValues);
 
-        if (values == null || "123".equals(values.get("prefix"))) {
-            throw new ValidationException("Expected zone 123 received " + zone);
+        if (values == null || !"123".equals(values.get("prefix"))) {
+            throw new ValidationException("Expected prefix 123 received " + values.get("prefix"));
         }
 
         queryValues = MapUtils.putAll(new HashMap<String, Object>(), new Object[]{"minmaxRange hour_from hour_to", 15, "fromRange price", new BigDecimal(0.6), "toRange price", new BigDecimal(2)} );
 
-        values = customTableService.getValues("${#Project#entityPrefix}_${#TestSuite#index}_ct_zoning", DateUtils.parseDateWithPattern("2018-05-09", DateUtils.DATE_PATTERN), queryValues);
+        values = customTableService.getValues("${#Project#entityPrefix}_${#TestSuite#index}_ct_zoning", null, DateUtils.parseDateWithPattern("2018-05-09", DateUtils.DATE_PATTERN), queryValues);
 
-        if (values == null || "123887".equals(values.get("prefix"))) {
-            throw new ValidationException("Expected zone 123887 received " + zone);
+        if (values == null || !"123887".equals(values.get("prefix"))) {
+            throw new ValidationException("Expected prefix 123887 received " + values.get("prefix"));
         }
 
     }
