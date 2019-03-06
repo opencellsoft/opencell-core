@@ -182,11 +182,11 @@ public class SellerApi extends BaseApi {
             }
             final String address2 = addressDto.getAddress2();
             if (address2 != null) {
-                address.setAddress2(address1); 
+                address.setAddress2(address2); 
             }
             final String address3 = addressDto.getAddress3();
             if (address3 != null) {
-                address.setAddress3(address1); 
+                address.setAddress3(address3); 
             }
             final String city = addressDto.getCity();
             if (city != null) {
