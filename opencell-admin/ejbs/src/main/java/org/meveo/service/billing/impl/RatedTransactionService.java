@@ -93,6 +93,7 @@ import org.meveo.service.script.billing.TaxScriptService;
  * @author Said Ramli
  * @author Abdelmounaim Akadid
  * @author Abdellatif BARI
+ * @author Mounir BAHIJE
  * @lastModifiedVersion 7.0
  */
 @Stateless
@@ -367,7 +368,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
             scAggregate.addRatedTransaction(ratedTransaction);
             ratedTransaction.setInvoice(invoice);
-            ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+            if (isVirtual == true) {
+                ratedTransaction.setStatus(RatedTransactionStatusEnum.VIRTUAL);
+            } else {
+                ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+            }
         }
 
         // Determine which discount plan items apply to this invoice
@@ -894,6 +899,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (!isVirtual) {
             create(ratedTransaction);
             walletOperationService.updateNoCheck(walletOperation);
+        } else {
+            create(ratedTransaction);
         }
         return ratedTransaction;
     }
