@@ -116,24 +116,22 @@ public class DDRequestBuilderApi extends BaseCrudApi<DDRequestBuilder, DDRequest
 
     @Override
     public DDRequestBuilder update(DDRequestBuilderDto ddRequestBuilderDto) throws BusinessException, MeveoApiException {
-        String code = null;
+
         if (ddRequestBuilderDto == null) {
             missingParameters.add("ddRequestBuilderDto");
             handleMissingParameters();
             return null;
         }
-
-        if (StringUtils.isBlank(ddRequestBuilderDto.getCode())) {
-            code = ddRequestBuilderDto.getCode();
+        String code = ddRequestBuilderDto.getCode();
+        if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
         handleMissingParameters();
-        DDRequestBuilder ddRequestBuilder = null;
-        ddRequestBuilder = ddRequestBuilderService.findByCode(code);
+        DDRequestBuilder ddRequestBuilder = ddRequestBuilderService.findByCode(code);
+        
         if (ddRequestBuilder == null) {
             throw new EntityDoesNotExistsException(DDRequestBuilder.class, code);
         }
-
         
         if (ddRequestBuilderDto.getNbOperationPerFile() != null && ddRequestBuilderDto.getNbOperationPerFile()  != 0L ) {
             ddRequestBuilder.setNbOperationPerFile(ddRequestBuilderDto.getNbOperationPerFile());
