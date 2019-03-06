@@ -6,12 +6,15 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.payments.RejectedType;
 
 /**
  * The Class RejectedPaymentDto.
  *
  * @author Edward P. Legaspi
+ * @author phung
+ * @lastModifedVersion 7.0
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RejectedPaymentDto extends AccountOperationDto implements Serializable {
@@ -36,6 +39,15 @@ public class RejectedPaymentDto extends AccountOperationDto implements Serializa
      */
     public RejectedPaymentDto() {
         super.setType("R");
+    }
+    
+    /**
+     * @param rejectedPayment rejected payment data.
+     */
+    public RejectedPaymentDto(RejectedPayment rejectedPayment) {
+        setRejectedDate(rejectedPayment.getRejectedDate());
+        setRejectedDescription(rejectedPayment.getRejectedDescription());
+        setRejectedCode(rejectedPayment.getRejectedCode());
     }
 
     /**

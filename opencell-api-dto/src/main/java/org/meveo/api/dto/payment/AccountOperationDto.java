@@ -20,6 +20,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
  * The Class AccountOperationDto.
  *
  * @author Edward P. Legaspi
+ * @author phung
  * @lastModifiedVersion 5.0
  */
 @XmlRootElement(name = "AccountOperation")
@@ -197,7 +198,11 @@ public class AccountOperationDto extends AuditableEntityDto {
     		}
     		setMatchingAmounts(matchingAmountsDto);
     	}
-    	
+
+        if (accountOp.getRejectedPayment() != null) {
+            setRejectedPayment(new RejectedPaymentDto(accountOp.getRejectedPayment()));
+        }
+
     	setCustomFields(customFieldsDto);
 	}
 
