@@ -12665,7 +12665,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CA_DOUBLE_SINGLE_NV" description="CA_DOUBLE_SINGLE_NV field">
                      <fieldType>DOUBLE</fieldType>
-                     <doubleValue>16.171</doubleValue>
+                     <doubleValue>16.17</doubleValue>
                   </customField>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
