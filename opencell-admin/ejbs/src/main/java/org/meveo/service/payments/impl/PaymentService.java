@@ -108,6 +108,9 @@ public class PaymentService extends PersistenceService<Payment> {
     @Override
     public void create(Payment entity) throws BusinessException {
         super.create(entity);
+        if(entity.getId() != null && entity.getPaymentMethod().isSimple()){
+            paymentHistoryService.addHistory(entity.getCustomerAccount(),entity,null,entity.getAmount().multiply(new BigDecimal(100)).longValue(),PaymentStatusEnum.ACCEPTED,null,null,null,OperationCategoryEnum.CREDIT,null,entity.getCustomerAccount().getPreferredPaymentMethod());
+        }
     }
 
     /**
