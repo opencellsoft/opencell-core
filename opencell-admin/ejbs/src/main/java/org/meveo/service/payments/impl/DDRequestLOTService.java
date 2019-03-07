@@ -319,7 +319,6 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
                         DateUtils.addDaysToDate(new Date(), ArConfig.getDateValueAfter()), ddRequestLOT.getSendDate(), ddRequestLOT.getSendDate(),
                         ddrequestItem.getAccountOperations(), true, MatchingTypeEnum.A_DERICT_DEBIT);
                     ddrequestItem.setAutomatedPayment(automatedPayment);
-
                     paymentStatusEnum = PaymentStatusEnum.ACCEPTED;
                 }
             } else {
