@@ -527,8 +527,8 @@
 												<h:panelGroup layout="block" styleClass="form-panel" style="margin-bottom: 10px" >
 													<c:set var="allowedDiscountPlans"
 														   value="${subscriptionBean.getAllowedDiscountPlans()}" />
-													<hftl:formField disabled="#{empty allowedDiscountPlans}" listenerUpdate="instantiateDiscountPlanDialog" field="discountPlan" valueLabelField="code" listBean="#{discountPlanBean}" listElements="#{allowedDiscountPlans}" />
-													<p:commandButton disabled="#{empty allowedDiscountPlans}" style="float: left" rendered="#{subscriptionBean.edit}" value="#{messages['button.instanciateButton']}" type="button" onclick="PF('dlg_instantiateDiscountPlanDialog').show()"></p:commandButton>
+													<hftl:formField disabled="#{empty allowedDiscountPlans or subscriptionBean.entity.id == null}" listenerUpdate="instantiateDiscountPlanDialog" field="discountPlan" valueLabelField="code" listBean="#{discountPlanBean}" listElements="#{allowedDiscountPlans}" />
+													<p:commandButton disabled="#{empty allowedDiscountPlans or subscriptionBean.entity.id == null}" style="float: left" rendered="#{subscriptionBean.edit}" value="#{messages['button.instanciateButton']}" type="button" onclick="PF('dlg_instantiateDiscountPlanDialog').show()"></p:commandButton>
 												</h:panelGroup>
 												<p:dataTable id="datatable_discountPlanInstances" var="entity" lazy="false" paginator="true" resizableColumns="true" reflow="true"
 															 value="#{subscriptionBean.entity.discountPlanInstances}" rows="10" rowKey="#{entity.id}"
