@@ -834,7 +834,7 @@ public class ElasticClient {
             return new AsyncResult<ReindexingStatistics>(statistics);
         }
 
-        log.info("Start to repopulate Elastic Search");
+        log.info("Started to repopulate Elastic Search");
 
         try {
 
@@ -860,7 +860,7 @@ public class ElasticClient {
 
                     for (CustomEntityTemplate cet : cets) {
 
-                        log.info("Start to populate Elastic Search with data from {} table", cet.getDbTablename());
+                        log.info("Started to populate Elastic Search with data from {} table", cet.getDbTablename());
 
                         Object fromId = 0;
 
@@ -884,7 +884,7 @@ public class ElasticClient {
 
                 } else {
 
-                    log.info("Start to populate Elastic Search with data from {} entity", classname);
+                    log.info("Started to populate Elastic Search with data from {} entity", classname);
 
                     Object fromId = -1000;
                     int totalProcessed = 0;
@@ -935,7 +935,7 @@ public class ElasticClient {
 
         // TODO should delete all data
 
-        log.info("Start to repopulate Elastic Search for {}/{}", entityClass, cetCode);
+        log.info("Started to repopulate Elastic Search for {}/{}", entityClass, cetCode);
 
         try {
 
@@ -945,7 +945,7 @@ public class ElasticClient {
 
                 CustomEntityTemplate cet = customEntityTemplateService.findByCode(cetCode);
 
-                log.info("Start to populate Elastic Search with data from {} table", cet.getDbTablename());
+                log.info("Started to populate Elastic Search with data from {} table", cet.getDbTablename());
 
                 Object fromId = 0;
 
@@ -970,7 +970,7 @@ public class ElasticClient {
             } else {
                 String classname = ReflectionUtils.getCleanClassName(entityClass.getSimpleName());
 
-                log.info("Start to populate Elastic Search with data from {} entity", classname);
+                log.info("Started to populate Elastic Search with data from {} entity", classname);
 
                 Object fromId = -1000;
                 int totalProcessed = 0;
