@@ -71,6 +71,7 @@
         <hftl:entityPopup id="userAccountPopup"
 			header="#{messages['userAccount.popup.header']}"
 			backingBean="#{userAccountBean}"
+			 dataModel="#{userAccountBean.listAllUserAccountWithBillingAccountAndDiscountPlan()}"
 			searchField1Label="#{messages['userAccount.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['userAccount.name']}"
