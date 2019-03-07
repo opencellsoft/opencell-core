@@ -218,7 +218,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
     @ActionMethod
     public void addNewValues() throws BusinessException {
 
-        Map<String, Object> convertedValues = customTableService.convertValues(newValues, fields, false);
+        Map<String, Object> convertedValues = customTableService.convertValue(newValues, fields, false, null);
 
         customTableService.create(customTableName, convertedValues);
         messages.info(new BundleKey("messages", "customTable.valuesSaved"));
@@ -243,7 +243,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         }
 
         try {
-            importFuture = customTableService.importDataAsync(entity,  file.getInputstream(), appendImportedData);
+            importFuture = customTableService.importDataAsync(entity, file.getInputstream(), appendImportedData);
             messages.info(new BundleKey("messages", "customTable.importFile.started"));
 
         } catch (Exception e) {
