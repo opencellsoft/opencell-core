@@ -331,7 +331,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
                         ddrequestItem.getAccountOperations(), true, MatchingTypeEnum.A_DERICT_DEBIT,ddRequestLOT.getSeller());
                     ddrequestItem.setAutomatedPayment(automatedPayment);
 
-                    paymentStatusEnum = PaymentStatusEnum.PENDING;
+                    paymentStatusEnum = PaymentStatusEnum.ACCEPTED;
                 }
             } else {
                 paymentErrorTypeEnum = PaymentErrorTypeEnum.ERROR;
