@@ -171,11 +171,12 @@ public class PaymentGateway extends EnableBusinessCFEntity {
     private BankCoordinates bankCoordinates = new BankCoordinates();
     
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    /**
+     * Seller associated to a customer
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private Seller seller;
-
-    
     
     /**
      * Instantiates a new payment gateway
