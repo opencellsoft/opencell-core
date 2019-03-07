@@ -1,6 +1,8 @@
 package org.meveo.admin.action.admin.custom;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +17,7 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTemplate.GroupedCustomFieldTreeItemType;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -128,8 +131,22 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         return customEntityTemplateService;
     }
 
+    /**
+     * Is entity being customized is a Custom entity template
+     * 
+     * @return True if entity being customized is a Custom entity template
+     */
     public boolean isCustomEntityTemplate() {
         return entityClassName == null || CustomEntityTemplate.class.getName().equals(entityClassName);
+    }
+
+    /**
+     * Is entity being customized is a Custom entity template and will be stored as a separate table
+     * 
+     * @return True if entity being customized is a Custom entity template and will be stored as a separate table
+     */
+    public boolean isCustomTable() {
+        return isCustomEntityTemplate() && entity.isStoreAsTable();
     }
 
     /**
@@ -686,6 +703,28 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                 parent = (SortedTreeNode) parent.getParent();
             }
 
+            return null;
+        }
+    }
+
+    /**
+     * Get applicable field types. For custom tables only some of options are enabled.
+     * 
+     * @return Applicable field types
+     */
+    public CustomFieldTypeEnum[] getFieldTypes() {
+        if (isCustomTable()) {
+            CustomFieldTypeEnum[] enums = new CustomFieldTypeEnum[] { CustomFieldTypeEnum.DATE, CustomFieldTypeEnum.DOUBLE, CustomFieldTypeEnum.LIST, CustomFieldTypeEnum.LONG,
+                    CustomFieldTypeEnum.STRING };
+            Arrays.sort(enums, new Comparator<Object>() {
+                @Override
+                public int compare(Object o1, Object o2) {
+                    return o1.toString().compareTo(o2.toString());
+                }
+            });
+
+            return enums;
+        } else {
             return null;
         }
     }

@@ -1,5 +1,6 @@
 package org.meveo.api.account;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -181,11 +182,11 @@ public class SellerApi extends BaseApi {
             }
             final String address2 = addressDto.getAddress2();
             if (address2 != null) {
-                address.setAddress2(address1); 
+                address.setAddress2(address2); 
             }
             final String address3 = addressDto.getAddress3();
             if (address3 != null) {
-                address.setAddress3(address1); 
+                address.setAddress3(address3); 
             }
             final String city = addressDto.getCity();
             if (city != null) {
@@ -193,11 +194,15 @@ public class SellerApi extends BaseApi {
             }
             final String countryCode = addressDto.getCountry();
             if (countryCode != null) {
-                Country country = countryService.findByCode(countryCode);
-                if (country == null) {
-                    throw new EntityDoesNotExistsException(Country.class, countryCode);
+                if (isNotBlank(countryCode)) {
+                    Country country = countryService.findByCode(countryCode);
+                    if (country == null) {
+                        throw new EntityDoesNotExistsException(Country.class, countryCode);
+                    }
+                    address.setCountry(country); 
+                } else {
+                    address.setCountry(null);
                 }
-                address.setCountry(country);
             }
             final String state = addressDto.getState();
             if (state != null) {
@@ -376,45 +381,62 @@ public class SellerApi extends BaseApi {
 
     private void updateParentSeller(Seller seller, final String parentSellerCode) throws EntityDoesNotExistsException {
         if (parentSellerCode != null) {
-            Seller parentSeller = sellerService.findByCode(parentSellerCode);
-            if (parentSeller == null) {
-                throw new EntityDoesNotExistsException(Seller.class, parentSellerCode);
-            }
+            if (isNotBlank(parentSellerCode)) {
+                Seller parentSeller = sellerService.findByCode(parentSellerCode);
+                if (parentSeller == null) {
+                    throw new EntityDoesNotExistsException(Seller.class, parentSellerCode);
+                }
 
-            seller.setSeller(parentSeller);
+                seller.setSeller(parentSeller); 
+            } else {
+                seller.setSeller(null);
+            }
+            
         }
     }
 
     private void updateTradingLanguage(Seller seller, final String languageCode) throws EntityDoesNotExistsException {
         if (languageCode != null) {
-            TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(languageCode);
-            if (tradingLanguage == null) {
-                throw new EntityDoesNotExistsException(TradingLanguage.class, languageCode);
-            }
+            if (isNotBlank(languageCode)) {
+                TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(languageCode);
+                if (tradingLanguage == null) {
+                    throw new EntityDoesNotExistsException(TradingLanguage.class, languageCode);
+                }
 
-            seller.setTradingLanguage(tradingLanguage);
+                seller.setTradingLanguage(tradingLanguage);
+            } else {
+                seller.setTradingLanguage(null);
+            }
+            
         }
     }
 
     private void updateTradingCountry(Seller seller, String countryCode) throws EntityDoesNotExistsException {
         if (countryCode != null) {
-            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode);
-            if (tradingCountry == null) {
-                throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
-            }
+            if (isNotBlank(countryCode)) {
+                TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode);
+                if (tradingCountry == null) {
+                    throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
+                }
 
-            seller.setTradingCountry(tradingCountry);
+                seller.setTradingCountry(tradingCountry);  
+            } else {
+                seller.setTradingCountry(null);
+            }
         }
     }
 
     private void updateTradingCurrency(Seller seller, String currencyCode) throws EntityDoesNotExistsException {
         if (currencyCode != null) {
-            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode);
-            if (tradingCurrency == null) {
-                throw new EntityDoesNotExistsException(TradingCurrency.class, currencyCode);
+            if (isNotBlank(currencyCode)) {
+                TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode);
+                if (tradingCurrency == null) {
+                    throw new EntityDoesNotExistsException(TradingCurrency.class, currencyCode);
+                }
+                seller.setTradingCurrency(tradingCurrency);  
+            } else {
+                seller.setTradingCurrency(null);
             }
-            
-            seller.setTradingCurrency(tradingCurrency);
         }
     }
 

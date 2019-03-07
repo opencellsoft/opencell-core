@@ -1,15 +1,20 @@
 package org.meveo.api.job;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.AuditableDto;
 import org.meveo.api.dto.job.JobInstanceDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.job.JobInstanceListResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -29,7 +34,12 @@ import org.meveo.service.job.TimerEntityService;
 
 @Stateless
 public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
-
+	
+	/**
+     * Default sort for list call.
+     */
+    private static final String DEFAULT_SORT_ORDER_ID = "id";
+    
     @Inject
     private JobInstanceService jobInstanceService;
 
@@ -224,5 +234,76 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         
         JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, entityToDtoConverter.getCustomFieldsDTO(jobInstance, CustomFieldInheritanceEnum.INHERIT_NONE));
         return jobInstanceDto;
+    }
+    
+    
+    /**
+     * List job instances
+     * 
+     * @param pagingAndFiltering paging and filtering.
+     * @return instance of JobInstanceListDto which contains list of Job Instance DTO
+     * @throws MeveoApiException meveo api exception
+     */
+    public JobInstanceListResponseDto list(Boolean mergedCF, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+        return list(pagingAndFiltering, CustomFieldInheritanceEnum.getInheritCF(true, Boolean.valueOf(mergedCF)));
+    }
+
+    public JobInstanceListResponseDto list(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
+
+        String sortBy = DEFAULT_SORT_ORDER_ID;
+        if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+            sortBy = pagingAndFiltering.getSortBy();
+        }
+
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, JobInstance.class);
+
+        Long totalCount = jobInstanceService.count(paginationConfiguration);
+
+        JobInstanceListResponseDto result = new JobInstanceListResponseDto();
+
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if (totalCount > 0) {
+            List<JobInstance> jobInstances = jobInstanceService.list(paginationConfiguration);
+            if (jobInstances != null) {
+                for (JobInstance jobInstance : jobInstances) {
+                    result.getJobInstances().getJobInstances().add(JobInstanceToDto(jobInstance, inheritCF));
+                }
+            }
+        }
+
+        return result;
+
+    }
+    
+    /**
+     * Convert jobInstance entity to dto
+     * 
+     * @param jobInstance of JobInstance to be mapped
+     * @return instance of JobInstanceDto.
+     */
+    public JobInstanceDto JobInstanceToDto(JobInstance jobInstance) {
+        return this.JobInstanceToDto(jobInstance, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    /**
+     * Convert jobInstance dto to entity
+     *
+     * @param jobInstance instance of JobInstance to be mapped
+     * @param inheritCF the inherit CF
+     * @return instance of JobInstanceDto
+     */
+    public JobInstanceDto JobInstanceToDto(JobInstance jobInstance, CustomFieldInheritanceEnum inheritCF) {
+    	JobInstanceDto dto = new JobInstanceDto();
+
+    	dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(jobInstance, inheritCF));
+        dto.setAuditable(new AuditableDto(jobInstance.getAuditable()));
+        dto.setJobTemplate(jobInstance.getJobTemplate());
+        dto.setJobTemplate(jobInstance.getJobTemplate());
+        dto.setJobCategory(jobInstance.getJobCategoryEnum());
+        dto.setParameter(jobInstance.getParametres());
+
+        return dto;
     }
 }

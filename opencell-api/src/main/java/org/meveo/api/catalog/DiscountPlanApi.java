@@ -18,6 +18,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.DiscountPlanService;
@@ -107,7 +108,11 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 			discountPlan.setDefaultDuration(postData.getDefaultDuration());
 		} 
 		if (postData.getDurationUnit() != null) {
-			discountPlan.setDurationUnit(postData.getDurationUnit());
+		    if (StringUtils.isBlank(postData.getDurationUnit())) {
+		        discountPlan.setDurationUnit(DurationPeriodUnitEnum.DAY);  
+            } else {
+                discountPlan.setDurationUnit(postData.getDurationUnit());
+            }
 		} 
 		
 		// populate customFields

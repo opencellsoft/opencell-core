@@ -8,6 +8,7 @@ import org.meveo.api.CustomEntityInstanceApi;
 import org.meveo.api.CustomEntityTemplateApi;
 import org.meveo.api.CustomFieldTemplateApi;
 import org.meveo.api.EntityCustomActionApi;
+import org.meveo.api.custom.CustomTableApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CustomEntityInstanceDto;
@@ -15,6 +16,8 @@ import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.EntityCustomizationDto;
+import org.meveo.api.dto.custom.CustomTableDataDto;
+import org.meveo.api.dto.custom.CustomTableDataResponseDto;
 import org.meveo.api.dto.response.BusinessEntityResponseDto;
 import org.meveo.api.dto.response.CustomEntityInstanceResponseDto;
 import org.meveo.api.dto.response.CustomEntityTemplateResponseDto;
@@ -22,6 +25,7 @@ import org.meveo.api.dto.response.CustomEntityTemplatesResponseDto;
 import org.meveo.api.dto.response.EntityCustomActionResponseDto;
 import org.meveo.api.dto.response.EntityCustomizationResponseDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.EntityCustomizationWs;
 
@@ -43,6 +47,9 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Inject
     private EntityCustomActionApi entityCustomActionApi;
+
+    @Inject
+    private CustomTableApi customTableApi;
 
     @Override
     public ActionStatus createField(CustomFieldTemplateDto postData) {
@@ -548,6 +555,110 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
         try {
             entityCustomActionApi.enableOrDisable(actionCode, appliesTo, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus appendTableData(CustomTableDataDto dto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+
+            customTableApi.create(dto);
+
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus updateTableData(CustomTableDataDto dto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+
+            customTableApi.update(dto);
+
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus removeTableData(CustomTableDataDto dto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+
+            customTableApi.remove(dto);
+
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public CustomTableDataResponseDto listTableData(String customTableCode, PagingAndFiltering pagingAndFiltering) {
+        CustomTableDataResponseDto result = new CustomTableDataResponseDto();
+
+        try {
+
+            return customTableApi.list(customTableCode, pagingAndFiltering);
+
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus createOrUpdateTableData(CustomTableDataDto dto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+
+            customTableApi.createOrUpdate(dto);
+
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableTableData(CustomTableDataDto dto) {
+
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            customTableApi.enableDisable(dto, true);
+
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableTableData(CustomTableDataDto dto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            customTableApi.enableDisable(dto, false);
+
         } catch (Exception e) {
             processException(e, result);
         }

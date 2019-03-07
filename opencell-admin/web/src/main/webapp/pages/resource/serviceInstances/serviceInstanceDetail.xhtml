@@ -141,18 +141,20 @@
 					</p:dataTable>
                 </p:tab>
                 <p:tab title="#{messages['paymentScheduleInstance.title']}" id="psInstances">
-	                <hftl:dataList backingBean="#{paymentScheduleInstanceBean}" dataModel="#{paymentScheduleInstanceBean.getInstancesForService(serviceInstanceBean.entity)}" 
-	                label="#{messages['paymentScheduleInstance.title']}" sortBy="startDate" exportButton="false" checkMany="false">
-							<hftl:column label="#{messages['businessEntity.code']}" field="code" noLinkToView="true" />							
-							<hftl:column label="#{messages['paymentScheduleTemplate.amount']}" field="amount" />
-							<hftl:column label="#{messages['paymentScheduleTemplate.status']}" field="status" />
-							<hftl:column label="#{messages['paymentScheduleTemplate.calendar']}" field="calendar.code" />
-							<hftl:column label="#{messages['paymentScheduleInstance.startDate']}" field="startDate"  isDate="true"/>
-							<hftl:column label="#{messages['paymentScheduleInstance.endDate']}" field="endDate"  isDate="true"/>
-				
-							<hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" backingBean="#{paymentScheduleInstanceBean}" objectIdParamName="objectId"
-							 renderDeleteLink="false" renderEditLink="true" backTab="psInstances" backView="serviceInstanceDetail" backEntityId="#{serviceInstanceBean.entity.id}"/>
-			        </hftl:dataList>
+					<c:if test="#{not empty serviceInstanceBean.entity.id}">
+						<hftl:dataList backingBean="#{paymentScheduleInstanceBean}" dataModel="#{paymentScheduleInstanceBean.getInstancesForService(serviceInstanceBean.entity)}"
+						label="#{messages['paymentScheduleInstance.title']}" sortBy="startDate" exportButton="false" checkMany="false">
+								<hftl:column label="#{messages['businessEntity.code']}" field="code" noLinkToView="true" />
+								<hftl:column label="#{messages['paymentScheduleTemplate.amount']}" field="amount" />
+								<hftl:column label="#{messages['paymentScheduleTemplate.status']}" field="status" />
+								<hftl:column label="#{messages['paymentScheduleTemplate.calendar']}" field="calendar.code" />
+								<hftl:column label="#{messages['paymentScheduleInstance.startDate']}" field="startDate"  isDate="true"/>
+								<hftl:column label="#{messages['paymentScheduleInstance.endDate']}" field="endDate"  isDate="true"/>
+
+								<hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" backingBean="#{paymentScheduleInstanceBean}" objectIdParamName="objectId"
+								 renderDeleteLink="false" renderEditLink="true" backTab="psInstances" backView="serviceInstanceDetail" backEntityId="#{serviceInstanceBean.entity.id}"/>
+						</hftl:dataList>
+					</c:if>
                 </p:tab>                    
 
                 <hftl:customFields backingBean="#{serviceInstanceBean}" messagesId=":formId:messages" />

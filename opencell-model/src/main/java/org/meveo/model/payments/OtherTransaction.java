@@ -19,9 +19,12 @@
 package org.meveo.model.payments;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -30,6 +33,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -308,6 +312,17 @@ public class OtherTransaction extends AuditableEntity implements ICustomFieldEnt
     
     @OneToOne(mappedBy = "newOT")
     private PaymentVentilation paymentVentilation;
+    
+    @OneToMany(mappedBy = "originalOT", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<PaymentVentilation> paymentVentilations = new ArrayList<>();
+    
+    public List<PaymentVentilation> getPaymentVentilations() {
+        return paymentVentilations;
+    }
+
+    public void setPaymentVentilations(List<PaymentVentilation> paymentVentilations) {
+        this.paymentVentilations = paymentVentilations;
+    }
 
     public Date getDueDate() {
         return dueDate;

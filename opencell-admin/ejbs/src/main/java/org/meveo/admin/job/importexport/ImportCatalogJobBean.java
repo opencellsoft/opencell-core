@@ -100,7 +100,7 @@ public class ImportCatalogJobBean {
             }
 
             report = "";
-            file = FileUtils.getFileForParsing(inputDir, fileExtensions);
+            file = FileUtils.getFirstFile(inputDir, fileExtensions);
             if (file != null) {
                 fileName = file.getName();
                 report = "parse " + fileName + ";";
@@ -158,7 +158,7 @@ public class ImportCatalogJobBean {
                 }
                 report += result.getErrorsAString();
 
-                if (FileUtils.getFileForParsing(inputDir, fileExtensions) != null) {
+                if (FileUtils.getFirstFile(inputDir, fileExtensions) != null) {
                     result.setDone(false);
                 }
 
