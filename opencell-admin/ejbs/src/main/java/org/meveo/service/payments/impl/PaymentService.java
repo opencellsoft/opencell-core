@@ -35,6 +35,7 @@ import org.meveo.commons.exceptions.PaymentException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.AutomatedRefund;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -515,20 +516,20 @@ public class PaymentService extends PersistenceService<Payment> {
             } else {
                 String occTemplateCode = null;
 
-                if (accountOperation instanceof Payment) {
-                    if (PaymentMethodEnum.CARD == ((Payment) accountOperation).getPaymentMethod()) {
+                if (accountOperation instanceof AutomatedRefund || accountOperation instanceof Refund) {
+                    if (PaymentMethodEnum.CARD == accountOperation.getPaymentMethod()) {
+                        occTemplateCode = paramBean.getProperty("occ.rejectedRefund.card", "REJ_RCR");
+                    } else {
+                        occTemplateCode = paramBean.getProperty("occ.rejectedRefund.dd", "REJ_RDD");
+                    }
+                } else if (accountOperation instanceof Payment) {
+                    if (PaymentMethodEnum.CARD == accountOperation.getPaymentMethod()) {
                         occTemplateCode = paramBean.getProperty("occ.rejectedPayment.card", "REJ_CRD");
                     } else {
                         occTemplateCode = paramBean.getProperty("occ.rejectedPayment.dd", "REJ_DDT");
                     }
                 }
-                if (accountOperation instanceof Refund) {
-                    if (PaymentMethodEnum.CARD == ((Refund) accountOperation).getPaymentMethod()) {
-                        occTemplateCode = paramBean.getProperty("occ.rejectedRefund.card", "REJ_RCR");
-                    } else {
-                        occTemplateCode = paramBean.getProperty("occ.rejectedRefund.dd", "REJ_RDD");
-                    }
-                }
+                
                 OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
                 if (occTemplate == null) {
                     throw new BusinessException("Cannot find AO Template with code:" + occTemplateCode);
