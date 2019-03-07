@@ -135,7 +135,6 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author Wassim Drira
  * @author Said Ramli
  * @author Khalid HORRI
- * @author Mounir BAHIJE
  * @lastModifiedVersion 7.0
  */
 @Stateless
@@ -904,7 +903,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (preferedPaymentMethod != null) {
             invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
-        create(invoice);
 
         ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactions, false, true);
         invoice.setRatedTransactions(ratedTransactions);
