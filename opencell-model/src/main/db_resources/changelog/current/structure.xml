@@ -1443,7 +1443,7 @@ execute 'create table '||schema_name||'.billing_rated_transaction (
     constraint fk_rt_ua foreign key (user_account_id) references '||schema_name||'.account_entity (id) match simple on update no action on delete no action
 ) partition by range (usage_date)';
 
-execute 'alter table '||schema_name||'.billing_rated_transaction owner to meveo;';
+-- execute 'alter table '||schema_name||'.billing_rated_transaction owner to meveo;';
 
 -- Create indexes
 execute 'create index rated_transaction_u_date on '||schema_name||'.billing_rated_transaction using btree (usage_date);';
@@ -1594,7 +1594,7 @@ execute 'create table ' || schema_name || '.billing_wallet_operation(
         references ' || schema_name || '.billing_tax (id) match simple on update no action on delete no action
 ) partition by range (operation_date) ';
 
-execute 'alter table ' || schema_name || '.billing_wallet_operation owner to meveo;';
+-- execute 'alter table ' || schema_name || '.billing_wallet_operation owner to meveo;';
 
 -- Create indexes
 execute 'create index billing_wallet_operation_o_date on ' || schema_name || '.billing_wallet_operation using btree (operation_date);';
@@ -1707,7 +1707,7 @@ execute 'create table ' || schema_name || '.rating_edr
         references ' || schema_name || '.billing_subscription (id) match simple on update no action on delete no action
 ) partition by range (event_date);';
 
-execute 'alter table ' || schema_name || '.rating_edr owner to meveo;';
+-- execute 'alter table ' || schema_name || '.rating_edr owner to meveo;';
 
 -- Creates indexes
 execute 'create index rating_edr_e_date on ' || schema_name || '.rating_edr using btree (event_date);';
