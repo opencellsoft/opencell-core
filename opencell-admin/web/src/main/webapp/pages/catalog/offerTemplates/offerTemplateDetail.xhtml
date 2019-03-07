@@ -116,7 +116,7 @@
                                         actionListenerBean="#{offerTemplateBean.entity.subscriptionRenewal}" actionListenerMethod="setDefaultRenewForUnit" />
                                     <hftl:formField label="#{messages['subscription.renewForUnit']}" field="subscriptionRenewal" childField="renewForUnit" required="true"
                                         rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" listenerUpdate="subscriptionRenewal" />
-                                    <hftl:formField label="#{messages['subscription.renewNotifyBefore']}" field="subscriptionRenewal" childField="daysNotifyRenewal" size="2" minValue="1"
+                                    <hftl:formField label="#{messages['subscription.renewNotifyBefore']}" field="subscriptionRenewal" childField="daysNotifyRenewal" size="2" minValue="0"
                                         rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" />
                                     <hftl:formField label="#{messages['subscription.extendAgreementPeriod']}" field="subscriptionRenewal" childField="extendAgreementPeriodToSubscribedTillDate"
                                         rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" />
