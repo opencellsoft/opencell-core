@@ -868,11 +868,13 @@ public class NativePersistenceService extends BaseService {
      * @param targetClass Target data type class to convert to
      * @param expectedList Is return value expected to be a list. If value is not a list and is a string a value will be parsed as comma separated string and each value will be
      *        converted accordingly. If a single value is passed, it will be added to a list.
+     * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
+     *        standard date and time and then date only patterns will be applied.
      * @return A converted data type
      * @throws InvalidParameterException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected Object castValue(Object value, Class targetClass, boolean expectedList) throws ValidationException {
+    protected Object castValue(Object value, Class targetClass, boolean expectedList, String[] datePatterns) throws ValidationException {
 
         // log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
         // value != null ? value.getClass().isArray() : null);
@@ -891,7 +893,7 @@ public class NativePersistenceService extends BaseService {
                 List valuesConverted = new ArrayList<>();
                 String[] valueItems = ((String) value).split(",");
                 for (String valueItem : valueItems) {
-                    Object valueConverted = castValue(valueItem, targetClass, false);
+                    Object valueConverted = castValue(valueItem, targetClass, false, datePatterns);
                     if (valueConverted != null) {
                         valuesConverted.add(valueConverted);
                     } else {
@@ -902,7 +904,7 @@ public class NativePersistenceService extends BaseService {
 
                 // A single value list
             } else {
-                Object valueConverted = castValue(value, targetClass, false);
+                Object valueConverted = castValue(value, targetClass, false, datePatterns);
                 if (valueConverted != null) {
                     return Arrays.asList(valueConverted);
                 } else {
@@ -955,18 +957,30 @@ public class NativePersistenceService extends BaseService {
                 } else if (numberVal != null) {
                     return new Date(numberVal.longValue());
                 } else if (stringVal != null) {
-                    // first try with date and time and then only with date format
-                    Date date = DateUtils.parseDateWithPattern(stringVal, DateUtils.DATE_TIME_PATTERN);
-                    if (date == null) {
-                        date = DateUtils.parseDateWithPattern(stringVal, paramBean.getDateTimeFormat());
+
+                    // Use provided date patterns or try default patterns if they were not provided
+                    if (datePatterns != null) {
+                        for (String datePattern : datePatterns) {
+                            Date date = DateUtils.parseDateWithPattern(stringVal, datePattern);
+                            if (date != null) {
+                                return date;
+                            }
+                        }
+                    } else {
+
+                        // first try with date and time and then only with date format
+                        Date date = DateUtils.parseDateWithPattern(stringVal, DateUtils.DATE_TIME_PATTERN);
+                        if (date == null) {
+                            date = DateUtils.parseDateWithPattern(stringVal, paramBean.getDateTimeFormat());
+                        }
+                        if (date == null) {
+                            date = DateUtils.parseDateWithPattern(stringVal, DateUtils.DATE_PATTERN);
+                        }
+                        if (date == null) {
+                            date = DateUtils.parseDateWithPattern(stringVal, paramBean.getDateFormat());
+                        }
+                        return date;
                     }
-                    if (date == null) {
-                        date = DateUtils.parseDateWithPattern(stringVal, DateUtils.DATE_PATTERN);
-                    }
-                    if (date == null) {
-                        date = DateUtils.parseDateWithPattern(stringVal, paramBean.getDateFormat());
-                    }
-                    return date;
                 }
 
             } else if (targetClass.isEnum()) {

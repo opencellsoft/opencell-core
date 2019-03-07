@@ -374,6 +374,7 @@ public class CustomTableService extends NativePersistenceService {
      * @return Number of records imported
      * @throws BusinessException General business exception
      */
+    @SuppressWarnings("rawtypes")
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public int importData(CustomEntityTemplate customEntityTemplate, InputStream inputStream, boolean append) throws BusinessException {
 
@@ -394,6 +395,12 @@ public class CustomTableService extends NativePersistenceService {
                 return pos1 - pos2;
             }
         });
+
+        Map<String, Class> fieldTypes = new HashMap<>();
+        for (CustomFieldTemplate cft : fields) {
+            fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
+            fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
+        }
 
         String tableName = customEntityTemplate.getDbTablename();
         int importedLines = 0;
@@ -419,7 +426,7 @@ public class CustomTableService extends NativePersistenceService {
                 // Save to DB every 500 records
                 if (importedLines >= 500) {
 
-                    values = convertValues(values, fields, false);
+                    values = convertValues(values, fieldTypes, false);
                     customTableService.createInNewTx(tableName, values, updateESImediately);
 
                     values.clear();
@@ -431,16 +438,22 @@ public class CustomTableService extends NativePersistenceService {
 
                 importedLines++;
                 importedLinesTotal++;
+
+                if (importedLinesTotal % 30000 == 0) {
+                    log.trace("Imported {} lines to {} table", importedLinesTotal, tableName);
+                }
             }
 
             // Save to DB remaining records
-            values = convertValues(values, fields, false);
+            values = convertValues(values, fieldTypes, false);
             customTableService.createInNewTx(tableName, values, updateESImediately);
 
             // Re-populate ES index
             if (!updateESImediately) {
                 elasticClient.repopulate(currentUser, CustomTableRecord.class, customEntityTemplate.getCode());
             }
+
+            log.info("Imported {} lines to {} table", importedLinesTotal, tableName);
 
         } catch (RuntimeJsonMappingException e) {
             throw new ValidationException("Invalid file format", "message.upload.fail.invalidFormat", e);
@@ -461,6 +474,7 @@ public class CustomTableService extends NativePersistenceService {
      * @return Number of records imported
      * @throws BusinessException General business exception
      */
+    @SuppressWarnings("rawtypes")
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public int importData(CustomEntityTemplate customEntityTemplate, List<Map<String, Object>> values, boolean append) throws BusinessException {
 
@@ -481,6 +495,12 @@ public class CustomTableService extends NativePersistenceService {
                 return pos1 - pos2;
             }
         });
+
+        Map<String, Class> fieldTypes = new HashMap<>();
+        for (CustomFieldTemplate cft : fields) {
+            fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
+            fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
+        }
 
         String tableName = customEntityTemplate.getDbTablename();
         int importedLines = 0;
@@ -505,7 +525,7 @@ public class CustomTableService extends NativePersistenceService {
                 // Save to DB every 1000 records
                 if (importedLines >= 1000) {
 
-                    valuesPartial = convertValues(valuesPartial, fields, false);
+                    valuesPartial = convertValues(valuesPartial, fieldTypes, false);
                     customTableService.createInNewTx(tableName, valuesPartial, updateESImediately);
 
                     valuesPartial.clear();
@@ -519,7 +539,7 @@ public class CustomTableService extends NativePersistenceService {
             }
 
             // Save to DB remaining records
-            valuesPartial = convertValues(valuesPartial, fields, false);
+            valuesPartial = convertValues(valuesPartial, fieldTypes, false);
             customTableService.createInNewTx(tableName, valuesPartial, updateESImediately);
 
             // Repopulate ES index
@@ -765,8 +785,10 @@ public class CustomTableService extends NativePersistenceService {
         }
         List<Map<String, Object>> convertedValues = new LinkedList<>();
 
+        String[] datePatterns = new String[] { DateUtils.DATE_TIME_PATTERN, paramBean.getDateTimeFormat(), DateUtils.DATE_PATTERN, paramBean.getDateFormat() };
+
         for (Map<String, Object> value : values) {
-            convertedValues.add(convertValues(value, fields, discardNull));
+            convertedValues.add(convertValue(value, fields, discardNull, datePatterns));
         }
 
         return convertedValues;
@@ -778,11 +800,14 @@ public class CustomTableService extends NativePersistenceService {
      * @param values A map of values with customFieldTemplate code or db field name as a key and field value as a value.
      * @param fields Field definitions
      * @param discardNull If True, null values will be discarded
+     * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
+     *        standard date and time and then date only patterns will be applied.
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */
     @SuppressWarnings("rawtypes")
-    public Map<String, Object> convertValues(Map<String, Object> values, Collection<CustomFieldTemplate> fields, boolean discardNull) throws ValidationException {
+    public Map<String, Object> convertValue(Map<String, Object> values, Collection<CustomFieldTemplate> fields, boolean discardNull, String[] datePatterns)
+            throws ValidationException {
 
         if (values == null) {
             return null;
@@ -794,20 +819,22 @@ public class CustomTableService extends NativePersistenceService {
             fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
         }
 
-        return convertValues(values, fieldTypes, discardNull);
+        return convertValue(values, fieldTypes, discardNull, datePatterns);
     }
 
     /**
-     * Convert values to a data type matching field definition
+     * Convert single record values to a data type matching field definition
      * 
      * @param values A map of values with customFieldTemplate code or db field name as a key and field value as a value.
      * @param fields Field definitions with field name or field code as a key and data class as a value
      * @param discardNull If True, null values will be discarded
+     * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
+     *        standard date and time and then date only patterns will be applied.
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */
     @SuppressWarnings("rawtypes")
-    public Map<String, Object> convertValues(Map<String, Object> values, Map<String, Class> fields, boolean discardNull) throws ValidationException {
+    private Map<String, Object> convertValue(Map<String, Object> values, Map<String, Class> fields, boolean discardNull, String[] datePatterns) throws ValidationException {
 
         if (values == null) {
             return null;
@@ -818,7 +845,7 @@ public class CustomTableService extends NativePersistenceService {
         // Handle ID field
         Object id = values.get(FIELD_ID);
         if (id != null) {
-            valuesConverted.put(FIELD_ID, castValue(id, Long.class, false));
+            valuesConverted.put(FIELD_ID, castValue(id, Long.class, false, datePatterns));
         }
 
         // Convert field based on data type
@@ -827,7 +854,7 @@ public class CustomTableService extends NativePersistenceService {
 
                 String key = valueEntry.getKey();
                 if (key.equals(FIELD_ID)) {
-                    continue;
+                    continue; // Was handled before already
                 }
                 if (valueEntry.getValue() == null && !discardNull) {
                     valuesConverted.put(key, null);
@@ -842,7 +869,7 @@ public class CustomTableService extends NativePersistenceService {
                     if (dataClass == null) {
                         throw new ValidationException("No field definition " + fieldName + " was found");
                     }
-                    Object value = castValue(valueEntry.getValue(), dataClass, false);
+                    Object value = castValue(valueEntry.getValue(), dataClass, false, datePatterns);
 
                     // Replace cft code with db field name if needed
                     String dbFieldname = CustomFieldTemplate.getDbFieldname(fieldName);
