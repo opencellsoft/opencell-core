@@ -51,7 +51,8 @@ import org.slf4j.LoggerFactory;
  * Utils class for java reflection api.
  * 
  * @author Ignas Lelys
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 public class ReflectionUtils {
 
@@ -101,9 +102,11 @@ public class ReflectionUtils {
 
             ArrayList<Class> classList = new ArrayList<Class>();
 
-            for (Object clazz : classes) {
-                if (((Class) clazz).getName().startsWith(packageName)) {
-                    classList.add((Class) clazz);
+            synchronized(classes) {
+                for (Object clazz : classes) {
+                    if (((Class) clazz).getName().startsWith(packageName)) {
+                        classList.add((Class) clazz);
+                    }
                 }
             }
 
@@ -552,5 +555,38 @@ public class ReflectionUtils {
         }
         classReferences.put(fieldClass, matchedFields);
         return matchedFields;
+    }
+
+
+    private static Method getMethodFromInterface(Class<?> cls, Class<? extends Annotation> annotationClass, String methodName, Class... parameterTypes) {
+        while (cls != null) {
+            Class<?>[] interfaces = cls.getInterfaces();
+
+            for (int i = 0; i < interfaces.length; ++i) {
+                if (interfaces[i].isAnnotationPresent(annotationClass) && Modifier.isPublic(interfaces[i].getModifiers())) {
+                    try {
+                        return interfaces[i].getDeclaredMethod(methodName, parameterTypes);
+                    } catch (NoSuchMethodException nsme) {
+                        Method method = getMethodFromInterface(interfaces[i], annotationClass, methodName, parameterTypes);
+                        if (method != null) {
+                            return method;
+                        }
+                    }
+                }
+            }
+            cls = cls.getSuperclass();
+        }
+        return null;
+    }
+
+    /**
+     * Get parent method from interface having the annotation in parameter
+     *
+     * @param method the class method
+     * @param annotationClass the annotation of the desired interface
+     * @return the matching interface method
+     */
+    public static Method getMethodFromInterface(Method method, Class<? extends Annotation> annotationClass) {
+        return getMethodFromInterface(method.getDeclaringClass(), annotationClass, method.getName(), method.getParameterTypes());
     }
 }

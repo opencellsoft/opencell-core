@@ -3,6 +3,7 @@ package org.meveo.model.billing;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.*;
 
@@ -14,7 +15,8 @@ import org.hibernate.annotations.Type;
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
  * @author Mounir BAHIJE
- * @lastModifiedVersion 5.3
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Embeddable
 public class SubscriptionRenewal implements Serializable {
@@ -266,5 +268,27 @@ public class SubscriptionRenewal implements Serializable {
      */
     public void setAutoRenewDate(Date autoRenewDate) {
         this.autoRenewDate = autoRenewDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SubscriptionRenewal that = (SubscriptionRenewal) o;
+        return autoRenew == that.autoRenew &&
+                extendAgreementPeriodToSubscribedTillDate == that.extendAgreementPeriodToSubscribedTillDate &&
+                Objects.equals(autoRenewDate, that.autoRenewDate) &&
+                endOfTermAction == that.endOfTermAction &&
+                initialyActiveForUnit == that.initialyActiveForUnit &&
+                Objects.equals(initialyActiveFor, that.initialyActiveFor) &&
+                renewForUnit == that.renewForUnit &&
+                Objects.equals(renewFor, that.renewFor) &&
+                initialTermType == that.initialTermType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(autoRenew, autoRenewDate, endOfTermAction, initialyActiveForUnit, initialyActiveFor, extendAgreementPeriodToSubscribedTillDate,
+                renewForUnit, renewFor, initialTermType);
     }
 }
