@@ -1,6 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" 
-    >
+    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui">
+
+	<o:importConstants type="org.meveo.model.audit.AuditableFieldName" />
 
     <ui:define name="metadata">
         <f:metadata>
@@ -156,6 +158,12 @@
 						</hftl:dataList>
 					</c:if>
                 </p:tab>                    
+				<c:if test="#{serviceInstanceBean.entity.id != null}">
+					<ui:include src="../../audit/auditableField.xhtml">
+						<ui:param name="auditableEntity" value="#{serviceInstanceBean.entity}" />
+						<ui:param name="auditableFieldName" value="#{'STATUS'}" />
+					</ui:include>
+				</c:if>
 
                 <hftl:customFields backingBean="#{serviceInstanceBean}" messagesId=":formId:messages" />
             </p:tabView>

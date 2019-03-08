@@ -796,6 +796,43 @@
 			<column name="cf_values_accum" type="${type.json}"></column>
     	</addColumn>
 	</changeSet>
+
+    <changeSet id="#3762_20181123_1" author="AbdellatifBARI" dbms="mysql">
+        <createTable tableName="audit_field_changes_history_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="audit_field_changes_history_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}audit_field_changes_history_seq values(1)</sql>
+    </changeSet>
+
+    <changeSet id="#3762_20181123_2" author="AbdellatifBARI">
+        <createSequence sequenceName="audit_field_changes_history_seq" startValue="1" />
+        <createTable tableName="audit_field_changes_history">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="audit_field_changes_history_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="entity_class" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="entity_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="field_name" type="varchar(255)" />
+            <column name="change_type" type="varchar(255)" />
+            <column name="change_origin" type="varchar(255)" />
+            <column name="origin_name" type="varchar(255)" />
+            <column name="previous_state" type="varchar(255)" />
+            <column name="current_state" type="varchar(255)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="actor" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
 	
 	<changeSet id="#3652_26112018" author="anasseh">
         <addColumn tableName="ar_ddrequest_lot_op">

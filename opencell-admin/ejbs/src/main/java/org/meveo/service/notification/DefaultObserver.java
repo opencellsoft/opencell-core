@@ -1,24 +1,13 @@
 package org.meveo.service.notification;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.ftp.event.FileDelete;
 import org.meveo.admin.ftp.event.FileDownload;
 import org.meveo.admin.ftp.event.FileRename;
 import org.meveo.admin.ftp.event.FileUpload;
+import org.meveo.audit.AuditableFieldEvent;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.CFEndPeriodEvent;
@@ -41,10 +30,13 @@ import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Terminated;
 import org.meveo.event.qualifier.Updated;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.audit.AuditChangeType;
+import org.meveo.model.audit.AuditableFieldHistory;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.mediation.MeveoFtpFile;
@@ -70,11 +62,27 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
 
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Handles events associated with CDRUD operations on entities
  * 
- * @lastModifiedVersion willBeSetLater
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Singleton
 @Startup
@@ -417,6 +425,57 @@ public class DefaultObserver {
     public void counterUpdated(@Observes CounterPeriodEvent event) throws BusinessException {
         log.debug("DefaultObserver.counterUpdated " + event);
         checkEvent(NotificationEventTypeEnum.COUNTER_DEDUCED, event);
+    }
+
+    private void fieldUpdated(BaseEntity entity, AuditableFieldEvent field, NotificationEventTypeEnum notificationType) throws BusinessException {
+        if (entity != null) {
+            log.debug("observe a dirty status of entity {} with id {}", entity.getClass().getName(), entity.getId());
+            checkEvent(notificationType, field);
+        }
+    }
+
+    private void fieldUpdated(AuditableEntity entity, AuditableFieldHistory fieldHistory) throws BusinessException {
+        AuditableFieldEvent field = new AuditableFieldEvent();
+        try {
+            BeanUtils.copyProperties(field, fieldHistory);
+            field.setEntity(entity);
+            //In the case of a status field, we fire an status event.
+            if (fieldHistory.getAuditType() == AuditChangeType.STATUS) {
+                fieldUpdated(entity, field, NotificationEventTypeEnum.STATUS_UPDATED);
+            }
+            //In the case of a renewal field, we fire an renewal event.
+            if (fieldHistory.getAuditType() == AuditChangeType.RENEWAL) {
+                fieldUpdated(entity, field, NotificationEventTypeEnum.RENEWAL_UPDATED);
+            }
+            fieldHistory.setNotified(true);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            fieldHistory.setNotified(false);
+            log.error("Failed to fire field updated notification");
+            throw new BusinessException(e.getMessage());
+        } catch (BusinessException e) {
+            fieldHistory.setNotified(false);
+            log.error("Failed to fire field updated notification");
+            throw e;
+        }
+    }
+
+    public void fieldsUpdated(@Observes Set<BaseEntity> event) throws BusinessException {
+        if (event != null && !event.isEmpty()) {
+            for (BaseEntity baseEntity : event) {
+                AuditableEntity entity = (AuditableEntity) baseEntity;
+                Set<AuditableFieldHistory> auditableFields = entity.getAuditableFields();
+                if (!entity.isNotified() && auditableFields != null && !auditableFields.isEmpty()) {
+                    for (AuditableFieldHistory fieldHistory : auditableFields) {
+                        // Check if the field is notifiable and is not yet notified
+                        if (fieldHistory.isNotfiable() && !fieldHistory.isNotified()) {
+                            fieldUpdated(entity, fieldHistory);
+                        }
+                    }
+                    entity.setNotified(true);
+                }
+
+            }
+        }
     }
 
 }

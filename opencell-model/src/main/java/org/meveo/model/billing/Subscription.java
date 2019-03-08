@@ -18,13 +18,32 @@
  */
 package org.meveo.model.billing;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import org.apache.commons.lang3.BooleanUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.Email;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IBillableEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.audit.AuditChangeType;
+import org.meveo.model.audit.AuditTarget;
+import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
+import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.dunning.DunningDocument;
+import org.meveo.model.mediation.Access;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.shared.DateUtils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -46,39 +65,21 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.apache.commons.lang3.BooleanUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.hibernate.validator.constraints.Email;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.IBillableEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IWFEntity;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
-import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.model.communication.email.MailingTypeEnum;
-import org.meveo.model.dunning.DunningDocument;
-import org.meveo.model.mediation.Access;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.rating.EDR;
-import org.meveo.model.shared.DateUtils;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * Subscription
  * 
  * @author Said Ramli
- * @author Abdellatif BARI
  * @author Mounir BAHIJE
  * @author Khalid HORRI
+ * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
 @Entity
@@ -110,6 +111,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
+    @AuditTarget(type = AuditChangeType.STATUS, history = true, notif = true)
     private SubscriptionStatusEnum status = SubscriptionStatusEnum.CREATED;
 
     /**
@@ -211,6 +213,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      * Subscription renewal configuration
      */
     @Embedded
+    @AuditTarget(type = AuditChangeType.RENEWAL, history = true, notif = true)
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
 
     /**
@@ -341,6 +344,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     @Transient
     private BigDecimal totalInvoicingAmountTax;
+
 
     public Date getEndAgreementDate() {
         return endAgreementDate;

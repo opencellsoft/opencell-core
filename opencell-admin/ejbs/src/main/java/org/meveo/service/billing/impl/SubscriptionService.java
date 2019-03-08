@@ -18,19 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
@@ -40,6 +27,8 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.audit.AuditChangeType;
+import org.meveo.model.audit.AuditableFieldName;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -55,6 +44,7 @@ import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
@@ -62,11 +52,25 @@ import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.offer.OfferModelScriptService;
 import org.primefaces.model.SortOrder;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
+
 /**
  * @author Edward P. Legaspi
  * @author khalid HORRI
  * @author Mounir BAHIJE
- * @lastModifiedVersion 5.3
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class SubscriptionService extends BusinessService<Subscription> {
@@ -85,6 +89,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @Inject
     private OfferTemplateService offerTemplateService;
+
+    @Inject
+    private AuditableFieldService auditableFieldService;
+
     
     @MeveoAudit
     @Override
@@ -95,6 +103,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.createAutoRenewDate();
 
         super.create(subscription);
+
+        //Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
+        auditableFieldService.createFieldHistory(subscription, AuditableFieldName.STATUS.getFieldName(), AuditChangeType.STATUS, "", String.valueOf(subscription.getStatus()));
 
         // execute subscription script
         OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
