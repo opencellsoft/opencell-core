@@ -19,7 +19,6 @@
 package org.meveo.model;
 
 import org.meveo.model.audit.AuditableFieldHistory;
-import org.meveo.model.audit.ChangeOrigin;
 import org.meveo.security.MeveoUser;
 
 import javax.persistence.Embedded;

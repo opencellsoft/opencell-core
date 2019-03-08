@@ -5,7 +5,7 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.event.qualifier.Processed;
-import org.meveo.model.audit.ChangeOrigin;
+import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -98,7 +98,7 @@ public abstract class Job {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void execute(JobInstance jobInstance, JobExecutionResultImpl executionResult) throws BusinessException {
 
-        auditOrigin.setAuditOrigin(ChangeOrigin.JOB);
+        auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
         auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
 
         if (executionResult == null) {

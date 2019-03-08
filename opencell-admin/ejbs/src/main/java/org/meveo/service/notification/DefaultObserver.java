@@ -35,7 +35,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.audit.AuditChangeType;
+import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldHistory;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.generic.wf.GenericWorkflow;
@@ -440,11 +440,11 @@ public class DefaultObserver {
             BeanUtils.copyProperties(field, fieldHistory);
             field.setEntity(entity);
             //In the case of a status field, we fire an status event.
-            if (fieldHistory.getAuditType() == AuditChangeType.STATUS) {
+            if (fieldHistory.getAuditType() == AuditChangeTypeEnum.STATUS) {
                 fieldUpdated(entity, field, NotificationEventTypeEnum.STATUS_UPDATED);
             }
             //In the case of a renewal field, we fire an renewal event.
-            if (fieldHistory.getAuditType() == AuditChangeType.RENEWAL) {
+            if (fieldHistory.getAuditType() == AuditChangeTypeEnum.RENEWAL) {
                 fieldUpdated(entity, field, NotificationEventTypeEnum.RENEWAL_UPDATED);
             }
             fieldHistory.setNotified(true);

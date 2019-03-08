@@ -6,6 +6,6 @@ package org.meveo.model.audit;
  * @author Abdellatif BARI
  * @since 7.0
  */
-public enum AuditChangeType {
+public enum AuditChangeTypeEnum {
     STATUS, RENEWAL, OTHER;
 }

@@ -5,6 +5,7 @@ import org.hibernate.Transaction;
 import org.hibernate.type.Type;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.service.audit.AuditableFieldConfiguration;
@@ -25,7 +26,7 @@ import java.util.Map;
  * @since 7.0
  */
 
-public class AuditEmptyInterceptor extends EmptyInterceptor {
+public class FieldAuditInterceptor extends EmptyInterceptor {
 
     private static final long serialVersionUID = -1175387060899608632L;
 
@@ -48,7 +49,8 @@ public class AuditEmptyInterceptor extends EmptyInterceptor {
             auditableEntities.putAll(auditableFieldConfiguration.getAuditableEntities());
         }
 
-        if (!AuditableEntity.class.isAssignableFrom(entity.getClass()) || !auditableEntities.keySet().contains(entity.getClass().getName())) {
+        String calssName = ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName());
+        if (!AuditableEntity.class.isAssignableFrom(entity.getClass()) || !auditableEntities.containsKey(calssName)) {
             return super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
         }
 
@@ -56,7 +58,7 @@ public class AuditEmptyInterceptor extends EmptyInterceptor {
         List<Field> fields = auditableEntities.get(entity.getClass().getName());
 
         //store the dirty fields to process them before the end of the transaction
-        auditableFieldService.setDirtyableFields((BaseEntity) entity, fields, currentState, previousState, propertyNames);
+        auditableFieldService.setChangedFields((BaseEntity) entity, fields, currentState, previousState, propertyNames);
 
         return super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
     }
@@ -65,7 +67,7 @@ public class AuditEmptyInterceptor extends EmptyInterceptor {
     public void beforeTransactionCompletion(Transaction tx) {
         //Called before a transaction is committed (but not before rollback).
         try {
-            auditableFieldService.registreDirtyableFields();
+            auditableFieldService.registerChangedFields();
         } catch (BusinessException e) {
             log.error("exception in interceptor beforeTransactionCompletion()", e);
             tx.rollback();
@@ -75,6 +77,6 @@ public class AuditEmptyInterceptor extends EmptyInterceptor {
     @Override
     public void afterTransactionCompletion(Transaction tx) {
         //Called after a transaction is committed or rolled back.
-        auditableFieldService.resetDirtyableEntities();
+        auditableFieldService.resetChangedEntities();
     }
 }

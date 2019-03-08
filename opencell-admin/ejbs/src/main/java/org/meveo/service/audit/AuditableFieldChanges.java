@@ -16,9 +16,9 @@ import java.util.Set;
 public class AuditableFieldChanges {
 
     /**
-     * the dirtable entities
+     * the changed entities
      */
-    private Set<BaseEntity> dirtyableEntities = new HashSet<>();
+    private Set<BaseEntity> changedEntities = new HashSet<>();
 
     /**
      * Check if a transaction is in progress
@@ -26,21 +26,21 @@ public class AuditableFieldChanges {
     private boolean hasTransactionInProgress = false;
 
     /**
-     * Adding the dirtable entity
+     * Adding the changed entity
      *
      * @param baseEntity the entity
      */
     public void addChange(BaseEntity baseEntity) {
-        dirtyableEntities.add(baseEntity);
+        changedEntities.add(baseEntity);
     }
 
     /**
-     * Gets the dirtyable entities
+     * Gets the changed entities
      *
-     * @return the dirtyable entities
+     * @return the changed entities
      */
-    public Set<BaseEntity> getDirtyableEntities() {
-        return dirtyableEntities;
+    public Set<BaseEntity> getChangedEntities() {
+        return changedEntities;
     }
 
     /**
@@ -62,10 +62,10 @@ public class AuditableFieldChanges {
     }
 
     public boolean isEmpty() {
-        return dirtyableEntities.isEmpty();
+        return changedEntities.isEmpty();
     }
 
     public void clear() {
-        dirtyableEntities.clear();
+        changedEntities.clear();
     }
 }

@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AuditTarget {
-    AuditChangeType type();
+    AuditChangeTypeEnum type();
 
     boolean history() default false;
     boolean notif() default false;

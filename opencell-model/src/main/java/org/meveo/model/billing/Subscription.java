@@ -32,7 +32,7 @@ import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.audit.AuditChangeType;
+import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
@@ -111,7 +111,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    @AuditTarget(type = AuditChangeType.STATUS, history = true, notif = true)
+    @AuditTarget(type = AuditChangeTypeEnum.STATUS, history = true, notif = true)
     private SubscriptionStatusEnum status = SubscriptionStatusEnum.CREATED;
 
     /**
@@ -213,7 +213,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      * Subscription renewal configuration
      */
     @Embedded
-    @AuditTarget(type = AuditChangeType.RENEWAL, history = true, notif = true)
+    @AuditTarget(type = AuditChangeTypeEnum.RENEWAL, history = true, notif = true)
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
 
     /**

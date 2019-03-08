@@ -31,7 +31,7 @@ public class AuditableFieldHistory implements Serializable {
     /**
      * Type of audit
      */
-    private AuditChangeType auditType;
+    private AuditChangeTypeEnum auditType;
 
     /**
      * Is historable field
@@ -71,7 +71,7 @@ public class AuditableFieldHistory implements Serializable {
      * @param historable    Is historable field
      * @param notfiable     Is notfiable field
      */
-    public AuditableFieldHistory(String fieldName, Object previousState, Object currentState, AuditChangeType auditType, boolean historable, boolean notfiable) {
+    public AuditableFieldHistory(String fieldName, Object previousState, Object currentState, AuditChangeTypeEnum auditType, boolean historable, boolean notfiable) {
         super();
         this.fieldName = fieldName;
         this.currentState = currentState;
@@ -140,7 +140,7 @@ public class AuditableFieldHistory implements Serializable {
      *
      * @return the auditType
      */
-    public AuditChangeType getAuditType() {
+    public AuditChangeTypeEnum getAuditType() {
         return auditType;
     }
 
@@ -149,7 +149,7 @@ public class AuditableFieldHistory implements Serializable {
      *
      * @param auditType the new auditType
      */
-    public void setAuditType(AuditChangeType auditType) {
+    public void setAuditType(AuditChangeTypeEnum auditType) {
         this.auditType = auditType;
     }
 

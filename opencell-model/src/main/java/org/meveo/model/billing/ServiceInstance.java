@@ -29,7 +29,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.audit.AuditChangeType;
+import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.Calendar;
@@ -112,7 +112,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity {
     /** Status. */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    @AuditTarget(type = AuditChangeType.STATUS, history = true, notif = true)
+    @AuditTarget(type = AuditChangeTypeEnum.STATUS, history = true, notif = true)
     private InstanceStatusEnum status;
 
     /** Last status change timestamp. */
@@ -210,7 +210,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity {
 
     /** Service renewal configuration. */
     @Embedded
-    @AuditTarget(type = AuditChangeType.RENEWAL, history = true, notif = true)
+    @AuditTarget(type = AuditChangeTypeEnum.RENEWAL, history = true, notif = true)
     private SubscriptionRenewal serviceRenewal = new SubscriptionRenewal();
 
     /**

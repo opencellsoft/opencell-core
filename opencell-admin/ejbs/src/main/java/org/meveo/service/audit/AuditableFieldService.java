@@ -6,7 +6,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.AuditableField;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.audit.AuditChangeType;
+import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.audit.AuditableFieldHistory;
 import org.meveo.service.base.PersistenceService;
@@ -64,7 +64,7 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
      */
     private boolean hasUnauditedEntities() {
         if (!auditableFieldChanges.isEmpty()) {
-            for (BaseEntity baseEntity : auditableFieldChanges.getDirtyableEntities()) {
+            for (BaseEntity baseEntity : auditableFieldChanges.getChangedEntities()) {
                 AuditableEntity entity = (AuditableEntity) baseEntity;
                 if (!entity.isHistorized() || !entity.isNotified()) {
                     return true;
@@ -75,7 +75,7 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
     }
 
     /**
-     * Registre dirtyable field
+     * Mark and add the changed field to changed fields collection.
      *
      * @param baseEntity    the current auditable entity
      * @param field         the field to check
@@ -83,7 +83,7 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
      * @param previousState the previous state of all fields of current auditable entity
      * @param propertyNames the names of all fields in the current auditable entity
      */
-    private void setDirtyableField(BaseEntity baseEntity, Field field, Object[] currentState, Object[] previousState, String[] propertyNames) {
+    private void setChangedField(BaseEntity baseEntity, Field field, Object[] currentState, Object[] previousState, String[] propertyNames) {
 
         AuditableEntity entity = (AuditableEntity) baseEntity;
         String fieldName = field.getName();
@@ -114,13 +114,13 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
     /**
      * Create fields history
      *
-     * @param dirtyableEntities the dirtyable fields and their entities.
+     * @param changedEntities the changed fields and their entities.
      * @throws BusinessException the business exception
      */
-    private void createFieldsHistory(Set<BaseEntity> dirtyableEntities) throws BusinessException {
+    private void createFieldsHistory(Set<BaseEntity> changedEntities) throws BusinessException {
 
-        if (dirtyableEntities != null && !dirtyableEntities.isEmpty()) {
-            for (BaseEntity baseEntity : dirtyableEntities) {
+        if (changedEntities != null && !changedEntities.isEmpty()) {
+            for (BaseEntity baseEntity : changedEntities) {
                 AuditableEntity entity = (AuditableEntity) baseEntity;
                 Set<AuditableFieldHistory> auditableFields = entity.getAuditableFields();
                 if (!entity.isHistorized() && auditableFields != null && !auditableFields.isEmpty()) {
@@ -129,9 +129,9 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
                             try {
                                 String previousState = String.valueOf(field.getPreviousState());
                                 String currentState = String.valueOf(field.getCurrentState());
-                                if (field.getAuditType() == AuditChangeType.RENEWAL) {
+                                if (field.getAuditType() == AuditChangeTypeEnum.RENEWAL) {
                                     previousState = "";
-                                    currentState = AuditChangeType.RENEWAL.toString();
+                                    currentState = AuditChangeTypeEnum.RENEWAL.toString();
                                 }
                                 createFieldHistory(entity, field.getFieldName(), field.getAuditType(), previousState, currentState);
                                 field.setHistorized(true);
@@ -149,15 +149,15 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
     }
 
     /**
-     * fireDirtyableFieldsEvents
+     * fire the fields updated event
      *
-     * @param dirtyableEntities the dirtyable fields and their entities.
+     * @param changedEntities the changed fields and their entities.
      * @throws BusinessException the business exception
      */
-    private void fireDirtyableFieldsEvents(Set<BaseEntity> dirtyableEntities) throws BusinessException {
-        if (dirtyableEntities != null && !dirtyableEntities.isEmpty()) {
+    private void fireChangedFieldsEvents(Set<BaseEntity> changedEntities) throws BusinessException {
+        if (changedEntities != null && !changedEntities.isEmpty()) {
             Set<BaseEntity> entities = new HashSet<>();
-            for (BaseEntity baseEntity : dirtyableEntities) {
+            for (BaseEntity baseEntity : changedEntities) {
                 AuditableEntity entity = (AuditableEntity) baseEntity;
                 Set<AuditableFieldHistory> auditableFields = entity.getAuditableFields();
                 if (!entity.isNotified() && auditableFields != null && !auditableFields.isEmpty()) {
@@ -180,51 +180,51 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
     }
 
     /**
-     * Registre the dirtyable fields.
+     * Historize the changed fields and create associated notifications.
      *
-     * @param dirtyableEntities the dirtyable fields and their entities.
+     * @param changedEntities the changed fields and their entities.
      * @throws BusinessException the business exception
      */
-    private void registreDirtyableFields(Set<BaseEntity> dirtyableEntities) throws BusinessException {
-        if (dirtyableEntities != null && !dirtyableEntities.isEmpty()) {
+    private void registerChangedFields(Set<BaseEntity> changedEntities) throws BusinessException {
+        if (changedEntities != null && !changedEntities.isEmpty()) {
             // Add fields change history
-            createFieldsHistory(dirtyableEntities);
+            createFieldsHistory(changedEntities);
 
             // Fire fields updated events.
-            fireDirtyableFieldsEvents(dirtyableEntities);
+            fireChangedFieldsEvents(changedEntities);
         }
     }
 
     /**
-     * Sets the dirtyable fields
+     * Mark and collect the changed fields
      *
-     * @param entity        the dirtyable entity
-     * @param fields        the fields of dirtyable entity
+     * @param entity        the changed entity
+     * @param fields        the fields of changed entity
      * @param currentState  the current state of entity fields
      * @param previousState the previous state of entity fields
      * @param propertyNames the names of the entity fields
      */
-    public void setDirtyableFields(BaseEntity entity, List<Field> fields, Object[] currentState, Object[] previousState, String[] propertyNames) {
+    public void setChangedFields(BaseEntity entity, List<Field> fields, Object[] currentState, Object[] previousState, String[] propertyNames) {
         for (Field field : fields) {
             //collect all auditable fields that are modified
-            setDirtyableField((BaseEntity) entity, field, currentState, previousState, propertyNames);
+            setChangedField((BaseEntity) entity, field, currentState, previousState, propertyNames);
         }
     }
 
     /**
-     * Registre the dirtyable fields.
+     * Register the changed fields.
      *
      * @throws BusinessException the business exception
      */
-    public void registreDirtyableFields() throws BusinessException {
+    public void registerChangedFields() throws BusinessException {
         if (!auditableFieldChanges.isHasTransactionInProgress() && hasUnauditedEntities()) {
             try {
                 auditableFieldChanges.setHasTransactionInProgress(true);
                 Set<BaseEntity> entities = new HashSet<>();
-                entities.addAll(auditableFieldChanges.getDirtyableEntities());
-                registreDirtyableFields(entities);
+                entities.addAll(auditableFieldChanges.getChangedEntities());
+                registerChangedFields(entities);
             } catch (BusinessException e) {
-                log.error("exception in AuditableFieldService registreDirtyableFields()", e);
+                log.error("exception in AuditableFieldService registerChangedFields()", e);
                 throw e;
             } finally {
                 auditableFieldChanges.setHasTransactionInProgress(false);
@@ -233,14 +233,20 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
     }
 
     /**
-     * Reset dirtyable entities map
+     * Reset changed entities map
      */
-    public void resetDirtyableEntities() {
+    public void resetChangedEntities() {
         if (!auditableFieldChanges.isHasTransactionInProgress() && !hasUnauditedEntities()) {
             auditableFieldChanges.clear();
         }
     }
 
+    /**
+     * Get auditable fields list
+     *
+     * @param entity auditable fields entity
+     * @return auditable fields list
+     */
     public List<AuditableField> list(BaseEntity entity) {
         Map<String, Object> filters = new HashMap();
         filters.put("entityClass", ReflectionUtils.getCleanClassName(entity.getClass().getName()));
@@ -249,7 +255,17 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
         return list(config);
     }
 
-    public void createFieldHistory(BaseEntity entity, String fieldName, AuditChangeType changeType, String previousState, String currentState) throws BusinessException {
+    /**
+     * Create changed field history in database.
+     *
+     * @param entity changed field entity
+     * @param fieldName changed field name
+     * @param changeType changed type of field
+     * @param previousState previous state of field
+     * @param currentState current state of field
+     * @throws BusinessException the business exception
+     */
+    public void createFieldHistory(BaseEntity entity, String fieldName, AuditChangeTypeEnum changeType, String previousState, String currentState) throws BusinessException {
 
         AuditableField auditableField = new AuditableField(currentUser);
         auditableField.setEntityClass(ReflectionUtils.getCleanClassName(entity.getClass().getName()));

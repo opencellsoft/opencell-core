@@ -25,8 +25,8 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.audit.AuditChangeType;
-import org.meveo.model.audit.AuditableFieldName;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -722,7 +722,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         entity.updateSubscribedTillAndRenewalNotifyDates();
         super.create(entity);
         //Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
-        auditableFieldService.createFieldHistory(entity, AuditableFieldName.STATUS.getFieldName(), AuditChangeType.STATUS, "", String.valueOf(entity.getStatus()));
+        auditableFieldService.createFieldHistory(entity, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "", String.valueOf(entity.getStatus()));
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.meveo.api.logging;
 
-import org.meveo.model.audit.ChangeOrigin;
+import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.AuditOrigin;
@@ -42,7 +42,7 @@ public class WsRestApiInterceptor {
             MDC.put("providerCode", currentUser.getProviderCode());
         }
 
-        auditOrigin.setAuditOrigin(ChangeOrigin.API);
+        auditOrigin.setAuditOrigin(ChangeOriginEnum.API);
         auditOrigin.setAuditOriginName(auditUtils.getAuditOrigin(invocationContext));
 
         if (log.isDebugEnabled()) {

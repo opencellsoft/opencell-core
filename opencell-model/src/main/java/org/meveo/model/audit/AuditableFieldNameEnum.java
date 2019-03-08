@@ -6,7 +6,7 @@ package org.meveo.model.audit;
  * @author Abdellatif BARI
  * @since 7.0
  */
-public enum AuditableFieldName {
+public enum AuditableFieldNameEnum {
     STATUS("status");
 
     /**
@@ -28,7 +28,7 @@ public enum AuditableFieldName {
      *
      * @param fieldName field name
      */
-    AuditableFieldName(final String fieldName) {
+    AuditableFieldNameEnum(final String fieldName) {
         this.fieldName = fieldName;
     }
 }

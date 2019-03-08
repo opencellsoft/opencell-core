@@ -1,6 +1,6 @@
 package org.meveo.service.audit;
 
-import org.meveo.model.audit.ChangeOrigin;
+import org.meveo.model.audit.ChangeOriginEnum;
 
 import javax.enterprise.context.RequestScoped;
 
@@ -16,7 +16,7 @@ public class AuditOrigin {
     /**
      * Source of change
      */
-    private ChangeOrigin auditOrigin;
+    private ChangeOriginEnum auditOrigin;
 
     /**
      * Source name of change
@@ -29,7 +29,7 @@ public class AuditOrigin {
      *
      * @return Source of change
      */
-    public ChangeOrigin getAuditOrigin() {
+    public ChangeOriginEnum getAuditOrigin() {
         return auditOrigin;
     }
 
@@ -38,7 +38,7 @@ public class AuditOrigin {
      *
      * @param auditOrigin Source of change
      */
-    public void setAuditOrigin(ChangeOrigin auditOrigin) {
+    public void setAuditOrigin(ChangeOriginEnum auditOrigin) {
         this.auditOrigin = auditOrigin;
     }
 

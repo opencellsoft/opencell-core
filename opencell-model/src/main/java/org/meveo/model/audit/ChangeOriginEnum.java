@@ -6,7 +6,7 @@ package org.meveo.model.audit;
  * @author Abdellatif BARI
  * @since 7.0
  */
-public enum ChangeOrigin {
+public enum ChangeOriginEnum {
     API, JOB, GUI, OTHER;
 
     public String getLabel() {

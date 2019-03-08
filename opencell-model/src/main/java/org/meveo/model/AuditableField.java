@@ -19,8 +19,8 @@
 package org.meveo.model;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.meveo.model.audit.AuditChangeType;
-import org.meveo.model.audit.ChangeOrigin;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.security.MeveoUser;
 
 import javax.persistence.Column;
@@ -76,7 +76,7 @@ public class AuditableField extends BaseEntity {
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "change_type")
-    private AuditChangeType changeType = AuditChangeType.OTHER;
+    private AuditChangeTypeEnum changeType = AuditChangeTypeEnum.OTHER;
 
 
     /**
@@ -84,7 +84,7 @@ public class AuditableField extends BaseEntity {
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "change_origin")
-    private ChangeOrigin changeOrigin = ChangeOrigin.OTHER;
+    private ChangeOriginEnum changeOrigin = ChangeOriginEnum.OTHER;
 
 
     /**
@@ -191,7 +191,7 @@ public class AuditableField extends BaseEntity {
      *
      * @return the changeType
      */
-    public AuditChangeType getChangeType() {
+    public AuditChangeTypeEnum getChangeType() {
         return changeType;
     }
 
@@ -200,7 +200,7 @@ public class AuditableField extends BaseEntity {
      *
      * @param changeType the new changeType
      */
-    public void setChangeType(AuditChangeType changeType) {
+    public void setChangeType(AuditChangeTypeEnum changeType) {
         this.changeType = changeType;
     }
 
@@ -209,7 +209,7 @@ public class AuditableField extends BaseEntity {
      *
      * @return the changeOrigin
      */
-    public ChangeOrigin getChangeOrigin() {
+    public ChangeOriginEnum getChangeOrigin() {
         return changeOrigin;
     }
 
@@ -218,7 +218,7 @@ public class AuditableField extends BaseEntity {
      *
      * @param changeOrigin the new changeOrigin
      */
-    public void setChangeOrigin(ChangeOrigin changeOrigin) {
+    public void setChangeOrigin(ChangeOriginEnum changeOrigin) {
         this.changeOrigin = changeOrigin;
     }
 

@@ -5,7 +5,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
-import org.meveo.model.audit.ChangeOrigin;
+import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.service.audit.AuditOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
         Object result = null;
         try {
 
-            auditOrigin.setAuditOrigin(ChangeOrigin.GUI);
+            auditOrigin.setAuditOrigin(ChangeOriginEnum.GUI);
             auditOrigin.setAuditOriginName(FacesContext.getCurrentInstance().getViewRoot().getViewId());
 
             // Call a backing bean method
