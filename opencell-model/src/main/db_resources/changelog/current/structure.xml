@@ -1873,7 +1873,7 @@ $$ LANGUAGE plpgsql;
                 <constraints nullable="true"/>
             </column>
         </addColumn>
-        <dropNotNullConstraint tableName="billing_discount_plan_instance" columnName="billing_account_id"/>
+        <dropNotNullConstraint tableName="billing_discount_plan_instance" columnName="billing_account_id" columnDataType="bigint"/>
         <addForeignKeyConstraint constraintName="billing_discount_plan_instance_bs_fk" referencedTableName="billing_subscription" baseColumnNames="subscription_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id" />
 
     </changeSet>
