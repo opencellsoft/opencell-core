@@ -194,7 +194,8 @@ public class QuoteService extends BusinessService<Quote> {
             }            
             // Create rated transactions from wallet operations
             for (WalletOperation walletOperation : walletOperations) {
-                ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true));
+                RatedTransaction createdRatedTransaction = ratedTransactionService.createRatedTransaction(walletOperation, true);
+                ratedTransactions.add(createdRatedTransaction);
             }
             Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());
             File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
