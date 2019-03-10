@@ -1792,6 +1792,11 @@ $$ LANGUAGE plpgsql;
     
     <changeSet id="#4049_20190306 - Can not create two payment gateways" author="AmineBenAicha">
         <dropUniqueConstraint tableName="ar_payment_gateway" constraintName="uk_payment_gateway" />
+        
     </changeSet>
-
+        <changeSet id="#4069 - Reject file can be processed many times" author="anasseh">
+        <addColumn tableName="ar_ddrequest_item">
+            <column name="rejected_file_name" type="varchar(1000)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
