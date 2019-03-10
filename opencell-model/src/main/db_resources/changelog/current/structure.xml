@@ -2290,4 +2290,10 @@
         </addColumn>
          <addForeignKeyConstraint constraintName="fk_dd_item_refund_id" referencedTableName="ar_account_operation" baseColumnNames="refund_id" baseTableName="ar_ddrequest_item" referencedColumnNames="id"/>     
     </changeSet>
+    
+        <changeSet id="#4069 - Reject file can be processed many times" author="anasseh">
+        <addColumn tableName="ar_ddrequest_item">
+            <column name="rejected_file_name" type="varchar(1000)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -108,7 +108,12 @@ public class DDRequestItem extends AuditableEntity {
     
     @OneToOne(optional = true)
     @JoinColumn(name = "refund_id")
-    private Refund refund;
+    private AutomatedRefund automatedRefund;
+    
+    @Column(name = "rejected_file_name", length = 1000)
+    @Size(max = 1000)    
+    private String rejectedFileName;
+    
 
     public DDRequestItem() {
 
@@ -254,20 +259,29 @@ public class DDRequestItem extends AuditableEntity {
     /**
      * @return the refund
      */
-    public Refund getRefund() {
-        return refund;
+    public AutomatedRefund getAutomatedRefund() {
+        return automatedRefund;
     }
 
     /**
      * @param refund the refund to set
      */
-    public void setRefund(Refund refund) {
-        this.refund = refund;
+    public void setAutomatedRefund(AutomatedRefund refund) {
+        this.automatedRefund = refund;
     }
 
     @Transient
     public boolean hasError() {
         return !(errorMsg == null || errorMsg.trim().length() == 0);
     }
+
+	public String getRejectedFileName() {
+		return rejectedFileName;
+	}
+
+	public void setRejectedFileName(String rejectedFileName) {
+		this.rejectedFileName = rejectedFileName;
+	}
+
 
 }
