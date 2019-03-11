@@ -301,7 +301,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     private String uuid = UUID.randomUUID().toString();
 
     /**
-     * Subscription status
+     * Reference date
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "reference_date")

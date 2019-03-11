@@ -49,11 +49,14 @@
                     <hftl:formField id="scriptSelectId" label="#{messages['billingCycle.scriptCode']}" field="scriptInstance" valueLabelField="code" required="false" popup="true"
                         popupId="billingCycleScriptPopup" showResetButton="true" />
 
-                        <hftl:formField label="#{messages['invoiceType.name']}" id="invoiceTypeSelectedId" field="invoiceType" valueLabelField="code" popup="true" popupId="searchInvoiceTypePopup"
-                            showResetButton="true" required="false" />
+                    <hftl:formField label="#{messages['invoiceType.name']}" id="invoiceTypeSelectedId" field="invoiceType" valueLabelField="code" popup="true" popupId="searchInvoiceTypePopup"
+                        showResetButton="true" required="false" />
 
-                        <hftl:formField label="#{messages['billingCycle.invoiceTypeEL']}" field="invoiceTypeEl" textArea="true" rows="1" maxlength="2000" newLine="true" />
-                        <hftl:formField label="#{messages['billingCycle.invoiceTypeELSpark']}" field="invoiceTypeElSpark" textArea="true" rows="1" maxlength="2000" />
+                    <hftl:formField label="#{messages['billingCycle.invoiceTypeEL']}" field="invoiceTypeEl" textArea="true" rows="1" maxlength="2000" newLine="true" />
+                    <hftl:formField label="#{messages['billingCycle.invoiceTypeELSpark']}" field="invoiceTypeElSpark" textArea="true" rows="1" maxlength="2000" />
+                    <hftl:formField id="referenceDate"
+                                    label="#{messages['billingCycle.referenceDate']}"
+                                    field="referenceDate" required="true" listValues="#{billingCycleBean.getReferenceDateList()}"/>
 
                 </p:tab>
                 <hftl:customFields backingBean="#{billingCycleBean}" messagesId=":formBillingCycle:messages" />

@@ -319,19 +319,4 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
         this.launchInvoicingRejectedBA = launchInvoicingRejectedBA;
     }
 
-    /**
-     * Gets list of applicable reference dates
-     *
-     * @return A list of applicable reference dates
-     */
-    public List<ReferenceDateEnum> getReferenceDateList() {
-
-        List<ReferenceDateEnum> referenceDateList = new ArrayList();
-        referenceDateList.add(ReferenceDateEnum.TODAY);
-        referenceDateList.add(ReferenceDateEnum.NEXT_INVOICE_DATE);
-        referenceDateList.add(ReferenceDateEnum.LAST_TRANSACTION_DATE);
-        referenceDateList.add(ReferenceDateEnum.END_DATE);
-        return referenceDateList;
-    }
-
 }

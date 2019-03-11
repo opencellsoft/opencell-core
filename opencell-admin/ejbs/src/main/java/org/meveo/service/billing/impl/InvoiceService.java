@@ -87,6 +87,7 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionGroup;
+import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
@@ -2052,8 +2053,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private Date getReferenceDate(Invoice invoice) {
         BillingRun billingRun = invoice.getBillingRun();
         Date referenceDate = null;
+        ReferenceDateEnum referenceDateEnum = null;
         if (billingRun != null && billingRun.getReferenceDate() != null) {
-            switch (billingRun.getReferenceDate()) {
+            referenceDateEnum = billingRun.getReferenceDate();
+        }else if (billingRun.getBillingCycle() != null && billingRun.getBillingCycle().getReferenceDate() != null) {
+            referenceDateEnum = billingRun.getReferenceDate();
+        }
+        if (referenceDateEnum != null) {
+            switch (referenceDateEnum) {
                 case TODAY:
                     referenceDate = new Date();
                     break;

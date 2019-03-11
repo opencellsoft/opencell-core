@@ -30,6 +30,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingCycleService;
@@ -39,6 +40,9 @@ import org.meveo.service.billing.impl.BillingCycleService;
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ *
  */
 @Named
 @ViewScoped
@@ -111,5 +115,19 @@ public class BillingCycleBean extends CustomFieldBean<BillingCycle> {
         }
         return billingCycleTarget;
     }
-	
+
+    /**
+     * Gets list of applicable reference dates
+     *
+     * @return A list of applicable reference dates
+     */
+    public List<ReferenceDateEnum> getReferenceDateList() {
+
+        List<ReferenceDateEnum> referenceDateList = new ArrayList();
+        referenceDateList.add(ReferenceDateEnum.TODAY);
+        referenceDateList.add(ReferenceDateEnum.NEXT_INVOICE_DATE);
+        referenceDateList.add(ReferenceDateEnum.LAST_TRANSACTION_DATE);
+        referenceDateList.add(ReferenceDateEnum.END_DATE);
+        return referenceDateList;
+    }
 }
