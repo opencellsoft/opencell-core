@@ -49,7 +49,7 @@ public class FieldAuditInterceptor extends EmptyInterceptor {
             auditableEntities.putAll(auditableFieldConfiguration.getAuditableEntities());
         }
 
-        String calssName = ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName());
+        String calssName = ReflectionUtils.getCleanClassName(entity.getClass().getName());
         if (!AuditableEntity.class.isAssignableFrom(entity.getClass()) || !auditableEntities.containsKey(calssName)) {
             return super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
         }
