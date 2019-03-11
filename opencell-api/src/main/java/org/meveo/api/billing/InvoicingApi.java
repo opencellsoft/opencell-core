@@ -65,6 +65,9 @@ public class InvoicingApi extends BaseApi {
         if (createBillingRunDto.getBillingRunTypeEnum() == null) {
             missingParameters.add("billingRunType");
         }
+        if (createBillingRunDto.getReferenceDate() == null) {
+            missingParameters.add("referenceDate");
+        }
 
         handleMissingParameters();
 

@@ -304,7 +304,8 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      * Reference date
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "reference_date")
+    @Column(name = "reference_date", nullable = false)
+    @NotNull
     private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
 
 

@@ -34,6 +34,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -170,7 +171,8 @@ public class BillingCycle extends BusinessCFEntity {
      * Reference date
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "reference_date")
+    @Column(name = "reference_date", nullable = false)
+    @NotNull
     private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
 
     public String getBillingTemplateName() {

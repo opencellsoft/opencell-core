@@ -51,6 +51,9 @@ public class BillingCycleApi extends BaseApi {
         if (postData.getDueDateDelay() == null && StringUtils.isBlank(postData.getDueDateDelayEL()) && StringUtils.isBlank(postData.getDueDateDelayELSpark())) {
             missingParameters.add("dueDateDelay, dueDateDelayEL or dueDateDelayELSpark");
         }
+        if (postData.getReferenceDate() == null) {
+            missingParameters.add("referenceDate");
+        }
 
         handleMissingParametersAndValidate(postData);
 

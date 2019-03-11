@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -30,7 +30,6 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingCycleService;
@@ -40,46 +39,43 @@ import org.meveo.service.billing.impl.BillingCycleService;
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
- * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
- *
  */
 @Named
 @ViewScoped
 public class BillingCycleBean extends CustomFieldBean<BillingCycle> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link BillingCycle} service. Extends {@link PersistenceService}
-	 * .
-	 */
-	@Inject
-	private BillingCycleService billingCycleService;
-	
+    /**
+     * Injected @{link BillingCycle} service. Extends {@link PersistenceService}
+     * .
+     */
+    @Inject
+    private BillingCycleService billingCycleService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public BillingCycleBean() {
-		super(BillingCycle.class);
-	}
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<BillingCycle> getPersistenceService() {
-		return billingCycleService;
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this
+     * bean for {@link BaseBean}.
+     */
+    public BillingCycleBean() {
+        super(BillingCycle.class);
+    }
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
-	
-	
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<BillingCycle> getPersistenceService() {
+        return billingCycleService;
+    }
+
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
+
+
     public List<BillingCycle> listSubscriptionBillingCycle() {
         List<BillingCycle> billingCycleSource = billingCycleService.list();
         List<BillingCycle> billingCycleTarget = new ArrayList<BillingCycle>();
@@ -91,7 +87,7 @@ public class BillingCycleBean extends CustomFieldBean<BillingCycle> {
         }
         return billingCycleTarget;
     }
-    
+
     public List<BillingCycle> listOrderBillingCycle() {
         List<BillingCycle> billingCycleSource = billingCycleService.list();
         List<BillingCycle> billingCycleTarget = new ArrayList<BillingCycle>();
@@ -103,7 +99,7 @@ public class BillingCycleBean extends CustomFieldBean<BillingCycle> {
         }
         return billingCycleTarget;
     }
-    
+
     public List<BillingCycle> listBillingAccountBillingCycle() {
         List<BillingCycle> billingCycleSource = billingCycleService.list();
         List<BillingCycle> billingCycleTarget = new ArrayList<BillingCycle>();
@@ -116,18 +112,4 @@ public class BillingCycleBean extends CustomFieldBean<BillingCycle> {
         return billingCycleTarget;
     }
 
-    /**
-     * Gets list of applicable reference dates
-     *
-     * @return A list of applicable reference dates
-     */
-    public List<ReferenceDateEnum> getReferenceDateList() {
-
-        List<ReferenceDateEnum> referenceDateList = new ArrayList();
-        referenceDateList.add(ReferenceDateEnum.TODAY);
-        referenceDateList.add(ReferenceDateEnum.NEXT_INVOICE_DATE);
-        referenceDateList.add(ReferenceDateEnum.LAST_TRANSACTION_DATE);
-        referenceDateList.add(ReferenceDateEnum.END_DATE);
-        return referenceDateList;
-    }
 }
