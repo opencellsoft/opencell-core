@@ -13,13 +13,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.BillingProcessTypesEnum;
+import org.meveo.model.billing.ReferenceDateEnum;
 
 /**
  * The Class CreateBillingRunDto.
  *
  * @author anasseh
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 
 @XmlRootElement(name = "CreateBillingRunDto")
@@ -48,6 +50,9 @@ public class CreateBillingRunDto extends BaseEntityDto {
 
     /** The last transaction date. */
     private Date lastTransactionDate;
+
+    /** The reference date. */
+    private ReferenceDateEnum referenceDate;
     
     /** Custom fields. */
     private CustomFieldsDto customFields;
@@ -166,7 +171,25 @@ public class CreateBillingRunDto extends BaseEntityDto {
     public void setLastTransactionDate(Date lastTransactionDate) {
         this.lastTransactionDate = lastTransactionDate;
     }
-    
+
+    /**
+     * Gets the referenceDate
+     *
+     * @return the referenceDate
+     */
+    public ReferenceDateEnum getReferenceDate() {
+        return referenceDate;
+    }
+
+    /**
+     * Sets the referenceDate.
+     *
+     * @param referenceDate the new referenceDate
+     */
+    public void setReferenceDate(ReferenceDateEnum referenceDate) {
+        this.referenceDate = referenceDate;
+    }
+
     /**
      * Gets the custom fields.
      *
@@ -187,8 +210,15 @@ public class CreateBillingRunDto extends BaseEntityDto {
 
     @Override
     public String toString() {
-        return "CreateBillingRunDto [billingCycleCode=" + billingCycleCode + ", billingRunTypeEnum=" + billingRunTypeEnum + ", startDate=" + startDate + ", endDate=" + endDate
-                + ", invoiceDate=" + invoiceDate + ", lastTransactionDate=" + lastTransactionDate + ", customFields=" + customFields + "]";
+        return "CreateBillingRunDto{" +
+                "billingCycleCode='" + billingCycleCode + '\'' +
+                ", billingRunTypeEnum=" + billingRunTypeEnum +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", invoiceDate=" + invoiceDate +
+                ", lastTransactionDate=" + lastTransactionDate +
+                ", referenceDate=" + referenceDate +
+                ", customFields=" + customFields +
+                '}';
     }
-
 }

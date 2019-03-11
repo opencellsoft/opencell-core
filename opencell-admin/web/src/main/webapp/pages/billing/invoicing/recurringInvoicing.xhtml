@@ -55,7 +55,9 @@
 						field="invoiceDate" />
 					<hftl:formField id="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}"
 						field="lastTransactionDate" />
-					
+                    <hftl:formField id="referenceDate"
+									label="#{messages['billingRun.referenceDate']}"
+									field="referenceDate" listValues="#{ReferenceDateEnum.values()}"/>
                 </p:tab>
                 <hftl:customFields backingBean="#{billingRunBean}" messagesId=":formId:messages"/>
             </p:tabView>
