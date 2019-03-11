@@ -21,6 +21,7 @@
             <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
             <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> <!-- Needed for ES -->
             <property name="hibernate.ejb.event.post-delete" value="org.meveo.jpa.event.DeleteEventListener" /> <!-- Needed for ES -->
+            <property name="hibernate.ejb.interceptor" value="org.meveo.interceptor.FieldAuditInterceptor" />
         </properties>
     </persistence-unit>
 
@@ -45,6 +46,7 @@
             <property name="hibernate.generate_statistics" value="false" />
             <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
             <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> <!-- Needed for ES -->
+            <property name="hibernate.ejb.interceptor" value="org.meveo.interceptor.FieldAuditInterceptor" />
         </properties>
     </persistence-unit>
 

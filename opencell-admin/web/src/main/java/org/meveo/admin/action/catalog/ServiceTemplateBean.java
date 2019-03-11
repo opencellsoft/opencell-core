@@ -290,7 +290,10 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             } else {
                 serviceChargeTemplateSubscription.setServiceTemplate(entity);
                 serviceChargeTemplateSubscriptionService.create(serviceChargeTemplateSubscription);
+
+                entity = getPersistenceService().refreshOrRetrieve(entity);
                 entity.getServiceSubscriptionCharges().add(serviceChargeTemplateSubscription);
+                serviceTemplateService.update(entity);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
         } catch (Exception e) {
@@ -343,7 +346,10 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             } else {
                 serviceChargeTemplateTermination.setServiceTemplate(entity);
                 serviceChargeTemplateTerminationService.create(serviceChargeTemplateTermination);
+                
+                entity = getPersistenceService().refreshOrRetrieve(entity);
                 entity.getServiceTerminationCharges().add(serviceChargeTemplateTermination);
+                serviceTemplateService.update(entity);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
         } catch (Exception e) {
@@ -397,7 +403,10 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             } else {
                 serviceChargeTemplateRecurring.setServiceTemplate(entity);
                 serviceChargeTemplateRecurringService.create(serviceChargeTemplateRecurring);
+                
+                entity = getPersistenceService().refreshOrRetrieve(entity);
                 entity.getServiceRecurringCharges().add(serviceChargeTemplateRecurring);
+                serviceTemplateService.update(entity);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
         } catch (Exception e) {
@@ -452,7 +461,10 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             } else {
                 serviceChargeTemplateUsage.setServiceTemplate(entity);
                 serviceChargeTemplateUsageService.create(serviceChargeTemplateUsage);
+               
+                entity = getPersistenceService().refreshOrRetrieve(entity);
                 entity.getServiceUsageCharges().add(serviceChargeTemplateUsage);
+                serviceTemplateService.update(entity);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
         } catch (Exception e) {

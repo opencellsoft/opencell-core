@@ -85,7 +85,7 @@ public class SepaRejectedTransactionsJob extends Job {
             ArrayList<String> fileExtensions = new ArrayList<String>();
             fileExtensions.add(ext);
 
-            File[] files = FileUtils.getFilesForParsing(inputDir, fileExtensions, prefix);
+            File[] files = FileUtils.listFiles(inputDir, fileExtensions, prefix);
             if (files == null || files.length == 0) {
                 result.setReport("No files!");
             } else {

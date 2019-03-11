@@ -251,8 +251,17 @@ public class CustomFieldValue implements Serializable, Cloneable {
     @JsonIgnore
     private IReferenceEntity entityReferenceValueForGUI;
 
+    /**
+     * Is it a newly entered period that was not saved to DB yet
+     */
     @JsonIgnore
     protected boolean isNewPeriod = false;
+
+    /**
+     * A lazy dataset of type LazyDataModel for list, map and matrix type value display for data entry in GUI to be used in p:dataTable component
+     */
+    @JsonIgnore
+    private Object datasetForGUI;
 
     /**
      * Custom field value instance
@@ -701,6 +710,20 @@ public class CustomFieldValue implements Serializable, Cloneable {
      */
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    /**
+     * @return A lazy dataset of type LazyDataModel for list, map and matrix type value display for data entry in GUI to be used in p:dataTable component
+     */
+    public Object getDatasetForGUI() {
+        return datasetForGUI;
+    }
+
+    /**
+     * @param datasetForGUI A lazy dataset of type LazyDataModel for list, map and matrix type value display for data entry in GUI to be used in p:dataTable component
+     */
+    public void setDatasetForGUI(Object datasetForGUI) {
+        this.datasetForGUI = datasetForGUI;
     }
 
     /**
@@ -1621,5 +1644,26 @@ public class CustomFieldValue implements Serializable, Cloneable {
             log.error("Failed to clone", e);
             return this;
         }
+    }
+
+    /**
+     * Check if List/Map/Matrix type field is excessive in size
+     * 
+     * @return True if List or Map value exceeds 20K rows
+     */
+    @SuppressWarnings("rawtypes")
+    public boolean isExcessiveInSize() {
+        List listValue = getListValue();
+
+        if (listValue != null && listValue.size() > 20000) {
+            return true;
+        }
+
+        Map mapValue = getMapValue();
+        if (mapValue != null && mapValue.size() > 20000) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -42,6 +42,13 @@ import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 
+/**
+ * The QuoteService class
+ *
+ * @author Andrius Karpavicius
+ * @author Mounir BAHIJE
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class QuoteService extends BusinessService<Quote> {
 
@@ -141,14 +148,21 @@ public class QuoteService extends BusinessService<Quote> {
                             }
                         }
 
-                        // Add recurring charges
-                        for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
-                            List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, quoteInvoiceInfo.getFromDate(),
-                                quoteInvoiceInfo.getToDate());
-                            if (walletOperations != null && walletOps != null) {
-                                walletOperations.addAll(walletOps);
-                            }
-                        }
+						// Add recurring charges
+						for (RecurringChargeInstance recurringChargeInstance : serviceInstance
+								.getRecurringChargeInstances()) {
+							// Why? Doing this overrides the quantity
+							// if (recurringChargeInstance != null) {
+							// recurringChargeInstance =
+							// recurringChargeInstanceService.findByCode(recurringChargeInstance.getCode());
+							// }
+							List<WalletOperation> walletOps = recurringChargeInstanceService
+									.applyRecurringChargeVirtual(recurringChargeInstance,
+											quoteInvoiceInfo.getFromDate(), quoteInvoiceInfo.getToDate());
+							if (walletOperations != null && walletOps != null) {
+								walletOperations.addAll(walletOps);
+							}
+						}
                     }
 
                     // Process CDRS
@@ -194,7 +208,10 @@ public class QuoteService extends BusinessService<Quote> {
             }            
             // Create rated transactions from wallet operations
             for (WalletOperation walletOperation : walletOperations) {
-                ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true));
+                RatedTransaction createdRatedTransaction = ratedTransactionService.createRatedTransaction(walletOperation, true);
+                createdRatedTransaction.setChargeInstance(null);
+                createdRatedTransaction.setSubscription(null);
+                ratedTransactions.add(createdRatedTransaction);
             }
             Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());
             File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
@@ -205,7 +222,7 @@ public class QuoteService extends BusinessService<Quote> {
             
             // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
             // invoice.setBillingAccount(null);
-            invoice.setRatedTransactions(null);
+            invoice.setRatedTransactions(ratedTransactions);
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
                 log.debug("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
                 // invoiceAgregate.setBillingAccount(null);
@@ -225,7 +242,7 @@ public class QuoteService extends BusinessService<Quote> {
                     // ((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
                     // ((SubCategoryInvoiceAgregate)invoiceAgregate).setCategoryInvoiceAgregate(null);
                     ((SubCategoryInvoiceAgregate) invoiceAgregate).setWallet(null);
-                    ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
+                    //((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
                 }
             }
             invoiceService.create(invoice);

@@ -18,15 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -34,6 +25,8 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -50,6 +43,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -57,6 +51,14 @@ import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
 import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
 import org.meveo.service.script.service.ServiceModelScriptService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * ServiceInstanceService.
@@ -66,7 +68,7 @@ import org.meveo.service.script.service.ServiceModelScriptService;
  * @author akadid abdelmounaim
  * @author Said Ramli
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
@@ -125,6 +127,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
+
+    @Inject
+    private AuditableFieldService auditableFieldService;
 
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
@@ -558,12 +563,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 if (applyAgreement && endAgreementDate != null && terminationDate.before(endAgreementDate)) {
                     if (endAgreementDate.before(nextChargeDate)) {
                         recurringChargeInstance.setTerminationDate(endAgreementDate);
-                        walletOperationService.applyReimbursment(recurringChargeInstance);
+                        walletOperationService.applyReimbursment(recurringChargeInstance,orderNumber);
                     }
 
                 } else if (terminationDate.before(storedNextChargeDate)) {
                     recurringChargeInstance.setTerminationDate(terminationDate);
-                    walletOperationService.applyReimbursment(recurringChargeInstance);
+                    walletOperationService.applyReimbursment(recurringChargeInstance,orderNumber);
                 }
 
             }
@@ -715,8 +720,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     @Override
     public void create(ServiceInstance entity) throws BusinessException {
         entity.updateSubscribedTillAndRenewalNotifyDates();
-
         super.create(entity);
+        //Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
+        auditableFieldService.createFieldHistory(entity, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "", String.valueOf(entity.getStatus()));
     }
 
     @Override
@@ -803,18 +809,19 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     /**
      * Get a list of service ids that are about to expire or have expired already
-     * 
+     *
+     * @param untillDate the subscription till date
      * @return A list of service ids
      */
-    public List<Long> getSubscriptionsToRenewOrNotify() {
+    public List<Long> getSubscriptionsToRenewOrNotify(Date untillDate) {
         List<Long> ids = getEntityManager().createNamedQuery("ServiceInstance.getExpired", Long.class) //
-            .setParameter("date", new Date()) //
+            .setParameter("date", untillDate) //
             .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
             .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
             .getResultList();
 
         ids.addAll(getEntityManager().createNamedQuery("ServiceInstance.getToNotifyExpiration", Long.class) //
-            .setParameter("date", new Date()) //
+            .setParameter("date", untillDate) //
             .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
             .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
             .getResultList());

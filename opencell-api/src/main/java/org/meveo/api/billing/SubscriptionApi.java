@@ -1,16 +1,5 @@
 package org.meveo.api.billing;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
@@ -113,6 +102,16 @@ import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
 
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
@@ -120,7 +119,8 @@ import org.meveo.service.order.OrderService;
  * @author Said Ramli
  * @author Mohamed El Youssoufi
  * @author Youssef IZEM
- * @lastModifiedVersion 5.4
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class SubscriptionApi extends BaseApi {
@@ -1214,16 +1214,6 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
-     * Convert subscription entity to dto
-     * 
-     * @param subscription instance of Subscription to be mapped
-     * @return instance of SubscriptionDto.
-     */
-    public SubscriptionDto subscriptionToDto(Subscription subscription) {
-        return this.subscriptionToDto(subscription, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
-    }
-
-    /**
      * Convert subscription dto to entity
      *
      * @param subscription instance of Subscription to be mapped
@@ -1231,18 +1221,6 @@ public class SubscriptionApi extends BaseApi {
      * @return instance of SubscriptionDto
      */
     public SubscriptionDto subscriptionToDto(Subscription subscription, CustomFieldInheritanceEnum inheritCF) {
-        return this.subscriptionToDto(subscription, inheritCF, null);
-    }
-
-    /**
-     * Convert subscription dto to entity
-     *
-     * @param subscription instance of Subscription to be mapped
-     * @param inheritCF choose whether CF values are inherited and/or merged
-     * @param oneShotChargeInstances instances of OneShotCharges to be mapped
-     * @return instance of SubscriptionDto
-     */
-    public SubscriptionDto subscriptionToDto(Subscription subscription, CustomFieldInheritanceEnum inheritCF, List<OneShotChargeInstance> oneShotChargeInstances) {
         SubscriptionDto dto = new SubscriptionDto(subscription);
         if (subscription.getAccessPoints() != null) {
             for (Access ac : subscription.getAccessPoints()) {
@@ -1261,7 +1239,7 @@ public class SubscriptionApi extends BaseApi {
                 CustomFieldsDto customFieldsDTO = null;
                 customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(serviceInstance, inheritCF);
 
-                serviceInstanceDto = new ServiceInstanceDto(serviceInstance, customFieldsDTO);
+                serviceInstanceDto = serviceInstanceToDto(serviceInstance, customFieldsDTO);
                 dto.getServices().addServiceInstance(serviceInstanceDto);
             }
         }
@@ -1276,8 +1254,21 @@ public class SubscriptionApi extends BaseApi {
         }
 
         dto.setAutoEndOfEngagement(subscription.getAutoEndOfEngagement());
-
+        setAuditableFieldsDto(subscription, dto);
         return dto;
+    }
+
+    /**
+     * Get the ServiceInstanceDto dto
+     *
+     * @param serviceInstance instance of ServiceInstance entity
+     * @param customFieldsDTO the custom field DTO
+     * @return the Service instance dto
+     */
+    private ServiceInstanceDto serviceInstanceToDto(ServiceInstance serviceInstance, CustomFieldsDto customFieldsDTO) {
+        ServiceInstanceDto serviceInstanceDto = new ServiceInstanceDto(serviceInstance, customFieldsDTO);
+        setAuditableFieldsDto(serviceInstance, serviceInstanceDto);
+        return serviceInstanceDto;
     }
 
     public void createOrUpdatePartialWithAccessAndServices(SubscriptionDto subscriptionDto, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
@@ -1678,7 +1669,7 @@ public class SubscriptionApi extends BaseApi {
 
         ServiceInstance serviceInstance = getSingleServiceInstance(serviceInstanceId, serviceInstanceCode, subscription);
         if (serviceInstance != null) {
-            result = new ServiceInstanceDto(serviceInstance, entityToDtoConverter.getCustomFieldsDTO(serviceInstance, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+            result = serviceInstanceToDto(serviceInstance, entityToDtoConverter.getCustomFieldsDTO(serviceInstance, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
         }
 
         return result;
@@ -1925,7 +1916,7 @@ public class SubscriptionApi extends BaseApi {
 
         List<ServiceInstance> serviceInstances = serviceInstanceService.listServiceInstance(subscriptionCode, serviceInstanceCode);
         if (serviceInstances != null && !serviceInstances.isEmpty()) {
-            result = serviceInstances.stream().map(p -> new ServiceInstanceDto(p, entityToDtoConverter.getCustomFieldsDTO(p, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)))
+            result = serviceInstances.stream().map(p -> serviceInstanceToDto(p, entityToDtoConverter.getCustomFieldsDTO(p, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)))
                 .collect(Collectors.toList());
         }
 

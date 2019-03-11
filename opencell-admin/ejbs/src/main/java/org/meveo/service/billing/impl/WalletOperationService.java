@@ -522,7 +522,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param chargeInstance Recurring charge instance
      * @throws BusinessException Business exception
      */
-    public void applyReimbursment(RecurringChargeInstance chargeInstance) throws BusinessException {
+    public void applyReimbursment(RecurringChargeInstance chargeInstance, String orderNumber) throws BusinessException {
         if (chargeInstance == null) {
             throw new IncorrectChargeInstanceException("charge instance is null");
         }
@@ -592,9 +592,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             Tax tax = invoiceSubCategoryCountryService.determineTax(chargeInstance, applyChargeOnDate);
 
             Date chargeDateForWO = isApplyInAdvance ? applyChargeOnDate : nextChargeDate;
+            String orderNumberForWO = (orderNumber != null)?orderNumber : chargeInstance.getOrderNumber();
             WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance, ApplicationTypeEnum.PRORATA_TERMINATION, chargeDateForWO,
                 chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, null, chargeInstance.getCurrency(), chargeInstance.getCountry().getId(), tax, null,
-                nextChargeDate, recurringChargeTemplate.getInvoiceSubCategory(), chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), chargeInstance.getOrderNumber(),
+                nextChargeDate, recurringChargeTemplate.getInvoiceSubCategory(), chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), orderNumberForWO,
                 applyChargeOnDate, nextChargeDate, ChargeApplicationModeEnum.REIMBURSMENT, false, false);
 
             chargeWalletOperation(chargeApplication);

@@ -78,7 +78,7 @@ public class MediationJob extends Job {
             if (!f.exists()) {
                 f.mkdirs();
             }
-            File[] files = FileUtils.getFilesForParsing(inputDir, cdrExtensions);
+            File[] files = FileUtils.listFiles(inputDir, cdrExtensions);
             if (files == null || files.length == 0) {
                 return;
             }

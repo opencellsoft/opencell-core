@@ -52,7 +52,7 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
         otherTransactionGeneralService.update(originalOTG);
         entity.setVentilationDate(new Date());
         ParamBean paramBean = paramBeanFactory.getInstance();
-        OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.411100.cr", "411100_CR"));
+        OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.arc", "ARC"));
         entity.setAccountOperation(createPayment(entity, occTemplate)); //// Account operation Credit
         entity.setNewOT(createVentilatedOTG(entity));
         create(entity);
@@ -67,7 +67,7 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
 
         createUnventilatedOTG(paymentVentilation);
         ParamBean paramBean = paramBeanFactory.getInstance();
-        OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.411100.dr", "411100_DR"));
+        OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.ard", "ARD"));
         Payment p = createPayment(paymentVentilation, occTemplate); //// Account operation Debit}
         List<Long> operationIds = new ArrayList<Long>();
         operationIds.add(p.getId());
@@ -109,14 +109,14 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
     private OtherTransactionGeneral createVentilatedOTG(PaymentVentilation entity) throws BusinessException {
         ParamBean paramBean = paramBeanFactory.getInstance();
         BigDecimal ventilationAmout = entity.getVentilationAmount();
-        OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.rec.dr", "PAY_REC_DR"));
+        OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.otd_suspense_account", "OTD_Suspense_Account"));
         return createOTG(occTemplate, entity, ventilationAmout, ventilationAmout, BigDecimal.ZERO, MatchingStatusEnum.L);
     }
 
     private OtherTransactionGeneral createUnventilatedOTG(PaymentVentilation paymentVentilation) throws BusinessException {
         ParamBean paramBean = paramBeanFactory.getInstance();
         BigDecimal ventilationAmout = paymentVentilation.getVentilationAmount();
-        OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.rec.cr", "PAY_REC_CR"));
+        OCCTemplate occTemplate = getOCCTemplate(paramBean.getProperty("occ.payment.otc.suspense.account", "OTC_Suspense_Account"));
         return createOTG(occTemplate, paymentVentilation, ventilationAmout, BigDecimal.ZERO, ventilationAmout, MatchingStatusEnum.O);
 
     }
