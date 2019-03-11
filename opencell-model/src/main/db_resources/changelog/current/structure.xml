@@ -1799,4 +1799,11 @@ $$ LANGUAGE plpgsql;
             <column name="rejected_file_name" type="varchar(1000)" />
         </addColumn>
     </changeSet>
+
+    <changeSet id="#3310_20190126" author="AbdellatifBARI">
+        <addColumn tableName="billing_billing_run">
+             <column name="reference_date" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>

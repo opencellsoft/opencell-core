@@ -46,6 +46,8 @@ import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * Billing cycle
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @Cacheable
@@ -246,7 +248,7 @@ public class BillingCycle extends BusinessCFEntity {
         Date result = null;
         if (calendar != null) {
             calendar.setInitDate(subscriptionDate);
-            result = calendar.nextCalendarDate(date);
+            result = calendar.nextCalendarDate(date != null ? date : new Date());
         }
         return result;
     }

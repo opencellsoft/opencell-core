@@ -136,6 +136,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author Said Ramli
  * @author Khalid HORRI
  * @author Mounir BAHIJE
+ * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
 @Stateless
@@ -2048,10 +2049,34 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return billingTemplateName;
     }
 
+    private Date getReferenceDate(Invoice invoice) {
+        BillingRun billingRun = invoice.getBillingRun();
+        Date referenceDate = null;
+        if (billingRun != null && billingRun.getReferenceDate() != null) {
+            switch (billingRun.getReferenceDate()) {
+                case TODAY:
+                    referenceDate = new Date();
+                    break;
+                case NEXT_INVOICE_DATE:
+                    referenceDate = invoice.getBillingAccount() != null ? invoice.getBillingAccount().getNextInvoiceDate() : null;
+                    break;
+                case LAST_TRANSACTION_DATE:
+                    referenceDate = billingRun.getLastTransactionDate();
+                    break;
+                case END_DATE:
+                    referenceDate = billingRun.getEndDate();
+                    break;
+                default:
+                    break;
+            }
+        }
+        return referenceDate;
+    }
+
     /**
      * Assign invoice number and increment BA invoice date.
      *
-     * @param invoiceId invoice id
+     * @param invoiceId            invoice id
      * @param invoicesToNumberInfo instance of InvoicesToNumberInfo
      * @throws BusinessException business exception
      */
@@ -2068,7 +2093,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (initCalendarDate == null) {
             initCalendarDate = billingAccount.getAuditable().getCreated();
         }
-        Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate);
+
+        Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate, getReferenceDate(invoice));
         billingAccount.setNextInvoiceDate(nextCalendarDate);
         billingAccount.updateAudit(currentUser);
         invoice = update(invoice);

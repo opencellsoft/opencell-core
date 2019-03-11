@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +40,7 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
+import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -316,4 +318,20 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
     public void setLaunchInvoicingRejectedBA(boolean launchInvoicingRejectedBA) {
         this.launchInvoicingRejectedBA = launchInvoicingRejectedBA;
     }
+
+    /**
+     * Gets list of applicable reference dates
+     *
+     * @return A list of applicable reference dates
+     */
+    public List<ReferenceDateEnum> getReferenceDateList() {
+
+        List<ReferenceDateEnum> referenceDateList = new ArrayList();
+        referenceDateList.add(ReferenceDateEnum.TODAY);
+        referenceDateList.add(ReferenceDateEnum.NEXT_INVOICE_DATE);
+        referenceDateList.add(ReferenceDateEnum.LAST_TRANSACTION_DATE);
+        referenceDateList.add(ReferenceDateEnum.END_DATE);
+        return referenceDateList;
+    }
+
 }
