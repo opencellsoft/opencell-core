@@ -1,13 +1,24 @@
 package org.meveo.model.billing;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.CustomDateSerializer;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
-
-import javax.persistence.*;
-
-import org.hibernate.annotations.Type;
 
 /**
  * Embeddable set of renewal fields. Use in ServiceTemplate and Subscription.
@@ -19,6 +30,7 @@ import org.hibernate.annotations.Type;
  * @lastModifiedVersion 7.0
  */
 @Embeddable
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SubscriptionRenewal implements Serializable {
 
     private static final long serialVersionUID = 7391688555444183997L;
@@ -104,6 +116,7 @@ public class SubscriptionRenewal implements Serializable {
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "auto_renew_date")
+    @JsonSerialize(using = CustomDateSerializer.class)
     private Date autoRenewDate;
     
     /**
@@ -124,6 +137,7 @@ public class SubscriptionRenewal implements Serializable {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auto_termin_reason_id")
+    @JsonUnwrapped()
     private SubscriptionTerminationReason terminationReason;
 
     /**

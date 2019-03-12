@@ -94,7 +94,7 @@
         </delete>
     </changeSet>
 
-    <changeSet id="#3644_04102018" author="AbdellatifBari">
+    <changeSet id="#3644_20181004" author="AbdellatifBari">
         <addColumn tableName="crm_custom_field_tmpl">
             <column name="display_format" type="varchar(80)" />
         </addColumn>
@@ -758,7 +758,8 @@
         </addColumn>
     </changeSet>
     
-    <changeSet id="#3543_27092018" author="AbdellatifBari">
+    <changeSet id="#3543_20180927" author="AbdellatifBari">
+
         <addColumn tableName="cat_serv_rec_charge_template">
             <column name="counter_template_id" type="bigint" />
         </addColumn>
@@ -1875,6 +1876,18 @@ $$ LANGUAGE plpgsql;
         </addColumn>
         <dropNotNullConstraint tableName="billing_discount_plan_instance" columnName="billing_account_id" columnDataType="bigint"/>
         <addForeignKeyConstraint constraintName="billing_discount_plan_instance_bs_fk" referencedTableName="billing_subscription" baseColumnNames="subscription_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id" />
-
     </changeSet>
+
+    <changeSet id="#3108_20190213_1" author="AbdellatifBari">
+        <addColumn tableName="billing_subscription">
+            <column name="initial_renewal" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#3108_20190213_2" author="AbdellatifBari">
+        <addColumn tableName="billing_service_instance">
+            <column name="initial_renewal" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

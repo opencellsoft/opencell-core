@@ -271,6 +271,12 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity {
     private OrderItemActionEnum orderItemAction;
 
     /**
+     * Initial service renewal configuration
+     */
+    @Column(name = "initial_renewal")
+    private String initialServiceRenewal;
+
+    /**
      * Gets the end agreement date.
      *
      * @return the end agreement date
@@ -1008,4 +1014,21 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity {
         this.paymentDayInMonthPS = paymentDayInMonthPS;
     }
 
+    /**
+     * Gets the initial service renewal
+     *
+     * @return the initial service renewal
+     */
+    public String getInitialServiceRenewal() {
+        return initialServiceRenewal;
+    }
+
+    /**
+     * Sets the initial service renewal.
+     *
+     * @param initialServiceRenewal the new initial service renewal
+     */
+    public void setInitialServiceRenewal(String initialServiceRenewal) {
+        this.initialServiceRenewal = initialServiceRenewal;
+    }
 }

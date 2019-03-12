@@ -16,7 +16,7 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.util.PersistenceUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.slf4j.Logger;
 
 /**
@@ -24,8 +24,8 @@ import org.slf4j.Logger;
  * 
  * @author Andrius Karpavicius
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class TenantCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
