@@ -36,7 +36,6 @@ import org.apache.commons.beanutils.BeanUtilsBean;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
-import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.action.order.OfferItemInfo;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -71,7 +70,7 @@ import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.quote.QuoteService;
 import org.meveo.service.wf.WorkflowService;
-import org.meveo.util.PersistenceUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -87,7 +86,8 @@ import org.tmf.dsmapi.quote.ProductQuoteItem;
  * view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Named
 @ViewScoped

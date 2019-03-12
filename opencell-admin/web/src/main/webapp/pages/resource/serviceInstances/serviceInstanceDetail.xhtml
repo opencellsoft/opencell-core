@@ -43,6 +43,13 @@
             <p:tabView id="tabView" activeIndex="#{serviceInstanceBean.activeTab}">
                 <p:tab title="#{messages['commons.tab.information']}">
 
+                    <h:panelGroup layout="block" styleClass="clearLeft">
+						<h:outputFormat styleClass="note" rendered="#{serviceInstanceBean.isTerminatedService()}"
+									  value="#{messages['serviceInstance.serviceTerminationMessage']}">
+							<f:param value="#{serviceInstanceBean.entity.subscribedTillDate}"/>
+						</h:outputFormat>
+					</h:panelGroup>
+
                     <hftl:formField id="serviceSelectedId" label="#{messages['serviceInstance.code']}" field="code" valueLabelField="code" required="true" popup="false" allowEdit="true" />
 
                     <hftl:formField id="subscriptionSelectedId" label="#{messages['serviceInstance.subscription']}" field="subscription" valueLabelField="code" required="true"
@@ -181,6 +188,15 @@
 						value="#{messages['serviceInstance.suspendButton']}" ajax="false"
 						onclick="if(confirm('#{messages['confirmationMessage.confirmSuspension']}')){return true;}else{return false;}"
 						disabled="#{serviceInstanceBean.entity.status.toString() != 'ACTIVE'}" />
+
+					<p:commandButton action="#{serviceInstanceBean.cancelServiceTermination}"
+									 value="#{messages['button.cancelTerminationButton']}"
+									 update=":formId"
+									 rendered="#{serviceInstanceBean.isTerminatedService()}">
+						<p:confirm header="#{messages['commons.confirmationHeader']}"
+								   message="#{messages['confirmationMessage.cancelServiceTermination']}"
+								   icon="ui-icon-alert" />
+					</p:commandButton>
 				</h:panelGroup>
 			</ui:define>
 		</hftl:formPanel>

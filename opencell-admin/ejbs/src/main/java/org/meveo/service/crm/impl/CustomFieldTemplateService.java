@@ -52,7 +52,7 @@ import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableCreatorService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.EntityCustomizationUtils;
-import org.meveo.util.PersistenceUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +65,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 /**
  * @author Wassim Drira
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
- * 
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class CustomFieldTemplateService extends BusinessService<CustomFieldTemplate> {

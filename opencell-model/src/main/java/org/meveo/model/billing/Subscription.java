@@ -38,7 +38,6 @@ import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
@@ -360,6 +359,11 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @Transient
     private BigDecimal totalInvoicingAmountTax;
 
+    /**
+     * Initial subscription renewal configuration
+     */
+    @Column(name = "initial_renewal")
+    private String initialSubscriptionRenewal;
 
     public Date getEndAgreementDate() {
         return endAgreementDate;
@@ -902,6 +906,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     public void setElectronicBilling(boolean electronicBilling) {
         this.electronicBilling = electronicBilling;
     }
+
     public List<DiscountPlanInstance> getDiscountPlanInstances() {
         return discountPlanInstances;
     }
@@ -929,5 +934,23 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     public void setDiscountPlan(DiscountPlan discountPlan) {
         this.discountPlan = discountPlan;
+    }
+
+    /**
+     * Gets the initial subscription renewal
+     *
+     * @return the initial subscription renewal
+     */
+    public String getInitialSubscriptionRenewal() {
+        return initialSubscriptionRenewal;
+    }
+
+    /**
+     * Sets the initial subscription renewal.
+     *
+     * @param initialSubscriptionRenewal the new initial subscription renewal
+     */
+    public void setInitialSubscriptionRenewal(String initialSubscriptionRenewal) {
+        this.initialSubscriptionRenewal = initialSubscriptionRenewal;
     }
 }
