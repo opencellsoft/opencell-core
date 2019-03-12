@@ -13,12 +13,15 @@ import org.meveo.api.dto.response.account.ProviderContactsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.ProviderContactRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.crm.ProviderContact;
 
 /**
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
+ * @author Abdellatif BARI
  * @since Jun 3, 2016 4:40:19 AM
- *
+ * @lastModifiedVersion 7.0
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -32,7 +35,10 @@ public class ProviderContactRsImpl extends BaseRs implements ProviderContactRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerContactApi.create(providerContactDto);
+            ProviderContact providerContact = providerContactApi.create(providerContactDto);
+            if (StringUtils.isBlank(providerContactDto.getCode())) {
+                result.setEntityCode(providerContact.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -96,7 +102,10 @@ public class ProviderContactRsImpl extends BaseRs implements ProviderContactRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerContactApi.createOrUpdate(providerContactDto);
+            ProviderContact providerContact = providerContactApi.createOrUpdate(providerContactDto);
+            if (StringUtils.isBlank(providerContactDto.getCode())) {
+                result.setEntityCode(providerContact.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

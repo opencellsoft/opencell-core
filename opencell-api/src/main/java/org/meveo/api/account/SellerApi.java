@@ -41,6 +41,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.CountryService;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.InvoiceSequenceService;
@@ -80,8 +81,12 @@ public class SellerApi extends BaseApi {
     @Inject
     private CountryService countryService;
 
-    public void create(SellerDto postData) throws MeveoApiException, BusinessException {
-        create(postData, true);
+    @Inject
+    private CustomGenericEntityCodeService customGenericEntityCodeService;
+
+
+    public Seller create(SellerDto postData) throws MeveoApiException, BusinessException {
+        return create(postData, true);
     }
 
     public Seller create(SellerDto postData, boolean checkCustomField) throws MeveoApiException, BusinessException {
@@ -103,10 +108,7 @@ public class SellerApi extends BaseApi {
      */
     public Seller create(SellerDto postData, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
-        handleMissingParametersAndValidate(postData);
+        handleMissingParameters(postData);
 
         if (sellerService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Seller.class, postData.getCode());
@@ -114,7 +116,11 @@ public class SellerApi extends BaseApi {
 
         Seller seller = new Seller();
         seller = this.sellerDtoToSeller(seller, postData);
- 
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            seller.setCode(customGenericEntityCodeService.getGenericEntityCode(seller));
+        }
+
         if (postData.getInvoiceTypeSequences() != null) {
             for (Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet()) {
                 InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey());
@@ -262,6 +268,9 @@ public class SellerApi extends BaseApi {
      *
      * @param seller the seller
      * @param contactInformationDto the contact information dto
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     private void updateContactInformation(Seller seller, ContactInformationDto contactInformationDto) {
         if (contactInformationDto != null) {
@@ -293,8 +302,8 @@ public class SellerApi extends BaseApi {
         }
     }
 
-    public void update(SellerDto postData) throws MeveoApiException, BusinessException {
-        update(postData, true);
+    public Seller update(SellerDto postData) throws MeveoApiException, BusinessException {
+        return update(postData, true);
     }
 
     public Seller update(SellerDto postData, boolean checkCustomField) throws MeveoApiException, BusinessException {
@@ -533,16 +542,17 @@ public class SellerApi extends BaseApi {
      * creates or updates seller based on the seller code. If seller is not existing based on the seller code, it will be created else, will be updated.
      * 
      * @param postData posted data to API
-     * 
+     * @return the seller
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
-    public void createOrUpdate(SellerDto postData) throws MeveoApiException, BusinessException {
+    public Seller createOrUpdate(SellerDto postData) throws MeveoApiException, BusinessException {
         Seller seller = sellerService.findByCode(postData.getCode());
         if (seller == null) {
-            create(postData);
+            seller = create(postData);
         } else {
-            update(postData);
+            seller = update(postData);
         }
+        return seller;
     }
 }

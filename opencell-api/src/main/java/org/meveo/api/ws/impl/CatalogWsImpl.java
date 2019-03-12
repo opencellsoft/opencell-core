@@ -81,15 +81,15 @@ import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.ws.CatalogWs;
-import org.meveo.model.catalog.BusinessOfferModel;
-import org.meveo.model.catalog.BusinessProductModel;
-import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.*;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
 
 /**
  * @author Edward P. Legaspi(edward.legaspi@manaty.net)
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @WebService(serviceName = "CatalogWs", endpointInterface = "org.meveo.api.ws.CatalogWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -209,7 +209,10 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateApi.create(postData);
+            OfferTemplate offerTemplate = offerTemplateApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(offerTemplate.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -630,7 +633,10 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateApi.createOrUpdate(postData);
+            OfferTemplate offerTemplate = offerTemplateApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(offerTemplate.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1111,7 +1117,10 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            productTemplateApi.createOrUpdate(postData);
+            ProductTemplate productTemplate = productTemplateApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(productTemplate.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1193,7 +1202,10 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            productTemplateApi.create(postData);
+            ProductTemplate productTemplate = productTemplateApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(productTemplate.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1381,7 +1393,10 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            bundleTemplateApi.createOrUpdate(postData);
+            BundleTemplate bundleTemplate = bundleTemplateApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(bundleTemplate.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1394,7 +1409,10 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            bundleTemplateApi.create(postData);
+            BundleTemplate bundleTemplate = bundleTemplateApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(bundleTemplate.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

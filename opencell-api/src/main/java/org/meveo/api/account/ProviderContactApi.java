@@ -22,10 +22,10 @@ import org.meveo.service.crm.impl.ProviderContactService;
 /**
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
- * 
- * @lastModifiedVersion 5.0
- * @since Jun 3, 2016 1:28:17 AM
  *
+ * @since Jun 3, 2016 1:28:17 AM
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class ProviderContactApi extends BaseApi {
@@ -36,10 +36,7 @@ public class ProviderContactApi extends BaseApi {
     @Inject
     private  CountryService countryService;
 
-    public void create(ProviderContactDto providerContactDto) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(providerContactDto.getCode())) {
-            missingParameters.add("code");
-        }
+    public ProviderContact create(ProviderContactDto providerContactDto) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(providerContactDto.getDescription())) {
             missingParameters.add("description");
         }
@@ -80,9 +77,10 @@ public class ProviderContactApi extends BaseApi {
             address.setState(addressDto.getState());
         }
         providerContactService.create(providerContact);
+        return providerContact;
     }
 
-    public void update(ProviderContactDto providerContactDto) throws MeveoApiException, BusinessException {
+    public ProviderContact update(ProviderContactDto providerContactDto) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(providerContactDto.getCode())) {
             missingParameters.add("code");
         }
@@ -124,6 +122,7 @@ public class ProviderContactApi extends BaseApi {
             address.setState(addressDto.getState());
         }
         providerContactService.update(providerContact);
+        return providerContact;
     }
 
     public ProviderContactDto find(String providerContactCode) throws MeveoApiException {
@@ -162,12 +161,13 @@ public class ProviderContactApi extends BaseApi {
         return result;
     }
 
-    public void createOrUpdate(ProviderContactDto providerContactDto) throws MeveoApiException, BusinessException {
+    public ProviderContact createOrUpdate(ProviderContactDto providerContactDto) throws MeveoApiException, BusinessException {
         ProviderContact providerContact = providerContactService.findByCode(providerContactDto.getCode());
         if (providerContact == null) {
-            create(providerContactDto);
+            providerContact = create(providerContactDto);
         } else {
-            update(providerContactDto);
+            providerContact = update(providerContactDto);
         }
+        return providerContact;
     }
 }

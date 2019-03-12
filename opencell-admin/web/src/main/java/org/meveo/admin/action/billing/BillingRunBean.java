@@ -250,7 +250,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
 
     public String rerateConfirmedInvoicing() {
         try {
-            billingRunService.retateBillingRunTransactions(entity);
+            billingRunService.rerateBillingRunTransactions(entity);
             return cancelConfirmedInvoicing();
 
         } catch (Exception e) {
@@ -262,7 +262,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
 
     public String rerateInvoicing() {
         try {
-            billingRunService.retateBillingRunTransactions(entity);
+            billingRunService.rerateBillingRunTransactions(entity);
             return cancelInvoicing();
 
         } catch (Exception e) {
