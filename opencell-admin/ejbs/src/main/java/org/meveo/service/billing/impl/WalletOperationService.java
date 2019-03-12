@@ -85,11 +85,12 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 /**
  * Service class for WalletOperation entity
  * 
+ * @author Edward P. Legaspi
  * @author Wassim Drira
  * @author Phung tien lan
  * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class WalletOperationService extends BusinessService<WalletOperation> {
@@ -1063,8 +1064,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         try {
             ids = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceIds").setParameter("invoicingDate", invoicingDate).getResultList();
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("listToInvoice error={} ", e.getMessage());
+            log.error("listToInvoice error={}", e.getMessage());
         }
         return ids;
     }
@@ -1314,20 +1314,31 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         return result;
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public int updateToRerate(List<Long> walletIdList) {
-        int walletsOpToRerate = 0;
-        @SuppressWarnings("unchecked")
-        List<Long> ratedTransactionsBilled = (List<Long>) getEntityManager().createNamedQuery("RatedTransaction.getRatedTransactionsBilled")
-            .setParameter("walletIdList", walletIdList).getResultList();
-        walletIdList.removeAll(ratedTransactionsBilled);
-        if (walletIdList.size() > 0 && !walletIdList.isEmpty()) {
-            walletsOpToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
-            getEntityManager().createNamedQuery("RatedTransaction.setStatusToCanceled").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
-        }
-        getEntityManager().flush();
-        return walletsOpToRerate;
-    }
+	@SuppressWarnings("unchecked")
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public int updateToRerate(List<Long> walletIdList) {
+		int walletsOpToRerate = 0;
+		@SuppressWarnings("unchecked")
+		List<Long> ratedTransactionsBilled = (List<Long>) getEntityManager()
+				.createNamedQuery("WalletOperation.getRatedTransactionsBilled")
+				.setParameter("walletIdList", walletIdList).getResultList();
+		walletIdList.removeAll(ratedTransactionsBilled);
+		if (!walletIdList.isEmpty()) {
+			// set all rt.wos to open and ratedTx.id=null
+			getEntityManager().createNamedQuery("WalletOperation.setStatusToOpen")
+					.setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
+
+			// set selected wo to rerate
+			walletsOpToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate")
+					.setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
+
+			// cancelled selected rts
+			getEntityManager().createNamedQuery("RatedTransaction.setStatusToCanceled")
+					.setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
+		}
+		getEntityManager().flush();
+		return walletsOpToRerate;
+	}
 
     @SuppressWarnings("unchecked")
     public List<Long> listToRerate() {
@@ -1483,5 +1494,33 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         return result;
     }
 
+	public List<AggregatedWalletOperation> listToInvoiceIdsWithGrouping(Date invoicingDate,
+			RatedTransactionsJobAggregationSetting aggregationSettings) {
+		
+		WalletOperationAggregatorQueryBuilder woa = new WalletOperationAggregatorQueryBuilder(aggregationSettings);
+		
+		String strQuery = woa.getGroupQuery();
+		log.debug("aggregated query={}", strQuery);
+
+		Query query = getEntityManager().createQuery(strQuery);
+		query.setParameter("invoicingDate", invoicingDate);
+		
+		// get the aggregated data
+		@SuppressWarnings("unchecked")
+		List<AggregatedWalletOperation> result = (List<AggregatedWalletOperation>) query.getResultList();
+		
+		return result;
+	}
+	
+	public void updateAggregatedWalletOperations(Date invoicingDate) {
+		// batch update
+		String strQuery = "UPDATE " + WalletOperation.class.getSimpleName() + " o SET status='"
+				+ WalletOperationStatusEnum.TREATED + "'" //
+				+ " WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate) AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN";
+		Query query = getEntityManager().createQuery(strQuery);
+		query.setParameter("invoicingDate", invoicingDate);
+		int affectedRecords = query.executeUpdate();
+		log.debug("updated record wo count={}", affectedRecords);
+	}
     
 }

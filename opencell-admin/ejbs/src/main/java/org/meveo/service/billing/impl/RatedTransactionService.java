@@ -98,6 +98,15 @@ import org.meveo.service.script.billing.TaxScriptService;
  */
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
+	
+	@Inject
+	private ServiceInstanceService serviceInstanceService;
+
+	@Inject
+	private ChargeInstanceService<ChargeInstance> chargeInstanceService;
+
+	@Inject
+	private UserAccountService userAccountService;
 
     @Inject
     private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
@@ -930,6 +939,178 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             createRatedTransaction(walletOp, false);
         }
     }
+    
+    /**
+	 * Create a {@link RatedTransaction} from a group of wallet operations.
+	 * 
+	 * @param aggregatedWo
+	 *            aggregated wallet operations
+	 * @param aggregatedSettings
+	 *            aggregation settings of wallet operations
+	 * @param invoicingDate
+	 *            the invoicing date
+	 * @return created {@link RatedTransaction}
+	 * @throws BusinessException
+	 *             Exception when RT is not create successfully
+	 * @see WalletOperation
+	 */
+	public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo,
+			RatedTransactionsJobAggregationSetting aggregatedSettings, Date invoicingDate) throws BusinessException {
+		return createRatedTransaction(aggregatedWo, aggregatedSettings, invoicingDate, false);
+	}
+
+	/**
+	 * 
+	 * @param aggregatedWo
+	 *            aggregated wallet operations
+	 * @param aggregationSettings
+	 *            aggregation settings of wallet operations
+	 * @param isVirtual
+	 *            is virtual
+	 * @param invoicingDate
+	 *            the invoicing date
+	 * @return {@link RatedTransaction}
+	 * @throws BusinessException
+	 *             Exception when RT is not create successfully
+	 */
+	public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo,
+			RatedTransactionsJobAggregationSetting aggregationSettings, Date invoicingDate, boolean isVirtual)
+			throws BusinessException {
+		RatedTransaction ratedTransaction = new RatedTransaction();
+
+		Seller seller = null;
+		BillingAccount ba = null;
+		UserAccount ua = null;
+		Subscription sub = null;
+		ServiceInstance si = null;
+		ChargeInstance ci = null;
+		String code = null;
+		String description = null;
+		InvoiceSubCategory isc = null;
+
+		Calendar cal = Calendar.getInstance();
+		if (aggregationSettings.isAggregateByDay()) {
+			cal.set(Calendar.YEAR, aggregatedWo.getYear(), aggregatedWo.getMonth(), aggregatedWo.getDay(), 0, 0);
+			ratedTransaction.setUsageDate(cal.getTime());
+		} else {
+			cal.set(Calendar.YEAR, aggregatedWo.getYear(), aggregatedWo.getMonth(), 1, 0, 0);
+			ratedTransaction.setUsageDate(cal.getTime());
+
+		}
+
+		isc = invoiceSubCategoryService.refreshOrRetrieve(aggregatedWo.getInvoiceSubCategory());
+
+		switch (aggregationSettings.getAggregationLevel()) {
+		case BA:
+			ba = billingAccountService.findById(aggregatedWo.getIdAsLong());
+			seller = ba.getCustomerAccount().getCustomer().getSeller();
+			code = isc.getCode();
+			description = isc.getDescription();
+			break;
+
+		case UA:
+			ua = userAccountService.findById(aggregatedWo.getIdAsLong());
+			ba = ua.getBillingAccount();
+			seller = ba.getCustomerAccount().getCustomer().getSeller();
+			code = isc.getCode();
+			description = isc.getDescription();
+			break;
+
+		case SUB:
+			sub = subscriptionService.findById(aggregatedWo.getIdAsLong());
+			ua = sub.getUserAccount();
+			ba = ua.getBillingAccount();
+			seller = sub.getSeller();
+			code = isc.getCode();
+			description = isc.getDescription();
+			break;
+
+		case SI:
+			si = serviceInstanceService.findById(aggregatedWo.getIdAsLong());
+			sub = si.getSubscription();
+			ua = sub.getUserAccount();
+			ba = ua.getBillingAccount();
+			seller = sub.getSeller();
+			code = si.getCode();
+			description = si.getDescription();
+			break;
+
+		case CI:
+			ci = (ChargeInstance) chargeInstanceService.findById(aggregatedWo.getIdAsLong());
+			sub = ci.getSubscription();
+			ua = sub.getUserAccount();
+			ba = ua.getBillingAccount();
+			seller = sub.getSeller();
+			code = ci.getCode();
+			description = ci.getDescription();
+			break;
+
+		case DESC:
+			ci = (ChargeInstance) chargeInstanceService.findById(aggregatedWo.getIdAsLong());
+			sub = ci.getSubscription();
+			ua = sub.getUserAccount();
+			ba = ua.getBillingAccount();
+			seller = sub.getSeller();
+			code = ci.getCode();
+			description = aggregatedWo.getComputedDescription();
+			break;
+
+		default:
+			ba = billingAccountService.findById(aggregatedWo.getIdAsLong());
+			seller = ba.getCustomerAccount().getCustomer().getSeller();
+		}
+
+		if(aggregationSettings.isAggregateByOrder()) {
+			ratedTransaction.setOrderNumber(aggregatedWo.getOrderNumber());
+		}
+		if (aggregationSettings.isAggregateByParam1()) {
+			ratedTransaction.setParameter1(aggregatedWo.getParameter1());
+		}
+		if (aggregationSettings.isAggregateByParam2()) {
+			ratedTransaction.setParameter2(aggregatedWo.getParameter2());
+		}
+		if (aggregationSettings.isAggregateByParam3()) {
+			ratedTransaction.setParameter3(aggregatedWo.getParameter3());
+		}
+		if (aggregationSettings.isAggregateByExtraParam()) {
+			ratedTransaction.setParameterExtra(aggregatedWo.getParameterExtra());
+		}
+
+		Tax tax = taxService.refreshOrRetrieve(aggregatedWo.getTax());
+
+		ratedTransaction.setCode(code);
+		ratedTransaction.setDescription(description);
+		ratedTransaction.setTax(tax);
+		ratedTransaction.setTaxPercent(tax.getPercent());
+		ratedTransaction.setInvoiceSubCategory(isc);
+		ratedTransaction.setSeller(seller);
+		ratedTransaction.setBillingAccount(ba);
+		ratedTransaction.setUserAccount(ua);
+		ratedTransaction.setSubscription(sub);
+		ratedTransaction.setChargeInstance(ci);
+		ratedTransaction.setAmountWithTax(aggregatedWo.getAmountWithTax());
+		ratedTransaction.setAmountTax(aggregatedWo.getAmountTax());
+		ratedTransaction.setAmountWithoutTax(aggregatedWo.getAmountWithoutTax());
+		ratedTransaction.setUnitAmountWithTax(aggregatedWo.getUnitAmountWithTax());
+		ratedTransaction.setUnitAmountTax(aggregatedWo.getUnitAmountTax());
+		ratedTransaction.setUnitAmountWithoutTax(aggregatedWo.getUnitAmountWithoutTax());
+		ratedTransaction.setQuantity(aggregatedWo.getQuantity());
+
+		if (!isVirtual) {
+			create(ratedTransaction);
+
+			WalletOperationAggregatorQueryBuilder woa = new WalletOperationAggregatorQueryBuilder(aggregationSettings);
+			String strQuery = woa.listWoQuery(aggregatedWo.getIdAsLong());
+			Query query = getEntityManager().createQuery(strQuery);
+			query.setParameter("invoicingDate", invoicingDate);
+			List<WalletOperation> walletOps = (List<WalletOperation>) query.getResultList();
+			for (WalletOperation tempWo : walletOps) {
+				tempWo.setRatedTransaction(ratedTransaction);
+			}
+		}
+
+		return ratedTransaction;
+	}
 
     /**
      * @param invoice invoice
