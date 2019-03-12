@@ -23,8 +23,12 @@ import org.meveo.service.notification.EmailNotificationService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
+ * The CRUD Api for EmailNotification Entity.
+ *
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNotificationDto> {
 
@@ -40,9 +44,6 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
     @Override
     public EmailNotification create(EmailNotificationDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(postData.getClassNameFilter())) {
             missingParameters.add("classNameFilter");
         }

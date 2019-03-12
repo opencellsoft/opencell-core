@@ -21,7 +21,10 @@ import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
 import org.meveo.service.script.ScriptInstanceService;
-
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class RevenueRecognitionRuleApi extends BaseCrudApi<RevenueRecognitionRule, RevenueRecognitionRuleDto> {
 
@@ -36,9 +39,6 @@ public class RevenueRecognitionRuleApi extends BaseCrudApi<RevenueRecognitionRul
 
     @Override
     public RevenueRecognitionRule create(RevenueRecognitionRuleDto postData) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
 
         if (StringUtils.isBlank(postData.getScript())) {
             missingParameters.add("script");

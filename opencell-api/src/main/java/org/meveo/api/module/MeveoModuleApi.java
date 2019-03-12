@@ -79,9 +79,9 @@ import org.primefaces.model.SortOrder;
  * @author Tyshan Shi(tyshan@manaty.net)
  * @author Edward P. Legaspi(edward.legaspi@manaty.net)
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- * 
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
@@ -134,9 +134,6 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     @Override
     public MeveoModule create(MeveoModuleDto moduleDto) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(moduleDto.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(moduleDto.getDescription())) {
             missingParameters.add("description");
         }

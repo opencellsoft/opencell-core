@@ -63,9 +63,9 @@ import org.primefaces.model.SortOrder;
  * @author Edward P. Legaspi
  * @author Wassim Drira
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
- *
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTemplateDto> {
@@ -95,9 +95,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
     public OfferTemplate create(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(postData.getName())) {
             postData.setName(postData.getCode());
         }

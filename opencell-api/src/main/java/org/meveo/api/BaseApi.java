@@ -147,15 +147,7 @@ public abstract class BaseApi {
         }
     }
 
-    /**
-     * Check if any parameters are missing and throw and exception.
-     * 
-     * @param dto base data transfer object.
-     * @throws MeveoApiException meveo api exception.
-     */
-    protected void handleMissingParametersAndValidate(BaseEntityDto dto) throws MeveoApiException {
-        validate(dto);
-
+    protected void handleMissingParameters(BaseEntityDto dto) throws MeveoApiException {
         try {
             BusinessEntityDto bdto = (BusinessEntityDto) dto;
             boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
@@ -165,13 +157,21 @@ public abstract class BaseApi {
         } catch (ClassCastException e) {
             log.info("allow entity code update rule not applied : Not business Dto");
         }
-
-        if (!missingParameters.isEmpty()) {
-            MissingParameterException mpe = new MissingParameterException(missingParameters);
-            missingParameters.clear();
-            throw mpe;
-        }
+        handleMissingParameters();
     }
+
+    /**
+     * Check if any parameters are missing and throw and exception.
+     * 
+     * @param dto base data transfer object.
+     * @throws MeveoApiException meveo api exception.
+     */
+    protected void handleMissingParametersAndValidate(BaseEntityDto dto) throws MeveoApiException {
+        validate(dto);
+        handleMissingParameters(dto);
+    }
+
+
 
     protected void handleMissingParameters(BaseEntityDto dto, String... fields) throws MeveoApiException {
 
