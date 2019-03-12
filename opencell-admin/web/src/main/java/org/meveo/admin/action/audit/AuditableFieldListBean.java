@@ -27,7 +27,7 @@ public class AuditableFieldListBean extends AuditableFieldBean {
     }
 
     public String getId(BaseEntity entity, AuditableFieldNameEnum fieldName) {
-        return entity.getClass().getSimpleName() + "_" + entity.getId() + "_" + fieldName.getFieldName();
+        return ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()) + "_" + entity.getId() + "_" + fieldName.getFieldName();
     }
 
 }
