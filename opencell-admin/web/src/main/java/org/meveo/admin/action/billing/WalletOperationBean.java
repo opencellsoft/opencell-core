@@ -157,36 +157,36 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 		return super.getLazyDataModel();
 	}
 	
-	
-
 	public void updatedToRerate(WalletOperation walletOperation) {
-		 try{
-			  List<Long> walletIdList=new ArrayList<Long>();
-			  walletIdList.add(walletOperation.getId());
-			  if(walletOperationService.updateToRerate(walletIdList)>0){
-				  walletOperationService.refresh(walletOperation);
-			      messages.info(new BundleKey("messages","update.successful"));
-			  }else{
-			 messages.info(new BundleKey("messages","walletOperation.alreadyBilled"));
-			 }
-			  }catch (Exception e) {
-			   log.error("failed to updated to rerate ",e); 
-			    messages.error(new BundleKey("messages","update.failed"));
-			  }}
+		try {
+			List<Long> walletIdList = new ArrayList<Long>();
+			walletIdList.add(walletOperation.getId());
+			if (walletOperationService.updateToRerate(walletIdList) > 0) {
+				walletOperationService.refresh(walletOperation);
+				messages.info(new BundleKey("messages", "update.successful"));
+			} else {
+				messages.info(new BundleKey("messages", "walletOperation.alreadyBilled"));
+			}
+		} catch (Exception e) {
+			log.error("failed to updated to rerate ", e);
+			messages.error(new BundleKey("messages", "update.failed"));
+		}
+	}
 	
 	public String massToRerate() {
-		try{
-		List<Long> walletIdList=null;
-		if (getSelectedEntities() != null) {
-			walletIdList=new ArrayList<Long>();
-			for (WalletOperation wallet : getSelectedEntities()) {
-				walletIdList.add(wallet.getId());	
-			}}
-			int count=walletOperationService.updateToRerate(walletIdList); 
-			messages.info(new BundleKey("messages", "walletOperation.updateToRerate"),count);
-		}catch (Exception e) {
-			log.error("error while updating to rerate",e);
-			messages.error(new BundleKey("messages","update.failed"));
+		try {
+			List<Long> walletIdList = null;
+			if (getSelectedEntities() != null) {
+				walletIdList = new ArrayList<Long>();
+				for (WalletOperation wallet : getSelectedEntities()) {
+					walletIdList.add(wallet.getId());
+				}
+			}
+			int count = walletOperationService.updateToRerate(walletIdList);
+			messages.info(new BundleKey("messages", "walletOperation.updateToRerate"), count);
+		} catch (Exception e) {
+			log.error("error while updating to rerate", e);
+			messages.error(new BundleKey("messages", "update.failed"));
 		}
 		conversation.end();
 		return "walletOperations";

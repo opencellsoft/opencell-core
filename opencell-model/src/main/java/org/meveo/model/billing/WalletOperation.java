@@ -101,6 +101,10 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "update WalletOperation w set w.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE"
                 + " where (w.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN OR w.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED)"
                 + " and w.id IN :notBilledWalletIdList"),
+        @NamedQuery(name = "WalletOperation.getRatedTransactionIds", query = "SELECT ratedTransaction.id FROM WalletOperation WHERE id IN :notBilledWalletIdList"),
+        @NamedQuery(name = "WalletOperation.setStatusToOpen", query = "UPDATE WalletOperation o1 SET o1.ratedTransaction=NULL, o1.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
+                + " WHERE o1.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED"
+                + " AND o1.ratedTransaction.id IN (SELECT o2.ratedTransaction.id FROM WalletOperation o2 WHERE o2.id IN :notBilledWalletIdList)"),
         @NamedQuery(name = "WalletOperation.listByChargeInstance", query = "SELECT o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "),
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
                 + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),

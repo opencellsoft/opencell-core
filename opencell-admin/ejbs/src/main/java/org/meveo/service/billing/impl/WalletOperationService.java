@@ -60,7 +60,6 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -1315,20 +1314,31 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         return result;
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public int updateToRerate(List<Long> walletIdList) {
-        int walletsOpToRerate = 0;
-        @SuppressWarnings("unchecked")
-        List<Long> ratedTransactionsBilled = (List<Long>) getEntityManager().createNamedQuery("WalletOperation.getRatedTransactionsBilled")
-            .setParameter("walletIdList", walletIdList).getResultList();
-        walletIdList.removeAll(ratedTransactionsBilled);
-        if (walletIdList.size() > 0 && !walletIdList.isEmpty()) {
-            walletsOpToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
-            getEntityManager().createNamedQuery("RatedTransaction.setStatusToCanceled").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
-        }
-        getEntityManager().flush();
-        return walletsOpToRerate;
-    }
+	@SuppressWarnings("unchecked")
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public int updateToRerate(List<Long> walletIdList) {
+		int walletsOpToRerate = 0;
+		@SuppressWarnings("unchecked")
+		List<Long> ratedTransactionsBilled = (List<Long>) getEntityManager()
+				.createNamedQuery("WalletOperation.getRatedTransactionsBilled")
+				.setParameter("walletIdList", walletIdList).getResultList();
+		walletIdList.removeAll(ratedTransactionsBilled);
+		if (!walletIdList.isEmpty()) {
+			// set all rt.wos to open and ratedTx.id=null
+			getEntityManager().createNamedQuery("WalletOperation.setStatusToOpen")
+					.setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
+
+			// set selected wo to rerate
+			walletsOpToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate")
+					.setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
+
+			// cancelled selected rts
+			getEntityManager().createNamedQuery("RatedTransaction.setStatusToCanceled")
+					.setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
+		}
+		getEntityManager().flush();
+		return walletsOpToRerate;
+	}
 
     @SuppressWarnings("unchecked")
     public List<Long> listToRerate() {
