@@ -66,9 +66,9 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
- **/
-
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class BillingAccountApi extends AccountEntityApi {
@@ -118,8 +118,8 @@ public class BillingAccountApi extends AccountEntityApi {
     @Inject
     private EmailTemplateService emailTemplateService;
 
-    public void create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
-        create(postData, true);
+    public BillingAccount create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
+        return create(postData, true);
     }
 
     public BillingAccount create(BillingAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
@@ -128,9 +128,6 @@ public class BillingAccountApi extends AccountEntityApi {
 
     public BillingAccount create(BillingAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(postData.getCustomerAccount())) {
             missingParameters.add("customerAccount");
         }
@@ -152,7 +149,7 @@ public class BillingAccountApi extends AccountEntityApi {
             }
         }
 
-        handleMissingParametersAndValidate(postData);
+        handleMissingParameters(postData);
 
         if (billingAccountService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(BillingAccount.class, postData.getCode());
@@ -281,8 +278,8 @@ public class BillingAccountApi extends AccountEntityApi {
         return billingAccount;
     }
 
-    public void update(BillingAccountDto postData) throws MeveoApiException, BusinessException {
-        update(postData, true);
+    public BillingAccount update(BillingAccountDto postData) throws MeveoApiException, BusinessException {
+        return update(postData, true);
     }
 
     public BillingAccount update(BillingAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
@@ -608,16 +605,18 @@ public class BillingAccountApi extends AccountEntityApi {
      * Create or update Billing Account based on Billing Account Code
      * 
      * @param postData posted data to API
-     * 
+     * @return the billing account
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
-    public void createOrUpdate(BillingAccountDto postData) throws MeveoApiException, BusinessException {
-        if (billingAccountService.findByCode(postData.getCode()) == null) {
-            create(postData);
+    public BillingAccount createOrUpdate(BillingAccountDto postData) throws MeveoApiException, BusinessException {
+        BillingAccount billingAccount = billingAccountService.findByCode(postData.getCode());
+        if (billingAccount == null) {
+            billingAccount = create(postData);
         } else {
-            update(postData);
+            billingAccount = update(postData);
         }
+        return billingAccount;
     }
 
     public BillingAccount terminate(BillingAccountDto postData) throws MeveoApiException {

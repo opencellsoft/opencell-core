@@ -15,14 +15,16 @@ import org.meveo.api.dto.response.billing.AccountingCodeListResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.AccountingCodeRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.AccountingCode;
 
 /**
  * REST API to manage AccountingCode or Chart of accounts.
  * 
  * @author Edward P. Legaspi
- * @version 23 Feb 2018
- * @lastModifiedVersion 5.0
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class AccountingCodeRsImpl extends BaseRs implements AccountingCodeRs {
@@ -35,7 +37,10 @@ public class AccountingCodeRsImpl extends BaseRs implements AccountingCodeRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accountingCodeApi.create(postData);
+            AccountingCode accountingCode = accountingCodeApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(accountingCode.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -61,7 +66,10 @@ public class AccountingCodeRsImpl extends BaseRs implements AccountingCodeRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accountingCodeApi.createOrUpdate(postData);
+            AccountingCode accountingCode = accountingCodeApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(accountingCode.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

@@ -3,6 +3,7 @@ package org.meveo.api.rest.crm.impl;
 import javax.inject.Inject;
 import javax.ws.rs.PathParam;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.crm.ContactApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -14,8 +15,13 @@ import org.meveo.api.dto.response.crm.ContactsResponseDto;
 import org.meveo.api.dto.response.crm.GetContactResponseDto;
 import org.meveo.api.rest.crm.ContactRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 public class ContactRsImpl extends BaseRs implements ContactRs {
 
 	@Inject
@@ -26,7 +32,10 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			contactApi.create(postData);
+			Contact contact = contactApi.create(postData);
+			if (StringUtils.isBlank(postData.getCode())) {
+				result.setEntityCode(contact.getCode());
+			}
 		} catch (Exception e) {
 			processException(e, result);
 		}
@@ -49,7 +58,10 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 	public ActionStatus createOrUpdate(ContactDto postData) {
 		ActionStatus result = new ActionStatus();
 		try {
-			contactApi.createOrUpdate(postData);
+			Contact contact = contactApi.createOrUpdate(postData);
+			if (StringUtils.isBlank(postData.getCode())) {
+				result.setEntityCode(contact.getCode());
+			}
 		} catch (Exception e) {
 			processException(e, result);
 		}

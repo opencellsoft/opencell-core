@@ -1827,4 +1827,34 @@ $$ LANGUAGE plpgsql;
 			<column name="wallet_operation_id"></column>
 		</dropColumn>
 	</changeSet>
+
+    <changeSet id="#3599_20181002_1" author="AbdellatifBARI" dbms="mysql">
+        <createTable tableName="adm_custom_generic_entity_code_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_custom_generic_entity_code_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}adm_custom_generic_entity_code_seq values(3)</sql>
+    </changeSet>
+    <changeSet id="#3599_20181002_2" author="AbdellatifBARI">
+        <createSequence sequenceName="adm_custom_generic_entity_code_seq" startValue="3" />
+        <createTable tableName="adm_custom_generic_entity_code">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_custom_generic_entity_code_pkey" />
+            </column>
+            <column name="entity_class" type="varchar(255)" />
+            <column name="code_el" type="varchar(255)" />
+            <column name="sequence_size" type="int4" />
+            <column name="sequence_current_value" type="bigint" defaultValueNumeric="0"/>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </createTable>
+        <addUniqueConstraint columnNames="entity_class" constraintName="uk_adm_custom_generic_entity_code_class" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_custom_generic_entity_code" />
+    </changeSet>
+
 </databaseChangeLog>

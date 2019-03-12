@@ -12,10 +12,14 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.notification.JobTriggerApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.JobTriggerRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.notification.JobTrigger;
 
 /**
  * @author Tyshan Shi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
@@ -28,7 +32,10 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            jobTriggerApi.create(postData);
+            JobTrigger jobTrigger = jobTriggerApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(jobTrigger.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -79,7 +86,10 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            jobTriggerApi.createOrUpdate(postData);
+            JobTrigger jobTrigger = jobTriggerApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(jobTrigger.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
