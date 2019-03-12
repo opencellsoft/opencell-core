@@ -2052,7 +2052,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private Date getReferenceDate(Invoice invoice) {
         BillingRun billingRun = invoice.getBillingRun();
-        Date referenceDate = null;
+        Date referenceDate = new Date();
         ReferenceDateEnum referenceDateEnum = null;
         if (billingRun != null && billingRun.getReferenceDate() != null) {
             referenceDateEnum = billingRun.getReferenceDate();

@@ -54,9 +54,7 @@
 
                     <hftl:formField label="#{messages['billingCycle.invoiceTypeEL']}" field="invoiceTypeEl" textArea="true" rows="1" maxlength="2000" newLine="true" />
                     <hftl:formField label="#{messages['billingCycle.invoiceTypeELSpark']}" field="invoiceTypeElSpark" textArea="true" rows="1" maxlength="2000" />
-                    <hftl:formField id="referenceDate"
-                                    label="#{messages['billingCycle.referenceDate']}"
-                                    field="referenceDate" required="true" listValues="#{ReferenceDateEnum.values()}"/>
+                    <hftl:formField id="referenceDate" label="#{messages['billingCycle.referenceDate']}" field="referenceDate"/>
 
                 </p:tab>
                 <hftl:customFields backingBean="#{billingCycleBean}" messagesId=":formBillingCycle:messages" />
