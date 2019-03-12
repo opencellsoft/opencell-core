@@ -21,12 +21,8 @@ package org.meveo.admin.action.billing;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -46,38 +42,13 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.OneShotChargeInstance;
-import org.meveo.model.billing.ProductChargeInstance;
-import org.meveo.model.billing.ProductInstance;
-import org.meveo.model.billing.RecurringChargeInstance;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.OfferProductTemplate;
-import org.meveo.model.catalog.OfferServiceTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.billing.*;
+import org.meveo.model.catalog.*;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.OneShotChargeInstanceService;
-import org.meveo.service.billing.impl.ProductChargeInstanceService;
-import org.meveo.service.billing.impl.ProductInstanceService;
-import org.meveo.service.billing.impl.RecurringChargeInstanceService;
-import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.billing.impl.UsageChargeInstanceService;
-import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -763,6 +734,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public void populateAccounts(UserAccount userAccount) {
+        userAccount.getBillingAccount().getDiscountPlanInstances().size();
         entity.setUserAccount(userAccount);
         if (userAccount != null && appProvider.isLevelDuplication()) {
             entity.setCode(userAccount.getCode());
@@ -1067,10 +1039,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
         this.terminationReason = terminationReason;
     }
-    
+
     /**
      * Compute balance due
-     * 
+     *
      * @return due balance
      * @throws BusinessException General business exception
      */
@@ -1083,7 +1055,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     /**
      * Compute balance exigible without litigation.
-     * 
+     *
      * @return exigible balance without litigation
      * @throws BusinessException General business exception
      */
@@ -1094,4 +1066,31 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             return subscriptionService.subscriptionBalanceExigibleWithoutLitigation(entity, new Date());
         }
     }
+
+    @ActionMethod
+    public String instantiateDiscountPlan() throws BusinessException {
+        if (entity.getDiscountPlan() != null) {
+            DiscountPlan dp = entity.getDiscountPlan();
+            entity = subscriptionService.instantiateDiscountPlan(entity, dp);
+            entity.setDiscountPlan(null);
+        }
+        return getEditViewName();
+    }
+
+    @ActionMethod
+    public String deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
+        subscriptionService.terminateDiscountPlan(entity, dpi);
+        return getEditViewName();
+    }
+
+    public List<DiscountPlan> getAllowedDiscountPlans(){
+        if(entity.getOffer() != null){
+            List<DiscountPlan> allowedDiscountPlans = entity.getOffer().getAllowedDiscountPlans();
+            BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
+            billingAccount.getDiscountPlanInstances().forEach(dpi -> allowedDiscountPlans.remove(dpi.getDiscountPlan()));
+            return allowedDiscountPlans;
+        }
+        return Collections.emptyList();
+    }
+
 }

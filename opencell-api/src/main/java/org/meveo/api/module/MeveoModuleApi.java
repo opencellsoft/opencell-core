@@ -314,6 +314,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                         modulePropertyFlagLoader.setLoadOfferProductTemplate(pagingAndFiltering.hasFieldOption("loadOfferProductTemplate"));
                         modulePropertyFlagLoader.setLoadServiceChargeTemplate(pagingAndFiltering.hasFieldOption("loadServiceChargeTemplate"));
                         modulePropertyFlagLoader.setLoadProductChargeTemplate(pagingAndFiltering.hasFieldOption("loadProductChargeTemplate"));
+                        modulePropertyFlagLoader.setLoadAllowedDiscountPlan(pagingAndFiltering.hasFieldOption("loadAllowedDiscountPlan"));
                     }
                     
                     moduleDto = moduleToDto(meveoModule, modulePropertyFlagLoader);
@@ -863,7 +864,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         if (bom.getOfferTemplate() != null) {
             dto.setOfferTemplate(offerTemplateApi.fromOfferTemplate(bom.getOfferTemplate(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE, modulePropertyFlagLoader.isLoadOfferServiceTemplate(),
                 modulePropertyFlagLoader.isLoadOfferProductTemplate(), modulePropertyFlagLoader.isLoadServiceChargeTemplate(),
-                modulePropertyFlagLoader.isLoadProductChargeTemplate()));
+                modulePropertyFlagLoader.isLoadProductChargeTemplate(), modulePropertyFlagLoader.isLoadAllowedDiscountPlan()));
         }
     }
 

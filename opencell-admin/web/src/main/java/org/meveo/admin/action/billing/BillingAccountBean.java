@@ -46,10 +46,7 @@ import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.CounterInstanceService;
-import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.primefaces.model.DualListModel;
@@ -143,7 +140,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String instantiateDiscountPlan() throws BusinessException {
 		if (entity.getDiscountPlan() != null) {
 			DiscountPlan dp = entity.getDiscountPlan();
-			entity = billingAccountService.instantiateDiscountPlan(entity, dp, null);
+			entity = billingAccountService.instantiateDiscountPlan(entity, dp);
 			entity.setDiscountPlan(null);
 		}
 		
@@ -152,7 +149,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	
 	@ActionMethod
 	public String deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
-		billingAccountService.terminateDiscountPlan(entity, dpi);
+        billingAccountService.terminateDiscountPlan(entity, dpi);
 		return getEditViewName();
 //		messages.warn(new BundleKey("messages", "message.discount.terminate.warning"));
 	}

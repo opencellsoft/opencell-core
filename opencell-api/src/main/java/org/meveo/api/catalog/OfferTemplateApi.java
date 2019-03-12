@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -14,13 +15,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.account.FilterProperty;
 import org.meveo.api.dto.account.FilterResults;
-import org.meveo.api.dto.catalog.ChannelDto;
-import org.meveo.api.dto.catalog.OfferProductTemplateDto;
-import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
-import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
-import org.meveo.api.dto.catalog.OfferTemplateDto;
-import org.meveo.api.dto.catalog.ProductTemplateDto;
-import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.catalog.*;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -38,24 +33,11 @@ import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.catalog.BusinessOfferModel;
-import org.meveo.model.catalog.Channel;
-import org.meveo.model.catalog.LifeCycleStatusEnum;
-import org.meveo.model.catalog.OfferProductTemplate;
-import org.meveo.model.catalog.OfferServiceTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OfferTemplateCategory;
-import org.meveo.model.catalog.ProductOffering;
-import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.*;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.catalog.impl.BusinessOfferModelService;
-import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.ProductTemplateService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.catalog.impl.*;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.SortOrder;
 
@@ -90,6 +72,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
+
+    @Inject
+    private DiscountPlanService discountPlanService;
 
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
@@ -272,7 +257,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
 
         offerTemplate.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), postData.getRenewalRule(), false));
-
+        processAllowedDiscountPlans(postData, offerTemplate);
         try {
             saveImage(offerTemplate, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {
@@ -287,6 +272,16 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         processOfferProductTemplates(postData, offerTemplate);
 
         return offerTemplate;
+    }
+
+    private void processAllowedDiscountPlans(OfferTemplateDto postData, OfferTemplate offerTemplate) {
+        List<DiscountPlanDto> allowedDiscountPlans = postData.getAllowedDiscountPlans();
+        if(allowedDiscountPlans != null && !allowedDiscountPlans.isEmpty()){
+            offerTemplate.setAllowedDiscountPlans(allowedDiscountPlans
+                    .stream()
+                    .map(discountPlanDto -> discountPlanService.findByCode(discountPlanDto.getCode()))
+                    .collect(Collectors.toList()));
+        }
     }
 
     private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
@@ -429,13 +424,13 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
     @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
     public OfferTemplateDto find(String code, Date validFrom, Date validTo) throws MeveoApiException {
-        return find(code, validFrom, validTo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, true, true, true);
+        return find(code, validFrom, validTo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, true, true, true, true);
     }
 
     @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
     @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
     public OfferTemplateDto find(String code, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate,
-            boolean loadOfferProductTemplate, boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate) throws MeveoApiException {
+            boolean loadOfferProductTemplate, boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("offerTemplateCode");
@@ -449,7 +444,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                 code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
 
-        return fromOfferTemplate(offerTemplate, inheritCF, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate);
+        return fromOfferTemplate(offerTemplate, inheritCF, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate, loadAllowedDiscountPlan);
     }
 
     @Override
@@ -459,11 +454,11 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
 
     public OfferTemplateDto fromOfferTemplate(OfferTemplate offerTemplate) {
-        return fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, true, true, true);
+        return fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, true, true, true, true);
     }
 
     public OfferTemplateDto fromOfferTemplate(OfferTemplate offerTemplate, CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
-            boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate) {
+            boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan) {
 
         OfferTemplateDto dto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false);
         dto.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
@@ -495,6 +490,17 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                     offerProductTemplates.add(offerProductTemplateDto);
                 }
                 dto.setOfferProductTemplates(offerProductTemplates);
+            }
+        }
+
+        if(loadAllowedDiscountPlan) {
+            List<DiscountPlan> allowedDiscountPlans = offerTemplate.getAllowedDiscountPlans();
+            if (allowedDiscountPlans != null && !allowedDiscountPlans.isEmpty()) {
+                List<DiscountPlanDto> discountPlanDtos = new ArrayList<>();
+                for (DiscountPlan discountPlan : allowedDiscountPlans) {
+                    discountPlanDtos.add(new DiscountPlanDto(discountPlan, entityToDtoConverter.getCustomFieldsDTO(discountPlan)));
+                }
+                dto.setAllowedDiscountPlans(discountPlanDtos);
             }
         }
 
@@ -567,7 +573,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             for (OfferTemplate offerTemplate : offers) {
                 result.addOfferTemplate(fromOfferTemplate(offerTemplate, inheritCF, pagingAndFiltering.hasFieldOption("offerServiceTemplate"),
                     pagingAndFiltering.hasFieldOption("offerProductTemplate"), pagingAndFiltering.hasFieldOption("serviceChargeTemplate"),
-                    pagingAndFiltering.hasFieldOption("productChargeTemplate")));
+                    pagingAndFiltering.hasFieldOption("productChargeTemplate"), pagingAndFiltering.hasFieldOption("loadAllowedDiscountPlan")));
             }
         }
 

@@ -256,7 +256,7 @@
 						     			<p:messages id="discountMessages"></p:messages>
 								     	<h:panelGroup styleClass="form-panel" style="margin-bottom: 10px; width: 100%">
 								     		<hftl:formField displayOneLine="false" listenerUpdate="instantiateDiscountPlanDialog" field="discountPlan" valueLabelField="code" listBean="#{discountPlanBean}" />
-								     		<p:commandButton style="float: left" rendered="#{billingAccountBean.edit}" value="#{messages['button.instanciateButton']}" type="button" onclick="PF('dlg_instantiateDiscountPlanDialog').show()"></p:commandButton>
+								     		<p:commandButton style="float: left" rendered="#{billingAccountBean.edit}" value="#{messages['button.instanciateButton']}" type="button" onclick="PF('dlg_instantiateDiscountPlanDialog').show()" disabled="#{billingAccountBean.entity.id == null}"></p:commandButton>
 								     	</h:panelGroup>
 								     	<p:dataTable id="datatable_discountPlanInstances" var="entity" lazy="false" paginator="true" resizableColumns="true" reflow="true"
 		                                    value="#{billingAccountBean.entity.discountPlanInstances}" rows="10" rowKey="#{entity.id}"

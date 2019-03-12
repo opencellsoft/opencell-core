@@ -44,6 +44,11 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElement(name = "offerProductTemplate")
     private List<OfferProductTemplateDto> offerProductTemplates;
 
+    /** The offer product templates. */
+    @XmlElementWrapper(name = "allowedDiscountPlans")
+    @XmlElement(name = "allowedDiscountPlans")
+    private List<DiscountPlanDto> allowedDiscountPlans;
+
     /** The renewal rule. */
     private SubscriptionRenewalDto renewalRule;
 
@@ -173,6 +178,24 @@ public class OfferTemplateDto extends ProductOfferingDto {
      */
     public void setOfferProductTemplates(List<OfferProductTemplateDto> offerProductTemplates) {
         this.offerProductTemplates = offerProductTemplates;
+    }
+
+    /**
+     * Gets the list of allowed Discount Plans.
+     *
+     * @return the Allowed Discount Plans
+     */
+    public List<DiscountPlanDto> getAllowedDiscountPlans() {
+        return allowedDiscountPlans;
+    }
+
+    /**
+     * Sets the list of allowed Discount Plans.
+     *
+     * @param allowedDiscountPlans the new list of allowed Discount Plans
+     */
+    public void setAllowedDiscountPlans(List<DiscountPlanDto> allowedDiscountPlans) {
+        this.allowedDiscountPlans = allowedDiscountPlans;
     }
 
     /**
