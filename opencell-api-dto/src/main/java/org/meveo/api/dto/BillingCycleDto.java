@@ -9,11 +9,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.ReferenceDateEnum;
 
 /**
  * The Class BillingCycleDto.
  *
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @XmlRootElement(name = "BillingCycle")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,6 +87,9 @@ public class BillingCycleDto extends BusinessEntityDto {
     @XmlElement
     private BillingEntityTypeEnum type;
 
+    /** The reference date. */
+    private ReferenceDateEnum referenceDate;
+
     /**
      * Instantiates a new billing cycle dto.
      */
@@ -113,6 +119,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             type = billingCycleEntity.getType();
             invoiceTypeEl = billingCycleEntity.getInvoiceTypeEl();
             invoiceTypeElSpark = billingCycleEntity.getInvoiceTypeElSpark();
+            referenceDate = billingCycleEntity.getReferenceDate();
 
             if (billingCycleEntity.getInvoiceType() != null) {
                 invoiceTypeCode = billingCycleEntity.getInvoiceType().getCode();
@@ -324,7 +331,7 @@ public class BillingCycleDto extends BusinessEntityDto {
         return "BillingCycleDto [code=" + getCode() + ", description=" + getDescription() + ", billingTemplateName=" + billingTemplateName + ", invoiceDateDelay="
                 + invoiceDateDelay + ", dueDateDelay=" + dueDateDelay + ", dueDateDelayEL=" + dueDateDelayEL + ", invoiceDateProductionDelay=" + invoiceDateProductionDelay
                 + ", transactionDateDelay=" + transactionDateDelay + ", calendar=" + calendar + ", invoicingThreshold=" + invoicingThreshold + ", invoiceTypeCode="
-                + invoiceTypeCode + ", customFields=" + customFields + "]";
+                + invoiceTypeCode + ", customFields=" + customFields + ", referenceDate=" + referenceDate + "]";
     }
 
     /**
@@ -397,6 +404,24 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     public void setType(BillingEntityTypeEnum type) {
         this.type = type;
+    }
+
+    /**
+     * Gets the referenceDate
+     *
+     * @return the referenceDate
+     */
+    public ReferenceDateEnum getReferenceDate() {
+        return referenceDate;
+    }
+
+    /**
+     * Sets the referenceDate.
+     *
+     * @param referenceDate the new referenceDate
+     */
+    public void setReferenceDate(ReferenceDateEnum referenceDate) {
+        this.referenceDate = referenceDate;
     }
 
 }
