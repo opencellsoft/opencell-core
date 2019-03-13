@@ -112,8 +112,8 @@ public class PaymentService extends PersistenceService<Payment> {
     public void create(Payment entity) throws BusinessException {
         super.create(entity);
         if (entity.getId() != null && entity.getPaymentMethod().isSimple()) {
-            PaymentMethod paymentMethod  = getPaymentMathod(entity);
-            paymentHistoryService.addHistory(entity.getCustomerAccount(), entity, null, entity.getAmount().multiply(new BigDecimal(100)).longValue(),PaymentStatusEnum.ACCEPTED,null,null,null,OperationCategoryEnum.CREDIT,null,paymentMethod);
+            PaymentMethod paymentMethod  = getPaymentMethod(entity);
+            paymentHistoryService.addHistory(entity.getCustomerAccount(), entity, null, entity.getAmount().multiply(new BigDecimal(100)).longValue(), PaymentStatusEnum.ACCEPTED, null, null, null, OperationCategoryEnum.CREDIT, null, paymentMethod);
         }
     }
 
@@ -122,7 +122,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param payment the payment
      * @return A method payment.
      */
-    private PaymentMethod getPaymentMathod(Payment payment) {
+    private PaymentMethod getPaymentMethod(Payment payment) {
         if (payment == null || payment.getCustomerAccount() == null || payment.getCustomerAccount().getPaymentMethods() == null ) {
             return null;
         }

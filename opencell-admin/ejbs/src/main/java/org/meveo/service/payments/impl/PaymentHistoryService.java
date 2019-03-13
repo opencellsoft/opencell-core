@@ -54,9 +54,16 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
         paymentHistory.setSyncStatus(status);
         paymentHistory.setPaymentGatewayCode(paymentGatewayCode);
         paymentHistory.setLastUpdateDate(paymentHistory.getOperationDate());
-        if (payment.getPaymentMethod() != null && payment.getPaymentMethod().isSimple()) {
-            paymentHistory.setPaymentMethodType(payment.getPaymentMethod());
-            paymentHistory.setPaymentMethodName(payment.getPaymentInfo());
+        if (payment != null) {
+            if (payment.getPaymentMethod() != null && payment.getPaymentMethod().isSimple()) {
+                paymentHistory.setPaymentMethodType(payment.getPaymentMethod());
+                paymentHistory.setPaymentMethodName(payment.getPaymentInfo());
+            }
+        } else  if (refund != null) {
+            if (refund.getPaymentMethod() != null && refund.getPaymentMethod().isSimple()) {
+                paymentHistory.setPaymentMethodType(refund.getPaymentMethod());
+                paymentHistory.setPaymentMethodName(refund.getPaymentInfo());
+            }
         }
         if (paymentMethod != null) {
             paymentHistory.setPaymentMethodType(paymentMethod.getPaymentType());
