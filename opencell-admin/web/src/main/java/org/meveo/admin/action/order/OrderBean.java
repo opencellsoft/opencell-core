@@ -43,6 +43,7 @@ import org.meveo.api.billing.OrderApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -68,6 +69,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.WirePaymentMethod;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -92,7 +94,8 @@ import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
  * 
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Mounir Bahije
+ * @lastModifiedVersion 7.0
  */
 @Named
 @ViewScoped
@@ -102,6 +105,9 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     @Inject
     private SubscriptionService subscriptionService;
+
+    @Inject
+    private SellerService sellerService;
 
     /**
      * Injected @{link Order} service. Extends {@link PersistenceService}.
@@ -993,4 +999,17 @@ public class OrderBean extends CustomFieldBean<Order> {
         entity.setStatus(status);
         saveOrUpdate(entity);
     }
+
+    /**
+     * Get Seller's list
+     * @return list of sellers
+     */
+    public List<Seller> listSellers() {
+        if (sellerService.list() != null) {
+            return sellerService.list();
+        } else {
+            return new ArrayList<Seller>();
+        }
+    }
+
 }
