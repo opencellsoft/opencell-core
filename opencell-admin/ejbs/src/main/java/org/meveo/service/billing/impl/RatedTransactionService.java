@@ -487,14 +487,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 for (DiscountPlanItem discountPlanItem : subscriptionApplicableDiscountPlanItems) {
                     SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise, invoiceRounding, invoiceRoundingMode, scAggregate,
                             amount, cAggregate, discountPlanItem);
-                    amountCumulativeForTax = amount.add(isEnterprise ? discountAggregate.getAmountWithoutTax() : discountAggregate.getAmountWithTax());
+                    if(discountAggregate != null) {
+                    	amountCumulativeForTax = amount.add(isEnterprise ? discountAggregate.getAmountWithoutTax() : discountAggregate.getAmountWithTax());
+                    }
                 }
 
                 // Add discount aggregates for billingAccount
                 for (DiscountPlanItem discountPlanItem : billingAccountApplicableDiscountPlanItems) {
                     SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise, invoiceRounding, invoiceRoundingMode,
                             scAggregate, amountCumulativeForTax, cAggregate, discountPlanItem);
-                    amountCumulativeForTax = amountCumulativeForTax.add(isEnterprise ? discountAggregate.getAmountWithoutTax() : discountAggregate.getAmountWithTax());
+                    if(discountAggregate != null) {
+                    	amountCumulativeForTax = amountCumulativeForTax.add(isEnterprise ? discountAggregate.getAmountWithoutTax() : discountAggregate.getAmountWithTax());
+                    }
                 }
 
                 // Add tax aggregate or update its amounts
@@ -923,28 +927,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Create Rated transaction from wallet operation.
-     * 
-     * @param walletOperation Wallet operation
-     * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
-     * @return Rated transaction
-     * @throws BusinessException business exception
-     */
-    public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
-        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
-
-        walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
-
-        if (!isVirtual) {
-            create(ratedTransaction);
-            walletOperationService.updateNoCheck(walletOperation);
-        } else {
-            create(ratedTransaction);
-        }
-        return ratedTransaction;
-    }
-
-    /**
      * Convert Wallet operations to Rated transactions for a given billable entity up to a given date
      * 
      * @param entity entity to bill
@@ -968,6 +950,31 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for (WalletOperation walletOp : walletOps) {
             createRatedTransaction(walletOp, false);
         }
+    }
+
+    /**
+     * Create Rated transaction from wallet operation.
+     * 
+     * @param walletOperation Wallet operation
+     * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
+     * @return Rated transaction
+     * @throws BusinessException business exception
+     */
+    public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
+        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
+		
+        walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
+
+        if (!isVirtual) {
+            create(ratedTransaction);
+            walletOperationService.updateNoCheck(walletOperation);
+        } else {
+            create(ratedTransaction);
+        }
+        
+        walletOperation.setRatedTransaction(ratedTransaction);
+        
+        return ratedTransaction;
     }
     
     /**

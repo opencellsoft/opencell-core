@@ -977,4 +977,17 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 	public void setWalletOperations(Set<WalletOperation> walletOperations) {
 		this.walletOperations = walletOperations;
 	}
+	
+	/**
+	 * This will be use for backward compatibility back when a WalletOperation is mapped to a RatedTransaction. 
+	 * @return first id of the WalletOperation
+	 */
+	public Long getWalletOperationId() {
+		if (getWalletOperations() != null && getWalletOperations().isEmpty()) {
+			return getWalletOperations().iterator().next().getId();
+		}
+
+		return null;
+	}
+	
 }

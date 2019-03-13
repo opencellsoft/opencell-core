@@ -1522,5 +1522,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		int affectedRecords = query.executeUpdate();
 		log.debug("updated record wo count={}", affectedRecords);
 	}
-    
+
+	public List<WalletOperation> listByRatedTransactionId(Long ratedTransactionId) {
+		return getEntityManager().createNamedQuery("WalletOperation.listByRatedTransactionId")
+				.setParameter("ratedTransactionId", ratedTransactionId).getResultList();
+	}
+	
 }
