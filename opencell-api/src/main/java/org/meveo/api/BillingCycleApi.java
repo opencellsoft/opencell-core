@@ -22,7 +22,9 @@ import org.meveo.service.catalog.impl.CalendarService;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class BillingCycleApi extends BaseApi {
 
@@ -48,6 +50,9 @@ public class BillingCycleApi extends BaseApi {
         }
         if (postData.getDueDateDelay() == null && StringUtils.isBlank(postData.getDueDateDelayEL()) && StringUtils.isBlank(postData.getDueDateDelayELSpark())) {
             missingParameters.add("dueDateDelay, dueDateDelayEL or dueDateDelayELSpark");
+        }
+        if (postData.getReferenceDate() == null) {
+            missingParameters.add("referenceDate");
         }
 
         handleMissingParametersAndValidate(postData);
@@ -85,6 +90,7 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceType(invoiceType);
         billingCycle.setInvoiceTypeEl(postData.getInvoiceTypeEl());
         billingCycle.setInvoiceTypeElSpark(postData.getInvoiceTypeElSpark());
+        billingCycle.setReferenceDate(postData.getReferenceDate());
 
         if (postData.getType() == null) {
             billingCycle.setType(BillingEntityTypeEnum.BILLINGACCOUNT);
@@ -174,8 +180,9 @@ public class BillingCycleApi extends BaseApi {
         if (postData.getInvoicingThreshold() != null) {
             billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         }
-
-
+        if (postData.getReferenceDate() != null) {
+            billingCycle.setReferenceDate(postData.getReferenceDate());
+        }
         if (postData.getType() != null) {
             billingCycle.setType(postData.getType());
         }
