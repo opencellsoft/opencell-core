@@ -161,7 +161,7 @@
 
 						<c:if test="#{!empty(popupWidgetVar) and edit and !disabled}">
 							<p:commandButton value="#{messages['commons.addNew']}"
-								partialSubmit="true" process="@this addNewFields"
+								partialSubmit="true" process="@form"
 								update="#{idPrefix}_customFields_omitFromSubmit"
 								action="#{customFieldDataEntryBean.addValueToMap(cfValueHolder, field, cft)}"
 								oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()">
@@ -171,7 +171,7 @@
 
 						<c:if test="#{empty(popupWidgetVar) and edit and !disabled}">
 							<p:commandButton value="#{messages['commons.addNew']}"
-								partialSubmit="true" process="@this addNewFields"
+								partialSubmit="true" process="@form"
 								update="#{idPrefix}_customFields_omitFromSubmit"
 								action="#{customFieldDataEntryBean.addValueToMap(cfValueHolder, field, cft)}">
 								<p:resetInput target="addNewFields" />
@@ -344,7 +344,7 @@
 
 						<c:if test="#{!empty(popupWidgetVar) and edit and !disabled}">
 							<p:commandButton value="#{messages['commons.addNew']}"
-								partialSubmit="true" process="@this addNewFields"
+								partialSubmit="true" process="@form"
 								update="#{idPrefix}_customFields_omitFromSubmit"
 								action="#{customFieldDataEntryBean.addMatrixRow(cfValueHolder, field, cft)}"
 								oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()">
