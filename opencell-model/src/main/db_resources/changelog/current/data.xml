@@ -997,11 +997,6 @@ ORDER BY
             <column name="name" value="sc-module-myusers-menu"/>
             <column name="permission" value="sc-module-myusers-menu"/>
         </insert>
-        <insert tableName="adm_permission">
-            <column name="id" valueNumeric="-108"/>
-            <column name="name" value="cc-gui-access"/>
-            <column name="permission" value="cc-gui-access"/>
-        </insert>
         <insert tableName="adm_role">
             <column name="id" valueNumeric="-7"/>
             <column name="version" valueNumeric="0"/>
@@ -1339,10 +1334,6 @@ ORDER BY
             <column name="permission_id" valueNumeric="-47"/>
         </insert>
         <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="-7"/>
-            <column name="permission_id" valueNumeric="-108"/>
-        </insert>
-        <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-8"/>
             <column name="permission_id" valueNumeric="-101"/>
         </insert>
@@ -1545,10 +1536,6 @@ ORDER BY
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-8"/>
             <column name="permission_id" valueNumeric="-87"/>
-        </insert>
-        <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="-8"/>
-            <column name="permission_id" valueNumeric="-108"/>
         </insert>
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-9"/>
@@ -1781,10 +1768,6 @@ ORDER BY
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-9"/>
             <column name="permission_id" valueNumeric="-49"/>
-        </insert>
-        <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="-9"/>
-            <column name="permission_id" valueNumeric="-108"/>
         </insert>
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-10"/>
@@ -2065,10 +2048,6 @@ ORDER BY
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-10"/>
             <column name="permission_id" valueNumeric="-31"/>
-        </insert>
-        <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="-10"/>
-            <column name="permission_id" valueNumeric="-108"/>
         </insert>
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-11"/>
@@ -2850,10 +2829,7 @@ ORDER BY
             <column name="role_id" valueNumeric="-14"/>
             <column name="permission_id" valueNumeric="-72"/>
         </insert>
-        <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="-14"/>
-            <column name="permission_id" valueNumeric="-108"/>
-        </insert>
+        
     </changeSet>
 
     <changeSet author="AbdelmounaimAkadid" id="#3255_18052018">
@@ -2929,6 +2905,34 @@ ORDER BY
             <column name="uuid" value="INVOICE_TYPE-4" />
             <column name="invoice_sequence_id" value="-1" />
         </insert>
+    </changeSet>
+    
+    <changeSet id="#721_CC_new_permissions" author="Tony">
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-108"/>
+            <column name="name" value="cc-gui-access"/>
+            <column name="permission" value="cc-gui-access"/>
+        </insert>
+        <insert tableName="adm_role_permission">
+		    <column name="role_id" valueNumeric="-14" />
+		    <column name="permission_id" valueNumeric="-108" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		    <column name="role_id" valueNumeric="-7" />
+		    <column name="permission_id" valueNumeric="-108" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		    <column name="role_id" valueNumeric="-8" />
+		    <column name="permission_id" valueNumeric="-108" />
+	    </insert>
+	    <insert tableName="adm_role_permission">
+		    <column name="role_id" valueNumeric="-9" />
+		    <column name="permission_id" valueNumeric="-108" />
+	    </insert>
+	    <insert tableName="adm_role_permission">
+		    <column name="role_id" valueNumeric="-10" />
+		    <column name="permission_id" valueNumeric="-108" />
+	    </insert>
     </changeSet>
     
    <changeSet id="20180715 Payment gateway" author="ansseh">
