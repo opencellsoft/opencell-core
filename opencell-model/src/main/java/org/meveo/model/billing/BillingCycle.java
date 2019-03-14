@@ -171,8 +171,7 @@ public class BillingCycle extends BusinessCFEntity {
      * Reference date
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "reference_date", nullable = false)
-    @NotNull
+    @Column(name = "reference_date")
     private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
 
     public String getBillingTemplateName() {

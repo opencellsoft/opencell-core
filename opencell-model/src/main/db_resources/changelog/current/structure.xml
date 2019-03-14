@@ -1898,9 +1898,7 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#3310_20190126_2" author="AbdellatifBARI">
         <addColumn tableName="billing_cycle">
-            <column name="reference_date" type="varchar(255)" defaultValue="TODAY">
-                <constraints nullable="false" />
-            </column>
+            <column name="reference_date" type="varchar(255)" />
         </addColumn>
     </changeSet>
 
