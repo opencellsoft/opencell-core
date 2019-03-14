@@ -115,18 +115,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
         selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
 
-        if (entity.getAddress() == null) {
-            entity.setAddress(new Address());
-        }
-        if (entity.getName() == null) {
-            entity.setName(new Name());
-        }
-        if (entity.getContactInformation() == null) {
-            entity.setContactInformation(new ContactInformation());
-        }
-		if (entity.getDiscountPlanInstances() == null) {
-			entity.setDiscountPlanInstances(new ArrayList<>());
-		}
+        this.initNestedFields(entity);
+		
 		if (discountPlanDM == null) {
 			List<DiscountPlan> sourceDS = null;
 			sourceDS = discountPlanService.list();
@@ -176,6 +166,28 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
         }
         return null;
+    }
+    
+    @Override
+    public BillingAccount getEntity() {
+        BillingAccount ba = super.getEntity();
+       this.initNestedFields(ba);
+        return ba;
+    }
+
+    private void initNestedFields(BillingAccount ba) {
+        if (ba.getAddress() == null) {
+            ba.setAddress(new Address());
+        }
+        if (ba.getName() == null) {
+            ba.setName(new Name());
+        }
+        if (ba.getContactInformation() == null) {
+            ba.setContactInformation(new ContactInformation());
+        }
+        if (ba.getDiscountPlanInstances() == null) {
+            ba.setDiscountPlanInstances(new ArrayList<>());
+        }
     }
 
     @Override
