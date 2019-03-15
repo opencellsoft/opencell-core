@@ -98,6 +98,15 @@ import org.meveo.service.script.billing.TaxScriptService;
  */
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
+	
+	@Inject
+	private ServiceInstanceService serviceInstanceService;
+
+	@Inject
+	private ChargeInstanceService<ChargeInstance> chargeInstanceService;
+
+	@Inject
+	private UserAccountService userAccountService;
 
     @Inject
     private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
@@ -376,24 +385,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         // Determine which discount plan items apply to this invoice
-        List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
+        List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
+        List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
 
-        if ((billingAccount.getDiscountPlanInstances() != null) && !billingAccount.getDiscountPlanInstances().isEmpty()) {
-            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-			for (DiscountPlanInstance dpi : billingAccount.getDiscountPlanInstances()) {
-				if (!dpi.isEffective(invoice.getInvoiceDate())) {
-					continue;
-				}
-				if (dpi.getDiscountPlan().isActive()) {
-					List<DiscountPlanItem> discountPlanItems = dpi.getDiscountPlan().getDiscountPlanItems();
-					for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-						if (discountPlanItem.isActive() && matchDiscountPlanItemExpression(
-								discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice, dpi)) {
-							applicableDiscountPlanItems.add(discountPlanItem);
-						}
-					}
-				}
-			}
+        Subscription subscription = invoice.getSubscription();
+        CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+
+        if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
+            subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
+        }
+        if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
+            billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
 
         // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates
@@ -481,59 +483,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             if ((amount != null) && !BigDecimal.ZERO.equals(amount)) {
 
-                // Add discount aggregates
-                for (DiscountPlanItem discountPlanItem : applicableDiscountPlanItems) {
+                // Add discount aggregates for subscription
+                for (DiscountPlanItem discountPlanItem : subscriptionApplicableDiscountPlanItems) {
+                    SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise, invoiceRounding, invoiceRoundingMode, scAggregate,
+                            amount, cAggregate, discountPlanItem);
+                    if(discountAggregate != null) {
+                    	amountCumulativeForTax = amount.add(isEnterprise ? discountAggregate.getAmountWithoutTax() : discountAggregate.getAmountWithTax());
+                    }
+                }
 
-                    // Apply discount if matches the category, subcategory, or applies to any category
-                    if (((discountPlanItem.getInvoiceCategory() == null) && (discountPlanItem.getInvoiceSubCategory() == null))
-                            || ((discountPlanItem.getInvoiceSubCategory() != null)
-                                    && discountPlanItem.getInvoiceSubCategory().getId().equals(scAggregate.getInvoiceSubCategory().getId()))
-                            || ((discountPlanItem.getInvoiceCategory() != null) && (discountPlanItem.getInvoiceSubCategory() == null)
-                                    && discountPlanItem.getInvoiceCategory().getId().equals(scAggregate.getInvoiceSubCategory().getInvoiceCategory().getId()))) {
-                        BigDecimal discountPercent = discountPlanItem.getDiscountValue();
-
-                        if (discountPlanItem.getDiscountValueEL() != null) {
-                            discountPercent = evaluateDiscountPercentExpression(discountPlanItem.getDiscountValueEL(), scAggregate.getUserAccount(), scAggregate.getWallet(),
-                                invoice, amount);
-							log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
-									discountPercent, amount);
-                        }
-
-                        BigDecimal discountAmount;
-                        if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-            				discountAmount = amount.multiply(discountPercent.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
-            			} else {
-            				discountAmount = discountPlanItem.getDiscountValue().negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());;
-            			}
-
-                        if (discountAmount.compareTo(BigDecimal.ZERO) < 0) {
-                            SubCategoryInvoiceAgregate discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount,
-                                scAggregate.getUserAccount(), scAggregate.getWallet(), scAggregate.getTax(), scAggregate.getTaxPercent(), invoice, null);
-
-                            discountAggregate.updateAudit(currentUser);
-                            discountAggregate.setItemNumber(scAggregate.getItemNumber());
-                            discountAggregate.setCategoryInvoiceAgregate(cAggregate);
-
-                            discountAggregate.setDiscountAggregate(true);
-							if (discountPlanItem.getDiscountPlanItemType()
-									.equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-								discountAggregate.setDiscountPercent(discountPercent);
-							}
-                            discountAggregate.setDiscountPlanItem(discountPlanItem);
-                            discountAggregate.setDescription(discountPlanItem.getCode());
-
-                            amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, scAggregate.getTaxPercent(), isEnterprise, invoiceRounding,
-                                invoiceRoundingMode.getRoundingMode());
-
-                            discountAggregate.setAmountWithoutTax(amounts[0]);
-                            discountAggregate.setAmountWithTax(amounts[1]);
-                            discountAggregate.setAmountTax(amounts[2]);
-
-                            invoice.addInvoiceAggregate(discountAggregate);
-                            discountAggregates.add(discountAggregate);
-
-                            amountCumulativeForTax = amountCumulativeForTax.add(amounts[isEnterprise ? 0 : 1]);
-                        }
+                // Add discount aggregates for billingAccount
+                for (DiscountPlanItem discountPlanItem : billingAccountApplicableDiscountPlanItems) {
+                    SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise, invoiceRounding, invoiceRoundingMode,
+                            scAggregate, amountCumulativeForTax, cAggregate, discountPlanItem);
+                    if(discountAggregate != null) {
+                    	amountCumulativeForTax = amountCumulativeForTax.add(isEnterprise ? discountAggregate.getAmountWithoutTax() : discountAggregate.getAmountWithTax());
                     }
                 }
 
@@ -624,6 +588,82 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if ((invoicingThreshold != null) && (invoicingThreshold.compareTo(isEnterprise ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax()) > 0)) {
             throw new BusinessException("Invoice amount below the threshold");
         }
+    }
+
+    private SubCategoryInvoiceAgregate getDiscountAggregates(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise,
+            int invoiceRounding, RoundingModeEnum invoiceRoundingMode, SubCategoryInvoiceAgregate scAggregate, BigDecimal amount,
+            CategoryInvoiceAgregate cAggregate, DiscountPlanItem discountPlanItem) throws BusinessException {
+        BigDecimal[] amounts;// Apply discount if matches the category, subcategory, or applies to any category
+        SubCategoryInvoiceAgregate discountAggregate;
+        if ((discountPlanItem.getInvoiceCategory() == null && discountPlanItem.getInvoiceSubCategory() == null)
+                || (discountPlanItem.getInvoiceSubCategory() != null
+                        && discountPlanItem.getInvoiceSubCategory().getId().equals(scAggregate.getInvoiceSubCategory().getId()))
+                || (discountPlanItem.getInvoiceCategory() != null && discountPlanItem.getInvoiceSubCategory() == null
+                        && discountPlanItem.getInvoiceCategory().getId().equals(scAggregate.getInvoiceSubCategory().getInvoiceCategory().getId()))) {
+            BigDecimal discountValue = discountPlanItem.getDiscountValue();
+
+            if (discountPlanItem.getDiscountValueEL() != null) {
+                discountValue = evaluateDiscountPercentExpression(discountPlanItem.getDiscountValueEL(), scAggregate.getUserAccount(), scAggregate.getWallet(),
+                    invoice, amount);
+                log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
+                        discountValue, amount);
+            }
+
+            BigDecimal discountAmount;
+            if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+                discountAmount = amount.multiply(discountValue.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
+            } else {
+                discountAmount = discountValue.negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());;
+            }
+
+            if (discountAmount.compareTo(BigDecimal.ZERO) < 0) {
+                discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount,
+                    scAggregate.getUserAccount(), scAggregate.getWallet(), scAggregate.getTax(), scAggregate.getTaxPercent(), invoice, null);
+
+                discountAggregate.updateAudit(currentUser);
+                discountAggregate.setItemNumber(scAggregate.getItemNumber());
+                discountAggregate.setCategoryInvoiceAgregate(cAggregate);
+
+                discountAggregate.setDiscountAggregate(true);
+                if (discountPlanItem.getDiscountPlanItemType()
+                        .equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+                    discountAggregate.setDiscountPercent(discountValue);
+                }
+                discountAggregate.setDiscountPlanItem(discountPlanItem);
+                discountAggregate.setDescription(discountPlanItem.getCode());
+
+                amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, scAggregate.getTaxPercent(), isEnterprise, invoiceRounding,
+                    invoiceRoundingMode.getRoundingMode());
+
+                discountAggregate.setAmountWithoutTax(amounts[0]);
+                discountAggregate.setAmountWithTax(amounts[1]);
+                discountAggregate.setAmountTax(amounts[2]);
+
+                invoice.addInvoiceAggregate(discountAggregate);
+                return discountAggregate;
+            }
+        }
+        return null;
+    }
+
+    private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount,List<DiscountPlanInstance> discountPlanInstances, Invoice invoice, CustomerAccount customerAccount)
+            throws BusinessException {
+        List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
+        for (DiscountPlanInstance dpi : discountPlanInstances) {
+            if (!dpi.isEffective(invoice.getInvoiceDate())) {
+                continue;
+            }
+            if (dpi.getDiscountPlan().isActive()) {
+                List<DiscountPlanItem> discountPlanItems = dpi.getDiscountPlan().getDiscountPlanItems();
+                for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+                    if (discountPlanItem.isActive() && matchDiscountPlanItemExpression(
+                            discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice, dpi)) {
+                        applicableDiscountPlanItems.add(discountPlanItem);
+                    }
+                }
+            }
+        }
+        return applicableDiscountPlanItems;
     }
 
     /**
@@ -851,6 +891,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (expression.indexOf("dpi") >= 0) {
             userMap.put("dpi", dpi);
         }
+        if (expression.indexOf("su") >= 0) {
+            userMap.put("su", invoice.getSubscription());
+        }
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {
             result = (Boolean) res;
@@ -883,25 +926,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         createRatedTransaction(walletOperation, false);
     }
 
-    /**
-     * Create Rated transaction from wallet operation.
-     * 
-     * @param walletOperation Wallet operation
-     * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
-     * @return Rated transaction
-     * @throws BusinessException business exception
-     */
-    public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
-        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
 
-        walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
-
-        if (!isVirtual) {
-            create(ratedTransaction);
-            walletOperationService.updateNoCheck(walletOperation);
-        }
-        return ratedTransaction;
-    }
 
     /**
      * Convert Wallet operations to Rated transactions for a given billable entity up to a given date
@@ -928,6 +953,203 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             createRatedTransaction(walletOp, false);
         }
     }
+
+    /**
+     * Create Rated transaction from wallet operation.
+     * 
+     * @param walletOperation Wallet operation
+     * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
+     * @return Rated transaction
+     * @throws BusinessException business exception
+     */
+    public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
+        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
+		
+        walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
+
+        if (!isVirtual) {
+            create(ratedTransaction);
+            walletOperationService.updateNoCheck(walletOperation);
+        } else {
+            create(ratedTransaction);
+        }
+        
+        walletOperation.setRatedTransaction(ratedTransaction);
+        
+        return ratedTransaction;
+    }
+    
+    /**
+	 * Create a {@link RatedTransaction} from a group of wallet operations.
+	 * 
+	 * @param aggregatedWo
+	 *            aggregated wallet operations
+	 * @param aggregatedSettings
+	 *            aggregation settings of wallet operations
+	 * @param invoicingDate
+	 *            the invoicing date
+	 * @return created {@link RatedTransaction}
+	 * @throws BusinessException
+	 *             Exception when RT is not create successfully
+	 * @see WalletOperation
+	 */
+	public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo,
+			RatedTransactionsJobAggregationSetting aggregatedSettings, Date invoicingDate) throws BusinessException {
+		return createRatedTransaction(aggregatedWo, aggregatedSettings, invoicingDate, false);
+	}
+
+	/**
+	 * 
+	 * @param aggregatedWo
+	 *            aggregated wallet operations
+	 * @param aggregationSettings
+	 *            aggregation settings of wallet operations
+	 * @param isVirtual
+	 *            is virtual
+	 * @param invoicingDate
+	 *            the invoicing date
+	 * @return {@link RatedTransaction}
+	 * @throws BusinessException
+	 *             Exception when RT is not create successfully
+	 */
+	public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo,
+			RatedTransactionsJobAggregationSetting aggregationSettings, Date invoicingDate, boolean isVirtual)
+			throws BusinessException {
+		RatedTransaction ratedTransaction = new RatedTransaction();
+
+		Seller seller = null;
+		BillingAccount ba = null;
+		UserAccount ua = null;
+		Subscription sub = null;
+		ServiceInstance si = null;
+		ChargeInstance ci = null;
+		String code = null;
+		String description = null;
+		InvoiceSubCategory isc = null;
+
+		Calendar cal = Calendar.getInstance();
+		if (aggregationSettings.isAggregateByDay()) {
+			cal.set(Calendar.YEAR, aggregatedWo.getYear(), aggregatedWo.getMonth(), aggregatedWo.getDay(), 0, 0);
+			ratedTransaction.setUsageDate(cal.getTime());
+		} else {
+			cal.set(Calendar.YEAR, aggregatedWo.getYear(), aggregatedWo.getMonth(), 1, 0, 0);
+			ratedTransaction.setUsageDate(cal.getTime());
+
+		}
+
+		isc = invoiceSubCategoryService.refreshOrRetrieve(aggregatedWo.getInvoiceSubCategory());
+
+		switch (aggregationSettings.getAggregationLevel()) {
+		case BA:
+			ba = billingAccountService.findById(aggregatedWo.getIdAsLong());
+			seller = ba.getCustomerAccount().getCustomer().getSeller();
+			code = isc.getCode();
+			description = isc.getDescription();
+			break;
+
+		case UA:
+			ua = userAccountService.findById(aggregatedWo.getIdAsLong());
+			ba = ua.getBillingAccount();
+			seller = ba.getCustomerAccount().getCustomer().getSeller();
+			code = isc.getCode();
+			description = isc.getDescription();
+			break;
+
+		case SUB:
+			sub = subscriptionService.findById(aggregatedWo.getIdAsLong());
+			ua = sub.getUserAccount();
+			ba = ua.getBillingAccount();
+			seller = sub.getSeller();
+			code = isc.getCode();
+			description = isc.getDescription();
+			break;
+
+		case SI:
+			si = serviceInstanceService.findById(aggregatedWo.getIdAsLong());
+			sub = si.getSubscription();
+			ua = sub.getUserAccount();
+			ba = ua.getBillingAccount();
+			seller = sub.getSeller();
+			code = si.getCode();
+			description = si.getDescription();
+			break;
+
+		case CI:
+			ci = (ChargeInstance) chargeInstanceService.findById(aggregatedWo.getIdAsLong());
+			sub = ci.getSubscription();
+			ua = sub.getUserAccount();
+			ba = ua.getBillingAccount();
+			seller = sub.getSeller();
+			code = ci.getCode();
+			description = ci.getDescription();
+			break;
+
+		case DESC:
+			ci = (ChargeInstance) chargeInstanceService.findById(aggregatedWo.getIdAsLong());
+			sub = ci.getSubscription();
+			ua = sub.getUserAccount();
+			ba = ua.getBillingAccount();
+			seller = sub.getSeller();
+			code = ci.getCode();
+			description = aggregatedWo.getComputedDescription();
+			break;
+
+		default:
+			ba = billingAccountService.findById(aggregatedWo.getIdAsLong());
+			seller = ba.getCustomerAccount().getCustomer().getSeller();
+		}
+
+		if(aggregationSettings.isAggregateByOrder()) {
+			ratedTransaction.setOrderNumber(aggregatedWo.getOrderNumber());
+		}
+		if (aggregationSettings.isAggregateByParam1()) {
+			ratedTransaction.setParameter1(aggregatedWo.getParameter1());
+		}
+		if (aggregationSettings.isAggregateByParam2()) {
+			ratedTransaction.setParameter2(aggregatedWo.getParameter2());
+		}
+		if (aggregationSettings.isAggregateByParam3()) {
+			ratedTransaction.setParameter3(aggregatedWo.getParameter3());
+		}
+		if (aggregationSettings.isAggregateByExtraParam()) {
+			ratedTransaction.setParameterExtra(aggregatedWo.getParameterExtra());
+		}
+
+		Tax tax = taxService.refreshOrRetrieve(aggregatedWo.getTax());
+
+		ratedTransaction.setCode(code);
+		ratedTransaction.setDescription(description);
+		ratedTransaction.setTax(tax);
+		ratedTransaction.setTaxPercent(tax.getPercent());
+		ratedTransaction.setInvoiceSubCategory(isc);
+		ratedTransaction.setSeller(seller);
+		ratedTransaction.setBillingAccount(ba);
+		ratedTransaction.setUserAccount(ua);
+		ratedTransaction.setSubscription(sub);
+		ratedTransaction.setChargeInstance(ci);
+		ratedTransaction.setAmountWithTax(aggregatedWo.getAmountWithTax());
+		ratedTransaction.setAmountTax(aggregatedWo.getAmountTax());
+		ratedTransaction.setAmountWithoutTax(aggregatedWo.getAmountWithoutTax());
+		ratedTransaction.setUnitAmountWithTax(aggregatedWo.getUnitAmountWithTax());
+		ratedTransaction.setUnitAmountTax(aggregatedWo.getUnitAmountTax());
+		ratedTransaction.setUnitAmountWithoutTax(aggregatedWo.getUnitAmountWithoutTax());
+		ratedTransaction.setQuantity(aggregatedWo.getQuantity());
+
+		if (!isVirtual) {
+			create(ratedTransaction);
+
+			WalletOperationAggregatorQueryBuilder woa = new WalletOperationAggregatorQueryBuilder(aggregationSettings);
+			String strQuery = woa.listWoQuery(aggregatedWo.getIdAsLong());
+			Query query = getEntityManager().createQuery(strQuery);
+			query.setParameter("invoicingDate", invoicingDate);
+			List<WalletOperation> walletOps = (List<WalletOperation>) query.getResultList();
+			for (WalletOperation tempWo : walletOps) {
+				tempWo.setRatedTransaction(ratedTransaction);
+			}
+		}
+
+		return ratedTransaction;
+	}
 
     /**
      * @param invoice invoice

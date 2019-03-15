@@ -28,6 +28,9 @@ import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.CatalogRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.ProductChargeTemplate;
+import org.meveo.model.catalog.ProductTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
@@ -37,7 +40,8 @@ import org.tmf.dsmapi.catalog.resource.product.ProductSpecification;
 
 /**
  * @author phung
- *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -260,7 +264,10 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         Response.ResponseBuilder responseBuilder = null;
         try {
-            productTemplateApi.create(postData);
+            ProductTemplate productTemplate = productTemplateApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(productTemplate.getCode());
+            }
             responseBuilder = Response.ok().entity(result);
 
         } catch (Exception e) {
@@ -275,7 +282,10 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         Response.ResponseBuilder responseBuilder = null;
         try {
-            productTemplateApi.createOrUpdate(postData);
+            ProductTemplate productTemplate = productTemplateApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(productTemplate.getCode());
+            }
             responseBuilder = Response.ok().entity(result);
 
         } catch (Exception e) {

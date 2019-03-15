@@ -43,7 +43,8 @@ import org.primefaces.model.SortOrder;
 /**
  * @author Edward P. Legaspi(edward.legaspi@manaty.net)
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  *
  */
 @Stateless
@@ -89,9 +90,6 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
     @Override
     public ProductTemplate create(ProductTemplateDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(postData.getName())) {
             missingParameters.add("name");
         }

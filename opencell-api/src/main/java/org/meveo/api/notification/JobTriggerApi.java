@@ -22,8 +22,12 @@ import org.meveo.service.notification.JobTriggerService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
+ * The CRUD Api for JobTrigger Entity.
+ *
  * @author Tyshan Shi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
 
@@ -42,9 +46,6 @@ public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
     @Override
     public JobTrigger create(JobTriggerDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(postData.getClassNameFilter())) {
             missingParameters.add("classNameFilter");
         }

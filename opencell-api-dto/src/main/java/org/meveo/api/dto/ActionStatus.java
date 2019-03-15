@@ -13,7 +13,9 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
  * Determine the status of the MEVEO API web service response.
  * 
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(Include.NON_NULL)
@@ -35,6 +37,18 @@ public class ActionStatus {
      */
     @XmlElement(required = true)
     private String message;
+
+    /**
+     * the entity identifier
+     */
+    @XmlElement
+    private Long entityId;
+
+    /**
+     * the entity code
+     */
+    @XmlElement
+    private String entityCode;
 
     public ActionStatus() {
         status = ActionStatusEnum.SUCCESS;
@@ -93,12 +107,55 @@ public class ActionStatus {
         this.errorCode = errorCode;
     }
 
+    /**
+     * Gets the entity id
+     *
+     * @return the entity id
+     */
+    public Long getEntityId() {
+        return entityId;
+    }
+
+    /**
+     * Sets the entity id.
+     *
+     * @param entityId the new entity id
+     */
+    public void setEntityId(Long entityId) {
+        this.entityId = entityId;
+    }
+
+    /**
+     * Gets the entity code
+     *
+     * @return the entity code
+     */
+    public String getEntityCode() {
+        return entityCode;
+    }
+
+    /**
+     * Sets the entity code.
+     *
+     * @param entityCode the new entity code
+     */
+    public void setEntityCode(String entityCode) {
+        this.entityCode = entityCode;
+    }
+
     public String getjson() {
-        return "{\"status\":\"" + status + "\",\"errorCode\": \"" + errorCode + "\",\"message\": \"" + message + "\"}";
+        return "{\"status\":\"" + status + "\",\"errorCode\": \"" + errorCode + "\",\"message\": \""
+                + message + "\",\"entityId\": \"" + entityId + "\",\"entityCode\": \"" + entityCode + "\"}";
     }
 
     @Override
     public String toString() {
-        return "ActionStatus [status=" + status + ", errorCode=" + errorCode + ", message=" + message + "]";
+        return "ActionStatus{" +
+                "status=" + status +
+                ", errorCode=" + errorCode +
+                ", message='" + message + '\'' +
+                ", entityId=" + entityId +
+                ", entityCode='" + entityCode + '\'' +
+                '}';
     }
 }

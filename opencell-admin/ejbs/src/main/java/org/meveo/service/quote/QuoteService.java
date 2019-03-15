@@ -156,6 +156,7 @@ public class QuoteService extends BusinessService<Quote> {
                                 walletOperations.addAll(walletOps);
                             }
                         }
+
                     }
 
                     // Process CDRS
@@ -201,7 +202,10 @@ public class QuoteService extends BusinessService<Quote> {
             }            
             // Create rated transactions from wallet operations
             for (WalletOperation walletOperation : walletOperations) {
-                ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true));
+                RatedTransaction createdRatedTransaction = ratedTransactionService.createRatedTransaction(walletOperation, true);
+                createdRatedTransaction.setChargeInstance(null);
+                createdRatedTransaction.setSubscription(null);
+                ratedTransactions.add(createdRatedTransaction);
             }
             Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());
             File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);

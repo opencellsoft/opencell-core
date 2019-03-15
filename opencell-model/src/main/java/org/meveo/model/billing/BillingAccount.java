@@ -45,14 +45,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.AccountEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.IBillableEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IWFEntity;
-import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
@@ -73,7 +66,7 @@ import org.meveo.model.payments.CustomerAccount;
 @DiscriminatorValue(value = "ACCT_BA")
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listIdsByBillingRunId", query = "SELECT b.id FROM BillingAccount b where b.billingRun.id=:billingRunId"),
         @NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId") })
-public class BillingAccount extends AccountEntity implements IBillableEntity, IWFEntity {
+public class BillingAccount extends AccountEntity implements IBillableEntity, IWFEntity, IDiscountable {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) BillingAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
@@ -642,8 +635,21 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 	public List<DiscountPlanInstance> getDiscountPlanInstances() {
 		return discountPlanInstances;
 	}
-	
-	public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstances) {
+
+    @Override
+    public List<DiscountPlanInstance> getAllDiscountPlanInstances() {
+        return this.getDiscountPlanInstances();
+    }
+
+    @Override
+    public void addDiscountPlanInstances(DiscountPlanInstance discountPlanInstance) {
+        if(this.getDiscountPlanInstances() == null){
+            this.setDiscountPlanInstances(new ArrayList<>());
+        }
+        this.getDiscountPlanInstances().add(discountPlanInstance);
+    }
+
+    public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstances) {
 		this.discountPlanInstances = discountPlanInstances;
 	}
 

@@ -94,7 +94,7 @@
         </delete>
     </changeSet>
 
-    <changeSet id="#3644_04102018" author="AbdellatifBari">
+    <changeSet id="#3644_20181004" author="AbdellatifBari">
         <addColumn tableName="crm_custom_field_tmpl">
             <column name="display_format" type="varchar(80)" />
         </addColumn>
@@ -758,7 +758,8 @@
         </addColumn>
     </changeSet>
     
-    <changeSet id="#3543_27092018" author="AbdellatifBari">
+    <changeSet id="#3543_20180927" author="AbdellatifBari">
+
         <addColumn tableName="cat_serv_rec_charge_template">
             <column name="counter_template_id" type="bigint" />
         </addColumn>
@@ -796,6 +797,43 @@
 			<column name="cf_values_accum" type="${type.json}"></column>
     	</addColumn>
 	</changeSet>
+
+    <changeSet id="#3762_20181123_1" author="AbdellatifBARI" dbms="mysql">
+        <createTable tableName="audit_field_changes_history_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="audit_field_changes_history_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}audit_field_changes_history_seq values(1)</sql>
+    </changeSet>
+
+    <changeSet id="#3762_20181123_2" author="AbdellatifBARI">
+        <createSequence sequenceName="audit_field_changes_history_seq" startValue="1" />
+        <createTable tableName="audit_field_changes_history">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="audit_field_changes_history_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="entity_class" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="entity_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="field_name" type="varchar(255)" />
+            <column name="change_type" type="varchar(255)" />
+            <column name="change_origin" type="varchar(255)" />
+            <column name="origin_name" type="varchar(255)" />
+            <column name="previous_state" type="varchar(255)" />
+            <column name="current_state" type="varchar(255)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="actor" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
 	
 	<changeSet id="#3652_26112018" author="anasseh">
         <addColumn tableName="ar_ddrequest_lot_op">
@@ -1755,6 +1793,113 @@ $$ LANGUAGE plpgsql;
     
     <changeSet id="#4049_20190306 - Can not create two payment gateways" author="AmineBenAicha">
         <dropUniqueConstraint tableName="ar_payment_gateway" constraintName="uk_payment_gateway" />
+        
+    </changeSet>
+        <changeSet id="#4069 - Reject file can be processed many times" author="anasseh">
+        <addColumn tableName="ar_ddrequest_item">
+            <column name="rejected_file_name" type="varchar(1000)" />
+        </addColumn>
+    </changeSet>
+
+	<changeSet id="#3794_20190221 - Aggregate WO"
+		author="EdwardPLegaspi">
+		<addColumn tableName="billing_wallet_operation">
+			<column name="rated_transaction_id" type="bigint" />
+			<column name="service_instance_id" type="bigint"></column>
+		</addColumn>
+
+		<addForeignKeyConstraint
+			constraintName="fk_wallet_operation_rated_transaction"
+			referencedTableName="billing_rated_transaction"
+			baseColumnNames="rated_transaction_id"
+			baseTableName="billing_wallet_operation" referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			constraintName="fk_wallet_operation_service_instance"
+			referencedTableName="billing_service_instance"
+			baseColumnNames="service_instance_id"
+			baseTableName="billing_wallet_operation" referencedColumnNames="id" />
+
+		<sql>UPDATE billing_wallet_operation o SET
+			rated_transaction_id=(SELECT
+			r.id FROM billing_rated_transaction r WHERE r.wallet_operation_id=o.id
+			LIMIT 1);
+		</sql>
+		<dropColumn tableName="billing_rated_transaction">
+			<column name="wallet_operation_id"></column>
+		</dropColumn>
+	</changeSet>
+
+    <changeSet id="#3599_20181002_1" author="AbdellatifBARI" dbms="mysql">
+        <createTable tableName="adm_custom_generic_entity_code_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_custom_generic_entity_code_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}adm_custom_generic_entity_code_seq values(3)</sql>
+    </changeSet>
+    <changeSet id="#3599_20181002_2" author="AbdellatifBARI">
+        <createSequence sequenceName="adm_custom_generic_entity_code_seq" startValue="3" />
+        <createTable tableName="adm_custom_generic_entity_code">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_custom_generic_entity_code_pkey" />
+            </column>
+            <column name="entity_class" type="varchar(255)" />
+            <column name="code_el" type="varchar(255)" />
+            <column name="sequence_size" type="int4" />
+            <column name="sequence_current_value" type="bigint" defaultValueNumeric="0"/>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </createTable>
+        <addUniqueConstraint columnNames="entity_class" constraintName="uk_adm_custom_generic_entity_code_class" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_custom_generic_entity_code" />
+    </changeSet>
+
+    <changeSet id="#3848_23012019" author="abdelkader.bouazza">
+        <createTable tableName="cat_offer_tmpl_discount_plan">
+            <column name="offer_tmpl_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="discount_plan_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="offer_tmpl_id, discount_plan_id" constraintName="cat_offer_tmpl_discount_plan_pkey" tableName="cat_offer_tmpl_discount_plan" />
+
+        <addColumn tableName="billing_discount_plan_instance">
+            <column name="subscription_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <dropNotNullConstraint tableName="billing_discount_plan_instance" columnName="billing_account_id" columnDataType="bigint"/>
+        <addForeignKeyConstraint constraintName="billing_discount_plan_instance_bs_fk" referencedTableName="billing_subscription" baseColumnNames="subscription_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="#3108_20190213_1" author="AbdellatifBari">
+        <addColumn tableName="billing_subscription">
+            <column name="initial_renewal" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#3108_20190213_2" author="AbdellatifBari">
+        <addColumn tableName="billing_service_instance">
+            <column name="initial_renewal" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#3310_20190126_1" author="AbdellatifBARI">
+        <addColumn tableName="billing_billing_run">
+            <column name="reference_date" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#3310_20190126_2" author="AbdellatifBARI">
+        <addColumn tableName="billing_cycle">
+            <column name="reference_date" type="varchar(255)" />
+        </addColumn>
     </changeSet>
 
 </databaseChangeLog>

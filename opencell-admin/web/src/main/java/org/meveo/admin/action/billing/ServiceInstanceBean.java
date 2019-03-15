@@ -30,6 +30,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
@@ -40,6 +41,9 @@ import org.omnifaces.cdi.Param;
 /**
  * Standard backing bean for {@link ServiceInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Named
 @ViewScoped
@@ -219,5 +223,27 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
      */
     public void  autoUpdateEndOfEngagementDate() {
         entity.autoUpdateEndOfEngagementDate();
+    }
+
+    /**
+     * Check is terminated service
+     *
+     * @return true is the service is terminated
+     */
+    public boolean isTerminatedService() {
+        return serviceInstanceService.willBeTerminatedInFuture(entity);
+    }
+
+    /**
+     * cancel subscription termination.
+     */
+    @ActionMethod
+    public void cancelServiceTermination() throws BusinessException {
+        log.debug("cancelTermination...");
+        entity = serviceInstanceService.refreshOrRetrieve(entity);
+        serviceInstanceService.cancelServiceTermination(entity);
+        serviceInstanceService.refresh(entity);
+        messages.info(new BundleKey("messages", "termination.cancelTerminationSuccessful"));
+
     }
 }

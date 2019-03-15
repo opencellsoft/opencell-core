@@ -16,10 +16,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.ObservableEntity;
+import org.meveo.model.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
@@ -44,9 +41,14 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
 	@JoinColumn(name = "discount_plan_id", nullable = false, updatable = false)
 	private DiscountPlan discountPlan;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "billing_account_id", nullable = false, updatable = false)
+	@ManyToOne
+	@JoinColumn(name = "billing_account_id")
 	private BillingAccount billingAccount;
+
+
+	@ManyToOne
+	@JoinColumn(name = "subscription_id")
+	private Subscription subscription;
 
 	/**
 	 * Effectivity start date
@@ -226,4 +228,19 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
 		this.cfAccumulatedValues = cfAccumulatedValues;
 	}
 
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
+
+	public void assignEntityToDiscountPlanInstances(IDiscountable entity) {
+		if(entity instanceof BillingAccount){
+			this.setBillingAccount((BillingAccount) entity);
+		}else{
+			this.setSubscription((Subscription) entity);
+		}
+	}
 }

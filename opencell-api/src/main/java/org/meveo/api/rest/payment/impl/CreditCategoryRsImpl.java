@@ -13,10 +13,14 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.CreditCategoryApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.CreditCategoryRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.payments.CreditCategory;
 
 /**
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
  * @since 22 Aug 2017
+ * @lastModifiedVersion 7.0
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -30,7 +34,10 @@ public class CreditCategoryRsImpl extends BaseRs implements CreditCategoryRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			creditCategoryApi.create(postData);
+			CreditCategory creditCategory = creditCategoryApi.create(postData);
+			if (StringUtils.isBlank(postData.getCode())) {
+				result.setEntityCode(creditCategory.getCode());
+			}
 		} catch (Exception e) {
 			processException(e, result);
 		}
@@ -56,7 +63,10 @@ public class CreditCategoryRsImpl extends BaseRs implements CreditCategoryRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			creditCategoryApi.createOrUpdate(postData);
+			CreditCategory creditCategory = creditCategoryApi.createOrUpdate(postData);
+			if (StringUtils.isBlank(postData.getCode())) {
+				result.setEntityCode(creditCategory.getCode());
+			}
 		} catch (Exception e) {
 			processException(e, result);
 		}

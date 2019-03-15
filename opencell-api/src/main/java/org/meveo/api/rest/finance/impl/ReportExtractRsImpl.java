@@ -18,13 +18,16 @@ import org.meveo.api.finance.ReportExtractApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.finance.ReportExtractRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.finance.ReportExtract;
 
 /**
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
  * @version %I%, %G%
  * @since 5.0
- * @lastModifiedVersion 5.1
- **/
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class ReportExtractRsImpl extends BaseRs implements ReportExtractRs {
@@ -37,7 +40,10 @@ public class ReportExtractRsImpl extends BaseRs implements ReportExtractRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            reportExtractApi.create(postData);
+            ReportExtract reportExtract = reportExtractApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(reportExtract.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -63,7 +69,10 @@ public class ReportExtractRsImpl extends BaseRs implements ReportExtractRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            reportExtractApi.createOrUpdate(postData);
+            ReportExtract reportExtract = reportExtractApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(reportExtract.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

@@ -26,6 +26,7 @@ import org.meveo.service.catalog.impl.CalendarService;
 /**
  * Service class for WalletReservation entity
  * 
+ * @author Edward P. Legaspi
  * @author Wassim Drira
  * @lastModifiedVersion 5.0.1
  */

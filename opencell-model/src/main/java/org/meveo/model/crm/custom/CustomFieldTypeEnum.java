@@ -5,6 +5,10 @@ import java.util.Map;
 
 import org.meveo.model.crm.EntityReferenceWrapper;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 7.0
+ */
 public enum CustomFieldTypeEnum {
     /**
      * String value
