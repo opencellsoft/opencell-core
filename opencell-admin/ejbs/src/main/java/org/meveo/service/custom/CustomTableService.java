@@ -244,7 +244,7 @@ public class CustomTableService extends NativePersistenceService {
     }
 
     /**
-     * Export data into a file into exports directory. Filename is in the following format: <db table name>_id_<formated date>.csv
+     * Export data into a file into exports directory. Filename is in the following format: &lt;db table name&gt;_id_&lt;formated date&gt;.csv
      * 
      * @param customEntityTemplate Custom table definition
      * @param config Pagination and search criteria
@@ -601,7 +601,7 @@ public class CustomTableService extends NativePersistenceService {
     /**
      * Execute a search on given fields for given query values. See ElasticClient.search() for a query format.
      *
-     * @cetCodeOrTablename Custom entity template code, or custom table name to query
+     * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param queryValues Fields and values to match
      * @param from Pagination - starting record. Defaults to 0.
      * @param size Pagination - number of records per page. Defaults to ElasticClient.DEFAULT_SEARCH_PAGE_SIZE.

@@ -215,7 +215,7 @@ public class RatedTransactionsJobAggregationSetting {
 	}
 
 	/**
-	 * @param aggregate
+	 * @param aggregateByExtraParam
 	 *            by extra param
 	 */
 	public void setAggregateByExtraParam(boolean aggregateByExtraParam) {
