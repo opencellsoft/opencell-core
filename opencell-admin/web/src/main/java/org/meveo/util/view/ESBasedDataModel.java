@@ -99,10 +99,10 @@ public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>
 
     private static final long serialVersionUID = -5796910936316457321L;
 
-    public static String RECORD_ID = "_id";
-    public static String RECORD_TYPE = "_type";
+    public static String RECORD_ES_ID = "_id";
     public static String RECORD_SCORE = "_score";
-    public static String RECORD_CODE = "code";
+    public static String RECORD_INDEX = "index";
+    public static String RECORD_ID = "id";
     public static String FILTER_FULL_TEXT = "fullText";
     protected static String FILTER_PE_FULL_TEXT = "globalFilter";
 
@@ -202,7 +202,7 @@ public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>
             Logger log = LoggerFactory.getLogger(getClass());
             log.error("Failed to search in ES with {}", paginationConfig, e);
         }
-        return new SearchResponse();
+        return null;
     }
 
     /**
@@ -234,9 +234,9 @@ public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>
 
         searchResult.getHits().forEach(hit -> {
 
-            Map<String, Object> result = new HashMap<>(hit.getSource());
-            result.put(RECORD_ID, hit.getId());
-            result.put(RECORD_TYPE, hit.getType());
+            Map<String, Object> result = new HashMap<>(hit.getSourceAsMap());
+            result.put(RECORD_ES_ID, hit.getId());
+            result.put(RECORD_INDEX, hit.getIndex());
             result.put(RECORD_SCORE, new Float(hit.getScore()).doubleValue());
 
             results.add(result);

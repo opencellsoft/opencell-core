@@ -419,13 +419,13 @@
 				<version>1.0.2.Final</version>
 			</dependency>
 
-			<dependency>
-				<groupId>org.elasticsearch</groupId>
-				<artifactId>elasticsearch</artifactId>
-				<version>2.3.3</version>
-			</dependency>
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-high-level-client</artifactId>
+                <version>6.6.1</version>
+            </dependency>
 
-			<dependency>
+            <dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
 				<version>${jackson.version}</version>
@@ -750,26 +750,30 @@
 				<db.driver>org.postgresql.Driver </db.driver>
 				<db.url>jdbc:postgresql://localhost/meveo</db.url>
                 <db.schema>public</db.schema>
-				<db.username>meveo</db.username>
-				<db.password>meveo</db.password>
-			</properties>
-			<dependencies>
-				<!-- Dependency for liquibase plugin -->
-				<dependency>
-					<groupId>org.postgresql</groupId>
-					<artifactId>postgresql</artifactId>
-					<version>9.4.1211</version>
-					<scope>provided</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.liquibase.ext</groupId>
-					<artifactId>liquibase-postgresql</artifactId>
-					<version>3.0</version>
-					<scope>provided</scope>
+                <db.username>meveo</db.username>
+                <db.password>meveo</db.password>
+            </properties>
+            <dependencies>
+                <!-- Dependency for liquibase plugin -->
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>42.2.5</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.liquibase.ext</groupId>
+                    <artifactId>liquibase-postgresql</artifactId>
+                    <version>3.0</version>
+                    <scope>provided</scope>
                     <exclusions>
                         <exclusion>
                             <groupId>org.liquibase</groupId>
                             <artifactId>liquibase-core</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>postgresql</groupId>
+                            <artifactId>postgresql</artifactId>
                         </exclusion>
                     </exclusions>
 				</dependency>
