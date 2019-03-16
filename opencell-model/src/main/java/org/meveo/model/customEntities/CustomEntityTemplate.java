@@ -113,8 +113,18 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
      */
     public String getDbTablename() {
         if (dbTablename == null && code != null) {
-            dbTablename = BaseEntity.cleanUpAndLowercaseCodeOrId(code);
+            dbTablename = getDbTablename(code);
         }
         return dbTablename;
+    }
+
+    /**
+     * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
+     *
+     * @param code Field code
+     * @return Database field name
+     */
+    public static String getDbTablename(String code) {
+        return BaseEntity.cleanUpAndLowercaseCodeOrId(code);
     }
 }

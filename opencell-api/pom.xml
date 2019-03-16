@@ -118,11 +118,6 @@
         <!-- End of libraries provided in Jboss -->
 
         <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.iban4j</groupId>
             <artifactId>iban4j</artifactId>
         </dependency>

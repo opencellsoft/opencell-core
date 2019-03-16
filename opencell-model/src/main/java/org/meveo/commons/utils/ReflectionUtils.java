@@ -86,6 +86,14 @@ public class ReflectionUtils {
         return object;
     }
 
+    /**
+     * Get a list of classes from a given package
+     * 
+     * @param packageName Package name
+     * @return A list of classes
+     * @throws ClassNotFoundException Class discovery issue
+     * @throws IOException Class discovery issue
+     */
     @SuppressWarnings("rawtypes")
     public static List<Class> getClasses(String packageName) throws ClassNotFoundException, IOException {
 
@@ -119,6 +127,13 @@ public class ReflectionUtils {
         return new ArrayList<Class>();
     }
 
+    /**
+     * Get fields of a given class and it's superclasses
+     * 
+     * @param fields A list of fields to supplement to
+     * @param type Class
+     * @return A list of field (same as fields parameter plus newly discovered fields
+     */
     public static List<Field> getAllFields(List<Field> fields, Class<?> type) {
         fields.addAll(Arrays.asList(type.getDeclaredFields()));
 
@@ -129,10 +144,17 @@ public class ReflectionUtils {
         return fields;
     }
 
-    public static <T extends Enum<T>> T getEnumFromString(Class<T> c, String string) {
-        if (c != null && string != null) {
+    /**
+     * Get enum object from string value for a given enum type
+     * 
+     * @param enumType Enum class
+     * @param enumValue Enum value as string
+     * @return Enum object
+     */
+    public static <T extends Enum<T>> T getEnumFromString(Class<T> enumType, String enumValue) {
+        if (enumType != null && enumValue != null) {
             try {
-                return Enum.valueOf(c, string.trim().toUpperCase());
+                return Enum.valueOf(enumType, enumValue.trim().toUpperCase());
             } catch (IllegalArgumentException ex) {
             }
         }

@@ -2,8 +2,6 @@ package org.meveo.service.index;
 
 import java.util.Map;
 
-import org.meveo.commons.utils.ReflectionUtils;
-
 /**
  * Represents changes pending to be submitted to Elastic Search
  * 
@@ -33,57 +31,114 @@ public class ElasticSearchChangeset {
         DELETE
     }
 
+    /**
+     * Full identifier including an index, type and record identifier
+     */
     private String fullId;
 
+    /**
+     * Action to perform
+     */
     private ElasticSearchAction action;
 
+    /**
+     * Elastic search index
+     */
     private String index;
 
+    /**
+     * Elastic search type
+     */
     private String type;
 
-    private String id;
+    /**
+     * Record identifier in Opencell
+     */
+    private Object id;
 
-    @SuppressWarnings("rawtypes")
-    private Class clazz;
+    /**
+     * Record identifier for Elastic Search. Includes type and record identifier.
+     */
+    private String idForES;
 
+    /**
+     * Associated data
+     */
     private Map<String, Object> source;
 
-    @SuppressWarnings("rawtypes")
-    public ElasticSearchChangeset(ElasticSearchAction action, String index, String type, String id, Class clazz, Map<String, Object> source) {
+    /**
+     * Constructor
+     * 
+     * @param action Action to perform
+     * @param index Elastic search index name
+     * @param type Elastic search type. Optional. If provided, will be used as part of record identifier in ES.
+     * @param id Record identifier in Opencell
+     */
+    public ElasticSearchChangeset(ElasticSearchAction action, String index, String type, Object id) {
+        this(action, index, type, id, null);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param action Action to perform
+     * @param index Elastic search index name
+     * @param type Elastic search type. Optional. If provided, will be used as part of record identifier in ES. In case of action Create or Add_replace, value will be supplemented
+     *        with 'type' value.
+     * @param id Record identifier in Opencell
+     * @param source Associated data (null for Delete action)
+     */
+    public ElasticSearchChangeset(ElasticSearchAction action, String index, String type, Object id, Map<String, Object> source) {
         this.action = action;
         this.index = index;
         this.type = type;
         this.id = id;
-        this.clazz = clazz;
+        this.idForES = type != null ? type + "_" + id : id.toString();
         this.source = source;
-        this.fullId = String.format("%s/%s/%s", index, type, id);
+        this.fullId = String.format("%s/%s", index, this.id);
+        if (type != null && (action == ElasticSearchAction.ADD_REPLACE || action == ElasticSearchAction.UPSERT)) {
+            this.source.put(ElasticSearchConfiguration.MAPPING_FIELD_TYPE, type);
+        }
     }
 
+    /**
+     * @return Action to perform
+     */
     public ElasticSearchAction getAction() {
         return action;
     }
 
+    /**
+     * @return Elastic search index
+     */
     public String getIndex() {
         return index;
     }
 
+    /**
+     * @return Elastic search type
+     */
     public String getType() {
         return type;
     }
 
-    public String getId() {
+    /**
+     * @return Record identifier in Opencell
+     */
+    public Object getId() {
         return id;
     }
 
-    @SuppressWarnings("rawtypes")
-    public Class getClazz() {
-        return clazz;
+    /**
+     * @return Record identifier for Elastic Search. Includes type and record identifier.
+     */
+    public String getIdForES() {
+        return idForES;
     }
 
-    public String getClazzName() {
-        return ReflectionUtils.getCleanClassName(clazz.getSimpleName());
-    }
-
+    /**
+     * @return Associated data
+     */
     public Map<String, Object> getSource() {
         return source;
     }
@@ -97,12 +152,17 @@ public class ElasticSearchChangeset {
         source.putAll(updates);
     }
 
-    public String getFullId() {
+    /**
+     * Get full identifier including index
+     * 
+     * @return Index+type+id value
+     */
+    protected String getFullId() {
         return fullId;
     }
 
     @Override
     public String toString() {
-        return String.format("ElasticSearchChangeset [clazz=%s, action=%s, fullId=%s, source=%s]", getClazzName(), action, fullId, source);
+        return "ElasticSearchChangeset [fullId=" + fullId + ", action=" + action + ", source=" + source + "]";
     }
 }
