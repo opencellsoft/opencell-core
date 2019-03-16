@@ -926,6 +926,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         createRatedTransaction(walletOperation, false);
     }
 
+
+
     /**
      * Convert Wallet operations to Rated transactions for a given billable entity up to a given date
      * 
