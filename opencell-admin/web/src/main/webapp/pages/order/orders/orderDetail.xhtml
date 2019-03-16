@@ -73,6 +73,9 @@
                           updateField=":orderForm:tabView:orderInfo:emailTemplateId :orderForm:tabView:orderInfo:emailTemplateId_text">
         </hftl:entityPopup>
 
+
+
+
         <hftl:formPanel formId="orderForm" label="#{messages['order.panel']}" backingBean="#{orderBean}" edit="#{orderBean.orderEditable}" showEditButton="#{orderBean.orderEditable}" ajaxSubmit="true"
             submitPartialProcess=":orderForm:tabView:orderInfo">
             <p:tabView id="tabView" activeIndex="#{orderBean.activeTab}">
@@ -85,10 +88,10 @@
                         <hftl:formField label="#{messages['order.category']}" field="category" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                         <hftl:formField label="#{messages['order.dueDateDelayEL']}" field="dueDateDelayEL" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
                         <hftl:formField label="#{messages['order.dueDateDelayELSpark']}" field="dueDateDelayELSpark" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
-					
+
 						<hftl:formField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
                             				popupId="billingCyclePopup" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
-						
+
                         <hftl:formField label="#{messages['order.receivedFromApp']}" field="receivedFromApp" edit="false"
                             rendered="#{orderBean.entity.receivedFromApp!=null and orderBean.entity.quote==null}" />
                         <hftl:formField label="#{messages['order.externalId']}" field="externalId" edit="false"
@@ -170,7 +173,7 @@
                                         <hftl:decorateFormField label="#{messages['bankCoordinates.iban']}" fieldId="iban">
                                             <h:outputText id="iban" value="#{orderBean.paymentMethod.bankCoordinates.iban}" required="true" converter="ibanConverter" />
                                         </hftl:decorateFormField>
-                                        </c:if>                               
+                                        </c:if>
                                     </c:if>
                                 </h:panelGroup>
 
@@ -339,6 +342,7 @@
                                                         </h:outputText>
                                                     </hftl:decorateFormField>
 
+
                                                     <h:panelGroup id="renewRulePanel"
                                                         rendered="#{itemConfiguration.isOffer() and (orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY)}">
 
@@ -373,6 +377,26 @@
                                                             </h:outputText>
                                                         </hftl:decorateFormField>
 
+                                                        <hftl:decorateFormField fieldId="seller_#{itemStatus.index}"
+                                                                                label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_SELLER.characteristicName)]}"
+                                                                                rendered="#{orderBean.selectedOrderItem.action!=OrderItemActionEnum.MODIFY}">
+
+                                                            <p:selectOneMenu id="seller_#{itemStatus.index}"
+                                                                             value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_SELLER]}"
+                                                                             required="#{true}"
+                                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
+                                                                <hftl:objectConverter/>
+                                                                <f:selectItem itemLabel="" itemValue=""/>
+                                                                <f:selectItems value="#{orderBean.listSellers()}" var="elem" itemLabel="#{elem['descriptionOrCode']}"
+                                                                               itemValue="#{elem['code']}"/>
+
+                                                            </p:selectOneMenu>
+                                                            <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_SELLER]}"
+                                                                          styleClass="field-value"
+                                                                          rendered="#{(orderBean.entity.status != OrderStatusEnum.IN_CREATION or orderBean.selectedOrderItem.action!=OrderItemActionEnum.ADD) and (orderBean.selectedOrderItem.action!=OrderItemActionEnum.MODIFY) }">
+                                                            </h:outputText>
+
+                                                        </hftl:decorateFormField>
 
                                                         <h:panelGroup id="autoRenewPanel" rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]!=null}">
                                                             <hftl:decorateFormField fieldId="autoRenew_#{itemStatus.index}" label="#{messages['subscription.autoRenew']}" componentWidth="10">
@@ -414,8 +438,6 @@
                                                                         rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_FOR_UNIT]!=null and !(orderBean.entity.status == OrderStatusEnum.IN_CREATION)}">
                                                                     </h:outputText>
                                                                 </hftl:decorateFormField>
-
-
 
                                                                 <hftl:decorateFormField fieldId="daysNotifyBeforeRenew_#{itemStatus.index}" label="#{messages['subscription.renewNotifyBefore']}"
                                                                     componentWidth="15">
@@ -577,7 +599,6 @@
                                                         <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.TERMINATION_REASON]}" styleClass="field-value"
                                                             rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION}" />
                                                     </hftl:decorateFormField>
-
 
                                                     <div class="clearLeft"></div>
                                                     <h:panelGroup id="cf_#{itemStatus.index}_panel">
