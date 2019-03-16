@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API - wildfly" resourceRoot="" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API - wildfly" resourceRoot="" soapui-version="5.5.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" id="862741d9-1cba-4f44-8645-23cbf90521aa" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -21506,7 +21506,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>89d9fb1b-7999-4940-8db5-444ebc3d9e53</con:value>
+              <con:value>0e3c8333-d0f4-473d-8677-4c158983c562</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -23040,22 +23040,14 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="2e755563-3e40-4a57-bc7d-0b91d2fa777b" name="Sub">
-              <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="e2e583ed-a9a4-475f-865d-f8010bbaec3c" name="XPath Match 20">
-              <con:configuration>
-                <path>exists(//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2" and subscriptionDate=terminationDate])</path>
-                <content>true</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+              <con:configuration><path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE2']/subscriptionDate</path><content>2016-02-27T*</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
-            <con:credentials>
+            <con:assertion type="XPath Match" id="e2e583ed-a9a4-475f-865d-f8010bbaec3c" name="XPath Match 21">
+              <con:configuration><path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE2']/terminationDate</path><content>2016-02-29T*</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -25592,7 +25584,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
-            <con:parameters><entry key="quoteId" value="a3dfc782-430c-4bdd-a5be-d2bbb193f7d9" xmlns="http://eviware.com/soapui/config"/></con:parameters>
+            <con:parameters><entry key="quoteId" value="48996dee-53a2-420b-8dcc-b7791cf96d81" xmlns="http://eviware.com/soapui/config"/></con:parameters>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -26736,7 +26728,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
-            <con:parameters><entry key="quoteId" value="598212f9-762c-45de-87a8-c0281136c0c5" xmlns="http://eviware.com/soapui/config"/></con:parameters>
+            <con:parameters><entry key="quoteId" value="901f042b-d9d8-42ba-a880-7ba3efb0cbbe" xmlns="http://eviware.com/soapui/config"/></con:parameters>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -27786,7 +27778,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
-            <con:parameters><entry key="quoteId" value="6340eedf-3265-4a38-acf7-be712024d40d" xmlns="http://eviware.com/soapui/config"/></con:parameters>
+            <con:parameters><entry key="quoteId" value="16e26195-2c16-4006-a343-7ff8b7d61ad2" xmlns="http://eviware.com/soapui/config"/></con:parameters>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -30384,7 +30376,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>18</con:value>
+        <con:value>30</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -30764,13 +30756,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="414a2edb-ec88-4941-9134-22b5be163bff" name="XPath Match">
-              <con:configuration>
-                <path>count(//ratedTransaction)</path>
-                <content>8</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+              <con:configuration><path>count(//ratedTransaction)</path><content>17</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="2ce89db8-a29d-4eca-8fbc-0c250bf2fdb1" name="Contains 1">
               <con:configuration>
@@ -31132,13 +31118,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="c11d6c95-7a14-4c1e-84fb-cef6cefc651d" name="XPath Match">
-              <con:configuration>
-                <path>count(//ratedTransaction)</path>
-                <content>2</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+              <con:configuration><path>count(//ratedTransaction)</path><content>4</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="8dc34ece-eec6-42e7-a533-8fb6f3952b9c" name="Contains 1">
               <con:configuration>
@@ -31224,7 +31204,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:endpoint>${#Project#opencell.url}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order_FilterExpression",
-   "orderDate":"2015-10-25T15:50:48+08:00",
+   "orderDate":"2018-10-25T15:50:48+08:00",
    "dueDateDelayEL" : "#{order.orderDate.date}",
    "orderItem":[
       {         
@@ -31311,7 +31291,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <targetCode>242420cf-d663-4546-94ef-f713d93ea712</targetCode>
+            <targetCode>950d7e43-e5d8-4a76-adc0-ee203bfaa437</targetCode>
             <targetType>ORDER</targetType>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
@@ -31319,18 +31299,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1bc75f17-2661-416c-84be-e978469d0b48"/>
             <con:assertion type="Simple Contains" id="b1c9508f-7951-43c5-a8c2-d4ef20c695cf" name="Contains">
-              <con:configuration>
-                <token>FAIL</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="107d3253-5a03-40ab-b7bb-79239c2bd148" name="Contains 1">
-              <con:configuration>
-                <token>no billable transaction for selected billing accounts.</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>org.meveo.admin.exception.BusinessException: no billable transaction for selected billing accounts</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
@@ -31473,7 +31445,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>7db8eff5-0d6a-4025-a068-e2fb0afd074f</targetCode>
+            <targetCode>2552d1b3-f0bd-4756-abb4-0ae4139cfbe9</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -31688,7 +31660,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>fcf187a8-2317-49c3-a8d9-451f6e548189</targetCode>
+            <targetCode>aeb63544-4bcc-489b-a89a-6a86f3722a2f</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -31892,7 +31864,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>391f9685-876d-4143-ab9d-e450b20f5731</targetCode>
+            <targetCode>d8222aee-27a9-431d-bd6a-9b9379265a5c</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -31977,13 +31949,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="46049da8-6791-4e75-b3e9-74423a1c5689" name="XPath Match">
-              <con:configuration>
-                <path>count(//ratedTransaction)</path>
-                <content>1</content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+              <con:configuration><path>count(//ratedTransaction)</path><content>4</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="5552ef98-8051-4b55-a267-971866332726" name="XPath Match 1">
               <con:configuration>
@@ -32126,31 +32092,26 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="aa448c6e-976e-44e8-9c32-c679cf855747" name="XPath Match">
-              <con:configuration>
-                <path>//ratedTransaction[code="${#Project#baseEntityPrefix}_REC1" and contains(usageDate,"2016-02-29")]</path>
-                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  <usageDate>2016-02-29T00:00:00*</usageDate>
-  <unitAmountWithoutTax>10.000000000000</unitAmountWithoutTax>
-  <unitAmountWithTax>10.500000000000</unitAmountWithTax>
-  <unitAmountTax>0.500000000000</unitAmountTax>
-  <quantity>-0.070000000000</quantity>
-  <amountWithoutTax>-0.700000000000</amountWithoutTax>
-  <amountWithTax>-0.735000000000</amountWithTax>
-  <amountTax>-0.035000000000</amountTax>
-  <code>${#Project#baseEntityPrefix}_REC1</code>
-  <description>Recurring charge</description>
-  <unityDescription>1</unityDescription>
-  <priceplanCode>${#Project#baseEntityPrefix}_REC1</priceplanCode>
-  <doNotTriggerInvoicing>false</doNotTriggerInvoicing>
-  <startDate>2016-02-29T00:00:00*</startDate>
-  <endDate>2016-03-01T00:00:00*</endDate>
-  <taxCode>TAX_05</taxCode>
-  <taxPercent>5.000000000000</taxPercent>
-</ratedTransaction>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+              <con:configuration><path>//ratedTransaction[code="${#Project#baseEntityPrefix}_REC1" and contains(usageDate,"2016-03-01")]</path><content><![CDATA[<ratedTransaction>
+          <usageDate>2016-03-01T00:00:00*</usageDate>
+          <unitAmountWithoutTax>10.000000000000</unitAmountWithoutTax>
+           <unitAmountWithTax>10.500000000000</unitAmountWithTax>
+                                 <unitAmountTax>0.500000000000</unitAmountTax>
+                                 <quantity>-3.000000000000</quantity>
+                                 <amountWithoutTax>-30.000000000000</amountWithoutTax>
+                                 <amountWithTax>-31.500000000000</amountWithTax>
+                                 <amountTax>-1.500000000000</amountTax>
+                                 <code>${#Project#baseEntityPrefix}_REC1</code>
+                                 <description>Recurring charge</description>
+                                 <unityDescription>1</unityDescription>
+                                 <priceplanCode>${#Project#baseEntityPrefix}_REC1</priceplanCode>
+                                 <doNotTriggerInvoicing>false</doNotTriggerInvoicing>
+                                 <startDate>2016-03-01T00:00:00*</startDate>
+                                 <endDate>2016-04-01T00:00:00*</endDate>
+                                 <taxCode>TAX_05</taxCode>
+                                 <taxPercent>5.000000000000</taxPercent>
+                              </ratedTransaction>
+]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
@@ -32172,11 +32133,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>74</con:value>
+        <con:value>81</con:value>
       </con:property>
       <con:property>
         <con:name>orderNrThatCreatedSubscription</con:name>
-        <con:value>777cf921-1d95-41eb-a520-02699c8c1b66</con:value>
+        <con:value>a4518f30-c1ef-4060-a2ea-56f45ca79dda</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -32910,7 +32871,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>25be45a9-e654-486d-ac01-69c3de8de86b</con:value>
+              <con:value>1dfac37f-314f-4153-ac48-8414ce790f73</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -33213,15 +33174,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>orderId1</con:name>
-        <con:value>741434a5-ce72-4806-861f-b0935699030c</con:value>
+        <con:value>fdb40928-ea11-43f2-b8f3-28fc92b9c797</con:value>
       </con:property>
       <con:property>
         <con:name>orderId2</con:name>
-        <con:value>8f97e5e5-fd9c-43c1-85d7-463b45e069db</con:value>
+        <con:value>330a489f-2645-40fd-8127-aa34bf3ccbc5</con:value>
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>53</con:value>
+        <con:value>60</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
