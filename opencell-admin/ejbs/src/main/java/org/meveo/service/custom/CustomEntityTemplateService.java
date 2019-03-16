@@ -128,7 +128,9 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
         customFieldsCache.removeCustomEntityTemplate(cet);
 
-        // Need to remove from ES
+        // Remove from ES
+        elasticClient.removeCETMapping(cet);
+
     }
 
     /**

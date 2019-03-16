@@ -44,7 +44,6 @@ import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -68,6 +67,16 @@ public class NativePersistenceService extends BaseService {
      * ID field name
      */
     public static String FIELD_ID = "id";
+
+    /**
+     * Valid from field name
+     */
+    public static String FIELD_VALID_FROM = "valid_from";
+
+    /**
+     * Validity priority field name
+     */
+    public static String FIELD_VALID_PRIORITY = "valid_priority";
 
     /**
      * Disabled field name
@@ -871,7 +880,7 @@ public class NativePersistenceService extends BaseService {
      * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
      *        standard date and time and then date only patterns will be applied.
      * @return A converted data type
-     * @throws InvalidParameterException
+     * @throws ValidationException Value can not be cast to a target class
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected Object castValue(Object value, Class targetClass, boolean expectedList, String[] datePatterns) throws ValidationException {

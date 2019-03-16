@@ -1,59 +1,50 @@
 {
 	"entityMapping": {
-		"Customer": {
-			"index": "accounts"
+		"org.meveo.model.AccountEntity": {
+			"index": "account",
+			"useType": true
 		},
-		"CustomerAccount": {
-			"index": "accounts"
+		"org.meveo.model.Seller": {
+			"index": "seller"
 		},
-		"BillingAccount": {
-			"index": "accounts"
-		},
-		"UserAccount": {
-			"index": "accounts"
-		},
-		"Seller": {
-			"index": "accounts"
-		},
-		"OfferTemplate,BundleTemplate,ProductTemplate,ServiceTemplate,PricePlanMatrix,OfferTemplateCategory,InvoiceCategory,InvoiceSubCategory": {
-			"index": "catalog"
-		},
-		"ChargeTemplate": {
+		"org.meveo.model.catalog.ProductOffering,org.meveo.model.catalog.ServiceTemplate,org.meveo.model.catalog.PricePlanMatrix,org.meveo.model.catalog.OfferTemplateCategory,org.meveo.model.billing.InvoiceCategory,org.meveo.model.billing.InvoiceSubCategory": {
 			"index": "catalog",
+			"useType": true
+		},
+		"org.meveo.model.catalog.ChargeTemplate": {
+			"index": "catalog",
+			"useType": true,
 			"type": "ChargeTemplate"
 		},
-		"Subscription": {
-			"index": "billing"
+		"org.meveo.model.billing.Subscription": {
+			"index": "subscription"
 		},
-		"ServiceInstance": {
-			"index": "billing"
+		"org.meveo.model.billing.ServiceInstance": {
+			"index": "service"
 		},
-		"AccountOperation": {
-			"index": "payment"
+		"org.meveo.model.payments.AccountOperation": {
+			"index": "ao"
 		},
-		"RatedTransaction": {
-			"index": "payment"
+		"org.meveo.model.billing.RatedTransaction": {
+			"index": "rt"
 		},
-		"CustomEntityInstance": {
-			"index": "custom",
-			"type": "#{cetCode}"
+		"org.meveo.model.customEntities.CustomEntityInstance": {
+			"index": "#{cetCode}"
 		},
-		"CustomTableRecord": {
-			"index": "custom",
-			"type": "#{cetCode}"
+		"org.meveo.model.customEntities.CustomTableRecord": {
+			"index": "#{cetCode}"
 		},
-		"UserHierarchyLevel": {
-			"index": "users"
+		"org.meveo.model.hierarchy.UserHierarchyLevel": {
+			"index": "user"
 		}
 	},
 	"entityFieldMapping": {
 		"default": {
 			"code": "code",
 			"id": "id",
-			"description": "description",
-			"description_sort": "description"
+			"description": "description"
 		},
-		"Customer": {
+		"org.meveo.model.crm.Customer": {
 			"address.address1": "address.address1",
 			"address.address2": "address.address2",
 			"address.address3": "address.address3",
@@ -67,7 +58,7 @@
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code"
 		},
-		"CustomerAccount": {
+		"org.meveo.model.payments.CustomerAccount": {
 			"address.address1": "address.address1",
 			"address.address2": "address.address2",
 			"address.address3": "address.address3",
@@ -81,9 +72,9 @@
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code",
 			"paymentMethods": "getPaymentMethods()",
-			"customer": "getCustomer().getCode()"
+			"parentAccountCode": "getCustomer().getCode()"
 		},
-		"BillingAccount": {
+		"org.meveo.model.billing.BillingAccount": {
 			"address.address1": "address.address1",
 			"address.address2": "address.address2",
 			"address.address3": "address.address3",
@@ -96,9 +87,9 @@
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code",
-			"customerAccount": "getCustomerAccount().getCode()"
+			"parentAccountCode": "getCustomerAccount().getCode()"
 		},
-		"UserAccount": {
+		"org.meveo.model.UserAccount": {
 			"address.address1": "address.address1",
 			"address.address2": "address.address2",
 			"address.address3": "address.address3",
@@ -111,48 +102,54 @@
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code",
-			"billingAccount": "getBillingAccount().getCode()"
+			"parentAccountCode": "getBillingAccount().getCode()"
 		},
-		"ChargeTemplate": {
+		"org.meveo.model.catalog.ChargeTemplate": {
 			"chargeType": "getClass().getSimpleName()"
 		},
-		"ProductOffering": {
+		"org.meveo.model.catalog.ProductOffering": {
 			"name": "name"
 		},
-		"OfferTemplateCategory": {
+		"org.meveo.model.catalog.OfferTemplateCategory": {
 			"name": "name"
 		},
-		"Subscription": {
+		"org.meveo.model.billing.Subscription": {
 			"userAccount.code": "getUserAccount().getCode()",
+			"userAccount.description": "getUserAccount().getDescription()",
+			"userAccount.billingAccount": "getUserAccount().getBillingAccount().getCode()",
+			"userAccount.email": "getUserAccount().getBillingAccount().getContactInformation().getEmail()",
 			"userAccount.name.fullName": "getUserAccount().getName().getFullName()",
 			"userAccount.name.firstName": "getUserAccount().getName().firstName",
 			"userAccount.name.lastName": "getUserAccount().getName().lastName",
-			"userAccount.address.zipCode": "getUserAccount().getAddress().getZipCode()",
-			"email": "getUserAccount().getBillingAccount().getContactInformation().getEmail()",
+			"userAccount.name.title": "getUserAccount().getName().title.description",
+			"userAccount.address.address1": "getUserAccount().address.address1",
+			"userAccount.address.address2": "getUserAccount().address.address2",
+			"userAccount.address.address3": "getUserAccount().address.address3",
+			"userAccount.address.zipCode": "getUserAccount().address.zipCode",
+			"userAccount.address.city": "getUserAccount().address.city",
+			"userAccount.address.countryCode": "getUserAccount().address.country.countryCode",
+			"userAccount.address.country": "getUserAccount().address.country.description",
+			"userAccount.address.state": "getUserAccount().address.state",
 			"subscriptionDate": "getSubscriptionDate()",
 			"status": "getStatus()",
-			"userAccount.name.title": "getUserAccount().getName().title.description",
-			"userAccount.description": "getUserAccount().getDescription()",
-			"userAccount.billingAccount": "getUserAccount().getBillingAccount().getCode()",
+			"statusDate": "statusDate",
 			"offer.code": "getOffer().getCode()",
 			"offer.description": "getOffer().getDescription()",
 			"offer.name": "getOffer().getName()"
 		},
-		"ServiceInstance": {
+		"org.meveo.model.billing.ServiceInstance": {
 			"subscription.code": "subscription.code",
 			"subscription.description": "subscription.description",
-			"subscription.description_sort": "subscription.description",
 			"status": "status",
 			"statusDate": "statusDate",
 			"subscriptionDate": "subscriptionDate",
 			"terminationDate": "terminationDate",
 			"endAgreementDate": "endAgreementDate"
 		},
-		"AccountOperation": {
+		"org.meveo.model.payments.AccountOperation": {
 			"occCode": "occCode",
 			"occDescription": "occDescription",
-			"occDescription_sort": "occDescription",
-			"type": "type",
+			"transactionType": "type",
 			"amount": "amount",
 			"transactionCategory": "transactionCategory",
 			"matchingStatus": "matchingStatus",
@@ -163,10 +160,9 @@
 			"customerAccount.name.firstName": "getCustomerAccount().getName().firstName",
 			"customerAccount.name.lastName": "getCustomerAccount().getName().lastName",
 			"customerAccount.name.title": "getCustomerAccount().getName().title.description",
-			"customerAccount.description": "getCustomerAccount().getDescription()",
-			"customerAccount.description_sort": "getCustomerAccount().getDescription()"
+			"customerAccount.description": "getCustomerAccount().getDescription()"
 		},
-		"RatedTransaction": {
+		"org.meveo.model.billing.RatedTransaction": {
 			"billingRun": "getBillingRun().getId()",
 			"billingAccount.code": "getBillingAccount().getCode()",
 			"billingAccount.name.fullName": "getBillingAccount().getName().getFullName()",
@@ -174,10 +170,8 @@
 			"billingAccount.name.lastName": "getBillingAccount().getName().lastName",
 			"billingAccount.name.title": "getBillingAccount().getName().title.description",
 			"billingAccount.description": "getBillingAccount().getDescription()",
-			"billingAccount.description_sort": "getBillingAccount().getDescription()",
 			"invoiceSubCategory.code": "getInvoiceSubCategory().getCode()",
 			"invoiceSubCategory.description": "getInvoiceSubCategory().getDescription()",
-			"invoiceSubCategory.description_sort": "getInvoiceSubCategory().getDescription()",
 			"invoice": "getInvoice().getInvoiceNumber()",
 			"status": "status",
 			"usageDate": "usageDate",
@@ -191,7 +185,7 @@
 			"properties": {
 				"<fieldName>": {
 					"type": "date",
-					"index": "not_analyzed",
+					"index": "<indexValue>",
 					"format": "strict_date_optional_time"
 				}
 			}
@@ -200,7 +194,7 @@
 			"properties": {
 				"<fieldName>": {
 					"type": "long",
-					"index": "not_analyzed"
+					"index": "<indexValue>"
 				}
 			}
 		},
@@ -208,29 +202,37 @@
 			"properties": {
 				"<fieldName>": {
 					"type": "double",
-					"index": "not_analyzed"
+					"index": "<indexValue>"
 				}
 			}
 		},
-		"#{cft.fieldType != 'DATE' and cft.fieldType != 'LONG' and cft.fieldType != 'DOUBLE'}": {
+		"#{cft.fieldType == 'BOOLEAN' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
 			"properties": {
 				"<fieldName>": {
-					"type": "string",
-					"index": "analyzed"
+					"type": "boolean",
+					"index": "<indexValue>"
 				}
 			}
 		},
 		"#{cft.storageType == 'MAP' or cft.storageType == 'MATRIX'}": {
 			"properties": {
 				"<fieldName>": {
-					"type": "string",
-					"index": "analyzed"
+					"type": "text",
+					"index": "<indexValue>"
+				}
+			}
+		},
+		"#{cft.fieldType != 'DATE' and cft.fieldType != 'LONG' and cft.fieldType != 'DOUBLE'}": {
+			"properties": {
+				"<fieldName>": {
+					"type": "<keywordOrText>",
+					"index": "<indexValue>"
 				}
 			}
 		}
 	},
 	"dataModel": {
-		"<provider>_billing_v1": {
+		"<provider>_subscription_v1": {
 			"settings": {
 				"analysis": {
 					"analyzer": {
@@ -249,54 +251,86 @@
 				}
 			},
 			"aliases": {
-				"<provider>_billing": {
+				"<provider>_subscription": {
 					
 				}
 			},
 			"mappings": {
-				"Subscription": {
+				"_doc": {
 					"properties": {
+						"id": {
+							"type": "long"
+						},
 						"code": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						},
 						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "text",
+							"fields": {
+								"sort": {
+									"type": "keyword",
+									"ignore_above": 500
+								}
+							}
 						},
 						"userAccount": {
 							"properties": {
 								"code": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "keyword"
 								},
 								"description": {
-									"type": "string"
+									"type": "text",
+									"fields": {
+										"sort": {
+											"type": "keyword",
+											"ignore_above": 500
+										}
+									}
 								},
-								"description_sort": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"billingAccount": {
-									"type": "string"
+								"email": {
+									"type": "keyword"
 								},
 								"name": {
 									"properties": {
 										"fullName": {
-											"type": "string",
-											"index": "not_analyzed"
+											"type": "keyword"
 										},
 										"firstName": {
-											"type": "string"
+											"type": "text"
 										},
 										"lastName": {
-											"type": "string"
+											"type": "text"
 										},
 										"title": {
-											"type": "string"
+											"type": "keyword"
+										}
+									}
+								},
+								"address": {
+									"properties": {
+										"address1": {
+											"type": "text"
+										},
+										"address2": {
+											"type": "text"
+										},
+										"address3": {
+											"type": "text"
+										},
+										"city": {
+											"type": "keyword"
+										},
+										"countryCode": {
+											"type": "keyword"
+										},
+										"country": {
+											"type": "keyword"
+										},
+										"zipCode": {
+											"type": "keyword"
+										},
+										"state": {
+											"type": "keyword"
 										}
 									}
 								}
@@ -305,51 +339,94 @@
 						"offer": {
 							"properties": {
 								"code": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "keyword"
 								},
 								"description": {
-									"type": "string"
+									"type": "text",
+									"fields": {
+										"sort": {
+											"type": "keyword",
+											"ignore_above": 500
+										}
+									}
 								},
-								"description_sort": {
-									"type": "string",
-									"index": "not_analyzed"
-								}
-							}
-						}
-					}
-				},
-				"ServiceInstance": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"subscription": {
-							"properties": {
-								"code": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"description": {
-									"type": "string"
-								},
-								"description_sort": {
-									"type": "string",
-									"index": "not_analyzed"
+								"name": {
+									"type": "keyword"
 								}
 							}
 						},
 						"status": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
+						},
+						"statusDate": {
+							"type": "date"
+						},
+						"subscriptionDate": {
+							"type": "date"
+						}
+					}
+				}
+			}
+		},
+		"<provider>_service_v1": {
+			"settings": {
+				"analysis": {
+					"analyzer": {
+						"default": {
+							"tokenizer": "standard",
+							"filter": [
+								"lowercase",
+								"asciifolding"
+							]
+						}
+					}
+				},
+				"index": {
+					"number_of_shards": "5",
+					"number_of_replicas": "1"
+				}
+			},
+			"aliases": {
+				"<provider>_service": {
+					
+				}
+			},
+			"mappings": {
+				"_doc": {
+					"properties": {
+						"id": {
+							"type": "long"
+						},
+						"code": {
+							"type": "keyword"
+						},
+						"description": {
+							"type": "text",
+							"fields": {
+								"sort": {
+									"type": "keyword",
+									"ignore_above": 500
+								}
+							}
+						},
+						"subscription": {
+							"properties": {
+								"code": {
+									"type": "keyword"
+								},
+								"description": {
+									"type": "text",
+									"fields": {
+										"sort": {
+											"type": "keyword",
+											"ignore_above": 500
+										}
+									}
+								}
+							}
+						},
+						"status": {
+							"type": "keyword"
 						},
 						"statusDate": {
 							"type": "date"
@@ -364,177 +441,10 @@
 							"type": "date"
 						}
 					}
-				},
-				"AccountOperation": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"occCode": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"occDescription": {
-							"type": "string"
-						},
-						"occDescription_sort": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"transactionCategory": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"type": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"amount": {
-							"type": "double"
-						},
-						"matchingStatus": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"reference": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"customerAccount": {
-							"properties": {
-								"code": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"description": {
-									"type": "string"
-								},
-								"description_sort": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"customer": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"name": {
-									"properties": {
-										"fullName": {
-											"type": "string",
-											"index": "not_analyzed"
-										},
-										"firstName": {
-											"type": "string"
-										},
-										"lastName": {
-											"type": "string"
-										},
-										"title": {
-											"type": "string"
-										}
-									}
-								}
-							}
-						}
-					}
-				},
-				"RatedTransaction": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"billingRun": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"invoice": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"status": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"amountWithoutTax": {
-							"type": "double"
-						},
-						"amountTax": {
-							"type": "double"
-						},
-						"amountWithTax": {
-							"type": "double"
-						},
-						"usageDate": {
-							"type": "date"
-						},
-						"invoiceSubCategory": {
-							"properties": {
-								"code": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"description": {
-									"type": "string"
-								},
-								"description_sort": {
-									"type": "string",
-									"index": "not_analyzed"
-								}
-							}
-						},
-						"billingAccount": {
-							"properties": {
-								"code": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"description": {
-									"type": "string"
-								},
-								"description_sort": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"name": {
-									"properties": {
-										"fullName": {
-											"type": "string",
-											"index": "not_analyzed"
-										},
-										"firstName": {
-											"type": "string"
-										},
-										"lastName": {
-											"type": "string"
-										},
-										"title": {
-											"type": "string"
-										}
-									}
-								}
-							}
-						}
-					}
 				}
 			}
 		},
-		"<provider>_users_v1": {
+		"<provider>_user_v1": {
 			"settings": {
 				"analysis": {
 					"analyzer": {
@@ -553,23 +463,27 @@
 				}
 			},
 			"aliases": {
-				"<provider>_users": {
+				"<provider>_user": {
 					
 				}
 			},
 			"mappings": {
-				"UserHierarchyLevel": {
+				"_doc": {
 					"properties": {
+						"id": {
+							"type": "long"
+						},
 						"code": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						},
 						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "text",
+							"fields": {
+								"sort": {
+									"type": "keyword",
+									"ignore_above": 500
+								}
+							}
 						}
 					}
 				}
@@ -599,142 +513,37 @@
 				}
 			},
 			"mappings": {
-				"ProductTemplate": {
+				"_doc": {
 					"properties": {
+						"entityType": {
+							"type": "keyword"
+						},
+						"id": {
+							"type": "long"
+						},
 						"code": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						},
 						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "text",
+							"fields": {
+								"sort": {
+									"type": "keyword",
+									"ignore_above": 500
+								}
+							}
 						},
 						"name": {
-							"type": "string"
-						}
-					}
-				},
-				"OfferTemplate": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"name": {
-							"type": "string"
-						}
-					}
-				},
-				"ServiceTemplate": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
-						}
-					}
-				},
-				"PricePlanMatrix": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
-						}
-					}
-				},
-				"OfferTemplateCategory": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"name": {
-							"type": "string"
-						}
-					}
-				},
-				"InvoiceCategory": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
-						}
-					}
-				},
-				"InvoiceSubCategory": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
-						}
-					}
-				},
-				"ChargeTemplate": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "text"
 						},
 						"chargeType": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						}
 					}
 				}
 			}
 		},
-		"<provider>_accounts_v1": {
+		"<provider>_account_v1": {
 			"settings": {
 				"analysis": {
 					"analyzer": {
@@ -753,300 +562,83 @@
 				}
 			},
 			"aliases": {
-				"<provider>_accounts": {
+				"<provider>_account": {
 					
 				}
 			},
 			"mappings": {
-				"Customer": {
+				"_doc": {
 					"properties": {
+						"entityType": {
+							"type": "keyword"
+						},
+						"id": {
+							"type": "long"
+						},
 						"code": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						},
 						"description": {
-							"type": "string"
+							"type": "text",
+							"fields": {
+								"sort": {
+									"type": "keyword",
+									"ignore_above": 500
+								}
+							}
 						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
+						"parentAccountCode": {
+							"type": "keyword"
 						},
 						"address": {
 							"properties": {
 								"address1": {
-									"type": "string"
+									"type": "text"
 								},
 								"address2": {
-									"type": "string"
+									"type": "text"
 								},
 								"address3": {
-									"type": "string"
+									"type": "text"
 								},
 								"city": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "keyword"
 								},
 								"countryCode": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "keyword"
 								},
 								"country": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "keyword"
 								},
 								"zipCode": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "keyword"
 								},
 								"state": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "keyword"
 								}
 							}
 						},
 						"name": {
 							"properties": {
 								"fullName": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "keyword"
 								},
 								"firstName": {
-									"type": "string"
+									"type": "text"
 								},
 								"lastName": {
-									"type": "string"
+									"type": "text"
 								},
 								"title": {
-									"type": "string"
+									"type": "keyword"
 								}
 							}
-						}
-					}
-				},
-				"CustomerAccount": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"customer": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"address": {
-							"properties": {
-								"address1": {
-									"type": "string"
-								},
-								"address2": {
-									"type": "string"
-								},
-								"address3": {
-									"type": "string"
-								},
-								"city": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"countryCode": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"country": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"zipCode": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"state": {
-									"type": "string",
-									"index": "not_analyzed"
-								}
-							}
-						},
-						"name": {
-							"properties": {
-								"fullName": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"firstName": {
-									"type": "string"
-								},
-								"lastName": {
-									"type": "string"
-								},
-								"title": {
-									"type": "string"
-								}
-							}
-						},
-						"paymentMethods": {
-							"type": "string"
-						}
-					}
-				},
-				"BillingAccount": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"address": {
-							"properties": {
-								"address1": {
-									"type": "string"
-								},
-								"address2": {
-									"type": "string"
-								},
-								"address3": {
-									"type": "string"
-								},
-								"city": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"countryCode": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"country": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"zipCode": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"state": {
-									"type": "string",
-									"index": "not_analyzed"
-								}
-							}
-						},
-						"name": {
-							"properties": {
-								"fullName": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"firstName": {
-									"type": "string"
-								},
-								"lastName": {
-									"type": "string"
-								},
-								"title": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				},
-				"UserAccount": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"billingAccount": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"address": {
-							"properties": {
-								"address1": {
-									"type": "string"
-								},
-								"address2": {
-									"type": "string"
-								},
-								"address3": {
-									"type": "string"
-								},
-								"city": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"countryCode": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"country": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"zipCode": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"state": {
-									"type": "string",
-									"index": "not_analyzed"
-								}
-							}
-						},
-						"name": {
-							"properties": {
-								"fullName": {
-									"type": "string",
-									"index": "not_analyzed"
-								},
-								"firstName": {
-									"type": "string"
-								},
-								"lastName": {
-									"type": "string"
-								},
-								"title": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				},
-				"Seller": {
-					"properties": {
-						"code": {
-							"type": "string",
-							"index": "not_analyzed"
-						},
-						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
 						}
 					}
 				}
 			}
 		},
-		"<provider>_payment_v1": {
+		"<provider>_seller_v1": {
 			"settings": {
 				"analysis": {
 					"analyzer": {
@@ -1065,116 +657,188 @@
 				}
 			},
 			"aliases": {
-				"<provider>_payment": {
+				"<provider>_seller": {
 					
 				}
 			},
 			"mappings": {
-				"AccountOperation": {
+				"_doc": {
 					"properties": {
+						"id": {
+							"type": "long"
+						},
 						"code": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						},
 						"description": {
-							"type": "string"
+							"type": "text",
+							"fields": {
+								"sort": {
+									"type": "keyword",
+									"ignore_above": 500
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"<provider>_ao_v1": {
+			"settings": {
+				"analysis": {
+					"analyzer": {
+						"default": {
+							"tokenizer": "standard",
+							"filter": [
+								"lowercase",
+								"asciifolding"
+							]
+						}
+					}
+				},
+				"index": {
+					"number_of_shards": "5",
+					"number_of_replicas": "1"
+				}
+			},
+			"aliases": {
+				"<provider>_ao": {
+					
+				}
+			},
+			"mappings": {
+				"_doc": {
+					"properties": {
+						"id": {
+							"type": "long"
 						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
+						"code": {
+							"type": "keyword"
+						},
+						"description": {
+							"type": "text",
+							"fields": {
+								"sort": {
+									"type": "keyword",
+									"ignore_above": 500
+								}
+							}
 						},
 						"occCode": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						},
 						"occDescription": {
-							"type": "string"
-						},
-						"occDescription_sort": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "text",
+							"fields": {
+								"sort": {
+									"type": "keyword",
+									"ignore_above": 500
+								}
+							}
 						},
 						"transactionCategory": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						},
-						"type": {
-							"type": "string",
-							"index": "not_analyzed"
+						"tranactionType": {
+							"type": "keyword"
 						},
 						"amount": {
 							"type": "double"
 						},
 						"matchingStatus": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						},
 						"reference": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						},
 						"customerAccount": {
 							"properties": {
 								"code": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "keyword"
 								},
 								"description": {
-									"type": "string"
-								},
-								"description_sort": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "text",
+									"fields": {
+										"sort": {
+											"type": "keyword",
+											"ignore_above": 500
+										}
+									}
 								},
 								"customer": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "keyword"
 								},
 								"name": {
 									"properties": {
 										"fullName": {
-											"type": "string",
-											"index": "not_analyzed"
+											"type": "keyword"
 										},
 										"firstName": {
-											"type": "string"
+											"type": "text"
 										},
 										"lastName": {
-											"type": "string"
+											"type": "text"
 										},
 										"title": {
-											"type": "string"
+											"type": "keyword"
 										}
 									}
 								}
 							}
 						}
 					}
+				}
+			}
+		},
+		"<provider>_rt_v1": {
+			"settings": {
+				"analysis": {
+					"analyzer": {
+						"default": {
+							"tokenizer": "standard",
+							"filter": [
+								"lowercase",
+								"asciifolding"
+							]
+						}
+					}
 				},
-				"RatedTransaction": {
+				"index": {
+					"number_of_shards": "5",
+					"number_of_replicas": "1"
+				}
+			},
+			"aliases": {
+				"<provider>_rt": {
+					
+				}
+			},
+			"mappings": {
+				"_doc": {
 					"properties": {
+						"id": {
+							"type": "long"
+						},
 						"code": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						},
 						"description": {
-							"type": "string"
-						},
-						"description_sort": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "text",
+							"fields": {
+								"sort": {
+									"type": "keyword",
+									"ignore_above": 500
+								}
+							}
 						},
 						"billingRun": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						},
 						"invoice": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						},
 						"status": {
-							"type": "string",
-							"index": "not_analyzed"
+							"type": "keyword"
 						},
 						"amountWithoutTax": {
 							"type": "double"
@@ -1191,45 +855,46 @@
 						"invoiceSubCategory": {
 							"properties": {
 								"code": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "keyword"
 								},
 								"description": {
-									"type": "string"
-								},
-								"description_sort": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "text",
+									"fields": {
+										"sort": {
+											"type": "keyword",
+											"ignore_above": 500
+										}
+									}
 								}
 							}
 						},
 						"billingAccount": {
 							"properties": {
 								"code": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "keyword"
 								},
 								"description": {
-									"type": "string"
-								},
-								"description_sort": {
-									"type": "string",
-									"index": "not_analyzed"
+									"type": "text",
+									"fields": {
+										"sort": {
+											"type": "keyword",
+											"ignore_above": 500
+										}
+									}
 								},
 								"name": {
 									"properties": {
 										"fullName": {
-											"type": "string",
-											"index": "not_analyzed"
+											"type": "keyword"
 										},
 										"firstName": {
-											"type": "string"
+											"type": "text"
 										},
 										"lastName": {
-											"type": "string"
+											"type": "text"
 										},
 										"title": {
-											"type": "string"
+											"type": "keyword"
 										}
 									}
 								}
@@ -1238,53 +903,91 @@
 					}
 				}
 			}
-		},
-		"<provider>_custom_v1": {
-			"settings": {
-				"analysis": {
-					"analyzer": {
-						"default": {
-							"tokenizer": "standard",
-							"filter": [
-								"lowercase",
-								"asciifolding"
-							]
-						}
-					}
-				},
-				"index": {
-					"number_of_shards": "3",
-					"number_of_replicas": "1"
-				}
-			},
-			"aliases": {
-				"<provider>_custom": {
-					
-				}
-			}
 		}
 	},
 	"cetTemplates": {
-		"cet_as_cei": {
-			"properties": {
-				"code": {
-					"type": "string",
-					"index": "not_analyzed"
+		"cei": {
+			"<indexName>_v1": {
+				"settings": {
+					"analysis": {
+						"analyzer": {
+							"default": {
+								"tokenizer": "standard",
+								"filter": [
+									"lowercase",
+									"asciifolding"
+								]
+							}
+						}
+					},
+					"index": {
+						"number_of_shards": "5",
+						"number_of_replicas": "1"
+					}
 				},
-				"description": {
-					"type": "string"
+				"aliases": {
+					"<indexName>": {
+						
+					}
 				},
-				"description_sort": {
-					"type": "string",
-					"index": "not_analyzed"
+				"mappings": {
+					"_doc": {
+						"properties": {
+							"entityType": {
+								"type": "keyword"
+							},
+							"id": {
+								"type": "long"
+							},
+							"code": {
+								"type": "keyword"
+							},
+							"description": {
+								"type": "text",
+								"fields": {
+									"sort": {
+										"type": "keyword",
+										"ignore_above": 500
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		},
-		"cet_as_table": {
-			"properties": {
-				"id": {
-					"type": "long",
-					"index": "not_analyzed"
+		"customTable": {
+			"<indexName>_v1": {
+				"settings": {
+					"analysis": {
+						"analyzer": {
+							"default": {
+								"tokenizer": "standard",
+								"filter": [
+									"lowercase",
+									"asciifolding"
+								]
+							}
+						}
+					},
+					"index": {
+						"number_of_shards": "5",
+						"number_of_replicas": "1"
+					}
+				},
+				"aliases": {
+					"<indexName>": {
+						
+					}
+				},
+				"mappings": {
+					"_doc": {
+						"properties": {
+							"id": {
+								"type": "long"
+							}
+						}
+					}
 				}
 			}
 		}

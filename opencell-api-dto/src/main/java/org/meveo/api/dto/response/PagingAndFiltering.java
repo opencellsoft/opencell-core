@@ -129,11 +129,11 @@ public class PagingAndFiltering implements Serializable {
      * The Enum SortOrder.
      */
     public enum SortOrder {
-        
+
         /** The ascending. */
-        ASCENDING, 
- /** The descending. */
- DESCENDING;
+        ASCENDING,
+        /** The descending. */
+        DESCENDING;
     }
 
     /**
