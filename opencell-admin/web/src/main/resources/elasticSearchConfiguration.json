@@ -205,6 +205,14 @@
 				}
 			}
 		},
+		"#{cft.fieldType == 'BOOLEAN' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
+			"properties": {
+				"<fieldName>": {
+					"type": "boolean",
+					"index": "<indexValue>"
+				}
+			}
+		},
 		"#{cft.storageType == 'MAP' or cft.storageType == 'MATRIX'}": {
 			"properties": {
 				"<fieldName>": {
