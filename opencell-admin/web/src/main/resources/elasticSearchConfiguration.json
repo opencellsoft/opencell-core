@@ -185,8 +185,7 @@
 			"properties": {
 				"<fieldName>": {
 					"type": "date",
-					"index": "<indexValue>",
-					"format": "strict_date_optional_time"
+					"index": "<indexValue>"
 				}
 			}
 		},
@@ -202,14 +201,6 @@
 			"properties": {
 				"<fieldName>": {
 					"type": "double",
-					"index": "<indexValue>"
-				}
-			}
-		},
-		"#{cft.fieldType == 'BOOLEAN' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
-			"properties": {
-				"<fieldName>": {
-					"type": "boolean",
 					"index": "<indexValue>"
 				}
 			}
