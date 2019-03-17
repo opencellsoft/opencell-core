@@ -311,13 +311,17 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
                 // Process value further in case of certain data types - date, list or entity
                 if (value != null) {
-                    if (value instanceof Timestamp || value instanceof java.sql.Date) {
-                        value = value.toString();
+                    if (value instanceof Timestamp) {
+                        value = ((Timestamp) value).getTime();
+                    } else if (value instanceof java.sql.Date) {
+                        value = ((java.sql.Date) value).getTime();
                     } else if (value instanceof Collection && !((Collection) value).isEmpty()) {
                         List values = new ArrayList<>();
                         for (Object val : ((Collection) value)) {
-                            if (val instanceof Timestamp || val instanceof java.sql.Date) {
-                                values.add(val.toString());
+                            if (val instanceof Timestamp) {
+                                values.add(((Timestamp) val).getTime());
+                            } else if (val instanceof java.sql.Date) {
+                                values.add(((java.sql.Date) val).getTime());
                             } else if (val.getClass().isAnnotationPresent(Embeddable.class)) {
                                 values.add(convertObjectToFieldMap(val));
                             } else if (val instanceof IEntity) {
@@ -425,8 +429,10 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                 value = ((HibernateProxy) value).getHibernateLazyInitializer().getImplementation();
             }
 
-            if (value != null && (value instanceof Timestamp || value instanceof java.sql.Date)) {
-                fieldValueMap.put(field.getName(), value.toString());
+            if (value != null && value instanceof Timestamp) {
+                fieldValueMap.put(field.getName(), ((Timestamp) value).getTime());
+            } else if (value != null && value instanceof java.sql.Date) {
+                fieldValueMap.put(field.getName(), ((java.sql.Date) value).getTime());
             } else if (value != null && (value instanceof IEntity || value.getClass().isAnnotationPresent(Embeddable.class))) {
                 fieldValueMap.put(field.getName(), convertObjectToFieldMap(value));
             } else {
@@ -761,6 +767,21 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
         // Add map of values
         for (Map<String, Object> values : entities) {
+
+            Map<String, Object> convertedValues = new HashMap<>(values);
+
+            // Replace sql.Timestamp and sql.Date with a numeric value
+            for (Entry<String, Object> valueInfo : values.entrySet()) {
+
+                Object val = valueInfo.getValue();
+
+                if (val != null && val instanceof Timestamp) {
+                    convertedValues.put(valueInfo.getKey(), ((Timestamp) val).getTime());
+                } else if (val != null && val instanceof java.sql.Date) {
+                    convertedValues.put(valueInfo.getKey(), ((java.sql.Date) val).getTime());
+                }
+            }
+
             lastId = values.get(NativePersistenceService.FIELD_ID);
 
             idForES = lastId.toString();
@@ -769,7 +790,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                 values.put(ElasticSearchConfiguration.MAPPING_FIELD_TYPE, indexAndType[1]);
             }
 
-            bulkRequest.add(new IndexRequest(indexName, ElasticSearchConfiguration.MAPPING_DOC_TYPE, idForES).source(values));
+            bulkRequest.add(new IndexRequest(indexName, ElasticSearchConfiguration.MAPPING_DOC_TYPE, idForES).source(convertedValues));
         }
 
         // Execute bulk request

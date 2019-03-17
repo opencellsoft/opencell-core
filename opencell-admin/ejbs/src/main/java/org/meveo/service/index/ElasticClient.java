@@ -912,7 +912,7 @@ public class ElasticClient {
             esConnection.reinitES();
 
             // Drop all indexes
-            elasticSearchIndexPopulationService.dropIndexes();
+            elasticSearchIndexPopulationService.dropAllIndexes(); // TODO need to fix index droping by provider. elasticSearchIndexPopulationService.dropIndexes();
 
             // Recreate all indexes
             elasticSearchIndexPopulationService.createIndexes();

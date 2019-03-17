@@ -185,8 +185,7 @@
 			"properties": {
 				"<fieldName>": {
 					"type": "date",
-					"index": "<indexValue>",
-					"format": "strict_date_optional_time"
+					"index": "<indexValue>"
 				}
 			}
 		},
