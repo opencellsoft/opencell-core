@@ -1187,6 +1187,7 @@
 
    <changeSet id="#3650_20190131" author="AmineBenAicha">
     	<!-- Update table wf_generic_workflow -->
+    	<dropForeignKeyConstraint baseTableName="wf_generic_workflow" constraintName="fk_wf_transition_script"/>
     	<dropColumn tableName="wf_generic_workflow" columnName="transition_script_id" />
 
     	<!-- Create table wf_generic_transition -->
