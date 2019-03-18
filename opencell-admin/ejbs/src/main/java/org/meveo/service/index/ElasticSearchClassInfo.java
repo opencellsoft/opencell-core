@@ -15,7 +15,7 @@ public class ElasticSearchClassInfo {
     private Class<? extends ISearchable> clazz;
 
     /**
-     * CET template code
+     * Custom entity template code
      */
     private String cetCode;
 
@@ -25,10 +25,17 @@ public class ElasticSearchClassInfo {
         this.cetCode = cetCode;
     }
 
+    /**
+     * 
+     * @return Entity class
+     */
     public Class<? extends ISearchable> getClazz() {
         return clazz;
     }
 
+    /**
+     * @return Custom entity template code
+     */
     public String getCetCode() {
         return cetCode;
     }

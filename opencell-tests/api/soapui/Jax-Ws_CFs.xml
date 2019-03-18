@@ -957,10 +957,6 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:RestService" id="df9523f5-ebd3-41b1-8d36-c525c9ddce42" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO CF" type="rest" definitionUrl="SELLER_DATE_SINGLE_V" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <con:settings/>
-    <con:endpoints/>
-  </con:interface>
   <con:interface xsi:type="con:RestService" id="03f488f9-f60e-4aef-ad70-b3cdb58831b8" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://localhost:8080" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
@@ -12665,7 +12661,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CA_DOUBLE_SINGLE_NV" description="CA_DOUBLE_SINGLE_NV field">
                      <fieldType>DOUBLE</fieldType>
-                     <doubleValue>16.171</doubleValue>
+                     <doubleValue>16.17</doubleValue>
                   </customField>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>

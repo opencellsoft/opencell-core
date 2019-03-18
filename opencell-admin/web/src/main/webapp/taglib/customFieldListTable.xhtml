@@ -59,15 +59,17 @@
 		label="#{cft.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}#{cft.valueRequired and !hasInheritedValue and !inherited?' *':''} #{inherited?messages['customField.inheritedValue']:''}"
 		componentWidth="#{componentWidth}" displayOneLine="false">
 
-		<p:messages id="#{idPrefix}_cfMessages" globalOnly="false"
-			redisplay="false" />
+		<p:messages id="#{idPrefix}_cfMessages" globalOnly="false" autoUpdate="true" />
 
 		<c:if
 			test="#{cft.storageType eq CustomFieldStorageTypeEnum.LIST or cft.storageType eq CustomFieldStorageTypeEnum.MAP}">
 			<p:dataTable id="#{idPrefix}_customFields_omitFromSubmit"
-				lazy="false" value="#{field.mapValuesForGUI}" var="mapValues"
+				lazy="true" value="#{customFieldDataEntryBean.getValueDataset(field, cft.storageType)}" var="mapValues"
 				editable="#{edit and !disabled}" editMode="cell" reflow="false"
-				resizableColumns="true" rowIndexVar="rowIndex">
+				resizableColumns="true" rowIndexVar="rowIndex" paginator="true"
+                rows="10" styleClass="custom-grid" paginatorAlwaysVisible="false"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="10,20,30">
 
 				<p:ajax event="cellEdit" update="#{messagesId} #{updateOnAddEdit}"
 					partialSubmit="true"
@@ -159,7 +161,7 @@
 
 						<c:if test="#{!empty(popupWidgetVar) and edit and !disabled}">
 							<p:commandButton value="#{messages['commons.addNew']}"
-								partialSubmit="true" process="@this addNewFields"
+								partialSubmit="true" process="@form"
 								update="#{idPrefix}_customFields_omitFromSubmit"
 								action="#{customFieldDataEntryBean.addValueToMap(cfValueHolder, field, cft)}"
 								oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()">
@@ -169,7 +171,7 @@
 
 						<c:if test="#{empty(popupWidgetVar) and edit and !disabled}">
 							<p:commandButton value="#{messages['commons.addNew']}"
-								partialSubmit="true" process="@this addNewFields"
+								partialSubmit="true" process="@form"
 								update="#{idPrefix}_customFields_omitFromSubmit"
 								action="#{customFieldDataEntryBean.addValueToMap(cfValueHolder, field, cft)}">
 								<p:resetInput target="addNewFields" />
@@ -204,7 +206,7 @@
 
 		<c:if test="#{cft.storageType eq CustomFieldStorageTypeEnum.MATRIX}">
 			<p:dataTable id="#{idPrefix}_customFields_omitFromSubmit"
-				lazy="false" value="#{field.matrixValuesForGUI}" var="mapValues"
+				lazy="true" value="#{customFieldDataEntryBean.getValueDataset(field, cft.storageType)}" var="mapValues"
 				editable="#{edit and !disabled}" editMode="cell" reflow="false"
 				resizableColumns="true" rowIndexVar="rowIndex" paginator="true"
 				rows="10" styleClass="custom-grid" paginatorAlwaysVisible="false"
@@ -342,7 +344,7 @@
 
 						<c:if test="#{!empty(popupWidgetVar) and edit and !disabled}">
 							<p:commandButton value="#{messages['commons.addNew']}"
-								partialSubmit="true" process="@this addNewFields"
+								partialSubmit="true" process="@form"
 								update="#{idPrefix}_customFields_omitFromSubmit"
 								action="#{customFieldDataEntryBean.addMatrixRow(cfValueHolder, field, cft)}"
 								oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()">
@@ -352,7 +354,7 @@
 
 						<c:if test="#{empty(popupWidgetVar) and edit and !disabled}">
 							<p:commandButton value="#{messages['commons.addNew']}"
-								partialSubmit="true" process="@this addNewFields"
+								partialSubmit="true" process="@form"
 								update="#{idPrefix}_customFields_omitFromSubmit"
 								action="#{customFieldDataEntryBean.addMatrixRow(cfValueHolder, field, cft)}">
 								<p:resetInput target="addNewFields" />

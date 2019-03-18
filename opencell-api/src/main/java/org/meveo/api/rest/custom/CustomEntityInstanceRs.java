@@ -17,6 +17,8 @@ import org.meveo.api.dto.response.CustomEntityInstancesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
+ * Rest API for custom entity instance management
+ * 
  * @author Andrius Karpavicius
  **/
 @Path("/customEntityInstance")

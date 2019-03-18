@@ -347,7 +347,7 @@
 							<ui:param name="buttons" value="true" />
 							<ui:define name="buttons">								
 								<p:button value="#{messages['action.back']}"
-									outcome="generalLedgers" includeViewParams="true">
+									outcome="#{sellerBean.back()}" includeViewParams="true">
 									<f:param name="cid"
 										value="#{javax.enterprise.context.conversation.id}" />
 								</p:button>
@@ -373,7 +373,7 @@
 								<h:outputText value="#{entity.type}" />
 							</p:column>
 							
-							<p:column width="10%">
+							<p:column width="15%">
 								<f:facet name="header">
 									<h:outputText value="#{messages['otherTransaction.occCode']}" />
 								</f:facet>

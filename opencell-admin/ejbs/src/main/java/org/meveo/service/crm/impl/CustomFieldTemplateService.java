@@ -28,9 +28,9 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -44,10 +44,15 @@ import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.custom.CfValueAccumulator;
+import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.service.custom.CustomTableCreatorService;
 import org.meveo.service.index.ElasticClient;
-import org.meveo.util.PersistenceUtils;
+import org.meveo.util.EntityCustomizationUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,8 +65,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 /**
  * @author Wassim Drira
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
- * 
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class CustomFieldTemplateService extends BusinessService<CustomFieldTemplate> {
@@ -77,6 +81,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @Inject
     private ClusterEventPublisher clusterEventPublisher;
+
+    @Inject
+    private CustomEntityTemplateService customEntityTemplateService;
+
+    @Inject
+    private CustomTableCreatorService customTableCreatorService;
 
     static boolean useCFTCache = true;
 
@@ -220,8 +230,20 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }
         super.create(cft);
 
+        // Check if its a custom table field and add it to a db table
+        if (cft.getAppliesTo().startsWith(CustomEntityInstance.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
+            String entityCode = EntityCustomizationUtils.getEntityCode(cft.getAppliesTo());
+            CustomEntityTemplate cet = customEntityTemplateService.findByCode(entityCode);
+            if (cet == null) {
+                log.warn("Custom entity template {} was not found", entityCode);
+            } else if (cet.isStoreAsTable()) {
+                customTableCreatorService.addField(cet.getDbTablename(), cft);
+            }
+        }
+
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
         elasticClient.updateCFMapping(cft);
+
         boolean reaccumulateCFValues = cfValueAccumulator.refreshCfAccumulationRules(cft);
         if (reaccumulateCFValues) {
 
@@ -243,6 +265,17 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }
         CustomFieldTemplate cftUpdated = super.update(cft);
 
+        // Check if its a custom table field and update it in db table
+        if (cft.getAppliesTo().startsWith(CustomEntityInstance.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
+            String entityCode = EntityCustomizationUtils.getEntityCode(cft.getAppliesTo());
+            CustomEntityTemplate cet = customEntityTemplateService.findByCode(entityCode);
+            if (cet == null) {
+                log.warn("Custom entity template {} was not found", entityCode);
+            } else if (cet.isStoreAsTable()) {
+                customTableCreatorService.updateField(cet.getDbTablename(), cft);
+            }
+        }
+
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
         elasticClient.updateCFMapping(cftUpdated);
 
@@ -253,6 +286,18 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public void remove(CustomFieldTemplate cft) throws BusinessException {
         customFieldsCache.removeCustomFieldTemplate(cft);
         super.remove(cft);
+
+        // Check if its a custom table field and remove it froma db table
+        if (cft.getAppliesTo().startsWith(CustomEntityInstance.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
+            String entityCode = EntityCustomizationUtils.getEntityCode(cft.getAppliesTo());
+            CustomEntityTemplate cet = customEntityTemplateService.findByCode(entityCode);
+            if (cet == null) {
+                log.warn("Custom entity template {} was not found", entityCode);
+            } else if (cet.isStoreAsTable()) {
+                customTableCreatorService.removeField(cet.getDbTablename(), cft);
+            }
+        }
+
         cfValueAccumulator.refreshCfAccumulationRules(cft);
     }
 
@@ -300,7 +345,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public static String calculateAppliesToValue(ICustomFieldEntity entity) throws CustomFieldException {
         CustomFieldEntity cfeAnnotation = entity.getClass().getAnnotation(CustomFieldEntity.class);
         String appliesTo = null;
-        if (cfeAnnotation != null){
+        if (cfeAnnotation != null) {
             appliesTo = cfeAnnotation.cftCodePrefix();
             if (cfeAnnotation.cftCodeFields().length > 0) {
                 for (String fieldName : cfeAnnotation.cftCodeFields()) {
@@ -454,8 +499,8 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                 ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
                 ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
             } else if (cft.getCalendar() instanceof CalendarBanking) {
-                ((CalendarBanking)  cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
-                ((CalendarBanking)  cft.getCalendar()).nextCalendarDate(new Date());
+                ((CalendarBanking) cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
+                ((CalendarBanking) cft.getCalendar()).nextCalendarDate(new Date());
             }
         }
         if (cft.getListValues() != null) {
@@ -498,8 +543,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         return getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTsForAccumulation", CustomFieldTemplate.class).setParameter("appliesTo", appliesToValues)
             .getResultList();
     }
-    
-    
+
     /**
      * Get the file reader
      * 
@@ -540,7 +584,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         Object values = null;
         if (cfDto != null && !StringUtils.isBlank(cfDto.getFileValue())) {
             byte[] bytes = Base64.decodeBase64(cfDto.getFileValue());
-            
+
             // read from file
             ObjectReader oReader = getReader(cft);
             try (Reader reader = new InputStreamReader(new ByteArrayInputStream(bytes))) {
@@ -549,49 +593,49 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                 List<Object> listValue = new ArrayList<Object>();
                 List<String> keyColumns = cft.getMatrixKeyColumnCodes();
                 while (mappingIterator.hasNext()) {
-        
+
                     Map<String, Object> csvLine = mappingIterator.next();
                     Object value = null;
-        
+
                     // Populate customFieldValue.listValue
                     if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
                         if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
                             listValue.add(new EntityReferenceWrapper((BusinessEntity) csvLine.get(CustomFieldValue.MAP_VALUE)));
-        
+
                         } else {
                             listValue.add(csvLine.get(CustomFieldValue.MAP_VALUE));
                         }
-        
+
                         // Populate customFieldValue.mapValue from csv line
                     } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
                         if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
                             mapValue.put((String) csvLine.get(CustomFieldValue.MAP_KEY), new EntityReferenceWrapper((BusinessEntity) csvLine.get(CustomFieldValue.MAP_VALUE)));
-        
+
                         } else {
                             mapValue.put((String) csvLine.get(CustomFieldValue.MAP_KEY), csvLine.get(CustomFieldValue.MAP_VALUE));
                         }
                         // Populate customFieldValue.mapValue from csv line
                     } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
-        
+
                         // Multi-value values need to be concatenated and stored as string
                         if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
-        
+
                             value = cft.serializeMultiValue(csvLine);
                             if (value == null) {
                                 continue;
                             }
-        
+
                         } else {
                             value = csvLine.get(CustomFieldValue.MAP_VALUE);
                             if (StringUtils.isBlank(value)) {
                                 continue;
                             }
-        
+
                             if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
                                 value = new EntityReferenceWrapper((BusinessEntity) value);
                             }
                         }
-        
+
                         StringBuilder keyBuilder = new StringBuilder();
                         for (String column : keyColumns) {
                             keyBuilder.append(keyColumns.indexOf(column) == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
@@ -606,7 +650,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                 if (!mapValue.isEmpty()) {
                     values = mapValue;
                 }
-            
+
             } catch (RuntimeJsonMappingException e) {
                 log.error("invalid format", e.getMessage());
             } catch (IOException e) {
@@ -615,5 +659,5 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }
         return values;
     }
-    
+
 }

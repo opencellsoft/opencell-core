@@ -16,7 +16,6 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -69,7 +68,7 @@ public class InvoicingJobBean extends BaseJobBean {
                 }
                 try {
                     billingRunService.detach(billingRun);
-                    billingRunService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue(),result.getJobInstance().getId());
+                    billingRunService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue(), result.getJobInstance().getId(), result);
                     result.registerSucces();
                 } catch (Exception e) {
                     log.error("Failed to run invoicing", e);

@@ -23,19 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
@@ -91,6 +79,14 @@ public class OfferTemplate extends ProductOffering {
     @Column(name = "minimum_amount_el_sp", length = 2000)
     @Size(max = 2000)
     private String minimumAmountElSpark;
+
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name="cat_offer_tmpl_discount_plan",
+            joinColumns=@JoinColumn(name="offer_tmpl_id", referencedColumnName="id"),
+            inverseJoinColumns=@JoinColumn(name="discount_plan_id", referencedColumnName="id"))
+    private List<DiscountPlan> allowedDiscountPlans;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
@@ -358,5 +354,20 @@ public class OfferTemplate extends ProductOffering {
      */
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
+    }
+
+    public List<DiscountPlan> getAllowedDiscountPlans() {
+        return allowedDiscountPlans;
+    }
+
+    public void setAllowedDiscountPlans(List<DiscountPlan> allowedDiscountPlans) {
+        this.allowedDiscountPlans = allowedDiscountPlans;
+    }
+
+    public void addAnAllowedDiscountPlan(DiscountPlan allowedDiscountPlan) {
+        if (getAllowedDiscountPlans() == null) {
+            this.allowedDiscountPlans = new ArrayList<DiscountPlan>();
+        }
+        this.allowedDiscountPlans.add(allowedDiscountPlan);
     }
 }

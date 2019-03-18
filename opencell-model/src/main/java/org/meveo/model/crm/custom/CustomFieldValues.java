@@ -99,7 +99,7 @@ public class CustomFieldValues implements Serializable {
     }
 
     /**
-     * Set custom field values as is. Just a regular setter for bean's valuesByCode field. Do not use this method, as it does not track changes to CF field values. Use setValues()
+     * Set custom field values as is. Just a regular setter for bean's valuesByCode field. DO NOT USE this method, as it does not track changes to CF field values. Use setValues()
      * instead.
      * 
      * @param newValuesByCode values by code
@@ -133,12 +133,12 @@ public class CustomFieldValues implements Serializable {
                 CustomFieldValue cfPeriodExisting = getCfValueByPeriod(valueInfo.getKey(), cfValue.getPeriod(), true, false);
                 cfValue.isNewPeriod = cfPeriodExisting == null;
 
-                // Mark dirty fields - new period, or just a value change
+                // Mark dirty fields - new period, or just a value change. Ignore value change for excessive size fields, as they should not be inherited/accumulated
                 if (cfPeriodExisting == null) {
                     dirtyCfValues.add(cfCode);
                     dirtyCfPeriods.add(cfCode);
-                } else if ((cfPeriodExisting.getValue() == null && cfValue.getValue() == null)
-                        || (cfPeriodExisting.getValue() != null && !cfPeriodExisting.getValue().equals(cfValue.getValue()))) {
+                } else if ((cfPeriodExisting.getValue() == null && cfValue.getValue() != null) || (cfPeriodExisting.getValue() != null && cfValue.getValue() == null)
+                        || (cfPeriodExisting.getValue() != null && !cfValue.isExcessiveInSize() && !cfPeriodExisting.getValue().equals(cfValue.getValue()))) {
                     dirtyCfValues.add(cfCode);
                 }
             }
@@ -524,7 +524,7 @@ public class CustomFieldValues implements Serializable {
         }
 
         List<CustomFieldValue> cfValues = valuesByCode.get(cfCode);
-        if (cfValues == null || cfValues.isEmpty() || cfValues.size() > 1) {
+        if (cfValues == null || cfValues.isEmpty() || cfValues.size() > 1) { // size>1 if value is versioned, and here trying to set a single value
             valuesByCode.put(cfCode, new ArrayList<>());
             CustomFieldValue cfValue = new CustomFieldValue(value);
             valuesByCode.get(cfCode).add(cfValue);
@@ -538,7 +538,7 @@ public class CustomFieldValues implements Serializable {
         } else {
 
             Object oldValue = cfValues.get(0).getValue();
-            if ((oldValue != null && !oldValue.equals(value)) || (oldValue == null && value != null)) {
+            if ((oldValue != null && value == null) || (oldValue == null && value != null) || (oldValue != null && !oldValue.equals(value))) {
                 // Mark dirty fields - value change
                 dirtyCfValues.add(cfCode);
                 cfValues.get(0).setValue(value);
@@ -920,6 +920,14 @@ public class CustomFieldValues implements Serializable {
      */
     public Set<String> getDirtyCfPeriods() {
         return dirtyCfPeriods;
+    }
+
+    /**
+     * Clear dirty value and period flags. NO NEED TO USE it other than for testing.
+     */
+    public void clearDirtyFlags() {
+        dirtyCfValues = new HashSet<>();
+        dirtyCfPeriods = new HashSet<>();
     }
 
     @Override

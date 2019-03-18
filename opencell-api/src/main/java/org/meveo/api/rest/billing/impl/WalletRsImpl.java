@@ -21,14 +21,18 @@ import org.meveo.api.dto.response.billing.WalletBalanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.WalletRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.WalletTemplate;
 
 /**
  * Wallet operation and balance related REST API
  * 
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.1
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class WalletRsImpl extends BaseRs implements WalletRs {
@@ -159,7 +163,10 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            walletApi.createOperation(postData);
+            WalletOperation walletOperation = walletApi.createOperation(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(walletOperation.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -212,7 +219,10 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            walletApi.create(postData);
+            WalletTemplate walletTemplate = walletApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(walletTemplate.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -264,7 +274,10 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            walletApi.createOrUpdate(postData);
+            WalletTemplate walletTemplate = walletApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(walletTemplate.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

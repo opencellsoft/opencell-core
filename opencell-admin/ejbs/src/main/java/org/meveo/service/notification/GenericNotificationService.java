@@ -1,29 +1,27 @@
 package org.meveo.service.notification;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.cache.NotificationCacheContainerProvider;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.event.IEvent;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.service.base.BusinessService;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
- *
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
+
 @Stateless
 public class GenericNotificationService extends BusinessService<Notification> {
 
@@ -78,14 +76,7 @@ public class GenericNotificationService extends BusinessService<Notification> {
     @SuppressWarnings("unchecked")
     public List<Notification> getApplicableNotificationsNoCache(NotificationEventTypeEnum eventType, Object entityOrEvent) {
 
-        Object entity = null;
-        if (entityOrEvent instanceof IEntity) {
-            entity = (IEntity) entityOrEvent;
-        } else if (entityOrEvent instanceof IEvent) {
-            entity = (IEntity) ((IEvent) entityOrEvent).getEntity();
-        } else {
-            entity = entityOrEvent;
-        }
+        Object entity = notificationCacheContainerProvider.getEntity(entityOrEvent);
 
         @SuppressWarnings("rawtypes")
         Class entityClass = entity.getClass();

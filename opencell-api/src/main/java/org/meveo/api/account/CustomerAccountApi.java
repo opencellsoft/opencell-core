@@ -40,6 +40,7 @@ import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -49,11 +50,11 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * CRUD API for {@link CustomerAccount}.
- *  
+ *
  * @author Edward P. Legaspi
  * @author anasseh
- * 
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -86,8 +87,11 @@ public class CustomerAccountApi extends AccountEntityApi {
 	@Inject
 	private AddressBookService addressBookService;
 
-    public void create(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
-        create(postData, true);
+    @Inject
+    private CustomGenericEntityCodeService customGenericEntityCodeService;
+
+    public CustomerAccount create(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
+        return create(postData, true);
     }
 
     public CustomerAccount create(CustomerAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
@@ -96,9 +100,6 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     public CustomerAccount create(CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(postData.getCustomer())) {
             missingParameters.add("customer");
         }
@@ -112,7 +113,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             missingParameters.add("name.lastName");
         }
 
-        handleMissingParametersAndValidate(postData);
+        handleMissingParameters(postData);
 
         if (postData.getPaymentMethods() != null) {
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
@@ -170,6 +171,10 @@ public class CustomerAccountApi extends AccountEntityApi {
         customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
         customerAccount.setDueDateDelayELSpark(postData.getDueDateDelayELSpark());
 
+        if (StringUtils.isBlank(postData.getCode())) {
+            customerAccount.setCode(customGenericEntityCodeService.getGenericEntityCode(customerAccount));
+        }
+
         if (postData.getPaymentMethods() != null) {
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
                 paymentMethodApi.validate(paymentMethodDto, false);
@@ -192,6 +197,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             throw e;
         }
 
+
 		AddressBook addressBook = new AddressBook("CA_" + customerAccount.getCode());
 		addressBookService.create(addressBook);
 		
@@ -202,8 +208,8 @@ public class CustomerAccountApi extends AccountEntityApi {
         return customerAccount;
     }
 
-    public void update(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
-        update(postData, true);
+    public CustomerAccount update(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
+        return update(postData, true);
     }
 
     public CustomerAccount update(CustomerAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
@@ -548,13 +554,14 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
     }
 
-    public void createOrUpdate(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
-
-        if (customerAccountService.findByCode(postData.getCode()) == null) {
-            create(postData);
+    public CustomerAccount createOrUpdate(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
+        CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode());
+        if (customerAccount == null) {
+            customerAccount = create(postData);
         } else {
-            update(postData);
+            customerAccount = update(postData);
         }
+        return customerAccount;
     }
 
     public CustomerAccount closeAccount(CustomerAccountDto postData) throws EntityDoesNotExistsException, BusinessException {
