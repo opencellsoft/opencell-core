@@ -389,6 +389,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
 
         Subscription subscription = invoice.getSubscription();
+        subscription = subscriptionService.refreshOrRetrieve(subscription);
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
 
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
