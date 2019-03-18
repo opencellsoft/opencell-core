@@ -55,8 +55,17 @@ public class GenericWorkflow extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "target_entity_class", nullable = false)
+    /**
+     * Qualified name of Workflowed entities
+     */
+    @Column(name = "target_entity_class", length = 255, nullable = false)
     private String targetEntityClass;
+
+    /**
+     * Custom entity template code
+     */
+    @Column(name = "target_cet_code", length = 255)
+    private String targetCetCode;
 
     /**
      * A list of workflow instances
@@ -136,5 +145,13 @@ public class GenericWorkflow extends EnableBusinessEntity {
 
     public void setInitStatus(String initStatus) {
         this.initStatus = initStatus;
+    }
+
+    public String getTargetCetCode() {
+        return targetCetCode;
+    }
+
+    public void setTargetCetCode(String targetCetCode) {
+        this.targetCetCode = targetCetCode;
     }
 }

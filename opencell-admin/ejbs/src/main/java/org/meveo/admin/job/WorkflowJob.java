@@ -20,6 +20,7 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class WorkflowJob execute the given workflow  on each entity entity return by the given filter.
+ * @see GenericWorkflowJob
  */
 @Stateless
 public class WorkflowJob extends Job {

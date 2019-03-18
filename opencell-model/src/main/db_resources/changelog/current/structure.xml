@@ -1901,5 +1901,33 @@ $$ LANGUAGE plpgsql;
             <column name="reference_date" type="varchar(255)" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#4070_20190313" author="AmineBENAICHA">
+    	<dropColumn tableName="wf_generic_workflow">
+			<column name="init_status" />
+		</dropColumn>
+        <addColumn tableName="wf_generic_workflow">
+            <column name="init_status" type="varchar(255)" />
+            <column name="target_cet_code" type="varchar(255)" />
+        </addColumn>
+        
+        <dropUniqueConstraint tableName="wf_instance" constraintName="uk_generic_wf_id_code_wf_instance" />
+        <dropColumn tableName="wf_instance">
+        	<column name="code" />
+            <column name="description" />
+        	<column name="disabled" />
+            <column name="created" />
+            <column name="updated" />
+            <column name="creator" />
+            <column name="updater" />
+        </dropColumn>
+        <addColumn tableName="wf_instance">
+        	<column name="entity_instance_code" type="varchar(255)" >
+        		<constraints nullable="false" />
+        	</column>
+            <column name="target_cet_code" type="varchar(255)" />
+        </addColumn>
+        <addUniqueConstraint tableName="wf_instance" constraintName="uk_wf_instance_code_gwf_id_cet_code" columnNames="entity_instance_code, generic_wf_id, target_cet_code" deferrable="false" disabled="false" initiallyDeferred="false" />
+    </changeSet>
 
 </databaseChangeLog>

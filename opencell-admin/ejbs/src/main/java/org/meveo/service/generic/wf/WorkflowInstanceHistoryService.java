@@ -25,6 +25,8 @@ import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
@@ -34,17 +36,6 @@ import com.google.common.collect.Maps;
 
 @Stateless
 public class WorkflowInstanceHistoryService extends PersistenceService<WorkflowInstanceHistory> {
-
-    public WorkflowInstanceHistory getLastWFHistory(WorkflowInstance workflowInstance) {
-
-        List<WorkflowInstanceHistory> wfHistories = findByWorkflowInstance(workflowInstance);
-
-        if (wfHistories != null && !wfHistories.isEmpty()) {
-            return wfHistories.iterator().next();
-        }
-
-        return null;
-    }
 
     public List<WorkflowInstanceHistory> findByGenericWorkflow(GenericWorkflow genericWorkflow) {
 
@@ -64,11 +55,16 @@ public class WorkflowInstanceHistoryService extends PersistenceService<WorkflowI
         return (List<WorkflowInstanceHistory>) executeSelectQuery(query, params);
     }
 
-    public List<WorkflowInstanceHistory> findByEntityInstanceCode(String entityInstanceCode) {
+    public List<WorkflowInstanceHistory> findByBusinessEntity(BusinessEntity entity) {
 
         Map<String, Object> params = Maps.newHashMap();
-        String query = "From WorkflowInstanceHistory where workflowInstance.code = :entityInstanceCode order by workflowInstance.genericWorkflow.code, actionDate desc";
-        params.put("entityInstanceCode", entityInstanceCode);
+        String query = "From WorkflowInstanceHistory where workflowInstance.entityInstanceCode = :entityInstanceCode order by workflowInstance.genericWorkflow.code, actionDate desc";
+        params.put("entityInstanceCode", entity.getCode());
+
+        if (entity instanceof CustomEntityInstance) {
+            query = "From WorkflowInstanceHistory where workflowInstance.entityInstanceCode = :entityInstanceCode and workflowInstance.targetCetCode = :targetCetCode order by workflowInstance.genericWorkflow.code, actionDate desc";
+            params.put("targetCetCode", ((CustomEntityInstance) entity).getCetCode());
+        }
 
         return (List<WorkflowInstanceHistory>) executeSelectQuery(query, params);
     }
@@ -78,7 +74,7 @@ public class WorkflowInstanceHistoryService extends PersistenceService<WorkflowI
 
         QueryBuilder queryBuilder = new QueryBuilder(WorkflowInstanceHistory.class, "wfih");
         if (!StringUtils.isBlank(entityInstanceCode)) {
-            queryBuilder.addCriterion("wfih.workflowInstance.code", "=", entityInstanceCode, true);
+            queryBuilder.addCriterion("wfih.workflowInstance.entityInstanceCode", "=", entityInstanceCode, true);
         }
         if (!StringUtils.isBlank(workflowCode)) {
             queryBuilder.addCriterion("wfih.workflowInstance.genericWorkflow.code", "=", workflowCode, true);
