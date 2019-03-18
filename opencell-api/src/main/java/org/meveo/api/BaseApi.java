@@ -1,34 +1,11 @@
 package org.meveo.api;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import javax.ejb.EJB;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomEntityInstanceDto;
@@ -36,6 +13,7 @@ import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.dto.audit.AuditableFieldDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -43,7 +21,13 @@ import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.commons.utils.*;
+import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.AuditableField;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
@@ -62,6 +46,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.api.EntityToDtoConverter;
+import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
@@ -74,16 +59,39 @@ import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ejb.EJB;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 /**
  * @author Edward P. Legaspi
  * @author Andrius Karpavicius
  * @author Wassim Drira
  * @author Said Ramli
- * @author Abdellatif BARI
  * @author Khalid HORRI
+ * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  * 
- **/
+ */
 public abstract class BaseApi {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
@@ -128,12 +136,28 @@ public abstract class BaseApi {
 
     private static final String SUPER_ADMIN_MANAGEMENT = "superAdminManagement";
 
+    @Inject
+    private AuditableFieldService auditableFieldService;
+
     protected void handleMissingParameters() throws MissingParameterException {
         if (!missingParameters.isEmpty()) {
             MissingParameterException mpe = new MissingParameterException(missingParameters);
             missingParameters.clear();
             throw mpe;
         }
+    }
+
+    protected void handleMissingParameters(BaseEntityDto dto) throws MeveoApiException {
+        try {
+            BusinessEntityDto bdto = (BusinessEntityDto) dto;
+            boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
+            if (!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT)) {
+                throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
+            }
+        } catch (ClassCastException e) {
+            log.info("allow entity code update rule not applied : Not business Dto");
+        }
+        handleMissingParameters();
     }
 
     /**
@@ -144,23 +168,10 @@ public abstract class BaseApi {
      */
     protected void handleMissingParametersAndValidate(BaseEntityDto dto) throws MeveoApiException {
         validate(dto);
-
-        try {
-            BusinessEntityDto bdto = (BusinessEntityDto) dto;
-            boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
-            if (!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT)) {
-                throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
-            }
-        } catch (ClassCastException e) {
-            log.info("allow entity code update rule not applied : Not business Dto");
-        }
-
-        if (!missingParameters.isEmpty()) {
-            MissingParameterException mpe = new MissingParameterException(missingParameters);
-            missingParameters.clear();
-            throw mpe;
-        }
+        handleMissingParameters(dto);
     }
+
+
 
     protected void handleMissingParameters(BaseEntityDto dto, String... fields) throws MeveoApiException {
 
@@ -435,7 +446,7 @@ public abstract class BaseApi {
 
             // Validate that value is valid (min/max, regexp). When
             // value is a list or a map, check separately each value
-            if (!isEmpty && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.LONG
+            if (!isEmpty && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN || cft.getFieldType() == CustomFieldTypeEnum.LONG
                     || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY)) {
 
                 List valuesToCheck = new ArrayList<>();
@@ -530,6 +541,9 @@ public abstract class BaseApi {
                                     + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
                                     + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
                         }
+                    } else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+                    	Boolean booleanValue = null;
+                    	booleanValue = Boolean.valueOf(valueToCheck.toString());
 
                     } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
                         // Just in case, set CET code to whatever CFT definition
@@ -639,6 +653,8 @@ public abstract class BaseApi {
             return cfDto.getDateValue();
         } else if (cfDto.getDoubleValue() != null) {
             return getDoubleValue(cfDto, cft);
+        } else if (cfDto.getBooleanValue() != null) {
+            return cfDto.getBooleanValue();
         } else if (cfDto.getLongValue() != null) {
             return cfDto.getLongValue();
         } else if (cfDto.getEntityReferenceValue() != null) {
@@ -1390,4 +1406,53 @@ public abstract class BaseApi {
         value = NumberUtils.round(value, nbDecimal, roundingMode.getRoundingMode());
         return value.doubleValue();
     }
+
+    /**
+     * Convert auditableField entity to dto
+     *
+     * @param entity instance of AuditableField to be mapped
+     * @return instance of AuditableFieldDto
+     */
+    public AuditableFieldDto auditableFieldToDto(AuditableField entity) {
+        AuditableFieldDto dto = new AuditableFieldDto();
+        dto.setEntityClass(entity.getEntityClass());
+        dto.setFieldName(entity.getName());
+        dto.setChangeOrigin(String.valueOf(entity.getChangeOrigin()));
+        dto.setOriginName(entity.getOriginName());
+        dto.setPreviousState(entity.getPreviousState());
+        dto.setCurrentState(entity.getCurrentState());
+        dto.setCreated(DateUtils.formatDateWithPattern(entity.getCreated(), DateUtils.DATE_TIME_PATTERN));
+        dto.setActor(entity.getActor());
+        return dto;
+    }
+
+    /**
+     * Convert list of auditableField entity to dto
+     *
+     * @param entites list of auditableField entity to be mapped
+     * @return list of instance of AuditableFieldDto.
+     */
+    public List<AuditableFieldDto> auditableFieldsToDto(List<AuditableField> entites) {
+        List<AuditableFieldDto> dtos = null;
+        if (entites != null && !entites.isEmpty()) {
+            dtos = new ArrayList<>();
+            for (AuditableField entity : entites) {
+                dtos.add(auditableFieldToDto(entity));
+            }
+        }
+        return dtos;
+    }
+
+    /**
+     * Sets the auditable fields in to dto.
+     *
+     * @param entity entity instance
+     * @param dto    dto instance
+     */
+    public void setAuditableFieldsDto(BaseEntity entity, AuditableEntityDto dto) {
+        List<AuditableField> auditableFields = auditableFieldService.list(entity);
+        List<AuditableFieldDto> auditableFieldsDto = auditableFieldsToDto(auditableFields);
+        dto.setAuditableFields(auditableFieldsDto);
+    }
+
 }

@@ -30,6 +30,10 @@ import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.util.MeveoParamBean;
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class InvoicingApi extends BaseApi {
 
@@ -90,6 +94,7 @@ public class InvoicingApi extends BaseApi {
                 billingRunEntity.setLastTransactionDate(DateUtils.addDaysToDate(billingRunEntity.getProcessDate(), 1));
             }
         }
+        billingRunEntity.setReferenceDate(createBillingRunDto.getReferenceDate());
         billingRunEntity.setStatus(BillingRunStatusEnum.NEW);
         billingRunService.create(billingRunEntity);
         

@@ -1,7 +1,24 @@
 package org.meveo.service.job;
 
-import java.util.Collection;
-import java.util.Map;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
+import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.JobRunningStatusEnum;
+import org.meveo.event.qualifier.Processed;
+import org.meveo.model.audit.ChangeOriginEnum;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.audit.AuditOrigin;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -15,31 +32,16 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.ResourceBundle;
-import org.meveo.cache.JobCacheContainerProvider;
-import org.meveo.cache.JobRunningStatusEnum;
-import org.meveo.event.qualifier.Processed;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.jobs.JobCategoryEnum;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.util.ApplicationProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Interface that must implement all jobs that are managed in meveo application by the JobService bean. The implementation must be a session EJB and must statically register itself
  * (through its jndi name) to the JobService.
  * 
  * @author seb
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 public abstract class Job {
 
@@ -81,6 +83,9 @@ public abstract class Job {
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
 
+    @Inject
+    private AuditOrigin auditOrigin;
+
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -92,6 +97,9 @@ public abstract class Job {
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void execute(JobInstance jobInstance, JobExecutionResultImpl executionResult) throws BusinessException {
+
+        auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
+        auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
 
         if (executionResult == null) {
             executionResult = new JobExecutionResultImpl();

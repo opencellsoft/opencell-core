@@ -35,6 +35,7 @@ import liquibase.change.core.CreateTableChange;
 import liquibase.change.core.DropColumnChange;
 import liquibase.change.core.DropDefaultValueChange;
 import liquibase.change.core.DropNotNullConstraintChange;
+import liquibase.change.core.DropSequenceChange;
 import liquibase.change.core.DropTableChange;
 import liquibase.change.core.ModifyDataTypeChange;
 import liquibase.changelog.ChangeSet;
@@ -413,7 +414,7 @@ public class CustomTableCreatorService implements Serializable {
 
         DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
 
-        // Remove table
+        // Remove table changeset
         ChangeSet changeSet = new ChangeSet(dbTableName + "_CT_R_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
         changeSet.setFailOnError(false);
 
@@ -422,7 +423,18 @@ public class CustomTableCreatorService implements Serializable {
         dropTableChange.setCascadeConstraints(true);
 
         changeSet.addChange(dropTableChange);
+
         dbLog.addChangeSet(changeSet);
+
+        // Changeset for Postgress
+        ChangeSet pgChangeSet = new ChangeSet(dbTableName + "_CT_CRP_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "postgresql", dbLog);
+        pgChangeSet.setFailOnError(false);
+
+        DropSequenceChange dropPgSequence = new DropSequenceChange();
+        dropPgSequence.setSequenceName(dbTableName + "_seq");
+        pgChangeSet.addChange(dropPgSequence);
+
+        dbLog.addChangeSet(pgChangeSet);
 
         EntityManager em = entityManagerProvider.getEntityManagerWoutJoinedTransactions();
 

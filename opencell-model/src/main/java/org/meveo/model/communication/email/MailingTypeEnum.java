@@ -7,7 +7,7 @@ package org.meveo.model.communication.email;
  * If mailingType is "manual", only the GUI action and API can send the invoice.
  *
  * @author HORRI Khalid
- * @lastModefiedVersion 7.0
+ * @lastModifiedVersion 7.0
  */
 public enum MailingTypeEnum {
 

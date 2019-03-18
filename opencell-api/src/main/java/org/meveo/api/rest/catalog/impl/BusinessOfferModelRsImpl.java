@@ -17,13 +17,15 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.rest.catalog.BusinessOfferModelRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.BusinessOfferModel;
-
-import java.util.Optional;
+import org.meveo.model.module.MeveoModule;
 
 /**
  * @author Edward P. Legaspi(edward.legaspi@manaty.net)
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferModelRs {
@@ -39,7 +41,10 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.create(postData);
+            MeveoModule meveoModule = moduleApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(meveoModule.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -100,12 +105,13 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
             if (postData != null) {
                 if (postData.getOfferTemplate() != null) {
                     if (offerTemplateApi.find(postData.getOfferTemplate().getCode(), null, null) != null) {
-                        moduleApi.createOrUpdate(postData);
+                        MeveoModule meveoModule = moduleApi.createOrUpdate(postData);
+                        if (StringUtils.isBlank(postData.getCode())) {
+                            result.setEntityCode(meveoModule.getCode());
+                        }
                     }
                 }
             }
-
-
         } catch (Exception e) {
             processException(e, result);
         }

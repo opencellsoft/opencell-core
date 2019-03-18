@@ -32,7 +32,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections4.MapUtils;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.search.SearchHitField;
+import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.hibernate.SQLQuery;
 import org.meveo.admin.exception.BusinessException;
@@ -244,7 +244,7 @@ public class CustomTableService extends NativePersistenceService {
     }
 
     /**
-     * Export data into a file into exports directory. Filename is in the following format: <db table name>_id_<formated date>.csv
+     * Export data into a file into exports directory. Filename is in the following format: &lt;db table name&gt;_id_&lt;formated date&gt;.csv
      * 
      * @param customEntityTemplate Custom table definition
      * @param config Pagination and search criteria
@@ -356,7 +356,6 @@ public class CustomTableService extends NativePersistenceService {
     public Future<DataImportExportStatistics> importDataAsync(CustomEntityTemplate customEntityTemplate, InputStream inputStream, boolean append) throws BusinessException {
 
         try {
-            log.error("AKK current user is {}", currentUser);
             int itemsImported = importData(customEntityTemplate, inputStream, append);
             return new AsyncResult<DataImportExportStatistics>(new DataImportExportStatistics(itemsImported));
 
@@ -450,7 +449,7 @@ public class CustomTableService extends NativePersistenceService {
 
             // Re-populate ES index
             if (!updateESImediately) {
-                elasticClient.repopulate(currentUser, CustomTableRecord.class, customEntityTemplate.getCode());
+                elasticClient.populateAll(currentUser, CustomTableRecord.class, customEntityTemplate.getCode());
             }
 
             log.info("Imported {} lines to {} table", importedLinesTotal, tableName);
@@ -544,7 +543,7 @@ public class CustomTableService extends NativePersistenceService {
 
             // Repopulate ES index
             if (!updateESImediately) {
-                elasticClient.repopulate(currentUser, CustomTableRecord.class, customEntityTemplate.getCode());
+                elasticClient.populateAll(currentUser, CustomTableRecord.class, customEntityTemplate.getCode());
             }
 
         } catch (Exception e) {
@@ -601,7 +600,7 @@ public class CustomTableService extends NativePersistenceService {
     /**
      * Execute a search on given fields for given query values. See ElasticClient.search() for a query format.
      *
-     * @cetCodeOrTablename Custom entity template code, or custom table name to query
+     * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param queryValues Fields and values to match
      * @param from Pagination - starting record. Defaults to 0.
      * @param size Pagination - number of records per page. Defaults to ElasticClient.DEFAULT_SEARCH_PAGE_SIZE.
@@ -628,10 +627,8 @@ public class CustomTableService extends NativePersistenceService {
             Map<String, Object> values = new HashMap<>();
             responseValues.add(values);
 
-            values.put(NativePersistenceService.FIELD_ID, hit.getId());
-
             if (hit.getFields() != null && hit.getFields().values() != null && !hit.getFields().values().isEmpty()) {
-                for (SearchHitField field : hit.getFields().values()) {
+                for (DocumentField field : hit.getFields().values()) {
                     if (field.getValues() != null) {
                         if (field.getValues().size() > 1) {
                             values.put(field.getName(), field.getValues());
@@ -641,8 +638,8 @@ public class CustomTableService extends NativePersistenceService {
                     }
                 }
 
-            } else if (hit.getSource() != null) {
-                values.putAll(hit.getSource());
+            } else if (hit.getSourceAsMap() != null) {
+                values.putAll(hit.getSourceAsMap());
             }
         });
 
@@ -663,7 +660,7 @@ public class CustomTableService extends NativePersistenceService {
 
         Map<String, Object> values = new HashMap<>(queryValues);
 
-        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.ASC }, new String[] { fieldToReturn });
+        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.DESC }, new String[] { fieldToReturn });
 
         if (results == null || results.isEmpty()) {
             return null;
@@ -687,7 +684,8 @@ public class CustomTableService extends NativePersistenceService {
         Map<String, Object> values = new HashMap<>(queryValues);
         values.put("minmaxRange valid_from valid_to", date);
 
-        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.ASC }, new String[] { fieldToReturn });
+        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_VALID_PRIORITY, FIELD_VALID_FROM, FIELD_ID },
+            new SortOrder[] { SortOrder.DESC, SortOrder.DESC, SortOrder.DESC }, new String[] { fieldToReturn });
 
         if (results == null || results.isEmpty()) {
             return null;
@@ -709,7 +707,7 @@ public class CustomTableService extends NativePersistenceService {
 
         Map<String, Object> values = new HashMap<>(queryValues);
 
-        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.ASC }, fieldsToReturn);
+        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.DESC }, fieldsToReturn);
 
         if (results == null || results.isEmpty()) {
             return null;
@@ -733,7 +731,8 @@ public class CustomTableService extends NativePersistenceService {
         Map<String, Object> values = new HashMap<>(queryValues);
         values.put("minmaxRange valid_from valid_to", date);
 
-        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.ASC }, fieldsToReturn);
+        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_VALID_PRIORITY, FIELD_VALID_FROM, FIELD_ID },
+            new SortOrder[] { SortOrder.DESC, SortOrder.DESC, SortOrder.DESC }, fieldsToReturn);
 
         if (results == null || results.isEmpty()) {
             return null;

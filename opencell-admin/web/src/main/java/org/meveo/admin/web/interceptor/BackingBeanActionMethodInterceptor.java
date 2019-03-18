@@ -1,7 +1,14 @@
 package org.meveo.admin.web.interceptor;
 
-import java.io.Serializable;
-import java.sql.SQLException;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.model.audit.ChangeOriginEnum;
+import org.meveo.service.audit.AuditOrigin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -11,19 +18,15 @@ import javax.interceptor.InvocationContext;
 import javax.persistence.TransactionRequiredException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.jboss.seam.international.status.Messages;
-import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ValidationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.Serializable;
+import java.sql.SQLException;
 
 /**
  * Handles exceptions of backing bean action methods
  *
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @ActionMethod
 @Interceptor
@@ -36,11 +39,18 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
     @Inject
     protected Messages messages;
 
+    @Inject
+    private AuditOrigin auditOrigin;
+
     @AroundInvoke
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {
 
         Object result = null;
         try {
+
+            auditOrigin.setAuditOrigin(ChangeOriginEnum.GUI);
+            auditOrigin.setAuditOriginName(FacesContext.getCurrentInstance().getViewRoot().getViewId());
+
             // Call a backing bean method
             result = invocationContext.proceed();
             return result;

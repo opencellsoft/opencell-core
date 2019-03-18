@@ -13,7 +13,13 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.RevenueRecognitionRuleApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.RevenueRecognitionRulesRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.finance.RevenueRecognitionRule;
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class RevenueRecognitionRuleRsImpl extends BaseRs implements RevenueRecognitionRulesRs {
@@ -26,7 +32,10 @@ public class RevenueRecognitionRuleRsImpl extends BaseRs implements RevenueRecog
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            revenueRecognitionRuleApi.create(postData);
+            RevenueRecognitionRule revenueRecognitionRule = revenueRecognitionRuleApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(revenueRecognitionRule.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -52,7 +61,10 @@ public class RevenueRecognitionRuleRsImpl extends BaseRs implements RevenueRecog
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            revenueRecognitionRuleApi.createOrUpdate(postData);
+            RevenueRecognitionRule revenueRecognitionRule = revenueRecognitionRuleApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(revenueRecognitionRule.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

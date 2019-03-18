@@ -18,12 +18,16 @@ import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.BillingAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
@@ -36,7 +40,10 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingAccountApi.create(postData);
+            BillingAccount billingAccount = billingAccountApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(billingAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -100,7 +107,10 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingAccountApi.createOrUpdate(postData);
+            BillingAccount billingAccount = billingAccountApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(billingAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

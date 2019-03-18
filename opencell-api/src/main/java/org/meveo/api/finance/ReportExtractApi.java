@@ -33,10 +33,13 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.SortOrder;
 
 /**
+ * The CRUD Api for ReportExtract Entity.
+ *
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
  * @since 5.0
- * @lastModifiedVersion 5.1
- **/
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDto> {
 
@@ -51,9 +54,6 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
 
     @Override
     public ReportExtract create(ReportExtractDto postData) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(postData.getScriptType())) {
             missingParameters.add("scriptType");
         }

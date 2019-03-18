@@ -24,6 +24,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -34,6 +36,8 @@ import org.meveo.model.ExportIdentifier;
  * Subscription termination rule
  * 
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @Cacheable
@@ -41,6 +45,8 @@ import org.meveo.model.ExportIdentifier;
 @Table(name = "billing_subscrip_termin_reason", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_sub_term_reason_seq"), })
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties({ "auditable", "previousCode", "appendGeneratedCode" })
 public class SubscriptionTerminationReason extends BusinessEntity {
 
     private static final long serialVersionUID = 8579279870178217508L;

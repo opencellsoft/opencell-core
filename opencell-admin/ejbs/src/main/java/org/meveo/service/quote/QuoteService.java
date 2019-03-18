@@ -150,15 +150,13 @@ public class QuoteService extends BusinessService<Quote> {
 
                         // Add recurring charges
                         for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
-                            if (recurringCharge != null) {
-                                recurringCharge = recurringChargeInstanceService.findByCode(recurringCharge.getCode());
-                            }
                             List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, quoteInvoiceInfo.getFromDate(),
                                 quoteInvoiceInfo.getToDate());
                             if (walletOperations != null && walletOps != null) {
                                 walletOperations.addAll(walletOps);
                             }
                         }
+
                     }
 
                     // Process CDRS
@@ -204,7 +202,10 @@ public class QuoteService extends BusinessService<Quote> {
             }            
             // Create rated transactions from wallet operations
             for (WalletOperation walletOperation : walletOperations) {
-                ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true));
+                RatedTransaction createdRatedTransaction = ratedTransactionService.createRatedTransaction(walletOperation, true);
+                createdRatedTransaction.setChargeInstance(null);
+                createdRatedTransaction.setSubscription(null);
+                ratedTransactions.add(createdRatedTransaction);
             }
             Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());
             File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
@@ -215,6 +216,14 @@ public class QuoteService extends BusinessService<Quote> {
             
             // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
             // invoice.setBillingAccount(null);
+            for (RatedTransaction ratedTransaction :ratedTransactions) {
+                if (ratedTransaction != null) {
+                    ratedTransactionService.create(ratedTransaction);
+                    ratedTransaction.setInvoice(null);
+                    ratedTransaction.setSubscription(null);
+                    ratedTransaction.setChargeInstance(null);
+                }
+            }
             invoice.setRatedTransactions(ratedTransactions);
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
                 log.debug("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
@@ -240,6 +249,15 @@ public class QuoteService extends BusinessService<Quote> {
             }
             invoiceService.create(invoice);
             invoiceService.postCreate(invoice);
+            for (RatedTransaction ratedTransaction :ratedTransactions) {
+                if (ratedTransaction != null) {
+                    ratedTransaction.setInvoice(invoice);
+                    if (invoice != null) {
+                        ratedTransaction.setSubscription(invoice.getSubscription());
+                    }
+                }
+                ratedTransactionService.update(ratedTransaction);
+            }
             invoices.add(invoice);
         }
         return invoices;
