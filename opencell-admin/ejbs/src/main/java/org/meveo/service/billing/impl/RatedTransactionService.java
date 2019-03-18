@@ -975,10 +975,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (!isVirtual) {
             create(ratedTransaction);
             walletOperationService.updateNoCheck(walletOperation);
-        } else {
-            create(ratedTransaction);
         }
-        
         walletOperation.setRatedTransaction(ratedTransaction);
         
         return ratedTransaction;
