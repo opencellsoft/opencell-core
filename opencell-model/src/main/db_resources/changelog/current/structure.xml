@@ -1209,7 +1209,7 @@
         </createTable>
         <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_generic_transition" constraintName="fk_transition_generic_wf" deferrable="false" initiallyDeferred="false"
             onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
-        <addForeignKeyConstraint baseColumnNames="action_script_id" baseTableName="wf_generic_transition" constraintName="fk_wf_transition_script" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="action_script_id" baseTableName="wf_generic_transition" constraintName="fk_wf_action_script" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 
         <!-- Update table wf_instance -->
