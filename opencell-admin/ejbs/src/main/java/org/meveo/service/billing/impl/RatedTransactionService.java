@@ -610,14 +610,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         discountValue, amount);
             }
 
-            BigDecimal discountAmount;
-            if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-                discountAmount = amount.multiply(discountValue.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
-            } else {
-                discountAmount = discountValue.negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());;
+            BigDecimal discountAmount = null;
+            
+            if(discountValue != null ) {
+	            if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+	                discountAmount = amount.multiply(discountValue.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
+	            
+	            } else {
+	                discountAmount = discountValue.negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());;
+	            }
             }
 
-            if (discountAmount.compareTo(BigDecimal.ZERO) < 0) {
+            if (discountAmount != null && discountAmount.compareTo(BigDecimal.ZERO) < 0) {
                 discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount,
                     scAggregate.getUserAccount(), scAggregate.getWallet(), scAggregate.getTax(), scAggregate.getTaxPercent(), invoice, null);
 
