@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -109,6 +111,25 @@ public class PaymentService extends PersistenceService<Payment> {
     @Override
     public void create(Payment entity) throws BusinessException {
         super.create(entity);
+        if (entity.getId() != null && entity.getPaymentMethod().isSimple()) {
+            PaymentMethod paymentMethod  = getPaymentMethod(entity);
+            paymentHistoryService.addHistory(entity.getCustomerAccount(), entity, null, entity.getAmount().multiply(new BigDecimal(100)).longValue(), PaymentStatusEnum.ACCEPTED, null, null, null, OperationCategoryEnum.CREDIT, null, paymentMethod);
+        }
+    }
+
+    /**
+     * Return the a Method payment corresponds to method payment type
+     * @param payment the payment
+     * @return A method payment.
+     */
+    private PaymentMethod getPaymentMethod(Payment payment) {
+        if (payment == null || payment.getCustomerAccount() == null || payment.getCustomerAccount().getPaymentMethods() == null ) {
+            return null;
+        }
+        List<PaymentMethod> paymentMethods = payment.getCustomerAccount().getPaymentMethods().stream().filter(paymentMethod -> {
+            return paymentMethod.getPaymentType().equals(payment.getPaymentMethod());
+        }).collect(Collectors.toList());
+        return (paymentMethods != null && !paymentMethods.isEmpty()) ? paymentMethods.get(0) : null;
     }
 
     /**
@@ -530,14 +551,14 @@ public class PaymentService extends PersistenceService<Payment> {
                         occTemplateCode = paramBean.getProperty("occ.rejectedPayment.dd", "REJ_DDT");
                     }
                 }
-                
+
                 OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
                 if (occTemplate == null) {
                     throw new BusinessException("Cannot find AO Template with code:" + occTemplateCode);
                 }
                 CustomerAccount ca = accountOperation.getCustomerAccount();
                 List<AccountOperation> listAoThatSupposedPaid = getAccountOperationThatWasPaid(accountOperation);
-                
+
                 Long aoPaymentIdWasRejected = accountOperation.getId();
 
                 matchingCodeService.unmatchingByAOid(aoPaymentIdWasRejected);
@@ -602,7 +623,7 @@ public class PaymentService extends PersistenceService<Payment> {
     public  List<AccountOperation> getAccountOperationThatWasPaid(AccountOperation paymentOrRefund) throws BusinessException {
         if (paymentOrRefund.getMatchingStatus() != MatchingStatusEnum.L) {
             return null;
-        }       
+        }
         List<AccountOperation> listAoThatSupposedPaid = new ArrayList<AccountOperation>();
         List<MatchingAmount> matchingAmounts = paymentOrRefund.getMatchingAmounts();
         log.trace("matchingAmounts:" + matchingAmounts);
