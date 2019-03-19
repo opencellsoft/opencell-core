@@ -57,6 +57,8 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  * Billing run
  * 
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ReferenceIdentifierQuery("BillingRun.findByIdAndBCCode")
@@ -297,6 +299,14 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
+
+    /**
+     * Reference date
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "reference_date")
+    private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
+
 
     public Date getProcessDate() {
         return processDate;
@@ -657,5 +667,21 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
         return billingCycle.getDescription();
     }
 
+    /**
+     * Gets the reference date
+     *
+     * @return the reference date
+     */
+    public ReferenceDateEnum getReferenceDate() {
+        return referenceDate;
+    }
 
+    /**
+     * Sets the reference date.
+     *
+     * @param referenceDate the new reference date
+     */
+    public void setReferenceDate(ReferenceDateEnum referenceDate) {
+        this.referenceDate = referenceDate;
+    }
 }

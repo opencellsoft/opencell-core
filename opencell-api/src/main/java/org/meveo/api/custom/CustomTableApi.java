@@ -169,9 +169,9 @@ public class CustomTableApi extends BaseApi {
         for (CustomTableRecordDto record : dto.getValues()) {
 
             if (record.getValues().containsKey(NativePersistenceService.FIELD_ID)) {
-                customTableService.update(cet.getDbTablename(), customTableService.convertValues(record.getValues(), cfts.values(), false));
+                customTableService.update(cet.getDbTablename(), customTableService.convertValue(record.getValues(), cfts.values(), false, null));
             } else {
-                customTableService.create(cet.getDbTablename(), customTableService.convertValues(record.getValues(), cfts.values(), false));
+                customTableService.create(cet.getDbTablename(), customTableService.convertValue(record.getValues(), cfts.values(), false, null));
             }
         }
     }
@@ -209,7 +209,7 @@ public class CustomTableApi extends BaseApi {
             throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
         }
 
-        pagingAndFiltering.setFilters(customTableService.convertValues(pagingAndFiltering.getFilters(), cfts.values(), true));
+        pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
 
         PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, null, pagingAndFiltering, null);
 

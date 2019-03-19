@@ -23,6 +23,10 @@ public class DiscountPlanInstanceDto extends BaseEntityDto {
 	 * The billingAccount code.
 	 */
 	private String billingAccount;
+	/**
+	 * The subscription code.
+	 */
+	private String subscription;
 
 	/**
 	 * Effectivity start date
@@ -57,7 +61,11 @@ public class DiscountPlanInstanceDto extends BaseEntityDto {
 
 	public DiscountPlanInstanceDto(DiscountPlanInstance e, CustomFieldsDto customFields) {
 		discountPlan = e.getDiscountPlan().getCode();
-		billingAccount = e.getBillingAccount().getCode();
+		if(e.getBillingAccount()!=null){
+			billingAccount = e.getBillingAccount().getCode();
+		}else{
+			subscription = e.getSubscription().getCode();
+		}
 		startDate = e.getStartDate();
 		endDate = e.getEndDate();
 		this.customFields = customFields;
@@ -93,6 +101,22 @@ public class DiscountPlanInstanceDto extends BaseEntityDto {
 	 */
 	public void setBillingAccount(String billingAccount) {
 		this.billingAccount = billingAccount;
+	}
+
+	/**
+	 * Gets the subscription code
+	 * @return code
+	 */
+	public String getSubscription() {
+		return subscription;
+	}
+
+	/**
+	 * Sets the subscription code
+	 * @param subscription code
+	 */
+	public void setSubscription(String subscription) {
+		this.subscription = subscription;
 	}
 
 	/**

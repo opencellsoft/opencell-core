@@ -41,7 +41,9 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
@@ -70,6 +72,7 @@ import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.omnifaces.util.Faces;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 /**
  * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
@@ -131,7 +134,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     private Map<Long, Amounts> openBalance = new HashMap<>();
 
     // Retrieved wallet operations to improve GUI performance for Ajax request
-    private Map<String, List<WalletOperation>> walletOperations = new HashMap<String, List<WalletOperation>>();
+    private Map<String, LazyDataModel<WalletOperation>> walletOperations = new HashMap<String, LazyDataModel<WalletOperation>>();
 
     private EntityListDataModelPF<ProductInstance> productInstances = null;
 
@@ -305,15 +308,16 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         return result;
     }
 
-    public List<WalletOperation> getWalletOperations(String walletCode) {
-
-        if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
-            log.debug("getWalletOperations {}", walletCode);
-            walletOperations.put(walletCode, walletOperationService.findByUserAccountAndWalletCode(walletCode, entity, false));
-        }
-
-        return walletOperations.get(walletCode);
-    }
+    public LazyDataModel<WalletOperation> getWalletOperations(String walletCode) {   	
+   	 HashMap<String, Object> filters = new HashMap<String, Object>();
+   	 filters.put("wallet.code", walletCode);
+   	 
+		if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
+			log.debug("getWalletOperations {}", walletCode);
+			walletOperations.put(walletCode,walletOperationBean.getLazyDataModel(filters, true));
+		}		 
+		return walletOperations.get(walletCode);
+   }
 
     @Produces
     @Named("getRatedTransactionsInvoiced")
@@ -587,7 +591,12 @@ public class UserAccountBean extends AccountBean<UserAccount> {
             messages.info(new BundleKey("messages", "productInstance.saved.ok"));
         }
     }
-    
+    public List<UserAccount> listAllUserAccountWithBillingAccountAndDiscountPlan() {
+        List<UserAccount> userAccounts = super.listAll();
+        userAccounts.forEach(userAccount -> userAccount.getBillingAccount().getDiscountPlanInstances().size());
+        return userAccounts;
+    }
+
     public List<Seller> listSellers() {
         if(productInstance!= null && productInstance.getProductTemplate() != null) {
             if(productInstance.getProductTemplate().getSellers().size() > 0) {

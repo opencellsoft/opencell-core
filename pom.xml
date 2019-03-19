@@ -420,9 +420,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.elasticsearch</groupId>
-                <artifactId>elasticsearch</artifactId>
-                <version>2.3.3</version>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-high-level-client</artifactId>
+                <version>6.6.1</version>
             </dependency>
 
             <dependency>
@@ -431,7 +431,7 @@
                 <version>1.7</version>
             </dependency>
 
-			<dependency>
+            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>${jackson.version}</version>
@@ -764,7 +764,7 @@
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>9.4.1211</version>
+                    <version>42.2.5</version>
                     <scope>provided</scope>
                 </dependency>
                 <dependency>
@@ -776,6 +776,10 @@
                         <exclusion>
                             <groupId>org.liquibase</groupId>
                             <artifactId>liquibase-core</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>postgresql</groupId>
+                            <artifactId>postgresql</artifactId>
                         </exclusion>
                     </exclusions>
                 </dependency>

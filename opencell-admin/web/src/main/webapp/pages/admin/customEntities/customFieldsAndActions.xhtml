@@ -411,6 +411,10 @@
                             componentWidth="15" />
                         <hftl:formField label="#{messages['customFieldTemplate.regExp']}" field="regExp" rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}" size="29"
                             componentWidth="19" />
+                        <hftl:formField label="#{messages['customFieldTemplate.nbDecimal']}" field="nbDecimal"
+                                        rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE}" />
+                        <hftl:formField label="#{messages['customFieldTemplate.roundingMode']}" field="roundingMode"
+                                        rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE}" />
                     </p:fieldset>
                 </h:panelGroup>
                 <p:fieldset legend="#{messages['customFieldTemplate.versioningAndCaching']}" styleClass="clearfix versioning-and-caching">

@@ -45,15 +45,7 @@ import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportTemplate;
 import org.meveo.model.DatePeriod;
-import org.meveo.model.catalog.BusinessOfferModel;
-import org.meveo.model.catalog.BusinessServiceModel;
-import org.meveo.model.catalog.LifeCycleStatusEnum;
-import org.meveo.model.catalog.OfferProductTemplate;
-import org.meveo.model.catalog.OfferServiceTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ProductOffering;
-import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.*;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValueHolder;
@@ -135,6 +127,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     private List<OfferServiceTemplate> bsmServiceTemplates;
     private List<BusinessServiceModel> businessServiceModels;
     private List<BusinessServiceModel> selectedBsms;
+    private DiscountPlan allowedDiscountPlan;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -966,6 +959,59 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     public void setDuplicateOfferFlag(boolean duplicateOfferFlag) {
         this.duplicateOfferFlag = duplicateOfferFlag;
+    }
+
+    public DiscountPlan getAllowedDiscountPlan() {
+        return allowedDiscountPlan;
+    }
+
+    public void setAllowedDiscountPlan(DiscountPlan allowedDiscountPlan) {
+        this.allowedDiscountPlan = allowedDiscountPlan;
+    }
+
+    public void newAllowedDiscountPlan() {
+        this.allowedDiscountPlan = new DiscountPlan();
+    }
+
+    public void editAllowedDiscountPlan(DiscountPlan allowedDiscountPlan) {
+        this.allowedDiscountPlan = allowedDiscountPlan;
+    }
+
+    public void cancelAllowedDiscountPlanEdit() {
+        this.allowedDiscountPlan = null;
+    }
+
+    @ActionMethod
+    public void deleteAllowedDiscountPlan(DiscountPlan allowedDiscountPlan) throws BusinessException {
+        try {
+            entity.getAllowedDiscountPlans().remove(allowedDiscountPlan);
+            this.allowedDiscountPlan = null;
+
+            messages.info(new BundleKey("messages", "offerTemplate.allowedDiscountPlan.delete.successful"));
+
+        } catch (Exception e) {
+            messages.error(new BundleKey("messages", "error.delete.unexpected"));
+        }
+    }
+
+    @ActionMethod
+    public void saveAllowedDiscountPlan() {
+        log.info("save AllowedDiscountPlan getObjectId={}", getObjectId());
+
+        try {
+            if (allowedDiscountPlan == null || entity.getAllowedDiscountPlans().contains(allowedDiscountPlan)) {
+                messages.error(new BundleKey("messages", "save.unsuccessful.duplicate"));
+            } else {
+                entity.addAnAllowedDiscountPlan(allowedDiscountPlan);
+                messages.info(new BundleKey("messages", "offerTemplate.allowedDiscountPlan.create.successful"));
+            }
+
+        } catch (Exception e) {
+            log.error("exception when saving Discount Plan !", e.getMessage());
+            messages.error(new BundleKey("messages", "save.unsuccessful"));
+        }
+
+        allowedDiscountPlan = null;
     }
 
 }

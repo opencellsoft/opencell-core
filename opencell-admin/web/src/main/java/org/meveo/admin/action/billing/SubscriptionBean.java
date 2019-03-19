@@ -18,21 +18,6 @@
  */
 package org.meveo.admin.action.billing;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -46,7 +31,9 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
@@ -54,10 +41,12 @@ import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -86,6 +75,21 @@ import org.meveo.service.medina.impl.AccessService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 
+import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
@@ -93,7 +97,7 @@ import org.primefaces.context.RequestContext;
  * @author Wassim Drira
  * @author Said Ramli
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2.1
+ * @lastModifiedVersion 7.0
  */
 @Named
 @ViewScoped
@@ -176,6 +180,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     
     private SubscriptionTerminationReason terminationReason;
 
+    private ServiceInstance selectedTerminableService;
+
+
     /**
      * User Account Id passed as a parameter. Used when creating new subscription entry from user account definition window, so default uset Account will be set on newly created
      * subscription entry.
@@ -189,6 +196,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private EntityListDataModelPF<ServiceTemplate> serviceTemplates = new EntityListDataModelPF<ServiceTemplate>(new ArrayList<ServiceTemplate>());
 
     private EntityListDataModelPF<ServiceInstance> serviceInstances = new EntityListDataModelPF<ServiceInstance>(new ArrayList<ServiceInstance>());
+
+    private EntityListDataModelPF<ServiceInstance> terminableServices = new EntityListDataModelPF<ServiceInstance>(new ArrayList<ServiceInstance>());
 
     private EntityListDataModelPF<OneShotChargeInstance> oneShotChargeInstances = null;
     private EntityListDataModelPF<RecurringChargeInstance> recurringChargeInstances = null;
@@ -224,6 +233,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         } else {
             initServiceTemplates();
             initServiceInstances(entity.getServiceInstances());
+            initTerminableServices(entity.getServiceInstances());
         }
 
         return entity;
@@ -429,6 +439,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public EntityListDataModelPF<ServiceInstance> getServiceInstances() {
         return serviceInstances;
+    }
+
+    public EntityListDataModelPF<ServiceInstance> getTerminableServices() {
+        return terminableServices;
     }
 
     public EntityListDataModelPF<ServiceTemplate> getServiceTemplates() {
@@ -683,6 +697,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         subscriptionService.refresh(entity);
 
         initServiceInstances(entity.getServiceInstances());
+        initTerminableServices(entity.getServiceInstances());
         initServiceTemplates();
         resetChargesDataModels();
 
@@ -758,11 +773,20 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         return selectedServiceInstance;
     }
 
+    public void setSelectedTerminableService(ServiceInstance selectedTerminableService) {
+        this.selectedTerminableService = selectedTerminableService;
+    }
+
+    public ServiceInstance getSelectedTerminableService() {
+        return selectedTerminableService;
+    }
+
     public void setSelectedServiceInstance(ServiceInstance selectedServiceInstance) {
         this.selectedServiceInstance = selectedServiceInstance;
     }
 
     public void populateAccounts(UserAccount userAccount) {
+        userAccount.getBillingAccount().getDiscountPlanInstances().size();
         entity.setUserAccount(userAccount);
         if (userAccount != null && appProvider.isLevelDuplication()) {
             entity.setCode(userAccount.getCode());
@@ -878,6 +902,19 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         serviceInstances.addAll(instantiatedServices);
 
         log.debug("serviceInstances initialized with {} items", serviceInstances.getSize());
+    }
+
+    private void initTerminableServices(List<ServiceInstance> serviceInstances) {
+
+        terminableServices = new EntityListDataModelPF<ServiceInstance>(new ArrayList<ServiceInstance>());
+        if(serviceInstances!= null && !serviceInstances.isEmpty()){
+            for(ServiceInstance serviceInstance : serviceInstances){
+                if (serviceInstanceService.willBeTerminatedInFuture(serviceInstance)) {
+                    terminableServices.add(serviceInstance);
+                }
+            }
+        }
+        log.debug("terminableServices initialized with {} items", terminableServices.getSize());
     }
 
     private void resetChargesDataModels() {
@@ -1003,7 +1040,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
      * Copy subscription renewal and other information from offer
      */
     public void copyInfoFromOffer() {
-        entity.setSubscriptionRenewal(entity.getOffer().getSubscriptionRenewal());
+        SubscriptionRenewal subscriptionRenewal = entity.getOffer().getSubscriptionRenewal();
+        entity.setSubscriptionRenewal(subscriptionRenewal);
         updateSubscribedTillDate();
         
         entity.setMinimumAmountEl(entity.getOffer().getMinimumAmountEl());
@@ -1067,10 +1105,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
         this.terminationReason = terminationReason;
     }
-    
+
     /**
      * Compute balance due
-     * 
+     *
      * @return due balance
      * @throws BusinessException General business exception
      */
@@ -1083,7 +1121,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     /**
      * Compute balance exigible without litigation.
-     * 
+     *
      * @return exigible balance without litigation
      * @throws BusinessException General business exception
      */
@@ -1093,5 +1131,83 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         } else {
             return subscriptionService.subscriptionBalanceExigibleWithoutLitigation(entity, new Date());
         }
+    }
+
+    @ActionMethod
+    public String instantiateDiscountPlan() throws BusinessException {
+        if (entity.getDiscountPlan() != null) {
+            DiscountPlan dp = entity.getDiscountPlan();
+            entity = subscriptionService.instantiateDiscountPlan(entity, dp);
+            entity.setDiscountPlan(null);
+        }
+        return getEditViewName();
+    }
+
+    @ActionMethod
+    public String deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
+        subscriptionService.terminateDiscountPlan(entity, dpi);
+        return getEditViewName();
+    }
+
+    public List<DiscountPlan> getAllowedDiscountPlans(){
+        if(entity.getOffer() != null){
+            List<DiscountPlan> allowedDiscountPlans = entity.getOffer().getAllowedDiscountPlans();
+            BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
+            billingAccount.getDiscountPlanInstances().forEach(dpi -> allowedDiscountPlans.remove(dpi.getDiscountPlan()));
+            return allowedDiscountPlans;
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Check is terminated subscription
+     *
+     * @return true is the subscription is terminated
+     */
+    public boolean isTerminatedSubscription() {
+        return subscriptionService.willBeTerminatedInFuture(entity);
+    }
+
+    /**
+     * cancel subscription termination.
+     */
+    @ActionMethod
+    public void cancelSubscriptionTermination() throws BusinessException {
+        log.debug("cancelTermination...");
+        entity = subscriptionService.refreshOrRetrieve(entity);
+        subscriptionService.cancelSubscriptionTermination(entity);
+        subscriptionService.refresh(entity);
+        messages.info(new BundleKey("messages", "termination.cancelTerminationSuccessful"));
+    }
+
+    /**
+     * cancel termination.
+     */
+    @ActionMethod
+    public void cancelServiceTermination() throws BusinessException {
+        log.debug("cancelTermination...");
+        if (selectedTerminableService != null) {
+            log.debug("service id={} checked", selectedTerminableService.getId());
+
+            if (!serviceInstanceService.willBeTerminatedInFuture(selectedTerminableService)) {
+                messages.info(new BundleKey("messages", "error.cancelTerminationService"));
+                return;
+            }
+
+            // Obtain EM attached service instance entity
+            entity = subscriptionService.refreshOrRetrieve(entity);
+            selectedTerminableService = entity.getServiceInstances().get(entity.getServiceInstances().indexOf(selectedTerminableService));
+
+            serviceInstanceService.cancelServiceTermination(selectedTerminableService);
+            subscriptionService.refresh(entity);
+
+            initTerminableServices(entity.getServiceInstances());
+            keepCurrentTab();
+
+        } else {
+            log.error("cancelTermination id=#0 is NOT a serviceInstance");
+        }
+        selectedTerminableService = null;
+        messages.info(new BundleKey("messages", "termination.cancelTerminationSuccessful"));
     }
 }

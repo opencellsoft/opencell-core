@@ -201,6 +201,13 @@
                         <ui:param name="formId" value=":offerForm" />
                     </ui:include>
                 </p:tab>
+
+                <p:tab title="#{messages['menu.discountPlans']}">
+                    <ui:include src="allowedDiscountPlansTab.xhtml">
+                        <ui:param name="backingBean" value="#{offerTemplateBean}" />
+                        <ui:param name="formId" value=":offerForm" />
+                    </ui:include>
+                </p:tab>
             </p:tabView>
         </hftl:formPanel>
 

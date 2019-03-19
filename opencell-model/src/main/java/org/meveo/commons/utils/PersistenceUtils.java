@@ -1,9 +1,15 @@
-package org.meveo.util;
+package org.meveo.commons.utils;
 
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 import org.meveo.model.IEntity;
+
+
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 
 public class PersistenceUtils {
 

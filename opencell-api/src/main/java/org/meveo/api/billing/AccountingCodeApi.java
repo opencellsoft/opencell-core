@@ -23,10 +23,11 @@ import org.meveo.service.billing.impl.AccountingCodeService;
 
 /**
  * API class for AccountingCode CRUD.
- * 
+ *
  * @author Edward P. Legaspi
  * @since 5.0
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  **/
 @Stateless
 public class AccountingCodeApi extends BaseCrudApi<AccountingCode, AccountingCodeDto> {
@@ -36,9 +37,6 @@ public class AccountingCodeApi extends BaseCrudApi<AccountingCode, AccountingCod
 
     @Override
     public AccountingCode create(AccountingCodeDto postData) throws BusinessException, MeveoApiException {
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (postData.getChartOfAccountTypeEnum() == null) {
             missingParameters.add("chartOfAccountTypeEnum");
         }

@@ -1,6 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" 
-    >
+    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui">
+
+	<o:importConstants type="org.meveo.model.audit.AuditableFieldNameEnum" />
 
     <ui:define name="metadata">
         <f:metadata>
@@ -40,6 +42,13 @@
 
             <p:tabView id="tabView" activeIndex="#{serviceInstanceBean.activeTab}">
                 <p:tab title="#{messages['commons.tab.information']}">
+
+                    <h:panelGroup layout="block" styleClass="clearLeft">
+						<h:outputFormat styleClass="note" rendered="#{serviceInstanceBean.isTerminatedService()}"
+									  value="#{messages['serviceInstance.serviceTerminationMessage']}">
+							<f:param value="#{serviceInstanceBean.entity.subscribedTillDate}"/>
+						</h:outputFormat>
+					</h:panelGroup>
 
                     <hftl:formField id="serviceSelectedId" label="#{messages['serviceInstance.code']}" field="code" valueLabelField="code" required="true" popup="false" allowEdit="true" />
 
@@ -141,19 +150,27 @@
 					</p:dataTable>
                 </p:tab>
                 <p:tab title="#{messages['paymentScheduleInstance.title']}" id="psInstances">
-	                <hftl:dataList backingBean="#{paymentScheduleInstanceBean}" dataModel="#{paymentScheduleInstanceBean.getInstancesForService(serviceInstanceBean.entity)}" 
-	                label="#{messages['paymentScheduleInstance.title']}" sortBy="startDate" exportButton="false" checkMany="false">
-							<hftl:column label="#{messages['businessEntity.code']}" field="code" noLinkToView="true" />							
-							<hftl:column label="#{messages['paymentScheduleTemplate.amount']}" field="amount" />
-							<hftl:column label="#{messages['paymentScheduleTemplate.status']}" field="status" />
-							<hftl:column label="#{messages['paymentScheduleTemplate.calendar']}" field="calendar.code" />
-							<hftl:column label="#{messages['paymentScheduleInstance.startDate']}" field="startDate"  isDate="true"/>
-							<hftl:column label="#{messages['paymentScheduleInstance.endDate']}" field="endDate"  isDate="true"/>
-				
-							<hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" backingBean="#{paymentScheduleInstanceBean}" objectIdParamName="objectId"
-							 renderDeleteLink="false" renderEditLink="true" backTab="psInstances" backView="serviceInstanceDetail" backEntityId="#{serviceInstanceBean.entity.id}"/>
-			        </hftl:dataList>
+					<c:if test="#{not empty serviceInstanceBean.entity.id}">
+						<hftl:dataList backingBean="#{paymentScheduleInstanceBean}" dataModel="#{paymentScheduleInstanceBean.getInstancesForService(serviceInstanceBean.entity)}"
+						label="#{messages['paymentScheduleInstance.title']}" sortBy="startDate" exportButton="false" checkMany="false">
+								<hftl:column label="#{messages['businessEntity.code']}" field="code" noLinkToView="true" />
+								<hftl:column label="#{messages['paymentScheduleTemplate.amount']}" field="amount" />
+								<hftl:column label="#{messages['paymentScheduleTemplate.status']}" field="status" />
+								<hftl:column label="#{messages['paymentScheduleTemplate.calendar']}" field="calendar.code" />
+								<hftl:column label="#{messages['paymentScheduleInstance.startDate']}" field="startDate"  isDate="true"/>
+								<hftl:column label="#{messages['paymentScheduleInstance.endDate']}" field="endDate"  isDate="true"/>
+
+								<hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" backingBean="#{paymentScheduleInstanceBean}" objectIdParamName="objectId"
+								 renderDeleteLink="false" renderEditLink="true" backTab="psInstances" backView="serviceInstanceDetail" backEntityId="#{serviceInstanceBean.entity.id}"/>
+						</hftl:dataList>
+					</c:if>
                 </p:tab>                    
+				<c:if test="#{serviceInstanceBean.entity.id != null}">
+					<ui:include src="../../audit/auditableField.xhtml">
+						<ui:param name="auditableEntity" value="#{serviceInstanceBean.entity}" />
+						<ui:param name="auditableFieldName" value="#{'STATUS'}" />
+					</ui:include>
+				</c:if>
 
                 <hftl:customFields backingBean="#{serviceInstanceBean}" messagesId=":formId:messages" />
             </p:tabView>
@@ -171,6 +188,15 @@
 						value="#{messages['serviceInstance.suspendButton']}" ajax="false"
 						onclick="if(confirm('#{messages['confirmationMessage.confirmSuspension']}')){return true;}else{return false;}"
 						disabled="#{serviceInstanceBean.entity.status.toString() != 'ACTIVE'}" />
+
+					<p:commandButton action="#{serviceInstanceBean.cancelServiceTermination}"
+									 value="#{messages['button.cancelTerminationButton']}"
+									 update=":formId"
+									 rendered="#{serviceInstanceBean.isTerminatedService()}">
+						<p:confirm header="#{messages['commons.confirmationHeader']}"
+								   message="#{messages['confirmationMessage.cancelServiceTermination']}"
+								   icon="ui-icon-alert" />
+					</p:commandButton>
 				</h:panelGroup>
 			</ui:define>
 		</hftl:formPanel>

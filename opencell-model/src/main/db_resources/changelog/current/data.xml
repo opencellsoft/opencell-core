@@ -216,12 +216,12 @@
     <changeSet id="#3908_20191001" author="HORRI KHALID">
         <insert tableName="adm_permission">
             <column name="id" valueNumeric="-114"/>
-            <column name="name" value="useJob"/>
+            <column name="name" value="Job execution"/>
             <column name="permission" value="useJob"/>
         </insert>
         <insert tableName="adm_permission">
             <column name="id" valueNumeric="-115"/>
-            <column name="name" value="createJob"/>
+            <column name="name" value="Job management"/>
             <column name="permission" value="createJob"/>
         </insert>
     </changeSet>
@@ -1047,5 +1047,26 @@ public class KPICustomerPerOfferReporting extends ReportExtractScript {
             <column name="uuid" value="Custom_table_data_import_Job" />
         </insert>
     </changeSet>
-    
+
+    <changeSet id="#3599_20181002" author="AbdellatifBARI">
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueNumeric="1" />
+            <column name="created" valueDate="2018-10-02 12:09:00.913" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="entity_class" value="Customer" />
+            <column name="code_el" value="CUST_#{entity.customerCategory.code}_#{sequenceNextValue}" />
+            <column name="sequence_size" valueNumeric="5" />
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueNumeric="2" />
+            <column name="created" valueDate="2018-10-02 12:12:09.935" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="entity_class" value="Subscription" />
+            <column name="code_el" value="SU_#{entity.userAccount.code}_#{sequenceNextValue}" />
+            <column name="sequence_size" valueNumeric="9" />
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

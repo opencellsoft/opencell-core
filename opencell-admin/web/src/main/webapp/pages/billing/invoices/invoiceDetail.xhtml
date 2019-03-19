@@ -142,8 +142,10 @@
                                                     <p:column headerText="#{messages['subscription.offer']}">
                                                         <h:outputText value="#{rated.offerCode}"/>
                                                     </p:column>
-                                                    <p:column headerText="#{messages['discountPlan.eventCode']}">
-                                                        <h:outputText value="#{ratedTransactionBean.getWalletOperationCode(rated.getWalletOperationId())}"/>
+                                                    <p:column headerText="#{messages['walletOperation.chargeInstance']}">
+                                                    	<ui:repeat value="#{ratedTransactionBean.getWalletOperationCodes(rated.getId())}" var="wo" varStatus="loop">
+														    #{wo}#{not loop.last ? ', ' : ''}
+														</ui:repeat>
                                                     </p:column>
                                                     <p:column headerText="#{messages['billingRun.panel']}">
                                                         <h:outputText value="#{rated.billingRun.id}"/>

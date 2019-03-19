@@ -124,11 +124,13 @@ public class PaymentJobBean extends BaseJobBean {
             List<Long> caIds = new ArrayList<Long>();
             if (OperationCategoryEnum.CREDIT == operationCategory) {
                 caIds = customerAccountService.getCAidsForPayment(paymentMethodType, fromDueDate,toDueDate);
+                log.debug("nb CA for payment:" + caIds.size());
             } else {
                 caIds = customerAccountService.getCAidsForRefund(paymentMethodType, fromDueDate,toDueDate);
+                log.debug("nb CA for refund:" + caIds.size());
             }
 
-            log.debug("nb CA for payment:" + caIds.size());
+           
             result.setNbItemsToProcess(caIds.size());
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
@@ -182,14 +184,17 @@ public class PaymentJobBean extends BaseJobBean {
 
     private ScriptInterface getJobScriptByCfCode(JobInstance jobInstance,String scriptCfCode, Class clazz) {
         try {
-            final  String scriptCode =  ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, scriptCfCode)).getCode();
-            if (scriptCode != null) {
-                log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
-                ScriptInterface si = scriptInstanceService.getScriptInstance(scriptCode);
-                if (si != null && clazz.isInstance(si)) {
-                    return si;
-                }
-            }
+        	EntityReferenceWrapper entityReferenceWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, scriptCfCode);
+        	if(entityReferenceWrapper != null) {
+	            final  String scriptCode =  entityReferenceWrapper.getCode();
+	            if (scriptCode != null) {
+	                log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
+	                ScriptInterface si = scriptInstanceService.getScriptInstance(scriptCode);
+	                if (si != null && clazz.isInstance(si)) {
+	                    return si;
+	                }
+	            }
+        	}
         } catch (Exception e) {
             log.error(" Error on getJobScriptByCfCode : [{}]" , e.getMessage());
         }

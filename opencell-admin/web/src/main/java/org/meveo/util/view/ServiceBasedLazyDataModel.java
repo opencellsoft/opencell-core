@@ -81,7 +81,7 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
             if (getRowCount() > 0) {
 
                 Map<String, Object> dataFilters = new HashMap<String, Object>();
-                dataFilters.put("code", esResults.codes);
+                dataFilters.put("id", esResults.ids);
 
                 paginationConfig = new PaginationConfiguration(0, pageSize, dataFilters, null, getListFieldsToFetchImpl(), sortField, sortOrder);
                 return loadData(paginationConfig);
@@ -141,15 +141,17 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
             }
 
             // Get number of hits
+
             int rowCount = new Long(searchResult.getHits().getTotalHits()).intValue();
-            List<String> codes = new ArrayList<>();
+
+            List<String> ids = new ArrayList<>();
 
             searchResult.getHits().forEach(hit -> {
-                codes.add(hit.getSource().get(ESBasedDataModel.RECORD_CODE).toString());
+                ids.add((String) hit.getSourceAsMap().get(ESBasedDataModel.RECORD_ID));
                 // codes.add(hit.getFields().get(ESBasedDataModel.RECORD_CODE).getValue());
             });
 
-            return new ElasticSearchResults(rowCount, codes);
+            return new ElasticSearchResults(rowCount, ids);
 
         } catch (Exception e) {
             Logger log = LoggerFactory.getLogger(getClass());
@@ -311,19 +313,19 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
     protected abstract ElasticClient getElasticClientImpl();
 
     /**
-     * Elastic Search search results- number of total records matched and entity identifiers(codes) of records matched in current page
+     * Elastic Search search results- number of total records matched and entity identifiers of records matched in current page
      */
     private class ElasticSearchResults {
         protected int hits;
-        protected List<String> codes;
+        protected List<String> ids;
 
         public ElasticSearchResults(int hits) {
             this.hits = hits;
         }
 
-        public ElasticSearchResults(int hits, List<String> codes) {
+        public ElasticSearchResults(int hits, List<String> ids) {
             this.hits = hits;
-            this.codes = codes;
+            this.ids = ids;
         }
     }
 }
