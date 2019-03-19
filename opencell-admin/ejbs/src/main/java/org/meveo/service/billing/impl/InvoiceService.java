@@ -136,7 +136,6 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author Wassim Drira
  * @author Said Ramli
  * @author Khalid HORRI
- * @author Mounir BAHIJE
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */

@@ -117,7 +117,7 @@ public class UserAccount extends AccountEntity implements IWFEntity {
     /**
      * Primary waller
      */
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
 

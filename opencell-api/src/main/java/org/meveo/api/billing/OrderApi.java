@@ -1,15 +1,5 @@
 package org.meveo.api.billing;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
@@ -80,6 +70,15 @@ import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrderItem;
 import org.tmf.dsmapi.catalog.resource.order.ProductRelationship;
 import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Andrius Karpavičius
@@ -580,7 +579,7 @@ public class OrderApi extends BaseApi {
             throw new BusinessException("Subscription with code " + subscriptionCode + " already exists");
         }
         String subscriptionSeller = (String) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_SELLER.getCharacteristicName(), String.class,
-                UUID.randomUUID().toString());
+                null);
 
         SubscriptionDto subscriptionDto = new SubscriptionDto();
 

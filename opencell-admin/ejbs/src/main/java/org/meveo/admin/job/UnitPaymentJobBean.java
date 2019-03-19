@@ -70,9 +70,10 @@ public class UnitPaymentJobBean {
                 result.registerError(customerAccountId, doPaymentResponseDto.getErrorMessage());
                 result.addReport("AccountOperation id : " + customerAccountId + " RejectReason : " + doPaymentResponseDto.getErrorMessage());
                 this.checkPaymentRetry(doPaymentResponseDto.getErrorCode(), listAOids, aoFilterScript);
-            } else {
+            } else if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.PENDING == doPaymentResponseDto.getPaymentStatus()){
                 result.registerSucces();
-            }
+                result.registerSucces();
+            }            
 
         } catch (Exception e) {
             log.error("Failed to pay recorded invoice id:" + customerAccountId, e);

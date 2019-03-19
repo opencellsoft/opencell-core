@@ -116,6 +116,12 @@
         </dependency>
 
         <!-- End of libraries provided in Jboss -->
+        
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>6.6.1</version>
+        </dependency>
 
         <dependency>
             <groupId>org.iban4j</groupId>

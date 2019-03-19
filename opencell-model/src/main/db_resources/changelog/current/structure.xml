@@ -1152,7 +1152,7 @@
     	</addColumn>
     </changeSet>
 
-    <changeSet id="#3879 - dunning model" author="mboukayoua" dbms="postgresql">
+    <changeSet id="#3879 - dunning model" author="mboukayoua">
         <createTable tableName="dunning_document">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_dunning_document_sequence" />
@@ -1187,6 +1187,7 @@
 
    <changeSet id="#3650_20190131" author="AmineBenAicha">
     	<!-- Update table wf_generic_workflow -->
+    	<dropForeignKeyConstraint baseTableName="wf_generic_workflow" constraintName="fk_wf_transition_script"/>
     	<dropColumn tableName="wf_generic_workflow" columnName="transition_script_id" />
 
     	<!-- Create table wf_generic_transition -->
@@ -1209,10 +1210,11 @@
         </createTable>
         <addForeignKeyConstraint baseColumnNames="generic_wf_id" baseTableName="wf_generic_transition" constraintName="fk_transition_generic_wf" deferrable="false" initiallyDeferred="false"
             onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="wf_generic_workflow" />
-        <addForeignKeyConstraint baseColumnNames="action_script_id" baseTableName="wf_generic_transition" constraintName="fk_wf_transition_script" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="action_script_id" baseTableName="wf_generic_transition" constraintName="fk_wf_action_script" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 
         <!-- Update table wf_instance -->
+        <dropForeignKeyConstraint baseTableName="wf_instance_history" constraintName="fk_history_wf_instance" />
         <dropColumn tableName="wf_instance_history" columnName="wf_instance_id" />
         <dropTable tableName="wf_instance" />
 		<createTable tableName="wf_instance">
@@ -1244,8 +1246,13 @@
         <addForeignKeyConstraint baseColumnNames="current_wf_status_id" baseTableName="wf_instance" constraintName="fk_instance_wf_status" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
         <addUniqueConstraint columnNames="generic_wf_id, code" constraintName="uk_generic_wf_id_code_wf_instance" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_instance" />
+        
 
     	<!-- Update table wf_instance_history -->
+    	
+    	
+    	<dropForeignKeyConstraint baseTableName="wf_instance_history" constraintName="fk_history_wf_status_from" />
+    	<dropForeignKeyConstraint baseTableName="wf_instance_history" constraintName="fk_history_wf_status_to" />
     	<dropColumn tableName="wf_instance_history" columnName="wf_status_from" />
     	<dropColumn tableName="wf_instance_history" columnName="wf_status_to" />
     	<dropColumn tableName="wf_instance_history" columnName="event" />
