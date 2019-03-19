@@ -42,13 +42,6 @@ import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 
-/**
- * The QuoteService class
- *
- * @author Andrius Karpavicius
- * @author Mounir BAHIJE
- * @lastModifiedVersion 7.0
- */
 @Stateless
 public class QuoteService extends BusinessService<Quote> {
 
