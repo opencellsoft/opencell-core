@@ -98,7 +98,7 @@ public class QuoteService extends BusinessService<Quote> {
      * @throws BusinessException business exception
      */
     @SuppressWarnings("unused")
-    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos, boolean generatePdf) throws BusinessException {    	
+    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos, boolean generatePdf) throws BusinessException {        
         log.info("Creating simulated invoice for {}", quoteInvoiceInfos);
 
         List<Invoice> invoices = new ArrayList<>();
@@ -127,7 +127,7 @@ public class QuoteService extends BusinessService<Quote> {
                 }
 
                 Subscription subscription = quoteInvoiceInfo.getSubscription();
-				if (subscription != null) {
+                if (subscription != null) {
 
                     billingAccount = subscription.getUserAccount().getBillingAccount();
 
@@ -156,7 +156,6 @@ public class QuoteService extends BusinessService<Quote> {
                                 walletOperations.addAll(walletOps);
                             }
                         }
-
                     }
 
                     // Process CDRS
@@ -202,10 +201,7 @@ public class QuoteService extends BusinessService<Quote> {
             }            
             // Create rated transactions from wallet operations
             for (WalletOperation walletOperation : walletOperations) {
-                RatedTransaction createdRatedTransaction = ratedTransactionService.createRatedTransaction(walletOperation, true);
-                createdRatedTransaction.setChargeInstance(null);
-                createdRatedTransaction.setSubscription(null);
-                ratedTransactions.add(createdRatedTransaction);
+                ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true));
             }
             Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());
             File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
@@ -216,15 +212,7 @@ public class QuoteService extends BusinessService<Quote> {
             
             // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
             // invoice.setBillingAccount(null);
-            for (RatedTransaction ratedTransaction :ratedTransactions) {
-                if (ratedTransaction != null) {
-                    ratedTransactionService.create(ratedTransaction);
-                    ratedTransaction.setInvoice(null);
-                    ratedTransaction.setSubscription(null);
-                    ratedTransaction.setChargeInstance(null);
-                }
-            }
-            invoice.setRatedTransactions(ratedTransactions);
+            invoice.setRatedTransactions(null);
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
                 log.debug("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
                 // invoiceAgregate.setBillingAccount(null);
@@ -244,20 +232,11 @@ public class QuoteService extends BusinessService<Quote> {
                     // ((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
                     // ((SubCategoryInvoiceAgregate)invoiceAgregate).setCategoryInvoiceAgregate(null);
                     ((SubCategoryInvoiceAgregate) invoiceAgregate).setWallet(null);
-                    //((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
+                    ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
                 }
             }
             invoiceService.create(invoice);
             invoiceService.postCreate(invoice);
-            for (RatedTransaction ratedTransaction :ratedTransactions) {
-                if (ratedTransaction != null) {
-                    ratedTransaction.setInvoice(invoice);
-                    if (invoice != null) {
-                        ratedTransaction.setSubscription(invoice.getSubscription());
-                    }
-                }
-                ratedTransactionService.update(ratedTransaction);
-            }
             invoices.add(invoice);
         }
         return invoices;
