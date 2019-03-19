@@ -905,7 +905,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (preferedPaymentMethod != null) {
             invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
-        create(invoice);
 
         ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactions, false, true);
         invoice.setRatedTransactions(ratedTransactions);

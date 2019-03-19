@@ -18,17 +18,10 @@
  */
 package org.meveo.model.billing;
 
-/**
- * The RatedTransactionStatusEnum class
- *
- * @author Andrius Karpavicius
- * @author Mounir BAHIJE
- * @lastModifiedVersion 7.0
- */
 public enum RatedTransactionStatusEnum {
 
     OPEN(1, "ratedTransactionStatus.open"), BILLED(2, "ratedTransactionStatus.billed"), REJECTED(3, "ratedTransactionStatus.rejected"), RERATED(4,
-            "ratedTransactionStatus.rerated"), CANCELED(5, "ratedTransactionStatus.canceled"), VIRTUAL(6, "ratedTransactionStatus.virtual");
+            "ratedTransactionStatus.rerated"), CANCELED(5, "ratedTransactionStatus.canceled");
 
     private Integer id;
     private String label;

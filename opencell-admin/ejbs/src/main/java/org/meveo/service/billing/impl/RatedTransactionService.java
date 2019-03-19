@@ -376,8 +376,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
             scAggregate.addRatedTransaction(ratedTransaction);
             ratedTransaction.setInvoice(invoice);
-                ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
-            }
+            ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+        }
 
         // Determine which discount plan items apply to this invoice
         List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
@@ -925,7 +925,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         createRatedTransaction(walletOperation, false);
     }
-
 
     /**
      * Convert Wallet operations to Rated transactions for a given billable entity up to a given date

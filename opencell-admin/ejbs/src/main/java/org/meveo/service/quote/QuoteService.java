@@ -42,13 +42,6 @@ import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 
-/**
- * The QuoteService class
- *
- * @author Andrius Karpavicius
- * @author Mounir BAHIJE
- * @lastModifiedVersion 7.0
- */
 @Stateless
 public class QuoteService extends BusinessService<Quote> {
 
@@ -150,9 +143,6 @@ public class QuoteService extends BusinessService<Quote> {
 
                         // Add recurring charges
                         for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
-                            if (recurringCharge != null) {
-                                recurringCharge = recurringChargeInstanceService.findByCode(recurringCharge.getCode());
-                            }
                             List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, quoteInvoiceInfo.getFromDate(),
                                 quoteInvoiceInfo.getToDate());
                             if (walletOperations != null && walletOps != null) {
@@ -219,7 +209,7 @@ public class QuoteService extends BusinessService<Quote> {
             
             // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
             // invoice.setBillingAccount(null);
-            invoice.setRatedTransactions(ratedTransactions);
+            invoice.setRatedTransactions(null);
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
                 log.debug("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
                 // invoiceAgregate.setBillingAccount(null);
@@ -239,7 +229,7 @@ public class QuoteService extends BusinessService<Quote> {
                     // ((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
                     // ((SubCategoryInvoiceAgregate)invoiceAgregate).setCategoryInvoiceAgregate(null);
                     ((SubCategoryInvoiceAgregate) invoiceAgregate).setWallet(null);
-                    //((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
+                    ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
                 }
             }
             invoiceService.create(invoice);
