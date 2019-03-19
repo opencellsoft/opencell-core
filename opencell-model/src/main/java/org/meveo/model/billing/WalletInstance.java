@@ -71,7 +71,7 @@ public class WalletInstance extends BusinessEntity {
     /**
      * User account wallet is associated to
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
@@ -106,13 +106,13 @@ public class WalletInstance extends BusinessEntity {
     /**
      * Operations against this wallet
      */
-    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "wallet", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<WalletOperation> operations;
 
     /**
      * Rated transactions against this wallet
      */
-    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "wallet", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<RatedTransaction> ratedTransactions;
 
     /**
