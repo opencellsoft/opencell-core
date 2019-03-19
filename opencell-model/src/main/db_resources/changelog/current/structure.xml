@@ -1249,6 +1249,10 @@
         
 
     	<!-- Update table wf_instance_history -->
+    	
+    	
+    	<dropForeignKeyConstraint baseTableName="wf_instance_history" constraintName="fk_history_wf_status_from" />
+    	<dropForeignKeyConstraint baseTableName="wf_instance_history" constraintName="fk_history_wf_status_to" />
     	<dropColumn tableName="wf_instance_history" columnName="wf_status_from" />
     	<dropColumn tableName="wf_instance_history" columnName="wf_status_to" />
     	<dropColumn tableName="wf_instance_history" columnName="event" />
