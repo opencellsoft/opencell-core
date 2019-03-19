@@ -3,6 +3,7 @@
  */
 package org.meveo.api.payment;
 
+import static java.lang.reflect.Modifier.isAbstract;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -24,6 +25,7 @@ import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestBuilderTypeEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.payments.impl.DDRequestBuilderInterface;
 import org.meveo.service.payments.impl.DDRequestBuilderService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.SortOrder;
@@ -48,50 +50,63 @@ public class DDRequestBuilderApi extends BaseCrudApi<DDRequestBuilder, DDRequest
   
     @Override
     public DDRequestBuilder create(DDRequestBuilderDto ddRequestBuilderDto) throws MeveoApiException, BusinessException {
-        String code = null;
+        
         if (ddRequestBuilderDto == null) {
             missingParameters.add("ddRequestBuilderDto");
             handleMissingParameters();
             return null;
-        } else if (ddRequestBuilderDto != null) {
-            code = ddRequestBuilderDto.getCode();
-            if (StringUtils.isBlank(code)) {
-                missingParameters.add("code");
-            }
-            
-            if (ddRequestBuilderDto.getType() == null) {
-                missingParameters.add("type");
-            }
-            if (ddRequestBuilderDto.getPaymentLevel() == null) {
-                missingParameters.add("paymentLevel");
-            }            
+        }
 
-            if (ddRequestBuilderDto.getType() == DDRequestBuilderTypeEnum.CUSTOM && StringUtils.isBlank(ddRequestBuilderDto.getScriptInstanceCode())) {
+        String code = ddRequestBuilderDto.getCode();
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+
+        DDRequestBuilderTypeEnum type = ddRequestBuilderDto.getType();
+        final String scriptInstanceCode = ddRequestBuilderDto.getScriptInstanceCode();
+        final String implementationClassName = ddRequestBuilderDto.getImplementationClassName();
+        
+        if (type == null) {
+            missingParameters.add("type");
+        } else {
+            if (DDRequestBuilderTypeEnum.CUSTOM == type && StringUtils.isBlank(scriptInstanceCode)) {
                 missingParameters.add("scriptInstanceCode");
+            } else if (DDRequestBuilderTypeEnum.NATIF == type) { 
+                if (StringUtils.isBlank(implementationClassName)) {
+                    missingParameters.add("implementationClassName");
+                } else {
+                    this.validateDDRImplementationClassName(implementationClassName);                    
+                }
             }
+        }
+        
+        if (ddRequestBuilderDto.getPaymentLevel() == null) {
+            missingParameters.add("paymentLevel");
         }
 
         handleMissingParameters();
-
-        if (ddRequestBuilderDto != null && ddRequestBuilderDto.getType() == DDRequestBuilderTypeEnum.NATIF) {
-            throw new BusinessException("Cant add Natif DDRequestBuilder");
+        
+        ScriptInstance scriptInstance = null;
+        DDRequestBuilder ddRequestBuilder = new DDRequestBuilder();
+        
+        if (type == DDRequestBuilderTypeEnum.CUSTOM ) {
+            if (ddRequestBuilderService.findByCode(code) != null) {
+                throw new EntityAlreadyExistsException(DDRequestBuilder.class, code);
+            }
+            
+            scriptInstance = scriptInstanceService.findByCode(ddRequestBuilderDto.getScriptInstanceCode());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, ddRequestBuilderDto.getScriptInstanceCode());
+            } 
+            ddRequestBuilder.setScriptInstance(scriptInstance);
+        } else if (type == DDRequestBuilderTypeEnum.NATIF ) {
+            ddRequestBuilder.setImplementationClassName(implementationClassName);
         }
-
-        DDRequestBuilder ddRequestBuilder = ddRequestBuilderService.findByCode(code);
-        if (ddRequestBuilder != null) {
-            throw new EntityAlreadyExistsException(DDRequestBuilder.class, code);
-        }
-
-        ScriptInstance scriptInstance = scriptInstanceService.findByCode(ddRequestBuilderDto.getScriptInstanceCode());
-        if (scriptInstance == null) {
-            throw new EntityDoesNotExistsException(ScriptInstance.class, ddRequestBuilderDto.getScriptInstanceCode());
-        }
-
-        ddRequestBuilder = new DDRequestBuilder();
-        ddRequestBuilder.setType(ddRequestBuilderDto.getType());
+        
+        ddRequestBuilder.setType(type);
         ddRequestBuilder.setCode(code);
         ddRequestBuilder.setDescription(ddRequestBuilderDto.getDescription());
-        ddRequestBuilder.setScriptInstance(scriptInstance);
+
         ddRequestBuilder.setMaxSizeFile(ddRequestBuilderDto.getMaxSizeFile());
         ddRequestBuilder.setNbOperationPerFile(ddRequestBuilderDto.getNbOperationPerFile());
         ddRequestBuilder.setPaymentLevel(ddRequestBuilderDto.getPaymentLevel());
@@ -112,6 +127,30 @@ public class DDRequestBuilderApi extends BaseCrudApi<DDRequestBuilder, DDRequest
 
         ddRequestBuilderService.create(ddRequestBuilder);
         return ddRequestBuilder;
+
+    }
+
+    /**
+     * check if :
+     *    - implementationClassName is a valid class name
+     *    - is a valid sub-class of DDRequestBuilderInterface
+     *    
+     * @param implementationClassName
+     * @throws MeveoApiException
+     */
+    private void validateDDRImplementationClassName(String implementationClassName) throws MeveoApiException {
+        try {
+            Class<?> clazz = Class.forName(implementationClassName);
+            if ( ! DDRequestBuilderInterface.class.isAssignableFrom(clazz) ) {
+                throw new MeveoApiException(String.format(" [%s] is not a sub class of DDRequestBuilderInterface ", implementationClassName)); 
+            } 
+            if ( isAbstract(clazz.getModifiers()) ) {
+                throw new MeveoApiException(String.format(" [%s] is an abstract class ", implementationClassName)); 
+            } 
+        } catch (ClassNotFoundException e) {
+            log.error(" {} is not a valid class name ", implementationClassName, e);
+            throw new MeveoApiException(String.format(" [%s] is not a valid class name ", implementationClassName));
+        }
     }
 
     @Override
@@ -122,16 +161,48 @@ public class DDRequestBuilderApi extends BaseCrudApi<DDRequestBuilder, DDRequest
             handleMissingParameters();
             return null;
         }
+        
         String code = ddRequestBuilderDto.getCode();
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
-        handleMissingParameters();
-        DDRequestBuilder ddRequestBuilder = ddRequestBuilderService.findByCode(code);
         
+        DDRequestBuilder ddRequestBuilder = ddRequestBuilderService.findByCode(code);
         if (ddRequestBuilder == null) {
             throw new EntityDoesNotExistsException(DDRequestBuilder.class, code);
         }
+        
+        DDRequestBuilderTypeEnum type = ddRequestBuilderDto.getType();
+        if (type == null) {
+            type = ddRequestBuilder.getType();
+        }
+        
+        final String scriptInstanceCode = ddRequestBuilderDto.getScriptInstanceCode();
+        final String implementationClassName = ddRequestBuilderDto.getImplementationClassName();
+        
+        if (DDRequestBuilderTypeEnum.CUSTOM == type && StringUtils.isBlank(scriptInstanceCode)) {
+            missingParameters.add("scriptInstanceCode");
+        } else if (DDRequestBuilderTypeEnum.NATIF == type) { 
+            if (StringUtils.isBlank(implementationClassName)) {
+                missingParameters.add("implementationClassName");
+            } else {
+                this.validateDDRImplementationClassName(implementationClassName);                    
+            }
+        }
+        
+        handleMissingParameters();
+
+        if (DDRequestBuilderTypeEnum.CUSTOM == type) { // for this case 'scriptInstanceCode' is already that it's not blank
+            ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptInstanceCode);
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, ddRequestBuilderDto.getScriptInstanceCode());
+            }
+            ddRequestBuilder.setScriptInstance(scriptInstance);
+        } else { // type is NATIVE : for this case also 'implementationClassName' is already that it's not blank
+            ddRequestBuilder.setImplementationClassName(implementationClassName);
+        }
+        
+        ddRequestBuilder.setType(type); // type value is already checked above 
         
         if (ddRequestBuilderDto.getNbOperationPerFile() != null && ddRequestBuilderDto.getNbOperationPerFile()  != 0L ) {
             ddRequestBuilder.setNbOperationPerFile(ddRequestBuilderDto.getNbOperationPerFile());
@@ -142,14 +213,7 @@ public class DDRequestBuilderApi extends BaseCrudApi<DDRequestBuilder, DDRequest
         if (ddRequestBuilderDto.getPaymentLevel() != null ) {
             ddRequestBuilder.setPaymentLevel(ddRequestBuilderDto.getPaymentLevel());
         }
-        if (!StringUtils.isBlank(ddRequestBuilderDto.getScriptInstanceCode())) {
-            ScriptInstance scriptInstance = scriptInstanceService.findByCode(ddRequestBuilderDto.getScriptInstanceCode());
-            if (scriptInstance == null) {
-                throw new EntityDoesNotExistsException(ScriptInstance.class, ddRequestBuilderDto.getScriptInstanceCode());
-            }
-            ddRequestBuilder.setScriptInstance(scriptInstance);
-        }
-        if (!StringUtils.isBlank(ddRequestBuilderDto.getDescription())) {
+        if (ddRequestBuilderDto.getDescription() != null) {
             ddRequestBuilder.setDescription(ddRequestBuilderDto.getDescription());
         }
        
