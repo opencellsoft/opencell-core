@@ -249,13 +249,6 @@ public class QuoteService extends BusinessService<Quote> {
             }
             invoiceService.create(invoice);
             invoiceService.postCreate(invoice);
-            for (RatedTransaction ratedTransaction :ratedTransactions) {
-                if (ratedTransaction != null) {
-                    ratedTransaction.setInvoice(invoice);
-                }
-                ratedTransactionService.update(ratedTransaction);
-            }
-
             invoices.add(invoice);
         }
         return invoices;
