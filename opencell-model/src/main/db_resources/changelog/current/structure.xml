@@ -1152,7 +1152,7 @@
     	</addColumn>
     </changeSet>
 
-    <changeSet id="#3879 - dunning model" author="mboukayoua" dbms="postgresql">
+    <changeSet id="#3879 - dunning model" author="mboukayoua">
         <createTable tableName="dunning_document">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_dunning_document_sequence" />
