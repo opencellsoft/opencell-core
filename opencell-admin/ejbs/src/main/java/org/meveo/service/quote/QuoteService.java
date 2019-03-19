@@ -150,6 +150,9 @@ public class QuoteService extends BusinessService<Quote> {
 
                         // Add recurring charges
                         for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
+                            if (recurringCharge != null) {
+                                recurringCharge = recurringChargeInstanceService.findByCode(recurringCharge.getCode());
+                            }
                             List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, quoteInvoiceInfo.getFromDate(),
                                 quoteInvoiceInfo.getToDate());
                             if (walletOperations != null && walletOps != null) {
@@ -216,14 +219,6 @@ public class QuoteService extends BusinessService<Quote> {
             
             // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
             // invoice.setBillingAccount(null);
-            for (RatedTransaction ratedTransaction :ratedTransactions) {
-                if (ratedTransaction != null) {
-                    ratedTransactionService.create(ratedTransaction);
-                    ratedTransaction.setInvoice(null);
-                    ratedTransaction.setSubscription(null);
-                    ratedTransaction.setChargeInstance(null);
-                }
-            }
             invoice.setRatedTransactions(ratedTransactions);
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
                 log.debug("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
