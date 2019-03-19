@@ -1214,6 +1214,7 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 
         <!-- Update table wf_instance -->
+        <dropForeignKeyConstraint baseTableName="wf_instance_history" constraintName="fk_history_wf_instance" />
         <dropColumn tableName="wf_instance_history" columnName="wf_instance_id" />
         <dropTable tableName="wf_instance" />
 		<createTable tableName="wf_instance">
@@ -1245,8 +1246,7 @@
         <addForeignKeyConstraint baseColumnNames="current_wf_status_id" baseTableName="wf_instance" constraintName="fk_instance_wf_status" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_status" />
         <addUniqueConstraint columnNames="generic_wf_id, code" constraintName="uk_generic_wf_id_code_wf_instance" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_instance" />
-        <dropForeignKeyConstraint baseTableName="wf_instance_history" constraintName="fk_history_wf_instance" />
-        <dropIndex tableName="wf_instance_history" indexName="fk_history_wf_instance" />
+        
 
     	<!-- Update table wf_instance_history -->
     	<dropColumn tableName="wf_instance_history" columnName="wf_status_from" />
