@@ -1180,6 +1180,14 @@
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="#3879 - dunning model - MYSQL dunning_document_seq" author="mboukayoua" dbms="mysql">
+        <createTable tableName="dunning_document_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_document_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}dunning_document_seq values(1)</sql>
+    </changeSet>
 
     <changeSet id="#4010_20190206" author="anasseh">
             <modifyDataType tableName="wf_history_action" columnName="result" newDataType="${type.text}"/>
