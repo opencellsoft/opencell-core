@@ -266,7 +266,8 @@ public class PaymentService extends PersistenceService<Payment> {
     public PaymentResponseDto doPayment(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
             String cardNumber, String ownerName, String cvv, String expiryDate, CreditCardTypeEnum cardType, boolean isPayment, PaymentMethodEnum paymentMethodType)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-        PaymentResponseDto doPaymentResponseDto = null;
+        PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+        doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
         PaymentMethod preferredMethod = null;
         OperationCategoryEnum operationCat = isPayment ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT;
         try {
@@ -284,9 +285,10 @@ public class PaymentService extends PersistenceService<Payment> {
             }
 
             if (paymentGateway != null) {
+            	paymentGateway = paymentGatewayService.refreshOrRetrieve(paymentGateway);
                 if (!paymentGateway.getCode().equals(matchedPaymentGatewayForTheCA.getCode())) {
-                    throw new PaymentException(PaymentErrorEnum.PAY_GATEWAY_NOT_COMPATIBLE_FOR_CA,
-                        "Cant process payment for the customerAccount:" + customerAccount.getCode() + " with the selected paymentGateway:" + paymentGateway.getCode());
+                    log.warn("Cant process payment for the customerAccount:" + customerAccount.getCode() + " with the selected paymentGateway:" + paymentGateway.getCode());
+                    return doPaymentResponseDto;
                 }
             } else {
                 paymentGateway = matchedPaymentGatewayForTheCA;
@@ -372,7 +374,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 log.warn("Payment with method id {} was rejected. Status: {}", preferredMethod.getId(), doPaymentResponseDto.getPaymentStatus());
             }
 
-            paymentHistoryService.addHistory(customerAccount, aoPaymentId == null ? null : findById(aoPaymentId), aoPaymentId == null ? null : refundService.findById(aoPaymentId),
+            paymentHistoryService.addHistory(customerAccount, isPayment ?  findById(aoPaymentId) : null, !isPayment ? refundService.findById(aoPaymentId) : null,
                 ctsAmount, status, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(), errorType, operationCat, paymentGateway.getCode(), preferredMethod);
 
         } catch (PaymentException e) {

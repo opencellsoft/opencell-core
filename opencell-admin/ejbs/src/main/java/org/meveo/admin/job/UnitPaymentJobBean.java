@@ -70,8 +70,8 @@ public class UnitPaymentJobBean {
                 result.registerError(customerAccountId, doPaymentResponseDto.getErrorMessage());
                 result.addReport("AccountOperation id : " + customerAccountId + " RejectReason : " + doPaymentResponseDto.getErrorMessage());
                 this.checkPaymentRetry(doPaymentResponseDto.getErrorCode(), listAOids, aoFilterScript);
-            } else {
-                result.registerSucces();
+            } else if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.PENDING == doPaymentResponseDto.getPaymentStatus()){
+            	result.registerSucces();
             }
 
         } catch (Exception e) {

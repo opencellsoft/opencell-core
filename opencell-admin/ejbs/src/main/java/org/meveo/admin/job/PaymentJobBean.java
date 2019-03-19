@@ -20,7 +20,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.payments.DueDate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -45,156 +44,158 @@ import org.slf4j.Logger;
 @Stateless
 public class PaymentJobBean extends BaseJobBean {
 
-    @Inject
-    private Logger log;
+	@Inject
+	private Logger log;
 
-    @Inject
-    private CustomerAccountService customerAccountService;
+	@Inject
+	private CustomerAccountService customerAccountService;
 
-    @Inject
-    private PaymentAsync paymentAsync;
+	@Inject
+	private PaymentAsync paymentAsync;
 
-    @Inject
-    private PaymentGatewayService paymentGatewayService;
-    
-    @Inject
-    private ScriptInstanceService scriptInstanceService;
+	@Inject
+	private PaymentGatewayService paymentGatewayService;
 
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
+	@Inject
+	private ScriptInstanceService scriptInstanceService;
 
-    @SuppressWarnings("unchecked")
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("Running with parameter={}", jobInstance.getParametres());
+	@Inject
+	@CurrentUser
+	protected MeveoUser currentUser;
 
-        try {
-            Long nbRuns = new Long(1);
-            Long waitingMillis = new Long(0);
-            boolean createAO = true;
-            boolean matchingAO = true;
-            Date fromDueDate = null;
-            Date toDueDate = null;
-            String paymentPerAOorCA = "CA";
+	@SuppressWarnings("unchecked")
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+		log.debug("Running with parameter={}", jobInstance.getParametres());
 
-            OperationCategoryEnum operationCategory = OperationCategoryEnum.CREDIT;
-            PaymentMethodEnum paymentMethodType = PaymentMethodEnum.CARD;
+		try {
+			Long nbRuns = new Long(1);
+			Long waitingMillis = new Long(0);
+			boolean createAO = true;
+			boolean matchingAO = true;
+			Date fromDueDate = null;
+			Date toDueDate = null;
+			String paymentPerAOorCA = "CA";
 
-            PaymentGateway paymentGateway = null;
-            if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_paymentGateway") != null) {
-                paymentGateway =  paymentGatewayService.findByCode(((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_paymentGateway")).getCode());
-            }
-            try {
-                operationCategory = OperationCategoryEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "SepaJob_creditOrDebit")).toUpperCase());
-                paymentMethodType = PaymentMethodEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "PaymentJob_cardOrDD")).toUpperCase());
-                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
-                if (nbRuns == -1) {
-                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
-                }
-                createAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_createAO"));
-                matchingAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_matchingAO"));
-                paymentPerAOorCA = (String) this.getParamOrCFValue(jobInstance, "PaymentJob_AOorCA");
-                
-                DateRangeScript dateRangeScript = this.getDueDateRangeScript(jobInstance);
-                if (dateRangeScript != null) {
-                    DateRange dueDateRange = dateRangeScript.computeDateRange(new HashMap<>()); // no addtional params are needed right now for computeDateRange, may be in the future.
-                    fromDueDate = dueDateRange.getFrom();
-                    toDueDate =  dueDateRange.getTo();
-                } else {
-                    fromDueDate = (Date) this.getParamOrCFValue(jobInstance, "PaymentJob_fromDueDate");
-                    toDueDate = (Date) this.getParamOrCFValue(jobInstance, "PaymentJob_toDueDate"); 
-                }
-                
-            } catch (Exception e) {
-                nbRuns = new Long(1);
-                waitingMillis = new Long(0);
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
-            }
-            
-            if (fromDueDate == null) {
-                fromDueDate = new Date(1);
-            }
-            if (toDueDate == null) {
-                toDueDate = DateUtils.addYearsToDate(fromDueDate, 1000);
-            }
-            
-            List<Long> caIds = new ArrayList<Long>();
-            if (OperationCategoryEnum.CREDIT == operationCategory) {
-                caIds = customerAccountService.getCAidsForPayment(paymentMethodType, fromDueDate,toDueDate);
-            } else {
-                caIds = customerAccountService.getCAidsForRefund(paymentMethodType, fromDueDate,toDueDate);
-            }
+			OperationCategoryEnum operationCategory = OperationCategoryEnum.CREDIT;
+			PaymentMethodEnum paymentMethodType = PaymentMethodEnum.CARD;
 
-            log.debug("nb CA for payment:" + caIds.size());
-            result.setNbItemsToProcess(caIds.size());
+			PaymentGateway paymentGateway = null;
+			if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_paymentGateway") != null) {
+				paymentGateway = paymentGatewayService.findByCode(((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_paymentGateway")).getCode());
+			}
+			try {				
+				operationCategory = OperationCategoryEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "PaymentJob_creditOrDebit")).toUpperCase());				
+				paymentMethodType = PaymentMethodEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "PaymentJob_cardOrDD")).toUpperCase());
+				nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
+				waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
+				if (nbRuns == -1) {
+					nbRuns = (long) Runtime.getRuntime().availableProcessors();
+				}
+				createAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_createAO"));
+				matchingAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_matchingAO"));
+				paymentPerAOorCA = (String) this.getParamOrCFValue(jobInstance, "PaymentJob_AOorCA");
 
-            List<Future<String>> futures = new ArrayList<Future<String>>();
-            SubListCreator subListCreator = new SubListCreator(caIds, nbRuns.intValue());
-            log.debug("block to run:" + subListCreator.getBlocToRun());
-            log.debug("nbThreads:" + nbRuns);
-            MeveoUser lastCurrentUser = currentUser.unProxy();
-            
-            AccountOperationFilterScript aoFilterScript = getAOScriptInstance(jobInstance);
-            while (subListCreator.isHasNext()) {
-                futures.add(paymentAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO, paymentGateway, operationCategory,
-                    paymentMethodType, lastCurrentUser, paymentPerAOorCA, fromDueDate,toDueDate, aoFilterScript));
-                if (subListCreator.isHasNext()) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-            }
-            // Wait for all async methods to finish
-            for (Future<String> future : futures) {
-                try {
-                    future.get();
+				DateRangeScript dateRangeScript = this.getDueDateRangeScript(jobInstance);
+				if (dateRangeScript != null) {
+					DateRange dueDateRange = dateRangeScript.computeDateRange(new HashMap<>()); // no addtional params are needed right now for computeDateRange, may be in the
+																								// future.
+					fromDueDate = dueDateRange.getFrom();
+					toDueDate = dueDateRange.getTo();
+				} else {
+					fromDueDate = (Date) this.getParamOrCFValue(jobInstance, "PaymentJob_fromDueDate");
+					toDueDate = (Date) this.getParamOrCFValue(jobInstance, "PaymentJob_toDueDate");
+				}
 
-                } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
+			} catch (Exception e) {
+				nbRuns = new Long(1);
+				waitingMillis = new Long(0);
+				log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
+			}
 
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
-                    result.addReport(cause.getMessage());
-                    log.error("Failed to execute async method", cause);
-                }
-            }
-        } catch (Exception e) {
-            log.error("Failed to run usage rating job", e);
-            result.registerError(e.getMessage());
-            result.addReport(e.getMessage());
-        }
-    }
+			if (fromDueDate == null) {
+				fromDueDate = new Date(1);
+			}
+			if (toDueDate == null) {
+				toDueDate = DateUtils.addYearsToDate(fromDueDate, 1000);
+			}			
+			List<Long> caIds = new ArrayList<Long>();
+			if (OperationCategoryEnum.CREDIT == operationCategory) {
+				caIds = customerAccountService.getCAidsForPayment(paymentMethodType, fromDueDate, toDueDate);
+				log.debug("nb CA for payments:" + caIds.size());
+			} else {
+				caIds = customerAccountService.getCAidsForRefund(paymentMethodType, fromDueDate, toDueDate);
+				log.debug("nb CA for refunds:" + caIds.size());
+			}
 
-    
-    private AccountOperationFilterScript getAOScriptInstance(JobInstance jobInstance) {
-        return (AccountOperationFilterScript) this.getJobScriptByCfCode(jobInstance, "PaymentJob_aoFilterScript", AccountOperationFilterScript.class);
-    }
-    
-    private DateRangeScript getDueDateRangeScript(JobInstance jobInstance) {
-        return (DateRangeScript) this.getJobScriptByCfCode(jobInstance, "PaymentJob_dueDateRangeScript", DateRangeScript.class);
-    }
+			result.setNbItemsToProcess(caIds.size());
 
-    private ScriptInterface getJobScriptByCfCode(JobInstance jobInstance,String scriptCfCode, Class clazz) {
-        try {
-            final  String scriptCode =  ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, scriptCfCode)).getCode();
-            if (scriptCode != null) {
-                log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
-                ScriptInterface si = scriptInstanceService.getScriptInstance(scriptCode);
-                if (si != null && clazz.isInstance(si)) {
-                    return si;
-                }
-            }
-        } catch (Exception e) {
-            log.error(" Error on getJobScriptByCfCode : [{}]" , e.getMessage());
-        }
-        return null;
-    }
+			List<Future<String>> futures = new ArrayList<Future<String>>();
+			SubListCreator subListCreator = new SubListCreator(caIds, nbRuns.intValue());
+			log.debug("block to run:" + subListCreator.getBlocToRun());
+			log.debug("nbThreads:" + nbRuns);
+			MeveoUser lastCurrentUser = currentUser.unProxy();
 
-    
+			AccountOperationFilterScript aoFilterScript = getAOScriptInstance(jobInstance);
+			while (subListCreator.isHasNext()) {
+				futures.add(paymentAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO, paymentGateway, operationCategory,
+						paymentMethodType, lastCurrentUser, paymentPerAOorCA, fromDueDate, toDueDate, aoFilterScript));
+				if (subListCreator.isHasNext()) {
+					try {
+						Thread.sleep(waitingMillis.longValue());
+					} catch (InterruptedException e) {
+						log.error("", e);
+					}
+				}
+			}
+			// Wait for all async methods to finish
+			for (Future<String> future : futures) {
+				try {
+					future.get();
+
+				} catch (InterruptedException e) {
+					// It was cancelled from outside - no interest
+
+				} catch (ExecutionException e) {
+					Throwable cause = e.getCause();
+					result.registerError(cause.getMessage());
+					result.addReport(cause.getMessage());
+					log.error("Failed to execute async method", cause);
+				}
+			}
+		} catch (Exception e) {
+			log.error("Failed to run usage rating job", e);
+			result.registerError(e.getMessage());
+			result.addReport(e.getMessage());
+		}
+	}
+
+	private AccountOperationFilterScript getAOScriptInstance(JobInstance jobInstance) {
+		return (AccountOperationFilterScript) this.getJobScriptByCfCode(jobInstance, "PaymentJob_aoFilterScript", AccountOperationFilterScript.class);
+	}
+
+	private DateRangeScript getDueDateRangeScript(JobInstance jobInstance) {
+		return (DateRangeScript) this.getJobScriptByCfCode(jobInstance, "PaymentJob_dueDateRangeScript", DateRangeScript.class);
+	}
+
+	private ScriptInterface getJobScriptByCfCode(JobInstance jobInstance, String scriptCfCode, Class clazz) {
+		try {
+			EntityReferenceWrapper entityReferenceWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, scriptCfCode);
+			if (entityReferenceWrapper != null) {
+				final String scriptCode = entityReferenceWrapper.getCode();
+				if (scriptCode != null) {
+					log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
+					ScriptInterface si = scriptInstanceService.getScriptInstance(scriptCode);
+					if (si != null && clazz.isInstance(si)) {
+						return si;
+					}
+				}
+			}
+		} catch (Exception e) {
+			log.error(" Error on getJobScriptByCfCode : [{}]", e.getMessage());
+		}
+		return null;
+	}
+
 }
