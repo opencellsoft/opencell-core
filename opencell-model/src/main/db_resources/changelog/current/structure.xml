@@ -920,8 +920,28 @@
         </addColumn>
         <addForeignKeyConstraint constraintName="fk_crm_customer_category_accounting_code" referencedTableName="billing_accounting_code" baseColumnNames="accounting_code_id" baseTableName="crm_customer_category"
             referencedColumnNames="id" />
+    </changeSet>  
+    
+	<changeSet author="hznibar" id="#3514_20190319" dbms="mysql">
+        <createTable tableName="billing_general_ledger_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_general_ledger_seq_pk" />
+            </column>
+        </createTable>
+        <createTable tableName="ar_other_transaction_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_other_transaction_seq_pk" />
+            </column>
+        </createTable>
+        <createTable tableName="ar_payment_ventilation_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_ventilation_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}billing_general_ledger_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_other_transaction_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_payment_ventilation_seq values(1)</sql>
     </changeSet>
-
      <changeSet  id="#3514_20180101" author="hznibar">
 		<createSequence sequenceName="billing_general_ledger_seq" />
 		<createSequence sequenceName="ar_other_transaction_seq" />
