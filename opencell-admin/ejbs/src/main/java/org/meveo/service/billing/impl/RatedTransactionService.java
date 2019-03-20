@@ -49,28 +49,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionMinAmountTypeEnum;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -922,10 +901,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public void createRatedTransaction(Long walletOperationId) throws BusinessException {
         WalletOperation walletOperation = walletOperationService.findById(walletOperationId);
-
+        if (isPrepaidWalletOperation(walletOperation)) {
+            walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
+            walletOperationService.updateNoCheck(walletOperation);
+           return;
+        }
         createRatedTransaction(walletOperation, false);
     }
-
     /**
      * Convert Wallet operations to Rated transactions for a given billable entity up to a given date
      * 
@@ -948,6 +930,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         for (WalletOperation walletOp : walletOps) {
+            // Exclude prepaid WO to create ratedTx
+            if (isPrepaidWalletOperation(walletOp)) {
+                walletOp.setStatus(WalletOperationStatusEnum.TREATED);
+                walletOperationService.updateNoCheck(walletOp);
+                continue;
+            }
             createRatedTransaction(walletOp, false);
         }
     }
@@ -962,7 +950,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
-		
         walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
 
         if (!isVirtual) {
@@ -970,10 +957,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             walletOperationService.updateNoCheck(walletOperation);
         }
         walletOperation.setRatedTransaction(ratedTransaction);
-        
         return ratedTransaction;
     }
-    
+
+    /**
+     * Check if the WO is from a prepaid wallet
+     * @param walletOperation WO
+     * @return True if the wallet's type is prepaid, false else
+     */
+    private boolean isPrepaidWalletOperation(WalletOperation walletOperation) {
+        return walletOperation.getWallet() != null && walletOperation.getWallet().getWalletTemplate() != null
+                && BillingWalletTypeEnum.PREPAID.equals(walletOperation.getWallet().getWalletTemplate().getWalletType());
+    }
+
     /**
 	 * Create a {@link RatedTransaction} from a group of wallet operations.
 	 * 
