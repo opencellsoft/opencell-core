@@ -1354,7 +1354,7 @@
 			]
 		},
 		{
-			"name": "DDRequestBuilderApi  :  createOrUpdate (#4058) Copy",
+			"name": "DDRequestBuilderApi  :  createOrUpdate (#4058)",
 			"item": [
 				{
 					"name": "create TestDummuyScript",
