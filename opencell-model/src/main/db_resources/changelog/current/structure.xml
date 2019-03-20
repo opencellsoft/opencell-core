@@ -1182,7 +1182,7 @@
     <changeSet id="#3842_20190111 - Trigger next charge" author="EdwardPLegaspi">
         <addColumn tableName="cat_usage_charge_template">
             <column name="trigger_next_charge" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="trigger_next_charge_el" type="${type.text}"/>
+            <column name="trigger_next_charge_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
     
