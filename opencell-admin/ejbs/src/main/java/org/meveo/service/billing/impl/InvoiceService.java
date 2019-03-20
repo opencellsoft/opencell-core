@@ -2233,7 +2233,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return created invoice
      * @throws BusinessException business exception
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public IBillableEntity setBillingRunAmounts(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
                                              Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) throws BusinessException {
 

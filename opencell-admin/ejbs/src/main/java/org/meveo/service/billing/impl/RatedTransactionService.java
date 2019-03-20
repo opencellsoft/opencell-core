@@ -349,8 +349,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @throws BusinessException BusinessException
      */
     @SuppressWarnings({ "unchecked", "unused" })
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void setInvoiceAmounts(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, List<RatedTransaction> ratedTransactions,
                                   Date firstTransactionDate, Date lastTransactionDate, boolean isInvoiceAdjustment, boolean isVirtual, BillingRun billingRun, boolean ignoreInvoicingThreshold) throws BusinessException {
 
