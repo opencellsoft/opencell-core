@@ -673,14 +673,20 @@ public final class FileUtils {
             public boolean accept(File dir, String name) {
 
                 String nameUpper = name.toUpperCase();
-                if (extensions == null && (nameUpper.contains(fileNameFilterUpper) || fileNameFilterUpper == null)) {
+                if (extensions == null && fileNameFilterUpper == null) {
                     return true;
                 }
+                
+                if (extensions == null && nameUpper.contains(fileNameFilterUpper)) {
+                    return true;
+                }
+                
                 for (String extension : extensions) {
-                    if ((name.endsWith(extension) || "*".equals(extension)) && (nameUpper.contains(fileNameFilterUpper))) {
+                    if ((name.endsWith(extension) || "*".equals(extension)) && (fileNameFilterUpper == null || nameUpper.contains(fileNameFilterUpper))) {
                         return true;
                     }
                 }
+                
                 return false;
             }
 
@@ -698,7 +704,7 @@ public final class FileUtils {
      * Checks if the file param is valid zip
      * 
      * @param file
-     * @return
+     * @return isValidZip
      */
     public static boolean isValidZip(final File file) {
         try (ZipFile zipfile = new ZipFile(file);) {
