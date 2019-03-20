@@ -1081,7 +1081,7 @@
         
         <createTable tableName="wf_instance_history_seq">
             <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName=wf_instance_history_seq_pk" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_instance_history_seq_pk" />
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}wf_instance_history_seq values(1)</sql>
