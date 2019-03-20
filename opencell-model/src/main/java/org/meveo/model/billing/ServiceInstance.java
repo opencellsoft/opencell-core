@@ -273,7 +273,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity {
     /**
      * Initial service renewal configuration
      */
-    @Column(name = "initial_renewal")
+    @Column(name = "initial_renewal", columnDefinition = "text")
     private String initialServiceRenewal;
 
     /**

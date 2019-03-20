@@ -8,6 +8,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.script.ScriptInstanceService;
 
@@ -25,11 +26,12 @@ public class TriggeredEdrScriptService implements Serializable {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public EDR updateEdr(String scriptCode, EDR edr) throws BusinessException {
+    public EDR updateEdr(String scriptCode, EDR edr, WalletOperation wo) throws BusinessException {
         TriggeredEdrScriptInterface scriptInterface = (TriggeredEdrScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(TriggeredEdrScript.CONTEXT_ENTITY, edr);
+        scriptContext.put(TriggeredEdrScript.CONTEXT_WO, wo);
 
         return scriptInterface.updateEdr(scriptContext);
     }

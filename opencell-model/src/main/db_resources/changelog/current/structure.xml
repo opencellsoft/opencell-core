@@ -1057,7 +1057,36 @@
             baseColumnNames="account_operation_id" />
     </changeSet>
 
-    <changeSet id="#3650_20181220" author="AmineBenAicha">
+	<changeSet id="#3650_20181220_1" author="AmineBenAicha" dbms="mysql">
+        <createTable tableName="wf_generic_workflow_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_generic_workflow_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}wf_generic_workflow_seq values(1)</sql>
+        
+        <createTable tableName="wf_status_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_status_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}wf_status_seq values(1)</sql>
+        
+        <createTable tableName="wf_instance_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_instance_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}wf_instance_seq values(1)</sql>
+        
+        <createTable tableName="wf_instance_history_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_instance_history_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}wf_instance_history_seq values(1)</sql>
+    </changeSet>
+    <changeSet id="#3650_20181220_2" author="AmineBenAicha">
         <createSequence sequenceName="wf_generic_workflow_seq" />
         <createTable tableName="wf_generic_workflow">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -1153,7 +1182,7 @@
     <changeSet id="#3842_20190111 - Trigger next charge" author="EdwardPLegaspi">
         <addColumn tableName="cat_usage_charge_template">
             <column name="trigger_next_charge" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="trigger_next_charge_el" type="${type.text}"/>
+            <column name="trigger_next_charge_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
     
@@ -1200,12 +1229,28 @@
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="#3879 - dunning model - MYSQL dunning_document_seq" author="mboukayoua" dbms="mysql">
+        <createTable tableName="dunning_document_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_document_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}dunning_document_seq values(1)</sql>
+    </changeSet>
 
     <changeSet id="#4010_20190206" author="anasseh">
             <modifyDataType tableName="wf_history_action" columnName="result" newDataType="${type.text}"/>
    </changeSet>
 
-   <changeSet id="#3650_20190131" author="AmineBenAicha">
+	<changeSet id="#3650_20190131_1" author="AmineBenAicha" dbms="mysql">
+        <createTable tableName="wf_generic_transition_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_generic_transition_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}wf_generic_transition_seq values(1)</sql>
+    </changeSet>
+   <changeSet id="#3650_20190131_2" author="AmineBenAicha">
     	<!-- Update table wf_generic_workflow -->
     	<dropForeignKeyConstraint baseTableName="wf_generic_workflow" constraintName="fk_wf_transition_script"/>
     	<dropColumn tableName="wf_generic_workflow" columnName="transition_script_id" />
