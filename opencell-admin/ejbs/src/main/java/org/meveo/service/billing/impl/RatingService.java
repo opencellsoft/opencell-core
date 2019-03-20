@@ -431,7 +431,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                             log.info("trigger EDR from code {}", triggeredEDRTemplate.getCode());
                             
                             if (triggeredEDRTemplate.getTriggeredEdrScript() != null) {
-                                newEdr = triggeredEdrScriptService.updateEdr(triggeredEDRTemplate.getTriggeredEdrScript().getCode(), newEdr);
+                                newEdr = triggeredEdrScriptService.updateEdr(triggeredEDRTemplate.getTriggeredEdrScript().getCode(), newEdr, walletOperation);
                             }
                             
                             edrService.create(newEdr);

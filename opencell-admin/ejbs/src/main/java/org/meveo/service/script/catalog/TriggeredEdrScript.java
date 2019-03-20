@@ -12,6 +12,11 @@ import org.meveo.service.script.Script;
  * @lastModifiedVersion 6.0
  */
 public class TriggeredEdrScript extends Script implements TriggeredEdrScriptInterface {
+    
+    /**
+     * Wallet Operation which trigger the creation of TriggeredEdr
+     */
+    public static String CONTEXT_WO = "CONTEXT_WO";
 
     @Override
     public EDR updateEdr(Map<String, Object> methodContext) {
