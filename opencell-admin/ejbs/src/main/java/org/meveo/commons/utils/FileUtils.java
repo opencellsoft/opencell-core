@@ -673,7 +673,7 @@ public final class FileUtils {
             public boolean accept(File dir, String name) {
 
                 String nameUpper = name.toUpperCase();
-                if (extensions == null && (nameUpper.contains(fileNameFilterUpper))) {
+                if (extensions == null && (nameUpper.contains(fileNameFilterUpper) || fileNameFilterUpper == null)) {
                     return true;
                 }
                 for (String extension : extensions) {
