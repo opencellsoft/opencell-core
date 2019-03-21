@@ -1017,4 +1017,32 @@ public class KPICustomerPerOfferReporting extends ReportExtractScript {
             <column name="permission_id" valueNumeric="-115" />
         </insert>
     </changeSet>
+
+    <changeSet id="#4095_20190321_cc_gui_access_permissions" author="TonyAlejandro">
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-116"/>
+            <column name="name" value="cc-gui-access"/>
+            <column name="permission" value="cc-gui-access"/>
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-14" />
+            <column name="permission_id" valueNumeric="-116" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-7" />
+            <column name="permission_id" valueNumeric="-116" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-8" />
+            <column name="permission_id" valueNumeric="-116" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-9" />
+            <column name="permission_id" valueNumeric="-116" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-10" />
+            <column name="permission_id" valueNumeric="-116" />
+        </insert>
+    </changeSet>
 </databaseChangeLog>
