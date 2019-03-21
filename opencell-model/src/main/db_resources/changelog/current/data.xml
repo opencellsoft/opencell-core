@@ -2901,6 +2901,34 @@ ORDER BY
             <column name="invoice_sequence_id" value="-1" />
         </insert>
     </changeSet>
+
+    <changeSet id="#4095_20190321_cc_gui_access_permissions" author="TonyAlejandro">
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-108"/>
+            <column name="name" value="cc-gui-access"/>
+            <column name="permission" value="cc-gui-access"/>
+        </insert>
+        <insert tableName="adm_role_permission">
+		    <column name="role_id" valueNumeric="-14" />
+		    <column name="permission_id" valueNumeric="-108" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		    <column name="role_id" valueNumeric="-7" />
+		    <column name="permission_id" valueNumeric="-108" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		    <column name="role_id" valueNumeric="-8" />
+		    <column name="permission_id" valueNumeric="-108" />
+	    </insert>
+	    <insert tableName="adm_role_permission">
+		    <column name="role_id" valueNumeric="-9" />
+		    <column name="permission_id" valueNumeric="-108" />
+	    </insert>
+	    <insert tableName="adm_role_permission">
+		    <column name="role_id" valueNumeric="-10" />
+		    <column name="permission_id" valueNumeric="-108" />
+	    </insert>
+    </changeSet>
     
    <changeSet id="20180715 Payment gateway" author="ansseh">
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-10, 0, 0, now(), 'org.meveo.service.script.demo.CustomGatewayPaymentScript', 'CustomGatewayPaymentScript', 'JAVA', '
