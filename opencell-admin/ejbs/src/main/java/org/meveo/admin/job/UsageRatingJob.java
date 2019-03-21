@@ -69,6 +69,7 @@ public class UsageRatingJob extends Job {
         rateUntilDate.setDescription(resourceMessages.getString("jobExecution.rateUntilDate"));
         rateUntilDate.setFieldType(CustomFieldTypeEnum.DATE);
         rateUntilDate.setValueRequired(false);
+        billingCycle.setMaxValue(50L);
         result.put("rateUntilDate", rateUntilDate);
         
         CustomFieldTemplate ratingGroup = new CustomFieldTemplate();
