@@ -64,7 +64,8 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 6.1.X
  */
 @Named
 @ViewScoped
@@ -124,16 +125,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             Customer customer = customerService.findById(getCustomerId());
             populateAccounts(customer);
         }
-        if (entity.getAddress() == null) {
-            entity.setAddress(new Address());
-        }
-        if (entity.getName() == null) {
-            entity.setName(new Name());
-        }
-        if (entity.getContactInformation() == null) {
-            entity.setContactInformation(new ContactInformation());
-        }
-
+        this.initNestedFields(entity);
         if (entity.getId() != null) {
             if (!entity.getCardPaymentMethods(false).isEmpty()) {
                 if (entity.isNoMoreValidCard()) {
@@ -143,6 +135,25 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         }
 
         return entity;
+    }
+    
+    @Override
+    public CustomerAccount getEntity() {
+        CustomerAccount ca = super.getEntity();
+        this.initNestedFields(ca);
+        return ca;
+    }
+
+    private void initNestedFields(CustomerAccount ca) {
+        if (ca.getAddress() == null) {
+            ca.setAddress(new Address());
+        }
+        if (ca.getName() == null) {
+            ca.setName(new Name());
+        }
+        if (ca.getContactInformation() == null) {
+            ca.setContactInformation(new ContactInformation());
+        }
     }
 
     @Override

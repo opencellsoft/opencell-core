@@ -54,6 +54,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
@@ -166,17 +167,28 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
         }
         selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
-
-        if (entity.getAddress() == null) {
-            entity.setAddress(new Address());
-        }
-        if (entity.getName() == null) {
-            entity.setName(new Name());
-        }
-        if (entity.getContactInformation() == null) {
-            entity.setContactInformation(new ContactInformation());
-        }
+        this.initNestedFields(entity);
         return entity;
+    }
+    
+    
+    @Override
+    public UserAccount getEntity() {
+        UserAccount ua = super.getEntity();
+        this.initNestedFields(ua);
+        return ua;
+    }
+
+    private void initNestedFields(UserAccount ua) {
+        if (ua.getAddress() == null) {
+            ua.setAddress(new Address());
+        }
+        if (ua.getName() == null) {
+            ua.setName(new Name());
+        }
+        if (ua.getContactInformation() == null) {
+            ua.setContactInformation(new ContactInformation());
+        }
     }
 
     /*
