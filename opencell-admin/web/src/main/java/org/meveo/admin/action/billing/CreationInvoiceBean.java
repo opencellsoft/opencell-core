@@ -48,6 +48,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -68,7 +69,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.InvoiceAgregateHandler;
+import org.meveo.service.billing.impl.InvoiceAggregateHandler;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -127,14 +128,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     @Inject
     private ChargeTemplateServiceAll chargeTemplateServiceAll;
 
-    @Inject
-    private SellerService sellerService;
-
     private Invoice invoiceToAdd;
     private Invoice selectedInvoice;
     private InvoiceSubCategory selectedInvoiceSubCategory;
     private BigDecimal quantity;
     private BigDecimal unitAmountWithoutTax;
+    private BigDecimal unitAmountWithTax;
     private String description;
     private String parameter1;
     private String parameter2;
@@ -150,8 +149,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private Order order;
 
     @Inject
-    private InvoiceAgregateHandler agregateHandler;
-    private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAggregates = new ArrayList<SubCategoryInvoiceAgregate>();
+    private InvoiceAggregateHandler aggregateHandler;
+    private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAggregates = new ArrayList<>();
 
     @Inject
     @Param
@@ -161,11 +160,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     @Param
     private Long linkedInvoiceIdParam;
 
-    private List<CategoryInvoiceAgregate> categoryInvoiceAggregates = new ArrayList<CategoryInvoiceAgregate>();
+    private List<CategoryInvoiceAgregate> categoryInvoiceAggregates = new ArrayList<>();
     private CategoryInvoiceAgregate selectedCategoryInvoiceAgregate;
     private SubCategoryInvoiceAgregate selectedSubCategoryInvoiceAgregateDetaild;
     private SubCategoryInvoiceAgregate selectedSubCategoryInvoiceAgregate;
     private BigDecimal amountWithoutTax;
+    private BigDecimal amountWithTax;
     private boolean detailled = false;
     private Long rootInvoiceId = null;
     private Invoice rootInvoice;
@@ -189,7 +189,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @Override
     public Invoice initEntity() {
-        agregateHandler.reset();
+        aggregateHandler.reset();
         entity = super.initEntity();
         entity.setDueDate(new Date());
         entity.setInvoiceDate(new Date());
@@ -286,10 +286,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 messages.error("Quantity is required.");
                 return;
             }
-            if (StringUtils.isBlank(unitAmountWithoutTax)) {
-                messages.error("UnitAmountWithoutTax is required.");
-                return;
-            }
             if (StringUtils.isBlank(selectedCharge)) {
                 messages.error("Charge is required.");
                 return;
@@ -298,12 +294,25 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 messages.error("UsageDate is required.");
                 return;
             }
+            if(appProvider.isEntreprise()) {
+                if (StringUtils.isBlank(unitAmountWithoutTax)) {
+                    messages.error("UnitAmountWithoutTax is required.");
+                    return;
+                }
+                
+            } else {
+                if (StringUtils.isBlank(unitAmountWithTax)) {
+                    messages.error("UnitAmountWithTax is required.");
+                    return;
+                }
+            }
 
             selectInvoiceSubCat = invoiceSubCategoryService.retrieveIfNotManaged(selectInvoiceSubCat);
 
             RatedTransaction ratedTransaction = new RatedTransaction();
             ratedTransaction.setUsageDate(usageDate);
             ratedTransaction.setUnitAmountWithoutTax(unitAmountWithoutTax);
+            ratedTransaction.setUnitAmountWithTax(unitAmountWithTax);
             ratedTransaction.setQuantity(quantity);
             ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
             ratedTransaction.setWallet(getFreshUA().getWallet());
@@ -319,9 +328,14 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             ratedTransaction.setOrderNumber(orderNumber);
             ratedTransaction.setInvoice(entity);
             ratedTransaction.setInvoiceSubCategory(selectInvoiceSubCat);
-            ratedTransaction.setSeller(ratedTransaction.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+            if(entity.getSeller() == null) {
+            	ratedTransaction.setSeller(ratedTransaction.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+            	
+            } else {
+            	ratedTransaction.setSeller(entity.getSeller());
+            }
 
-            agregateHandler.addRT(ratedTransaction, selectInvoiceSubCat.getDescription(), getFreshUA());
+            aggregateHandler.addRT(ratedTransaction, selectInvoiceSubCat.getDescription(), getFreshUA());
             updateAmountsAndLines(getFreshBA());
         } catch (BusinessException be) {
             messages.error(be.getMessage());
@@ -341,12 +355,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
      */
     public void updateAmountsAndLines(BillingAccount billingAccount) throws BusinessException {
         billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
-        subCategoryInvoiceAggregates = new ArrayList<SubCategoryInvoiceAgregate>(agregateHandler.getSubCatInvAgregateMap().values());
-        categoryInvoiceAggregates = new ArrayList<CategoryInvoiceAgregate>(agregateHandler.getCatInvAgregateMap().values());
+        subCategoryInvoiceAggregates = new ArrayList<SubCategoryInvoiceAgregate>(aggregateHandler.getSubCatInvAgregateMap().values());
+        categoryInvoiceAggregates = new ArrayList<CategoryInvoiceAgregate>(aggregateHandler.getCatInvAgregateMap().values());
 
-        entity.setAmountWithoutTax(round(agregateHandler.getInvoiceAmountWithoutTax(), invoiceRounding, invoiceRoundingMode));
-        entity.setAmountTax(round(agregateHandler.getInvoiceAmountTax(), invoiceRounding, invoiceRoundingMode));
-        entity.setAmountWithTax(round(agregateHandler.getInvoiceAmountWithTax(), invoiceRounding, invoiceRoundingMode));
+        entity.setAmountWithoutTax(round(aggregateHandler.getInvoiceAmountWithoutTax(), invoiceRounding, invoiceRoundingMode));
+        entity.setAmountTax(round(aggregateHandler.getInvoiceAmountTax(), invoiceRounding, invoiceRoundingMode));
+        entity.setAmountWithTax(round(aggregateHandler.getInvoiceAmountWithTax(), invoiceRounding, invoiceRoundingMode));
 
         BigDecimal netToPay = entity.getAmountWithTax();
         if (appProvider != null && !appProvider.isEntreprise() && isIncludeBalance()) {
@@ -364,7 +378,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
      */
     public void deleteRatedTransactionLine() {
         try {
-            agregateHandler.removeRT(selectedRatedTransaction, selectedRatedTransaction.getInvoiceSubCategory().getDescription(), getFreshUA());
+            aggregateHandler.removeRT(selectedRatedTransaction, selectedRatedTransaction.getInvoiceSubCategory().getDescription(), getFreshUA());
             updateAmountsAndLines(getFreshBA());
         } catch (BusinessException be) {
             messages.error(be.getMessage());
@@ -422,7 +436,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     public void deleteLinkedInvoiceCategoryDetaild() {
         try {
             for (int i = 0; i < selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().size(); i++) {
-                agregateHandler.removeRT(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().get(i),
+                aggregateHandler.removeRT(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().get(i),
                     selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().get(i).getInvoiceSubCategory().getDescription(), getFreshUA());
                 updateAmountsAndLines(getFreshBA());
             }
@@ -439,11 +453,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
      */
     public void reComputeAmountWithoutTax(RatedTransaction ratedTx) {
         try {
-            agregateHandler.reset();
+            aggregateHandler.reset();
             for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
                 for (RatedTransaction rt : subcat.getRatedtransactions()) {
-                    rt.setAmountWithoutTax(null);
-                    agregateHandler.addRT(rt, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
+                    rt.resetAmounts();
+                    aggregateHandler.addRT(rt, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
                     updateAmountsAndLines(ratedTx.getBillingAccount());
                 }
             }
@@ -474,7 +488,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     return;
                 }
                 for (RatedTransaction ratedTransaction : openedRT) {
-                    agregateHandler.addRT(ratedTransaction, ratedTransaction.getInvoiceSubCategory().getDescription(), getFreshUA());
+                    aggregateHandler.addRT(ratedTransaction, ratedTransaction.getInvoiceSubCategory().getDescription(), getFreshUA());
                     updateAmountsAndLines(entity.getBillingAccount());
                 }
                 setRtxHasImported(true);
@@ -508,12 +522,14 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             invoiceCopy.setLinkedInvoices(invoiceService.retrieveIfNotManaged(entity.getLinkedInvoices()));
             BillingAccount billingAccount = invoiceCopy.getBillingAccount();
             Customer customer = billingAccount.getCustomerAccount().getCustomer();
-            invoiceCopy.setSeller(customer.getSeller());
+			if (invoiceCopy.getSeller() == null) {
+				invoiceCopy.setSeller(customer.getSeller());
+			}
             invoiceCopy.setInvoiceAgregates(new ArrayList<InvoiceAgregate>());
             getPersistenceService().create(invoiceCopy);
 
             Map<String, TaxInvoiceAgregate> taxInvAgregateMapCopy = new HashMap<String, TaxInvoiceAgregate>();
-            for (Entry<String, TaxInvoiceAgregate> entry : agregateHandler.getTaxInvAgregateMap().entrySet()) {
+            for (Entry<String, TaxInvoiceAgregate> entry : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
                 TaxInvoiceAgregate taxInvAgr = new TaxInvoiceAgregate();
                 BeanUtils.copyProperties(taxInvAgr, entry.getValue());
                 taxInvAgr.setId(null);
@@ -605,18 +621,20 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             Customer customer = billingAccount.getCustomerAccount().getCustomer();
             entity.setBillingAccount(billingAccount);
             entity.setDetailedInvoice(isDetailed());
-            entity.setSeller(customer.getSeller());
+			if (entity.getSeller() == null) {
+				entity.setSeller(customer.getSeller());
+			}
 
             invoiceService.assignInvoiceNumber(entity);
 
-            for (Entry<String, TaxInvoiceAgregate> entry : agregateHandler.getTaxInvAgregateMap().entrySet()) {
+            for (Entry<String, TaxInvoiceAgregate> entry : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
                 TaxInvoiceAgregate taxInvAgr = entry.getValue();
                 taxInvAgr.setInvoice(entity);
                 taxInvAgr.updateAudit(currentUser);
                 entity.addInvoiceAggregate(taxInvAgr);
             }
 
-            for (Entry<String, CategoryInvoiceAgregate> entry : agregateHandler.getCatInvAgregateMap().entrySet()) {
+            for (Entry<String, CategoryInvoiceAgregate> entry : aggregateHandler.getCatInvAgregateMap().entrySet()) {
                 CategoryInvoiceAgregate catInvAgr = entry.getValue();
                 catInvAgr.setInvoice(entity);
                 catInvAgr.updateAudit(currentUser);
@@ -694,6 +712,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                         RatedTransaction newRT = new RatedTransaction();
                         newRT.setUsageDate(rt.getUsageDate());
                         newRT.setUnitAmountWithoutTax(rt.getUnitAmountWithoutTax());
+                        newRT.setUnitAmountTax(rt.getUnitAmountWithTax());
                         newRT.setQuantity(rt.getQuantity());
                         newRT.setStatus(RatedTransactionStatusEnum.BILLED);
                         newRT.setWallet(rt.getWallet());
@@ -709,21 +728,21 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                         newRT.setOrderNumber(rt.getOrderNumber());
                         newRT.setInvoice(entity);
                         newRT.setSeller(rt.getSeller());
-                        agregateHandler.addRT(newRT, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
+                        aggregateHandler.addRT(newRT, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
                         updateAmountsAndLines(getFreshBA());
                     }
                 } else {
                     for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
                         if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-                            agregateHandler.addInvoiceSubCategory(((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory(), getFreshBA(), getFreshUA(),
-                                invoiceAgregate.getDescription(), invoiceAgregate.getAmountWithoutTax());
+                            aggregateHandler.addInvoiceSubCategory(((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory(), getFreshBA(), getFreshUA(),
+                                invoiceAgregate.getDescription(), ((SubCategoryInvoiceAgregate) invoiceAgregate).getIsEnterpriseAmount(appProvider.isEntreprise()));
                             updateAmountsAndLines(getFreshBA());
                         }
                     }
 
                     for (RatedTransaction rt : invoice.getRatedTransactions()) {
                         if (rt.getWallet() == null) {
-                            agregateHandler.addRT(rt, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
+                            aggregateHandler.addRT(rt, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
                         }
                     }
                     updateAmountsAndLines(getFreshBA());
@@ -821,7 +840,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
      */
     public void deleteLinkedInvoiceCategory() throws BusinessException {
         for (SubCategoryInvoiceAgregate subCat : selectedCategoryInvoiceAgregate.getSubCategoryInvoiceAgregates()) {
-            agregateHandler.removeInvoiceSubCategory(subCat.getInvoiceSubCategory(), getFreshBA(), getFreshUA(), subCat.getDescription(), subCat.getAmountWithoutTax());
+			aggregateHandler.removeInvoiceSubCategory(subCat.getInvoiceSubCategory(), getFreshBA(), getFreshUA(),
+					subCat.getDescription(), subCat.getIsEnterpriseAmount(appProvider.isEntreprise()));
             updateAmountsAndLines(getFreshBA());
         }
 
@@ -833,8 +853,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
      * @throws BusinessException General business exception
      */
     public void deleteLinkedInvoiceSubCategory() throws BusinessException {
-        agregateHandler.removeInvoiceSubCategory(selectedSubCategoryInvoiceAgregate.getInvoiceSubCategory(), getFreshBA(), getFreshUA(),
-            selectedSubCategoryInvoiceAgregate.getDescription(), selectedSubCategoryInvoiceAgregate.getAmountWithoutTax());
+		aggregateHandler.removeInvoiceSubCategory(selectedSubCategoryInvoiceAgregate.getInvoiceSubCategory(),
+				getFreshBA(), getFreshUA(), selectedSubCategoryInvoiceAgregate.getDescription(),
+				selectedSubCategoryInvoiceAgregate.getIsEnterpriseAmount(appProvider.isEntreprise()));
         updateAmountsAndLines(getFreshBA());
 
     }
@@ -881,14 +902,22 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             return;
         }
 
-        if (amountWithoutTax == null || selectedInvoiceSubCategory == null) {
-            messages.error("AmountWithoutTax and InvoiceSubCategory is required.");
-            return;
-        }
+		if (appProvider.isEntreprise()) {
+			if (amountWithoutTax == null || selectedInvoiceSubCategory == null) {
+				messages.error("AmountWithoutTax and InvoiceSubCategory is required.");
+				return;
+			}
+
+		} else {
+			if (amountWithTax == null || selectedInvoiceSubCategory == null) {
+				messages.error("AmountWithTax and InvoiceSubCategory is required.");
+				return;
+			}
+		}
 
         selectedInvoiceSubCategory = invoiceSubCategoryService.retrieveIfNotManaged(selectedInvoiceSubCategory);
 
-        agregateHandler.addInvoiceSubCategory(selectedInvoiceSubCategory, getFreshBA(), getFreshUA(), description, amountWithoutTax);
+        aggregateHandler.addInvoiceSubCategory(entity.getSeller(), entity.getInvoiceDate(), selectedInvoiceSubCategory, getFreshBA(), getFreshUA(), description, appProvider.isEntreprise() ? amountWithoutTax : amountWithTax);
         updateAmountsAndLines(getFreshBA());
     }
 
@@ -899,11 +928,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
      * @throws BusinessException business exception.
      */
     public void reComputeAmountWithoutTax(SubCategoryInvoiceAgregate invSubCat) throws BusinessException {
-        agregateHandler.reset();
+        aggregateHandler.reset();
         for (CategoryInvoiceAgregate cat : categoryInvoiceAggregates) {
             for (SubCategoryInvoiceAgregate subCate : cat.getSubCategoryInvoiceAgregates()) {
                 InvoiceSubCategory tmp = subCate.getInvoiceSubCategory();
-                agregateHandler.addInvoiceSubCategory(tmp, getFreshBA(), getFreshUA(), subCate.getDescription(), subCate.getAmountWithoutTax());
+                aggregateHandler.addInvoiceSubCategory(tmp, getFreshBA(), getFreshUA(), subCate.getDescription(), subCate.getIsEnterpriseAmount(appProvider.isEntreprise()));
                 updateAmountsAndLines(getFreshBA());
             }
         }
@@ -1205,4 +1234,20 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     public void setOrder(Order order) {
         this.order = order;
     }
+
+	public BigDecimal getUnitAmountWithTax() {
+		return unitAmountWithTax;
+	}
+
+	public void setUnitAmountWithTax(BigDecimal unitAmountWithTax) {
+		this.unitAmountWithTax = unitAmountWithTax;
+	}
+
+	public BigDecimal getAmountWithTax() {
+		return amountWithTax;
+	}
+
+	public void setAmountWithTax(BigDecimal amountWithTax) {
+		this.amountWithTax = amountWithTax;
+	}
 }

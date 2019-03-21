@@ -126,13 +126,27 @@
                                     <f:facet name="header">
                                         #{cat.description}
                                     </f:facet>
+
                                     <p:column>
+                                    	
                                         <p:accordionPanel activeIndex="null">
                                             <p:tab>
                                                 <f:facet name="title">
                                                     <h:outputText value="#{subCat.description}"/>
                                                 </f:facet>
-                                                <p:dataTable var="rated" resizableColumns="true" value="#{subCat.ratedTransactions}" paginator="true" rows="30"
+                                                
+		                                    	<p:panelGrid styleClass="custom-grid">
+											        <p:row>
+											            <p:column>#{messages['invoice.amountWithoutTax']}</p:column>
+											            <p:column>#{messages['invoice.amountWithTax']}</p:column>
+											        </p:row>
+			                                    	<p:row>
+			                                    		<p:column>#{subCat.amountWithoutTax}</p:column>
+			                                    		<p:column>#{subCat.amountWithTax}</p:column>
+			                                    	</p:row>
+		                                    	</p:panelGrid>
+		                                    	
+                                                <p:dataTable rendered="#{subCat.ratedTransactions.size() != 0}" var="rated" resizableColumns="true" value="#{subCat.ratedTransactions}" paginator="true" rows="30"
                                                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
                                                     <p:column headerText="#{messages['ratedTransaction.usageDate']}">
                                                         <h:outputText value="#{rated.usageDate}">

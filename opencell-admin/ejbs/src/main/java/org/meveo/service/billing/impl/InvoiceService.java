@@ -31,7 +31,14 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -104,6 +111,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.communication.impl.EmailSender;
@@ -216,6 +224,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private EmailSender emailSender;
+    
+    @Inject
+    private SellerService sellerService;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -379,6 +390,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (seller == null && cust.getSeller() != null) {
             seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
         }
+        seller = sellerService.refreshOrRetrieve(seller);
 
         InvoiceSequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
         int sequenceSize = sequence.getSequenceSize();

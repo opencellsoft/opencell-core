@@ -557,4 +557,8 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
         this.discountPlanItem = discountPlanItem;
     }
+    
+    public BigDecimal getIsEnterpriseAmount(boolean isEnterprise) {
+		return isEnterprise ? getAmountWithoutTax() : getAmountWithTax();
+	}
 }
