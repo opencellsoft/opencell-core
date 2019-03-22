@@ -1,6 +1,5 @@
 package org.meveo.api.billing;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,7 +26,6 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
-import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.EntityNotAllowedException;
@@ -78,7 +76,8 @@ import org.meveo.service.order.OrderService;
  * @author Wassim Drira
  * @author Said Ramli
  * @author Mohamed El Youssoufi
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.4
  */
 @Stateless
 public class SubscriptionApi extends BaseApi {
@@ -1631,14 +1630,14 @@ public class SubscriptionApi extends BaseApi {
         List<OneShotChargeInstanceDto> oneShotChargeInstanceDtos = new ArrayList<>();
 
         for(OneShotChargeInstance oneShotChargeInstance : oneShotChargeInstances) {
-            if(oneShotChargeInstance.getAmountWithTax() == null) {
-                BigDecimal quantity = oneShotChargeInstance.getQuantity();
-                BigDecimal amountWithoutTax = quantity.multiply(oneShotChargeInstance.getWalletOperations().get(0).getAmountWithTax());
-                BigDecimal amountWithTax = quantity.multiply(oneShotChargeInstance.getWalletOperations().get(0).getAmountTax());
-                oneShotChargeInstance.setAmountWithoutTax(amountWithoutTax);
-                oneShotChargeInstance.setAmountWithTax(amountWithTax);
+            OneShotChargeInstanceDto oneShotChargeInstanceDto = null;
+            List<WalletOperation> sortedWalletOperations = oneShotChargeInstance.getWalletOperationsSorted();
+            if(oneShotChargeInstance.getAmountWithTax() == null && sortedWalletOperations != null && !sortedWalletOperations.isEmpty()) {
+                oneShotChargeInstanceDto = new OneShotChargeInstanceDto(oneShotChargeInstance, sortedWalletOperations.get(0).getAmountWithTax(),
+                        sortedWalletOperations.get(0).getAmountWithTax());
+            } else{
+                oneShotChargeInstanceDto = new OneShotChargeInstanceDto(oneShotChargeInstance);
             }
-            OneShotChargeInstanceDto oneShotChargeInstanceDto = new OneShotChargeInstanceDto(oneShotChargeInstance);
             oneShotChargeInstanceDtos.add(oneShotChargeInstanceDto);
         }
 

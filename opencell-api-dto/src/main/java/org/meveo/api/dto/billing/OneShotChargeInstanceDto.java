@@ -9,6 +9,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.4
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OneShotChargeInstanceDto extends BusinessEntityDto {
 
@@ -23,16 +27,25 @@ public class OneShotChargeInstanceDto extends BusinessEntityDto {
         super();
     }
 
+    /**
+     * Instantiates a new OneShotChargeInstanceDto.
+     */
+    public OneShotChargeInstanceDto(OneShotChargeInstance oneShotChargeInstance, BigDecimal amountWithoutTax, BigDecimal amountWithTax) {
+        this(oneShotChargeInstance);
+        this.amountWithoutTax = amountWithoutTax;
+        this.amountWithTax = amountWithTax;
+    }
+
     public OneShotChargeInstanceDto(OneShotChargeInstance oneShotChargeInstance) {
-        setId(oneShotChargeInstance.getId());
-        setCode(oneShotChargeInstance.getCode());
-        setOperationDate(oneShotChargeInstance.getChargeDate());
-        setTerminationDate(oneShotChargeInstance.getTerminationDate());
-        setQuantity(oneShotChargeInstance.getQuantity());
-        setDescription(oneShotChargeInstance.getDescription());
-        setAmountWithoutTax(oneShotChargeInstance.getAmountWithoutTax());
-        setAmountWithTax(oneShotChargeInstance.getAmountWithTax());
-        setStatus(oneShotChargeInstance.getStatus());
+        this.id = oneShotChargeInstance.getId();
+        this.code = oneShotChargeInstance.getCode();
+        this.operationDate = oneShotChargeInstance.getChargeDate();
+        this.terminationDate = oneShotChargeInstance.getTerminationDate();
+        this.quantity = oneShotChargeInstance.getQuantity();
+        this.description = oneShotChargeInstance.getDescription();
+        this.amountWithoutTax = oneShotChargeInstance.getAmountWithoutTax();
+        this.amountWithTax = oneShotChargeInstance.getAmountWithTax();
+        this.status = oneShotChargeInstance.getStatus();
     }
 
     public Date getOperationDate() {
