@@ -39,11 +39,13 @@ import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.Auditable;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.generic.wf.GWFTransition;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.generic.wf.GWFTransitionService;
 import org.meveo.service.generic.wf.GenericWorkflowService;
 
@@ -66,6 +68,9 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
 
     @Inject
     private GWFTransitionService gWFTransitionService;
+
+    @Inject
+    private CustomEntityTemplateService customEntityTemplateService;
 
     private WFStatus selectedWFStatus;
 
@@ -105,6 +110,24 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
         }
         Collections.sort(classNames);
         return classNames;
+    }
+
+    /**
+     * Autocomplete method for selecting a custom entity template
+     *
+     * @param query Partial value entered
+     * @return A list of matching values
+     */
+    public List<String> autocompleteCET(String query) {
+        List<String> customEntities = new ArrayList<>();
+
+        List<CustomEntityTemplate> customEntityTemplates = customEntityTemplateService.search(query, false);
+
+        for (CustomEntityTemplate customEntityTemplate : customEntityTemplates) {
+            customEntities.add(customEntityTemplate.getCode());
+        }
+
+        return customEntities;
     }
 
     @Override
