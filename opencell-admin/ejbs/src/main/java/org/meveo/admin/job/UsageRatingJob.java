@@ -80,6 +80,7 @@ public class UsageRatingJob extends Job {
         ratingGroup.setFieldType(CustomFieldTypeEnum.STRING);
         ratingGroup.setValueRequired(false);
         ratingGroup.setDefaultValue(null);
+        ratingGroup.setMaxValue(50L);
         result.put("ratingGroup", ratingGroup);
 
         return result;
