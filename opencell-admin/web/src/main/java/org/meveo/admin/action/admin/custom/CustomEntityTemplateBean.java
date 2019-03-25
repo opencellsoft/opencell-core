@@ -146,7 +146,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
      * @return True if entity being customized is a Custom entity template and will be stored as a separate table
      */
     public boolean isCustomTable() {
-        return isCustomEntityTemplate() && entity.isStoreAsTable();
+        return isCustomEntityTemplate() && entity != null && entity.isStoreAsTable();
     }
 
     /**

@@ -1,6 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- https://examples.javacodegeeks.com/enterprise-java/logback/logback-rollingfileappender-example/ -->
 <!-- jboss log dir property: jboss.server.log.dir -->
-<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
 	<appender name="OC-AUDIT-FILE"

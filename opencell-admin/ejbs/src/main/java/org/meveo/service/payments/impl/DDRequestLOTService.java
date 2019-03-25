@@ -330,7 +330,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			DDRequestItem ddrequestItem = ddRequestLOT.getDdrequestItems().get(i);
 			AccountOperation automatedPayment = null;
 			PaymentErrorTypeEnum paymentErrorTypeEnum = null;
-			PaymentStatusEnum paymentStatusEnum = null;
+			PaymentStatusEnum paymentStatusEnum = PaymentStatusEnum.ACCEPTED;
 			String errorMsg = null;
 			if (!ddrequestItem.hasError()) {
 				if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0) {
@@ -346,7 +346,6 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 						ddrequestItem.setAutomatedPayment((AutomatedPayment) automatedPayment);
 
 					}
-					paymentStatusEnum = PaymentStatusEnum.ACCEPTED;
 				}
 			} else {
 				paymentErrorTypeEnum = PaymentErrorTypeEnum.ERROR;
