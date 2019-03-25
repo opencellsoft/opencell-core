@@ -567,13 +567,19 @@ public class InvoiceApi extends BaseApi {
         List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
         if (invoices != null) {
             for (Invoice invoice : invoices) {
-                this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
-                invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
+                try {
+                    this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
+                    invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
 
-                GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
-                invoicesDtos.add(generateInvoiceResultDto);
-                if (isDraft) {
-                    invoiceService.cancelInvoice(invoice);
+                    GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
+                    invoicesDtos.add(generateInvoiceResultDto);
+                    if (isDraft) {
+                        invoiceService.cancelInvoice(invoice);
+                    }
+                }catch (Exception e){
+                    // if any exception reset the invoice sequence
+                    invoiceService.decrementInvoiceSequence(invoice, invoices);
+                    throw new BusinessException(e);
                 }
             }
         }

@@ -1855,7 +1855,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         List<Invoice> invoices = this.generateInvoice(billingAccount, generateInvoiceRequestDto, ratedTxFilter, isDraft);
         for (Invoice invoice : invoices) {
-            this.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
+            try {
+                this.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
+            }catch (Exception e){
+                decrementInvoiceSequence(invoice, invoices);
+                throw new BusinessException(e);
+            }
+
         }
 
         return invoices;
@@ -2181,5 +2187,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
         cfValueAccumulator.entityCreated(invoice);
 
         log.trace("end of post create {}. entity id={}.", invoice.getClass().getSimpleName(), invoice.getId());
+    }
+
+
+    public void decrementInvoiceSequence(Invoice cuurentInvoice, List<Invoice> invoices) throws BusinessException {
+        int index = invoices.indexOf(cuurentInvoice);
+        for (int i = index; i < invoices.size(); i++) {
+            Invoice invoice = invoices.get(i);
+            InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
+
+            String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
+            Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
+
+            Seller seller = invoice.getSeller();
+            if (seller == null && cust.getSeller() != null) {
+                seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
+            }
+
+            serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, -1);
+            commit();
+        }
     }
 }
