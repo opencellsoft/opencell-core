@@ -216,9 +216,17 @@ public class InvoiceApi extends BaseApi {
                 if (subCatInvAgrDTO.getRatedTransactions() != null) {
                     for (RatedTransactionDto ratedTransactionDto : subCatInvAgrDTO.getRatedTransactions()) {
 
-                    	BigDecimal tempAmountWithoutTax = ratedTransactionDto.getUnitAmountWithoutTax().multiply(ratedTransactionDto.getQuantity());
-                        BigDecimal tempAmountWithTax = ratedTransactionDto.getUnitAmountWithTax().multiply(ratedTransactionDto.getQuantity());
-                        
+						BigDecimal tempAmountWithoutTax = BigDecimal.ZERO;
+						if (ratedTransactionDto.getUnitAmountWithoutTax() != null) {
+							tempAmountWithoutTax = ratedTransactionDto.getUnitAmountWithoutTax()
+									.multiply(ratedTransactionDto.getQuantity());
+						}
+						BigDecimal tempAmountWithTax = BigDecimal.ZERO;
+						if (ratedTransactionDto.getUnitAmountWithTax() != null) {
+							tempAmountWithTax = ratedTransactionDto.getUnitAmountWithTax()
+									.multiply(ratedTransactionDto.getQuantity());
+						}
+						
                         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(tempAmountWithoutTax, tempAmountWithTax, tax.getPercent(), isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
 
                         BigDecimal amountWithoutTax = amounts[0];
