@@ -101,6 +101,10 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
             throw new BusinessApiException("Workflow target class does not match");
         }
 
+        if (!StringUtils.isBlank(genericWorkflowDto.getTargetCetCode()) && !genericWorkflow.getTargetCetCode().equals(genericWorkflowDto.getTargetCetCode())) {
+            throw new BusinessApiException("Workflow target CET code does not match");
+        }
+
         if (CollectionUtils.isNotEmpty(genericWorkflowDto.getStatuses())) {
             boolean noneMatch = genericWorkflowDto.getStatuses().stream().noneMatch(s -> s.getCode().equals(genericWorkflowDto.getInitStatus()));
             if (noneMatch) {
@@ -192,6 +196,7 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         if (workflowToUpdate == null) {
             genericWorkflow = new GenericWorkflow();
             genericWorkflow.setTargetEntityClass(dto.getTargetEntityClass());
+            genericWorkflow.setTargetCetCode(dto.getTargetCetCode());
             if (dto.isDisabled() != null) {
                 genericWorkflow.setDisabled(dto.isDisabled());
             }

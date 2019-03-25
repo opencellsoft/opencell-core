@@ -68,7 +68,7 @@ public class WorkflowInstanceHistoryDto extends BaseEntityDto {
     public WorkflowInstanceHistoryDto(WorkflowInstanceHistory workflowInstanceHistory) {
         super();
         this.actionDate = workflowInstanceHistory.getActionDate();
-        this.workflowInstanceCode = workflowInstanceHistory.getWorkflowInstance() == null ? null : workflowInstanceHistory.getWorkflowInstance().getCode();
+        this.workflowInstanceCode = workflowInstanceHistory.getWorkflowInstance() == null ? null : workflowInstanceHistory.getWorkflowInstance().getEntityInstanceCode();
         this.fromStatus = workflowInstanceHistory.getFromStatus();
         this.toStatus = workflowInstanceHistory.getToStatus();
         this.transitionName = workflowInstanceHistory.getTransitionName();

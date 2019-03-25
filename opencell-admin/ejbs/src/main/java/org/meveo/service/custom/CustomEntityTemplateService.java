@@ -34,6 +34,8 @@ import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -164,6 +166,24 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
     public List<CustomEntityTemplate> listNoCache() {
         return super.list((Boolean) null);
+    }
+
+    /**
+     * Search a list of custom entity templates by code and storeAsTable
+     * 
+     * @param code
+     * @param storeAsTable
+     * @return A list of custom entity templates
+     */
+    public List<CustomEntityTemplate> search(String code, boolean storeAsTable) {
+        QueryBuilder queryBuilder = new QueryBuilder(CustomEntityTemplate.class, "cet", null);
+
+        if (!StringUtils.isBlank(code)) {
+            queryBuilder.like("code", code, QueryLikeStyleEnum.MATCH_ANYWHERE, false);
+        }
+        queryBuilder.addBooleanCriterion("storeAsTable", storeAsTable);
+
+        return queryBuilder.getQuery(getEntityManager()).getResultList();
     }
 
     @Override

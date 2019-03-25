@@ -38,10 +38,12 @@
 				field="description" />
 			<hftl:column label="#{messages['generic.wf.targetEntityClass']}"
 				field="targetEntityClass" />
+			<hftl:column label="#{messages['generic.wf.targetCetCode']}"
+				field="targetCetCode" />
+			<hftl:column label="#{messages['workflow.enableHistory']}"
+				field="enableHistory" isMessage="true" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
-			<hftl:column label="#{messages['workflow.enableHistory']}"
-				field="enableHistory" />
 			<hftl:actionsColumn renderDuplicateLink="true"
 				permission="#{currentUser.hasRole('administrationVisualization')}" />
 		</hftl:dataList>
