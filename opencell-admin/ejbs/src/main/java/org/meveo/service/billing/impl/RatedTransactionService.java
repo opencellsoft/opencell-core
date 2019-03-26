@@ -790,7 +790,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             .setParameter("walletOperationId", id).getResultList();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
             BillingRun billingRun = ratedTransaction.getBillingRun();
-            if ((billingRun != null) && (billingRun.getStatus() != BillingRunStatusEnum.CANCELLED)) {
+            if ((billingRun != null) && (billingRun.getStatus() != BillingRunStatusEnum.CANCELED)) {
                 throw new UnrolledbackBusinessException("A rated transaction " + ratedTransaction.getId() + " forbid rerating of wallet operation " + id);
             }
             ratedTransaction.setStatus(RatedTransactionStatusEnum.RERATED);
