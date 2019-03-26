@@ -1215,13 +1215,14 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="customer_account_id" type="bigint" >
-                <constraints nullable="false" foreignKeyName="fk_dunning_document_ca" references="ar_customer_account(id)"/>
-            </column>
-            <column name="billing_subscription_id" type="bigint">
-                <constraints nullable="true" foreignKeyName="fk_dunning_document_subscription" references="billing_subscription(id)"/>
-            </column>
+            <column name="customer_account_id" type="bigint" />
+            <column name="billing_subscription_id" type="bigint"/>
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="dunning_document" constraintName="fk_dunning_document_ca" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
+        <addForeignKeyConstraint baseColumnNames="billing_subscription_id" baseTableName="dunning_document" constraintName="fk_dunning_document_subscription" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+            
         <createSequence sequenceName="dunning_document_seq"/>
         <addColumn tableName="ar_account_operation">
             <column name="dunning_document_id" type="bigint">
@@ -1891,9 +1892,9 @@ $$ LANGUAGE plpgsql;
 			baseColumnNames="service_instance_id"
 			baseTableName="billing_wallet_operation" referencedColumnNames="id" />
 
-		<sql>UPDATE billing_wallet_operation o SET
+		<sql>UPDATE ${db.schema.adapted}billing_wallet_operation o SET
 			rated_transaction_id=(SELECT
-			r.id FROM billing_rated_transaction r WHERE r.wallet_operation_id=o.id
+			r.id FROM ${db.schema.adapted}billing_rated_transaction r WHERE r.wallet_operation_id=o.id
 			LIMIT 1);
 		</sql>
 		<dropColumn tableName="billing_rated_transaction">
