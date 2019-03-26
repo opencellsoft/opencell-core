@@ -1633,7 +1633,7 @@ public class SubscriptionApi extends BaseApi {
             OneShotChargeInstanceDto oneShotChargeInstanceDto = null;
             List<WalletOperation> sortedWalletOperations = oneShotChargeInstance.getWalletOperationsSorted();
             if(oneShotChargeInstance.getAmountWithTax() == null && sortedWalletOperations != null && !sortedWalletOperations.isEmpty()) {
-                oneShotChargeInstanceDto = new OneShotChargeInstanceDto(oneShotChargeInstance, sortedWalletOperations.get(0).getAmountWithTax(),
+                oneShotChargeInstanceDto = new OneShotChargeInstanceDto(oneShotChargeInstance, sortedWalletOperations.get(0).getAmountWithoutTax(),
                         sortedWalletOperations.get(0).getAmountWithTax());
             } else{
                 oneShotChargeInstanceDto = new OneShotChargeInstanceDto(oneShotChargeInstance);
