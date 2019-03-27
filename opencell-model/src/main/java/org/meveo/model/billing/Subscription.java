@@ -362,7 +362,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     /**
      * Initial subscription renewal configuration
      */
-    @Column(name = "initial_renewal")
+    @Column(name = "initial_renewal", columnDefinition = "text")
     private String initialSubscriptionRenewal;
 
     public Date getEndAgreementDate() {

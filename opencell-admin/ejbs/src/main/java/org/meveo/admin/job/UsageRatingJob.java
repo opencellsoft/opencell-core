@@ -69,6 +69,7 @@ public class UsageRatingJob extends Job {
         rateUntilDate.setDescription(resourceMessages.getString("jobExecution.rateUntilDate"));
         rateUntilDate.setFieldType(CustomFieldTypeEnum.DATE);
         rateUntilDate.setValueRequired(false);
+        rateUntilDate.setMaxValue(50L);
         result.put("rateUntilDate", rateUntilDate);
         
         CustomFieldTemplate ratingGroup = new CustomFieldTemplate();
@@ -79,6 +80,7 @@ public class UsageRatingJob extends Job {
         ratingGroup.setFieldType(CustomFieldTypeEnum.STRING);
         ratingGroup.setValueRequired(false);
         ratingGroup.setDefaultValue(null);
+        ratingGroup.setMaxValue(50L);
         result.put("ratingGroup", ratingGroup);
 
         return result;

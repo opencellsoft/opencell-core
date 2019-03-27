@@ -990,4 +990,39 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 		return null;
 	}
 	
+	public void resetAmounts() {
+		unitAmountWithoutTax = BigDecimal.ZERO;
+		unitAmountWithTax = BigDecimal.ZERO;
+		unitAmountTax = BigDecimal.ZERO;
+		amountWithoutTax = BigDecimal.ZERO;
+		amountWithTax = BigDecimal.ZERO;
+		amountTax = BigDecimal.ZERO;
+	}
+	
+	public BigDecimal getIsEnterpriseAmount(boolean isEnterprise) {
+		return isEnterprise ? getAmountWithoutTax() : getAmountWithTax();
+	}
+	
+	public BigDecimal getIsEnterpriseUnitAmount(boolean isEnterprise) {
+		return isEnterprise ? getUnitAmountWithoutTax() : getUnitAmountWithTax();
+	}
+	
+	public void setIsEnterpriseAmount(boolean isEnterprise, BigDecimal amount) {
+		if (isEnterprise) {
+			setAmountWithoutTax(amount);
+
+		} else {
+			setAmountWithTax(amount);
+		}
+	}
+
+	public void setIsEnterpriseUnitAmount(boolean isEnterprise, BigDecimal amount) {
+		if (isEnterprise) {
+			setUnitAmountWithoutTax(amount);
+
+		} else {
+			setUnitAmountWithTax(amount);
+		}		
+	}
+	
 }

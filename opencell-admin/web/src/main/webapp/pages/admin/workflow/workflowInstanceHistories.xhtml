@@ -31,9 +31,10 @@
         </hftl:searchPanel>
 
         <hftl:dataList backingBean="#{workflowInstanceHistoryListBean}" sortBy="actionDate">
-            <hftl:column label="#{messages['workflowHistory.actionDate']}" field="actionDate" />
-            <hftl:column label="#{messages['workflowHistory.entityInstanceCode']}" field="workflowInstance.code" />
+            <hftl:column label="#{messages['workflowHistory.actionDate']}" field="actionDate" isDate="true" time="true" />
+            <hftl:column label="#{messages['workflowHistory.entityInstanceCode']}" field="workflowInstance.entityInstanceCode" />
             <hftl:column label="#{messages['generic.wf.targetEntityClass']}" field="workflowInstance.targetEntityClass" />
+            <hftl:column label="#{messages['generic.wf.targetCetCode']}" field="workflowInstance.targetCetCode" />
             <hftl:column label="#{messages['workflowHistory.fromStatus']}" field="fromStatus" />
             <hftl:column label="#{messages['workflowHistory.toStatus']}" field="toStatus" />
             <hftl:column label="#{messages['workflowHistory.transitionName']}" field="transitionName" />

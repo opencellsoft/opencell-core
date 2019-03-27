@@ -1182,7 +1182,7 @@
     <changeSet id="#3842_20190111 - Trigger next charge" author="EdwardPLegaspi">
         <addColumn tableName="cat_usage_charge_template">
             <column name="trigger_next_charge" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="trigger_next_charge_el" type="${type.text}"/>
+            <column name="trigger_next_charge_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
     
@@ -1215,13 +1215,14 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="customer_account_id" type="bigint" >
-                <constraints nullable="false" foreignKeyName="fk_dunning_document_ca" references="ar_customer_account(id)"/>
-            </column>
-            <column name="billing_subscription_id" type="bigint">
-                <constraints nullable="true" foreignKeyName="fk_dunning_document_subscription" references="billing_subscription(id)"/>
-            </column>
+            <column name="customer_account_id" type="bigint" />
+            <column name="billing_subscription_id" type="bigint"/>
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="dunning_document" constraintName="fk_dunning_document_ca" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
+        <addForeignKeyConstraint baseColumnNames="billing_subscription_id" baseTableName="dunning_document" constraintName="fk_dunning_document_subscription" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+            
         <createSequence sequenceName="dunning_document_seq"/>
         <addColumn tableName="ar_account_operation">
             <column name="dunning_document_id" type="bigint">
@@ -1891,9 +1892,9 @@ $$ LANGUAGE plpgsql;
 			baseColumnNames="service_instance_id"
 			baseTableName="billing_wallet_operation" referencedColumnNames="id" />
 
-		<sql>UPDATE billing_wallet_operation o SET
+		<sql>UPDATE ${db.schema.adapted}billing_wallet_operation o SET
 			rated_transaction_id=(SELECT
-			r.id FROM billing_rated_transaction r WHERE r.wallet_operation_id=o.id
+			r.id FROM ${db.schema.adapted}billing_rated_transaction r WHERE r.wallet_operation_id=o.id
 			LIMIT 1);
 		</sql>
 		<dropColumn tableName="billing_rated_transaction">
@@ -1972,6 +1973,34 @@ $$ LANGUAGE plpgsql;
         <addColumn tableName="billing_cycle">
             <column name="reference_date" type="varchar(255)" />
         </addColumn>
+    </changeSet>
+    
+    <changeSet id="#4070_20190313" author="AmineBENAICHA">
+    	<dropColumn tableName="wf_generic_workflow">
+			<column name="init_status" />
+		</dropColumn>
+        <addColumn tableName="wf_generic_workflow">
+            <column name="init_status" type="varchar(255)" />
+            <column name="target_cet_code" type="varchar(255)" />
+        </addColumn>
+        
+        <dropUniqueConstraint tableName="wf_instance" constraintName="uk_generic_wf_id_code_wf_instance" />
+        <dropColumn tableName="wf_instance">
+        	<column name="code" />
+            <column name="description" />
+        	<column name="disabled" />
+            <column name="created" />
+            <column name="updated" />
+            <column name="creator" />
+            <column name="updater" />
+        </dropColumn>
+        <addColumn tableName="wf_instance">
+        	<column name="entity_instance_code" type="varchar(255)" >
+        		<constraints nullable="false" />
+        	</column>
+            <column name="target_cet_code" type="varchar(255)" />
+        </addColumn>
+        <addUniqueConstraint tableName="wf_instance" constraintName="uk_wf_instance_code_gwf_id_cet_code" columnNames="entity_instance_code, generic_wf_id, target_cet_code" deferrable="false" disabled="false" initiallyDeferred="false" />
     </changeSet>
 
 </databaseChangeLog>

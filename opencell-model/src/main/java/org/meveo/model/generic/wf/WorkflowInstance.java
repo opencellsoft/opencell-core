@@ -27,8 +27,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -36,23 +34,36 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableBusinessEntity;
-import org.meveo.model.ExportIdentifier;
+import org.meveo.model.BaseEntity;
 
 /**
  * Workflow instance linked to business entity
  */
 @Entity
-@ExportIdentifier({ "code" })
-@Table(name = "wf_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "generic_wf_id", "code" }))
+@Table(name = "wf_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "entity_instance_code", "generic_wf_id", "target_cet_code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "wf_instance_seq") })
-public class WorkflowInstance extends EnableBusinessEntity {
+public class WorkflowInstance extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "target_entity_class", nullable = false)
+    /**
+     * Qualified name of Workflowed entities
+     */
+    @Column(name = "target_entity_class", length = 255, nullable = false)
     private String targetEntityClass;
+
+    /**
+     * Affected entity instance code
+     */
+    @Column(name = "entity_instance_code", length = 255, nullable = false)
+    private String entityInstanceCode;
+
+    /**
+     * Custom entity template code
+     */
+    @Column(name = "target_cet_code", length = 255)
+    private String targetCetCode;
 
     /**
      * Generic Workflow
@@ -104,5 +115,21 @@ public class WorkflowInstance extends EnableBusinessEntity {
 
     public void setWfHistories(List<WorkflowInstanceHistory> wfHistories) {
         this.wfHistories = wfHistories;
+    }
+
+    public String getEntityInstanceCode() {
+        return entityInstanceCode;
+    }
+
+    public void setEntityInstanceCode(String entityInstanceCode) {
+        this.entityInstanceCode = entityInstanceCode;
+    }
+
+    public String getTargetCetCode() {
+        return targetCetCode;
+    }
+
+    public void setTargetCetCode(String targetCetCode) {
+        this.targetCetCode = targetCetCode;
     }
 }
