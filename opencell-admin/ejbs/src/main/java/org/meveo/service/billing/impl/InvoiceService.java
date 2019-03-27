@@ -363,15 +363,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param seller {@link Seller}
      * @return {@link InvoiceTypeSellerSequence}
      */
-	public InvoiceTypeSellerSequence getInvoiceTypeSellerSequence(InvoiceType invoiceType, Seller seller) {
-		InvoiceTypeSellerSequence sequence = invoiceType.getSellerSequenceByType(seller);
+    public InvoiceTypeSellerSequence getInvoiceTypeSellerSequence(InvoiceType invoiceType, Seller seller) {
+        InvoiceTypeSellerSequence sequence = invoiceType.getSellerSequenceByType(seller);
 
-		if (sequence == null && seller.getSeller() != null) {
-			sequence = getInvoiceTypeSellerSequence(invoiceType, seller.getSeller());
-		}
+        if (sequence == null && seller.getSeller() != null) {
+            sequence = getInvoiceTypeSellerSequence(invoiceType, seller.getSeller());
+        }
 
-		return sequence;
-	}
+        return sequence;
+    }
 
     /**
      * Assign invoice number to an invoice
@@ -398,22 +398,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
         InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
         InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
         String prefix = invoiceType.getPrefixEL();
-		if (invoiceTypeSellerSequencePrefix != null) {
-			prefix = invoiceTypeSellerSequencePrefix.getPrefixEL();
+        if (invoiceTypeSellerSequencePrefix != null) {
+            prefix = invoiceTypeSellerSequencePrefix.getPrefixEL();
 
-		} else if (seller != null) {
-			invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
-			if (invoiceTypeSellerSequence != null) {
-				prefix = invoiceTypeSellerSequence.getPrefixEL();
-			}
-		}
+        } else if (seller != null) {
+            invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
+            if (invoiceTypeSellerSequence != null) {
+                prefix = invoiceTypeSellerSequence.getPrefixEL();
+            }
+        }
 
-		if (prefix != null && !StringUtils.isBlank(prefix)) {
-			prefix = evaluatePrefixElExpression(prefix, invoice);
+        if (prefix != null && !StringUtils.isBlank(prefix)) {
+            prefix = evaluatePrefixElExpression(prefix, invoice);
 
-		} else {
-			prefix = "";
-		}
+        } else {
+            prefix = "";
+        }
 
         long nextInvoiceNb = sequence.getCurrentInvoiceNb();
         String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
@@ -711,7 +711,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 } else {
                     InvoiceType invoiceType = null;
                     if (!StringUtils.isBlank(billingCycle.getInvoiceTypeEl())) {
-                        String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun);
+                        String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun, billingAccount);
                         invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
                     }
                     if (isDraft) {
@@ -2010,12 +2010,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return billingTemplateName;
     }
 
-    public String evaluateInvoiceType(String expression, BillingRun billingRun) {
+    public String evaluateInvoiceType(String expression, BillingRun billingRun, BillingAccount billingAccount) {
         String invoiceTypeCode = null;
 
         if (!StringUtils.isBlank(expression)) {
             Map<Object, Object> contextMap = new HashMap<>();
             contextMap.put("br", billingRun);
+            contextMap.put("ba", billingAccount);
 
             try {
                 String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
