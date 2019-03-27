@@ -91,6 +91,11 @@ public class BillingCycleDto extends BusinessEntityDto {
     private ReferenceDateEnum referenceDate;
 
     /**
+     * The Script Instance code
+     */
+    private String scriptInstanceCode;
+
+    /**
      * Instantiates a new billing cycle dto.
      */
     public BillingCycleDto() {
@@ -127,6 +132,10 @@ public class BillingCycleDto extends BusinessEntityDto {
             if (billingCycleEntity.getCalendar() != null) {
                 calendar = billingCycleEntity.getCalendar().getCode();
             }
+            if (billingCycleEntity.getScriptInstance() != null) {
+                scriptInstanceCode = billingCycleEntity.getScriptInstance().getCode();
+            }
+
             customFields = customFieldInstances;
         }
     }
@@ -424,4 +433,19 @@ public class BillingCycleDto extends BusinessEntityDto {
         this.referenceDate = referenceDate;
     }
 
+    /**
+     * Gets the script instance code.
+     * @return the script instance code
+     */
+    public String getScriptInstanceCode() {
+        return scriptInstanceCode;
+    }
+
+    /**
+     * Sets the script instance code.
+     * @param scriptInstanceCode the script instance code.
+     */
+    public void setScriptInstanceCode(String scriptInstanceCode) {
+        this.scriptInstanceCode = scriptInstanceCode;
+    }
 }
