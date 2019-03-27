@@ -538,7 +538,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 log.debug("Payment ok, nothing to do.");
             } else {
                 String occTemplateCode = null;
-
+                List<AccountOperation> listAoThatSupposedPaid = getAccountOperationThatWasPaid(accountOperation);
                 if (accountOperation instanceof AutomatedRefund || accountOperation instanceof Refund) {
                     if (PaymentMethodEnum.CARD == accountOperation.getPaymentMethod()) {
                         occTemplateCode = paramBean.getProperty("occ.rejectedRefund.card", "REJ_RCR");
@@ -558,8 +558,6 @@ public class PaymentService extends PersistenceService<Payment> {
                     throw new BusinessException("Cannot find AO Template with code:" + occTemplateCode);
                 }
                 CustomerAccount ca = accountOperation.getCustomerAccount();
-                List<AccountOperation> listAoThatSupposedPaid = getAccountOperationThatWasPaid(accountOperation);
-
                 Long aoPaymentIdWasRejected = accountOperation.getId();
 
                 matchingCodeService.unmatchingByAOid(aoPaymentIdWasRejected);
@@ -622,7 +620,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @throws BusinessException Business Exception
      */
     public  List<AccountOperation> getAccountOperationThatWasPaid(AccountOperation paymentOrRefund) throws BusinessException {
-        if (paymentOrRefund.getMatchingStatus() != MatchingStatusEnum.L) {
+        if (paymentOrRefund.getMatchingStatus() != MatchingStatusEnum.L && paymentOrRefund.getMatchingStatus() != MatchingStatusEnum.P) {
             return null;
         }
         List<AccountOperation> listAoThatSupposedPaid = new ArrayList<AccountOperation>();
@@ -630,7 +628,7 @@ public class PaymentService extends PersistenceService<Payment> {
         log.trace("matchingAmounts:" + matchingAmounts);
         for (MatchingAmount ma : paymentOrRefund.getMatchingAmounts().get(0).getMatchingCode().getMatchingAmounts()) {
             log.trace("ma.getAccountOperation() id:{} , occ code:{}", ma.getAccountOperation().toString(), ma.getAccountOperation().getOccCode());
-            if (!(ma.getAccountOperation() instanceof Payment) && !(ma.getAccountOperation() instanceof Refund)) {
+            if (!(ma.getAccountOperation() instanceof Payment) && !(ma.getAccountOperation() instanceof Refund) && !(ma.getAccountOperation() instanceof RejectedPayment) ) {
                 listAoThatSupposedPaid.add(ma.getAccountOperation());
             }
         }

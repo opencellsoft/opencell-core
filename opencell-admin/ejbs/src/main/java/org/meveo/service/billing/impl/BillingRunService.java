@@ -425,7 +425,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @throws BusinessException the business exception
      */
     public void cancel(BillingRun billingRun) throws BusinessException {
-        billingRun.setStatus(BillingRunStatusEnum.CANCELLED);
+        billingRun.setStatus(BillingRunStatusEnum.CANCELED);
         update(billingRun);
     }
 
@@ -942,7 +942,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             break;
 
         case VALIDATED:
-        case CANCELLED:
+        case CANCELED:
         case NEW:
         default:
             throw new BusinessException("BillingRun with status " + billingRun.getStatus() + " cannot be validated");
