@@ -595,6 +595,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             Map<Long, List<RatedTransaction>> mapSellerRT = new HashMap<Long, List<RatedTransaction>>();
             for (RatedTransaction rt : ratedTransactions) {
+                rt.setBillingRun(billingRun);
                 Seller seller = rt.getSeller();
 
                 List<RatedTransaction> rtsBySeller = mapSellerRT.get(seller.getId());
