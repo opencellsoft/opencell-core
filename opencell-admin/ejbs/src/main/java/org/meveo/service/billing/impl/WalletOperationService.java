@@ -1481,6 +1481,27 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         }
         return result;
     }
+    
+    
+    @SuppressWarnings("unchecked")
+	public  List<Object[]> getNbrWalletsOperationByStatus() {
+        try {
+            return (List<Object[]>) getEntityManager().createNamedQuery("WalletOperation.countNbrWalletsOperationByStatus").getResultList();
+        } catch (NoResultException e) {
+            log.warn("failed to countNbrWalletsOperationByStatus", e);
+            return null;
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+	public  List<Object[]> getNbrEdrByStatus() {
+        try {
+            return (List<Object[]>) getEntityManager().createNamedQuery("EDR.countNbrEdrByStatus").getResultList();
+        } catch (NoResultException e) {
+            log.warn("failed to countNbrEdrByStatus", e);
+            return null;
+        }
+    }
 
     
 }
