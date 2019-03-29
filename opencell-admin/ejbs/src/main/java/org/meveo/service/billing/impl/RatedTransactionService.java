@@ -423,10 +423,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     log.trace("Will update {} rated transactions in subcategory {} with new tax from {} to {}", scAggregate.getItemNumber(),
                         scAggregate.getInvoiceSubCategory().getCode(), scAggregate.getTaxPercent(), tax.getPercent());
                     for (RatedTransaction ratedTransaction : scAggregate.getRatedtransactions()) {
-                        if ("NO_OFFER".equals(ratedTransaction.getOfferCode())) {
-                            int i = 5;
-                        }
-
                         ratedTransaction.setTax(tax);
                         ratedTransaction.setTaxPercent(tax.getPercent());
                         ratedTransaction.computeDerivedAmounts(isEnterprise, rtRounding, rtRoundingMode);
