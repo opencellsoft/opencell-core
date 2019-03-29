@@ -16,8 +16,7 @@
     
     
     Attributes
-        entity - the businesEntity
-        clazz  - the businesEntity class
+       	backingBean - backing bean associated with entity
         tabLabel - the tab label . If not provided a messages['generic.wfHistory.tabLabel'] will be used
 -->
 
@@ -26,8 +25,9 @@
 	<c:if test="${empty(tabLabel)}">
 		<c:set var="tabLabel" value="${messages['generic.wfHistory.tabLabel']}" />
 	</c:if>
-
-	<c:set var="edit" value="#{false}" />
+	
+	<c:set var="entity" value="#{backingBean.entity}" />
+	<c:set var="clazz" value="#{backingBean.clazz}" />
 	
 	<p:tab id="wfHistoryTab" title="${tabLabel}"
 		   rendered="${!empty(workflowInstanceHistoryBean.getWorkflowInstances(entity, clazz))}">

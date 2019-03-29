@@ -444,7 +444,8 @@
                     </h:panelGroup>
                 </p:tab>
                 <hftl:customFields prefix="quote" backingBean="#{quoteBean}" messagesId=":quoteForm:messages" />
-                <hftl:displayWorkflowsHistory entity="#{quoteBean.entity}" />
+                <!-- <hftl:displayWorkflowsHistory entity="#{quoteBean.entity}" /> -->
+                <hftl:displayGenericWFsHistory backingBean="#{quoteBean}" />
             </p:tabView>
 
             <ui:param name="buttons" value="true" />

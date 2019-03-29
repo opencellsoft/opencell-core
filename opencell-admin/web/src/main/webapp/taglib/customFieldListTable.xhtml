@@ -109,7 +109,7 @@
 					<p:commandButton icon="ui-icon-minus" partialSubmit="true"
 						process="@this"
 						update="#{updateOnAddEdit} #{idPrefix}_customFields_omitFromSubmit"
-						action="#{field.mapValuesForGUI.remove(mapValues)}">
+						action="#{customFieldDataEntryBean.removeValue(field, cft.storageType, mapValues)}">
 						<p:confirm header="#{messages['commons.confirmationHeader']}"
 							message="#{messages['commons.confirmDelete']}"
 							icon="ui-icon-alert" />
@@ -272,7 +272,7 @@
 					rendered="#{edit and !disabled}">
 
 					<p:commandButton icon="ui-icon-minus"
-						action="#{field.matrixValuesForGUI.remove(mapValues)}"
+						action="#{customFieldDataEntryBean.removeValue(field, cft.storageType, mapValues)}"
 						partialSubmit="true" process="@this"
 						update="#{updateOnAddEdit} #{idPrefix}_customFields_omitFromSubmit">
 						<p:confirm header="#{messages['commons.confirmationHeader']}"
