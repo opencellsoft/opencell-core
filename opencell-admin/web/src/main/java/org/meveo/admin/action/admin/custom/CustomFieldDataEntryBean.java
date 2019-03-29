@@ -83,7 +83,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
  * @author akadid abdelmounaim
  * @author Said Ramli
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @lastModifiedVersion 7.0
  */
 @Named
 @ViewScoped
@@ -2089,5 +2089,18 @@ public class CustomFieldDataEntryBean implements Serializable {
             cfv.setDatasetForGUI(dataset);
         }
         return (LazyDataModel) cfv.getDatasetForGUI();
+    }
+
+    /**
+     * Remove value from a map of values.
+     *
+     * @param cfv Map value holder
+     * @param storageType storage ype.
+     * @param mapValues map of values
+     */
+    public void removeValue(CustomFieldValue cfv, CustomFieldStorageTypeEnum storageType, Map<String, Object> mapValues) {
+        List valueList = storageType == CustomFieldStorageTypeEnum.MATRIX ? cfv.getMatrixValuesForGUI() : cfv.getMapValuesForGUI();
+        valueList.remove(mapValues);
+        cfv.setDatasetForGUI(null);
     }
 }
