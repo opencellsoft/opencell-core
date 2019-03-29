@@ -204,7 +204,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             }
 
             template = template.replace("#{REPORT_TITLE}", entity.getCategory() != null ? entity.getCategory() : entity.getCode());
-            template = template.replace("#{REPORT_STYLE}", entity.getStyle());
+            template = template.replace("#{REPORT_STYLE}", entity != null ? entity.getStyle() : "");
             template = template.replace("#{REPORT_TABLE}", table);
             template = template.replace("#{REPORT_DESCRIPTION}", entity.getDescriptionOrCode());
 
