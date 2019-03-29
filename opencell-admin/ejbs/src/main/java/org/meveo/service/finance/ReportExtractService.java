@@ -262,7 +262,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 line = new StringBuilder("");
             }
         } catch (Exception e) {
-            log.error("Cannot write report to file: {}", e.getMessage());
+            log.error("Cannot write report to file: {}", e);
             throw new BusinessException("Cannot write report to file.");
         } finally  {
             IOUtils.closeQuietly(fileWriter);
