@@ -161,10 +161,9 @@
 						</p:fieldset>
 					</p:tab>
 
-					<hftl:displayWorkflowsHistory
-						entity="#{dunningDocumentBean.entity}" />
-					<hftl:displayGenericWFsHistory
-						entity="#{dunningDocumentBean.entity}" />
+					<!-- <hftl:displayWorkflowsHistory
+						entity="#{dunningDocumentBean.entity}" /> -->
+					<hftl:displayGenericWFsHistory backingBean="#{dunningDocumentBean}" />
 				</p:tabView>
 				<ui:param name="buttons" value="true" />
 				<ui:define name="buttons">
