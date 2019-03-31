@@ -1,986 +1,852 @@
 {
-	"entityMapping": {
-		"org.meveo.model.AccountEntity": {
-			"index": "account",
-			"useType": true
-		},
-		"org.meveo.model.Seller": {
-			"index": "seller"
-		},
-		"org.meveo.model.catalog.ProductOffering,org.meveo.model.catalog.ServiceTemplate,org.meveo.model.catalog.PricePlanMatrix,org.meveo.model.catalog.OfferTemplateCategory,org.meveo.model.billing.InvoiceCategory,org.meveo.model.billing.InvoiceSubCategory": {
-			"index": "catalog",
-			"useType": true
-		},
-		"org.meveo.model.catalog.ChargeTemplate": {
-			"index": "catalog",
-			"useType": true,
-			"type": "ChargeTemplate"
-		},
-		"org.meveo.model.billing.Subscription": {
-			"index": "subscription"
-		},
-		"org.meveo.model.billing.ServiceInstance": {
-			"index": "service"
-		},
-		"org.meveo.model.payments.AccountOperation": {
-			"index": "ao"
-		},
-		"org.meveo.model.billing.RatedTransaction": {
-			"index": "rt"
-		},
-		"org.meveo.model.customEntities.CustomEntityInstance": {
-			"index": "#{cetCode}"
-		},
-		"org.meveo.model.customEntities.CustomTableRecord": {
-			"index": "#{cetCode}"
-		},
-		"org.meveo.model.hierarchy.UserHierarchyLevel": {
-			"index": "user"
-		}
-	},
-	"entityFieldMapping": {
-		"default": {
-			"code": "code",
-			"id": "id",
-			"description": "description"
-		},
-		"org.meveo.model.crm.Customer": {
-			"address.address1": "address.address1",
-			"address.address2": "address.address2",
-			"address.address3": "address.address3",
-			"address.zipCode": "address.zipCode",
-			"address.city": "address.city",
-			"address.countryCode": "address.country.countryCode",
-			"address.country": "address.country.description",
-			"address.state": "address.state",
-			"name.fullName": "getName().getFullName()",
-			"name.firstName": "name.firstName",
-			"name.lastName": "name.lastName",
-			"name.title": "name.title.code"
-		},
-		"org.meveo.model.payments.CustomerAccount": {
-			"address.address1": "address.address1",
-			"address.address2": "address.address2",
-			"address.address3": "address.address3",
-			"address.zipCode": "address.zipCode",
-			"address.city": "address.city",
-			"address.countryCode": "address.country.countryCode",
-			"address.country": "address.country.description",
-			"address.state": "address.state",
-			"name.fullName": "getName().getFullName()",
-			"name.firstName": "name.firstName",
-			"name.lastName": "name.lastName",
-			"name.title": "name.title.code",
-			"paymentMethods": "getPaymentMethods()",
-			"parentAccountCode": "getCustomer().getCode()"
-		},
-		"org.meveo.model.billing.BillingAccount": {
-			"address.address1": "address.address1",
-			"address.address2": "address.address2",
-			"address.address3": "address.address3",
-			"address.zipCode": "address.zipCode",
-			"address.city": "address.city",
-			"address.countryCode": "address.country.countryCode",
-			"address.country": "address.country.description",
-			"address.state": "address.state",
-			"name.fullName": "getName().getFullName()",
-			"name.firstName": "name.firstName",
-			"name.lastName": "name.lastName",
-			"name.title": "name.title.code",
-			"parentAccountCode": "getCustomerAccount().getCode()"
-		},
-		"org.meveo.model.UserAccount": {
-			"address.address1": "address.address1",
-			"address.address2": "address.address2",
-			"address.address3": "address.address3",
-			"address.zipCode": "address.zipCode",
-			"address.city": "address.city",
-			"address.countryCode": "address.country.countryCode",
-			"address.country": "address.country.description",
-			"address.state": "address.state",
-			"name.fullName": "getName().getFullName()",
-			"name.firstName": "name.firstName",
-			"name.lastName": "name.lastName",
-			"name.title": "name.title.code",
-			"parentAccountCode": "getBillingAccount().getCode()"
-		},
-		"org.meveo.model.catalog.ChargeTemplate": {
-			"chargeType": "getClass().getSimpleName()"
-		},
-		"org.meveo.model.catalog.ProductOffering": {
-			"name": "name"
-		},
-		"org.meveo.model.catalog.OfferTemplateCategory": {
-			"name": "name"
-		},
-		"org.meveo.model.billing.Subscription": {
-			"userAccount.code": "getUserAccount().getCode()",
-			"userAccount.description": "getUserAccount().getDescription()",
-			"userAccount.billingAccount": "getUserAccount().getBillingAccount().getCode()",
-			"userAccount.email": "getUserAccount().getBillingAccount().getContactInformation().getEmail()",
-			"userAccount.name.fullName": "getUserAccount().getName().getFullName()",
-			"userAccount.name.firstName": "getUserAccount().getName().firstName",
-			"userAccount.name.lastName": "getUserAccount().getName().lastName",
-			"userAccount.name.title": "getUserAccount().getName().title.description",
-			"userAccount.address.address1": "getUserAccount().address.address1",
-			"userAccount.address.address2": "getUserAccount().address.address2",
-			"userAccount.address.address3": "getUserAccount().address.address3",
-			"userAccount.address.zipCode": "getUserAccount().address.zipCode",
-			"userAccount.address.city": "getUserAccount().address.city",
-			"userAccount.address.countryCode": "getUserAccount().address.country.countryCode",
-			"userAccount.address.country": "getUserAccount().address.country.description",
-			"userAccount.address.state": "getUserAccount().address.state",
-			"subscriptionDate": "getSubscriptionDate()",
-			"status": "getStatus()",
-			"statusDate": "statusDate",
-			"offer.code": "getOffer().getCode()",
-			"offer.description": "getOffer().getDescription()",
-			"offer.name": "getOffer().getName()"
-		},
-		"org.meveo.model.billing.ServiceInstance": {
-			"subscription.code": "subscription.code",
-			"subscription.description": "subscription.description",
-			"status": "status",
-			"statusDate": "statusDate",
-			"subscriptionDate": "subscriptionDate",
-			"terminationDate": "terminationDate",
-			"endAgreementDate": "endAgreementDate"
-		},
-		"org.meveo.model.payments.AccountOperation": {
-			"occCode": "occCode",
-			"occDescription": "occDescription",
-			"transactionType": "type",
-			"amount": "amount",
-			"transactionCategory": "transactionCategory",
-			"matchingStatus": "matchingStatus",
-			"reference": "reference",
-			"customerAccount.code": "getCustomerAccount().getCode()",
-			"customerAccount.customer": "getCustomerAccount().getCustomer().getCode()",
-			"customerAccount.name.fullName": "getCustomerAccount().getName().getFullName()",
-			"customerAccount.name.firstName": "getCustomerAccount().getName().firstName",
-			"customerAccount.name.lastName": "getCustomerAccount().getName().lastName",
-			"customerAccount.name.title": "getCustomerAccount().getName().title.description",
-			"customerAccount.description": "getCustomerAccount().getDescription()"
-		},
-		"org.meveo.model.billing.RatedTransaction": {
-			"billingRun": "getBillingRun().getId()",
-			"billingAccount.code": "getBillingAccount().getCode()",
-			"billingAccount.name.fullName": "getBillingAccount().getName().getFullName()",
-			"billingAccount.name.firstName": "getBillingAccount().getName().firstName",
-			"billingAccount.name.lastName": "getBillingAccount().getName().lastName",
-			"billingAccount.name.title": "getBillingAccount().getName().title.description",
-			"billingAccount.description": "getBillingAccount().getDescription()",
-			"invoiceSubCategory.code": "getInvoiceSubCategory().getCode()",
-			"invoiceSubCategory.description": "getInvoiceSubCategory().getDescription()",
-			"invoice": "getInvoice().getInvoiceNumber()",
-			"status": "status",
-			"usageDate": "usageDate",
-			"amountWithoutTax": "amountWithoutTax",
-			"amountTax": "amountTax",
-			"amountWithTax": "amountWithTax"
-		}
-	},
-	"customFieldTemplates": {
-		"#{cft.fieldType == 'DATE' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
-			"properties": {
-				"<fieldName>": {
-					"type": "date",
-					"index": "<indexValue>"
-				}
-			}
-		},
-		"#{cft.fieldType == 'LONG' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
-			"properties": {
-				"<fieldName>": {
-					"type": "long",
-					"index": "<indexValue>"
-				}
-			}
-		},
-		"#{cft.fieldType == 'DOUBLE' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
-			"properties": {
-				"<fieldName>": {
-					"type": "double",
-					"index": "<indexValue>"
-				}
-			}
-		},
-		"#{cft.storageType == 'MAP' or cft.storageType == 'MATRIX'}": {
-			"properties": {
-				"<fieldName>": {
-					"type": "text",
-					"index": "<indexValue>"
-				}
-			}
-		},
-		"#{cft.fieldType != 'DATE' and cft.fieldType != 'LONG' and cft.fieldType != 'DOUBLE'}": {
-			"properties": {
-				"<fieldName>": {
-					"type": "<keywordOrText>",
-					"index": "<indexValue>"
-				}
-			}
-		}
-	},
-	"dataModel": {
-		"<provider>_subscription_v1": {
-			"settings": {
-				"analysis": {
-					"analyzer": {
-						"default": {
-							"tokenizer": "standard",
-							"filter": [
-								"lowercase",
-								"asciifolding"
-							]
-						}
-					}
-				},
-				"index": {
-					"number_of_shards": "5",
-					"number_of_replicas": "1"
-				}
-			},
-			"aliases": {
-				"<provider>_subscription": {
-					
-				}
-			},
-			"mappings": {
-				"_doc": {
-					"properties": {
-						"id": {
-							"type": "long"
-						},
-						"code": {
-							"type": "keyword"
-						},
-						"description": {
-							"type": "text",
-							"fields": {
-								"sort": {
-									"type": "keyword",
-									"ignore_above": 500
-								}
-							}
-						},
-						"userAccount": {
-							"properties": {
-								"code": {
-									"type": "keyword"
-								},
-								"description": {
-									"type": "text",
-									"fields": {
-										"sort": {
-											"type": "keyword",
-											"ignore_above": 500
-										}
-									}
-								},
-								"email": {
-									"type": "keyword"
-								},
-								"name": {
-									"properties": {
-										"fullName": {
-											"type": "keyword"
-										},
-										"firstName": {
-											"type": "text"
-										},
-										"lastName": {
-											"type": "text"
-										},
-										"title": {
-											"type": "keyword"
-										}
-									}
-								},
-								"address": {
-									"properties": {
-										"address1": {
-											"type": "text"
-										},
-										"address2": {
-											"type": "text"
-										},
-										"address3": {
-											"type": "text"
-										},
-										"city": {
-											"type": "keyword"
-										},
-										"countryCode": {
-											"type": "keyword"
-										},
-										"country": {
-											"type": "keyword"
-										},
-										"zipCode": {
-											"type": "keyword"
-										},
-										"state": {
-											"type": "keyword"
-										}
-									}
-								}
-							}
-						},
-						"offer": {
-							"properties": {
-								"code": {
-									"type": "keyword"
-								},
-								"description": {
-									"type": "text",
-									"fields": {
-										"sort": {
-											"type": "keyword",
-											"ignore_above": 500
-										}
-									}
-								},
-								"name": {
-									"type": "keyword"
-								}
-							}
-						},
-						"status": {
-							"type": "keyword"
-						},
-						"statusDate": {
-							"type": "date"
-						},
-						"subscriptionDate": {
-							"type": "date"
-						}
-					}
-				}
-			}
-		},
-		"<provider>_service_v1": {
-			"settings": {
-				"analysis": {
-					"analyzer": {
-						"default": {
-							"tokenizer": "standard",
-							"filter": [
-								"lowercase",
-								"asciifolding"
-							]
-						}
-					}
-				},
-				"index": {
-					"number_of_shards": "5",
-					"number_of_replicas": "1"
-				}
-			},
-			"aliases": {
-				"<provider>_service": {
-					
-				}
-			},
-			"mappings": {
-				"_doc": {
-					"properties": {
-						"id": {
-							"type": "long"
-						},
-						"code": {
-							"type": "keyword"
-						},
-						"description": {
-							"type": "text",
-							"fields": {
-								"sort": {
-									"type": "keyword",
-									"ignore_above": 500
-								}
-							}
-						},
-						"subscription": {
-							"properties": {
-								"code": {
-									"type": "keyword"
-								},
-								"description": {
-									"type": "text",
-									"fields": {
-										"sort": {
-											"type": "keyword",
-											"ignore_above": 500
-										}
-									}
-								}
-							}
-						},
-						"status": {
-							"type": "keyword"
-						},
-						"statusDate": {
-							"type": "date"
-						},
-						"subscriptionDate": {
-							"type": "date"
-						},
-						"terminationDate": {
-							"type": "date"
-						},
-						"endAgreementDate": {
-							"type": "date"
-						}
-					}
-				}
-			}
-		},
-		"<provider>_user_v1": {
-			"settings": {
-				"analysis": {
-					"analyzer": {
-						"default": {
-							"tokenizer": "standard",
-							"filter": [
-								"lowercase",
-								"asciifolding"
-							]
-						}
-					}
-				},
-				"index": {
-					"number_of_shards": "5",
-					"number_of_replicas": "1"
-				}
-			},
-			"aliases": {
-				"<provider>_user": {
-					
-				}
-			},
-			"mappings": {
-				"_doc": {
-					"properties": {
-						"id": {
-							"type": "long"
-						},
-						"code": {
-							"type": "keyword"
-						},
-						"description": {
-							"type": "text",
-							"fields": {
-								"sort": {
-									"type": "keyword",
-									"ignore_above": 500
-								}
-							}
-						}
-					}
-				}
-			}
-		},
-		"<provider>_catalog_v1": {
-			"settings": {
-				"analysis": {
-					"analyzer": {
-						"default": {
-							"tokenizer": "standard",
-							"filter": [
-								"lowercase",
-								"asciifolding"
-							]
-						}
-					}
-				},
-				"index": {
-					"number_of_shards": "5",
-					"number_of_replicas": "1"
-				}
-			},
-			"aliases": {
-				"<provider>_catalog": {
-					
-				}
-			},
-			"mappings": {
-				"_doc": {
-					"properties": {
-						"entityType": {
-							"type": "keyword"
-						},
-						"id": {
-							"type": "long"
-						},
-						"code": {
-							"type": "keyword"
-						},
-						"description": {
-							"type": "text",
-							"fields": {
-								"sort": {
-									"type": "keyword",
-									"ignore_above": 500
-								}
-							}
-						},
-						"name": {
-							"type": "text"
-						},
-						"chargeType": {
-							"type": "keyword"
-						}
-					}
-				}
-			}
-		},
-		"<provider>_account_v1": {
-			"settings": {
-				"analysis": {
-					"analyzer": {
-						"default": {
-							"tokenizer": "standard",
-							"filter": [
-								"lowercase",
-								"asciifolding"
-							]
-						}
-					}
-				},
-				"index": {
-					"number_of_shards": "5",
-					"number_of_replicas": "1"
-				}
-			},
-			"aliases": {
-				"<provider>_account": {
-					
-				}
-			},
-			"mappings": {
-				"_doc": {
-					"properties": {
-						"entityType": {
-							"type": "keyword"
-						},
-						"id": {
-							"type": "long"
-						},
-						"code": {
-							"type": "keyword"
-						},
-						"description": {
-							"type": "text",
-							"fields": {
-								"sort": {
-									"type": "keyword",
-									"ignore_above": 500
-								}
-							}
-						},
-						"parentAccountCode": {
-							"type": "keyword"
-						},
-						"address": {
-							"properties": {
-								"address1": {
-									"type": "text"
-								},
-								"address2": {
-									"type": "text"
-								},
-								"address3": {
-									"type": "text"
-								},
-								"city": {
-									"type": "keyword"
-								},
-								"countryCode": {
-									"type": "keyword"
-								},
-								"country": {
-									"type": "keyword"
-								},
-								"zipCode": {
-									"type": "keyword"
-								},
-								"state": {
-									"type": "keyword"
-								}
-							}
-						},
-						"name": {
-							"properties": {
-								"fullName": {
-									"type": "keyword"
-								},
-								"firstName": {
-									"type": "text"
-								},
-								"lastName": {
-									"type": "text"
-								},
-								"title": {
-									"type": "keyword"
-								}
-							}
-						}
-					}
-				}
-			}
-		},
-		"<provider>_seller_v1": {
-			"settings": {
-				"analysis": {
-					"analyzer": {
-						"default": {
-							"tokenizer": "standard",
-							"filter": [
-								"lowercase",
-								"asciifolding"
-							]
-						}
-					}
-				},
-				"index": {
-					"number_of_shards": "5",
-					"number_of_replicas": "1"
-				}
-			},
-			"aliases": {
-				"<provider>_seller": {
-					
-				}
-			},
-			"mappings": {
-				"_doc": {
-					"properties": {
-						"id": {
-							"type": "long"
-						},
-						"code": {
-							"type": "keyword"
-						},
-						"description": {
-							"type": "text",
-							"fields": {
-								"sort": {
-									"type": "keyword",
-									"ignore_above": 500
-								}
-							}
-						}
-					}
-				}
-			}
-		},
-		"<provider>_ao_v1": {
-			"settings": {
-				"analysis": {
-					"analyzer": {
-						"default": {
-							"tokenizer": "standard",
-							"filter": [
-								"lowercase",
-								"asciifolding"
-							]
-						}
-					}
-				},
-				"index": {
-					"number_of_shards": "5",
-					"number_of_replicas": "1"
-				}
-			},
-			"aliases": {
-				"<provider>_ao": {
-					
-				}
-			},
-			"mappings": {
-				"_doc": {
-					"properties": {
-						"id": {
-							"type": "long"
-						},
-						"code": {
-							"type": "keyword"
-						},
-						"description": {
-							"type": "text",
-							"fields": {
-								"sort": {
-									"type": "keyword",
-									"ignore_above": 500
-								}
-							}
-						},
-						"occCode": {
-							"type": "keyword"
-						},
-						"occDescription": {
-							"type": "text",
-							"fields": {
-								"sort": {
-									"type": "keyword",
-									"ignore_above": 500
-								}
-							}
-						},
-						"transactionCategory": {
-							"type": "keyword"
-						},
-						"tranactionType": {
-							"type": "keyword"
-						},
-						"amount": {
-							"type": "double"
-						},
-						"matchingStatus": {
-							"type": "keyword"
-						},
-						"reference": {
-							"type": "keyword"
-						},
-						"customerAccount": {
-							"properties": {
-								"code": {
-									"type": "keyword"
-								},
-								"description": {
-									"type": "text",
-									"fields": {
-										"sort": {
-											"type": "keyword",
-											"ignore_above": 500
-										}
-									}
-								},
-								"customer": {
-									"type": "keyword"
-								},
-								"name": {
-									"properties": {
-										"fullName": {
-											"type": "keyword"
-										},
-										"firstName": {
-											"type": "text"
-										},
-										"lastName": {
-											"type": "text"
-										},
-										"title": {
-											"type": "keyword"
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		},
-		"<provider>_rt_v1": {
-			"settings": {
-				"analysis": {
-					"analyzer": {
-						"default": {
-							"tokenizer": "standard",
-							"filter": [
-								"lowercase",
-								"asciifolding"
-							]
-						}
-					}
-				},
-				"index": {
-					"number_of_shards": "5",
-					"number_of_replicas": "1"
-				}
-			},
-			"aliases": {
-				"<provider>_rt": {
-					
-				}
-			},
-			"mappings": {
-				"_doc": {
-					"properties": {
-						"id": {
-							"type": "long"
-						},
-						"code": {
-							"type": "keyword"
-						},
-						"description": {
-							"type": "text",
-							"fields": {
-								"sort": {
-									"type": "keyword",
-									"ignore_above": 500
-								}
-							}
-						},
-						"billingRun": {
-							"type": "keyword"
-						},
-						"invoice": {
-							"type": "keyword"
-						},
-						"status": {
-							"type": "keyword"
-						},
-						"amountWithoutTax": {
-							"type": "double"
-						},
-						"amountTax": {
-							"type": "double"
-						},
-						"amountWithTax": {
-							"type": "double"
-						},
-						"usageDate": {
-							"type": "date"
-						},
-						"invoiceSubCategory": {
-							"properties": {
-								"code": {
-									"type": "keyword"
-								},
-								"description": {
-									"type": "text",
-									"fields": {
-										"sort": {
-											"type": "keyword",
-											"ignore_above": 500
-										}
-									}
-								}
-							}
-						},
-						"billingAccount": {
-							"properties": {
-								"code": {
-									"type": "keyword"
-								},
-								"description": {
-									"type": "text",
-									"fields": {
-										"sort": {
-											"type": "keyword",
-											"ignore_above": 500
-										}
-									}
-								},
-								"name": {
-									"properties": {
-										"fullName": {
-											"type": "keyword"
-										},
-										"firstName": {
-											"type": "text"
-										},
-										"lastName": {
-											"type": "text"
-										},
-										"title": {
-											"type": "keyword"
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	},
-	"cetTemplates": {
-		"cei": {
-			"<indexName>_v1": {
-				"settings": {
-					"analysis": {
-						"analyzer": {
-							"default": {
-								"tokenizer": "standard",
-								"filter": [
-									"lowercase",
-									"asciifolding"
-								]
-							}
-						}
-					},
-					"index": {
-						"number_of_shards": "5",
-						"number_of_replicas": "1"
-					}
-				},
-				"aliases": {
-					"<indexName>": {
-						
-					}
-				},
-				"mappings": {
-					"_doc": {
-						"properties": {
-							"entityType": {
-								"type": "keyword"
-							},
-							"id": {
-								"type": "long"
-							},
-							"code": {
-								"type": "keyword"
-							},
-							"description": {
-								"type": "text",
-								"fields": {
-									"sort": {
-										"type": "keyword",
-										"ignore_above": 500
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		},
-		"customTable": {
-			"<indexName>_v1": {
-				"settings": {
-					"analysis": {
-						"analyzer": {
-							"default": {
-								"tokenizer": "standard",
-								"filter": [
-									"lowercase",
-									"asciifolding"
-								]
-							}
-						}
-					},
-					"index": {
-						"number_of_shards": "5",
-						"number_of_replicas": "1"
-					}
-				},
-				"aliases": {
-					"<indexName>": {
-						
-					}
-				},
-				"mappings": {
-					"_doc": {
-						"properties": {
-							"id": {
-								"type": "long"
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+    "entityMapping": {
+        "org.meveo.model.AccountEntity": {
+            "index": "account",
+            "useType": true
+        },
+        "org.meveo.model.admin.Seller": {
+            "index": "seller"
+        },
+        "org.meveo.model.catalog.ProductOffering,org.meveo.model.catalog.ServiceTemplate,org.meveo.model.catalog.PricePlanMatrix,org.meveo.model.catalog.OfferTemplateCategory,org.meveo.model.billing.InvoiceCategory,org.meveo.model.billing.InvoiceSubCategory": {
+            "index": "catalog",
+            "useType": true
+        },
+        "org.meveo.model.catalog.ChargeTemplate": {
+            "index": "catalog",
+            "type": "ChargeTemplate"
+        },
+        "org.meveo.model.billing.Subscription": {
+            "index": "subscription"
+        },
+        "org.meveo.model.billing.ServiceInstance": {
+            "index": "service"
+        },
+        "org.meveo.model.payments.AccountOperation": {
+            "index": "ao",
+            "useType": true
+        },
+        "org.meveo.model.customEntities.CustomEntityInstance": {
+            "index": "#{cetCode}"
+        },
+        "org.meveo.model.customEntities.CustomTableRecord": {
+            "index": "#{cetCode}"
+        },
+        "org.meveo.model.hierarchy.UserHierarchyLevel": {
+            "index": "user"
+        }
+    },
+    "entityFieldMapping": {
+        "default": {
+            "code": "code",
+            "id": "id",
+            "description": "description"
+        },
+        "org.meveo.model.crm.Customer": {
+            "address.address1": "address.address1",
+            "address.address2": "address.address2",
+            "address.address3": "address.address3",
+            "address.zipCode": "address.zipCode",
+            "address.city": "address.city",
+            "address.countryCode": "address.country.countryCode",
+            "address.country": "address.country.description",
+            "address.state": "address.state",
+            "name.fullName": "getName().getFullName()",
+            "name.firstName": "name.firstName",
+            "name.lastName": "name.lastName",
+            "name.title": "name.title.code"
+        },
+        "org.meveo.model.payments.CustomerAccount": {
+            "address.address1": "address.address1",
+            "address.address2": "address.address2",
+            "address.address3": "address.address3",
+            "address.zipCode": "address.zipCode",
+            "address.city": "address.city",
+            "address.countryCode": "address.country.countryCode",
+            "address.country": "address.country.description",
+            "address.state": "address.state",
+            "name.fullName": "getName().getFullName()",
+            "name.firstName": "name.firstName",
+            "name.lastName": "name.lastName",
+            "name.title": "name.title.code",
+            "paymentMethods": "getPaymentMethods()",
+            "parentAccountCode": "getCustomer().getCode()"
+        },
+        "org.meveo.model.billing.BillingAccount": {
+            "address.address1": "address.address1",
+            "address.address2": "address.address2",
+            "address.address3": "address.address3",
+            "address.zipCode": "address.zipCode",
+            "address.city": "address.city",
+            "address.countryCode": "address.country.countryCode",
+            "address.country": "address.country.description",
+            "address.state": "address.state",
+            "name.fullName": "getName().getFullName()",
+            "name.firstName": "name.firstName",
+            "name.lastName": "name.lastName",
+            "name.title": "name.title.code",
+            "parentAccountCode": "getCustomerAccount().getCode()"
+        },
+        "org.meveo.model.billing.UserAccount": {
+            "address.address1": "address.address1",
+            "address.address2": "address.address2",
+            "address.address3": "address.address3",
+            "address.zipCode": "address.zipCode",
+            "address.city": "address.city",
+            "address.countryCode": "address.country.countryCode",
+            "address.country": "address.country.description",
+            "address.state": "address.state",
+            "name.fullName": "getName().getFullName()",
+            "name.firstName": "name.firstName",
+            "name.lastName": "name.lastName",
+            "name.title": "name.title.code",
+            "parentAccountCode": "getBillingAccount().getCode()"
+        },
+        "org.meveo.model.catalog.ChargeTemplate": {
+            "chargeType": "getClass().getSimpleName()"
+        },
+        "org.meveo.model.catalog.ProductOffering": {
+            "name": "name"
+        },
+        "org.meveo.model.catalog.OfferTemplateCategory": {
+            "name": "name"
+        },
+        "org.meveo.model.billing.Subscription": {
+            "userAccount.code": "getUserAccount().getCode()",
+            "userAccount.description": "getUserAccount().getDescription()",
+            "userAccount.billingAccount": "getUserAccount().getBillingAccount().getCode()",
+            "userAccount.email": "getUserAccount().getBillingAccount().getContactInformation().getEmail()",
+            "userAccount.name.fullName": "getUserAccount().getName().getFullName()",
+            "userAccount.name.firstName": "getUserAccount().getName().firstName",
+            "userAccount.name.lastName": "getUserAccount().getName().lastName",
+            "userAccount.name.title": "getUserAccount().getName().title.description",
+            "userAccount.address.address1": "getUserAccount().address.address1",
+            "userAccount.address.address2": "getUserAccount().address.address2",
+            "userAccount.address.address3": "getUserAccount().address.address3",
+            "userAccount.address.zipCode": "getUserAccount().address.zipCode",
+            "userAccount.address.city": "getUserAccount().address.city",
+            "userAccount.address.countryCode": "getUserAccount().address.country.countryCode",
+            "userAccount.address.country": "getUserAccount().address.country.description",
+            "userAccount.address.state": "getUserAccount().address.state",
+            "subscriptionDate": "getSubscriptionDate()",
+            "status": "getStatus()",
+            "statusDate": "statusDate",
+            "offer.code": "getOffer().getCode()",
+            "offer.description": "getOffer().getDescription()",
+            "offer.name": "getOffer().getName()"
+        },
+        "org.meveo.model.billing.ServiceInstance": {
+            "subscription.code": "subscription.code",
+            "subscription.description": "subscription.description",
+            "status": "status",
+            "statusDate": "statusDate",
+            "subscriptionDate": "subscriptionDate",
+            "terminationDate": "terminationDate",
+            "endAgreementDate": "endAgreementDate"
+        },
+        "org.meveo.model.payments.AccountOperation": {
+            "occCode": "occCode",
+            "occDescription": "occDescription",
+            "transactionType": "type",
+            "amount": "amount",
+            "transactionCategory": "transactionCategory",
+            "matchingStatus": "matchingStatus",
+            "reference": "reference",
+            "customerAccount.code": "getCustomerAccount().getCode()",
+            "customerAccount.customer": "getCustomerAccount().getCustomer().getCode()",
+            "customerAccount.name.fullName": "getCustomerAccount().getName().getFullName()",
+            "customerAccount.name.firstName": "getCustomerAccount().getName().firstName",
+            "customerAccount.name.lastName": "getCustomerAccount().getName().lastName",
+            "customerAccount.name.title": "getCustomerAccount().getName().title.description",
+            "customerAccount.description": "getCustomerAccount().getDescription()"
+        }
+    },
+    "customFieldTemplates": {
+        "#{cft.fieldType == 'DATE' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
+            "properties": {
+                "<fieldName>": {
+                    "type": "date",
+                    "index": "<indexValue>"
+                }
+            }
+        },
+        "#{cft.fieldType == 'LONG' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
+            "properties": {
+                "<fieldName>": {
+                    "type": "long",
+                    "index": "<indexValue>"
+                }
+            }
+        },
+        "#{cft.fieldType == 'DOUBLE' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
+            "properties": {
+                "<fieldName>": {
+                    "type": "double",
+                    "index": "<indexValue>"
+                }
+            }
+        },
+        "#{cft.storageType == 'MAP' or cft.storageType == 'MATRIX'}": {
+            "properties": {
+                "<fieldName>": {
+                    "type": "text",
+                    "index": "<indexValue>"
+                }
+            }
+        },
+        "#{cft.fieldType != 'DATE' and cft.fieldType != 'LONG' and cft.fieldType != 'DOUBLE'}": {
+            "properties": {
+                "<fieldName>": {
+                    "type": "<keywordOrText>",
+                    "index": "<indexValue>"
+                }
+            }
+        }
+    },
+    "dataModel": {
+        "<provider>_subscription_v1": {
+            "settings": {
+                "analysis": {
+                    "analyzer": {
+                        "default": {
+                            "tokenizer": "standard",
+                            "filter": [
+                                "lowercase",
+                                "asciifolding"
+                            ]
+                        }
+                    }
+                },
+                "index": {
+                    "number_of_shards": "5",
+                    "number_of_replicas": "1"
+                }
+            },
+            "aliases": {
+                "<provider>_subscription": {
+                    
+                }
+            },
+            "mappings": {
+                "_doc": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "code": {
+                            "type": "keyword"
+                        },
+                        "description": {
+                            "type": "text",
+                            "fields": {
+                                "sort": {
+                                    "type": "keyword",
+                                    "ignore_above": 500
+                                }
+                            }
+                        },
+                        "userAccount": {
+                            "properties": {
+                                "code": {
+                                    "type": "keyword"
+                                },
+                                "description": {
+                                    "type": "text",
+                                    "fields": {
+                                        "sort": {
+                                            "type": "keyword",
+                                            "ignore_above": 500
+                                        }
+                                    }
+                                },
+                                "email": {
+                                    "type": "keyword"
+                                },
+                                "name": {
+                                    "properties": {
+                                        "fullName": {
+                                            "type": "keyword"
+                                        },
+                                        "firstName": {
+                                            "type": "text"
+                                        },
+                                        "lastName": {
+                                            "type": "text"
+                                        },
+                                        "title": {
+                                            "type": "keyword"
+                                        }
+                                    }
+                                },
+                                "address": {
+                                    "properties": {
+                                        "address1": {
+                                            "type": "text"
+                                        },
+                                        "address2": {
+                                            "type": "text"
+                                        },
+                                        "address3": {
+                                            "type": "text"
+                                        },
+                                        "city": {
+                                            "type": "keyword"
+                                        },
+                                        "countryCode": {
+                                            "type": "keyword"
+                                        },
+                                        "country": {
+                                            "type": "keyword"
+                                        },
+                                        "zipCode": {
+                                            "type": "keyword"
+                                        },
+                                        "state": {
+                                            "type": "keyword"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "offer": {
+                            "properties": {
+                                "code": {
+                                    "type": "keyword"
+                                },
+                                "description": {
+                                    "type": "text",
+                                    "fields": {
+                                        "sort": {
+                                            "type": "keyword",
+                                            "ignore_above": 500
+                                        }
+                                    }
+                                },
+                                "name": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "status": {
+                            "type": "keyword"
+                        },
+                        "statusDate": {
+                            "type": "date"
+                        },
+                        "subscriptionDate": {
+                            "type": "date"
+                        }
+                    }
+                }
+            }
+        },
+        "<provider>_service_v1": {
+            "settings": {
+                "analysis": {
+                    "analyzer": {
+                        "default": {
+                            "tokenizer": "standard",
+                            "filter": [
+                                "lowercase",
+                                "asciifolding"
+                            ]
+                        }
+                    }
+                },
+                "index": {
+                    "number_of_shards": "5",
+                    "number_of_replicas": "1"
+                }
+            },
+            "aliases": {
+                "<provider>_service": {
+                    
+                }
+            },
+            "mappings": {
+                "_doc": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "code": {
+                            "type": "keyword"
+                        },
+                        "description": {
+                            "type": "text",
+                            "fields": {
+                                "sort": {
+                                    "type": "keyword",
+                                    "ignore_above": 500
+                                }
+                            }
+                        },
+                        "subscription": {
+                            "properties": {
+                                "code": {
+                                    "type": "keyword"
+                                },
+                                "description": {
+                                    "type": "text",
+                                    "fields": {
+                                        "sort": {
+                                            "type": "keyword",
+                                            "ignore_above": 500
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "status": {
+                            "type": "keyword"
+                        },
+                        "statusDate": {
+                            "type": "date"
+                        },
+                        "subscriptionDate": {
+                            "type": "date"
+                        },
+                        "terminationDate": {
+                            "type": "date"
+                        },
+                        "endAgreementDate": {
+                            "type": "date"
+                        }
+                    }
+                }
+            }
+        },
+        "<provider>_user_v1": {
+            "settings": {
+                "analysis": {
+                    "analyzer": {
+                        "default": {
+                            "tokenizer": "standard",
+                            "filter": [
+                                "lowercase",
+                                "asciifolding"
+                            ]
+                        }
+                    }
+                },
+                "index": {
+                    "number_of_shards": "5",
+                    "number_of_replicas": "1"
+                }
+            },
+            "aliases": {
+                "<provider>_user": {
+                    
+                }
+            },
+            "mappings": {
+                "_doc": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "code": {
+                            "type": "keyword"
+                        },
+                        "description": {
+                            "type": "text",
+                            "fields": {
+                                "sort": {
+                                    "type": "keyword",
+                                    "ignore_above": 500
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "<provider>_catalog_v1": {
+            "settings": {
+                "analysis": {
+                    "analyzer": {
+                        "default": {
+                            "tokenizer": "standard",
+                            "filter": [
+                                "lowercase",
+                                "asciifolding"
+                            ]
+                        }
+                    }
+                },
+                "index": {
+                    "number_of_shards": "5",
+                    "number_of_replicas": "1"
+                }
+            },
+            "aliases": {
+                "<provider>_catalog": {
+                    
+                }
+            },
+            "mappings": {
+                "_doc": {
+                    "properties": {
+                        "entityType": {
+                            "type": "keyword"
+                        },
+                        "id": {
+                            "type": "long"
+                        },
+                        "code": {
+                            "type": "keyword"
+                        },
+                        "description": {
+                            "type": "text",
+                            "fields": {
+                                "sort": {
+                                    "type": "keyword",
+                                    "ignore_above": 500
+                                }
+                            }
+                        },
+                        "name": {
+                            "type": "text"
+                        },
+                        "chargeType": {
+                            "type": "keyword"
+                        }
+                    }
+                }
+            }
+        },
+        "<provider>_account_v1": {
+            "settings": {
+                "analysis": {
+                    "analyzer": {
+                        "default": {
+                            "tokenizer": "standard",
+                            "filter": [
+                                "lowercase",
+                                "asciifolding"
+                            ]
+                        }
+                    }
+                },
+                "index": {
+                    "number_of_shards": "5",
+                    "number_of_replicas": "1"
+                }
+            },
+            "aliases": {
+                "<provider>_account": {
+                    
+                }
+            },
+            "mappings": {
+                "_doc": {
+                    "properties": {
+                        "entityType": {
+                            "type": "keyword"
+                        },
+                        "id": {
+                            "type": "long"
+                        },
+                        "code": {
+                            "type": "keyword"
+                        },
+                        "description": {
+                            "type": "text",
+                            "fields": {
+                                "sort": {
+                                    "type": "keyword",
+                                    "ignore_above": 500
+                                }
+                            }
+                        },
+                        "parentAccountCode": {
+                            "type": "keyword"
+                        },
+                        "address": {
+                            "properties": {
+                                "address1": {
+                                    "type": "text"
+                                },
+                                "address2": {
+                                    "type": "text"
+                                },
+                                "address3": {
+                                    "type": "text"
+                                },
+                                "city": {
+                                    "type": "keyword"
+                                },
+                                "countryCode": {
+                                    "type": "keyword"
+                                },
+                                "country": {
+                                    "type": "keyword"
+                                },
+                                "zipCode": {
+                                    "type": "keyword"
+                                },
+                                "state": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "name": {
+                            "properties": {
+                                "fullName": {
+                                    "type": "keyword"
+                                },
+                                "firstName": {
+                                    "type": "text"
+                                },
+                                "lastName": {
+                                    "type": "text"
+                                },
+                                "title": {
+                                    "type": "keyword"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "<provider>_seller_v1": {
+            "settings": {
+                "analysis": {
+                    "analyzer": {
+                        "default": {
+                            "tokenizer": "standard",
+                            "filter": [
+                                "lowercase",
+                                "asciifolding"
+                            ]
+                        }
+                    }
+                },
+                "index": {
+                    "number_of_shards": "5",
+                    "number_of_replicas": "1"
+                }
+            },
+            "aliases": {
+                "<provider>_seller": {
+                    
+                }
+            },
+            "mappings": {
+                "_doc": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "code": {
+                            "type": "keyword"
+                        },
+                        "description": {
+                            "type": "text",
+                            "fields": {
+                                "sort": {
+                                    "type": "keyword",
+                                    "ignore_above": 500
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "<provider>_ao_v1": {
+            "settings": {
+                "analysis": {
+                    "analyzer": {
+                        "default": {
+                            "tokenizer": "standard",
+                            "filter": [
+                                "lowercase",
+                                "asciifolding"
+                            ]
+                        }
+                    }
+                },
+                "index": {
+                    "number_of_shards": "5",
+                    "number_of_replicas": "1"
+                }
+            },
+            "aliases": {
+                "<provider>_ao": {
+                    
+                }
+            },
+            "mappings": {
+                "_doc": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "code": {
+                            "type": "keyword"
+                        },
+                        "description": {
+                            "type": "text",
+                            "fields": {
+                                "sort": {
+                                    "type": "keyword",
+                                    "ignore_above": 500
+                                }
+                            }
+                        },
+                        "occCode": {
+                            "type": "keyword"
+                        },
+                        "occDescription": {
+                            "type": "text",
+                            "fields": {
+                                "sort": {
+                                    "type": "keyword",
+                                    "ignore_above": 500
+                                }
+                            }
+                        },
+                        "transactionCategory": {
+                            "type": "keyword"
+                        },
+                        "tranactionType": {
+                            "type": "keyword"
+                        },
+                        "amount": {
+                            "type": "double"
+                        },
+                        "matchingStatus": {
+                            "type": "keyword"
+                        },
+                        "reference": {
+                            "type": "keyword"
+                        },
+                        "customerAccount": {
+                            "properties": {
+                                "code": {
+                                    "type": "keyword"
+                                },
+                                "description": {
+                                    "type": "text",
+                                    "fields": {
+                                        "sort": {
+                                            "type": "keyword",
+                                            "ignore_above": 500
+                                        }
+                                    }
+                                },
+                                "customer": {
+                                    "type": "keyword"
+                                },
+                                "name": {
+                                    "properties": {
+                                        "fullName": {
+                                            "type": "keyword"
+                                        },
+                                        "firstName": {
+                                            "type": "text"
+                                        },
+                                        "lastName": {
+                                            "type": "text"
+                                        },
+                                        "title": {
+                                            "type": "keyword"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "cetTemplates": {
+        "cei": {
+            "<indexName>_v1": {
+                "settings": {
+                    "analysis": {
+                        "analyzer": {
+                            "default": {
+                                "tokenizer": "standard",
+                                "filter": [
+                                    "lowercase",
+                                    "asciifolding"
+                                ]
+                            }
+                        }
+                    },
+                    "index": {
+                        "number_of_shards": "5",
+                        "number_of_replicas": "1"
+                    }
+                },
+                "aliases": {
+                    "<indexName>": {
+                        
+                    }
+                },
+                "mappings": {
+                    "_doc": {
+                        "properties": {
+                            "entityType": {
+                                "type": "keyword"
+                            },
+                            "id": {
+                                "type": "long"
+                            },
+                            "code": {
+                                "type": "keyword"
+                            },
+                            "description": {
+                                "type": "text",
+                                "fields": {
+                                    "sort": {
+                                        "type": "keyword",
+                                        "ignore_above": 500
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "customTable": {
+            "<indexName>_v1": {
+                "settings": {
+                    "analysis": {
+                        "analyzer": {
+                            "default": {
+                                "tokenizer": "standard",
+                                "filter": [
+                                    "lowercase",
+                                    "asciifolding"
+                                ]
+                            }
+                        }
+                    },
+                    "index": {
+                        "number_of_shards": "5",
+                        "number_of_replicas": "1"
+                    }
+                },
+                "aliases": {
+                    "<indexName>": {
+                        
+                    }
+                },
+                "mappings": {
+                    "_doc": {
+                        "properties": {
+                            "id": {
+                                "type": "long"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
