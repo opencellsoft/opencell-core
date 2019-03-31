@@ -572,7 +572,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 }
             }
 
-            invoiceService.commit();
             invoiceCopy = invoiceService.generateXmlAndPdfInvoice(invoiceCopy, true);
             draftGenerated = true;
 
@@ -591,9 +590,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             }
 
             invoiceService.cancelInvoice(invoiceCopy);
-            invoiceService.commit();
 
         } catch (Exception e) {
+            log.error("Error generating xml / pdf invoice=" + e.getMessage(), e);
             messages.error("Error generating xml / pdf invoice=" + e.getMessage());
         }
 
