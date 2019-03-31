@@ -85,6 +85,10 @@
                     oncomplete="updateIndexSummary()" rendered="#{indexingBean.enabled and (indexingBean.reindexingFuture ==null or indexingBean.reindexingFuture.isDone())}">
                     <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['indexing.confirmReindex']}" icon="ui-icon-alert" />
                 </p:commandButton>
+                <p:commandButton action="#{indexingBean.cleanAndReindexAll}" value="#{messages['indexing.reindexAll']}" process="@this" update=":reindexForm:messages"
+                    oncomplete="updateIndexSummary()" rendered="#{indexingBean.enabled and currentUser.providerCode == null and (indexingBean.reindexingFuture ==null or indexingBean.reindexingFuture.isDone())}">
+                    <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['indexing.confirmReindex']}" icon="ui-icon-alert" />
+                </p:commandButton>                
                 <p:commandButton value="#{messages['commons.refresh']}" update="messages reindexSummary"
                     rendered="#{indexingBean.reindexingFuture !=null and !indexingBean.reindexingFuture.isDone()}" />
             </ui:define>

@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -49,6 +51,7 @@ import org.elasticsearch.rest.RestStatus;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.proxy.HibernateProxy;
+import org.infinispan.Cache;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
@@ -62,22 +65,24 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.customEntities.CustomTableRecord;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.NativePersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
-import org.meveo.util.ApplicationProvider;
 import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
 
@@ -118,14 +123,80 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     private Logger log;
 
     @Inject
-    @ApplicationProvider
-    protected Provider appProvider;
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
+    /**
+     * A mapping between providerCode, classname, custom entity code (if applicable) and index name and type (if applicable)
+     */
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-es-index-cache")
+    private Cache<ESIndexKey, String[]> indices;
+
     private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
+
+    /**
+     * A cache key: providerCode, classname, custom entity code (if applicable)
+     */
+    private class ESIndexKey implements Serializable {
+
+        private static final long serialVersionUID = -7102146427175802501L;
+        public String providerCode;
+        public String classname;
+        public String cetCode;
+
+        /**
+         * Constructor
+         */
+        public ESIndexKey() {
+        }
+
+        /**
+         * Constructor
+         * 
+         * @param providerCode Provider code
+         * @param classname Full class name
+         * @param cetCode Custom entity template code
+         */
+        public ESIndexKey(String providerCode, String classname, String cetCode) {
+            this.providerCode = providerCode;
+            this.classname = classname;
+
+            if (classname.equals(CustomTableRecord.class.getName())) {
+                cetCode = BaseEntity.cleanUpAndLowercaseCodeOrId(cetCode);
+            }
+            this.cetCode = cetCode;
+        }
+
+        @Override
+        public String toString() {
+            return providerCode + ", " + classname + ", " + cetCode;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            ESIndexKey other = (ESIndexKey) obj;
+
+            if (other == null) {
+                return false;
+            }
+
+            return (providerCode + "_" + classname + "_" + cetCode).equals(other.providerCode + "_" + other.classname + "_" + other.cetCode);
+        }
+
+        @Override
+        public int hashCode() {
+            return (providerCode + "_" + classname + "_" + cetCode).hashCode();
+        }
+
+        public boolean isMatchProvider(String codeToMatch) {
+            return (providerCode == null && codeToMatch == null) || (providerCode != null && providerCode.equals(codeToMatch));
+        }
+
+    }
 
     /**
      * Populate index with data of a given entity class
@@ -164,7 +235,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
         // For CEI index has to be looked for every entity as index and type might depend in custom entity template code
         if (!isCEI) {
-            indexAndType = esConfiguration.getIndexAndType(entities.get(0));
+            indexAndType = getIndexAndType(entities.get(0));
             indexName = indexAndType[0];
         }
         Object lastId = null;
@@ -179,11 +250,11 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         for (ISearchable entity : entities) {
 
             if (isCEI) {
-                indexAndType = esConfiguration.getIndexAndType(entity);
+                indexAndType = getIndexAndType(entity);
                 indexName = indexAndType[0];
             }
             lastId = entity.getId();
-            idForES = ElasticClient.buildId(entity);
+            idForES = ElasticSearchIndexPopulationService.buildId(entity);
             if (indexAndType[1] != null) {
                 idForES = indexAndType[1] + "_" + idForES;
             }
@@ -216,7 +287,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             }
         }
 
-        statistics.updateStatstics(classname, found, failedRequests);
+        statistics.updateStatistics(classname, found, failedRequests);
         return new Object[] { found, lastId };
     }
 
@@ -444,7 +515,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Make a REST call to drop all indexes (all providers).
+     * Make a REST call to drop absolutely <b>ALL</b> indexes (all providers).
      * 
      * @throws BusinessException business exception
      */
@@ -469,24 +540,22 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Make a REST call to drop all indexes of a current provider. Index names are prefixed by provider code (removed spaces and lowercase).
+     * Make a REST call to drop indexes of a <b>current provider</b>. Index names are prefixed by provider code (removed spaces and lowercase).
      *
-     * @throws BusinessException business exception
+     * @throws BusinessException Failed to delete an index in ES exception
      */
     public void dropIndexes() throws BusinessException {
 
-        String indexPrefix = BaseEntity.cleanUpAndLowercaseCodeOrId(appProvider.getCode());
+        String indexPrefix = currentUser.getProviderCode() == null ? "null" : BaseEntity.cleanUpAndLowercaseCodeOrId(currentUser.getProviderCode());
 
         log.debug("Dropping all Elastic Search indexes with prefix {}", indexPrefix);
 
-        RestHighLevelClient client = esConnection.getClient();
-
-        // TODO would need to get a list of indexes, and then filter with provider prefix
+        List<String> indexNames = getIndicesFromES();
 
         // Delete indices
+        RestHighLevelClient client = esConnection.getClient();
 
-        for (Entry<String, String> model : esConfiguration.getDataModel().entrySet()) {
-            String indexName = model.getKey().replace(INDEX_PROVIDER_PLACEHOLDER, indexPrefix);
+        for (String indexName : indexNames) {
 
             DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(indexName);
 
@@ -505,17 +574,19 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Recreate indexes for a current provider. Index names are prefixed by provider code (removed spaces and lowercase).
+     * Recreate indexes for a <b>current provider</b>. Index names are prefixed by provider code (removed spaces and lowercase).
      * 
-     * @throws BusinessException business exception.
+     * @throws BusinessException Failure to create index in ES exception.
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createIndexes() throws BusinessException {
 
-        String indexPrefix = BaseEntity.cleanUpAndLowercaseCodeOrId(appProvider.getCode());
+        String indexPrefix = currentUser.getProviderCode() == null ? "null" : BaseEntity.cleanUpAndLowercaseCodeOrId(currentUser.getProviderCode());
 
         log.debug("Creating Elastic Search indexes with prefix {}", indexPrefix);
+
+        repopulateIndexAndTypeCache(false);
 
         RestHighLevelClient client = esConnection.getClient();
 
@@ -557,6 +628,42 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
+     * Repopulate cache for a <b>current provider</b>, that stores index and type mapping to class and custom entity template code.
+     * 
+     * @param populateCets Should custom entity templates be included
+     */
+    public void repopulateIndexAndTypeCache(boolean populateCets) {
+
+        // Clean up cache for current provider
+        Set<ESIndexKey> cacheKeys = new HashSet<>();
+
+        indices.forEach((key, value) -> {
+            if (key.isMatchProvider(currentUser.getProviderCode())) {
+                cacheKeys.add(key);
+            }
+        });
+
+        for (ESIndexKey key : cacheKeys) {
+            indices.remove(key);
+        }
+
+        // Recreate mapping again for regular classes
+        for (String classname : esConfiguration.getEntityClassesManaged()) {
+
+            if (!classname.equals(CustomTableRecord.class.getName()) && !classname.equals(CustomEntityInstance.class.getName())) {
+                addToIndexAndTypeCache(classname, null);
+            }
+        }
+
+        // Recreate mapping for custom entity templates - either custom tables, or custom entity instances
+        List<CustomEntityTemplate> cets = customEntityTemplateService.listNoCache();
+        for (CustomEntityTemplate cet : cets) {
+            String classname = cet.isStoreAsTable() ? CustomTableRecord.class.getName() : CustomEntityInstance.class.getName();
+            addToIndexAndTypeCache(classname, cet.getCode());
+        }
+    }
+
+    /**
      * Update Elastic Search model with custom entity template definitions - depending on the configuration might create new index for each CET
      * 
      * @param cet Custom entity template
@@ -565,7 +672,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     public void createCETIndex(CustomEntityTemplate cet) throws BusinessException {
 
         Class<? extends ISearchable> instanceClass = cet.isStoreAsTable() ? CustomTableRecord.class : CustomEntityInstance.class;
-        String[] indexAndType = esConfiguration.getIndexAndType(instanceClass, cet.getCode());
+        String[] indexAndType = addToIndexAndTypeCache(instanceClass, cet.getCode());
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
@@ -681,7 +788,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             return;
         }
 
-        String[] indexAndType = esConfiguration.getIndexAndType(entityClass, entityCode);
+        String[] indexAndType = getIndexAndType(entityClass, entityCode);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
@@ -754,7 +861,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             return new Object[] { 0, null };
         }
 
-        String[] indexAndType = esConfiguration.getIndexAndType(CustomTableRecord.class, tableName);
+        String[] indexAndType = getIndexAndType(CustomTableRecord.class, tableName);
         String indexName = indexAndType[0];
 
         // Process results
@@ -813,7 +920,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             }
         }
 
-        statistics.updateStatstics(tableName, found, failedRequests);
+        statistics.updateStatistics(tableName, found, failedRequests);
         return new Object[] { found, lastId };
     }
 
@@ -826,7 +933,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     public void removeCETIndex(CustomEntityTemplate cet) throws BusinessException {
 
         Class<? extends ISearchable> instanceClass = cet.isStoreAsTable() ? CustomTableRecord.class : CustomEntityInstance.class;
-        String[] indexAndType = esConfiguration.getIndexAndType(instanceClass, cet.getCode());
+        String[] indexAndType = getIndexAndType(instanceClass, cet.getCode());
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
@@ -856,10 +963,12 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             throw new BusinessException("Failed to find index " + indexName + " in Elastic Search.", e);
         }
 
+        // Delete index in Elastic search and also remove it from cached index names
         DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(indexName);
         try {
-            @SuppressWarnings("unused")
-            AcknowledgedResponse response = esConnection.getClient().indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
+            esConnection.getClient().indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
+            removeFromIndexAndTypeCache(instanceClass, cet.getCode());
+
         } catch (IOException e) {
             throw new BusinessException("Failed to delete index " + indexName + " information in Elastic Search.", e);
         } catch (ElasticsearchStatusException e) {
@@ -870,5 +979,242 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         }
 
         log.debug("Deleted index {} for Custom entity template: {}", indexName, cet.getCode());
+    }
+
+    /**
+     * Get all full index names as defined in Elastic search for a <b>current provider</b>, that is those indexes which name starts with a provider code (removed spaces and ). For
+     * a mian provider a string value of 'null' is used.
+     * 
+     * @return A list of full index names
+     * @throws BusinessException Elastic search mapping can not be accessed
+     */
+    private List<String> getIndicesFromES() throws BusinessException {
+
+        // Get a list of indexes, and then filter with provider prefix
+        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200").split(";")[0];
+
+        ResteasyClient rsClient = new ResteasyClientBuilder().build();
+        ResteasyWebTarget target = rsClient.target(uri + "/_mapping");
+
+        List<String> indexNames = new ArrayList<>();
+
+        String indexPrefix = currentUser.getProviderCode() == null ? "null" : BaseEntity.cleanUpAndLowercaseCodeOrId(currentUser.getProviderCode());
+
+        Response response = target.request().get();
+        if (response.getStatus() == HttpURLConnection.HTTP_OK) {
+
+            @SuppressWarnings("rawtypes")
+            Map indexMappings = response.readEntity(Map.class);
+            for (Object indexName : indexMappings.keySet()) {
+                if (((String) indexName).startsWith(indexPrefix)) {
+                    indexNames.add((String) indexName);
+                }
+            }
+        } else {
+            log.error("Failed to obtain current Elastic search mapping information. Response obtained: {}", response.readEntity(String.class));
+            throw new BusinessException("Failed to obtain current Elastic Search mapping information");
+        }
+
+        return indexNames;
+    }
+
+    /**
+     * Get a unique list of indexes and type for given entity classes. All indexes of a <b>current provider</b> will be returned if no class information is provided.
+     * 
+     * @param classesInfo A list of entity class information
+     * @return A set of arrays with full index name and type names in that order. Index names are prefixed by provider code (removed spaces and lowercase).
+     */
+    public Set<String[]> getIndexAndTypes(List<ElasticSearchClassInfo> classesInfo) {
+
+        Set<String[]> indexes = new HashSet<>();
+
+        if (classesInfo == null || classesInfo.isEmpty()) {
+
+            indices.forEach((key, value) -> {
+                if (key.isMatchProvider(currentUser.getProviderCode())) {
+                    indexes.add(value);
+                }
+            });
+
+        } else {
+            for (ElasticSearchClassInfo classInfo : classesInfo) {
+                String[] indexAndType = getIndexAndType(classInfo.getClazz(), classInfo.getCetCode());
+                if (indexAndType != null) {
+                    indexes.add(indexAndType);
+                }
+            }
+        }
+        return indexes;
+    }
+
+    /**
+     * Determine index and type value for Elastic Search for a given class. Index names are prefixed by provider code (removed spaces and lowercase).
+     * 
+     * @param clazzToConvert Entity class that extends ISearchable interface
+     * @param cetCode Custom entity template/custom table code
+     * @return An array with full index name and type in that order. Or null if no match was found e.g. not interested in storing in ES. Index names are prefixed by provider code
+     *         (removed spaces and lowercase).
+     */
+    public String[] getIndexAndType(Class<? extends ISearchable> clazzToConvert, String cetCode) {
+
+        String classname = ReflectionUtils.getCleanClassName(clazzToConvert.getName());
+
+        return indices.get(new ESIndexKey(currentUser.getProviderCode(), classname, cetCode));
+    }
+
+    /**
+     * Determine index and type value for Elastic Search for a given entity. Index names are prefixed by provider code (removed spaces and lowercase).
+     * 
+     * @param entity ISearchable entity to be stored/indexed in Elastic Search
+     * @return An array with full index name and type in that order. Index names are prefixed by provider code (removed spaces and lowercase).
+     */
+    public String[] getIndexAndType(ISearchable entity) {
+        String cetCode = null;
+        if (entity instanceof CustomEntityInstance) {
+            cetCode = ((CustomEntityInstance) entity).getCetCode();
+        } else if (entity instanceof CustomTableRecord) {
+            cetCode = ((CustomTableRecord) entity).getCetCode();
+        }
+        return getIndexAndType(entity.getClass(), cetCode);
+    }
+
+    /**
+     * Determine index and type value for Elastic Search for a given class and store it in indices cache
+     * 
+     * @param clazz Entity class that extends ISearchable interface
+     * @param cetCode Custom entity template/custom table code
+     * @return An array with a full index name and type in that order
+     */
+    private String[] addToIndexAndTypeCache(Class<? extends ISearchable> clazz, String cetCode) {
+
+        String classname = ReflectionUtils.getCleanClassName(clazz.getName());
+        return addToIndexAndTypeCache(classname, cetCode);
+    }
+
+    /**
+     * Determine index and type value for Elastic Search for a given class and store it in indices cache
+     * 
+     * @param clazzToConvert Entity class that extends ISearchable interface
+     * @param cetCode Custom entity template/custom table code
+     * @return An array with a full index name and type in that order
+     */
+    private String[] addToIndexAndTypeCache(String classname, String cetCode) {
+
+        String indexName = esConfiguration.getIndexName(classname);
+
+        // No index, no interest in ES
+        if (indexName == null) {
+            return null;
+        }
+
+        String type = esConfiguration.getType(classname);
+
+        if (cetCode != null) {
+            if (indexName.startsWith("#")) {
+                indexName = ValueExpressionWrapper.evaluateToStringIgnoreErrors(indexName, "cetCode", cetCode);
+            }
+            if (type != null && type.startsWith("#")) {
+                type = ValueExpressionWrapper.evaluateToStringIgnoreErrors(type, "cetCode", cetCode);
+            }
+        }
+
+        indexName = currentUser.getProviderCode() + "_" + indexName;
+
+        String[] indexAndType = new String[] { BaseEntity.cleanUpAndLowercaseCodeOrId(indexName), type };
+        indices.put(new ESIndexKey(currentUser.getProviderCode(), classname, cetCode), indexAndType);
+
+        return indexAndType;
+    }
+
+    /**
+     * Remove index and type value mapping for a given class from indices cache
+     * 
+     * @param clazzToConvert Entity class that extends ISearchable interface
+     * @param cetCode Custom entity template/custom table code
+     */
+    private void removeFromIndexAndTypeCache(Class<? extends ISearchable> clazzToConvert, String cetCode) {
+
+        String classname = ReflectionUtils.getCleanClassName(clazzToConvert.getName());
+        indices.remove(new ESIndexKey(currentUser.getProviderCode(), classname, cetCode));
+    }
+
+    /**
+     * Determine a classname and a Custom entity template code from index name and entity type
+     * 
+     * @param fullIndexName Full index name
+     * @param type Entity type value as stored in Elastic search datatable value
+     * @param Entity type as stored in Elastic search index
+     * @return An array with a full classname and a Custom entity code (when applicable). OR null if no match was found.
+     */
+    public String[] getClassnameAndCETCodeFromIndex(String fullIndexName, String type) {
+
+        for (Entry<ESIndexKey, String[]> keyValue : indices.entrySet()) {
+            ESIndexKey key = keyValue.getKey();
+            String[] value = keyValue.getValue();
+
+            if ((value[0].equals(fullIndexName) || fullIndexName.startsWith(value[0])) && ((value[1] == null && type == null) || (value[1] != null && value[1].equals(type)))
+                    && (key.isMatchProvider(currentUser.getProviderCode()))) {
+                return new String[] { key.classname, key.cetCode };
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Construct identifier for Elastic search for a given entity.
+     * 
+     * @param entity Entity to construct ID for
+     * @return Identifier value. Its either code, id or <code>_<id> of an entity
+     */
+    protected static String buildId(ISearchable entity) {
+        if (entity instanceof BusinessEntity) {
+            return BaseEntity.cleanUpCodeOrId(entity.getCode());
+        } else if (entity instanceof CustomTableRecord) {
+            return ((CustomTableRecord) entity).getId().toString();
+        } else {
+            return BaseEntity.cleanUpCodeOrId(entity.getCode() + "__" + entity.getId());
+        }
+    }
+
+    /**
+     * Get a summary of cached information.
+     * 
+     * @return A list of a map containing cache information with cache name as a key and cache as a value
+     */
+    // @Override
+    @SuppressWarnings("rawtypes")
+    public Map<String, Cache> getCaches() {
+        Map<String, Cache> summaryOfCaches = new HashMap<String, Cache>();
+        summaryOfCaches.put(indices.getName(), indices);
+
+        return summaryOfCaches;
+    }
+
+    /**
+     * Refresh cache by name. Removes <b>current provider's</b> data from cache and populates it again
+     * 
+     * @param cacheName Name of cache to refresh or null to refresh all caches
+     */
+    // @Override
+    @Asynchronous
+    public void refreshCache(String cacheName) {
+
+        if (cacheName == null || cacheName.equals(indices.getName()) || cacheName.contains(indices.getName())) {
+            repopulateIndexAndTypeCache(true);
+        }
+    }
+
+    /**
+     * Populate cache by name
+     * 
+     * @param cacheName Name of cache to populate or null to populate all caches
+     */
+    // @Override
+    public void populateCache(String cacheName) {
+
+        if (cacheName == null || cacheName.equals(indices.getName())) {
+            repopulateIndexAndTypeCache(true);
+        }
     }
 }
