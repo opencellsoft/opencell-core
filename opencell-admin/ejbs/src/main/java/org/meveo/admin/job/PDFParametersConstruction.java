@@ -187,7 +187,7 @@ public class PDFParametersConstruction {
 
             String languageCode = billingAccount.getTradingLanguage() != null ? billingAccount.getTradingLanguage().getLanguageCode() : null;
             if (languageCode == null) {
-                Locale.getDefault();
+                return Locale.getDefault();
             }
 
             String country = billingAccount.getTradingCountry() != null ? billingAccount.getTradingCountry().getCountryCode() : "";
