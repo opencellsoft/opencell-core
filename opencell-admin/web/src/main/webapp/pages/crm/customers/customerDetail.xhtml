@@ -121,7 +121,8 @@
 
 
 						<hftl:customFields backingBean="#{customerBean}" messagesId=":formCustomer:messages" />
-								<hftl:displayWorkflowsHistory entity="#{customerBean.entity}" />
+								<!-- <hftl:displayWorkflowsHistory entity="#{customerBean.entity}" /> -->
+								<hftl:displayGenericWFsHistory backingBean="#{customerBean}" />
 						</p:tabView>
                                 
 	 					 <ui:param name="buttons" value="true"/>

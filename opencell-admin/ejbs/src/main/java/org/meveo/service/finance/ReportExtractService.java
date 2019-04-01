@@ -204,7 +204,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             }
 
             template = template.replace("#{REPORT_TITLE}", entity.getCategory() != null ? entity.getCategory() : entity.getCode());
-            template = template.replace("#{REPORT_STYLE}", entity.getStyle());
+            template = template.replace("#{REPORT_STYLE}", entity.getStyle() != null ? entity.getStyle() : "");
             template = template.replace("#{REPORT_TABLE}", table);
             template = template.replace("#{REPORT_DESCRIPTION}", entity.getDescriptionOrCode());
 
@@ -219,7 +219,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             fileWriter.write(template);
             
         } catch (Exception e) {
-            log.error("Cannot write report to file: {}", e.getMessage());
+            log.error("Cannot write report to file: {}", e);
             throw new BusinessException("Cannot write report to file.");
         } finally {
             IOUtils.closeQuietly(fileWriter);
@@ -262,7 +262,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 line = new StringBuilder("");
             }
         } catch (Exception e) {
-            log.error("Cannot write report to file: {}", e.getMessage());
+            log.error("Cannot write report to file: {}", e);
             throw new BusinessException("Cannot write report to file.");
         } finally  {
             IOUtils.closeQuietly(fileWriter);

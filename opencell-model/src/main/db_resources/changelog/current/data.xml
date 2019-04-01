@@ -1910,6 +1910,269 @@ group by s.code
 	, uae.code]]>
             </column>
 			<where>code = 'UNBILLED_UA_HIERARCHY'</where>
-		</update>	
+		</update>
+	</changeSet>
+	
+	<changeSet id="#4113_20190329 - Regression on rt.walletOperation" author="EdwardPLegaspi">
+		<update  tableName="dwh_report_extract">
+			<column name="sql_query">
+                <![CDATA[select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+					, of.code AS "Offer code"
+					, of.description AS "Offer description"
+					, it.code AS "Invoice type code"
+					, it.description AS "Invoice type description"
+					, to_char(sum(rt.amount_without_tax), '9999999990.00') AS "Amount without tax"
+					, to_char(sum(rt.amount_with_tax), '9999999990.00') AS "Amount with tax"  
+				from cat_offer_template of
+					INNER JOIN billing_wallet_operation wo on wo.offer_code = OF.code
+					INNER JOIN billing_rated_transaction rt on wo.rated_transaction_id = rt.id
+					INNER JOIN billing_invoice i  on i.id = rt.invoice_id
+					INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id 
+				where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+				and(  of.code ilike '%' || :SEARCH_CRITERION || '%'  or OF.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+				group by date_trunc('month', i.invoice_date)
+					, it.code
+					, it.description
+					, of.code
+					, of.description order by date_trunc('month', i.invoice_date) DESC
+					, it.code DESC
+					, of.code
+				]]>
+            </column>
+			<where>code = 'INVOICED_OF'</where>
+		</update>
+		
+		<update  tableName="dwh_report_extract">
+			<column name="sql_query">
+                <![CDATA[select s.code AS "Seller code"
+					, s.description AS "Seller description"
+					, count(DISTINCT wo.id) AS "Transaction count"
+					, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+					, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+				from  billing_wallet_operation wo 
+					INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id 
+					INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id 
+					INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id 
+					INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id 
+					INNER JOIN crm_customer c  on c.id = ca.customer_id 
+					INNER JOIN crm_seller s  on s.id = c.seller_id 
+				where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' 
+					and EXISTS (  select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN' )  )  )  
+				and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+				group by s.code, s.description 
+				order by s.code
+				]]>
+            </column>
+			<where>code = 'UNBILLED_S'</where>
+		</update>
+		
+		<update  tableName="dwh_report_extract">
+			<column name="sql_query">
+                <![CDATA[select of.code AS "Offer code"
+					, of.description AS "Offer description"
+					, count(DISTINCT wo.id) AS "Transaction count"
+					, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+					, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+				from  cat_offer_template of 
+					INNER JOIN billing_wallet_operation wo  on wo.offer_code = OF.code 
+				where  (  wo.STATUS = 'OPEN'  or ( wo.STATUS = 'TREATED' 
+					and EXISTS ( select 1  from billing_rated_transaction rt  where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN' )  )  )  
+				and(  of.code ilike '%' || :SEARCH_CRITERION || '%'  or OF.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+				group by of.code, of.description 
+				order by of.code
+				]]>
+            </column>
+			<where>code = 'UNBILLED_OF'</where>
+		</update>
+		
+		<update  tableName="dwh_report_extract">
+			<column name="sql_query">
+                <![CDATA[select cae.code AS "Customer Account code"
+					, cae.description AS "Customer Account description"
+					, count(DISTINCT wo.id) AS "Transaction count"
+					, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+					, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+				from  billing_wallet_operation wo
+					INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id
+					INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id
+					INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id
+					INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id
+					INNER JOIN account_entity cae  on ca.id = cae.id
+					INNER JOIN crm_customer c  on c.id = ca.customer_id
+					INNER JOIN crm_seller s  on s.id = c.seller_id 
+				where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' 
+					and EXISTS (  select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN' )  )  )  
+				and(  cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+				group by cae.code, cae.description 
+				order by cae.code
+				]]>
+            </column>
+			<where>code = 'UNBILLED_CA'</where>
+		</update>
+		
+		<update  tableName="dwh_report_extract">
+			<column name="sql_query">
+                <![CDATA[SELECT
+				    TO_CHAR(ao.invoice_date,'MM') AS "Mois",
+				    TO_CHAR(ao.invoice_date,'DD/MM/YYYY') AS "Date facture",
+				    text('HG') AS "Code comptable",
+				    ae.code AS "Client facturé",
+				    text('MAI') AS "Type article",
+				    split_part(bac.code, ',', 6) AS "Famille statistique",
+				    split_part(bac.code, ',', 2) AS "Article",
+				    trim(TO_CHAR(ia.amount_without_tax,'9999990D00')) AS "Montant HT",
+				    trim(TO_CHAR(ia.quantity,'9999990')) AS "Qté facturée",
+				    ao.reference AS "No facture",
+				    ao.occ_description AS "Catégorie facture",
+				    ao.occ_code AS "Type de pièce",
+				    text('VEN') AS "Journal"
+				FROM
+				    account_entity ae
+				INNER JOIN ar_account_operation ao ON ao.customer_account_id = ae.id
+				INNER JOIN billing_invoice i ON i.invoice_number = ao.reference
+				INNER JOIN billing_invoice_agregate ia ON (ia.invoice_id = i.id AND type = 'F')
+				LEFT JOIN billing_accounting_code bac ON bac.id = ia.accounting_code_id
+				WHERE :START_DATE<>:END_DATE
+				AND ae.account_type = 'ACCT_CA'
+				AND ao.invoice_date >= to_date('01/' || TO_CHAR(CURRENT_DATE,'MM/YYYY'),'DD/MM/YYYY') + interval '-12 month'
+				AND ao.invoice_date <= to_date('01/' || TO_CHAR(CURRENT_DATE,'MM/YYYY'),'DD/MM/YYYY') + interval '0 month'
+				ORDER BY
+				    ae.code,
+				    occ_code,
+				    split_part(bac.code, ',', 6),
+				    split_part(bac.code, ',', 2)
+			    ]]>
+            </column>
+			<where>code = 'SALES_JOURNAL'</where>
+		</update>
+		
+		<update  tableName="dwh_report_extract">
+			<column name="sql_query">
+                <![CDATA[select ce.code AS "Customer code"
+					, ce.description AS "Customer description"
+					, count(DISTINCT wo.id) AS "Transaction count"
+					, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+					, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+				from  billing_wallet_operation wo
+					INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id
+					INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id
+					INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id 
+					INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id 
+					INNER JOIN crm_customer c  on c.id = ca.customer_id 
+					INNER JOIN account_entity ce  on c.id = ce.id 
+					INNER JOIN crm_seller s  on s.id = c.seller_id 
+				where  (  wo.STATUS = 'OPEN'  or (   wo.STATUS = 'TREATED'   
+					and EXISTS (   select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN'   )  )  )  
+				and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+				group by ce.code, ce.description 
+				order by ce.code
+				]]>
+            </column>
+			<where>code = 'UNBILLED_C'</where>
+		</update>
+		
+		<update  tableName="dwh_report_extract">
+			<column name="sql_query">
+                <![CDATA[select bae.code AS "Billing Account code"
+					, bae.description AS "Billing Account description"
+					, count(DISTINCT wo.id) AS "Transaction count"
+					, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+					, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+				from  billing_wallet_operation wo
+					INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id
+					INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id
+					INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id
+					INNER JOIN account_entity bae  on ba.id = bae.id
+					INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id
+					INNER JOIN crm_customer c  on c.id = ca.customer_id
+					INNER JOIN crm_seller s  on s.id = c.seller_id 
+				where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' 
+					and EXISTS (  select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN' )  )  )  
+					and(  bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+				group by bae.code, bae.description 
+				order by bae.code
+				]]>
+            </column>
+			<where>code = 'UNBILLED_BA'</where>
+		</update>
+		
+		<update  tableName="dwh_report_extract">
+			<column name="sql_query">
+                <![CDATA[select s.code AS "Seller code"
+					, s.description AS "Seller description"
+					, ce.code AS "Customer code"
+					, ce.description AS "Customer description"
+					, cae.code AS "Customer Account code"
+					, cae.description AS "Customer Account description"
+					, bae.code AS "Billing Account code"
+					, bae.description AS "Billing Account description"
+					, uae.code AS "User Account code"
+					, uae.description AS "User Account description"
+					, count(DISTINCT wo.id) AS "Transaction count"
+					, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+					, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+				from  billing_wallet_operation wo 
+					INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id 
+					INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id 
+					INNER JOIN account_entity uae  on ua.id = uae.id 
+					INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id 
+					INNER JOIN account_entity bae  on ba.id = bae.id 
+					INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id 
+					INNER JOIN account_entity cae  on ca.id = cae.id 
+					INNER JOIN crm_customer c  on c.id = ca.customer_id 
+					INNER JOIN account_entity ce  on c.id = ce.id 
+					INNER JOIN crm_seller s  on s.id = c.seller_id 
+				where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' 
+					and EXISTS (  select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id and rt.STATUS = 'OPEN' )  )  )  
+				and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  or ce.code ilike '%' 
+					|| :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or cae.code ilike '%' 
+					|| :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  or bae.code ilike '%' 
+					|| :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  or uae.code ilike '%' 
+					|| :SEARCH_CRITERION || '%'  or uae.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+				group by s.code
+					, s.description
+					, ce.code
+					, ce.description
+					, cae.code
+					, cae.description
+					, bae.code
+					, bae.description
+					, uae.code
+					, uae.description order by s.code
+					, ce.code
+					, cae.code
+					, bae.code
+					, uae.code
+				]]>
+            </column>
+			<where>code = 'UNBILLED_UA_HIERARCHY'</where>
+		</update>
+		
+		<update  tableName="dwh_report_extract">
+			<column name="sql_query">
+                <![CDATA[select uae.code AS "User Account code"
+					, uae.description AS "User Account description"
+					, count(DISTINCT wo.id) AS "Transaction count"
+					, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+					, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+				from  billing_wallet_operation wo 
+					INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id 
+					INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id 
+					INNER JOIN account_entity uae  on ua.id = uae.id 
+					INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id 
+					INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id 
+					INNER JOIN crm_customer c  on c.id = ca.customer_id 
+					INNER JOIN crm_seller s  on s.id = c.seller_id 
+				where  (  wo.STATUS = 'OPEN'  or (   wo.STATUS = 'TREATED'   
+					and EXISTS (   select 1 from billing_rated_transaction rt where wo.rated_transaction_id = rt.id   
+				and rt.STATUS = 'OPEN'   )  )  )  and(  uae.code ilike '%' || :SEARCH_CRITERION || '%'  or uae.description ilike '%' 
+					|| :SEARCH_CRITERION || '%'  )  
+				group by uae.code
+					, uae.description 
+				order by uae.code
+				]]>
+            </column>
+			<where>code = 'UNBILLED_UA'</where>
+		</update>
 	</changeSet>
 </databaseChangeLog>
