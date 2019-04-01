@@ -80,9 +80,16 @@ public class StringUtils {
         StringBuilder sb = new StringBuilder();
         for (Object s : values)
             if (!isBlank(s)) {
-                if (sb.length() != 0)
+                if (sb.length() != 0) {
                     sb.append(separator);
-                sb.append(s);
+                }
+
+                if (s.getClass().isArray()) {
+                    sb.append(StringUtils.concatenate(",", (String[])s));
+                } else {
+                    sb.append(s);
+                }
+
             }
         return sb.toString();
     }
@@ -288,7 +295,7 @@ public class StringUtils {
     public static final String getDefaultIfEmpty(String value, String defaultValue) {
         return org.apache.commons.lang3.StringUtils.isNotEmpty(value) ? value : defaultValue;
     }
-    
+
     /**
      * Check if string s contain only digital character
      *
@@ -297,13 +304,13 @@ public class StringUtils {
      */
     public static boolean isDigital(String s) {
 
-      for (Character c : s.toCharArray()) {
+        for (Character c : s.toCharArray()) {
 
-        if (!Character.isDigit(c)) {
-          return false;
+            if (!Character.isDigit(c)) {
+                return false;
+            }
         }
-      }
 
-      return true;
+        return true;
     }
 }

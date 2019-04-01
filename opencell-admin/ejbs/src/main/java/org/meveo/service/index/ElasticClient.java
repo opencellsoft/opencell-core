@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
@@ -22,7 +23,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkItemResponse.Failure;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -48,16 +48,18 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.customEntities.CustomTableRecord;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.index.ElasticSearchChangeset.ElasticSearchAction;
 import org.slf4j.Logger;
@@ -96,7 +98,7 @@ public class ElasticClient {
     private CustomEntityTemplateService customEntityTemplateService;
 
     @Inject
-    private ElasticSearchIndexPopulationService elasticSearchIndexPopulationService;
+    private ElasticSearchIndexPopulationService esPopulationService;
 
     @Inject
     private CustomFieldsCacheContainerProvider cfCache;
@@ -106,6 +108,12 @@ public class ElasticClient {
 
     @Inject
     private CurrentUserProvider currentUserProvider;
+
+    @Inject
+    private ProviderService providerService;
+
+    @EJB
+    private ElasticClient multitenantElasticClient;
 
     /**
      * Store and index entity in Elastic Search. In case of update, a full update will be performed unless it is configured in elasticSearchConfiguration.json to always do upsert.
@@ -129,7 +137,7 @@ public class ElasticClient {
     /**
      * Apply a partial update to the entity in Elastic Search. Used to update CF field values of an entity
      *
-     * @param entity Entity corresponding to a document in Elastic Search. Is used to construct document id only
+     * @param entity Entity corresponding to a document in Elastic Search. Is used to construct document id only.
      * @param fieldName Field name
      * @param fieldValue Field value
      */
@@ -143,7 +151,7 @@ public class ElasticClient {
     /**
      * Apply a partial update to the entity in Elastic Search
      *
-     * @param entity Entity corresponding to a document in Elastic Search. Is used to construct document id only
+     * @param entity Entity corresponding to a document in Elastic Search. Is used to construct document id only.
      * @param fieldsToUpdate A map of fieldname and values to update in entity
      */
     public void partialUpdate(ISearchable entity, Map<String, Object> fieldsToUpdate) {
@@ -152,14 +160,15 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esConfiguration.getIndexAndType(entity);
+        String[] indexAndType = esPopulationService.getIndexAndType(entity);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
             return;
         }
 
-        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.UPDATE, indexAndType[0], indexAndType[1], buildId(entity), fieldsToUpdate);
+        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.UPDATE, indexAndType[0], indexAndType[1],
+            ElasticSearchIndexPopulationService.buildId(entity), fieldsToUpdate);
         queuedChanges.addChange(change);
 
         log.trace("Queueing Elastic Search document changes {}", change);
@@ -179,7 +188,7 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esConfiguration.getIndexAndType(entity);
+        String[] indexAndType = esPopulationService.getIndexAndType(entity);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
@@ -190,16 +199,16 @@ public class ElasticClient {
 
         ElasticSearchAction action = upsert ? ElasticSearchAction.UPSERT : partialUpdate ? ElasticSearchAction.UPDATE : ElasticSearchAction.ADD_REPLACE;
 
-        Map<String, Object> jsonValueMap = elasticSearchIndexPopulationService.convertEntityToJson(entity, null, null, indexAndType[1]);
+        Map<String, Object> jsonValueMap = esPopulationService.convertEntityToJson(entity, null, null, indexAndType[1]);
 
-        ElasticSearchChangeset change = new ElasticSearchChangeset(action, indexAndType[0], indexAndType[1], buildId(entity), jsonValueMap);
+        ElasticSearchChangeset change = new ElasticSearchChangeset(action, indexAndType[0], indexAndType[1], ElasticSearchIndexPopulationService.buildId(entity), jsonValueMap);
         queuedChanges.addChange(change);
 
         log.trace("Queueing Elastic Search document changes {}", change);
     }
 
     /**
-     * Store and index entity/values in Elastic Search
+     * Store and index values in Elastic Search
      *
      * @param entityClass Entity class to store in Elastic Search
      * @param cetCode Custom entity template code
@@ -217,7 +226,7 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esConfiguration.getIndexAndType(entityClass, cetCode);
+        String[] indexAndType = esPopulationService.getIndexAndType(entityClass, cetCode);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
@@ -250,14 +259,15 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esConfiguration.getIndexAndType(entity);
+        String[] indexAndType = esPopulationService.getIndexAndType(entity);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
             return;
         }
 
-        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, indexAndType[0], indexAndType[1], buildId(entity));
+        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, indexAndType[0], indexAndType[1],
+            ElasticSearchIndexPopulationService.buildId(entity));
         queuedChanges.addChange(change);
 
         log.trace("Queueing Elastic Search document changes {}", change);
@@ -265,7 +275,7 @@ public class ElasticClient {
     }
 
     /**
-     * Remove entity from Elastic Search
+     * Remove values from Elastic Search
      *
      * @param entityClass Entity class to remove from Elastic Search
      * @param cetCode Custom entity template code
@@ -279,7 +289,7 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esConfiguration.getIndexAndType(entityClass, cetCode);
+        String[] indexAndType = esPopulationService.getIndexAndType(entityClass, cetCode);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
@@ -299,7 +309,7 @@ public class ElasticClient {
     }
 
     /**
-     * Remove entities from Elastic Search
+     * Remove values from Elastic Search
      *
      * @param entityClass Entity class to remove from Elastic Search
      * @param cetCode Custom entity template code
@@ -313,7 +323,7 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esConfiguration.getIndexAndType(entityClass, cetCode);
+        String[] indexAndType = esPopulationService.getIndexAndType(entityClass, cetCode);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
@@ -350,7 +360,7 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esConfiguration.getIndexAndType(entityClass, cetCode);
+        String[] indexAndType = esPopulationService.getIndexAndType(entityClass, cetCode);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
@@ -373,7 +383,7 @@ public class ElasticClient {
             throw new BusinessException("Failed to process delete by query request in Elastic Search", e);
         }
 
-        log.debug("{} records were deleted in Elastic Search for {}", bulkResponse.getDeleted(), indexAndType.toString());
+        log.debug("{} records were deleted in Elastic Search for {}", bulkResponse.getDeleted(), StringUtils.concatenate(", ", indexAndType));
         for (SearchFailure failure : bulkResponse.getSearchFailures()) {
             log.error("Failed to process delete by query (search phase) in Elastic Search for {}/{}", failure.getIndex(), indexAndType[1], failure.getReason());
         }
@@ -449,8 +459,8 @@ public class ElasticClient {
     }
 
     /**
-     * Execute a search compatible primefaces data table component search. See other search methods for documentation on search implementation. A search by query/full text search
-     * will be used if paginationConfig.fullTextFilter value is provided.
+     * Execute a primefaces data table component compatible search. See other search methods for documentation on search implementation. A search by query/full text search will be
+     * used if paginationConfig.fullTextFilter value is provided.
      *
      * @param paginationConfig Query, pagination and sorting configuration
      * @param classnamesOrCetCodes An array of full classnames or CET codes
@@ -473,11 +483,34 @@ public class ElasticClient {
             return search(paginationConfig.getFilters(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(),
                 paginationConfig.getSortField() != null ? new String[] { paginationConfig.getSortField() } : null, sortOrder != null ? new SortOrder[] { sortOrder } : null,
                 returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
+
+            // Or by a full text value
         } else {
             return search(paginationConfig.getFullTextFilter(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(),
                 paginationConfig.getSortField() != null ? new String[] { paginationConfig.getSortField() } : null, sortOrder != null ? new SortOrder[] { sortOrder } : null,
                 returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
         }
+    }
+
+    /**
+     * Execute a search. See other search() method for a detailed query description.
+     *
+     * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
+     * @param from Pagination - starting record
+     * @param size Pagination - number of records per page
+     * @param sortFields - Fields to sort by. If omitted, will sort by score.
+     * @param sortOrders Sorting orders
+     * @param returnFields Return only certain fields - see Elastic Search documentation for details
+     * @param classInfo Entity classes to match. If not provided will look in all indices of a current provider.
+     * @return Search result
+     * @throws BusinessException General business exception
+     */
+    public SearchResponse search(String query, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields, String[] classnamesOrCetCodes)
+            throws BusinessException {
+
+        List<ElasticSearchClassInfo> classInfo = getSearchScopeInfo(classnamesOrCetCodes, false);
+
+        return search(query, from, size, sortFields, sortOrders, returnFields, classInfo);
     }
 
     /**
@@ -493,7 +526,7 @@ public class ElasticClient {
      * @param sortFields - Fields to sort by. If omitted, will sort by score.
      * @param sortOrders Sorting orders
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
-     * @param classInfo Entity classes to match
+     * @param classInfo Entity classes to match. If not provided will look in all indices of a current provider.
      * @return Search result
      * @throws BusinessException General business exception
      */
@@ -504,13 +537,7 @@ public class ElasticClient {
             return null;
         }
 
-        Set<String[]> indicesAndTypes = null;
-        // Not clear where to look, return all indexes for current provider/tenant
-        if (classInfo == null || classInfo.isEmpty()) {
-            indicesAndTypes = esConfiguration.getIndexes();
-        } else {
-            indicesAndTypes = esConfiguration.getIndexAndTypes(classInfo);
-        }
+        Set<String[]> indicesAndTypes = esPopulationService.getIndexAndTypes(classInfo);
 
         // None of the classes are stored in Elastic Search, return empty json
         if (indicesAndTypes == null || indicesAndTypes.isEmpty()) {
@@ -524,15 +551,16 @@ public class ElasticClient {
             size = DEFAULT_SEARCH_PAGE_SIZE;
         }
 
-        log.debug("Execute Elastic Search search for \"{}\" records {}-{} on {} sort by {} {}", query, from, from + size, indicesAndTypes.toString(), sortFields, sortOrders);
+        log.debug("Execute Elastic Search search for \"{}\" records {}-{} on {} sort by {} {}", query, from, from + size, StringUtils.concatenate(", ", indicesAndTypes),
+            sortFields, sortOrders);
 
         Set<String> indices = new HashSet<>();
         String type = null;
         for (String[] indexAndType : indicesAndTypes) {
             indices.add(indexAndType[0]);
-            // TODO For now only a single type is supported. As not possible?? to search in one index without a type and another one with type - dont know how to write OR clause
+            // TODO For now only a single type is supported. As not possible to search in one index without a type and another one with type - dont know how to write OR clause
             // between indices
-            if (type == null && indexAndType[1] != null) {
+            if (indicesAndTypes.size() == 1 && type == null && indexAndType[1] != null) {
                 type = indexAndType[1];
             }
         }
@@ -623,6 +651,28 @@ public class ElasticClient {
     }
 
     /**
+     * Execute a search on given fields for given query values. See other search() method for a detailed description of query values.
+     * 
+     * @param queryValues Fields and values to match
+     * @param from Pagination - starting record. Defaults to 0.
+     * @param size Pagination - number of records per page. Defaults to DEFAULT_SEARCH_PAGE_SIZE.
+     * @param sortFields - Fields to sort by. If omitted, will sort by score. If search query contains a 'closestMatch' expression, sortFields and sortOrder will be overwritten
+     *        with a corresponding field and descending order, unless sorting included valid_xxx fields, in which case they will be given priority first.
+     * @param sortOrders Sorting orders
+     * @param returnFields Return only certain fields - see Elastic Search documentation for details
+     * @param classInfo Entity classes to match. If not provided will look in all indices of a current provider.
+     * @return Search result
+     * @throws BusinessException General business exception
+     */
+    public SearchResponse search(Map<String, ?> queryValues, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields,
+            String[] classnamesOrCetCodes) throws BusinessException {
+
+        List<ElasticSearchClassInfo> classInfo = getSearchScopeInfo(classnamesOrCetCodes, false);
+
+        return search(queryValues, from, size, sortFields, sortOrders, returnFields, classInfo);
+    }
+
+    /**
      * Execute a search on given fields for given query values
      * 
      * 
@@ -659,7 +709,7 @@ public class ElasticClient {
      *        with a corresponding field and descending order, unless sorting included valid_xxx fields, in which case they will be given priority first.
      * @param sortOrders Sorting orders
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
-     * @param classInfo Entity classes to match
+     * @param classInfo Entity classes to match. If not provided will look in all indices of a current provider.
      * @return Search result
      * @throws BusinessException General business exception
      */
@@ -670,16 +720,10 @@ public class ElasticClient {
             return null;
         }
 
-        Set<String[]> indexAndTypes = null;
-        // Not clear where to look, return all indexes for provider
-        if (classInfo == null || classInfo.isEmpty()) {
-            indexAndTypes = esConfiguration.getIndexes();
-        } else {
-            indexAndTypes = esConfiguration.getIndexAndTypes(classInfo);
-        }
+        Set<String[]> indicesAndTypes = esPopulationService.getIndexAndTypes(classInfo);
 
         // None of the classes are stored in Elastic Search, return empty json
-        if (indexAndTypes == null || indexAndTypes.isEmpty()) {
+        if (indicesAndTypes == null || indicesAndTypes.isEmpty()) {
             return null;
         }
 
@@ -690,15 +734,16 @@ public class ElasticClient {
             size = DEFAULT_SEARCH_PAGE_SIZE;
         }
 
-        log.debug("Execute Elastic Search search for {} records {}-{} on {} sort by {} {}", queryValues, from, from + size, indexAndTypes, sortFields, sortOrders);
+        log.debug("Execute Elastic Search search for {} records {}-{} on {} sort by {} {}", queryValues, from, from + size, StringUtils.concatenate(", ", indicesAndTypes),
+            sortFields, sortOrders);
 
         Set<String> indices = new HashSet<>();
         String type = null;
-        for (String[] indexAndType : indexAndTypes) {
+        for (String[] indexAndType : indicesAndTypes) {
             indices.add(indexAndType[0]);
             // TODO For now only a single type is supported. As not possible?? to search in one index without a type and another one with type - dont know how to write OR clause
             // between indices
-            if (type == null && indexAndType[1] != null) {
+            if (indicesAndTypes.size() == 1 && type == null && indexAndType[1] != null) {
                 type = indexAndType[1];
             }
         }
@@ -743,7 +788,7 @@ public class ElasticClient {
                 Object filterValue = fieldValue.getValue();
 
                 if (fieldName.contains(",")) {
-                    queryBuilder = QueryBuilders.multiMatchQuery(filterValue, StringUtils.stripAll(fieldName.split(",")));
+                    queryBuilder = QueryBuilders.multiMatchQuery(filterValue, org.apache.commons.lang.StringUtils.stripAll(fieldName.split(",")));
 
                 } else if ("term".equals(condition) || "filter_term".equals(condition)) {
                     queryBuilder = QueryBuilders.termQuery(fieldName, filterValue);
@@ -887,35 +932,55 @@ public class ElasticClient {
     }
 
     /**
-     * Delete and recrete Elastic search index structure and populate it with data
+     * Delete and recreate Elastic search index structure and populate it with data for a <b>current provider</b>
      * 
      * @param lastCurrentUser Current user
+     * @param reinitESConnection Should connection to ES be re-established
      * @return Reindexing statistics
-     * @throws BusinessException General exception
+     * @throws BusinessException General exception in communication with or action execution in Elastic search
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Future<ReindexingStatistics> cleanAndReindex(MeveoUser lastCurrentUser) throws BusinessException {
+    public Future<ReindexingStatistics> cleanAndReindex(MeveoUser lastCurrentUser, boolean reinitESConnection) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+        ReindexingStatistics statistics = cleanAndReindex(true, reinitESConnection, lastCurrentUser.getProviderCode());
+
+        return new AsyncResult<ReindexingStatistics>(statistics);
+    }
+
+    /**
+     * Delete and recreate Elastic search index structure and populate it with data for a current provider
+     * 
+     * @param dropIndexes Shall current indexes for provider be dropped first
+     * @param reinitESConnection Should connection to ES be re-established
+     * @param providerCode Current provider code. For information purpose only, so dont need to look it up
+     * @return Reindexing statistics
+     * @throws BusinessException General exception in communication with or action execution in Elastic search
+     */
+    private ReindexingStatistics cleanAndReindex(boolean dropIndexes, boolean reinitESConnection, String providerCode) throws BusinessException {
 
         ReindexingStatistics statistics = new ReindexingStatistics();
 
         if (!esConnection.isEnabled()) {
-            return new AsyncResult<ReindexingStatistics>(statistics);
+            return statistics;
         }
 
-        log.info("Started to repopulate Elastic Search");
+        log.info("Started to repopulate Elastic Search for provider {}", providerCode);
 
         try {
 
-            esConnection.reinitES();
+            if (reinitESConnection) {
+                esConnection.reinitES();
+            }
 
-            // Drop all indexes
-            elasticSearchIndexPopulationService.dropAllIndexes(); // TODO need to fix index droping by provider. elasticSearchIndexPopulationService.dropIndexes();
-
-            // Recreate all indexes
-            elasticSearchIndexPopulationService.createIndexes();
+            // Drop all indexes for the current provider
+            if (dropIndexes) {
+                esPopulationService.dropIndexes();
+            }
+            // Recreate all indexes for the current provider
+            esPopulationService.createIndexes();
 
             // Repopulate index from DB
 
@@ -932,17 +997,97 @@ public class ElasticClient {
                     }
 
                 } else {
-
                     populateAll(statistics, classname, null);
                 }
             }
 
-            log.info("Finished repopulating Elastic Search");
+            log.info("Finished repopulating Elastic Search for provider {}", providerCode);
 
         } catch (Exception e) {
-            log.error("Failed to repopulate Elastic Search", e);
+            log.error("Failed to repopulate Elastic Search for provider {}", providerCode, e);
             statistics.setException(e);
         }
+
+        return statistics;
+    }
+
+    /**
+     * Delete and recreate Elastic search index structure and populate it with data for a current provider
+     * 
+     * @param lastCurrentUser Current user
+     * @param reinitESConnection Should connection to ES be re-established and configuration reloaded
+     * @return Reindexing statistics
+     * @throws BusinessException General exception
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public Future<ReindexingStatistics> cleanAndReindexAll(MeveoUser lastCurrentUser, boolean reinitESConnection) throws BusinessException {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+        ReindexingStatistics statistics = new ReindexingStatistics();
+
+        if (!esConnection.isEnabled()) {
+            return new AsyncResult<ReindexingStatistics>(statistics);
+        }
+
+        log.info("Started to repopulate Elastic Search for all providers");
+
+        try {
+
+            if (reinitESConnection) {
+                esConnection.reinitES();
+            }
+
+            // Drop all indexes - of all providers
+            esPopulationService.dropAllIndexes();
+
+            final List<Provider> providers = providerService.list(new PaginationConfiguration("id", org.primefaces.model.SortOrder.ASCENDING));
+
+            int i = 0;
+
+            // Process each provider, aggregating its statistics
+            for (Provider provider : providers) {
+
+                Future<ReindexingStatistics> reindexProvider;
+
+                try {
+
+                    reindexProvider = multitenantElasticClient.cleanAndReindex(provider.getCode(), i == 0);
+                    statistics.updateStatistics(reindexProvider.get());
+                    if (statistics.getException() != null) {
+                        return new AsyncResult<ReindexingStatistics>(statistics);
+                    }
+
+                } catch (InterruptedException | ExecutionException | BusinessException e) {
+                    log.error("Failed to initialize a provider {}", provider.getCode());
+                }
+                i++;
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to repopulate Elastic Search for all providers", e);
+            statistics.setException(e);
+        }
+        return new AsyncResult<ReindexingStatistics>(statistics);
+    }
+
+    /**
+     * Recreate Elastic search index structure and populate it with data for a current provider. Part of cleanAndReindexAll() method. DOES not delete indexes - they should have
+     * been deleted before in cleanAndReindexAll().
+     * 
+     * @param providerCode Provider code that index should be rebuild for
+     * @param isMainProvider Is it a main provider
+     * @return Reindexing statistics
+     * @throws BusinessException General exception in communication with or action execution in Elastic search
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public Future<ReindexingStatistics> cleanAndReindex(String providerCode, boolean isMainProvider) throws BusinessException {
+
+        currentUserProvider.forceAuthentication("applicationInitializer", isMainProvider ? null : providerCode);
+
+        ReindexingStatistics statistics = cleanAndReindex(false, false, isMainProvider ? null : providerCode);
 
         return new AsyncResult<ReindexingStatistics>(statistics);
     }
@@ -1003,12 +1148,12 @@ public class ElasticClient {
 
                 Object fromId = 0;
 
-                int recordCount = elasticSearchIndexPopulationService.getRecordCountInNativeTable(cet.getDbTablename());
+                int recordCount = esPopulationService.getRecordCountInNativeTable(cet.getDbTablename());
                 int recordsRemaining = recordCount;
                 int totalProcessed = 0;
                 while (recordsRemaining > 0) {
 
-                    Object[] processedInfo = elasticSearchIndexPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), fromId,
+                    Object[] processedInfo = esPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), fromId,
                         recordsRemaining > INDEX_POPULATE_CT_PAGE_SIZE ? INDEX_POPULATE_CT_PAGE_SIZE : -1, statistics);
 
                     totalProcessed = totalProcessed + (int) processedInfo[0];
@@ -1027,7 +1172,7 @@ public class ElasticClient {
                 boolean hasMore = true;
 
                 while (hasMore) {
-                    Object[] processedInfo = elasticSearchIndexPopulationService.populateIndex(classname, fromId, INDEX_POPULATE_PAGE_SIZE, statistics);
+                    Object[] processedInfo = esPopulationService.populateIndex(classname, fromId, INDEX_POPULATE_PAGE_SIZE, statistics);
 
                     totalProcessed = totalProcessed + (int) processedInfo[0];
                     fromId = processedInfo[1];
@@ -1046,20 +1191,6 @@ public class ElasticClient {
     }
 
     /**
-     * Recreate index.
-     *
-     * @throws BusinessException business exception
-     */
-    public void createIndexes() throws BusinessException {
-
-        if (!esConnection.isEnabled()) {
-            return;
-        }
-
-        elasticSearchIndexPopulationService.createIndexes();
-    }
-
-    /**
      * Update Elastic Search model with custom entity template definition
      *
      * @param cet Custom entity template
@@ -1071,7 +1202,22 @@ public class ElasticClient {
             return;
         }
 
-        elasticSearchIndexPopulationService.createCETIndex(cet);
+        esPopulationService.createCETIndex(cet);
+    }
+
+    /**
+     * Remove from Elastic Search model a custom entity template definition
+     *
+     * @param cet Custom entity template
+     * @throws BusinessException General exception
+     */
+    public void removeCETMapping(CustomEntityTemplate cet) throws BusinessException {
+
+        if (!esConnection.isEnabled()) {
+            return;
+        }
+
+        esPopulationService.removeCETIndex(cet);
     }
 
     /**
@@ -1086,7 +1232,7 @@ public class ElasticClient {
             return;
         }
 
-        elasticSearchIndexPopulationService.updateCFMapping(cft);
+        esPopulationService.updateCFMapping(cft);
     }
 
     /**
@@ -1094,10 +1240,10 @@ public class ElasticClient {
      *
      * @param classnamesOrCetCodes An array of classnames (full or simple name) or CET codes
      * @param ignoreUnknownNames Should unknown classnames or CET codes throw an exception?
-     * @return list of elastic search class info.
+     * @return List of elastic search class info.
      * @throws BusinessException business exception
      */
-    public List<ElasticSearchClassInfo> getSearchScopeInfo(String[] classnamesOrCetCodes, boolean ignoreUnknownNames) throws BusinessException {
+    private List<ElasticSearchClassInfo> getSearchScopeInfo(String[] classnamesOrCetCodes, boolean ignoreUnknownNames) throws BusinessException {
 
         List<ElasticSearchClassInfo> classInfos = new ArrayList<>();
 
@@ -1120,34 +1266,14 @@ public class ElasticClient {
     }
 
     /**
-     * Do a backward conversion of index and/or type into a classname and custom entity template code.
-     *
-     * @param indexName Index name
-     * @param type Type value
-     * @return Information used to determine index and type in Elastic Search - classname and custom entity template code. Returns null if was not able to determine it frem index
-     *         name and type.
-     */
-    public ElasticSearchClassInfo getSearchScopeInfo(String indexName, String type) {
-
-        if (type != null) {
-            return getSearchScopeInfo(type);
-        } else {
-            String classname = esConfiguration.getClassnameFromIndex(indexName);
-            if (classname != null) {
-                return getSearchScopeInfo(classname);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Convert classname (full or simple name) or CET code into a information used to determine index and type in Elastic Search
+     * Convert classname (full or simple name) or CET code into a information used to determine index and type in Elastic Search. Note: passing a simple classname takes much, much
+     * longer.
      *
      * @param classnameOrCetCode Classname (full or simple name ) or CET code
      * @return Information used to determine index and type in Elastic Search
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public ElasticSearchClassInfo getSearchScopeInfo(String classnameOrCetCode) {
+    private ElasticSearchClassInfo getSearchScopeInfo(String classnameOrCetCode) {
         ElasticSearchClassInfo classInfo = null;
         try {
             classInfo = new ElasticSearchClassInfo((Class<? extends ISearchable>) Class.forName(classnameOrCetCode), null);
@@ -1192,28 +1318,33 @@ public class ElasticClient {
         return classInfo;
     }
 
-    protected static String buildId(ISearchable entity) {
-        if (entity instanceof BusinessEntity) {
-            return BaseEntity.cleanUpCodeOrId(entity.getCode());
-        } else if (entity instanceof CustomTableRecord) {
-            return ((CustomTableRecord) entity).getId().toString();
-        } else {
-            return BaseEntity.cleanUpCodeOrId(entity.getCode() + "__" + entity.getId());
+    /**
+     * Do a backward conversion of index and/or type into a classname and custom entity template code.
+     *
+     * @param indexName Index name
+     * @param type Type value
+     * @return Information used to determine index and type in Elastic Search - classname and custom entity template code. Returns null if was not able to determine it frem index
+     *         name and type.
+     */
+    @SuppressWarnings("unchecked")
+    public ElasticSearchClassInfo getSearchScopeInfo(String indexName, String type) {
+
+        String[] classInfo = esPopulationService.getClassnameAndCETCodeFromIndex(indexName, type);
+        if (classInfo != null) {
+            try {
+                return new ElasticSearchClassInfo((Class<? extends ISearchable>) Class.forName(classInfo[0]), classInfo[1]);
+            } catch (ClassNotFoundException e) {
+                log.error("Unknown class determined from ES index and type {}/{}", classInfo[0], classInfo[1]);
+            }
         }
+
+        return null;
     }
 
     /**
-     * Remove from Elastic Search model a custom entity template definition
-     *
-     * @param cet Custom entity template
-     * @throws BusinessException General exception
+     * Repopulate cache for a <b>current provider</b>, that stores index and type mapping to class and custom entity template code.
      */
-    public void removeCETMapping(CustomEntityTemplate cet) throws BusinessException {
-
-        if (!esConnection.isEnabled()) {
-            return;
-        }
-
-        elasticSearchIndexPopulationService.removeCETIndex(cet);
+    public void repopulateIndexAndTypeCache() {
+        esPopulationService.repopulateIndexAndTypeCache(true);
     }
 }
