@@ -1,6 +1,10 @@
 package org.meveo.apiv2.exception;
 
 import org.jboss.resteasy.api.validation.Validation;
+import org.meveo.apiv2.models.ApiException;
+import org.meveo.apiv2.models.ImmutableApiException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -9,15 +13,21 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class UnhandledExceptionMapper implements ExceptionMapper<Exception> {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Override
     public Response toResponse(Exception exception) {
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Internal Server Error : " + getErrorMessage(exception))
-                .type(MediaType.TEXT_PLAIN).header(Validation.VALIDATION_HEADER, "true")
+        log.error("An unhandled exception occurred ", exception);
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(toApiError(exception))
+                .type(MediaType.APPLICATION_JSON).header(Validation.VALIDATION_HEADER, "true")
                 .build();
     }
 
-    private String getErrorMessage(Exception exception) {
-        return exception.getMessage() != null ? exception.getMessage() : getStackTrace(exception.getStackTrace());
+    private ApiException toApiError(Exception exception) {
+        return ImmutableApiException.builder()
+                .code("500")
+                .details(exception.getMessage() != null ? exception.getMessage() : getStackTrace(exception.getStackTrace()))
+                .build();
     }
 
     private String getStackTrace(StackTraceElement[] stackTrace) {

@@ -3,11 +3,13 @@ package org.meveo.apiv2.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
+import org.meveo.apiv2.models.orderItem.ImmutableSubscription;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.core.Link;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Value.Immutable
@@ -20,5 +22,4 @@ public interface Resource extends Serializable {
     @Nullable
     @XmlJavaTypeAdapter(Link.JaxbAdapter.class)
     List<Link> getLinks();
-
 }
