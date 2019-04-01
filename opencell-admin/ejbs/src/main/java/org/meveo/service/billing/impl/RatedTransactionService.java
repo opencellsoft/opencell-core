@@ -404,19 +404,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if (calculateTaxOnSubCategoryLevel) {
                 Tax tax = null;
                 
-              //get the Tax computed rating stored in WalletOperation
-                for (RatedTransaction ratedTransaction : scAggregate.getRatedtransactions()) {
-                	WalletOperation walletOperation= walletOperationService.findByCode(ratedTransaction.getCode());
-                	if ((scAggregate.getTaxPercent() != null) && (walletOperation.getTaxPercent()!= null) &&(scAggregate.getTaxPercent().compareTo(walletOperation.getTaxPercent()) != 0)) {
-                		tax= scAggregate.getTax();
-						tax.setPercent(walletOperation.getTaxPercent());
-						ratedTransaction.setTax(tax);
-                        ratedTransaction.setTaxPercent(tax.getPercent());
-                        ratedTransaction.computeDerivedAmounts(isEnterprise, rtRounding, rtRoundingMode);
-                        scAggregate.setTax(tax);
-						scAggregate.setTaxPercent(walletOperation.getTaxPercent());
-					}
-                   
+                //use Tax selected at rating
+                if ((scAggregate.getTaxPercent() != null) ) {
+            		tax= scAggregate.getTax();
                 }
 
                 // If there is a taxScript in invoiceSubCategory and script is applicable, use it to compute external taxes
