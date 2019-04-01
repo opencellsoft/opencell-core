@@ -1,6 +1,5 @@
 package org.meveo.api.index;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -14,7 +13,6 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.service.index.ElasticClient;
-import org.meveo.service.index.ElasticSearchClassInfo;
 import org.meveo.service.index.ReindexingStatistics;
 
 /**
@@ -36,7 +34,7 @@ public class FullTextSearchApi extends BaseApi {
             throw new AccessDeniedException("Super administrator permission is required to clean and reindex full text search");
         }
         try {
-            Future<ReindexingStatistics> future = elasticClient.cleanAndReindex(currentUser.unProxy());
+            Future<ReindexingStatistics> future = elasticClient.cleanAndReindex(currentUser.unProxy(), true);
             future.get();
         } catch (Exception e) {
             throw new BusinessException(e);
@@ -65,10 +63,8 @@ public class FullTextSearchApi extends BaseApi {
 
         handleMissingParameters();
 
-        List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
-
         SearchResponse searchResult = elasticClient.search(query, from, size, sortField != null ? new String[] { sortField } : null,
-            sortOrder != null ? new SortOrder[] { sortOrder } : null, null, classInfo);
+            sortOrder != null ? new SortOrder[] { sortOrder } : null, null, classnamesOrCetCodes);
 
         if (searchResult != null) {
             return searchResult.toString();
@@ -99,9 +95,7 @@ public class FullTextSearchApi extends BaseApi {
 
         handleMissingParameters();
 
-        List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
-
-        SearchResponse searchResult = elasticClient.search(queryValues, from, size, null, null, null, classInfo);
+        SearchResponse searchResult = elasticClient.search(queryValues, from, size, null, null, null, classnamesOrCetCodes);
 
         if (searchResult != null) {
             return searchResult.toString();

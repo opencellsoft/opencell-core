@@ -1462,7 +1462,7 @@
     <con:endpoints>
       <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
     </con:endpoints>
-    <con:resource name="Account by id" path="/${#Project#tenantLowercase}_account/_doc/{type}_{id}" id="dc93348b-fbb2-4ed5-9fcd-c437a622a50f">
+    <con:resource name="Account by id" path="/${#Project#esIndexPrefix}_account/_doc/{type}_{id}" id="dc93348b-fbb2-4ed5-9fcd-c437a622a50f">
       <con:settings/>
       <con:parameters>
         <con:parameter>
@@ -1555,7 +1555,7 @@
         </con:representation>
       </con:method>
     </con:resource>
-    <con:resource name="Catalog by id" path="/${#Project#tenantLowercase}_catalog/_doc/{type}_{id}" id="dc93348b-fbb2-4ed5-9fcd-c437a622a50f">
+    <con:resource name="Catalog by id" path="/${#Project#esIndexPrefix}_catalog/_doc/{type}_{id}" id="dc93348b-fbb2-4ed5-9fcd-c437a622a50f">
       <con:settings/>
       <con:parameters>
         <con:parameter>
@@ -1610,7 +1610,7 @@
         </con:representation>
       </con:method>
     </con:resource>
-    <con:resource name="Index mapping" path="/${#Project#tenantLowercase}_{indexName}/_mapping/" id="1850bf0f-52e5-4e6a-b825-28745cd3960e">
+    <con:resource name="Index mapping" path="/${#Project#esIndexPrefix}_{indexName}/_mapping/" id="1850bf0f-52e5-4e6a-b825-28745cd3960e">
       <con:settings/>
       <con:parameters>
         <con:parameter>
@@ -1643,7 +1643,7 @@
         </con:representation>
       </con:method>
     </con:resource>
-    <con:resource name="Custom by id" path="/${#Project#tenantLowercase}_{cetCode}/_doc/{id}" id="dc93348b-fbb2-4ed5-9fcd-c437a622a50f">
+    <con:resource name="Custom by id" path="/${#Project#esIndexPrefix}_{cetCode}/_doc/{id}" id="dc93348b-fbb2-4ed5-9fcd-c437a622a50f">
       <con:settings/>
       <con:parameters>
         <con:parameter>
@@ -16758,6 +16758,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="delay" name="Delay" id="e8dec9ac-e62f-4e38-8499-fb0aa2d025f8">
+        <con:settings/>
+        <con:config>
+          <delay>6000</delay>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Setup Catalog: Charges, Services, Offer, PP, Counters, Wallets" searchProperties="true" id="fe1d7e1f-858a-439a-a1d1-76b54cf3a456">
@@ -19655,7 +19661,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Check Accounts mapping" id="f61c7eba-150a-4196-9ebe-2c43b08d682a">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_{indexName}/_mapping/" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{indexName}/_mapping/" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Check Accounts mapping" id="12241024-c879-45f7-9776-a0965570e40b" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -19671,14 +19677,14 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="72ca5c77-5144-46e1-9393-47ac49b23c2a" name="Contains">
               <con:configuration>
-                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE":{"type":"date","format":"strict_date_optional_time"}</token>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE":{"type":"date"}</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="e2b60dc0-adfe-451b-8d87-097198c573dd" name="Contains 1">
               <con:configuration>
-                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE-NI":{"type":"date","index":false,"format":"strict_date_optional_time"}</token>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE-NI":{"type":"date","index":false}</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -19811,14 +19817,14 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="506223c6-f729-4b6b-a77f-c0e6f75b9a15" name="Contains 20">
               <con:configuration>
-                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_LIST":{"type":"date","format":"strict_date_optional_time"}</token>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_LIST":{"type":"date"}</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="17993ffa-cc48-421f-b477-7f95bc76b5b2" name="Contains 21">
               <con:configuration>
-                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_LIST-NI":{"type":"date","index":false,"format":"strict_date_optional_time"}</token>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_DATE_LIST-NI":{"type":"date","index":false}</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -20018,7 +20024,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Check CET1 mapping" id="533a3b7e-6a6b-489b-a6d7-b59e6fe452fc">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_{indexName}/_mapping/" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{indexName}/_mapping/" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Check CET1 mapping" id="12241024-c879-45f7-9776-a0965570e40b" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -20029,7 +20035,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:originalUri>http://localhost/demo_accounts/_mapping/account</con:originalUri>
             <con:assertion type="JsonPath Match" id="206a2f6a-7df4-44e7-acb4-61b5faecd64b" name="JsonPath Match">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CET_One_v1".toLowerCase()}.mappings._doc.properties.code</path>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CET_One_v1".toLowerCase()}.mappings._doc.properties.code</path>
                 <content>{"type":"keyword"}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -20038,7 +20044,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="JsonPath Match" id="dc9f19d9-c708-401e-94d3-1deca1da4965" name="JsonPath Match 1">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CET_One_v1".toLowerCase()}.mappings._doc.properties.${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1</path>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CET_One_v1".toLowerCase()}.mappings._doc.properties.${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1</path>
                 <content>{"type":"text"}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -20047,7 +20053,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="JsonPath Match" id="3d6f545f-c4f2-4dcd-b66f-e4c5af1f79a8" name="JsonPath Match 2">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CET_One_v1".toLowerCase()}.mappings._doc.properties.${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2</path>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CET_One_v1".toLowerCase()}.mappings._doc.properties.${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2</path>
                 <content>{"type":"long","index":false}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -20071,7 +20077,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Check CET2 mapping" id="3fcf0952-2ae8-416b-847b-afc6847a126f">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_{indexName}/_mapping/" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{indexName}/_mapping/" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Check CET2 mapping" id="12241024-c879-45f7-9776-a0965570e40b" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -20082,7 +20088,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:originalUri>http://localhost/demo_accounts/_mapping/account</con:originalUri>
             <con:assertion type="JsonPath Match" id="206a2f6a-7df4-44e7-acb4-61b5faecd64b" name="JsonPath Match">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CET_Two_v1".toLowerCase()}.mappings._doc.properties.code</path>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CET_Two_v1".toLowerCase()}.mappings._doc.properties.code</path>
                 <content>{"type":"keyword"}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -20091,7 +20097,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="JsonPath Match" id="dc9f19d9-c708-401e-94d3-1deca1da4965" name="JsonPath Match 1">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CET_Two_v1".toLowerCase()}.mappings._doc.properties.${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT21</path>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CET_Two_v1".toLowerCase()}.mappings._doc.properties.${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT21</path>
                 <content>{"type":"text"}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -20100,7 +20106,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="JsonPath Match" id="3d6f545f-c4f2-4dcd-b66f-e4c5af1f79a8" name="JsonPath Match 2">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CET_Two_v1".toLowerCase()}.mappings._doc.properties.${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT22</path>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CET_Two_v1".toLowerCase()}.mappings._doc.properties.${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT22</path>
                 <content>{"type":"long","index":false}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -20196,7 +20202,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get CA document in Elastic Search" id="02b4bc71-3ccb-45ef-970b-bdae91249155">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get CA document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -20424,7 +20430,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get CA document in Elastic Search after update" id="f5caad83-131b-4395-b060-cc69db9bb58a">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get CA document in Elastic Search after update" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -20793,7 +20799,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get CA document in Elastic Search after update with CF" id="f8fead43-caaf-4f29-a907-6ddbae56bf03">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get CA document in Elastic Search after update with CF" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -21046,7 +21052,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get CA document in Elastic Search after update no CF" id="331b7acd-e020-49bc-9b91-e9cdfe4f50f3">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get CA document in Elastic Search after update no CF" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -21296,7 +21302,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get CA document in Elastic Search after BA creation" id="f4e7666f-1531-4ea8-8fd1-1e6c0a282ebe">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get CA document in Elastic Search after BA creation" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -21549,7 +21555,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get CA2 document in Elastic Search" id="6ed67bc7-3d8c-480b-870a-07c79cceb11f">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get CA2 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -21772,7 +21778,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get Offer1 document in Elastic Search" id="0074c5df-8377-4de8-aea2-1e5046b8ea15">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_catalog/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_catalog/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get Offer1 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -21902,7 +21908,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get Offer2 document in Elastic Search" id="859b73c9-2b5d-485a-9c8b-2f28e508f8d6">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_catalog/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_catalog/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get Offer2 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -22077,7 +22083,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get Cei1 - Cet one document in Elastic Search" id="4a3ccbc6-288d-4ed8-8cb8-fc77fd8ecae9">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get Cei1 - Cet one document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -22137,7 +22143,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="JsonPath Match" id="ac8ef00e-6e8c-455b-bf22-d710bdca3b81" name="JsonPath Match 4">
               <con:configuration>
                 <path>_index</path>
-                <content>${#Project#tenantLowercase}_${="${#Project#entityPrefix}_${#TestSuite#index}_CET_One".toLowerCase()}_v1</content>
+                <content>${#Project#esIndexPrefix}_${="${#Project#entityPrefix}_${#TestSuite#index}_CET_One".toLowerCase()}_v1</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -22161,7 +22167,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get Cei2 - Cet one document in Elastic Search" id="116528d9-1ae2-4dcc-9ebf-c333633a8618">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get Cei2 - Cet one document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -22221,7 +22227,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="JsonPath Match" id="f59fedc5-aa1b-4589-a76c-5bee28a9f3df" name="JsonPath Match 4">
               <con:configuration>
                 <path>_index</path>
-                <content>${#Project#tenantLowercase}_${="${#Project#entityPrefix}_${#TestSuite#index}_CET_One".toLowerCase()}_v1</content>
+                <content>${#Project#esIndexPrefix}_${="${#Project#entityPrefix}_${#TestSuite#index}_CET_One".toLowerCase()}_v1</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -22293,7 +22299,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get Cei2 - Cet two document in Elastic Search" id="dc4ad33e-7305-4873-9e04-e3fd35074010">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get Cei2 - Cet two document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -22346,7 +22352,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="JsonPath Match" id="58c12b13-a4d3-4700-99f3-653ea25deffe" name="JsonPath Match 4">
               <con:configuration>
                 <path>_index</path>
-                <content>${#Project#tenantLowercase}_${="${#Project#entityPrefix}_${#TestSuite#index}_CET_Two".toLowerCase()}_v1</content>
+                <content>${#Project#esIndexPrefix}_${="${#Project#entityPrefix}_${#TestSuite#index}_CET_Two".toLowerCase()}_v1</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -22832,7 +22838,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get CA document in Elastic Search - preDelete" id="747e22eb-c92a-4608-887d-bb9d8c802e8d">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get CA document in Elastic Search - preDelete" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -22944,7 +22950,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get CA document in Elastic Search" id="7eb356c1-de7e-4584-af21-e7d5a3ed233f">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get CA document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -22987,7 +22993,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get CA2 document in Elastic Search" id="10fa9e52-1ded-4c02-a197-f182b4e5a990">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_account/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get CA2 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -23114,7 +23120,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get Offer1 document in Elastic Search" id="2b2530c8-cda7-46cd-a178-4ff5c4ef0a8b">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_catalog/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_catalog/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get Offer1 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -23156,7 +23162,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get Offer2 document in Elastic Search" id="d5fbe431-8d04-477e-8a11-dbbadfc56056">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_catalog/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_catalog/_doc/{type}_{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get Offer2 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -23319,7 +23325,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get Cei1 document in Elastic Search" id="5246677a-5a5b-4e75-8d0c-a8fc0a09fe15">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get Cei1 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -23399,7 +23405,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Get Cei2 document in Elastic Search" id="4a1082ef-8bbe-49dd-8f3a-69d58b9cd783">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Get Cei2 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -23519,7 +23525,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>222</con:value>
+        <con:value>232</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -23759,7 +23765,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:testStep type="restrequest" name="Check custom table mapping" id="72ee6981-8bac-41a5-af16-6806fe42e779">
         <con:settings/>
-        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#tenantLowercase}_{indexName}/_mapping/" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{indexName}/_mapping/" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Check custom table mapping" id="12241024-c879-45f7-9776-a0965570e40b" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -23770,7 +23776,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:originalUri>http://localhost/demo_accounts/_mapping/account</con:originalUri>
             <con:assertion type="JsonPath Match" id="206a2f6a-7df4-44e7-acb4-61b5faecd64b" name="JsonPath Match">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.hour_from</path>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.hour_from</path>
                 <content>{"type":"long"}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -23779,7 +23785,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="JsonPath Match" id="dc9f19d9-c708-401e-94d3-1deca1da4965" name="JsonPath Match 1">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.hour_to</path>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.hour_to</path>
                 <content>{"type":"long"}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -23788,7 +23794,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="JsonPath Match" id="3d6f545f-c4f2-4dcd-b66f-e4c5af1f79a8" name="JsonPath Match 2">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.id</path>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.id</path>
                 <content>{"type":"long"}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -23797,7 +23803,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="JsonPath Match" id="d53eaf4b-d733-434a-a80c-e6b6c0aab88f" name="JsonPath Match 3">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.prefix</path>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.prefix</path>
                 <content>{"type":"keyword"}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -23806,7 +23812,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="JsonPath Match" id="7eca82a9-652a-4e6e-bc8b-b22e9109605f" name="JsonPath Match 4">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.price</path>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.price</path>
                 <content>{"type":"double"}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -23815,8 +23821,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="JsonPath Match" id="f55de643-d85f-4d4c-9ba7-b42d0ebd17b0" name="JsonPath Match 5">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.valid_from</path>
-                <content>{"type":"date","format":"strict_date_optional_time"}</content>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.valid_from</path>
+                <content>{"type":"date"}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -23824,8 +23830,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="JsonPath Match" id="19ff1571-c6a2-447e-b452-e319d7bd319a" name="JsonPath Match 6">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.valid_to</path>
-                <content>{"type":"date","format":"strict_date_optional_time"}</content>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.valid_to</path>
+                <content>{"type":"date"}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -23833,7 +23839,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="JsonPath Match" id="b4d22e99-d1cb-4147-9247-3d94423d6d44" name="JsonPath Match 7">
               <con:configuration>
-                <path>${="${#Project#tenantLowerCase}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.zone</path>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.zone</path>
                 <content>{"type":"keyword"}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -26432,6 +26438,10 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
     <con:property>
       <con:name>tenantLowercase</con:name>
       <con:value>demo</con:value>
+    </con:property>
+    <con:property>
+      <con:name>esIndexPrefix</con:name>
+      <con:value>null</con:value>
     </con:property>
     <con:property>
       <con:name>dbSchema</con:name>

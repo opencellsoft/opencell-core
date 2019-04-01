@@ -12,6 +12,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceBalanceDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplatesDto;
@@ -397,21 +398,8 @@ public class PaymentScheduleApi extends BaseApi {
             List<PaymentScheduleInstance> instances = paymentScheduleInstanceService.list(paginationConfig);
             for (PaymentScheduleInstance psInstance : instances) {
                 PaymentScheduleInstanceDto instanceDto = new PaymentScheduleInstanceDto(psInstance);
-                if (pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("balance")) {
-                    PaymentScheduleInstanceBalanceDto paymentScheduleInstanceBalanceDto = new PaymentScheduleInstanceBalanceDto();
-                    Long nbPaidItems = paymentScheduleInstanceItemService.countPaidItems(psInstance);
-                    Long nbIncomingItems = paymentScheduleInstanceItemService.countIncomingItems(psInstance);
-                    BigDecimal sumAmountPaid = paymentScheduleInstanceItemService.sumAmountPaid(psInstance);
-                    BigDecimal sumAmountIncoming = paymentScheduleInstanceItemService.sumAmountIncoming(psInstance);
-                    if (nbPaidItems != null) {
-                        paymentScheduleInstanceBalanceDto.setNbSchedulePaid(nbPaidItems.intValue());
-                    }
-                    if (nbIncomingItems != null) {
-                        paymentScheduleInstanceBalanceDto.setNbScheduleIncoming(nbIncomingItems.intValue());
-                    }
-                    paymentScheduleInstanceBalanceDto.setSumAmountPaid(sumAmountPaid);
-                    paymentScheduleInstanceBalanceDto.setSumAmountIncoming(sumAmountIncoming);
-                    instanceDto.setPaymentScheduleInstanceBalanceDto(paymentScheduleInstanceBalanceDto);
+                if (pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("balance")) {                   
+                    instanceDto = addPaymentScheduleInstanceBalance(psInstance, instanceDto);
                 }
                 result.getInstances().add(instanceDto);
             }
@@ -439,7 +427,7 @@ public class PaymentScheduleApi extends BaseApi {
 
         PaymentScheduleInstance paymentScheduleInstance = paymentScheduleInstanceService.findById(paymentScheduleInstanceDto.getId());
         if (paymentScheduleInstance == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, paymentScheduleInstanceDto.getId());
+            throw new EntityDoesNotExistsException(PaymentScheduleInstance.class, paymentScheduleInstanceDto.getId());
         }
         paymentScheduleInstanceService.detach(paymentScheduleInstance);
         paymentScheduleInstance.setStatus(paymentScheduleInstanceDto.getStatus());
@@ -489,7 +477,7 @@ public class PaymentScheduleApi extends BaseApi {
         handleMissingParameters();
         PaymentScheduleInstance paymentScheduleInstance = paymentScheduleInstanceService.findById(paymentScheduleInstanceDto.getId());
         if (paymentScheduleInstance == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, paymentScheduleInstanceDto.getId());
+            throw new EntityDoesNotExistsException(PaymentScheduleInstance.class, paymentScheduleInstanceDto.getId());
         }
         paymentScheduleInstanceService.terminate(paymentScheduleInstance, paymentScheduleInstanceDto.getEndDate());
     }
@@ -510,8 +498,58 @@ public class PaymentScheduleApi extends BaseApi {
         handleMissingParameters();
         PaymentScheduleInstance paymentScheduleInstance = paymentScheduleInstanceService.findById(paymentScheduleInstanceDto.getId());
         if (paymentScheduleInstance == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, paymentScheduleInstanceDto.getId());
+            throw new EntityDoesNotExistsException(PaymentScheduleInstance.class, paymentScheduleInstanceDto.getId());
         }
         paymentScheduleInstanceService.cancel(paymentScheduleInstance);
     }
+
+    /**
+     * Find  PaymentScheduleInstance by ID.
+     * @param id PaymentScheduleInstance ID
+     * @return A paymentScheduleInstance dto
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     */
+	public PaymentScheduleInstanceResponseDto findPaymentScheduleInstance(Long id) throws MissingParameterException, EntityDoesNotExistsException {
+        if (StringUtils.isBlank(id)) {
+            missingParameters.add("id");
+        }       
+        handleMissingParameters();
+        PaymentScheduleInstance paymentScheduleInstance = paymentScheduleInstanceService.findById(id);
+        if (paymentScheduleInstance == null) {
+            throw new EntityDoesNotExistsException(PaymentScheduleInstance.class, id);
+        }
+        PaymentScheduleInstanceDto instanceDto = new PaymentScheduleInstanceDto(paymentScheduleInstance);
+        instanceDto = addPaymentScheduleInstanceBalance(paymentScheduleInstance, instanceDto);
+        PaymentScheduleInstanceResponseDto paymentScheduleInstanceResponseDto = new PaymentScheduleInstanceResponseDto();
+        paymentScheduleInstanceResponseDto.setPaymentScheduleInstanceDto(instanceDto);
+        return paymentScheduleInstanceResponseDto;               
+	}
+	
+	/**
+	 * Add balance to PaymentScheduleInstanceDto
+	 * @param paymentScheduleInstance
+	 * @param PaymentScheduleInstanceDto
+	 * @return PaymentScheduleInstanceDto with balance
+	 */
+	private PaymentScheduleInstanceDto addPaymentScheduleInstanceBalance(PaymentScheduleInstance paymentScheduleInstance,PaymentScheduleInstanceDto paymentScheduleInstanceDto ) {
+		  PaymentScheduleInstanceBalanceDto paymentScheduleInstanceBalanceDto = new PaymentScheduleInstanceBalanceDto();
+          Long nbPaidItems = paymentScheduleInstanceItemService.countPaidItems(paymentScheduleInstance);
+          Long nbIncomingItems = paymentScheduleInstanceItemService.countIncomingItems(paymentScheduleInstance);
+          BigDecimal sumAmountPaid = paymentScheduleInstanceItemService.sumAmountPaid(paymentScheduleInstance);
+          if(sumAmountPaid == null) {
+        	  sumAmountPaid = BigDecimal.ZERO;
+          }
+          BigDecimal sumAmountIncoming = paymentScheduleInstanceItemService.sumAmountIncoming(paymentScheduleInstance);
+          if (nbPaidItems != null) {
+              paymentScheduleInstanceBalanceDto.setNbSchedulePaid(nbPaidItems.intValue());
+          }
+          if (nbIncomingItems != null) {
+              paymentScheduleInstanceBalanceDto.setNbScheduleIncoming(nbIncomingItems.intValue());
+          }
+          paymentScheduleInstanceBalanceDto.setSumAmountPaid(sumAmountPaid);
+          paymentScheduleInstanceBalanceDto.setSumAmountIncoming(sumAmountIncoming);
+          paymentScheduleInstanceDto.setPaymentScheduleInstanceBalanceDto(paymentScheduleInstanceBalanceDto);
+          return paymentScheduleInstanceDto;
+	}
 }

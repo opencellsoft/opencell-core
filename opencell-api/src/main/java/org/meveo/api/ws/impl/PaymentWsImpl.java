@@ -26,6 +26,7 @@ import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
@@ -742,6 +743,16 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         return result;
     }
 
+    @Override
+    public PaymentScheduleInstanceResponseDto findPaymentScheduleInstance(Long id) {
+    	PaymentScheduleInstanceResponseDto response = new PaymentScheduleInstanceResponseDto();    	
+    	try {
+    		response = paymentScheduleApi.findPaymentScheduleInstance(id);
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+    	return response;
+    }
 
     @Override
     public ActionStatus terminatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) {

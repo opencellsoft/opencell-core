@@ -19,6 +19,7 @@
 package org.meveo.service.custom;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,6 +176,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
      * @param storeAsTable
      * @return A list of custom entity templates
      */
+    @SuppressWarnings("unchecked")
     public List<CustomEntityTemplate> search(String code, boolean storeAsTable) {
         QueryBuilder queryBuilder = new QueryBuilder(CustomEntityTemplate.class, "cet", null);
 
@@ -202,6 +204,21 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
                 }
             }
 
+            // Order the list
+            if (config.getSortField() != null) {
+                Comparator<CustomEntityTemplate> comparator = null;
+                if ("description".equals(config.getSortField())) {
+                    comparator = Comparator.comparing(CustomEntityTemplate::getDescription);
+                } else if ("code".equals(config.getSortField())) {
+                    comparator = Comparator.comparing(CustomEntityTemplate::getCode);
+                } else if ("name".equals(config.getSortField())) {
+                    comparator = Comparator.comparing(CustomEntityTemplate::getName);
+                }
+                if (!config.isAscendingSorting()) {
+                    comparator = comparator.reversed();
+                }
+                cets.sort(comparator);
+            }
             return cets;
 
         } else {

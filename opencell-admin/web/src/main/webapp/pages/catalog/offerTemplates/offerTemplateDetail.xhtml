@@ -139,8 +139,7 @@
                 </p:tab>
 
                 <hftl:customFields backingBean="#{offerTemplateBean}" messagesId="offerForm:messages" />
-                
-                <hftl:displayGenericWFsHistory entity="#{offerTemplateBean.entity}" clazz="#{offerTemplateBean.clazz}" />
+                <hftl:displayGenericWFsHistory backingBean="#{offerTemplateBean}" />
 
                 <p:tab title="#{messages['menu.serviceTemplates']}" id="tab1">
 
