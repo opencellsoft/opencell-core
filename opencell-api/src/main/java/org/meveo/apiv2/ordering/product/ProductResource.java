@@ -7,8 +7,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.api.rest.PATCH;
-import org.meveo.apiv2.models.Product;
-import org.meveo.apiv2.models.Products;
+import org.meveo.apiv2.models.ApiException;
+import org.meveo.apiv2.models.product.Product;
+import org.meveo.apiv2.models.product.Products;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -28,11 +29,14 @@ public interface ProductResource {
                     headers = {
                             @Header (name = "ETag",
                                     description = "a pseudo-unique identifier that represents the version of the data sent back.",
-                                    schema = @Schema(implementation = String.class)
+                                    schema = @Schema(implementation = Integer.class)
                             )
                     },
                     description = "list of products", content = @Content(schema = @Schema(implementation = Products.class))
-            ), @ApiResponse(responseCode = "400", description = "Invalid parameters supplied")
+            ),
+                    @ApiResponse(responseCode = "304",
+                    description = "Not Modified, Returned to the client when the cached copy of a particular product is up to date with the server"),
+                    @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content(schema = @Schema(implementation = ApiException.class)))
     })
     Response getProducts(@DefaultValue("0") @QueryParam("offset") Long offset, @DefaultValue("50") @QueryParam("limit") Long limit,
             @QueryParam("sort") String sort, @QueryParam("orderBy") String orderBy, @QueryParam("filter") String filter,
@@ -48,13 +52,14 @@ public interface ProductResource {
                             headers = {
                                     @Header (name = "ETag",
                                             description = "a pseudo-unique identifier that represents the version of the data sent back",
-                                            schema = @Schema(implementation = String.class)
+                                            schema = @Schema(implementation = Integer.class)
                                     )
                             },
                             description = "the searched product", content = @Content(schema = @Schema(implementation = Product.class))
                     ),
-                    @ApiResponse(responseCode = "304", description = "the resource has not been modified since the last request"),
-                    @ApiResponse(responseCode = "404", description = "product not found")
+                    @ApiResponse(responseCode = "304",
+                            description = "Not Modified, Returned to the client when the cached copy of a particular product is up to date with the server"),
+                    @ApiResponse(responseCode = "404", description = "product not found", content = @Content(schema = @Schema(implementation = ApiException.class)))
             })
     Response getProduct(@Parameter(description = "id of the product", required = true) @PathParam("id") Long id,
             @Context Request request);
@@ -68,7 +73,7 @@ public interface ProductResource {
                             description = "the created product", content = @Content(schema = @Schema(implementation = Product.class)),
                             responseCode = "201"
                     ),
-                    @ApiResponse(responseCode = "400", description = "Invalid inputs supplied")
+                    @ApiResponse(responseCode = "400", description = "Invalid inputs supplied", content = @Content(schema = @Schema(implementation = ApiException.class)))
             })
     Response createProduct(@Parameter(description = "product object to be created", required = true) Product product);
 
@@ -81,8 +86,8 @@ public interface ProductResource {
                     @ApiResponse(
                             description = "the updated product", content = @Content(schema = @Schema(implementation = Product.class))
                     ),
-                    @ApiResponse(responseCode = "400", description = "Invalid inputs supplied"),
-                    @ApiResponse(responseCode = "404", description = "product not found")
+                    @ApiResponse(responseCode = "400", description = "Invalid inputs supplied", content = @Content(schema = @Schema(implementation = ApiException.class))),
+                    @ApiResponse(responseCode = "404", description = "product not found", content = @Content(schema = @Schema(implementation = ApiException.class)))
             })
     Response updateProduct(
             @Parameter(description = "id of the product to update", required = true) @PathParam("id") Long id,
@@ -97,8 +102,8 @@ public interface ProductResource {
                     @ApiResponse(
                             description = "the updated product", content = @Content(schema = @Schema(implementation = Product.class))
                     ),
-                    @ApiResponse(responseCode = "400", description = "Invalid inputs supplied"),
-                    @ApiResponse(responseCode = "404", description = "product not found")
+                    @ApiResponse(responseCode = "400", description = "Invalid inputs supplied", content = @Content(schema = @Schema(implementation = ApiException.class))),
+                    @ApiResponse(responseCode = "404", description = "product not found", content = @Content(schema = @Schema(implementation = ApiException.class)))
     })
     Response patchProduct(
             @Parameter(description = "id of the product to update", required = true) @PathParam("id") Long id,
@@ -114,7 +119,7 @@ public interface ProductResource {
                     @ApiResponse(
                             description = "the deleted product", content = @Content(schema = @Schema(implementation = Product.class))
                     ),
-                    @ApiResponse(responseCode = "404", description = "product not found")
+                    @ApiResponse(responseCode = "404", description = "product not found", content = @Content(schema = @Schema(implementation = ApiException.class)))
             })
     Response deleteProduct(
             @Parameter(description = "id of the product to delete", required = true) @PathParam("id") Long id);

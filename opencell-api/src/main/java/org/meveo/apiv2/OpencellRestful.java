@@ -4,6 +4,7 @@ import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import org.meveo.apiv2.exception.BadRequestExceptionMapper;
 import org.meveo.apiv2.exception.NotFoundExceptionMapper;
 import org.meveo.apiv2.exception.UnhandledExceptionMapper;
+import org.meveo.apiv2.ordering.orderitem.OrderItemResourceImpl;
 import org.meveo.apiv2.ordering.product.ProductResourceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ public class OpencellRestful extends Application {
         public Set<Class<?>> getClasses() {
             Set<Class<?>> resources = new HashSet();
             resources.add(ProductResourceImpl.class);
+            resources.add(OrderItemResourceImpl.class);
             resources.add(NotYetImplementedResource.class);
 
             resources.add(NotFoundExceptionMapper.class);
