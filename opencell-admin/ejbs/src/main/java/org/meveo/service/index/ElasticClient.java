@@ -160,14 +160,14 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esPopulationService.getIndexAndType(entity);
+        ESIndexNameAndType indexAndType = esPopulationService.getIndexAndType(entity);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
             return;
         }
 
-        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.UPDATE, indexAndType[0], indexAndType[1],
+        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.UPDATE, indexAndType.getIndexName(), indexAndType.getType(),
             ElasticSearchIndexPopulationService.buildId(entity), fieldsToUpdate);
         queuedChanges.addChange(change);
 
@@ -188,7 +188,7 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esPopulationService.getIndexAndType(entity);
+        ESIndexNameAndType indexAndType = esPopulationService.getIndexAndType(entity);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
@@ -199,9 +199,10 @@ public class ElasticClient {
 
         ElasticSearchAction action = upsert ? ElasticSearchAction.UPSERT : partialUpdate ? ElasticSearchAction.UPDATE : ElasticSearchAction.ADD_REPLACE;
 
-        Map<String, Object> jsonValueMap = esPopulationService.convertEntityToJson(entity, null, null, indexAndType[1]);
+        Map<String, Object> jsonValueMap = esPopulationService.convertEntityToJson(entity, null, null, indexAndType.getType());
 
-        ElasticSearchChangeset change = new ElasticSearchChangeset(action, indexAndType[0], indexAndType[1], ElasticSearchIndexPopulationService.buildId(entity), jsonValueMap);
+        ElasticSearchChangeset change = new ElasticSearchChangeset(action, indexAndType.getIndexName(), indexAndType.getType(), ElasticSearchIndexPopulationService.buildId(entity),
+            jsonValueMap);
         queuedChanges.addChange(change);
 
         log.trace("Queueing Elastic Search document changes {}", change);
@@ -226,7 +227,7 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esPopulationService.getIndexAndType(entityClass, cetCode);
+        ESIndexNameAndType indexAndType = esPopulationService.getIndexAndType(entityClass, cetCode);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
@@ -237,7 +238,8 @@ public class ElasticClient {
 
         ElasticSearchAction action = upsert ? ElasticSearchAction.UPSERT : partialUpdate ? ElasticSearchAction.UPDATE : ElasticSearchAction.ADD_REPLACE;
 
-        ElasticSearchChangeset change = new ElasticSearchChangeset(action, indexAndType[0], indexAndType[1], identifier, values); // Note: 'entityType' value is set in constructor
+        ElasticSearchChangeset change = new ElasticSearchChangeset(action, indexAndType.getIndexName(), indexAndType.getType(), identifier, values); // Note: 'entityType' value is
+                                                                                                                                                     // set in constructor
 
         queuedChanges.addChange(change);
 
@@ -259,14 +261,14 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esPopulationService.getIndexAndType(entity);
+        ESIndexNameAndType indexAndType = esPopulationService.getIndexAndType(entity);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
             return;
         }
 
-        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, indexAndType[0], indexAndType[1],
+        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, indexAndType.getIndexName(), indexAndType.getType(),
             ElasticSearchIndexPopulationService.buildId(entity));
         queuedChanges.addChange(change);
 
@@ -289,14 +291,14 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esPopulationService.getIndexAndType(entityClass, cetCode);
+        ESIndexNameAndType indexAndType = esPopulationService.getIndexAndType(entityClass, cetCode);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
             return;
         }
 
-        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, indexAndType[0], indexAndType[1], identifier);
+        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, indexAndType.getIndexName(), indexAndType.getType(), identifier);
 
         queuedChanges.addChange(change);
 
@@ -323,15 +325,15 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esPopulationService.getIndexAndType(entityClass, cetCode);
+        ESIndexNameAndType indexAndType = esPopulationService.getIndexAndType(entityClass, cetCode);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
             return;
         }
 
-        String indexName = indexAndType[0];
-        String type = indexAndType[1];
+        String indexName = indexAndType.getIndexName();
+        String type = indexAndType.getType();
 
         for (Object identifier : identifiers) {
 
@@ -360,18 +362,18 @@ public class ElasticClient {
             return;
         }
 
-        String[] indexAndType = esPopulationService.getIndexAndType(entityClass, cetCode);
+        ESIndexNameAndType indexAndType = esPopulationService.getIndexAndType(entityClass, cetCode);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
             return;
         }
 
-        String indexName = indexAndType[0];
+        String indexName = indexAndType.getIndexName();
 
         DeleteByQueryRequest deleteRequest = new DeleteByQueryRequest(indexName);
-        if (indexAndType[1] != null) {
-            deleteRequest.setQuery(new TermQueryBuilder(ElasticSearchConfiguration.MAPPING_FIELD_TYPE, indexAndType[1]));
+        if (indexAndType.getType() != null) {
+            deleteRequest.setQuery(new TermQueryBuilder(ElasticSearchConfiguration.MAPPING_FIELD_TYPE, indexAndType.getType()));
         } else {
             deleteRequest.setQuery(QueryBuilders.matchAllQuery());
         }
@@ -385,10 +387,10 @@ public class ElasticClient {
 
         log.debug("{} records were deleted in Elastic Search for {}", bulkResponse.getDeleted(), StringUtils.concatenate(", ", indexAndType));
         for (SearchFailure failure : bulkResponse.getSearchFailures()) {
-            log.error("Failed to process delete by query (search phase) in Elastic Search for {}/{}", failure.getIndex(), indexAndType[1], failure.getReason());
+            log.error("Failed to process delete by query (search phase) in Elastic Search for {}/{}", failure.getIndex(), indexAndType.getType(), failure.getReason());
         }
         for (Failure failure : bulkResponse.getBulkFailures()) {
-            log.error("Failed to process delete by query (bulk phase) in Elastic Search for {}/{} reason: {}", failure.getIndex(), indexAndType[1], failure.getMessage(),
+            log.error("Failed to process delete by query (bulk phase) in Elastic Search for {}/{} reason: {}", failure.getIndex(), indexAndType.getType(), failure.getMessage(),
                 failure.getCause());
         }
     }
@@ -537,7 +539,7 @@ public class ElasticClient {
             return null;
         }
 
-        Set<String[]> indicesAndTypes = esPopulationService.getIndexAndTypes(classInfo);
+        Set<ESIndexNameAndType> indicesAndTypes = esPopulationService.getIndexAndTypes(classInfo);
 
         // None of the classes are stored in Elastic Search, return empty json
         if (indicesAndTypes == null || indicesAndTypes.isEmpty()) {
@@ -556,12 +558,12 @@ public class ElasticClient {
 
         Set<String> indices = new HashSet<>();
         String type = null;
-        for (String[] indexAndType : indicesAndTypes) {
-            indices.add(indexAndType[0]);
+        for (ESIndexNameAndType indexAndType : indicesAndTypes) {
+            indices.add(indexAndType.getIndexName());
             // TODO For now only a single type is supported. As not possible to search in one index without a type and another one with type - dont know how to write OR clause
             // between indices
-            if (indicesAndTypes.size() == 1 && type == null && indexAndType[1] != null) {
-                type = indexAndType[1];
+            if (indicesAndTypes.size() == 1 && type == null && indexAndType.getType() != null) {
+                type = indexAndType.getType();
             }
         }
 
@@ -720,7 +722,7 @@ public class ElasticClient {
             return null;
         }
 
-        Set<String[]> indicesAndTypes = esPopulationService.getIndexAndTypes(classInfo);
+        Set<ESIndexNameAndType> indicesAndTypes = esPopulationService.getIndexAndTypes(classInfo);
 
         // None of the classes are stored in Elastic Search, return empty json
         if (indicesAndTypes == null || indicesAndTypes.isEmpty()) {
@@ -734,17 +736,17 @@ public class ElasticClient {
             size = DEFAULT_SEARCH_PAGE_SIZE;
         }
 
-        log.debug("Execute Elastic Search search for {} records {}-{} on {} sort by {} {}", queryValues, from, from + size, StringUtils.concatenate(", ", indicesAndTypes),
+        log.debug("Execute Elastic Search field search for {} records {}-{} on {} sort by {} {}", queryValues, from, from + size, StringUtils.concatenate(", ", indicesAndTypes),
             sortFields, sortOrders);
 
         Set<String> indices = new HashSet<>();
         String type = null;
-        for (String[] indexAndType : indicesAndTypes) {
-            indices.add(indexAndType[0]);
+        for (ESIndexNameAndType indexAndType : indicesAndTypes) {
+            indices.add(indexAndType.getIndexName());
             // TODO For now only a single type is supported. As not possible?? to search in one index without a type and another one with type - dont know how to write OR clause
             // between indices
-            if (indicesAndTypes.size() == 1 && type == null && indexAndType[1] != null) {
-                type = indexAndType[1];
+            if (indicesAndTypes.size() == 1 && type == null && indexAndType.getType() != null) {
+                type = indexAndType.getType();
             }
         }
 
