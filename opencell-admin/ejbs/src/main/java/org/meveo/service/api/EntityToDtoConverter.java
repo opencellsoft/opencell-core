@@ -3,10 +3,13 @@ package org.meveo.service.api;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -26,6 +29,7 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
@@ -290,5 +294,100 @@ public class EntityToDtoConverter {
         }
         return dtos;
     }
+
+	public Map<String, CustomFieldTemplate> findByAppliesTo(Set<String> appliesToValues) {
+		return customFieldTemplateService.findByAppliesTo(appliesToValues);
+	}
+	
+	public CustomFieldsDto getCustomFieldsDTO(CustomFieldInheritanceEnum inheritCF,
+			Map<String, CustomFieldTemplate> cfts, ICustomFieldEntity entity) throws CustomFieldException {
+
+		CustomFieldsDto currentEntityCFs = new CustomFieldsDto();
+
+		if (entity != null && entity.getCftAppliesTo() != null) {
+
+			for (Map.Entry<String, CustomFieldTemplate> entry : cfts.entrySet()) {
+
+				CustomFieldTemplate cft = entry.getValue();
+
+				if (entity.getCftAppliesTo().equals(cft.getAppliesTo())) {
+					
+					Map<String, List<CustomFieldValue>> cfValuesByCode = entity.getCfValues() != null
+							? entity.getCfValues().getValuesByCode()
+							: new HashMap<>();
+
+					boolean isValueMapEmpty = cfValuesByCode == null || cfValuesByCode.isEmpty();
+					boolean mergeMapValues = inheritCF == CustomFieldInheritanceEnum.INHERIT_MERGED;
+					boolean includeInheritedCF = mergeMapValues
+							|| inheritCF == CustomFieldInheritanceEnum.INHERIT_NO_MERGE;
+
+					if (!isValueMapEmpty) {
+
+						for (Entry<String, List<CustomFieldValue>> cfValueInfo : cfValuesByCode.entrySet()) {
+							String cfCode = cfValueInfo.getKey();
+							// Return only those values that have cft
+							if (!cfts.containsKey(cfCode)) {
+								continue;
+							}
+							for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
+								currentEntityCFs.getCustomField()
+										.add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+							}
+						}
+					}
+
+					// add parent cf values if inherited
+					if (includeInheritedCF) {
+						ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
+						if (parentEntities != null) {
+
+							Set<String> peDistinctAtvs = new HashSet<String>();
+							for (ICustomFieldEntity pentity : parentEntities) {
+								String peAppliesToValue = CustomFieldTemplateService.calculateAppliesToValue(entity);
+								pentity.setCftAppliesTo(peAppliesToValue);
+								peDistinctAtvs.add(peAppliesToValue);
+							}
+
+							if (peDistinctAtvs.size() > 0) {
+
+								Map<String, CustomFieldTemplate> pCfts = customFieldTemplateService
+										.findByAppliesTo(peDistinctAtvs);
+
+								for (ICustomFieldEntity parentEntity : parentEntities) {
+									if (parentEntity instanceof Provider
+											&& ((Provider) parentEntity).getCode() == null) {
+										parentEntity = appProvider;
+									}
+
+									CustomFieldsDto parentCFs = getCustomFieldsDTO(inheritCF, pCfts, parentEntity);
+									if (parentCFs != null) {
+
+										for (CustomFieldDto parentCF : parentCFs.getCustomField()) {
+											CustomFieldTemplate template = cfts.get(parentCF.getCode());
+											if (template != null) {
+												currentEntityCFs.getInheritedCustomField().add(parentCF);
+											}
+										}
+
+										mergeMapValues(parentCFs.getInheritedCustomField(),
+												currentEntityCFs.getInheritedCustomField());
+
+										if (mergeMapValues) {
+											mergeMapValues(parentCFs.getCustomField(),
+													currentEntityCFs.getCustomField());
+											mergeMapValues(parentCFs.getInheritedCustomField(),
+													currentEntityCFs.getCustomField());
+										}
+									}
+								}
+							}
+						}
+					}
+					break;
+				}
+			}
+		}
+		return currentEntityCFs.isEmpty() ? null : currentEntityCFs;
+	}
 
 }

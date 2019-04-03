@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -99,6 +100,36 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             return findByAppliesToNoCache(appliesTo);
         }
     }
+    
+
+	public Map<String, CustomFieldTemplate> findByAppliesTo(Set<String> subscriptionsDistinctAtvs) {
+		
+		if (useCFTCache) {
+            Map<String, CustomFieldTemplate> cfts = customFieldsCache.getCustomFieldTemplates(subscriptionsDistinctAtvs);
+            // Populate cache if record is not found in cache
+            if (cfts == null) {
+                cfts = findByAppliesToNoCache(subscriptionsDistinctAtvs);
+                if (cfts.isEmpty()) {
+                    customFieldsCache.markNoCustomFieldTemplates(subscriptionsDistinctAtvs);
+                } else {
+                    cfts.forEach((code, cft) -> customFieldsCache.addUpdateCustomFieldTemplate(cft));
+                }
+            }
+            return cfts;
+
+        } else {
+        	return findByAppliesToNoCache(subscriptionsDistinctAtvs);
+        }
+		
+	}
+
+	private Map<String, CustomFieldTemplate> findByAppliesToNoCache(Set<String> subscriptionsDistinctAtvs) {
+		List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTByAppliesTo", CustomFieldTemplate.class)
+	            .setParameter("appliesTo", subscriptionsDistinctAtvs).getResultList();
+	        Map<String, CustomFieldTemplate> cftMap = values.stream().collect(Collectors.toMap(cft -> cft.getCode(), cft -> cft));
+	        return cftMap;
+	}
+	
 
     /**
      * Find a list of custom field templates corresponding to a given entity - always do a lookup in DB

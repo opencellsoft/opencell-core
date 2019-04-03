@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
@@ -496,4 +497,24 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     public void cftsByAppliesToClearAll() {
         cftsByAppliesTo.clear();
     }
+
+	public Map<String, CustomFieldTemplate> getCustomFieldTemplates(Set<String> subscriptionsDistinctAtvs) {
+		Map<String, CustomFieldTemplate> res = new HashMap<>();
+		for(String appliesTo : subscriptionsDistinctAtvs) {
+			CacheKeyStr key = new CacheKeyStr(currentUser.getProviderCode(), appliesTo);
+			if(key != null && cftsByAppliesTo.get(key) != null) {
+				res.putAll(cftsByAppliesTo.get(key));
+			}
+		}
+        return res;
+	}
+
+	public void markNoCustomFieldTemplates(Set<String> subscriptionsDistinctAtvs) {
+		for(String appliesTo : subscriptionsDistinctAtvs) {
+			CacheKeyStr cacheKeyByAppliesTo = new CacheKeyStr(currentUser.getProviderCode(), appliesTo);
+	        if (!cftsByAppliesTo.getAdvancedCache().containsKey(cacheKeyByAppliesTo)) {
+	            cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, new HashMap<String, CustomFieldTemplate>());
+	        }	
+		}
+	}
 }

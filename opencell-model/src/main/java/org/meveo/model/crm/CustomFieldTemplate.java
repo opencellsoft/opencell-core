@@ -66,7 +66,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "CustomFieldTemplate.getCFTForIndex", query = "SELECT cft from CustomFieldTemplate cft where cft.disabled=false and cft.indexType is not null "),
         @NamedQuery(name = "CustomFieldTemplate.getCFTByCodeAndAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.code=:code and cft.appliesTo=:appliesTo", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-        @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo=:appliesTo order by cft.code", hints = {
+        @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo in (:appliesTo) order by cft.code", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class CustomFieldTemplate extends BusinessEntity implements Comparable<CustomFieldTemplate> {
 
