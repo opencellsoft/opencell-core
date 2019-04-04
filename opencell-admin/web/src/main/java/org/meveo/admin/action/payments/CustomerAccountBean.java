@@ -241,8 +241,10 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     public BigDecimal getBalanceDue() throws BusinessException {
         if (entity.getId() == null) {
             return new BigDecimal(0);
-        } else
+        
+        } else {
             return customerAccountService.customerAccountBalanceDue(entity, new Date());
+        }
     }
 
     /**
