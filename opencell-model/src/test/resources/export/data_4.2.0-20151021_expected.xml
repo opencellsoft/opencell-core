@@ -31,7 +31,7 @@
             <storageType>MAP</storageType>
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
         <allowEdit>true</allowEdit>
-            <appliesTo>SUB</appliesTo>
+            <appliesTo>Subscription</appliesTo>
             <code>sub mandatory cf</code>
             <mapKeyType>STRING</mapKeyType>
         </org.meveo.model.crm.CustomFieldTemplate>

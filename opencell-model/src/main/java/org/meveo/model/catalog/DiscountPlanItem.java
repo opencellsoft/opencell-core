@@ -32,11 +32,12 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  * Discount plan item/details
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.3
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Entity
 @Cacheable
-@CustomFieldEntity(cftCodePrefix = "DISCOUNT_PLAN_ITEM", inheritCFValuesFrom = { "discountPlan" })
+@CustomFieldEntity(cftCodePrefix = "DiscountPlanItem", inheritCFValuesFrom = { "discountPlan" })
 @ExportIdentifier({ "discountPlan.code", "code" })
 @Table(name = "cat_discount_plan_item", uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "discount_plan_id", "code" }) })

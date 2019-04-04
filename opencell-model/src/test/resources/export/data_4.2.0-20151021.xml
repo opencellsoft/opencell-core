@@ -24,7 +24,7 @@
             <code>sub mandatory cf</code>
             <description>sub mandatory cf</description>
             <fieldType>LONG</fieldType>
-            <accountLevel>SUB</accountLevel>
+            <accountLevel>Subscription</accountLevel>
             <valueRequired>false</valueRequired>
             <listValues xsId="13" />
             <versionable>false</versionable>

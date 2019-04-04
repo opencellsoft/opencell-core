@@ -31,14 +31,16 @@ import org.meveo.model.annotation.ImageType;
 
 /**
  * Product offer category
- * 
+ *
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Entity
 @ObservableEntity
 @ModuleItem
 @Cacheable
-@CustomFieldEntity(cftCodePrefix = "OFFER_CATEGORY")
+@CustomFieldEntity(cftCodePrefix = "OfferTemplateCategory")
 @ExportIdentifier({ "code" })
 @Table(name = "cat_offer_template_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

@@ -57,12 +57,14 @@ import org.meveo.model.scripts.ScriptInstance;
  * Price plan
  * 
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ModuleItem
 @ObservableEntity
 @Cacheable
-@CustomFieldEntity(cftCodePrefix = "PRICEPLAN")
+@CustomFieldEntity(cftCodePrefix = "PricePlanMatrix")
 @ExportIdentifier({ "code" })
 @Table(name = "cat_price_plan_matrix", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

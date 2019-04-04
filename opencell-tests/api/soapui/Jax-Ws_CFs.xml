@@ -2377,7 +2377,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>SELLER</con:value>
+              <con:value>Seller</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2395,7 +2395,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>CUST</con:value>
+              <con:value>Customer</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2413,7 +2413,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>CA</con:value>
+              <con:value>CustomerAccount</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2431,7 +2431,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>BA</con:value>
+              <con:value>BillingAccount</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2449,7 +2449,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>UA</con:value>
+              <con:value>UserAccount</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2467,7 +2467,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>SUB</con:value>
+              <con:value>Subscription</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2485,7 +2485,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>ACC</con:value>
+              <con:value>Access</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2503,7 +2503,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>PROVIDER</con:value>
+              <con:value>Provider</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2521,7 +2521,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>PRODUCT</con:value>
+              <con:value>ProductTemplate</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2539,7 +2539,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>PRODUCT_INSTANCE</con:value>
+              <con:value>ProductInstance</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2557,7 +2557,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>SERVICE</con:value>
+              <con:value>ServiceTemplate</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2575,7 +2575,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>SERVICE_INSTANCE</con:value>
+              <con:value>ServiceInstance</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2593,7 +2593,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>OFFER</con:value>
+              <con:value>OfferTemplate</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2611,7 +2611,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>CHARGE</con:value>
+              <con:value>ChargeTemplate</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2629,7 +2629,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>PRICEPLAN</con:value>
+              <con:value>PricePlanMatrix</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2647,7 +2647,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>INV_CAT</con:value>
+              <con:value>InvoiceCategory</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2665,7 +2665,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>INV_SUB_CAT</con:value>
+              <con:value>InvoiceSubCategory</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2683,7 +2683,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>ACC_OP</con:value>
+              <con:value>AccountOperation</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2701,7 +2701,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>INVOICE</con:value>
+              <con:value>Invoice</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2719,7 +2719,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>TAX</con:value>
+              <con:value>Tax</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -2737,7 +2737,7 @@ public class Action1 extends Script {
           <con:properties>
             <con:property>
               <con:name>cfType</con:name>
-              <con:value>BILLING_CYCLE</con:value>
+              <con:value>BillingCycle</con:value>
             </con:property>
             <con:property>
               <con:name>entityClass</con:name>
@@ -14951,7 +14951,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_REQUIRED" description="String required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
          </customField>\r
@@ -15197,7 +15197,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -15237,7 +15237,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MAXVALUE" description="String maxValue">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <defaultValue>KUKU</defaultValue>\r
             <storageType>SINGLE</storageType>\r
             <maxValue>15</maxValue>         
@@ -15417,7 +15417,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_MAXVALUE</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -15457,7 +15457,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_REGEXP" description="String regExp">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <defaultValue>KUKU</defaultValue>\r
             <storageType>SINGLE</storageType>\r
             <regExp>c.*g</regExp>         
@@ -15637,7 +15637,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_REGEXP</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -15677,7 +15677,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_LONG_MINVALUE" description="Long">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <minValue>-15</minValue>         
          </customField>\r
@@ -15856,7 +15856,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_LONG_MINVALUE</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -15896,7 +15896,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_LONG_MAXVALUE" description="Long">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <maxValue>15</maxValue>         
          </customField>\r
@@ -16075,7 +16075,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_LONG_MAXVALUE</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -16115,7 +16115,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_LONG_MINMAXVALUE" description="Long">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <minValue>-15</minValue>  
             <maxValue>15</maxValue>         
@@ -16295,7 +16295,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_LONG_MINMAXVALUE</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -16335,7 +16335,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_DOUBLE_MINVALUE" description="Double">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <minValue>-15</minValue>         
          </customField>\r
@@ -16514,7 +16514,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_DOUBLE_MINVALUE</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -16554,7 +16554,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_DOUBLE_MAXVALUE" description="Double">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <maxValue>15</maxValue>         
          </customField>\r
@@ -16733,7 +16733,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_DOUBLE_MAXVALUE</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -16773,7 +16773,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_DOUBLE_MINMAXVALUE" description="Double">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <minValue>-15</minValue>  
             <maxValue>15</maxValue>         
@@ -16953,7 +16953,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_DOUBLE_MINMAXVALUE</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -16993,7 +16993,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_DOUBLE_MAXVALUE_LIST" description="Double">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>LIST</storageType>\r
             <maxValue>15</maxValue>         
          </customField>\r
@@ -17186,7 +17186,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_DOUBLE_MAXVALUE_LIST</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -17226,7 +17226,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_HIDEONNEW" description="String required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <defaultValue>KUKU</defaultValue>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
@@ -17271,7 +17271,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_NOTALLOWEDIT" description="String not allow edit">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <defaultValue>KUKU</defaultValue>\r
             <storageType>SINGLE</storageType>\r
             <allowEdit>false</allowEdit>\r
@@ -17563,7 +17563,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_HIDEONNEW</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -17602,7 +17602,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_NOTALLOWEDIT</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -17642,7 +17642,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_APPLICABLE_ON_EL" description="String required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <defaultValue>KUKU</defaultValue>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
@@ -17913,7 +17913,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_APPLICABLE_ON_EL</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -19143,7 +19143,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_CHILD_ENTITY_VALIDATION" description="Child entity fields validation">\r
             <fieldType>CHILD_ENTITY</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>LIST</storageType>\r
             <valueRequired>true</valueRequired>\r
             <entityClazz>org.meveo.model.customEntities.CustomEntityTemplate - ${#Project#baseEntityPrefix}_CET_VALIDATION</entityClazz>\r
@@ -19474,7 +19474,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_CHILD_ENTITY_VALIDATION</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -20251,7 +20251,7 @@ public class Action1 extends Script {
          
          <customField code="${#Project#entityPrefix}_${#TestSuite#index}_CF_DEF_VAL" description="Default value test">
             <fieldType>STRING</fieldType>
-            <accountLevel>CUST</accountLevel> 
+            <accountLevel>Customer</accountLevel>
             <storageType>SINGLE</storageType> 
             <defaultValue>01234567890123456789012345678901234567890123456789012345678901324567890123456789</defaultValue>
          </customField>
@@ -20293,7 +20293,7 @@ public class Action1 extends Script {
    <soapenv:Body>
       <ws:removeField>
          <customFieldTemplateCode>${#Project#entityPrefix}_${#TestSuite#index}_CF_DEF_VAL</customFieldTemplateCode>
-         <appliesTo>CUST</appliesTo>
+         <appliesTo>Customer</appliesTo>
       </ws:removeField>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -20333,7 +20333,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#entityPrefix}_${#TestSuite#index}_STRING_MATRIX_NO_COLUMN" description="No columns">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>MATRIX</storageType>\r
             <mapKeyType>STRING</mapKeyType>\r
             <matrixColumns></matrixColumns>\r
@@ -20384,7 +20384,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#entityPrefix}_${#TestSuite#index}_STRING_MATRIX_NO_COLUMN" description="No columns">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>MATRIX</storageType>\r
             <mapKeyType>STRING</mapKeyType>\r
             <matrixColumns>\r
@@ -20442,7 +20442,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_PI_REQUIRED" description="String parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
          </customField>\r
@@ -20485,7 +20485,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED" description="String List parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>LIST</storageType>\r
             <valueRequired>true</valueRequired>\r
          </customField>\r
@@ -20528,7 +20528,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MAP_PI_REQUIRED" description="String map parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>true</valueRequired>\r
          </customField>\r
@@ -20571,7 +20571,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED" description="String matrix parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>MATRIX</storageType>\r
             <valueRequired>true</valueRequired>\r
             <matrixColumns>\r
@@ -20618,7 +20618,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" description="String Versionable parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>true</versionable>
@@ -20663,7 +20663,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED" description="String List versionable parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>LIST</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>true</versionable>
@@ -20708,7 +20708,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED" description="String map versionable parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>true</versionable>
@@ -20753,7 +20753,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED" description="String matrix valueRequired parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>MATRIX</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>true</versionable>
@@ -20802,7 +20802,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_PI_REQUIRED" description="String parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
          </customField>\r
@@ -20845,7 +20845,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED" description="String List parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <storageType>LIST</storageType>\r
             <valueRequired>true</valueRequired>\r
          </customField>\r
@@ -20888,7 +20888,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MAP_PI_REQUIRED" description="String map parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>true</valueRequired>\r
          </customField>\r
@@ -20931,7 +20931,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED" description="String matrix parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <storageType>MATRIX</storageType>\r
             <valueRequired>true</valueRequired>\r
             <matrixColumns>\r
@@ -20978,7 +20978,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" description="String Versionable parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>true</versionable>
@@ -21022,7 +21022,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED" description="String List versionable parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <storageType>LIST</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>true</versionable>
@@ -21066,7 +21066,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED" description="String map versionable parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>true</versionable>
@@ -21110,7 +21110,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED" description="String matrix versionable parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <storageType>MATRIX</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>true</versionable>
@@ -21158,7 +21158,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_NO_DEF" description="String no default value">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
          </customField>\r
       </ws:createOrUpdateField>\r
@@ -21421,7 +21421,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_DEF" description="String default value">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>should be set</defaultValue>
@@ -21465,7 +21465,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_PI_REQUIRED" description="String parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>should not be set</defaultValue>
@@ -21711,7 +21711,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_DEF" description="String default value">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <defaultValue>should be set</defaultValue>
@@ -22147,7 +22147,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_PI_REQUIRED" description="String parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <defaultValue>def value from customer</defaultValue>
@@ -22192,7 +22192,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED" description="String List parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>LIST</storageType>\r
             <valueRequired>false</valueRequired>
             <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
@@ -22236,7 +22236,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MAP_PI_REQUIRED" description="String map parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>
             <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
@@ -22280,7 +22280,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED" description="String matrix parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>MATRIX</storageType>\r
             <valueRequired>false</valueRequired>
             <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
@@ -22328,7 +22328,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" description="String Versionable parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>
             <defaultValue>def value versioned from customer</defaultValue>
@@ -22375,7 +22375,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED" description="String List versionable parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>LIST</storageType>\r
             <valueRequired>false</valueRequired>
             <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
@@ -22421,7 +22421,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED" description="String map versionable parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>
             <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
@@ -22467,7 +22467,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED" description="String matrix valueRequired parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>MATRIX</storageType>\r
             <valueRequired>false</valueRequired>
             <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
@@ -22823,7 +22823,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED" description="String List versionable parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>LIST</storageType>\r
             <valueRequired>true</valueRequired>
             <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
@@ -22869,7 +22869,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED" description="String matrix valueRequired parent inheritance required">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>MATRIX</storageType>\r
             <valueRequired>true</valueRequired>
             <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
@@ -22919,7 +22919,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_STRING_PI_NO_PI_REQUIRED" description="String parent inheritance required, but not available">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
@@ -23011,7 +23011,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23050,7 +23050,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23089,7 +23089,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_MAP_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23128,7 +23128,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23167,7 +23167,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23206,7 +23206,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23245,7 +23245,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23284,7 +23284,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23323,7 +23323,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_DEF</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23362,7 +23362,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>SELLER</appliesTo>\r
+         <appliesTo>Seller</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23401,7 +23401,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>SELLER</appliesTo>\r
+         <appliesTo>Seller</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23440,7 +23440,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_MAP_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>SELLER</appliesTo>\r
+         <appliesTo>Seller</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23479,7 +23479,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>SELLER</appliesTo>\r
+         <appliesTo>Seller</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23518,7 +23518,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>SELLER</appliesTo>\r
+         <appliesTo>Seller</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23557,7 +23557,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>SELLER</appliesTo>\r
+         <appliesTo>Seller</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23596,7 +23596,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>SELLER</appliesTo>\r
+         <appliesTo>Seller</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23635,7 +23635,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>SELLER</appliesTo>\r
+         <appliesTo>Seller</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23674,7 +23674,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_PI_NO_PI_REQUIRED</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -23945,7 +23945,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON" description="Seller Long Map RON">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <storageType>MAP</storageType>\r
             <mapKeyType>RON</mapKeyType>
          </customField>\r
@@ -23988,7 +23988,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON_V" description="Seller Long Map RON V">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <storageType>MAP</storageType>\r
             <mapKeyType>RON</mapKeyType>
             <versionable>true</versionable>
@@ -24658,7 +24658,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_1" description="Customer EL 1">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValue(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_NV')==1}</applicableOnEl>
@@ -24702,7 +24702,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_2" description="Customer EL 2">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValue(entity.seller,'${#Project#baseEntityPrefix}_SELLER_DOUBLE_SINGLE_NV')==10}</applicableOnEl>
@@ -24746,7 +24746,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_3" description="Customer EL 3">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValue(entity.seller,'${#Project#baseEntityPrefix}_SELLER_DOUBLE_SINGLE_NV')==10}</applicableOnEl>
@@ -24790,7 +24790,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_4" description="Customer EL 4">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_V', mv:parseDate('2015-09-15','yyyy-MM-dd'))==6}</applicableOnEl>
@@ -24834,7 +24834,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_5" description="Customer EL 5">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_V', mv:parseDate('2016-10-15','yyyy-MM-dd'))==110}</applicableOnEl>
@@ -24878,7 +24878,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_6" description="Customer EL 6">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_V', mv:parseDate('2016-10-15','yyyy-MM-dd'))==110}</applicableOnEl>
@@ -24922,7 +24922,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_7" description="Customer EL 7">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByRangeOfNumbers(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON', 9)==3}</applicableOnEl>
@@ -24966,7 +24966,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_8" description="Customer EL 8">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByRangeOfNumbers(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON', 25)==40}</applicableOnEl>
@@ -25010,7 +25010,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_9" description="Customer EL 9">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByRangeOfNumbers(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON', 25)==40}</applicableOnEl>
@@ -25054,7 +25054,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_10" description="Customer EL 10">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByRangeOfNumbersForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 8)==5}</applicableOnEl>
@@ -25098,7 +25098,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_11" description="Customer EL 11">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByRangeOfNumbersForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 25)==60}</applicableOnEl>
@@ -25142,7 +25142,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_12" description="Customer EL 12">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByRangeOfNumbersForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 25)==60}</applicableOnEl>
@@ -25186,7 +25186,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_13" description="Customer EL 13">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON', 9)==3}</applicableOnEl>
@@ -25230,7 +25230,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_14" description="Customer EL 14">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON', 25)==40}</applicableOnEl>
@@ -25274,7 +25274,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_15" description="Customer EL 15">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON', 25)==40}</applicableOnEl>
@@ -25318,7 +25318,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_16" description="Customer EL 16">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 7)==4}</applicableOnEl>
@@ -25362,7 +25362,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_17" description="Customer EL 17">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 25)==60}</applicableOnEl>
@@ -25406,7 +25406,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_18" description="Customer EL 18">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 25)==60}</applicableOnEl>
@@ -25450,7 +25450,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_19" description="Customer EL 19">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_NV', 'one')==2}</applicableOnEl>
@@ -25494,7 +25494,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_20" description="Customer EL 20">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_NV', 'three')==20}</applicableOnEl>
@@ -25538,7 +25538,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_21" description="Customer EL 21">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_NV', 'three')==20}</applicableOnEl>
@@ -25582,7 +25582,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_22" description="Customer EL 22">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'one')==7}</applicableOnEl>
@@ -25626,7 +25626,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_23" description="Customer EL 23">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'five')==90}</applicableOnEl>
@@ -25670,7 +25670,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_24" description="Customer EL 24">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'five')==90}</applicableOnEl>
@@ -25714,7 +25714,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_25" description="Customer EL 25">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKey2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_NV', 'one',7)==4}</applicableOnEl>
@@ -25758,7 +25758,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_25-1" description="Customer EL 25-1">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_NV', 'one|7')==4}</applicableOnEl>
@@ -25802,7 +25802,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_26" description="Customer EL 26">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKey2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_NV', 'two',9)==50}</applicableOnEl>
@@ -25846,7 +25846,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_27" description="Customer EL 27">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByKey2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_NV', 'two',9)==50}</applicableOnEl>
@@ -25890,7 +25890,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_27-1" description="Customer EL 27-1">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_NV', 'two|9')==50}</applicableOnEl>
@@ -25934,7 +25934,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_28" description="Customer EL 28">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'one', 9)==10}</applicableOnEl>
@@ -25978,7 +25978,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_28-1" description="Customer EL 28-1">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'one|9')==10}</applicableOnEl>
@@ -26022,7 +26022,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_29" description="Customer EL 29">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'two', 7)==90}</applicableOnEl>
@@ -26066,7 +26066,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_30" description="Customer EL 30">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'two', 7)==90}</applicableOnEl>
@@ -26110,7 +26110,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_30-1" description="Customer EL 30-1">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'two|7')==90}</applicableOnEl>
@@ -26154,7 +26154,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_31" description="Customer EL 31">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByClosestMatch(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_NV', 'twossss')==4}</applicableOnEl>
@@ -26198,7 +26198,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_32" description="Customer EL 32">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByClosestMatch(entity.seller,'${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_NV', 'foursss')==41}</applicableOnEl>
@@ -26242,7 +26242,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_33" description="Customer EL 33">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByClosestMatch(entity.seller,'${#Project#baseEntityPrefix}_SELLER_DOUBLE_MAP_NV', 'foursss')==41}</applicableOnEl>
@@ -26286,7 +26286,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_34" description="Customer EL 34">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByClosestMatchForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'twosss')==9}</applicableOnEl>
@@ -26330,7 +26330,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_35" description="Customer EL 35">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByClosestMatchForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V', mv:parseDate('2016-10-15','yyyy-MM-dd'), 'twosss')==135}</applicableOnEl>
@@ -26374,7 +26374,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_36" description="Customer EL 36">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByClosestMatchForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V', mv:parseDate('2016-10-15','yyyy-MM-dd'), 'twosss')==135}</applicableOnEl>
@@ -26418,7 +26418,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_37" description="Customer EL 37">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON', 9)}</applicableOnEl>
@@ -26462,7 +26462,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_38" description="Customer EL 38">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON', 25)}</applicableOnEl>
@@ -26506,7 +26506,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_39" description="Customer EL 39">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isInheritedCFValueHasKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON', 25)}</applicableOnEl>
@@ -26550,7 +26550,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_40" description="Customer EL 40">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 7)}</applicableOnEl>
@@ -26594,7 +26594,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_41" description="Customer EL 41">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 25)}</applicableOnEl>
@@ -26638,7 +26638,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_42" description="Customer EL 42">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isInheritedCFValueHasKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 25)}</applicableOnEl>
@@ -26682,7 +26682,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_43" description="Customer EL 43">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_NV', 'one')}</applicableOnEl>
@@ -26726,7 +26726,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_44" description="Customer EL 44">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_NV', 'three')}</applicableOnEl>
@@ -26770,7 +26770,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_45" description="Customer EL 45">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isInheritedCFValueHasKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_NV', 'three')}</applicableOnEl>
@@ -26814,7 +26814,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_46" description="Customer EL 46">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'one')}</applicableOnEl>
@@ -26858,7 +26858,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_47" description="Customer EL 47">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'five')}</applicableOnEl>
@@ -26902,7 +26902,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_48" description="Customer EL 48">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isInheritedCFValueHasKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'five')}</applicableOnEl>
@@ -26946,7 +26946,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_49" description="Customer EL 49">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKey2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_NV', 'one',7)}</applicableOnEl>
@@ -26990,7 +26990,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_49-1" description="Customer EL 49-1">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_NV', 'one|7')}</applicableOnEl>
@@ -27034,7 +27034,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_50" description="Customer EL 50">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKey2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_NV', 'two',9)}</applicableOnEl>
@@ -27078,7 +27078,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_51" description="Customer EL 51">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isInheritedCFValueHasKey2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_NV', 'two',9)}</applicableOnEl>
@@ -27122,7 +27122,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_51-1" description="Customer EL 51-1">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isInheritedCFValueHasKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_NV', 'two|9')}</applicableOnEl>
@@ -27166,7 +27166,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_52" description="Customer EL 52">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'one', 9)}</applicableOnEl>
@@ -27210,7 +27210,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_52-1" description="Customer EL 52-1">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'one|9')}</applicableOnEl>
@@ -27254,7 +27254,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_53" description="Customer EL 53">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isCFValueHasKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'two', 7)}</applicableOnEl>
@@ -27298,7 +27298,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_54" description="Customer EL 54">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isInheritedCFValueHasKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'two', 7)}</applicableOnEl>
@@ -27342,7 +27342,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_54-1" description="Customer EL 54-1">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:isInheritedCFValueHasKeyForDate(entity.seller,'${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V', mv:parseDate('2015-09-15','yyyy-MM-dd'), 'two|7')}</applicableOnEl>
@@ -27386,7 +27386,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_55" description="Customer EL 55">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKey2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV', 'b',7)['VAL_1']=='SELLER_MULTI_VALUE_151'}</applicableOnEl>
@@ -27430,7 +27430,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_56" description="Customer EL 56">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV', 'b|7')['VAL_2']==15.89}</applicableOnEl>
@@ -27474,7 +27474,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_57" description="Customer EL 57">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByKey2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV', 'a',7)['VAL_1']=='SELLER_MULTI_VALUE_15'}</applicableOnEl>
@@ -27518,7 +27518,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_58" description="Customer EL 58">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC',mv:parseDate('2015-09-15','yyyy-MM-dd'), 'p',27)['VAL_1']=='SELLER_MULTI_VALUE_181'}</applicableOnEl>
@@ -27562,7 +27562,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_59" description="Customer EL 59">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC',mv:parseDate('2015-09-15','yyyy-MM-dd'), 'k',27)['VAL_2']==17.91}</applicableOnEl>
@@ -27606,7 +27606,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_60" description="Customer EL 60">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV', 'b|7')['VAL_1']=='SELLER_MULTI_VALUE_15KO'}</applicableOnEl>
@@ -27650,7 +27650,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_61" description="Customer EL 61">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByKey2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV', 'a',7)['VAL_1']=='SELLER_MULTI_VALUE_15KO'}</applicableOnEl>
@@ -27694,7 +27694,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_62" description="Customer EL 62">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getCFValueByKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC',mv:parseDate('2015-09-15','yyyy-MM-dd'), 'p',27)['VAL_1']=='SELLER_MULTI_VALUE_181KO'}</applicableOnEl>
@@ -27738,7 +27738,7 @@ public class Action1 extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_EL_63" description="Customer EL 63">\r
             <fieldType>LONG</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>
             <applicableOnEl>#{mv:getInheritedCFValueByKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC',mv:parseDate('2015-09-15','yyyy-MM-dd'), 'k',27)['VAL_1']=='SELLER_MULTI_VALUE_17KO'}</applicableOnEl>
@@ -27941,7 +27941,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON</customFieldTemplateCode>\r
-         <appliesTo>SELLER</appliesTo>\r
+         <appliesTo>Seller</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -27980,7 +27980,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_SELLER_LONG_MAP_RON_V</customFieldTemplateCode>\r
-         <appliesTo>SELLER</appliesTo>\r
+         <appliesTo>Seller</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28019,7 +28019,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_1</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28058,7 +28058,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_2</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28097,7 +28097,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_3</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28136,7 +28136,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_4</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28175,7 +28175,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_5</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28214,7 +28214,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_6</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28253,7 +28253,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_7</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28292,7 +28292,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_8</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28331,7 +28331,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_9</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28370,7 +28370,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_10</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28409,7 +28409,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_11</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28448,7 +28448,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_12</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28487,7 +28487,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_13</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28526,7 +28526,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_14</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28565,7 +28565,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_15</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28604,7 +28604,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_16</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28643,7 +28643,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_17</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28682,7 +28682,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_18</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28721,7 +28721,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_19</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28760,7 +28760,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_20</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28799,7 +28799,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_21</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28838,7 +28838,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_22</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28877,7 +28877,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_23</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28916,7 +28916,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_24</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28955,7 +28955,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_25</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -28994,7 +28994,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_25-1</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29033,7 +29033,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_26</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29072,7 +29072,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_27</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29111,7 +29111,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_27-1</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29150,7 +29150,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_28</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29189,7 +29189,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_28-1</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29228,7 +29228,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_29</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29267,7 +29267,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_30</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29306,7 +29306,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_30-1</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29345,7 +29345,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_31</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29384,7 +29384,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_32</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29423,7 +29423,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_33</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29462,7 +29462,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_34</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29501,7 +29501,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_35</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29540,7 +29540,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_36</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29579,7 +29579,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_37</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29618,7 +29618,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_38</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29657,7 +29657,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_39</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29696,7 +29696,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_40</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29735,7 +29735,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_41</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29774,7 +29774,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_42</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29813,7 +29813,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_43</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29852,7 +29852,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_44</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29891,7 +29891,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_45</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29930,7 +29930,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_46</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -29969,7 +29969,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_47</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30008,7 +30008,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_48</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30047,7 +30047,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_49</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30086,7 +30086,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_49-1</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30125,7 +30125,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_50</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30164,7 +30164,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_51</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30203,7 +30203,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_51-1</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30242,7 +30242,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_52</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30281,7 +30281,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_52-1</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30320,7 +30320,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_53</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30359,7 +30359,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_54</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30398,7 +30398,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_54-1</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30437,7 +30437,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_55</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30476,7 +30476,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_56</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30515,7 +30515,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_57</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30554,7 +30554,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_58</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30593,7 +30593,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_59</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30632,7 +30632,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_60</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30671,7 +30671,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_61</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30710,7 +30710,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_62</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -30749,7 +30749,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_63</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>\r
+         <appliesTo>Customer</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -33611,7 +33611,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       <ws:createOrUpdateField> 
          <customField code="${#Project#baseEntityPrefix}_INHERITED_MAP_NV" description="${#Project#baseEntityPrefix}_INHERITED_MAP_NV field"> 
             <fieldType>STRING</fieldType>
-            <appliesTo>SUB</appliesTo>
+            <appliesTo>Subscription</appliesTo>
             <storageType>MAP</storageType>
             <mapKeyType>STRING</mapKeyType>
             <entityClazz>org.meveo.model.billing.Subscription</entityClazz>
@@ -33655,7 +33655,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       <ws:createOrUpdateField> 
          <customField code="${#Project#baseEntityPrefix}_INHERITED_MAP_NV" description="${#Project#baseEntityPrefix}_INHERITED_MAP_NV field"> 
             <fieldType>STRING</fieldType>
-            <appliesTo>ACC</appliesTo>
+            <appliesTo>Access</appliesTo>
             <storageType>MAP</storageType>
             <mapKeyType>STRING</mapKeyType>
             <entityClazz>org.meveo.model.mediation.Access</entityClazz>
@@ -36599,7 +36599,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
          \r
          <customField code="${#Project#entityPrefix}_S_C_1" description="${#Project#entityPrefix}_S_C_1">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             \r
             <valueRequired>false</valueRequired>\r
@@ -36716,7 +36716,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       <ws:createOrUpdateField>\r
          <customField code="${#Project#entityPrefix}_S_C_1" description="${#Project#entityPrefix}_S_C_1">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>UA</appliesTo>\r
+            <appliesTo>UserAccount</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
@@ -39789,8 +39789,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                      <languageCode>ENG</languageCode>\r
                   </languageDescriptions>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>PROVIDER</accountLevel>\r
-                  <appliesTo>PROVIDER</appliesTo>\r
+                  <accountLevel>Provider</accountLevel>\r
+                  <appliesTo>Provider</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -39811,8 +39811,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                      <languageCode>ENG</languageCode>\r
                   </languageDescriptions>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>PROVIDER</accountLevel>\r
-                  <appliesTo>PROVIDER</appliesTo>\r
+                  <accountLevel>Provider</accountLevel>\r
+                  <appliesTo>Provider</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -39833,8 +39833,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                      <languageCode>ENG</languageCode>\r
                   </languageDescriptions>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>PROVIDER</accountLevel>\r
-                  <appliesTo>PROVIDER</appliesTo>\r
+                  <accountLevel>Provider</accountLevel>\r
+                  <appliesTo>Provider</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -39855,8 +39855,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                      <languageCode>ENG</languageCode>\r
                   </languageDescriptions>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>PROVIDER</accountLevel>\r
-                  <appliesTo>PROVIDER</appliesTo>\r
+                  <accountLevel>Provider</accountLevel>\r
+                  <appliesTo>Provider</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>MAP</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -39916,8 +39916,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                   <auditable created="2018-06-06T09:50:04.701-03:00" updated="2018-06-06T09:51:02.299-03:00" creator="opencell.admin" updater="opencell.admin"/>\r
                   <disabled>false</disabled>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>SELLER</accountLevel>\r
-                  <appliesTo>SELLER</appliesTo>\r
+                  <accountLevel>Seller</accountLevel>\r
+                  <appliesTo>Seller</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -39938,8 +39938,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                      <languageCode>ENG</languageCode>\r
                   </languageDescriptions>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>SELLER</accountLevel>\r
-                  <appliesTo>SELLER</appliesTo>\r
+                  <accountLevel>Seller</accountLevel>\r
+                  <appliesTo>Seller</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -39961,8 +39961,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                      <languageCode>ENG</languageCode>\r
                   </languageDescriptions>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>CA</accountLevel>\r
-                  <appliesTo>CA</appliesTo>\r
+                  <accountLevel>CustomerAccount</accountLevel>\r
+                  <appliesTo>CustomerAccount</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -39983,8 +39983,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                      <languageCode>ENG</languageCode>\r
                   </languageDescriptions>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>CA</accountLevel>\r
-                  <appliesTo>CA</appliesTo>\r
+                  <accountLevel>CustomerAccount</accountLevel>\r
+                  <appliesTo>CustomerAccount</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>MAP</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40050,8 +40050,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                      <languageCode>ENG</languageCode>\r
                   </languageDescriptions>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>CUST</accountLevel>\r
-                  <appliesTo>CUST</appliesTo>\r
+                  <accountLevel>Customer</accountLevel>\r
+                  <appliesTo>Customer</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>MAP</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40111,8 +40111,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                   <auditable created="2018-06-06T09:50:04.701-03:00" updated="2018-06-06T09:51:02.299-03:00" creator="opencell.admin" updater="opencell.admin"/>\r
                   <disabled>false</disabled>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>CA</accountLevel>\r
-                  <appliesTo>CA</appliesTo>\r
+                  <accountLevel>CustomerAccount</accountLevel>\r
+                  <appliesTo>CustomerAccount</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40133,8 +40133,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                      <languageCode>ENG</languageCode>\r
                   </languageDescriptions>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>CA</accountLevel>\r
-                  <appliesTo>CA</appliesTo>\r
+                  <accountLevel>CustomerAccount</accountLevel>\r
+                  <appliesTo>CustomerAccount</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40156,8 +40156,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                      <languageCode>ENG</languageCode>\r
                   </languageDescriptions>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>CA</accountLevel>\r
-                  <appliesTo>CA</appliesTo>\r
+                  <accountLevel>CustomerAccount</accountLevel>\r
+                  <appliesTo>CustomerAccount</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40178,8 +40178,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                      <languageCode>ENG</languageCode>\r
                   </languageDescriptions>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>CA</accountLevel>\r
-                  <appliesTo>CA</appliesTo>\r
+                  <accountLevel>CustomerAccount</accountLevel>\r
+                  <appliesTo>CustomerAccount</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>MAP</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40239,8 +40239,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                   <auditable created="2018-06-06T09:49:40.580-03:00" updated="2018-06-06T09:50:25.914-03:00" creator="opencell.admin" updater="opencell.admin"/>\r
                   <disabled>false</disabled>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>BA</accountLevel>\r
-                  <appliesTo>BA</appliesTo>\r
+                  <accountLevel>BillingAccount</accountLevel>\r
+                  <appliesTo>BillingAccount</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40255,8 +40255,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                   <auditable created="2018-06-06T09:56:06.796-03:00" updated="2018-06-06T09:56:27.225-03:00" creator="opencell.admin" updater="opencell.admin"/>\r
                   <disabled>false</disabled>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>BA</accountLevel>\r
-                  <appliesTo>BA</appliesTo>\r
+                  <accountLevel>BillingAccount</accountLevel>\r
+                  <appliesTo>BillingAccount</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40272,8 +40272,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                   <auditable created="2018-06-06T09:53:38.443-03:00" updated="2018-06-06T09:53:50.651-03:00" creator="opencell.admin" updater="opencell.admin"/>\r
                   <disabled>false</disabled>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>BA</accountLevel>\r
-                  <appliesTo>BA</appliesTo>\r
+                  <accountLevel>BillingAccount</accountLevel>\r
+                  <appliesTo>BillingAccount</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>MAP</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40333,8 +40333,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                   <auditable created="2018-06-06T09:53:38.443-03:00" updated="2018-06-06T09:54:10.474-03:00" creator="opencell.admin" updater="opencell.admin"/>\r
                   <disabled>false</disabled>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>UA</accountLevel>\r
-                  <appliesTo>UA</appliesTo>\r
+                  <accountLevel>UserAccount</accountLevel>\r
+                  <appliesTo>UserAccount</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>MAP</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40394,8 +40394,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                   <auditable created="2018-06-06T09:50:04.701-03:00" updated="2018-06-06T09:51:02.299-03:00" creator="opencell.admin" updater="opencell.admin"/>\r
                   <disabled>false</disabled>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>CA</accountLevel>\r
-                  <appliesTo>CA</appliesTo>\r
+                  <accountLevel>CustomerAccount</accountLevel>\r
+                  <appliesTo>CustomerAccount</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40416,8 +40416,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                      <languageCode>ENG</languageCode>\r
                   </languageDescriptions>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>CA</accountLevel>\r
-                  <appliesTo>CA</appliesTo>\r
+                  <accountLevel>CustomerAccount</accountLevel>\r
+                  <appliesTo>CustomerAccount</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40477,8 +40477,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                   <auditable created="2018-06-06T09:49:40.580-03:00" updated="2018-06-06T09:50:40.376-03:00" creator="opencell.admin" updater="opencell.admin"/>\r
                   <disabled>false</disabled>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>SUB</accountLevel>\r
-                  <appliesTo>SUB</appliesTo>\r
+                  <accountLevel>Subscription</accountLevel>\r
+                  <appliesTo>Subscription</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40493,8 +40493,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                   <auditable created="2018-06-06T09:50:04.701-03:00" updated="2018-06-06T09:50:50.307-03:00" creator="opencell.admin" updater="opencell.admin"/>\r
                   <disabled>false</disabled>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>SUB</accountLevel>\r
-                  <appliesTo>SUB</appliesTo>\r
+                  <accountLevel>Subscription</accountLevel>\r
+                  <appliesTo>Subscription</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -40509,8 +40509,8 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                   <auditable created="2018-06-06T09:56:06.796-03:00" updated="2018-06-06T09:56:43.963-03:00" creator="opencell.admin" updater="opencell.admin"/>\r
                   <disabled>false</disabled>\r
                   <fieldType>STRING</fieldType>\r
-                  <accountLevel>SUB</accountLevel>\r
-                  <appliesTo>SUB</appliesTo>\r
+                  <accountLevel>Subscription</accountLevel>\r
+                  <appliesTo>Subscription</appliesTo>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -49394,7 +49394,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="K" description="K">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <defaultValue>kuku</defaultValue>
          </customField>\r
@@ -49443,7 +49443,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="L" description="L">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <defaultValue>lulu</defaultValue>
             <applicableOnEl>#{entity.code.endsWith("APPLICABLE")}</applicableOnEl>
@@ -49717,7 +49717,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="K" description="K">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CA</appliesTo>\r
+            <appliesTo>CustomerAccount</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
          </customField>\r
