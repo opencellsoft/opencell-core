@@ -21,6 +21,7 @@ package org.meveo.service.script;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +30,8 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -40,6 +43,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.model.security.Role;
 
@@ -98,22 +102,48 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
     /**
      * Wrap the logger and execute script.
      *
-     * @param scriptCode code of script
+     * @param scriptInstance Script to test
      * @param context context used in execution of script.
      * @return Log messages
      */
-    public String test(String scriptCode, Map<String, Object> context) {
+    public String test(ScriptInstance scriptInstance, Map<String, Object> context) {
         try {
-            ScriptInstance scriptInstance = findByCode(scriptCode);
+
             isUserHasExecutionRole(scriptInstance);
             String javaSrc = scriptInstance.getScript();
-            javaSrc = javaSrc.replaceAll("log.", "logTest.");
+            javaSrc = javaSrc.replaceAll("\\blog.", "logTest.");
             Class<ScriptInterface> compiledScript = compileJavaSource(javaSrc);
             ScriptInterface scriptClassInstance = compiledScript.newInstance();
+
             executeWInitAndFinalize(scriptClassInstance, context);
 
             String logMessages = scriptClassInstance.getLogMessages();
             return logMessages;
+
+        } catch (CharSequenceCompilerException e) {
+            log.error("Failed to compile script {}. Compilation errors:", scriptInstance.getCode());
+
+            List<ScriptInstanceError> scriptErrors = new ArrayList<>();
+
+            List<Diagnostic<? extends JavaFileObject>> diagnosticList = e.getDiagnostics().getDiagnostics();
+            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnosticList) {
+                if ("ERROR".equals(diagnostic.getKind().name())) {
+                    ScriptInstanceError scriptInstanceError = new ScriptInstanceError();
+                    scriptInstanceError.setMessage(diagnostic.getMessage(Locale.getDefault()));
+                    scriptInstanceError.setLineNumber(diagnostic.getLineNumber());
+                    scriptInstanceError.setColumnNumber(diagnostic.getColumnNumber());
+                    scriptInstanceError.setSourceFile(diagnostic.getSource().toString());
+                    // scriptInstanceError.setScript(scriptInstance);
+                    scriptErrors.add(scriptInstanceError);
+                    // scriptInstanceErrorService.create(scriptInstanceError, scriptInstance.getAuditable().getCreator());
+                    log.warn("{} script {} location {}:{}: {}", diagnostic.getKind().name(), scriptInstance.getCode(), diagnostic.getLineNumber(), diagnostic.getColumnNumber(),
+                        diagnostic.getMessage(Locale.getDefault()));
+                }
+            }
+            scriptInstance.setError(scriptErrors != null && !scriptErrors.isEmpty());
+            scriptInstance.setScriptErrors(scriptErrors);
+
+            return "Compilation errors";
 
         } catch (Exception e) {
             log.error("Script test failed", e);
