@@ -214,6 +214,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private PaymentMethodService paymentMethodService;
 
+    @EJB
+    InvoiceService invoiceService;
+
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
 
@@ -1749,6 +1752,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws InvoiceExistException the invoice exist exception
      * @throws ImportInvoiceException the import invoice exception
      */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<Invoice> generateInvoice(IBillableEntity entity, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft)
             throws BusinessException, InvoiceExistException, ImportInvoiceException {
 
@@ -1781,13 +1786,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         ratedTransactionService.createRatedTransaction(entity, invoiceDate);
 
         ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entity, firstTransactionDate, lastTransactionDate);
-        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(),
+        List<Invoice> invoices = invoiceService.createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(),
             isDraft, true);
 
         // TODO : delete this commit since generating PDF/XML and producing AOs are now outside this service !
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
         // Why not add a new method on another bean with Tx.Requires_New?
-        commit();
+        //commit();
         return invoices;
     }
 
@@ -1806,10 +1811,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void produceFilesAndAO(boolean produceXml, boolean producePdf, boolean generateAO, Invoice invoice, boolean isDraft)
             throws BusinessException, InvoiceExistException, ImportInvoiceException {
         if (produceXml) {
-            produceInvoiceXmlNoUpdate(invoice);
+            invoiceService.produceInvoiceXmlNoUpdate(invoice);
         }
         if (producePdf) {
-            produceInvoicePdfNoUpdate(invoice);
+            invoiceService.produceInvoicePdfNoUpdate(invoice);
         }
         if (generateAO && !isDraft) {
             recordedInvoiceService.generateRecordedInvoice(invoice);
@@ -1855,13 +1860,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         List<Invoice> invoices = this.generateInvoice(billingAccount, generateInvoiceRequestDto, ratedTxFilter, isDraft);
         for (Invoice invoice : invoices) {
-            try {
-                this.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
-            }catch (Exception e){
-                decrementInvoiceSequence(invoice, invoices);
-                throw new BusinessException(e);
-            }
-
+            this.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
         }
 
         return invoices;
@@ -2187,25 +2186,5 @@ public class InvoiceService extends PersistenceService<Invoice> {
         cfValueAccumulator.entityCreated(invoice);
 
         log.trace("end of post create {}. entity id={}.", invoice.getClass().getSimpleName(), invoice.getId());
-    }
-
-
-    public void decrementInvoiceSequence(Invoice cuurentInvoice, List<Invoice> invoices) throws BusinessException {
-        int index = invoices.indexOf(cuurentInvoice);
-        for (int i = index; i < invoices.size(); i++) {
-            Invoice invoice = invoices.get(i);
-            InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
-
-            String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
-            Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
-
-            Seller seller = invoice.getSeller();
-            if (seller == null && cust.getSeller() != null) {
-                seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
-            }
-
-            serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, -1);
-            commit();
-        }
     }
 }
