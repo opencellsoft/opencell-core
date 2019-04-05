@@ -1,18 +1,5 @@
 package org.meveo.cache;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
@@ -31,14 +18,29 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.notification.GenericNotificationService;
 import org.slf4j.Logger;
 
+import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Provides cache related services (loading, update) for event notification related operations
  * 
  * @author Andrius Karpavicius
  * @author Wassim Drira
  * @author Abdellatif BARI
+ * @author Mounir BAHIJE
  * @lastModifiedVersion 7.0
- * 
+ *
  */
 @Stateless
 public class NotificationCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
@@ -123,11 +125,12 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
             List<Notification> notificationsOld = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
-            List<Notification> notifications = new ArrayList<Notification>();
+            Set<Notification> notificationsSet = new HashSet<Notification>();
+            notificationsSet.add(notif);
             if (notificationsOld != null) {
-                notifications.addAll(notificationsOld);
+                notificationsSet.addAll(notificationsOld);
             }
-            notifications.add(notif);
+            List<Notification> notifications = new ArrayList<Notification>(notificationsSet);
             eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, notifications);
 
         } catch (Exception e) {
