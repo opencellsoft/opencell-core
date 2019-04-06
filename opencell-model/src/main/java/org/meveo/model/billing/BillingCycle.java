@@ -46,6 +46,9 @@ import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * Billing cycle
+ * @author Edward P. Legaspi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @Cacheable
