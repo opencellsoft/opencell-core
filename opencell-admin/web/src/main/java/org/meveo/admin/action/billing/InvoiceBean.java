@@ -68,7 +68,6 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
-import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.view.LazyDataModelWSize;
 import org.omnifaces.cdi.Param;
@@ -80,10 +79,11 @@ import org.primefaces.model.SortOrder;
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
- * 
+ *  
  * @author anasseh
+ * @author Edward P. Legaspi
  * @author Khalid HORRI
- * @lastModifiedVersion 5.3
+ * @lastModifiedVersion 7.0
  */
 @Named
 @ViewScoped
