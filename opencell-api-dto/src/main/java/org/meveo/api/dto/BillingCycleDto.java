@@ -432,10 +432,18 @@ public class BillingCycleDto extends BusinessEntityDto {
         this.referenceDate = referenceDate;
     }
 
+    /**
+     * Gets the scriptInstanceCode.
+     * @return code of script instance
+     */
 	public String getScriptInstanceCode() {
 		return scriptInstanceCode;
 	}
 
+	/**
+	 * Sets the scriptInstanceCode.
+	 * @param scriptInstanceCode code of script instance
+	 */
 	public void setScriptInstanceCode(String scriptInstanceCode) {
 		this.scriptInstanceCode = scriptInstanceCode;
 	}
