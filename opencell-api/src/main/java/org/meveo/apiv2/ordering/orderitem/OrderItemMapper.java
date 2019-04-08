@@ -2,10 +2,10 @@ package org.meveo.apiv2.ordering.orderitem;
 
 import org.meveo.apiv2.NotYetImplementedResource;
 import org.meveo.apiv2.ResourceMapper;
-import org.meveo.apiv2.models.orderItem.ImmutableOrderItem;
-import org.meveo.apiv2.models.orderItem.ImmutableProductInstance;
-import org.meveo.apiv2.models.orderItem.ImmutableSubscription;
-import org.meveo.apiv2.models.orderItem.ProductInstance;
+import org.meveo.apiv2.ordering.orderItem.ImmutableOrderItem;
+import org.meveo.apiv2.ordering.orderItem.ImmutableProductInstance;
+import org.meveo.apiv2.ordering.orderItem.ImmutableSubscription;
+import org.meveo.apiv2.ordering.orderItem.ProductInstance;
 import org.meveo.apiv2.ordering.product.ProductResource;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ServiceInstance;
@@ -24,12 +24,12 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.models.orderItem.OrderItem, OrderItem> {
+public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.orderItem.OrderItem, OrderItem> {
 
     private static final String CF_CLASSIC_PRICE_PRD = "CF_CLASSIC_PRICE_PRD";
 
     @Override
-    protected org.meveo.apiv2.models.orderItem.OrderItem toResource(OrderItem entity) {
+    public org.meveo.apiv2.ordering.orderItem.OrderItem toResource(OrderItem entity) {
         if(entity==null){
             return null;
         }
@@ -38,9 +38,9 @@ class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.models.orderItem.Or
                 .itemId(entity.getItemId())
                 .status(entity.getStatus().getApiState())
                 .action(entity.getAction().getLabel())
-                .order(getImmutableResource(NotYetImplementedResource.class, entity.getOrder()))
+                .order(buildImmutableResource(NotYetImplementedResource.class, entity.getOrder()))
                 .productInstance(toProductInstancesResources(entity.getProductInstances()))
-                .userAccount(getImmutableResource(NotYetImplementedResource.class, entity.getUserAccount()))
+                .userAccount(buildImmutableResource(NotYetImplementedResource.class, entity.getUserAccount()))
                 .subscription(toSubscriptionResource(entity.getSubscription()))
                 .build();
     }
@@ -53,7 +53,7 @@ class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.models.orderItem.Or
                 .map(productInstance -> ImmutableProductInstance.builder()
                         .id(productInstance.getId())
                         .code(productInstance.getCode())
-                        .product(getImmutableResource(ProductResource.class, productInstance.getProductTemplate()))
+                        .product(buildImmutableResource(ProductResource.class, productInstance.getProductTemplate()))
                         .quantity(productInstance.getQuantity().longValue())
                         .productPrice(getProductPrice(productInstance.getProductTemplate()))
                         .build())
@@ -67,16 +67,16 @@ class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.models.orderItem.Or
         return null;
     }
 
-    private org.meveo.apiv2.models.orderItem.Subscription toSubscriptionResource(Subscription subscription) {
+    private org.meveo.apiv2.ordering.orderItem.Subscription toSubscriptionResource(Subscription subscription) {
         if(subscription==null){
             return null;
         }
         return ImmutableSubscription.builder()
                 .id(subscription.getId())
                 .code(subscription.getCode())
-                .userAccount(getImmutableResource(NotYetImplementedResource.class, subscription.getUserAccount()))
-                .seller(getImmutableResource(NotYetImplementedResource.class, subscription.getSeller()))
-                .offerTemplate(getImmutableResource(NotYetImplementedResource.class, subscription.getOffer()))
+                .userAccount(buildImmutableResource(NotYetImplementedResource.class, subscription.getUserAccount()))
+                .seller(buildImmutableResource(NotYetImplementedResource.class, subscription.getSeller()))
+                .offerTemplate(buildImmutableResource(NotYetImplementedResource.class, subscription.getOffer()))
                 .subscriptionDate(DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), DateUtils.DATE_PATTERN))
                 .endAgreementDate(DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), DateUtils.DATE_PATTERN))
                 .addServices(getImmutableResources(subscription.getServiceInstances(), NotYetImplementedResource.class))
@@ -84,7 +84,7 @@ class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.models.orderItem.Or
     }
 
     @Override
-    protected OrderItem toEntity(org.meveo.apiv2.models.orderItem.OrderItem resource) {
+    public OrderItem toEntity(org.meveo.apiv2.ordering.orderItem.OrderItem resource) {
         OrderItem orderItem=new OrderItem();
         orderItem.setId(resource.getId());
         orderItem.setItemId(resource.getItemId());
@@ -134,7 +134,7 @@ class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.models.orderItem.Or
         return orderItem;
     }
 
-    private Subscription constructSubscription(org.meveo.apiv2.models.orderItem.Subscription resourceSubscription) {
+    private Subscription constructSubscription(org.meveo.apiv2.ordering.orderItem.Subscription resourceSubscription) {
         Subscription subscription = new Subscription();
 
         subscription.setId(resourceSubscription.getId());

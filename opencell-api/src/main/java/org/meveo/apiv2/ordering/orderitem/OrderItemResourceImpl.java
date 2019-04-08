@@ -1,9 +1,9 @@
 package org.meveo.apiv2.ordering.orderitem;
 
 import org.meveo.apiv2.common.LinkGenerator;
-import org.meveo.apiv2.models.orderItem.ImmutableOrderItem;
-import org.meveo.apiv2.models.orderItem.ImmutableOrderItems;
-import org.meveo.apiv2.models.orderItem.OrderItems;
+import org.meveo.apiv2.ordering.orderItem.ImmutableOrderItem;
+import org.meveo.apiv2.ordering.orderItem.ImmutableOrderItems;
+import org.meveo.apiv2.ordering.orderItem.OrderItems;
 import org.meveo.apiv2.services.ApiService;
 import org.meveo.model.order.OrderItem;
 
@@ -23,9 +23,9 @@ public class OrderItemResourceImpl implements OrderItemResource {
 
     @Override
     public Response getOrderItems(Long offset, Long limit, String sort, String orderBy, String filter, Request request) {
-        List<OrderItem> orderItems = orderItemService.list(offset, limit, sort, orderBy, filter);
+        List<OrderItem> orderItemsEntity = orderItemService.list(offset, limit, sort, orderBy, filter);
 
-        EntityTag etag = new EntityTag(Integer.toString(orderItems.hashCode()));
+        EntityTag etag = new EntityTag(Integer.toString(orderItemsEntity.hashCode()));
         CacheControl cc = new CacheControl();
         cc.setMaxAge(1000);
         Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
@@ -34,7 +34,7 @@ public class OrderItemResourceImpl implements OrderItemResource {
             return builder.build();
         }
 
-        ImmutableOrderItem[] orderItemList = orderItems
+        ImmutableOrderItem[] orderItemList = orderItemsEntity
                 .stream()
                 .map(orderItem -> toResourceOrderItemWithLink(orderItemMapper.toResource(orderItem)))
                 .toArray(ImmutableOrderItem[]::new);
@@ -66,7 +66,7 @@ public class OrderItemResourceImpl implements OrderItemResource {
     }
 
     @Override
-    public Response createOrderItem(org.meveo.apiv2.models.orderItem.OrderItem orderItem) {
+    public Response createOrderItem(org.meveo.apiv2.ordering.orderItem.OrderItem orderItem) {
         OrderItem orderItemEntity = orderItemService.create(orderItemMapper.toEntity(orderItem));
         return Response
                 .created(LinkGenerator.getUriBuilderFromResource(OrderItemResource.class, orderItemEntity.getId()).build())
@@ -75,14 +75,14 @@ public class OrderItemResourceImpl implements OrderItemResource {
     }
 
     @Override
-    public Response updateOrderItem(Long id, org.meveo.apiv2.models.orderItem.OrderItem orderItem) {
+    public Response updateOrderItem(Long id, org.meveo.apiv2.ordering.orderItem.OrderItem orderItem) {
         return orderItemService.update(id, orderItemMapper.toEntity(orderItem))
                 .map(orderItemEntity -> Response.ok().entity(toResourceOrderItemWithLink(orderItemMapper.toResource(orderItemEntity))).build())
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public Response patchOrderItem(Long id, org.meveo.apiv2.models.orderItem.OrderItem orderItem) {
+    public Response patchOrderItem(Long id, org.meveo.apiv2.ordering.orderItem.OrderItem orderItem) {
         return orderItemService.patch(id, orderItemMapper.toEntity(orderItem))
                 .map(orderItemEntity -> Response.ok().entity(toResourceOrderItemWithLink(orderItemMapper.toResource(orderItemEntity))).build())
                 .orElseThrow(NotFoundException::new);
@@ -96,7 +96,7 @@ public class OrderItemResourceImpl implements OrderItemResource {
     }
 
     // TODO : move to mapper
-    private org.meveo.apiv2.models.orderItem.OrderItem toResourceOrderItemWithLink(org.meveo.apiv2.models.orderItem.OrderItem orderItem) {
+    private org.meveo.apiv2.ordering.orderItem.OrderItem toResourceOrderItemWithLink(org.meveo.apiv2.ordering.orderItem.OrderItem orderItem) {
         return ImmutableOrderItem.copyOf(orderItem).withLinks(new LinkGenerator.SelfLinkGenerator(OrderItemResource.class)
                 .withId(orderItem.getId()).withGetAction().withPostAction().withPutAction().withPatchAction()
                 .withDeleteAction().build());

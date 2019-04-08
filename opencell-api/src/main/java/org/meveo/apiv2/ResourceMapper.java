@@ -13,11 +13,11 @@ public abstract class ResourceMapper<T extends Resource, E extends BaseEntity> {
 
     protected Resource[] getImmutableResources(List<? extends BaseEntity> elements, Class resource) {
         return elements==null ? new Resource[]{} : elements.stream()
-                .map(element -> getImmutableResource(resource, element))
+                .map(element -> buildImmutableResource(resource, element))
                 .toArray(Resource[]::new);
     }
 
-    protected <O extends BaseEntity> ImmutableResource getImmutableResource(Class resource,O element) {
+    protected <O extends BaseEntity> ImmutableResource buildImmutableResource(Class resource,O element) {
         LinkGenerator.SelfLinkGenerator resourceLinkBuilder = new LinkGenerator.SelfLinkGenerator(resource)
                 .withGetAction().withPostAction().withPatchAction().withDeleteAction();
         return element != null ? ImmutableResource.builder()

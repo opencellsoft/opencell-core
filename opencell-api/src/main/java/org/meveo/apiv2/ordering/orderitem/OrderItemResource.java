@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.api.rest.PATCH;
 import org.meveo.apiv2.models.ApiException;
-import org.meveo.apiv2.models.orderItem.OrderItem;
-import org.meveo.apiv2.models.orderItem.OrderItems;
+import org.meveo.apiv2.ordering.orderItem.OrderItem;
+import org.meveo.apiv2.ordering.orderItem.OrderItems;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
