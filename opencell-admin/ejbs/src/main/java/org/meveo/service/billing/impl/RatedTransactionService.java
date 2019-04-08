@@ -340,6 +340,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         Map<InvoiceSubCategory, BigDecimal> minAmountsWithTax = new HashMap<InvoiceSubCategory, BigDecimal>();
         String scaKey = null;
+        
+		log.debug("ratedTransactions.totalAmountWithoutTax={}",
+				ratedTransactions != null
+						? ratedTransactions.stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum()
+						: "0");
+        
         for (RatedTransaction ratedTransaction : ratedTransactions) {
 
             InvoiceSubCategory invoiceSubCategory = ratedTransaction.getInvoiceSubCategory();
@@ -394,6 +400,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
 
+		log.debug("subCategoryAggregates.total={}",
+				subCategoryAggregates != null
+						? subCategoryAggregates.values().stream()
+								.mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum()
+						: "0");
+        
         // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates
         BigDecimal[] amounts = null;
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates.values()) {
@@ -443,6 +455,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             BigDecimal amount = isEnterprise ? scAggregate.getAmountWithoutTax() : scAggregate.getAmountWithTax();
             BigDecimal amountCumulativeForTax = amount;
+            
+            log.debug("scAggregate.amount={}", amount);
 
             // Create category aggregates or update their amounts
 
@@ -495,7 +509,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                 // Add tax aggregate or update its amounts
 
-                if (calculateTaxOnSubCategoryLevel && (amountCumulativeForTax.compareTo(BigDecimal.ZERO) > 0)) {
+				if (calculateTaxOnSubCategoryLevel && !BigDecimal.ZERO.equals(amountCumulativeForTax)) {
 
                     TaxInvoiceAgregate taxAggregate = taxAggregates.get(scAggregate.getTax().getCode());
                     if (taxAggregate == null) {
@@ -518,14 +532,27 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         invoice.addInvoiceAggregate(taxAggregate);
                     }
 
+                    log.debug("adding cumulative amount={}", amountCumulativeForTax);
+                    
                     if (isEnterprise) {
                         taxAggregate.addAmountWithoutTax(amountCumulativeForTax);
+                        
                     } else {
                         taxAggregate.addAmountWithTax(amountCumulativeForTax);
                     }
+                    
+                    log.debug("taxAggregate.currentTotal={}",
+            				taxAggregates != null
+            						? taxAggregates.values().stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum()
+            						: "0");
                 }
             }
         }
+        
+		log.debug("taxAggregate.grantTotal={}",
+				taxAggregates != null
+						? taxAggregates.values().stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum()
+						: "0");
 
         // Calculate derived tax aggregate amounts
         if (calculateTaxOnSubCategoryLevel) {
