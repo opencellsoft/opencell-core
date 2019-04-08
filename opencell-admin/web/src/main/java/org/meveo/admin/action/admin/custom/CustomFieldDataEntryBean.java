@@ -135,6 +135,11 @@ public class CustomFieldDataEntryBean implements Serializable {
     @Inject
     protected Messages messages;
 
+    /**
+     * Selected item in dataTable.
+     */
+    private Map<String, Object> selectedItem;
+
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -2089,6 +2094,25 @@ public class CustomFieldDataEntryBean implements Serializable {
             cfv.setDatasetForGUI(dataset);
         }
         return (LazyDataModel) cfv.getDatasetForGUI();
+    }
+
+
+    /**
+     * Gets the selectedItem
+     *
+     * @return the selectedItem
+     */
+    public Map<String, Object> getSelectedItem() {
+        return selectedItem;
+    }
+
+    /**
+     * Sets the selectedItem.
+     *
+     * @param selectedItem the new selectedItem
+     */
+    public void setSelectedItem(Map<String, Object> selectedItem) {
+        this.selectedItem = selectedItem;
     }
 
     /**
