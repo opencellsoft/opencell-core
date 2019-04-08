@@ -1,4 +1,4 @@
-package org.meveo.apiv2.models.orderItem;
+package org.meveo.apiv2.ordering.orderItem;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;

@@ -8,8 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.api.rest.PATCH;
 import org.meveo.apiv2.models.ApiException;
-import org.meveo.apiv2.models.product.Product;
-import org.meveo.apiv2.models.product.Products;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;

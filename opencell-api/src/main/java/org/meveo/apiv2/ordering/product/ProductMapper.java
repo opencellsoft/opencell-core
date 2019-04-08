@@ -2,8 +2,6 @@ package org.meveo.apiv2.ordering.product;
 
 import org.meveo.apiv2.NotYetImplementedResource;
 import org.meveo.apiv2.ResourceMapper;
-import org.meveo.apiv2.models.product.ImmutableProduct;
-import org.meveo.apiv2.models.product.Product;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.*;
 import org.meveo.model.shared.DateUtils;
@@ -20,8 +18,8 @@ class ProductMapper extends ResourceMapper<Product, ProductTemplate> {
                 .addChannels(getImmutableResources(productTemplate.getChannels(), NotYetImplementedResource.class))
                 .addWalletTemplates(getImmutableResources(productTemplate.getWalletTemplates(), NotYetImplementedResource.class))
                 .addProductChargeTemplates(getImmutableResources(productTemplate.getProductChargeTemplates(), NotYetImplementedResource.class))
-                .businessProductModel(getImmutableResource(NotYetImplementedResource.class, productTemplate.getBusinessProductModel()))
-                .invoicingCalendar(getImmutableResource(NotYetImplementedResource.class, productTemplate.getInvoicingCalendar()))
+                .businessProductModel(buildImmutableResource(NotYetImplementedResource.class, productTemplate.getBusinessProductModel()))
+                .invoicingCalendar(buildImmutableResource(NotYetImplementedResource.class, productTemplate.getInvoicingCalendar()))
                 .name(productTemplate.getName())
                 .code(productTemplate.getCode()).lifeCycleStatus(productTemplate.getLifeCycleStatus().getValue())
                 .imageUrl(productTemplate.getImagePath())

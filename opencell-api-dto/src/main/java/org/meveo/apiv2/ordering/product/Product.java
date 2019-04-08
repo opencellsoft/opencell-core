@@ -1,4 +1,4 @@
-package org.meveo.apiv2.models.product;
+package org.meveo.apiv2.ordering.product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.immutables.value.Value;

@@ -94,8 +94,8 @@ public class OrderItemService implements ApiService<OrderItem> {
         return orderItem;
     }
 
-    private void populateOrderItemFields(OrderItem orderItem) throws BusinessException {
-        if(orderItem.getUserAccount() != null) {
+    public void populateOrderItemFields(OrderItem orderItem) throws BusinessException {
+        if(orderItem.getOrder() != null && orderItem.getOrder().getId() != null) {
             Order orderById = orderService.findById(orderItem.getOrder().getId());
             orderItem.setOrder(orderById);
         }

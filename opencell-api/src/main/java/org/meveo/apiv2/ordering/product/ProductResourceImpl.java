@@ -1,10 +1,6 @@
 package org.meveo.apiv2.ordering.product;
 
 import org.meveo.apiv2.common.LinkGenerator;
-import org.meveo.apiv2.models.product.ImmutableProduct;
-import org.meveo.apiv2.models.product.ImmutableProducts;
-import org.meveo.apiv2.models.product.Product;
-import org.meveo.apiv2.models.product.Products;
 import org.meveo.apiv2.services.ApiService;
 import org.meveo.apiv2.services.ProductService;
 import org.meveo.model.catalog.ProductTemplate;
@@ -24,8 +20,8 @@ public class ProductResourceImpl implements ProductResource {
 
     @Override
     public Response getProducts(Long offset, Long limit, String sort, String orderBy, String filter, Request request) {
-        List<ProductTemplate> productTemplates = productService.list(offset, limit, sort, orderBy, filter);
-        EntityTag etag = new EntityTag(Integer.toString(productTemplates.hashCode()));
+        List<ProductTemplate> productTemplatesEntity = productService.list(offset, limit, sort, orderBy, filter);
+        EntityTag etag = new EntityTag(Integer.toString(productTemplatesEntity.hashCode()));
         CacheControl cc = new CacheControl();
         cc.setMaxAge(1000);
         Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
@@ -33,7 +29,7 @@ public class ProductResourceImpl implements ProductResource {
             builder.cacheControl(cc);
             return builder.build();
         }
-        ImmutableProduct[] productList = productTemplates
+        ImmutableProduct[] productList = productTemplatesEntity
                 .stream()
                 .map(productTemplate -> toResourceProductWithLink(productMapper.toResource(productTemplate)))
                 .toArray(ImmutableProduct[]::new);
