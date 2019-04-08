@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -28,13 +29,9 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
-import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.customEntities.CustomTableRecord;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -101,10 +98,6 @@ public class ElasticSearchConfiguration implements Serializable {
     @Inject
     private Logger log;
 
-    @Inject
-    @ApplicationProvider
-    private Provider appProvider;
-
     /**
      * Load configuration from elasticSearchConfiguration.json file.
      * 
@@ -156,6 +149,10 @@ public class ElasticSearchConfiguration implements Serializable {
                     clazzes.add(clazz);
 
                     for (Class<?> classToIndex : clazzes) {
+
+                        if (!ISearchable.class.isAssignableFrom(classToIndex) || Modifier.isAbstract(classToIndex.getModifiers())) {
+                            continue;
+                        }
 
                         String classnameToIndex = classToIndex.getName();
                         JsonNode entityMapping = entityMappingInfo.getValue();
@@ -246,96 +243,23 @@ public class ElasticSearchConfiguration implements Serializable {
     }
 
     /**
-     * Get a unique list of indexes and type for given entity classes. Index names are prefixed by provider code (removed spaces and lowercase).
+     * Get index name value for a given class name
      * 
-     * @param classesInfo A list of entity class information
-     * @return A set of arrays with index and type names in that order
+     * @param classname Class name
+     * @return Index name without provider prefix or EL expression to determine index name without the provider
      */
-    public Set<String[]> getIndexAndTypes(List<ElasticSearchClassInfo> classesInfo) {
-
-        Set<String[]> indexes = new HashSet<>();
-
-        for (ElasticSearchClassInfo classInfo : classesInfo) {
-            String[] indexAndType = getIndexAndType(classInfo.getClazz(), classInfo.getCetCode());
-            if (indexAndType != null) {
-                indexes.add(indexAndType);
-            }
-        }
-
-        return indexes;
+    public String getIndexName(String classname) {
+        return indexMap.get(classname);
     }
 
     /**
-     * Get a unique list of indexes. Index names are prefixed by provider code (removed spaces and lowercase).
-     *
-     * @return A set of index property names
-     */
-    public Set<String[]> getIndexes() {
-
-        String indexPrefix = BaseEntity.cleanUpAndLowercaseCodeOrId(appProvider.getCode());
-
-        Set<String> indices = new HashSet<>(indexMap.values());
-
-        Set<String[]> indexNames = new HashSet<>();
-
-        // TODO does not include dynamic index names
-        for (String indexName : indices) {
-            if (!indexName.contains("#")) {
-                indexNames.add(new String[] { indexPrefix + "_" + indexName, null });
-            }
-        }
-
-        return indexNames;
-    }
-
-    /**
-     * Determine index and type value for Elastic Search for a given entity.
+     * Get type name value for a given class name
      * 
-     * @param entity ISearchable entity to be stored/indexed in Elastic Search
-     * @return An array with index and type in that order
+     * @param classname Class name
+     * @return Type name without provider prefix or EL expression to determine index name without the provider
      */
-    public String[] getIndexAndType(ISearchable entity) {
-        String cetCode = null;
-        if (entity instanceof CustomEntityInstance) {
-            cetCode = ((CustomEntityInstance) entity).getCetCode();
-        } else if (entity instanceof CustomTableRecord) {
-            cetCode = ((CustomTableRecord) entity).getCetCode();
-        }
-        return getIndexAndType(entity.getClass(), cetCode);
-    }
-
-    /**
-     * Determine index and type value for Elastic Search for a given class.
-     * 
-     * @param clazzToConvert Entity class that extends ISearchable interface
-     * @param cetCode Custom entity template/custom table code
-     * @return An array with index and type in that order
-     */
-    public String[] getIndexAndType(Class<? extends ISearchable> clazzToConvert, String cetCode) {
-
-        String classname = ReflectionUtils.getCleanClassName(clazzToConvert.getName());
-
-        String indexName = indexMap.get(classname);
-
-        // No index, no interest in ES
-        if (indexName == null) {
-            return null;
-        }
-
-        String type = typeMap.get(classname);
-
-        if (cetCode != null) {
-            if (indexName.startsWith("#")) {
-                indexName = ValueExpressionWrapper.evaluateToStringIgnoreErrors(indexName, "cetCode", cetCode);
-            }
-            if (type != null && type.startsWith("#")) {
-                type = ValueExpressionWrapper.evaluateToStringIgnoreErrors(type, "cetCode", cetCode);
-            }
-        }
-
-        indexName = appProvider.getCode() + "_" + indexName;
-
-        return new String[] { BaseEntity.cleanUpAndLowercaseCodeOrId(indexName), type };
+    public String getType(String classname) {
+        return typeMap.get(classname);
     }
 
     /**
@@ -458,27 +382,5 @@ public class ElasticSearchConfiguration implements Serializable {
         } else {
             return customEntityTemplates.get("cei");
         }
-    }
-
-    /**
-     * Determine a classname from index name
-     * 
-     * @param fullIndexName Full index name
-     * @return A full classname
-     */
-    public String getClassnameFromIndex(String fullIndexName) {
-
-        // Full index name is prefixed with <provider code>_ and suffixed by version number _<v..>
-        // Remove provider code
-        String cleanIndexName = fullIndexName.substring(appProvider.getCode().length() + 1);
-        cleanIndexName = cleanIndexName.substring(0, cleanIndexName.lastIndexOf("_v"));
-
-        for (Entry<String, String> indexInfo : indexMap.entrySet()) {
-            if (indexInfo.getValue().equals(cleanIndexName)) {
-                return indexInfo.getKey();
-            }
-        }
-        // TODO this does not cover dynamic index names as in cae of custom entity instances or custom tables
-        return null;
     }
 }

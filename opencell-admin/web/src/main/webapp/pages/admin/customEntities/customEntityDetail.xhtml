@@ -31,7 +31,7 @@
                 </p:tab>
 
                 <hftl:customFields backingBean="#{customEntityInstanceBean}" messagesId=":formId:messages" />
-				<hftl:displayGenericWFsHistory entity="#{customEntityInstanceBean.entity}" clazz="#{customEntityInstanceBean.clazz}" />
+				<hftl:displayGenericWFsHistory backingBean="#{customEntityInstanceBean}" />
 
             </p:tabView>
         </hftl:formPanel>

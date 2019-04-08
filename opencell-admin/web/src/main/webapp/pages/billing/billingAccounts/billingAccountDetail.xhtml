@@ -341,8 +341,8 @@
 								</p:tab>
 
                                         <hftl:customFields backingBean="#{billingAccountBean}" messagesId=":parentTab:formId:messages" />
-                                        <hftl:displayWorkflowsHistory entity="#{billingAccountBean.entity}" />
-
+                                        <!-- <hftl:displayWorkflowsHistory entity="#{billingAccountBean.entity}" /> -->
+										<hftl:displayGenericWFsHistory backingBean="#{billingAccountBean}" />
 										
 
 								</p:tabView>
