@@ -94,6 +94,7 @@ public class AccountOperationApi extends BaseApi {
         }
         AccountOperation accountOperation = null;
         CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount());
+        OperationCategoryEnum transactionCategory = postData.getTransactionCategory();
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
         }
@@ -116,6 +117,10 @@ public class AccountOperationApi extends BaseApi {
             rejectedPayment.setRejectedCode(postData.getRejectedPayment().getRejectedCode());
 
             accountOperation = rejectedPayment;
+        } else if ("W".equals(postData.getType())) {
+            WriteOff writeOff = new WriteOff();
+            transactionCategory = OperationCategoryEnum.CREDIT;
+            accountOperation = writeOff;
         }
 
         if (accountOperation == null) {
@@ -125,7 +130,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setDueDate(postData.getDueDate());
         accountOperation.setType(postData.getType());
         accountOperation.setTransactionDate(postData.getTransactionDate());
-        accountOperation.setTransactionCategory(postData.getTransactionCategory());
+        accountOperation.setTransactionCategory(transactionCategory);
         accountOperation.setReference(postData.getReference());
         if (!StringUtils.isBlank(postData.getAccountingCode())) {
             AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());

@@ -25879,7 +25879,7 @@ public class SuspendSubscriptions extends org.meveo.service.script.Script {
     public void execute(Map<String, Object> initContext) throws BusinessException {
 
         AccountOperation ao = (AccountOperation)initContext.get("event");
-        if( ao.getOccCode().equals("CC_REJECT") ) {
+        if( ao.getOccCode() != null && ao.getOccCode().equals("CC_REJECT") ) {
             // browse BillingAccounts>UserAccounts, to get to the subscriptions
             int i = 0;
 
