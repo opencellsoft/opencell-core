@@ -1792,7 +1792,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // TODO : delete this commit since generating PDF/XML and producing AOs are now outside this service !
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
         // Why not add a new method on another bean with Tx.Requires_New?
-        //commit();
+        commit();
         return invoices;
     }
 
@@ -1810,6 +1810,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public void produceFilesAndAO(boolean produceXml, boolean producePdf, boolean generateAO, Invoice invoice, boolean isDraft)
             throws BusinessException, InvoiceExistException, ImportInvoiceException {
+         invoice = invoiceService.refreshOrRetrieve(invoice);
         if (produceXml) {
             invoiceService.produceInvoiceXmlNoUpdate(invoice);
         }
