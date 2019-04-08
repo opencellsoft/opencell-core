@@ -178,6 +178,18 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     @Column(name = "last_login_date")
     private Date lastLoginDate;
 
+    /**
+     * Code
+     */
+    @Transient
+    private String code;
+
+    /**
+     * Description
+     */
+    @Transient
+    private String description;
+
     public User() {
     }
 
@@ -408,7 +420,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
 
     @Override
     public String getDescription() {
-        return "";
+        return "User " + getCode();
     }
 
     @Override
