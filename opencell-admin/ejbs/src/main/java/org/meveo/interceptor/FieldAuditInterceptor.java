@@ -42,7 +42,7 @@ public class FieldAuditInterceptor extends EmptyInterceptor {
     @Override
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
         //Called when an entity is detected to be dirty, during a flush.
-        log.debug("Flush Dirty Entity {}", entity.getClass().getName());
+        // log.debug("Flush Dirty Entity {}", entity.getClass().getName());
 
         //get only all the entities that extends the AuditableEntity interface and that contain fields that are marked by the AuditTarget annotation
         if (auditableEntities.isEmpty()) {
