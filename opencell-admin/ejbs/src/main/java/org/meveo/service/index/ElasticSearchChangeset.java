@@ -95,7 +95,7 @@ public class ElasticSearchChangeset {
         this.id = id;
         this.idForES = type != null ? type + "_" + id : id.toString();
         this.source = source;
-        this.fullId = String.format("%s/%s", index, this.id);
+        this.fullId = String.format("%s/%s", index, this.idForES);
         if (type != null && (action == ElasticSearchAction.ADD_REPLACE || action == ElasticSearchAction.UPSERT)) {
             this.source.put(ElasticSearchConfiguration.MAPPING_FIELD_TYPE, type);
         }
