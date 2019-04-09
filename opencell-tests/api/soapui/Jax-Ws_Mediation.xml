@@ -2102,7 +2102,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#TestSuite#entityPrefix}" description="${#TestSuite#entityPrefix}_NUMBERS">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SUB</appliesTo>\r
+            <appliesTo>Subscription</appliesTo>\r
             <storageType>LIST</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>true</versionable>\r
@@ -3108,7 +3108,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#TestSuite#entityPrefix}</customFieldTemplateCode>\r
-         <appliesTo>SUB</appliesTo>
+         <appliesTo>Subscription</appliesTo>
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -3525,7 +3525,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 
          <customField code="${#TestSuite#entityPrefix}" description="TOPTEN_NUMBERS from file">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SUB</appliesTo>\r
+            <appliesTo>Subscription</appliesTo>\r
             <storageType>LIST</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>true</versionable>\r
@@ -4533,7 +4533,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#TestSuite#entityPrefix}</customFieldTemplateCode>\r
-         <appliesTo>SUB</appliesTo>
+         <appliesTo>Subscription</appliesTo>
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -4924,7 +4924,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       <ws:createOrUpdateField>\r
          <customField code="${#TestSuite#entityPrefix}" description="Zonning plan">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>true</versionable>\r
@@ -5992,7 +5992,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#TestSuite#entityPrefix}</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>
+         <appliesTo>Customer</appliesTo>
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -6377,7 +6377,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 
          <customField code="${#TestSuite#entityPrefix}" description="Zonning plan">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>CUST</appliesTo>\r
+            <appliesTo>Customer</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>true</versionable>\r
@@ -7446,7 +7446,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#TestSuite#entityPrefix}</customFieldTemplateCode>\r
-         <appliesTo>CUST</appliesTo>
+         <appliesTo>Customer</appliesTo>
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>

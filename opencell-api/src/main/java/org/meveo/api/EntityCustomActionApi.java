@@ -33,8 +33,9 @@ import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
- **/
-
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class EntityCustomActionApi extends BaseApi {
 
@@ -313,7 +314,7 @@ public class EntityCustomActionApi extends BaseApi {
 
     /**
      * @param actionCode Entity custom action code.
-     * @param appliesTo the type of entity to which the CFT applies. eg OFFER, SERVICE.
+     * @param appliesTo the type of entity to which the CFT applies. eg OfferTemplate, ServiceTemplate.
      * @param entityCode Entity code to execute action on.
      * @return GUI redirection or null.
      * @throws MeveoApiException General API exception.

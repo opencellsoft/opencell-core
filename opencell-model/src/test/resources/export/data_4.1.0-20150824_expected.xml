@@ -12,7 +12,7 @@
 			<code>NUM_CLIENT_AGRESSO</code>
 			<description>Numero Client AGRESSO</description>
 			<fieldType>STRING</fieldType>
-			<accountLevel>CA</accountLevel>
+			<accountLevel>CustomerAccount</accountLevel>
 			<valueRequired>false</valueRequired>
 			<listValues xsId="7" />
 			<versionable>false</versionable>
@@ -34,7 +34,7 @@
 			<code>NUM_CLIENT_AGRESSO</code>
 			<description>Numero Client AGRESSO</description>
 			<fieldType>STRING</fieldType>
-			<accountLevel>CA</accountLevel>
+			<accountLevel>CustomerAccount</accountLevel>
 			<valueRequired>false</valueRequired>
 			<listValues />
 		<storageType>SINGLE</storageType>

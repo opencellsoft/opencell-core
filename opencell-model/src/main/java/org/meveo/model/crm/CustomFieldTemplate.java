@@ -59,10 +59,10 @@ import org.meveo.model.shared.DateUtils;
  * Custom field template
  * 
  * @author Andrius Karpavicius
- * @author Abdellatif BARI
  * @author Khalid HORRI
+ * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
- **/
+ */
 @Entity
 @ModuleItem
 @Cacheable
@@ -77,7 +77,7 @@ import org.meveo.model.shared.DateUtils;
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
         @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo=:appliesTo order by cft.code", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-        @NamedQuery(name = "CustomFieldTemplate.getCFTsForAccumulation", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo='SELLER' or cft.code in (SELECT cftu.code from CustomFieldTemplate cftu where cftu.appliesTo in :appliesTo group by cftu.code having count(cftu.code)>1) order by cft.code") })
+        @NamedQuery(name = "CustomFieldTemplate.getCFTsForAccumulation", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo='Seller' or cft.code in (SELECT cftu.code from CustomFieldTemplate cftu where cftu.appliesTo in :appliesTo group by cftu.code having count(cftu.code)>1) order by cft.code") })
 public class CustomFieldTemplate extends EnableBusinessEntity implements Comparable<CustomFieldTemplate> {
 
     private static final long serialVersionUID = -1403961759495272885L;

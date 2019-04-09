@@ -34,8 +34,8 @@ import org.meveo.service.job.Job;
  * 
  * @author Wassim Drira
  * @author HORRI khalid
- * @lastModifiedVersion 5.0
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class MediationJob extends Job {
@@ -129,7 +129,7 @@ public class MediationJob extends Job {
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("nbRuns");
-        nbRuns.setAppliesTo("JOB_MediationJob");
+        nbRuns.setAppliesTo("JobInstance_MediationJob");
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -139,7 +139,7 @@ public class MediationJob extends Job {
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
         waitingMillis.setCode("waitingMillis");
-        waitingMillis.setAppliesTo("JOB_MediationJob");
+        waitingMillis.setAppliesTo("JobInstance_MediationJob");
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
@@ -149,7 +149,7 @@ public class MediationJob extends Job {
 
         CustomFieldTemplate scriptJob = new CustomFieldTemplate();
         scriptJob.setCode("scriptJob");
-        scriptJob.setAppliesTo("JOB_MediationJob");
+        scriptJob.setAppliesTo("JobInstance_MediationJob");
         scriptJob.setActive(true);
         scriptJob.setAllowEdit(true);
         scriptJob.setMaxValue(Long.MAX_VALUE);

@@ -2003,4 +2003,57 @@ $$ LANGUAGE plpgsql;
         <addUniqueConstraint tableName="wf_instance" constraintName="uk_wf_instance_code_gwf_id_cet_code" columnNames="entity_instance_code, generic_wf_id, target_cet_code" deferrable="false" disabled="false" initiallyDeferred="false" />
     </changeSet>
 
+    <changeSet id="#4089_20190404" author="AbdellatifBARI">
+        <sql>update ${db.schema.adapted}crm_custom_field_tmpl set applies_to = case
+
+            when applies_to = 'PROVIDER'                then 'Provider'
+            when applies_to = 'PRODUCT'                 then 'ProductTemplate'
+            when applies_to = 'PRODUCT_INSTANCE'        then 'ProductInstance'
+            when applies_to = 'OFFER'                   then 'OfferTemplate'
+            when applies_to = 'SELLER'                  then 'Seller'
+            when applies_to = 'CUST'                    then 'Customer'
+            when applies_to = 'CA'                      then 'CustomerAccount'
+            when applies_to = 'BA'                      then 'BillingAccount'
+            when applies_to = 'UA'                      then 'UserAccount'
+            when applies_to = 'SERVICE'                 then 'ServiceTemplate'
+            when applies_to = 'SERVICE_INSTANCE'        then 'ServiceInstance'
+            when applies_to = 'SUB'                     then 'Subscription'
+            when applies_to = 'ACC'                     then 'Access'
+            when applies_to = 'CHARGE'                  then 'ChargeTemplate'
+            when applies_to = 'PRICEPLAN'               then 'PricePlanMatrix'
+
+            when applies_to = 'BILLING_CYCLE'           then 'BillingCycle'
+            when applies_to = 'TAX'                     then 'Tax'
+            when applies_to = 'INV_CAT'                 then 'InvoiceCategory'
+            when applies_to = 'INVOICE'                 then 'Invoice'
+            when applies_to = 'ACCT_CODE'               then 'AccountingCode'
+            when applies_to = 'FILTER'                  then 'Filter'
+            when applies_to = 'QUOTE'                   then 'Quote'
+            when applies_to = 'ORDER'                   then 'Order'
+            when applies_to = 'USER'                    then 'User'
+            when applies_to = 'JOB'                     then 'JobInstance'
+            when applies_to = 'DISCOUNT_PLAN_INSTANCE'  then 'DiscountPlanInstance'
+            when applies_to = 'DISCOUNT_PLAN'           then 'DiscountPlan'
+            when applies_to = 'OFFER_CATEGORY'          then 'OfferTemplateCategory'
+            when applies_to = 'INV_SUB_CAT'             then 'InvoiceSubCategory'
+            when applies_to = 'ACC_OP'                  then 'AccountOperation'
+
+            when applies_to = 'BILLING_RUN'             then 'BillingRun'
+            when applies_to = 'INVOICE_TYPE'            then 'InvoiceType'
+            when applies_to = 'DISCOUNT_PLAN_ITEM'      then 'DiscountPlanItem'
+            when applies_to = 'OTH_TR'                  then 'OtherTransaction'
+            when applies_to = 'REPORT'                  then 'ReportExtract'
+            when applies_to = 'BUNDLE'                  then 'BundleTemplate'
+            when applies_to = 'PAYMENT_SCH_INSTANCE'    then 'PaymentScheduleInstance'
+            when applies_to = 'DDREQ_BUILDER'           then 'DDRequestBuilder'
+            when applies_to = 'PAYMENT_SCH'             then 'PaymentScheduleTemplate'
+
+            when applies_to like 'JOB_%'                then  concat('JobInstance_', substring(applies_to, length('JOB_')+1, length(applies_to)))
+
+            else applies_to
+
+            end where applies_to is not null
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

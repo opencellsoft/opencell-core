@@ -73,11 +73,13 @@ import org.meveo.model.shared.Name;
 
 /**
  * Application user
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
 @Cacheable
-@CustomFieldEntity(cftCodePrefix = "USER")
+@CustomFieldEntity(cftCodePrefix = "User")
 @ExportIdentifier({ "userName" })
 @ReferenceIdentifierCode("userName")
 @ReferenceIdentifierDescription("email")

@@ -21,6 +21,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class SepaDirectDebitJob generate sepa/paynum or custom files for available DirectDebit request operations.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class SepaDirectDebitJob extends Job {
@@ -29,7 +31,7 @@ public class SepaDirectDebitJob extends Job {
     @Inject
     private SepaDirectDebitJobBean sepaDirectDebitJobBean;
     
-    private static final String APPLIES_TO_NAME = "JOB_SepaDirectDebitJob";
+    private static final String APPLIES_TO_NAME = "JobInstance_SepaDirectDebitJob";
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
