@@ -751,6 +751,8 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     /**
      * Check if this is a main provider A hardcoded ID = 1 of a current provider/tenant. Each provider/tenant has its's own schema and all should have same ID for fast retrieval
      * instead of ordering and taking a first record
+     * 
+     * @return True if its a provider with ID=1
      */
     public boolean isCurrentProvider() {
         return id != null && id == CURRENT_PROVIDER_ID;

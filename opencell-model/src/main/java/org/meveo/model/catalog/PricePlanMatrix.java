@@ -799,8 +799,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	}
 
 	/**
-	 * Expression to set the minimum allowed amount. 
-	 * @param minimumAmountEL
+	 * @param minimumAmountEL Expression to set the minimum allowed amount. 
 	 */
 	public void setMinimumAmountEL(String minimumAmountEL) {
 		this.minimumAmountEL = minimumAmountEL;
@@ -815,8 +814,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	}
 
 	/**
-	 * Expression to set the minimum allowed amount - for Spark.
-	 * @param minimumAmountELSpark
+	 * @param minimumAmountELSpark Expression to set the minimum allowed amount - for Spark.
 	 */
 	public void setMinimumAmountELSpark(String minimumAmountELSpark) {
 		this.minimumAmountELSpark = minimumAmountELSpark;
