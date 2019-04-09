@@ -695,7 +695,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Gets cc Emails
-     * @return
+     * @return CC emails
      */
     public String getCcedEmails() {
         return ccedEmails;

@@ -567,7 +567,7 @@ public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntit
 
     /**
      * Gets cc Emails
-     * @return
+     * @return CC emails
      */
     public String getCcedEmails() {
         return ccedEmails;
