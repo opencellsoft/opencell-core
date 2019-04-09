@@ -1,5 +1,9 @@
 package org.meveo.api.rest.impl;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -15,11 +19,6 @@ import org.meveo.api.dto.response.ScriptInstanceReponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.ScriptInstanceRs;
-
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Edward P. Legaspi
@@ -102,8 +101,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
 
         try {
                 result = scriptInstanceApi.execute(scriptInstanceCode, context);
-                responseBuilder = Response.ok();
-                responseBuilder.entity(result);
+                responseBuilder = Response.ok().entity(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
         } catch (MeveoApiException e) {
             log.error(e.getLocalizedMessage());
             responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(result);
@@ -113,8 +111,8 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
             responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result);
             responseBuilder.entity(e.getLocalizedMessage());
         }
-        Response response = responseBuilder.build();
-        return response;
+        
+        return responseBuilder.build();
     }
 
 
