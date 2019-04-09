@@ -72,7 +72,7 @@
                     <f:selectItem itemLabel="" itemValue="" />
                     <!-- store a entity itself -->
                     <c:if test="#{! fkToEntity}">
-                        <f:selectItems value="#{elements}" var="elem" itemLabel="#{listBean.getTranslation(elem[valueLabelField])}" itemValue="#{elem}" />
+                        <f:selectItems value="#{elements}" var="elem" itemLabel="#{listBean.getTranslation(elem[valueLabelField], elem[valueLabelField2])}" itemValue="#{elem}" />
                     </c:if>
                     <!-- store only a code value -->
                     <c:if test="#{fkToEntity}">
@@ -89,7 +89,7 @@
             </c:if>
             <c:if test="#{! edit}">
                 <c:if test="#{! fkToEntity}">
-                    <h:outputText id="#{id}" value="#{listBean.getTranslation(fieldItem[valueLabelField])}" styleClass="field-value" />
+                    <h:outputText id="#{id}" value="#{listBean.getTranslation(fieldItem[valueLabelField], fieldItem[valueLabelField2])}" styleClass="field-value" />
                 </c:if>
                 <c:if test="#{fkToEntity}">
                     <h:outputText id="#{id}" value="#{listBean.persistenceService.findByCode(fieldItem)[valueLabelField]}" styleClass="field-value" />
