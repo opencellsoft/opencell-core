@@ -503,7 +503,7 @@ public class ElasticClient {
      * @param sortFields - Fields to sort by. If omitted, will sort by score.
      * @param sortOrders Sorting orders
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
-     * @param classInfo Entity classes to match. If not provided will look in all indices of a current provider.
+     * @param classnamesOrCetCodes Entity classes or Custom entity template codes to match. If not provided will look in all indices of a current provider.
      * @return Search result
      * @throws BusinessException General business exception
      */
@@ -662,7 +662,7 @@ public class ElasticClient {
      *        with a corresponding field and descending order, unless sorting included valid_xxx fields, in which case they will be given priority first.
      * @param sortOrders Sorting orders
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
-     * @param classInfo Entity classes to match. If not provided will look in all indices of a current provider.
+     * @param classnamesOrCetCodes Entity classes or Custom entity template codes to match. If not provided will look in all indices of a current provider.
      * @return Search result
      * @throws BusinessException General business exception
      */
