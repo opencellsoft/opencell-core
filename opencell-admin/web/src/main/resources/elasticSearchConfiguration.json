@@ -161,6 +161,26 @@
         }
     },
     "customFieldTemplates": {
+        "#{cft.fieldType == 'ENTITY' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
+            "properties": {
+                "<fieldName>": {
+                    "properties": {
+                        "code": {
+                            "type": "keyword",
+                            "index": "<indexValue>"
+                        },
+                        "classname": {
+                            "type": "keyword",
+                            "index": "<indexValue>"
+                        },
+                        "classnameCode": {
+                            "type": "keyword",
+                            "index": "<indexValue>"
+                        }
+                    }
+                }
+            }
+        },
         "#{cft.fieldType == 'DATE' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
             "properties": {
                 "<fieldName>": {
@@ -798,9 +818,6 @@
                 "mappings": {
                     "_doc": {
                         "properties": {
-                            "entityType": {
-                                "type": "keyword"
-                            },
                             "id": {
                                 "type": "long"
                             },

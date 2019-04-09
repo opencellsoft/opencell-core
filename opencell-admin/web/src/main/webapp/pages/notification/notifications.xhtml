@@ -35,7 +35,7 @@
 <!--             <hftl:column style="display:none" label="#{messages['entity.notification.elFilter']}" field="elFilter" /> -->
             <hftl:column label="#{messages['notification.priority']}" field="priority" />
             <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
-            <hftl:actionsColumn permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}" />
+            <hftl:actionsColumn permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}" renderEnableLink="true" />
         </hftl:dataList>
     </ui:define>
 </ui:composition>

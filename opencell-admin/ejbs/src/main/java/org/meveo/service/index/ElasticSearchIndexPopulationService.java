@@ -385,29 +385,33 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             for (Entry<String, Object> cfValueInfo : cfEntity.getCfValuesAsValues().entrySet()) {
 
                 String cfCode = cfValueInfo.getKey();
-                Object value = cfValueInfo.getValue();
-                if (value instanceof Map || value instanceof EntityReferenceWrapper) {
-                    value = JsonUtils.toJson(value, false);
-                }
 
-                if (cftIndexable != null && cftIndexable.contains(entity.getClass().getName() + "_" + cfCode)) {
-                    jsonValueMap.put(cfCode, value);
-
-                } else if (cftNotIndexable != null && cftNotIndexable.contains(entity.getClass().getName() + "_" + cfCode)) {
+                if (cftNotIndexable != null && cftNotIndexable.contains(entity.getClass().getName() + "_" + cfCode)) {
                     continue;
 
-                } else {
+                } else if (cftIndexable == null || !cftIndexable.contains(entity.getClass().getName() + "_" + cfCode)) {
                     CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(cfCode, (ICustomFieldEntity) entity);
-                    if (cft != null && cft.getIndexType() != null) {
-                        if (cftIndexable != null) {
-                            cftIndexable.add(entity.getClass().getName() + "_" + cfCode);
+                    if (cft == null || cft.getIndexType() == null) {
+                        if (cftNotIndexable != null) {
+                            cftNotIndexable.add(entity.getClass().getName() + "_" + cfCode);
                         }
-                        jsonValueMap.put(cfCode, value);
+                        continue;
 
-                    } else if (cftNotIndexable != null) {
-                        cftNotIndexable.add(entity.getClass().getName() + "_" + cfCode);
+                    } else if (cftIndexable != null) {
+                        cftIndexable.add(entity.getClass().getName() + "_" + cfCode);
                     }
                 }
+
+                Object value = cfValueInfo.getValue();
+                if (value instanceof Map) {
+                    value = JsonUtils.toJson(value, false);
+
+                } else if (value instanceof EntityReferenceWrapper) {
+                    value = ((EntityReferenceWrapper) value).toMap();
+                }
+
+                jsonValueMap.put(cfCode, value);
+
             }
         }
 
