@@ -1182,6 +1182,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public List<RatedTransaction> listByInvoice(Invoice invoice) {
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "r");
         qb.addCriterionEntity("invoice", invoice);
+        qb.addOrderCriterion("id", true);
 
         try {
             return qb.getQuery(getEntityManager()).getResultList();
