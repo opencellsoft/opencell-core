@@ -25,5 +25,8 @@
         <modifyDataType tableName="ar_ddrequest_lot" columnName="file_name" newDataType="${type.text}"/>
         <modifyDataType tableName="ar_account_operation" columnName="bank_lot" newDataType="${type.text}"/>
     </changeSet>
+    <changeSet id="#4140-issue-with-action-length--gt--255-char" author="hznibar">
+    	<modifyDataType tableName="wf_history_action" columnName="result" newDataType="varchar(2000)"/>
+    </changeSet>
 
 </databaseChangeLog>
