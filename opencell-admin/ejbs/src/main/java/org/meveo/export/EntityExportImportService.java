@@ -99,7 +99,6 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
 import org.meveo.model.communication.MeveoInstance;
-import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Permission;
@@ -977,8 +976,6 @@ public class EntityExportImportService implements Serializable {
         } else {
             entityFound = findEntityByAttributes(entityToSave);
         }
-
-        updateCftFields(entityToSave);
 
         if (entityFound == null && updateExistingOnly) {
             log.debug("No existing entity was found. Entity will be saved by other means (cascading probably).");
@@ -2499,169 +2496,6 @@ public class EntityExportImportService implements Serializable {
             }
 
             return stringBuilder.toString();
-        }
-    }
-
-    /**
-     * update Custom field template fields
-     *
-     * @param entityDeserialized Entity deserialised
-     */
-    private void updateCftFields(IEntity entityDeserialized) {
-
-        Class clazz = entityDeserialized.getClass();
-
-        log.trace("update Cft Fields");
-
-        Class cls = clazz;
-        while (cls != null && cls.isAssignableFrom(CustomFieldTemplate.class)) {
-
-            for (Field field : cls.getDeclaredFields()) {
-                try {
-                    if (field.getName().equalsIgnoreCase("appliesTo")) {
-                        field.setAccessible(true);
-                        String value = (String)field.get(entityDeserialized);
-
-                        switch(value){
-
-                            case "PROVIDER":
-                                field.set(entityDeserialized, "Provider");
-                                break;
-                            case "PRODUCT":
-                                field.set(entityDeserialized, "ProductTemplate");
-                                break;
-                            case "PRODUCT_INSTANCE":
-                                field.set(entityDeserialized, "ProductInstance");
-                                break;
-                            case "OFFER":
-                                field.set(entityDeserialized, "OfferTemplate");
-                                break;
-                            case "SELLER":
-                                field.set(entityDeserialized, "Seller");
-                                break;
-                            case "CUST":
-                                field.set(entityDeserialized, "Customer");
-                                break;
-                            case "CA":
-                                field.set(entityDeserialized, "CustomerAccount");
-                                break;
-                            case "BA":
-                                field.set(entityDeserialized, "BillingAccount");
-                                break;
-                            case "UA":
-                                field.set(entityDeserialized, "UserAccount");
-                                break;
-                            case "SERVICE":
-                                field.set(entityDeserialized, "ServiceTemplate");
-                                break;
-                            case "SERVICE_INSTANCE":
-                                field.set(entityDeserialized, "ServiceInstance");
-                                break;
-                            case "SUB":
-                                field.set(entityDeserialized, "Subscription");
-                                break;
-                            case "ACC":
-                                field.set(entityDeserialized, "Access");
-                                break;
-                            case "CHARGE":
-                                field.set(entityDeserialized, "ChargeTemplate");
-                                break;
-                            case "PRICEPLAN":
-                                field.set(entityDeserialized, "PricePlanMatrix");
-                                break;
-
-
-
-                            case "BILLING_CYCLE":
-                                field.set(entityDeserialized, "BillingCycle");
-                                break;
-                            case "TAX":
-                                field.set(entityDeserialized, "Tax");
-                                break;
-                            case "INV_CAT":
-                                field.set(entityDeserialized, "InvoiceCategory");
-                                break;
-                            case "INVOICE":
-                                field.set(entityDeserialized, "Invoice");
-                                break;
-                            case "ACCT_CODE":
-                                field.set(entityDeserialized, "AccountingCode");
-                                break;
-                            case "FILTER":
-                                field.set(entityDeserialized, "Filter");
-                                break;
-                            case "QUOTE":
-                                field.set(entityDeserialized, "Quote");
-                                break;
-                            case "ORDER":
-                                field.set(entityDeserialized, "Order");
-                                break;
-                            case "USER":
-                                field.set(entityDeserialized, "User");
-                                break;
-                            case "JOB":
-                                field.set(entityDeserialized, "JobInstance");
-                                break;
-                            case "DISCOUNT_PLAN_INSTANCE":
-                                field.set(entityDeserialized, "DiscountPlanInstance");
-                                break;
-                            case "DISCOUNT_PLAN":
-                                field.set(entityDeserialized, "DiscountPlan");
-                                break;
-                            case "OFFER_CATEGORY":
-                                field.set(entityDeserialized, "OfferTemplateCategory");
-                                break;
-                            case "INV_SUB_CAT":
-                                field.set(entityDeserialized, "InvoiceSubCategory");
-                                break;
-                            case "ACC_OP":
-                                field.set(entityDeserialized, "AccountOperation");
-                                break;
-
-
-                            case "BILLING_RUN":
-                                field.set(entityDeserialized, "BillingRun");
-                                break;
-                            case "INVOICE_TYPE":
-                                field.set(entityDeserialized, "InvoiceType");
-                                break;
-                            case "DISCOUNT_PLAN_ITEM":
-                                field.set(entityDeserialized, "DiscountPlanItem");
-                                break;
-                            case "OTH_TR":
-                                field.set(entityDeserialized, "OtherTransaction");
-                                break;
-                            case "ReportExtract":
-                                field.set(entityDeserialized, "ReportExtract");
-                                break;
-                            case "BUNDLE":
-                                field.set(entityDeserialized, "BundleTemplate");
-                                break;
-                            case "PAYMENT_SCH_INSTANCE":
-                                field.set(entityDeserialized, "PaymentScheduleInstance");
-                                break;
-                            case "DDREQ_BUILDER":
-                                field.set(entityDeserialized, "DDRequestBuilder");
-                                break;
-                            case "PAYMENT_SCH":
-                                field.set(entityDeserialized, "PaymentScheduleTemplate");
-                                break;
-
-                            default:
-                                if(value.startsWith("JOB_")){
-                                    field.set(entityDeserialized, "JobInstance_" + value.substring(value.indexOf("JOB_") + "JOB_".length()));
-                                }
-                        }
-
-                        continue;
-                    }
-                } catch (IllegalArgumentException e) {
-                    throw new RuntimeException("Failed to access field " + clazz.getName() + "." + field.getName(), e);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-            cls = cls.getSuperclass();
         }
     }
 }

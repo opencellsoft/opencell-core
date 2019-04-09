@@ -2042,7 +2042,7 @@ $$ LANGUAGE plpgsql;
             when applies_to = 'INVOICE_TYPE'            then 'InvoiceType'
             when applies_to = 'DISCOUNT_PLAN_ITEM'      then 'DiscountPlanItem'
             when applies_to = 'OTH_TR'                  then 'OtherTransaction'
-            when applies_to = 'ReportExtract'           then 'ReportExtract'
+            when applies_to = 'REPORT'                  then 'ReportExtract'
             when applies_to = 'BUNDLE'                  then 'BundleTemplate'
             when applies_to = 'PAYMENT_SCH_INSTANCE'    then 'PaymentScheduleInstance'
             when applies_to = 'DDREQ_BUILDER'           then 'DDRequestBuilder'
