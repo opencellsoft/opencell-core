@@ -1086,8 +1086,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * Determine a classname and a Custom entity template code from index name and entity type
      * 
      * @param fullIndexName Full index name
-     * @param type Entity type value as stored in Elastic search datatable value
-     * @param Entity type as stored in Elastic search index
+     * @param type Entity type value as stored in Elastic search index data
      * @return An array with a full classname and a Custom entity code (when applicable). OR null if no match was found.
      */
     public String[] getClassnameAndCETCodeFromIndex(String fullIndexName, String type) {
@@ -1107,7 +1106,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * Construct identifier for Elastic search for a given entity.
      * 
      * @param entity Entity to construct ID for
-     * @return Identifier value. Its either code, id or <code>_<id> of an entity
+     * @return Identifier value. Its either code, id or &lt;code&gt;_&lt;id&gt; of an entity
      */
     protected static String buildId(ISearchable entity) {
         if (entity instanceof BusinessEntity) {

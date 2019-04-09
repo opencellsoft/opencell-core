@@ -2002,5 +2002,8 @@ $$ LANGUAGE plpgsql;
         </addColumn>
         <addUniqueConstraint tableName="wf_instance" constraintName="uk_wf_instance_code_gwf_id_cet_code" columnNames="entity_instance_code, generic_wf_id, target_cet_code" deferrable="false" disabled="false" initiallyDeferred="false" />
     </changeSet>
+    <changeSet id="#4140_08042019" author="hznibar">
+			<modifyDataType tableName="wf_history_action" columnName="result" newDataType="varchar(2000)" />
+	</changeSet>
 
 </databaseChangeLog>
