@@ -53,6 +53,9 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
 
     @Column(name = "category", length = 50)
     private String category;
+    
+    @Column(name = "output_dir", length = 100)
+    private String outputDir;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -114,6 +117,14 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
 
     public void setCategory(String category) {
         this.category = category;
+    }
+    
+    public String getOutputDir() {
+        return outputDir;
+    }
+
+    public void setOutputDir(String outputDir) {
+        this.outputDir = outputDir;
     }
 
     public ScriptInstance getScriptInstance() {

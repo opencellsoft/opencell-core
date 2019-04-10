@@ -2005,5 +2005,15 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#4140_08042019" author="hznibar">
 			<modifyDataType tableName="wf_history_action" columnName="result" newDataType="varchar(2000)" />
 	</changeSet>
+	
+	<changeSet id="#4127_10042019" author="AbdelmounaimAkadid">
+		<addColumn tableName="dwh_report_extract">
+            <column name="output_dir" type="varchar(255)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = concat('reports/', category) where category is not null or category != ''
+        </sql>
+        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = 'reports' where category is null or category = ''
+        </sql>
+	</changeSet>
 
 </databaseChangeLog>
