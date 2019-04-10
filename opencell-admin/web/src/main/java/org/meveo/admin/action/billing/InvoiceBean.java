@@ -73,7 +73,7 @@ import org.primefaces.model.LazyDataModel;
  * @author anasseh
  * @author Edward P. Legaspi
  * @author Khalid HORRI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 6.1
  */
 @Named
 @ViewScoped

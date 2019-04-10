@@ -408,10 +408,18 @@ public class BillingCycleDto extends BusinessEntityDto {
         this.type = type;
     }
 
+    /**
+     * Gets the script instance code.
+     * @return script instance code
+     */
 	public String getScriptInstanceCode() {
 		return scriptInstanceCode;
 	}
 
+	/**
+     * Sets the script instance code.
+     * @param scriptInstance script instance code
+     */
 	public void setScriptInstanceCode(String scriptInstanceCode) {
 		this.scriptInstanceCode = scriptInstanceCode;
 	}

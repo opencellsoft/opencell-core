@@ -358,10 +358,18 @@ public class BillingCycle extends BusinessCFEntity {
         this.type = type;
     }
 
+    /**
+     * Gets the script instance.
+     * @return script instance
+     */
     public ScriptInstance getScriptInstance() {
         return scriptInstance;
     }
 
+    /**
+     * Sets the script instance.
+     * @param scriptInstance script instance
+     */
     public void setScriptInstance(ScriptInstance scriptInstance) {
         this.scriptInstance = scriptInstance;
     }
