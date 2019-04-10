@@ -604,6 +604,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<Invoice> createAgregatesAndInvoice(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate, Date firstTransactionDate,
             Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean isDraft, boolean assignNumber) throws BusinessException {
@@ -1789,10 +1790,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<Invoice> invoices = invoiceService.createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(),
             isDraft, true);
 
-        // TODO : delete this commit since generating PDF/XML and producing AOs are now outside this service !
-        // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
-        // Why not add a new method on another bean with Tx.Requires_New?
-        commit();
         return invoices;
     }
 
