@@ -60,6 +60,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
+import org.meveo.event.qualifier.InstantiateWF;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -75,6 +76,7 @@ import org.meveo.model.ISearchable;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -145,6 +147,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Inject
     protected ElasticClient elasticClient;
+
+    @Inject
+    @InstantiateWF
+    protected Event<BaseEntity> entityInstantiateWFEventProducer;
 
     @Inject
     @Created
@@ -349,7 +355,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public void remove(E entity) throws BusinessException {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-        entity = findById((Long) entity.getId());
+        entity = retrieveIfNotManaged(entity);
         if (entity != null) {
             getEntityManager().remove(entity);
             if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
@@ -495,6 +501,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityCreatedEventProducer.fire((BaseEntity) entity);
+        }
+
+        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(WorkflowedEntity.class)) {
+            entityInstantiateWFEventProducer.fire((BaseEntity) entity);
         }
 
         if (accumulateCF && entity instanceof ICustomFieldEntity) {
@@ -751,6 +761,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=fiel.value. Applies to date and number type fields.</li>
      * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value&lt;=value</li>
      * <li>list. Value is in field's list value. Applies to date and number type fields.</li>
+     * <li>listInList. Value, which is a list, should be in field value (list)
      * <li>inList/not-inList. Field value is [not] in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value
      * of one item</li>
      * <li>minmaxRange. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields.</li>
@@ -797,7 +808,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * </ul>
      * 
      * 
-     * @param config PaginationConfiguration data holding object
+     * @param config Data filtering, sorting and pagination criteria
      * @return query to filter entities according pagination configuration data.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -858,9 +869,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + fieldName, (Date) filterValue);
                         }
 
-                        // Value which is a list should be in field value
+                        // Value, which is a list, should be in field value (list)
                     } else if ("listInList".equals(condition)) {
                         this.addListInListCreterion(queryBuilder, filterValue, fieldName);
+
                         // Value is in field value (list)
                     } else if ("list".equals(condition)) {
                         String paramName = queryBuilder.convertFieldToParam(fieldName);
@@ -1131,13 +1143,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
         }
-    }
-
-    /**
-     * Flush data to DB. NOTE: unlike the name suggest, no transaction commit is done
-     */
-    public void commit() {
-        getEntityManager().flush();
     }
 
     /**

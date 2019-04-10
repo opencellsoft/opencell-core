@@ -193,13 +193,9 @@
                         <hftl:formField label="#{messages['pricePlanMatrix.amountWithTaxEL']}" field="amountWithTaxEL" textArea="true" rows="1" maxlength="2000" rendered="#{!appProvider.entreprise}" newLine="true"/>
                         <hftl:formField label="#{messages['pricePlanMatrix.amountWithTaxELSpark']}" field="amountWithTaxELSpark" textArea="true" rows="1" maxlength="2000" rendered="#{!appProvider.entreprise}" />
                         
-                        <hftl:formField label="#{messages['pricePlanMatrix.minimumAmountWithoutTaxEL']}" field="minimumAmountWithoutTaxEl" textArea="true" rows="1" maxlength="2000" rendered="#{appProvider.entreprise}" />
-                        <hftl:formField label="#{messages['pricePlanMatrix.minimumAmountWithoutTaxELSpark']}" field="minimumAmountWithoutTaxELSpark" textArea="true" rows="1" maxlength="2000" rendered="#{appProvider.entreprise}" />
-                        <hftl:formField label="#{messages['pricePlanMatrix.minimumAmountWithTaxEL']}" field="minimumAmountWithTaxEl" textArea="true" rows="1" maxlength="2000" rendered="#{!appProvider.entreprise}" />
-                        <hftl:formField label="#{messages['pricePlanMatrix.minimumAmountWithTaxELSpark']}" field="minimumAmountWithTaxELSpark" textArea="true" rows="1" maxlength="2000" rendered="#{!appProvider.entreprise}" />
-
-						<hftl:formField rendered="#{appProvider.entreprise}" label="#{messages['pricePlanMatrix.ratingElWithoutTax']}" field="ratingELWithoutTax" />
-						<hftl:formField rendered="#{!appProvider.entreprise}" label="#{messages['pricePlanMatrix.ratingElWithTax']}" field="ratingELWithTax" />
+						<hftl:formField label="#{messages['pricePlanMatrix.minimumAmountEL']}" field="minimumAmountEL" />
+						<hftl:formField label="#{messages['pricePlanMatrix.minimumAmountELSpark']}" field="minimumAmountELSpark" />
+						<hftl:formField label="#{messages['pricePlanMatrix.totalAmountEL']}" field="totalAmountEL" />
                     
                     <hftl:formField id="scriptSelectId"
     							label="#{messages['pricePlanMatrix.scriptCode']}"

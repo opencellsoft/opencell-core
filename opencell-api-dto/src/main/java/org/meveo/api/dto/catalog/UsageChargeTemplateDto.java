@@ -12,7 +12,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
  * The Class UsageChargeTemplateDto.
  *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 7.0
  */
 @XmlRootElement(name = "UsageChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -50,6 +50,16 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 
     /** The priority. */
     private int priority = 1;
+    
+    /**
+     * If true and (charge has no counter associated) then the next matching charge with the full quantity of the EDR.
+     */
+    protected Boolean triggerNextCharge = false;
+    
+    /**
+     * Overrides the triggerNextCharge switch.
+     */
+    protected String triggerNextChargeEL;
 
     /**
      * Instantiates a new usage charge template dto.
@@ -73,6 +83,8 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
         filterExpression = usageChargeTemplate.getFilterExpression();
         filterExpressionSpark = usageChargeTemplate.getFilterExpressionSpark();
         priority = usageChargeTemplate.getPriority();
+        triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
+        triggerNextChargeEL = usageChargeTemplate.getTriggerNextChargeEL();
     }
 
     /**
@@ -199,5 +211,21 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
                 + ", filterExpression=" + filterExpression + ", filterExpressionSpark=" + filterExpressionSpark + ", priority=" + priority + ", id=" + id + ", code=" + code
                 + ", description=" + description + ", updatedCode=" + updatedCode + "]";
     }
+
+	public Boolean getTriggerNextCharge() {
+		return triggerNextCharge;
+	}
+
+	public void setTriggerNextCharge(Boolean triggerNextCharge) {
+		this.triggerNextCharge = triggerNextCharge;
+	}
+
+	public String getTriggerNextChargeEL() {
+		return triggerNextChargeEL;
+	}
+
+	public void setTriggerNextChargeEL(String triggerNextChargeEL) {
+		this.triggerNextChargeEL = triggerNextChargeEL;
+	}
 
 }

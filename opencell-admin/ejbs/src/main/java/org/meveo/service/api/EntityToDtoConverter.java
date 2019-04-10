@@ -126,7 +126,7 @@ public class EntityToDtoConverter {
 
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity);
 
-        logger.trace("Get Custom fields for \nEntity: {}/{}\nCustom Field Values: {}", entity.getClass().getSimpleName(), ((IEntity) entity).getId(), cfValues);
+        // logger.trace("Get Custom fields for \nEntity: {}/{}\nCustom Field Values: {}", entity.getClass().getSimpleName(), ((IEntity) entity).getId(), cfValues);
 
         // In case of INHERIT_MERGED scenario current values are merged with inherited values
         if (accumulateCF && inheritCF == CustomFieldInheritanceEnum.INHERIT_MERGED) {
@@ -138,7 +138,9 @@ public class EntityToDtoConverter {
                         continue;
                     }
                     for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
-                        currentEntityCFs.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                        if (!cfValue.isExcessiveInSize()) {
+                            currentEntityCFs.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                        }
                     }
                 }
             }
@@ -152,7 +154,9 @@ public class EntityToDtoConverter {
                         continue;
                     }
                     for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
-                        currentEntityCFs.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                        if (!cfValue.isExcessiveInSize()) {
+                            currentEntityCFs.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                        }
                     }
                 }
             }
@@ -172,7 +176,9 @@ public class EntityToDtoConverter {
                     }
                     // Add only those that are really inherited values
                     for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
-                        currentEntityCFs.getInheritedCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                        if (!cfValue.isExcessiveInSize()) {
+                            currentEntityCFs.getInheritedCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                        }
                     }
                 }
             }
@@ -199,7 +205,9 @@ public class EntityToDtoConverter {
                                     continue;
                                 }
                                 for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
-                                    currentEntityCFs.getInheritedCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                                    if (!cfValue.isExcessiveInSize()) {
+                                        currentEntityCFs.getInheritedCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                                    }
                                 }
                             }
                         }
@@ -245,7 +253,6 @@ public class EntityToDtoConverter {
      * @param source the source
      * @param destination the destination
      */
-    @SuppressWarnings("unused")
     private void mergeMapValues(List<CustomFieldDto> source, List<CustomFieldDto> destination) {
         for (CustomFieldDto sourceCF : source) {
             // logger.trace("Source custom field: {}", sourceCF);

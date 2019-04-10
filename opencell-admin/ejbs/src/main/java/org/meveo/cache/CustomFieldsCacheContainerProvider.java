@@ -35,7 +35,7 @@ import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
-import org.meveo.util.PersistenceUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.slf4j.Logger;
 
 /**
@@ -43,8 +43,8 @@ import org.slf4j.Logger;
  * 
  * @author Andrius Karpavicius
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class CustomFieldsCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {

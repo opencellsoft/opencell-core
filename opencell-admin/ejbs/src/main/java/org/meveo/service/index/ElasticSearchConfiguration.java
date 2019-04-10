@@ -1,7 +1,15 @@
 package org.meveo.service.index;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Modifier;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,16 +24,15 @@ import javax.ejb.Singleton;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
-import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -43,7 +50,15 @@ public class ElasticSearchConfiguration implements Serializable {
 
     private static final long serialVersionUID = 7200163625956435849L;
 
-    private static String DEFAULT = "default";
+    private static String MAPPING_DEFAULT = "default";
+
+    protected static String MAPPING_FIELD_TYPE = "entityType";
+
+    private static String MAPPING_CFT_INDEX_VALUE_PLACEHOLDER = "<indexValue>";
+
+    private static String MAPPING_CFT_STRING_TYPE_PLACEHOLDER = "<keywordOrText>";
+
+    protected static String MAPPING_DOC_TYPE = "_doc";
 
     /**
      * Contains a mapping of classnames to Elastic Search index name. Index name does not contain provider code prefix.
@@ -76,16 +91,12 @@ public class ElasticSearchConfiguration implements Serializable {
     private Map<String, String> customFieldTemplates = new HashMap<>();
 
     /**
-     * Contains custom entity template data model
+     * Contains index definition template for custom entity instances and custom tables
      */
-    private String customEntityTemplate = null;
-
-    // @Inject
-    // private Logger log;
+    private Map<String, String> customEntityTemplates = new HashMap<>();
 
     @Inject
-    @ApplicationProvider
-    private Provider appProvider;
+    private Logger log;
 
     /**
      * Load configuration from elasticSearchConfiguration.json file.
@@ -93,12 +104,32 @@ public class ElasticSearchConfiguration implements Serializable {
      * @throws IOException I/O exception
      * @throws JsonProcessingException Json processing exception.
      */
+    @SuppressWarnings("rawtypes")
     public void loadConfiguration() throws JsonProcessingException, IOException {
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readTree(this.getClass().getClassLoader().getResourceAsStream("elasticSearchConfiguration.json"));
+        JsonNode node = null;
+        upsertMap = new HashSet<>();
 
-        // Load entity mapping to index, type and update type
+        ObjectMapper mapper = new ObjectMapper();
+
+        ParamBean paramBean = ParamBean.getInstance();
+        String configFileParam = paramBean.getProperty("elasticsearch.config.file.path", "");
+
+        if (!StringUtils.isEmpty(configFileParam)) {
+            String rootDir = paramBean.getProperty("providers.rootDir", "");
+            String providerDir = paramBean.getProperty("provider.rootDir", "");
+            Path configFilePath = Paths.get(rootDir + File.separator + providerDir + File.separator + configFileParam);
+
+            if (!Files.exists(configFilePath, LinkOption.NOFOLLOW_LINKS)) {
+                throw new FileNotFoundException("The ES config file [" + configFileParam + "] does not exist in the provider root dir.");
+            }
+            node = mapper.readTree(configFilePath.toFile());
+
+        } else {
+            node = mapper.readTree(this.getClass().getClassLoader().getResourceAsStream("elasticSearchConfiguration.json"));
+        }
+
+        // Load entity mapping to index, type and update type. In case configuration is provided for a parent class, configuration will be repeated for all subclasses as well.
         Iterator<Entry<String, JsonNode>> entityMappings = node.get("entityMapping").fields();
 
         while (entityMappings.hasNext()) {
@@ -108,19 +139,42 @@ public class ElasticSearchConfiguration implements Serializable {
             String[] classnames = StringUtils.stripAll(entityMappingInfo.getKey().split(","));
 
             for (String classname : classnames) {
+                try {
+                    Class clazz = Class.forName(classname);
 
-                JsonNode entityMapping = entityMappingInfo.getValue();
+                    Set<Class<?>> clazzes = ReflectionUtils.getSubclasses(clazz);
+                    if (clazzes == null) {
+                        clazzes = new HashSet<>();
+                    }
+                    clazzes.add(clazz);
 
-                indexMap.put(classname, entityMapping.get("index").textValue());
-                if (entityMapping.has("type")) {
-                    typeMap.put(classname, entityMapping.get("type").textValue());
-                } else {
-                    typeMap.put(classname, classname);
-                }
-                if (entityMapping.has("upsert") && entityMapping.get("upsert").asBoolean()) {
-                    upsertMap.add(classname);
+                    for (Class<?> classToIndex : clazzes) {
+
+                        if (!ISearchable.class.isAssignableFrom(classToIndex) || Modifier.isAbstract(classToIndex.getModifiers())) {
+                            continue;
+                        }
+
+                        String classnameToIndex = classToIndex.getName();
+                        JsonNode entityMapping = entityMappingInfo.getValue();
+
+                        indexMap.put(classnameToIndex, entityMapping.get("index").textValue());
+                        if (entityMapping.has("type")) {
+                            typeMap.put(classnameToIndex, entityMapping.get("type").textValue());
+                        } else if (entityMapping.has("useType")) {
+                            typeMap.put(classnameToIndex, classToIndex.getSimpleName());
+                        }
+                        if (entityMapping.has("upsert") && entityMapping.get("upsert").asBoolean()) {
+                            upsertMap.add(classnameToIndex);
+                        }
+                    }
+                } catch (ClassNotFoundException e) {
+                    log.error("Can not find class {} defined in ES configuration", classname);
                 }
             }
+        }
+
+        if (upsertMap.isEmpty()) {
+            upsertMap = null;
         }
 
         // Load entity field mapping to JSON
@@ -130,17 +184,38 @@ public class ElasticSearchConfiguration implements Serializable {
 
             Entry<String, JsonNode> entityFieldMappingInfo = entityFieldMappings.next();
 
+            List<String> classNamesOrDefault = new ArrayList<String>();
+            classNamesOrDefault.add(entityFieldMappingInfo.getKey());
+
+            if (!entityFieldMappingInfo.getKey().equals(MAPPING_DEFAULT)) {
+                try {
+                    Class clazz = Class.forName(entityFieldMappingInfo.getKey());
+
+                    Set<Class<?>> clazzes = ReflectionUtils.getSubclasses(clazz);
+                    if (clazzes != null) {
+                        for (Class<?> subclass : clazzes) {
+                            classNamesOrDefault.add(subclass.getName());
+                        }
+                    }
+
+                } catch (ClassNotFoundException e) {
+                    log.error("Can not find class {} defined in ES configuration", entityFieldMappingInfo.getKey());
+                }
+            }
+
             JsonNode entityFieldMapping = entityFieldMappingInfo.getValue();
-
-            Map<String, String> fieldMaps = new HashMap<>();
-            fieldMap.put(entityFieldMappingInfo.getKey(), fieldMaps);
-
             Iterator<Entry<String, JsonNode>> fieldMappings = entityFieldMapping.fields();
 
+            Map<String, String> fieldMaps = new HashMap<>();
             while (fieldMappings.hasNext()) {
                 Entry<String, JsonNode> fieldMappingInfo = fieldMappings.next();
                 fieldMaps.put(fieldMappingInfo.getKey(), fieldMappingInfo.getValue().textValue());
             }
+
+            for (String entityKey : classNamesOrDefault) {
+                fieldMap.put(entityKey, fieldMaps);
+            }
+
         }
 
         // Load index data model: settings, mappings and aliases
@@ -159,137 +234,32 @@ public class ElasticSearchConfiguration implements Serializable {
             customFieldTemplates.put(fieldTemplateInfo.getKey(), fieldTemplateInfo.getValue().toString());
         }
 
-        // Load customEntity field mapping template - only the first one is used.
+        // Load customEntity mapping template
         Iterator<Entry<String, JsonNode>> cetTemplateInfos = node.get("cetTemplates").fields();
-        if (cetTemplateInfos.hasNext()) {
-            customEntityTemplate = cetTemplateInfos.next().getValue().toString();
+        while (cetTemplateInfos.hasNext()) {
+            Entry<String, JsonNode> cetTemplateInfo = cetTemplateInfos.next();
+            customEntityTemplates.put(cetTemplateInfo.getKey(), cetTemplateInfo.getValue().toString());
         }
     }
 
     /**
-     * Determine index value for Elastic Search for a given entity. Index name is prefixed by provider code (removed spaces and lowercase).
-     *
-     * @param entity Business entity to be stored/indexed in Elastic Search
-     * @return Index property name
-     */
-    public String getIndex(ISearchable entity) {
-        return getIndex(entity.getClass());
-    }
-
-    /**
-     * Determine index value for Elastic Search for a given entity class and provider. Index name is prefixed by provider code (removed spaces and lowercase).
-     *
-     * @param clazzToConvert Entity class that extends ISearchable interface
-     * @return Index property name
-     */
-    @SuppressWarnings("rawtypes")
-    public String getIndex(Class<? extends ISearchable> clazzToConvert) {
-
-        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
-
-        Class clazz = clazzToConvert;
-        while (clazz != null && !ISearchable.class.equals(clazz)) {
-            if (indexMap.containsKey(clazz.getSimpleName())) {
-                return indexPrefix + "_" + indexMap.get(clazz.getSimpleName());
-            }
-            clazz = clazz.getSuperclass();
-        }
-
-        return null;
-    }
-
-    /**
-     * Get a unique list of indexes for given entity classes. Index names are prefixed by provider code (removed spaces and lowercase).
+     * Get index name value for a given class name
      * 
-     * @param classesInfo A list of entity class information
-     * @return A set of index property names
+     * @param classname Class name
+     * @return Index name without provider prefix or EL expression to determine index name without the provider
      */
-    public Set<String> getIndexes(List<ElasticSearchClassInfo> classesInfo) {
-
-        Set<String> indexes = new HashSet<>();
-
-        for (ElasticSearchClassInfo classInfo : classesInfo) {
-            indexes.add(getIndex(classInfo.getClazz()));
-        }
-
-        return indexes;
+    public String getIndexName(String classname) {
+        return indexMap.get(classname);
     }
 
     /**
-     * Get a unique list of indexes. Index names are prefixed by provider code (removed spaces and lowercase).
+     * Get type name value for a given class name
      * 
-     * @return A set of index property names
+     * @param classname Class name
+     * @return Type name without provider prefix or EL expression to determine index name without the provider
      */
-    public Set<String> getIndexes() {
-
-        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
-
-        Set<String> indexNames = new HashSet<>();
-
-        for (String indexName : indexMap.values()) {
-            indexNames.add(indexPrefix + "_" + indexName);
-        }
-
-        return indexNames;
-    }
-
-    /**
-     * Determine Type value for Elastic Search for a given entity. If nothing found in configuration, a default value - classname will be used
-     * 
-     * @param entity ISearchable entity to be stored/indexed in Elastic Search
-     * @return Type property name
-     */
-    public String getType(ISearchable entity) {
-        String cetCode = null;
-        if (entity instanceof CustomEntityInstance) {
-            cetCode = ((CustomEntityInstance) entity).getCetCode();
-        }
-        return getType(entity.getClass(), cetCode);
-    }
-
-    /**
-     * Determine Type value for Elastic Search for a given class. If nothing found in configuration, a default value - classname will be used
-     * 
-     * @param clazzToConvert Entity class that extends ISearchable interface
-     * @param cetCode cet code
-     * @return Type property name
-     */
-    @SuppressWarnings("rawtypes")
-    public String getType(Class<? extends ISearchable> clazzToConvert, String cetCode) {
-
-        Class clazz = clazzToConvert;
-        while (!ISearchable.class.equals(clazz)) {
-            if (typeMap.containsKey(clazz.getSimpleName())) {
-                String type = typeMap.get(clazz.getSimpleName());
-
-                if (type.startsWith("#")) {
-                    return ValueExpressionWrapper.evaluateToStringIgnoreErrors(type, "cetCode", ElasticClient.cleanUpCode(cetCode));
-
-                } else {
-                    return type;
-                }
-            }
-            clazz = clazz.getSuperclass();
-        }
-
-        return ReflectionUtils.getCleanClassName(clazzToConvert.getSimpleName());
-    }
-
-    /**
-     * Get a unique list of types for given entity classes
-     * 
-     * @param classesInfo A list of entity class information
-     * @return A set of Type property names
-     */
-    public Set<String> getTypes(List<ElasticSearchClassInfo> classesInfo) {
-
-        Set<String> types = new HashSet<>();
-
-        for (ElasticSearchClassInfo classInfo : classesInfo) {
-            types.add(getType(classInfo.getClazz(), classInfo.getCetCode()));
-        }
-
-        return types;
+    public String getType(String classname) {
+        return typeMap.get(classname);
     }
 
     /**
@@ -299,13 +269,33 @@ public class ElasticSearchConfiguration implements Serializable {
      * @param entity ISearchable entity to be stored/indexed in Elastic Search
      * @return True if upsert should be used
      */
-    @SuppressWarnings("rawtypes")
     public boolean isDoUpsert(ISearchable entity) {
 
-        Class clazz = entity.getClass();
+        if (upsertMap == null) {
+            return false;
+        }
+
+        return isDoUpsert(entity.getClass());
+    }
+
+    /**
+     * Determine if upsert (update if exist or create is not exist) should be done instead of just update in Elastic Search for a given entity. Assume False if nothing found in
+     * configuration.
+     * 
+     * @param entityClass ISearchable entity to be stored/indexed in Elastic Search
+     * @return True if upsert should be used
+     */
+    @SuppressWarnings("rawtypes")
+    public boolean isDoUpsert(Class<? extends ISearchable> entityClass) {
+
+        if (upsertMap == null) {
+            return false;
+        }
+
+        Class clazz = entityClass;
 
         while (clazz != null && !ISearchable.class.equals(clazz)) {
-            if (upsertMap.contains(clazz.getSimpleName())) {
+            if (upsertMap.contains(clazz.getName())) {
                 return true;
             }
             clazz = clazz.getSuperclass();
@@ -328,15 +318,12 @@ public class ElasticSearchConfiguration implements Serializable {
 
         Map<String, String> fields = new HashMap<>();
 
-        if (fieldMap.containsKey(DEFAULT)) {
-            fields.putAll(fieldMap.get(DEFAULT));
+        if (fieldMap.containsKey(MAPPING_DEFAULT)) {
+            fields.putAll(fieldMap.get(MAPPING_DEFAULT));
         }
 
-        while (!BaseEntity.class.equals(clazz)) {
-            if (fieldMap.containsKey(clazz.getSimpleName())) {
-                fields.putAll(fieldMap.get(clazz.getSimpleName()));
-            }
-            clazz = clazz.getSuperclass();
+        if (fieldMap.containsKey(clazz.getName())) {
+            fields.putAll(fieldMap.get(clazz.getName()));
         }
 
         return fields;
@@ -345,7 +332,7 @@ public class ElasticSearchConfiguration implements Serializable {
     /**
      * Get a list of entity classes that is managed by Elastic Search
      * 
-     * @return A list of entity simple classnames
+     * @return A list of entity full classnames
      */
     public Set<String> getEntityClassesManaged() {
         return indexMap.keySet();
@@ -359,34 +346,41 @@ public class ElasticSearchConfiguration implements Serializable {
      * Get a field mapping configuration for a given custom field template
      * 
      * @param cft Custom field template
+     * @param cleanupFieldname Should field name (customFieldTemplate.code) be cleanedup - lowercased and spaces replaced by '_'
      * @return Field mapping JSON string
      */
-    public String getCustomFieldMapping(CustomFieldTemplate cft) {
+    public String getCustomFieldMapping(CustomFieldTemplate cft, boolean cleanupFieldname) {
 
         for (Entry<String, String> fieldTemplate : customFieldTemplates.entrySet()) {
             if (ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(fieldTemplate.getKey(), "cft", cft)) {
 
-                // Change index property to "no" from "analyzed" or "not_analyzed"
-                if (cft.getIndexType() == CustomFieldIndexTypeEnum.STORE_ONLY) {
-                    return fieldTemplate.getValue().replace("not_analyzed", "no").replace("analyzed", "no").replace("<fieldName>", cft.getCode());
-                    // Change index property "analyzed" to "not_analyzed"
-                } else if (cft.getIndexType() == CustomFieldIndexTypeEnum.INDEX_NOT_ANALYZE) {
-                    return fieldTemplate.getValue().replace("analyzed", "not_analyzed").replace("<fieldName>", cft.getCode());
-                } else {
-                    return fieldTemplate.getValue().replace("<fieldName>", cft.getCode());
+                String fieldname = cft.getCode();
+                if (cleanupFieldname) {
+                    fieldname = BaseEntity.cleanUpAndLowercaseCodeOrId(fieldname);
                 }
+
+                String mapping = fieldTemplate.getValue().replace("<fieldName>", fieldname);
+                mapping = mapping.replace(MAPPING_CFT_INDEX_VALUE_PLACEHOLDER, cft.getIndexType() == CustomFieldIndexTypeEnum.STORE_ONLY ? "false" : "true");
+                mapping = mapping.replace(MAPPING_CFT_STRING_TYPE_PLACEHOLDER, cft.getIndexType() == CustomFieldIndexTypeEnum.INDEX ? "text" : "keyword");
+
+                return mapping;
             }
         }
         return null;
     }
 
     /**
-     * Get a field mapping configuration for a given custom entity template
+     * Get a index definition template/configuration for a given custom entity template
      * 
      * @param cet Custom entity template
-     * @return Field mapping JSON string
+     * @return Index configuration JSON string
      */
-    public String getCetMapping(CustomEntityTemplate cet) {
-        return customEntityTemplate;
+    public String getCetIndexConfiguration(CustomEntityTemplate cet) {
+
+        if (cet.isStoreAsTable()) {
+            return customEntityTemplates.get("customTable");
+        } else {
+            return customEntityTemplates.get("cei");
+        }
     }
 }

@@ -59,15 +59,17 @@
 		label="#{cft.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}#{cft.valueRequired and !hasInheritedValue and !inherited?' *':''} #{inherited?messages['customField.inheritedValue']:''}"
 		componentWidth="#{componentWidth}" displayOneLine="false">
 
-		<p:messages id="#{idPrefix}_cfMessages" globalOnly="false"
-			redisplay="false" />
+		<p:messages id="#{idPrefix}_cfMessages" globalOnly="false" redisplay="false" />
 
 		<c:if
 			test="#{cft.storageType eq CustomFieldStorageTypeEnum.LIST or cft.storageType eq CustomFieldStorageTypeEnum.MAP}">
 			<p:dataTable id="#{idPrefix}_customFields_omitFromSubmit"
-				lazy="false" value="#{field.mapValuesForGUI}" var="mapValues"
+				lazy="true" value="#{customFieldDataEntryBean.getValueDataset(field, cft.storageType)}" var="mapValues"
 				editable="#{edit and !disabled}" editMode="cell" reflow="false"
-				resizableColumns="true" rowIndexVar="rowIndex">
+				resizableColumns="true" rowIndexVar="rowIndex" paginator="true"
+                rows="10" styleClass="custom-grid" paginatorAlwaysVisible="false"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="10,20,30">
 
 				<p:ajax event="cellEdit" update="#{messagesId} #{updateOnAddEdit}"
 					partialSubmit="true"
@@ -104,14 +106,21 @@
 				</p:column>
 				<p:column headerText="#{messages['commons.actions']}"
 					rendered="#{edit and !disabled}" width="15%">
-					<p:commandButton icon="ui-icon-minus" partialSubmit="true"
-						process="@this"
-						update="#{updateOnAddEdit} #{idPrefix}_customFields_omitFromSubmit"
-						action="#{field.mapValuesForGUI.remove(mapValues)}">
-						<p:confirm header="#{messages['commons.confirmationHeader']}"
-							message="#{messages['commons.confirmDelete']}"
-							icon="ui-icon-alert" />
-					</p:commandButton>
+					<c:if test="#{!empty(popupWidgetVar) and edit and !disabled}">
+						<p:commandButton icon="ui-icon-minus"
+										 action="#{customFieldDataEntryBean.removeValue(field, cft.storageType, mapValues)}"
+										 partialSubmit="true" process="@this"
+										 update="#{updateOnAddEdit} #{idPrefix}_customFields_omitFromSubmit">
+							<p:confirm header="#{messages['commons.confirmationHeader']}"
+									   message="#{messages['commons.confirmDelete']}"
+									   icon="ui-icon-alert" />
+						</p:commandButton>
+					</c:if>
+					<c:if test="#{empty(popupWidgetVar) and edit and !disabled}">
+						<p:commandButton icon="ui-icon-minus" onclick="PF('confirmCanotDeleteWidget_#{idPrefix}_#{cft.id}').show()">
+							<f:setPropertyActionListener value="#{mapValues}" target="#{customFieldDataEntryBean.selectedItem}" />
+						</p:commandButton>
+					</c:if>
 				</p:column>
 				<c:if test="#{!inherited}">
 					<f:facet name="footer" layout="block">
@@ -159,7 +168,7 @@
 
 						<c:if test="#{!empty(popupWidgetVar) and edit and !disabled}">
 							<p:commandButton value="#{messages['commons.addNew']}"
-								partialSubmit="true" process="@this addNewFields"
+							 	partialSubmit="true" process="@this addNewFields"
 								update="#{idPrefix}_customFields_omitFromSubmit"
 								action="#{customFieldDataEntryBean.addValueToMap(cfValueHolder, field, cft)}"
 								oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()">
@@ -169,7 +178,7 @@
 
 						<c:if test="#{empty(popupWidgetVar) and edit and !disabled}">
 							<p:commandButton value="#{messages['commons.addNew']}"
-								partialSubmit="true" process="@this addNewFields"
+							 	partialSubmit="true" process="@this addNewFields" ajax="false"
 								update="#{idPrefix}_customFields_omitFromSubmit"
 								action="#{customFieldDataEntryBean.addValueToMap(cfValueHolder, field, cft)}">
 								<p:resetInput target="addNewFields" />
@@ -204,7 +213,7 @@
 
 		<c:if test="#{cft.storageType eq CustomFieldStorageTypeEnum.MATRIX}">
 			<p:dataTable id="#{idPrefix}_customFields_omitFromSubmit"
-				lazy="false" value="#{field.matrixValuesForGUI}" var="mapValues"
+				lazy="true" value="#{customFieldDataEntryBean.getValueDataset(field, cft.storageType)}" var="mapValues"
 				editable="#{edit and !disabled}" editMode="cell" reflow="false"
 				resizableColumns="true" rowIndexVar="rowIndex" paginator="true"
 				rows="10" styleClass="custom-grid" paginatorAlwaysVisible="false"
@@ -268,15 +277,21 @@
 				</p:column>
 				<p:column headerText="#{messages['commons.actions']}" width="10%"
 					rendered="#{edit and !disabled}">
-
-					<p:commandButton icon="ui-icon-minus"
-						action="#{field.matrixValuesForGUI.remove(mapValues)}"
-						partialSubmit="true" process="@this"
-						update="#{updateOnAddEdit} #{idPrefix}_customFields_omitFromSubmit">
-						<p:confirm header="#{messages['commons.confirmationHeader']}"
-							message="#{messages['commons.confirmDelete']}"
-							icon="ui-icon-alert" />
-					</p:commandButton>
+					<c:if test="#{!empty(popupWidgetVar) and edit and !disabled}">
+						<p:commandButton icon="ui-icon-minus"
+									 action="#{customFieldDataEntryBean.removeValue(field, cft.storageType, mapValues)}"
+									 partialSubmit="true" process="@this"
+									 update="#{updateOnAddEdit} #{idPrefix}_customFields_omitFromSubmit">
+							<p:confirm header="#{messages['commons.confirmationHeader']}"
+								   message="#{messages['commons.confirmDelete']}"
+								   icon="ui-icon-alert" />
+						</p:commandButton>
+					</c:if>
+					<c:if test="#{empty(popupWidgetVar) and edit and !disabled}">
+						<p:commandButton icon="ui-icon-minus" onclick="PF('confirmCanotDeleteWidget_#{idPrefix}_#{cft.id}').show()">
+							<f:setPropertyActionListener value="#{mapValues}" target="#{customFieldDataEntryBean.selectedItem}" />
+						</p:commandButton>
+					</c:if>
 				</p:column>
 				<c:if test="#{!inherited}">
 					<f:facet name="footer" layout="block">
@@ -342,7 +357,7 @@
 
 						<c:if test="#{!empty(popupWidgetVar) and edit and !disabled}">
 							<p:commandButton value="#{messages['commons.addNew']}"
-								partialSubmit="true" process="@this addNewFields"
+							 	partialSubmit="true" process="@this addNewFields"
 								update="#{idPrefix}_customFields_omitFromSubmit"
 								action="#{customFieldDataEntryBean.addMatrixRow(cfValueHolder, field, cft)}"
 								oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()">
@@ -352,7 +367,7 @@
 
 						<c:if test="#{empty(popupWidgetVar) and edit and !disabled}">
 							<p:commandButton value="#{messages['commons.addNew']}"
-								partialSubmit="true" process="@this addNewFields"
+							 	partialSubmit="true" process="@this addNewFields" ajax="false"
 								update="#{idPrefix}_customFields_omitFromSubmit"
 								action="#{customFieldDataEntryBean.addMatrixRow(cfValueHolder, field, cft)}">
 								<p:resetInput target="addNewFields" />
@@ -415,7 +430,21 @@
 					</h:panelGroup>
 				</p:panelGrid>
 			</p:dialog>
-			
+
+			<c:if test="#{empty(popupWidgetVar) and edit and !disabled}">
+				<p:confirmDialog styleClass="confirm-dialog" message="#{messages['commons.confirmDelete']}"
+								 header="#{messages['commons.confirmationHeader']}" severity="alert"
+								 widgetVar="confirmCanotDeleteWidget_#{idPrefix}_#{cft.id}">
+					<p:commandButton value="#{messages['commons.yes']}"
+									 action="#{customFieldDataEntryBean.removeValue(field, cft.storageType, customFieldDataEntryBean.selectedItem)}"
+									 partialSubmit="true" process="@this" ajax="false"
+									 update="#{updateOnAddEdit} #{idPrefix}_customFields_omitFromSubmit"
+									 oncomplete="PF('confirmCanotDeleteWidget_#{idPrefix}_#{cft.id}').hide()"/>
+					<p:commandButton value="#{messages['commons.no']}"
+									 oncomplete="PF('confirmCanotDeleteWidget_#{idPrefix}_#{cft.id}').hide()"/>
+				</p:confirmDialog>
+			</c:if>
+
 			<script>
 			 	PrimeFaces.widget.FileUpload.prototype.reset = function() {   
 			        this.clearMessages();

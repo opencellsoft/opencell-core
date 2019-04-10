@@ -38,6 +38,7 @@ import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -255,33 +256,15 @@ public final class FileUtils {
     }
 
     /**
-     * Get File representation ready for parsing.
+     * Get the first file from a given directory matching extensions
      * 
      * @param sourceDirectory Directory to search inside.
-     * @param extensions list of extensions
-     * @return File object.
+     * @param extensions list of extensions to match
+     * @return First found file
      */
-    public static File getFileForParsing(String sourceDirectory, final List<String> extensions) {
-        File sourceDir = new File(sourceDirectory);
-        if (!sourceDir.exists() || !sourceDir.isDirectory()) {
-            logger.info(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
-            return null;
-        }
-        File[] files = sourceDir.listFiles(new FilenameFilter() {
+    public static File getFirstFile(String sourceDirectory, final List<String> extensions) {
 
-            public boolean accept(File dir, String name) {
-                if (extensions == null) {
-                    return true;
-                }
-                for (String extension : extensions) {
-                    if (name.endsWith(extension)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-        });
+        File[] files = listFiles(sourceDirectory, extensions);
 
         if (files == null || files.length == 0) {
             return null;
@@ -296,37 +279,32 @@ public final class FileUtils {
         return null;
     }
 
-    public static File[] getFilesForParsing(String sourceDirectory, final List<String> extensions) {
-        return getFilesForParsing(sourceDirectory, extensions, "*");
+    /**
+     * List files matching extensions in a given directory
+     * 
+     * @param sourceDirectory Directory to inspect
+     * @param extensions List of extensions to filter by
+     * @return Array of matched files
+     */
+    public static File[] listFiles(String sourceDirectory, final List<String> extensions) {
+        return listFiles(sourceDirectory, extensions, "*");
     }
 
     /**
-     * @param sourceDirectory source directory
-     * @param extensions list of extensions
-     * @param prefix Filename prefix
-     * @return array of File instance
+     * List files matching extensions and prefix in a given directory
+     * 
+     * @param sourceDirectory Directory to inspect
+     * @param extensions List of extensions to filter by
+     * @param prefix Filename prefix to filter by
+     * @return Array of matched files
      */
-    public static File[] getFilesForParsing(String sourceDirectory, final List<String> extensions, final String prefix) {
+    public static File[] listFiles(String sourceDirectory, final List<String> extensions, final String prefix) {
         File sourceDir = new File(sourceDirectory);
         if (!sourceDir.exists() || !sourceDir.isDirectory()) {
-            logger.info(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
+            logger.error(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
             return null;
         }
-        File[] files = sourceDir.listFiles(new FilenameFilter() {
-
-            public boolean accept(File dir, String name) {
-                if (extensions == null && (name.startsWith(prefix) || "*".equals(prefix) || prefix == null)) {
-                    return true;
-                }
-                for (String extension : extensions) {
-                    if ((name.endsWith(extension) || "*".equals(extension)) && (name.startsWith(prefix) || "*".equals(prefix) || prefix == null)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-        });
+        File[] files = sourceDir.listFiles(new ImportFileFiltre(prefix, extensions));
 
         if (files == null || files.length == 0) {
             return null;
@@ -335,9 +313,17 @@ public final class FileUtils {
         return files;
     }
 
-    public static List<File> getFilesToProcess(File dir, String prefix, String ext) {
+    /**
+     * List files matching extension and prefix in a given directory
+     * 
+     * @param dir Directory to inspect
+     * @param extension File extension to match
+     * @param prefix File prefix to match
+     * @return Array of matched files
+     */
+    public static List<File> listFiles(File dir, String extension, String prefix) {
         List<File> files = new ArrayList<File>();
-        ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);
+        ImportFileFiltre filtre = new ImportFileFiltre(prefix, extension);
         File[] listFile = dir.listFiles(filtre);
 
         if (listFile == null) {
@@ -662,5 +648,69 @@ public final class FileUtils {
         }
 
         return encodedFile;
+    }
+
+    /**
+     * Gets a list of files
+     *
+     * @param sourceDirectory the source directory
+     * @param extensions the extensions
+     * @param fileNameFilter the file name key
+     * @return the files for parsing
+     */
+    public static File[] listFilesByNameFilter(String sourceDirectory, ArrayList<String> extensions, String fileNameFilter) {
+
+        File sourceDir = new File(sourceDirectory);
+        if (!sourceDir.exists() || !sourceDir.isDirectory()) {
+            logger.info(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
+            return null;
+        }
+
+        String fileNameFilterUpper = fileNameFilter != null ? fileNameFilter.toUpperCase() : null;
+
+        File[] files = sourceDir.listFiles(new FilenameFilter() {
+
+            public boolean accept(File dir, String name) {
+
+                String nameUpper = name.toUpperCase();
+                if (extensions == null && fileNameFilterUpper == null) {
+                    return true;
+                }
+                
+                if (extensions == null && nameUpper.contains(fileNameFilterUpper)) {
+                    return true;
+                }
+                
+                for (String extension : extensions) {
+                    if ((name.endsWith(extension) || "*".equals(extension)) && (fileNameFilterUpper == null || nameUpper.contains(fileNameFilterUpper))) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+
+        });
+
+        if (files == null || files.length == 0) {
+            return null;
+        }
+
+        return files;
+
+    }
+
+    /**
+     * Checks if the file param is valid zip
+     * 
+     * @param file
+     * @return isValidZip
+     */
+    public static boolean isValidZip(final File file) {
+        try (ZipFile zipfile = new ZipFile(file);) {
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }

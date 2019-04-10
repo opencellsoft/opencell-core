@@ -30,14 +30,15 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
     /**
      * 
      * @param accountHierarchyDto account hierarchy dto.
+     * @param calculateBalances  true if needs  to calculate balances
      * @return list of customer dto satisfying the filter
      */
     @Override
-    public CustomerListResponse find(AccountHierarchyDto accountHierarchyDto) {
+    public CustomerListResponse find(AccountHierarchyDto accountHierarchyDto, Boolean calculateBalances) {
         CustomerListResponse result = new CustomerListResponse();
 
         try {
-            result.setCustomers(accountHierarchyApi.find(accountHierarchyDto));
+            result.setCustomers(accountHierarchyApi.find(accountHierarchyDto, calculateBalances));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

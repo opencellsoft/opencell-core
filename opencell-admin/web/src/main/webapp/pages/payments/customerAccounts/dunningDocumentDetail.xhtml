@@ -1,0 +1,182 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="objectId" value="#{dunningDocumentBean.objectId}" />
+			<f:viewParam name="tab" value="#{dunningDocumentBean.activeTab}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+				<p:menuitem outcome="customerAccounts"
+					value="#{messages['menu.customerAccounts']}" />
+				<p:menuitem
+					value="#{dunningDocumentBean.entity.customerAccount.code} - #{messages['customerAccount.dunning.documents']}"
+					disabled="true" />
+			</p:breadCrumb>
+		</h:form>
+
+		<p:panel>
+			<hftl:formPanel
+				label="#{messages['dunning.document.panel']} - #{dunningDocumentBean.entity.code}"
+				backingBean="#{dunningDocumentBean}" showFormButtons="false"
+				formId="headerForm" edit="false">
+				<p:tabView id="childTab"
+					activeIndex="#{dunningDocumentBean.activeTab}">
+					<p:tab title="#{messages['dunning.document.tab.details']}">
+						<p:fieldset legend="header">
+							<h:panelGroup>
+								<h:panelGroup layout="block" styleClass="formFieldGroup"
+									style="width:25%;">
+									<p:outputLabel
+										value="#{messages['dunning.document.customer.account']}" />
+									<h:panelGroup layout="block" styleClass="formFieldItem2Lines">
+										<h:outputText
+											value="#{dunningDocumentBean.entity.customerAccount.code}"
+											styleClass="field-value" />
+									</h:panelGroup>
+								</h:panelGroup>
+								<h:panelGroup layout="block" styleClass="formFieldGroup"
+									style="width:25%;">
+									<p:outputLabel value="#{messages['dunning.document.created']}" />
+									<h:panelGroup layout="block" styleClass="formFieldItem2Lines">
+										<h:outputText
+											value="#{dunningDocumentBean.entity.auditable.created}"
+											styleClass="field-value">
+											<f:convertDateTime type="date"
+												pattern="#{paramBean.dateFormat}" />
+										</h:outputText>
+									</h:panelGroup>
+								</h:panelGroup>
+								<h:panelGroup layout="block" styleClass="formFieldGroup"
+									style="width:25%;">
+									<p:outputLabel value="#{messages['dunning.document.updated']}" />
+									<h:panelGroup layout="block" styleClass="formFieldItem2Lines">
+										<h:outputText
+											value="#{dunningDocumentBean.entity.auditable.updated}"
+											styleClass="field-value">
+											<f:convertDateTime type="date"
+												pattern="#{paramBean.dateFormat}" />
+										</h:outputText>
+									</h:panelGroup>
+								</h:panelGroup>
+								<h:panelGroup layout="block" styleClass="formFieldGroup"
+									style="width:25%;">
+									<p:outputLabel
+										value="#{messages['dunning.document.amountWithoutTax']}" />
+									<h:panelGroup layout="block" styleClass="formFieldItem2Lines">
+										<h:outputText
+											value="#{dunningDocumentBean.entity.amountWithoutTax}"
+											styleClass="field-value"
+											converter="bigDecimal4DigitsConverter" />
+									</h:panelGroup>
+								</h:panelGroup>
+								<h:panelGroup layout="block" styleClass="formFieldGroup"
+									style="width:25%;">
+									<p:outputLabel
+										value="#{messages['dunning.document.amountWithTax']}" />
+									<h:panelGroup layout="block" styleClass="formFieldItem2Lines">
+										<h:outputText
+											value="#{dunningDocumentBean.entity.getAmountWithTax()}"
+											styleClass="field-value"
+											converter="bigDecimal4DigitsConverter" />
+									</h:panelGroup>
+								</h:panelGroup>
+								<h:panelGroup layout="block" styleClass="formFieldGroup"
+									style="width:25%;">
+									<p:outputLabel
+										value="#{messages['dunning.document.paidAmount']}" />
+									<h:panelGroup layout="block" styleClass="formFieldItem2Lines">
+										<h:outputText value="#{dunningDocumentBean.entity.paidAmount}"
+											styleClass="field-value"
+											converter="bigDecimal4DigitsConverter" />
+									</h:panelGroup>
+								</h:panelGroup>
+							</h:panelGroup>
+						</p:fieldset>
+						<p:fieldset legend="#{messages['dunning.document.due.invoices']}">
+							<hftl:dataList resultsId="dueinvoices"
+								backingBean="#{recordedInvoiceBean}"
+								dataModel="#{recordedInvoiceBean.getDueInvoices(dunningDocumentBean.entity)}"
+								label="#{messages['dunning.document.unpaid.invoices.title']}"
+								disabled="true" deleteManyButton="false" exportToXml="false"
+								formId="dueinvoices_form" checkMany="false" exportXlsxButton="false">
+
+								<hftl:column label="#{messages['invoice.invoiceDate']}"
+									isDate="true" field="invoiceDate" />
+								<hftl:column label="#{messages['invoice.dueDate']}"
+									isDate="true" field="dueDate" />
+								<hftl:column label="#{messages['invoice.amountWithoutTax']}"
+									field="amountWithoutTax" converterParam="4digits" />
+								<hftl:column label="#{messages['invoice.amountWithTax']}"
+									field="amount" converterParam="4digits" />
+								<hftl:actionsColumn renderViewLink="true"
+									editView="/pages/billing/invoices/invoiceDetail.xhtml"
+									renderEditLink="false" renderDeleteLink="false"
+									backView="backToDunningDocFromInvoice"
+									backEntityId="#{dunningDocumentBean.objectId}"
+									backTab="#{dunningDocumentBean.activeTab}">
+								</hftl:actionsColumn>
+							</hftl:dataList>
+						</p:fieldset>
+						<p:fieldset legend="#{messages['dunning.document.payments']}">
+							<hftl:dataList resultsId="payements" backingBean="#{paymentBean}"
+								dataModel="#{paymentBean.getDunningPayments(dunningDocumentBean.entity)}"
+								label="#{messages['dunning.document.payments.title']}"
+								disabled="true" deleteManyButton="false" exportToXml="false"
+								formId="payements_form" checkMany="false" exportXlsxButton="false">
+								
+								<hftl:column
+									label="#{messages['accountOperation.transactionDate']}"
+									field="transactionDate" isDate="true" />
+								<hftl:column label="#{messages['accountOperation.reference']}"
+									field="reference" />
+								<hftl:column label="#{messages['accountOperation.amount']}"
+									field="amount" />
+								<hftl:column
+									label="#{messages['accountOperation.paymentMethod']}"
+									field="paymentMethod" />
+								<hftl:column
+									label="#{messages['accountOperation.occDescription']}"
+									field="occDescription" />
+
+								<hftl:actionsColumn width="15%" renderDeleteLink="false"
+									editView="/pages/payments/accountOperations/showPayment.xhtml"
+									backView="backToDunningDocFromOcc"
+									backEntityId="#{dunningDocumentBean.objectId}"
+									backTab="#{dunningDocumentBean.activeTab}"
+									renderViewLink="true" />
+							</hftl:dataList>
+						</p:fieldset>
+					</p:tab>
+
+					<!-- <hftl:displayWorkflowsHistory
+						entity="#{dunningDocumentBean.entity}" /> -->
+					<hftl:displayGenericWFsHistory backingBean="#{dunningDocumentBean}" />
+				</p:tabView>
+				<ui:param name="buttons" value="true" />
+				<ui:define name="buttons">
+					<p:button outcome="customerAccountDetail"
+						value="#{messages['action.back']}">
+						<f:param name="customerAccountId"
+							value="#{dunningDocumentBean.entity.customerAccount.id}" />
+						<f:param name="edit" value="false" />
+						<f:param name="cid"
+							value="#{javax.enterprise.context.conversation.id}" />
+					</p:button>
+				</ui:define>
+			</hftl:formPanel>
+		</p:panel>
+	</ui:define>
+</ui:composition>

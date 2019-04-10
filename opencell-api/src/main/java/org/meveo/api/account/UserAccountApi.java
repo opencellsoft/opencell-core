@@ -55,7 +55,8 @@ import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 /**
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  *
  */
 @Stateless
@@ -89,8 +90,8 @@ public class UserAccountApi extends AccountEntityApi {
     @Inject
     private SellerService sellerService;
 
-    public void create(UserAccountDto postData) throws MeveoApiException, BusinessException {
-        create(postData, true);
+    public UserAccount create(UserAccountDto postData) throws MeveoApiException, BusinessException {
+        return create(postData, true);
     }
 
     public UserAccount create(UserAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
@@ -99,14 +100,11 @@ public class UserAccountApi extends AccountEntityApi {
 
     public UserAccount create(UserAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(postData.getBillingAccount())) {
             missingParameters.add("billingAccount");
         }
 
-        handleMissingParametersAndValidate(postData);
+        handleMissingParameters(postData);
 
         BillingAccount billingAccount = billingAccountService.findByCode(postData.getBillingAccount());
         if (billingAccount == null) {
@@ -147,8 +145,8 @@ public class UserAccountApi extends AccountEntityApi {
         return userAccount;
     }
 
-    public void update(UserAccountDto postData) throws MeveoApiException, DuplicateDefaultAccountException {
-        update(postData, true);
+    public UserAccount update(UserAccountDto postData) throws MeveoApiException, DuplicateDefaultAccountException {
+        return update(postData, true);
     }
 
     public UserAccount update(UserAccountDto postData, boolean checkCustomFields) throws MeveoApiException {
@@ -290,19 +288,20 @@ public class UserAccountApi extends AccountEntityApi {
      * Create or update User Account entity based on code.
      * 
      * @param postData posted data to API
-     * 
+     * @return the user account
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
-    public void createOrUpdate(UserAccountDto postData) throws MeveoApiException, BusinessException {
+    public UserAccount createOrUpdate(UserAccountDto postData) throws MeveoApiException, BusinessException {
 
         UserAccount userAccount = userAccountService.findByCode(postData.getCode());
 
         if (userAccount == null) {
-            create(postData);
+            userAccount = create(postData);
         } else {
-            update(postData);
+            userAccount = update(postData);
         }
+        return userAccount;
     }
 
     public UserAccount terminate(UserAccountDto postData) throws MeveoApiException, BusinessException {

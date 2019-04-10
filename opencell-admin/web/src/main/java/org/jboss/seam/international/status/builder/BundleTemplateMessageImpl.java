@@ -22,8 +22,8 @@ import javax.faces.application.FacesMessage.Severity;
 import javax.inject.Inject;
 
 import org.jboss.seam.international.status.ApplicationBundles;
-import org.jboss.seam.international.status.Client;
 import org.jboss.seam.international.status.Message;
+import org.meveo.admin.util.LocaleSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +43,7 @@ public class BundleTemplateMessageImpl implements BundleTemplateMessage {
     ApplicationBundles bundles;
 
     @Inject
-    @Client
-    Locale clientLocale;
+    private LocaleSelector localeSelector;
 
     private final Logger log = LoggerFactory.getLogger(BundleTemplateMessageImpl.class);
 
@@ -52,9 +51,10 @@ public class BundleTemplateMessageImpl implements BundleTemplateMessage {
         String text;
         String detail = null;
         try {
-            text = bundles.get(clientLocale, textKey.getBundle()).getString(textKey.getKey());
+            Locale locale = localeSelector.getCurrentLocale();
+            text = bundles.get(locale, textKey.getBundle()).getString(textKey.getKey());
             if (detailKey != null) {
-                detail = bundles.get(clientLocale, detailKey.getBundle()).getString(detailKey.getKey());
+                detail = bundles.get(locale, detailKey.getBundle()).getString(detailKey.getKey());
             }
         } catch (Exception e) {
             log.warn("Could not load bundle: " + textKey);

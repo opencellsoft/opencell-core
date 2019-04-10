@@ -27,6 +27,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.RoundingModeEnum;
 
 /**
+ * @author Edward P. Legaspi
  * @author R.AITYAAZZA
  * @author Said Ramli
  * @lastModifiedVersion 5.1
@@ -34,6 +35,8 @@ import org.meveo.model.catalog.RoundingModeEnum;
 public class NumberUtils {
 
     private static final BigDecimal HUNDRED = new BigDecimal("100");
+
+    public static final Integer DEFAULT_NUMBER_DIGITS_DECIMAL = 2;
 
     public static BigDecimal round(BigDecimal what, int howmuch, RoundingModeEnum roundingModeEnum) {
         if (what == null) {

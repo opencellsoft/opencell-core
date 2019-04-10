@@ -29,6 +29,7 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
@@ -81,11 +82,12 @@ public interface PaymentRs extends IBaseRs {
      * Returns a list of account operations along with the balance of a customer.
      * 
      * @param customerAccountCode customer account code
+     * @param pagingAndFiltering     
      * @return list of customer's response.
      */
     @GET
     @Path("/customerPayment")
-    public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode);
+    public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode,  PagingAndFiltering pagingAndFiltering);
 
     /************************************************************************************************/
     /**** Card Payment Method ****/
@@ -621,6 +623,17 @@ public interface PaymentRs extends IBaseRs {
     @PUT
     @Path("/paymentScheduleInstance")
     public ActionStatus updatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
+    
+    /**
+     * Find  PaymentScheduleInstance by ID
+     * 
+     * @param id PaymentScheduleInstance ID
+     * @return A paymentScheduleInstance dto
+     */
+    @GET
+    @Path("/paymentScheduleInstance")
+    public PaymentScheduleInstanceResponseDto findPaymentScheduleInstance(@QueryParam("id") Long id);
+
     
     /**
      * List  PaymentScheduleInstance matching a given criteria

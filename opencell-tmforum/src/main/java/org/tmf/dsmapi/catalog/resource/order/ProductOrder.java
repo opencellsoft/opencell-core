@@ -77,6 +77,26 @@ public class ProductOrder implements Serializable {
     /** The billing cycle. */
     private String billingCycle;
 
+    /** The electronic billing. */
+    private Boolean electronicBilling;
+
+    /** The email. */
+    private String email;
+    /**
+     * Mailing type
+     */
+    private String mailingType;
+
+    /**
+     * Email Template code
+     */
+    private String emailTemplate;
+
+    /**
+     * A list of emails separated by comma
+     */
+    private String ccedEmails;
+
     public String getId() {
         return id;
     }
@@ -257,4 +277,43 @@ public class ProductOrder implements Serializable {
         this.billingCycle = billingCycle;
     }
 
+    public Boolean getElectronicBilling() {
+        return electronicBilling;
+    }
+
+    public void setElectronicBilling(Boolean electronicBilling) {
+        this.electronicBilling = electronicBilling;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMailingType() {
+        return mailingType;
+    }
+
+    public void setMailingType(String mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    public String getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    public void setEmailTemplate(String emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
 }

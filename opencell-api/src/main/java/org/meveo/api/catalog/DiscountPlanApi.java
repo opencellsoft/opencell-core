@@ -18,11 +18,15 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
+import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 
+/**
+ * @author Said Ramli
+ * @lastModifiedVersion 5.3.2
+ */
 @Stateless
 public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> {
 
@@ -83,36 +87,33 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         handleMissingParametersAndValidate(postData);
 
         DiscountPlan discountPlan = discountPlanService.findByCode(postData.getCode());
-
         if (discountPlan == null) {
             throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getCode());
         }
-        discountPlan.setDescription(postData.getDescription());
+        
+        final String description = postData.getDescription();
+        if (description != null) {
+            discountPlan.setDescription(description); 
+        }
+        
         discountPlan.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+
 		if (postData.getStartDate() != null) {
 			discountPlan.setStartDate(postData.getStartDate());
-		} else {
-			discountPlan.setStartDate(null);
-		}
+		} 
 		if (postData.getEndDate() != null) {
 			discountPlan.setEndDate(postData.getEndDate());
-		} else {
-			discountPlan.setEndDate(null);
-		}
+		} 
 		if (postData.getDefaultDuration() != null) {
 			discountPlan.setDefaultDuration(postData.getDefaultDuration());
-		} else {
-			if (StringUtils.isBlank(postData.getDefaultDuration())) {
-				discountPlan.setDefaultDuration(null);
-			}
-		}
+		} 
 		if (postData.getDurationUnit() != null) {
-			discountPlan.setDurationUnit(postData.getDurationUnit());
-		} else {
-			if (StringUtils.isBlank(postData.getDurationUnit())) {
-				discountPlan.setDurationUnit(DurationPeriodUnitEnum.DAY);
-			}
-		}
+		    if (StringUtils.isBlank(postData.getDurationUnit())) {
+		        discountPlan.setDurationUnit(DurationPeriodUnitEnum.DAY);  
+            } else {
+                discountPlan.setDurationUnit(postData.getDurationUnit());
+            }
+		} 
 		
 		// populate customFields
         try {

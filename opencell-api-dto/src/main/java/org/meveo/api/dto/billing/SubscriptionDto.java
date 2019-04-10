@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 
@@ -133,6 +135,45 @@ public class SubscriptionDto extends BusinessEntityDto {
      * String value matched in the usageRatingJob to group the EDRs for rating.
      */
     private String ratingGroup;
+
+    /** The electronic billing. */
+    private Boolean electronicBilling;
+
+    /** The email. */
+    private String email;
+    /**
+     * Mailing type
+     */
+    private String mailingType;
+
+    /**
+     * Email Template code
+     */
+    private String emailTemplate;
+
+    /**
+     * A list of emails separated by comma
+     */
+    private String ccedEmails;
+
+
+
+    /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
+    @XmlElementWrapper(name = "discountPlansForInstantiation")
+    @XmlElement(name = "discountPlanForInstantiation")
+    private List<DiscountPlanDto> discountPlansForInstantiation;
+
+    /** List of discount plans to be disassociated from subscription */
+    @XmlElementWrapper(name = "discountPlansForTermination")
+    @XmlElement(name = "discountPlanForTermination")
+    private List<String> discountPlansForTermination;
+
+    /**
+     * Use to return the active discount plans for this entity.
+     */
+    @XmlElementWrapper(name = "discountPlanInstances")
+    @XmlElement(name = "discountPlanInstance")
+    private List<DiscountPlanInstanceDto> discountPlanInstances;
 
     /**
      * Instantiates a new subscription dto.
@@ -607,6 +648,53 @@ public class SubscriptionDto extends BusinessEntityDto {
 	public void setSeller(String seller) {
 		this.seller = seller;
 	}
+    /**
+     * Gets the code of discount plans.
+     * @return codes of discount plan
+     */
+    public List<DiscountPlanDto> getDiscountPlansForInstantiation() {
+        return discountPlansForInstantiation;
+    }
+
+    /**
+     * Sets the code of the discount plans.
+     * @param discountPlansForInstantiation codes of the discount plans
+     */
+    public void setDiscountPlansForInstantiation(List<DiscountPlanDto> discountPlansForInstantiation) {
+        this.discountPlansForInstantiation = discountPlansForInstantiation;
+    }
+
+    /**
+     * Gets the list of active discount plan instance.
+     * @return list of active discount plan instance
+     */
+    public List<DiscountPlanInstanceDto> getDiscountPlanInstances() {
+        return discountPlanInstances;
+    }
+
+    /**
+     * Sets the list of active discount plan instance.
+     * @param discountPlanInstances list of active discount plan instance
+     */
+    public void setDiscountPlanInstances(List<DiscountPlanInstanceDto> discountPlanInstances) {
+        this.discountPlanInstances = discountPlanInstances;
+    }
+
+    /**
+     * Gets the list of discount plan codes for termination.
+     * @return discount plan codes
+     */
+    public List<String> getDiscountPlansForTermination() {
+        return discountPlansForTermination;
+    }
+
+    /**
+     * Sets the list of discount plan codes for termination.
+     * @param discountPlansForTermination discount plan codes
+     */
+    public void setDiscountPlansForTermination(List<String> discountPlansForTermination) {
+        this.discountPlansForTermination = discountPlansForTermination;
+    }
 
     @Override
     public String toString() {
@@ -624,4 +712,44 @@ public class SubscriptionDto extends BusinessEntityDto {
 	public void setRatingGroup(String ratingGroup) {
 		this.ratingGroup = ratingGroup;
 	}
+
+    public Boolean getElectronicBilling() {
+        return electronicBilling;
+    }
+
+    public void setElectronicBilling(Boolean electronicBilling) {
+        this.electronicBilling = electronicBilling;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMailingType() {
+        return mailingType;
+    }
+
+    public void setMailingType(String mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    public String getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    public void setEmailTemplate(String emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
 }

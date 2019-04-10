@@ -46,6 +46,9 @@ import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * Billing cycle
+ * @author Edward P. Legaspi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @Cacheable
@@ -164,6 +167,13 @@ public class BillingCycle extends BusinessCFEntity {
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
+    /**
+     * Reference date
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "reference_date")
+    private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
+
     public String getBillingTemplateName() {
         return billingTemplateName;
     }
@@ -246,7 +256,7 @@ public class BillingCycle extends BusinessCFEntity {
         Date result = null;
         if (calendar != null) {
             calendar.setInitDate(subscriptionDate);
-            result = calendar.nextCalendarDate(date);
+            result = calendar.nextCalendarDate(date != null ? date : new Date());
         }
         return result;
     }
@@ -363,4 +373,21 @@ public class BillingCycle extends BusinessCFEntity {
         this.scriptInstance = scriptInstance;
     }
 
+    /**
+     * Gets the reference date
+     *
+     * @return the reference date
+     */
+    public ReferenceDateEnum getReferenceDate() {
+        return referenceDate;
+    }
+
+    /**
+     * Sets the reference date.
+     *
+     * @param referenceDate the new reference date
+     */
+    public void setReferenceDate(ReferenceDateEnum referenceDate) {
+        this.referenceDate = referenceDate;
+    }
 }

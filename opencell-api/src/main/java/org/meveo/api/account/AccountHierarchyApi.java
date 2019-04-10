@@ -1,5 +1,6 @@
 package org.meveo.api.account;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -599,13 +600,13 @@ public class AccountHierarchyApi extends BaseApi {
     /**
      * 
      * @param postData posted data
-     * 
+     * @param calculateBalances  true if needs  to calculate balances
      * @return a wrapper of customer.
      * @throws MeveoApiException meveo api exception.
      */
     // @SecuredBusinessEntityMethod(resultFilter=ListFilter.class)
     // @FilterResults(propertyToFilter = "customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
-    public CustomersDto find(AccountHierarchyDto postData) throws MeveoApiException {
+    public CustomersDto find(AccountHierarchyDto postData, Boolean calculateBalances) throws MeveoApiException {
 
         CustomersDto result = new CustomersDto();
 
@@ -694,14 +695,14 @@ public class AccountHierarchyApi extends BaseApi {
         if (customers != null) {
             for (Customer cust : customers) {
                 if (postData.getCustomFields() == null || postData.getCustomFields().isEmpty()) {
-                    result.getCustomer().add(customerToDto(cust));
+                    result.getCustomer().add(customerToDto(cust, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, calculateBalances));
                 } else {
                     for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 
                         if (!cfDto.isEmpty()) {
                             Object cfValue = customFieldInstanceService.getCFValue(cust, cfDto.getCode());
                             if (getValueConverted(cfDto).equals(cfValue)) {
-                                result.getCustomer().add(customerToDto(cust));
+                                result.getCustomer().add(customerToDto(cust, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, calculateBalances));
                             }
                         }
                     }
@@ -1072,7 +1073,9 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setVatNo(postData.getVatNo());
         billingAccountDto.setDiscountPlansForInstantiation(postData.getDiscountPlansForInstantiation());
         billingAccountDto.setDiscountPlansForTermination(postData.getDiscountPlansForTermination());
-
+        billingAccountDto.setMailingType(postData.getMailingType());
+        billingAccountDto.setEmailTemplate(postData.getEmailTemplate());
+        billingAccountDto.setCcedEmails(postData.getCcedEmails());
         CustomFieldsDto cfsDto = new CustomFieldsDto();
         if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
             Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
@@ -1581,14 +1584,20 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public CustomerDto customerToDto(Customer customer, CustomFieldInheritanceEnum inheritCF) {
+        return customerToDto(customer, inheritCF, false);
+    }
+    public CustomerDto customerToDto(Customer customer, CustomFieldInheritanceEnum inheritCF, Boolean calculateBalances) {
         CustomerDto dto = new CustomerDto(customer);
         accountEntityToDto(dto, customer, inheritCF);
 
         if (!dto.isLoaded() && customer.getCustomerAccounts() != null) {
             dto.setCustomerAccounts(new CustomerAccountsDto());
-
             for (CustomerAccount ca : customer.getCustomerAccounts()) {
-                dto.getCustomerAccounts().getCustomerAccount().add(customerAccountToDto(ca, inheritCF));
+                CustomerAccountDto customerAccountDto = customerAccountToDto(ca, inheritCF);
+                if(calculateBalances == null || calculateBalances) {
+                    populateCustomerAccountBalance(ca, customerAccountDto);
+                }
+                dto.getCustomerAccounts().getCustomerAccount().add(customerAccountDto);
             }
         }
 
@@ -1602,7 +1611,7 @@ public class AccountHierarchyApi extends BaseApi {
 
     public CustomerAccountDto customerAccountToDto(CustomerAccount ca, CustomFieldInheritanceEnum inheritCF) {
         CustomerAccountDto dto = new CustomerAccountDto(ca);
-        accountEntityToDto(dto, ca, inheritCF);        
+        accountEntityToDto(dto, ca, inheritCF);
 
         if (!dto.isLoaded() && ca.getBillingAccounts() != null) {
             dto.setBillingAccounts(new BillingAccountsDto());
@@ -1612,8 +1621,23 @@ public class AccountHierarchyApi extends BaseApi {
             }
         }
         dto.setLoaded(true);
-        
         return dto;
+    }
+
+    private void populateCustomerAccountBalance(CustomerAccount ca, CustomerAccountDto dto) {
+        try {
+            Date now = new Date();
+            BigDecimal creditBalance = customerAccountService.computeCreditBalance(ca, false, now, false);
+            BigDecimal balanceDue = customerAccountService.customerAccountBalanceDue(ca, now);
+            BigDecimal totalInvoiceBalance = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(ca, now);
+            BigDecimal accountBalance = customerAccountService.customerAccountBalance(ca, now);
+            dto.setBalance(balanceDue);
+            dto.setCreditBalance(creditBalance);
+            dto.setTotalInvoiceBalance(totalInvoiceBalance);
+            dto.setAccountBalance(accountBalance);
+        } catch (BusinessException e) {
+            log.error("Failed to populateCustomerAccountBalance of customerAccount {}. {}", ca.getCode(), e);
+        }
     }
 
     public BillingAccountDto billingAccountToDto(BillingAccount ba) {

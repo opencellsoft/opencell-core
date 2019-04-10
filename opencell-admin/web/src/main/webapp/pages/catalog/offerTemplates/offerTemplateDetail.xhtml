@@ -91,7 +91,6 @@
                                     valueLabelField="descriptionOrCode" listBean="#{customerCategoryListBean}" componentWidth="30" />
                                 <hftl:formField id="sellers" label="#{messages['offerTemplate.seller']}" field="sellers" listType="selectCheckbox"
                                     valueLabelField="descriptionOrCode" listBean="#{sellerListBean}" componentWidth="100" />  
-                                    <hftl:formField  label="#{messages['subscription.autoEndOfEngagement']}" field="autoEndOfEngagement" newLine="true" />  
                             </h:panelGrid>
                         </p:panelGrid>
 
@@ -106,6 +105,7 @@
                                 <hftl:formField label="#{messages['subscription.initialyActiveForUnit']}" field="subscriptionRenewal" childField="initialyActiveForUnit"
                                     required="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor!=null}"
                                     disabled="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor==null}" listenerUpdate="subscriptionRenewal" />
+                                <hftl:formField  label="#{messages['subscription.autoEndOfEngagement']}" field="autoEndOfEngagement" />
                                 <h:panelGroup rendered="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor!=null}">
                                     <hftl:formField label="#{messages['subscription.autoRenew']}" field="subscriptionRenewal" childField="autoRenew" required="true"
                                         listenerUpdate="subscriptionRenewal" newLine="true" />
@@ -139,6 +139,7 @@
                 </p:tab>
 
                 <hftl:customFields backingBean="#{offerTemplateBean}" messagesId="offerForm:messages" />
+                <hftl:displayGenericWFsHistory backingBean="#{offerTemplateBean}" />
 
                 <p:tab title="#{messages['menu.serviceTemplates']}" id="tab1">
 
@@ -197,6 +198,13 @@
 
                 <p:tab title="#{messages['menu.productTemplates']}">
                     <ui:include src="productTemplateTab.xhtml">
+                        <ui:param name="backingBean" value="#{offerTemplateBean}" />
+                        <ui:param name="formId" value=":offerForm" />
+                    </ui:include>
+                </p:tab>
+
+                <p:tab title="#{messages['menu.discountPlans']}">
+                    <ui:include src="allowedDiscountPlansTab.xhtml">
                         <ui:param name="backingBean" value="#{offerTemplateBean}" />
                         <ui:param name="formId" value=":offerForm" />
                     </ui:include>

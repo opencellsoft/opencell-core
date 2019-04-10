@@ -35,13 +35,30 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.filter.FilteredListApi;
 import org.meveo.commons.utils.JsonUtils;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceModeEnum;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -67,7 +84,8 @@ import org.primefaces.model.SortOrder;
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @author Abdelmounaim Akadid
- * @lastModifiedVersion 5.1
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class InvoiceApi extends BaseApi {
@@ -131,7 +149,11 @@ public class InvoiceApi extends BaseApi {
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO) throws MeveoApiException, BusinessException, Exception {
         log.debug("InvoiceDto:" + JsonUtils.toJson(invoiceDTO, true));
         validateInvoiceDto(invoiceDTO);
-
+        
+        boolean isEnterprise = appProvider.isEntreprise();
+        int invoiceRounding = appProvider.getInvoiceRounding();
+        RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
+        
         Auditable auditable = new Auditable(currentUser);
         Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
 
@@ -194,9 +216,22 @@ public class InvoiceApi extends BaseApi {
                 if (subCatInvAgrDTO.getRatedTransactions() != null) {
                     for (RatedTransactionDto ratedTransactionDto : subCatInvAgrDTO.getRatedTransactions()) {
 
-                        BigDecimal amountWithoutTax = ratedTransactionDto.getUnitAmountWithoutTax().multiply(ratedTransactionDto.getQuantity());
-                        BigDecimal amountWithTax = getAmountWithTax(tax, amountWithoutTax);
-                        BigDecimal amountTax = getAmountTax(amountWithTax, amountWithoutTax);
+						BigDecimal tempAmountWithoutTax = BigDecimal.ZERO;
+						if (ratedTransactionDto.getUnitAmountWithoutTax() != null) {
+							tempAmountWithoutTax = ratedTransactionDto.getUnitAmountWithoutTax()
+									.multiply(ratedTransactionDto.getQuantity());
+						}
+						BigDecimal tempAmountWithTax = BigDecimal.ZERO;
+						if (ratedTransactionDto.getUnitAmountWithTax() != null) {
+							tempAmountWithTax = ratedTransactionDto.getUnitAmountWithTax()
+									.multiply(ratedTransactionDto.getQuantity());
+						}
+						
+                        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(tempAmountWithoutTax, tempAmountWithTax, tax.getPercent(), isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
+
+                        BigDecimal amountWithoutTax = amounts[0];
+                        BigDecimal amountWithTax = amounts[1];
+                        BigDecimal amountTax = amounts[2];
 
                         RatedTransaction meveoRatedTransaction = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(),
                                 ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax,
@@ -253,11 +288,16 @@ public class InvoiceApi extends BaseApi {
                     invoiceAgregateSubcat.setAmountWithoutTax(subCatAmountWithoutTax);
                     invoiceAgregateSubcat.setAmountTax(subCatAmountTax);
                     invoiceAgregateSubcat.setAmountWithTax(subCatAmountWithTax);
+                
                 } else {
-                    // we add subCatAmountWithoutTax, in the case if there any opened RT to includ
-                    invoiceAgregateSubcat.setAmountWithoutTax(subCatAmountWithoutTax.add(subCatInvAgrDTO.getAmountWithoutTax()));
-                    invoiceAgregateSubcat.setAmountWithTax(subCatAmountWithTax.add(getAmountWithTax(tax, subCatInvAgrDTO.getAmountWithoutTax())));
-                    invoiceAgregateSubcat.setAmountTax(getAmountTax(invoiceAgregateSubcat.getAmountWithTax(), invoiceAgregateSubcat.getAmountWithoutTax()));
+                	// we add subCatAmountWithoutTax, in the case if there any opened RT to includ
+					BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(invoiceAgregateSubcat.getAmountWithoutTax(),
+							invoiceAgregateSubcat.getAmountWithTax(), tax.getPercent(), isEnterprise, invoiceRounding,
+							invoiceRoundingMode.getRoundingMode());
+                	
+                    invoiceAgregateSubcat.setAmountWithoutTax(amounts[0]);
+                    invoiceAgregateSubcat.setAmountWithTax(amounts[1]);
+                    invoiceAgregateSubcat.setAmountTax(amounts[2]);
                 }
                 invoice.addInvoiceAggregate(invoiceAgregateSubcat);
 
@@ -298,9 +338,6 @@ public class InvoiceApi extends BaseApi {
             invoiceAmountTax = invoiceAmountTax.add(invoiceAgregateCat.getAmountTax());
             invoiceAmountWithTax = invoiceAmountWithTax.add(invoiceAgregateCat.getAmountWithTax());
         }
-
-        int invoiceRounding = appProvider.getInvoiceRounding();
-        RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
 
         invoice.setAmountWithoutTax(round(invoiceAmountWithoutTax, invoiceRounding, invoiceRoundingMode));
         invoice.setAmountTax(round(invoiceAmountTax, invoiceRounding, invoiceRoundingMode));
@@ -998,5 +1035,59 @@ public class InvoiceApi extends BaseApi {
         }
 
         return result;
+    }
+
+    /**
+     * Send the invoice by Email.
+     * @param invoiceDto The invoice DTO
+     * @param mailingType The mailing type
+     * @return True if sent, false else
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     * @throws BusinessException
+     */
+    public boolean sendByEmail(InvoiceDto invoiceDto, MailingTypeEnum mailingType) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+        if (StringUtils.isBlank(invoiceDto.getInvoiceId())) {
+            missingParameters.add("invoiceId");
+        }
+        handleMissingParameters();
+        Invoice invoice = invoiceService.findById(invoiceDto.getInvoiceId());
+        if (invoice == null) {
+            throw new EntityDoesNotExistsException(Invoice.class, invoiceDto.getInvoiceId());
+        }
+        if (MailingTypeEnum.AUTO.equals(mailingType) && invoice.isDontSend()) {
+            return false;
+        }
+        if (MailingTypeEnum.AUTO.equals(mailingType) && invoice.getInvoiceType().equals(invoiceTypeService.getDefaultDraft())) {
+            return false;
+        }
+        if (invoiceDto.isCheckAlreadySent() && !invoice.isAlreadySent()) {
+            return invoiceService.sendByEmail(invoice, mailingType, invoiceDto.getOverrideEmail());
+        }
+        if (!invoiceDto.isCheckAlreadySent() && MailingTypeEnum.MANUAL.equals(mailingType)) {
+            return invoiceService.sendByEmail(invoice, mailingType, invoiceDto.getOverrideEmail());
+        }
+        return false;
+
+    }
+
+    /**
+     * Send a list of invoices
+     * @param invoicesResult  the invoice result
+     * @return GenerateInvoiceResultDto
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     * @throws BusinessException
+     */
+    public List<GenerateInvoiceResultDto> sendByEmail(List<GenerateInvoiceResultDto> invoicesResult)
+            throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+        for (GenerateInvoiceResultDto invoiceResult : invoicesResult) {
+            invoiceResult.setCheckAlreadySent(true);
+            invoiceResult.setSentByEmail(false);
+            if (sendByEmail(invoiceResult, MailingTypeEnum.AUTO)) {
+                invoiceResult.setSentByEmail(true);
+            }
+        }
+        return invoicesResult;
     }
 }

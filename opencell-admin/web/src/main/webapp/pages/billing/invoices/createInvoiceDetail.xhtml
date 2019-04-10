@@ -38,6 +38,17 @@
 				column2Label="#{messages['BusinessEntity.description']}"
 				column2="description">
 			</hftl:entityPopup>
+			<hftl:entityPopup id="sellerPopup"
+				header="#{messages['seller']}"
+				updateField=":formId:tabView:sellerSelectedId :formId:tabView:sellerSelectedId_text"
+				selection="#{creationInvoiceBean.entity.seller}"
+				backingBean="#{sellerBean}"
+				searchField1Label="#{messages['BusinessEntity.code']}"
+				searchField1="code"
+				column1Label="#{messages['BusinessEntity.code']}" column1="code"
+				column2Label="#{messages['BusinessEntity.description']}"
+				column2="description">
+			</hftl:entityPopup>
 			<hftl:entityPopup id="invoicePopup" header="#{messages['invoice']}"
 				updateField=":formId:tabView:linkedInvoices :formId:tabView:ImportRTs"
 				selection="#{creationInvoiceBean.invoiceToAdd}"
@@ -58,8 +69,8 @@
 				submitPartialProcess=":formId:tabView" ignoreEnterKey="true">
 				<p:tabView id="tabView"
 				activeIndex="#{creationInvoiceBean.activeTab}">				
-				<p:tab title="#{messages[creationInvoiceBean.pageMode == 'detailed' ? 'invoice.detailed' : 'invoice.aggregated']}">
-<!-- Header     -->			
+				<p:tab id="headerInfo" title="#{messages[creationInvoiceBean.pageMode == 'detailed' ? 'invoice.detailed' : 'invoice.aggregated']}">
+				<!-- Header     -->			
 						<p:fieldset legend="Header"
 							style="float: left; width: 95%; margin-top: 10px;">
 							<p:panel style="width: 50%; float: left;">
@@ -67,13 +78,18 @@
 									label="#{messages['invoice.invoiceType']}"
 									valueLabelField="descriptionOrCode"
 									listBean="#{invoiceTypeBean}" listenerUpdate="invoicePopup :formId:tabView:ImportRTs :formId:tabView:panelAddLinkedInvoice"></hftl:formField>
-
+								<hftl:formField id="sellerSelectedId"
+									label="#{messages['seller']}" field="seller"
+									valueLabelField="code" popup="true"
+									popupId="sellerPopup" required="false" 
+									showPopupOnlyOnNew="true" listenerUpdate=":formId:tabView:ImportRTs :formId:tabView:panelAddLinkedInvoice" />
+									
 								<hftl:formField id="billingAccountSelectedId"
 									label="#{messages['billingAccount']}" field="billingAccount"
 									valueLabelField="code" popup="true"
 									popupId="billingAccountPopup" required="true" 
 									showPopupOnlyOnNew="true" listenerUpdate="invoicePopup :formId:tabView:ImportRTs :formId:tabView:panelAddLinkedInvoice" />
-
+								
 								<hftl:formField field="invoiceDate" required="true"
 									label="#{messages['invoice.invoiceDate']}" />
 
@@ -98,7 +114,9 @@
 											<hftl:column label="#{messages['invoice.invoiceDate']}"
 												field="invoiceDate"  isDate="true"/>
 											<hftl:column label="#{messages['invoice.amountWithoutTax']}"
-												field="amountWithoutTax" converterParam="4digits" />
+												field="amountWithoutTax" converterParam="4digits" rendered="#{appProvider.entreprise}" />
+											<hftl:column label="#{messages['invoice.amountWithTax']}"
+												field="amountWithTax" converterParam="4digits" rendered="#{!appProvider.entreprise}" />
 											<p:column width="20px;">
 												<p:commandButton icon="ui-icon-trash"
 													action="#{creationInvoiceBean.deleteLinkedInvoice}"
@@ -428,13 +446,20 @@
 											label="#{messages['ratedTransaction.usageDate']} *">
 											<p:calendar id="usageDate" value="#{creationInvoiceBean.usageDate}"  pattern="#{paramBean.dateFormat}" />										
 										</hftl:decorateFormField> 										
-										<hftl:decorateFormField fieldId="unitAmountWithoutTax"
+										<hftl:decorateFormField fieldId="unitAmountWithoutTax" rendered="#{appProvider.entreprise}"
 											label="#{messages['ratedTransaction.unitAmountWithoutTax']} *">
 											<p:inputText id="unitAmountWithoutTax"
 												value="#{creationInvoiceBean.unitAmountWithoutTax}">
 												<p:keyFilter mask="num" />
 											</p:inputText>
-										</hftl:decorateFormField> 
+										</hftl:decorateFormField>
+										<hftl:decorateFormField fieldId="unitAmountWithTax" rendered="#{!appProvider.entreprise}"
+											label="#{messages['ratedTransaction.unitAmountWithTax']} *">
+											<p:inputText id="unitAmountWithTax"
+												value="#{creationInvoiceBean.unitAmountWithTax}">
+												<p:keyFilter mask="num" />
+											</p:inputText>
+										</hftl:decorateFormField>
 										<hftl:decorateFormField fieldId="quantity"
 											label="#{messages['ratedTransaction.quantity']} *">
 											<p:inputText id="quantity"
@@ -470,7 +495,8 @@
 							</p:panel>
 						</p:fieldset>
 						<div style="clear: both"></div>
-<!-- Add agregate invoice line	 -->					
+						
+						<!-- Add agregate invoice line	 -->					
 						<p:fieldset legend="Add agregate invoice line"
 							style="float: left; width: 95%; margin-top: 10px;"
 							rendered="#{!creationInvoiceBean.detailed}">
@@ -492,11 +518,16 @@
 											<p:inputText id="description_a"
 												value="#{creationInvoiceBean.description}" size="60"></p:inputText>
 										</hftl:decorateFormField> 
-										<hftl:decorateFormField fieldId="amountWithoutTax"
+										<hftl:decorateFormField fieldId="amountWithoutTax" rendered="#{appProvider.entreprise}"
 											label="#{messages['invoice.amountWithoutTax']} *">
 											<p:inputText id="amountWithoutTax"
 												value="#{creationInvoiceBean.amountWithoutTax}"></p:inputText>
-										</hftl:decorateFormField> 
+										</hftl:decorateFormField>
+										<hftl:decorateFormField fieldId="amountWithTax" rendered="#{!appProvider.entreprise}"
+											label="#{messages['invoice.amountWithTax']} *">
+											<p:inputText id="amountWithTax"
+												value="#{creationInvoiceBean.amountWithTax}"></p:inputText>
+										</hftl:decorateFormField>
 										<p:commandButton value="#{messages['action.invoice.addLine']}"
 											process="addAggregatedLine"
 											action="#{creationInvoiceBean.addAggregatedLine()}"
@@ -507,7 +538,8 @@
 							</p:panel>
 						</p:fieldset>
 						<div style="clear: both"></div>
-<!--   Summary   -->						
+						
+						<!--   Summary   -->						
 						<p:fieldset legend="Summary"
 							style="float: left; width: 95%; margin-top: 10px;">
 							<p:panel id="invoiceSummary">

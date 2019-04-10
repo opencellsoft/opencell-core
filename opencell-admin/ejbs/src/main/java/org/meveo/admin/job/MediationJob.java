@@ -21,6 +21,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -32,6 +33,7 @@ import org.meveo.service.job.Job;
  * The Class MediationJob consume standard cdr files.
  * 
  * @author Wassim Drira
+ * @author HORRI khalid
  * @lastModifiedVersion 5.0
  * 
  */
@@ -76,7 +78,7 @@ public class MediationJob extends Job {
             if (!f.exists()) {
                 f.mkdirs();
             }
-            File[] files = FileUtils.getFilesForParsing(inputDir, cdrExtensions);
+            File[] files = FileUtils.listFiles(inputDir, cdrExtensions);
             if (files == null || files.length == 0) {
                 return;
             }
@@ -84,8 +86,9 @@ public class MediationJob extends Job {
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
+            String scriptCode = (String) this.getParamOrCFValue(jobInstance, "scriptJob");
             while (subListCreator.isHasNext()) {
-                futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), lastCurrentUser));
+                futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), lastCurrentUser, scriptCode));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());
@@ -143,6 +146,18 @@ public class MediationJob extends Job {
         waitingMillis.setDefaultValue("0");
         waitingMillis.setValueRequired(false);
         result.put("waitingMillis", waitingMillis);
+
+        CustomFieldTemplate scriptJob = new CustomFieldTemplate();
+        scriptJob.setCode("scriptJob");
+        scriptJob.setAppliesTo("JOB_MediationJob");
+        scriptJob.setActive(true);
+        scriptJob.setAllowEdit(true);
+        scriptJob.setMaxValue(Long.MAX_VALUE);
+        scriptJob.setDescription(resourceMessages.getString("jobExecution.scriptJob"));
+        scriptJob.setFieldType(CustomFieldTypeEnum.STRING);
+        scriptJob.setValueRequired(false);
+        scriptJob.setDefaultValue("");
+        result.put("scriptJob", scriptJob);
 
         return result;
     }

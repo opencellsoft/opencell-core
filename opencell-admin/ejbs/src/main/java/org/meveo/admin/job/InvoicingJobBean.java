@@ -1,6 +1,9 @@
 package org.meveo.admin.job;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -8,16 +11,22 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
+/**
+ * @author HORRI Khalid
+ * @lastModifiedVersion 5.4
+ */
 @Stateless
 public class InvoicingJobBean extends BaseJobBean {
 
@@ -36,7 +45,8 @@ public class InvoicingJobBean extends BaseJobBean {
         log.debug("Running for parameter={}", jobInstance.getParametres());
 
         try {
-            List<BillingRun> billingRuns = billingRunService.listByNamedQuery("BillingRun.getForInvoicing");
+            List<BillingRun> billingRuns = getBillingRuns(this.getParamOrCFValue(jobInstance, "billingRuns"));
+
             log.info("BillingRuns to process={}", billingRuns.size());
             result.setNbItemsToProcess(billingRuns.size());
             Long nbRuns = new Long(1);
@@ -58,7 +68,7 @@ public class InvoicingJobBean extends BaseJobBean {
                 }
                 try {
                     billingRunService.detach(billingRun);
-                    billingRunService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue(),result.getJobInstance().getId());
+                    billingRunService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue(), result.getJobInstance().getId(), result);
                     result.registerSucces();
                 } catch (Exception e) {
                     log.error("Failed to run invoicing", e);
@@ -70,5 +80,34 @@ public class InvoicingJobBean extends BaseJobBean {
         }
 
         log.info("end Execute");
+    }
+
+    /**
+     * Get Billing runs to process
+     *
+     * @param billingRunsCF the billing runs getting from the custom field
+     * @return
+     */
+    private List<BillingRun> getBillingRuns(Object billingRunsCF) {
+        List<EntityReferenceWrapper> brList = (List<EntityReferenceWrapper>) billingRunsCF;
+        List<BillingRun> billingRuns = new ArrayList<>();
+        if (brList != null && !brList.isEmpty()) {
+            List<Long> ids = brList.stream().map(br -> {
+                String compositeCode = br.getCode();
+                if (compositeCode == null) {
+                    return null;
+                }
+                return Long.valueOf(compositeCode.split("/")[0]);
+            }).collect(Collectors.toList());
+            Map<String, Object> filters = new HashedMap();
+            filters.put("inList id", ids);
+            PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
+            billingRuns = billingRunService.list(paginationConfiguration);
+        } else {
+            if (billingRuns == null || billingRuns.isEmpty()) {
+                billingRuns = billingRunService.listByNamedQuery("BillingRun.getForInvoicing");
+            }
+        }
+        return billingRuns;
     }
 }

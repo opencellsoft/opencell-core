@@ -13,6 +13,7 @@ import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
+import org.meveo.api.dto.billing.SubscriptionAndServicesToActivateRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
 import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
@@ -20,7 +21,6 @@ import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.dto.response.RawResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
@@ -30,12 +30,16 @@ import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SubscriptionWs;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Youssef IZEM
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @WebService(serviceName = "SubscriptionWs", endpointInterface = "org.meveo.api.ws.SubscriptionWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -49,7 +53,10 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.create(postData);
+            Subscription subscription = subscriptionApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(subscription.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -146,9 +153,9 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         return result;
     }
 
-	@Override
-	public ActionStatus activateSubscription(String subscriptionCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus activateSubscription(String subscriptionCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             subscriptionApi.activateSubscription(subscriptionCode);
@@ -157,7 +164,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         }
 
         return result;
-	}
+    }
 
     @Override
     public SubscriptionsResponseDto listSubscriptionByUserAccount(String userAccountCode) {
@@ -186,7 +193,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
     }
 
     @Override
-    public GetSubscriptionResponseDto findSubscription(String subscriptionCode,CustomFieldInheritanceEnum inheritCF) {
+    public GetSubscriptionResponseDto findSubscription(String subscriptionCode, CustomFieldInheritanceEnum inheritCF) {
         GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
 
         try {
@@ -201,7 +208,10 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
     public ActionStatus createOrUpdateSubscription(SubscriptionDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            subscriptionApi.createOrUpdate(postData);
+            Subscription subscription = subscriptionApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(subscription.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -320,9 +330,9 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         return result;
     }
 
-	@Override
-	public ActionStatus cancelSubscriptionRenewal(String subscriptionCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus cancelSubscriptionRenewal(String subscriptionCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             subscriptionApi.cancelSubscriptionRenewal(subscriptionCode);
@@ -331,7 +341,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         }
 
         return result;
-	}
+    }
 
     @Override
     public SubscriptionForCustomerResponseDto activateForCustomer(SubscriptionForCustomerRequestDto postData) {
@@ -340,6 +350,17 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
             result = subscriptionApi.activateForCustomer(postData);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus subscribeAndActivateServices(SubscriptionAndServicesToActivateRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            subscriptionApi.subscribeAndActivateServices(postData);
+        } catch (Exception e) {
+            processException(e, result);
         }
         return result;
     }

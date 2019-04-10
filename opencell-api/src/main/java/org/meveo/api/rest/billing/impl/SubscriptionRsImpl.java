@@ -5,7 +5,19 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
-import org.meveo.api.dto.billing.*;
+import org.meveo.api.dto.billing.ActivateServicesRequestDto;
+import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
+import org.meveo.api.dto.billing.OneShotChargeInstanceDto;
+import org.meveo.api.dto.billing.OperationServicesRequestDto;
+import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
+import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
+import org.meveo.api.dto.billing.SubscriptionAndServicesToActivateRequestDto;
+import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
+import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
+import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -19,8 +31,9 @@ import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 import javax.enterprise.context.RequestScoped;
@@ -30,8 +43,10 @@ import java.util.List;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
- **/
+ * @author Youssef IZEM
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
@@ -44,7 +59,10 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.create(postData);
+            Subscription subscription = subscriptionApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(subscription.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -153,7 +171,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
             sortOrder);
 
         try {
-            if(inheritCF != null) {
+            if (inheritCF != null) {
                 return subscriptionApi.list(pagingAndFiltering, inheritCF);
             } else {
                 return subscriptionApi.list(mergedCF, pagingAndFiltering);
@@ -196,7 +214,10 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.createOrUpdate(postData);
+            Subscription subscription = subscriptionApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(subscription.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -327,11 +348,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         GetOneShotChargesResponseDto result = new GetOneShotChargesResponseDto();
 
         try {
-            if(subscriptionCode == null) {
+            if (subscriptionCode == null) {
                 List<OneShotChargeTemplateDto> oneShotChargeOthers = subscriptionApi.getOneShotChargeOthers();
                 result.getOneshotCharges().addAll(oneShotChargeOthers);
             } else {
-                List<OneShotChargeInstanceDto> oneShotChargeInstances = subscriptionApi.getOneShotCharges(subscriptionCode);
+                List<OneShotChargeInstanceDto> oneShotChargeInstances = subscriptionApi.getOneShotChargeOthers(subscriptionCode);
                 result.getOneshotChargeInstances().addAll(oneShotChargeInstances);
             }
 
@@ -366,9 +387,9 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         return result;
     }
 
-	@Override
-	public ActionStatus activate(String subscriptionCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus activate(String subscriptionCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             subscriptionApi.activateSubscription(subscriptionCode);
@@ -377,11 +398,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus cancelSubscriptionRenewal(String subscriptionCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus cancelSubscriptionRenewal(String subscriptionCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             subscriptionApi.cancelSubscriptionRenewal(subscriptionCode);
@@ -390,7 +411,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         }
 
         return result;
-	}
+    }
 
     @Override
     public SubscriptionForCustomerResponseDto activateForCustomer(SubscriptionForCustomerRequestDto postData) {
@@ -404,15 +425,26 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public ActionStatus cancelOneShotCharge(Long oneshotChargeId) {
+    public ActionStatus terminateOneShotCharge(String subscriptionCode, String oneshotChargeCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.cancelOneShotCharge(oneshotChargeId);
+            subscriptionApi.terminateOneShotCharge(oneshotChargeCode, subscriptionCode);
         } catch (Exception e) {
             processException(e, result);
         }
 
+        return result;
+    }
+
+    @Override
+    public ActionStatus subscribeAndActivateServices(SubscriptionAndServicesToActivateRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            subscriptionApi.subscribeAndActivateServices(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
         return result;
     }
 

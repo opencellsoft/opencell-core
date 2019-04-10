@@ -45,6 +45,7 @@ import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
+import org.meveo.service.index.ElasticSearchIndexPopulationService;
 import org.meveo.util.view.LazyDataModelWSize;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.LazyDataModel;
@@ -73,6 +74,9 @@ public class CacheBean implements Serializable {
 
     @Inject
     private TenantCacheContainerProvider tenantCacheContainerProvider;
+
+    @Inject
+    private ElasticSearchIndexPopulationService esPopulationService;
 
     /** Logger. */
     @Inject
@@ -136,6 +140,7 @@ public class CacheBean implements Serializable {
             caches.putAll(customFieldsCacheContainerProvider.getCaches());
             caches.putAll(jobCacheContainerProvider.getCaches());
             caches.putAll(tenantCacheContainerProvider.getCaches());
+            caches.putAll(esPopulationService.getCaches());
 
             selectedCache = caches.get(cacheName);
         }
@@ -156,6 +161,7 @@ public class CacheBean implements Serializable {
         caches.putAll(customFieldsCacheContainerProvider.getCaches());
         caches.putAll(jobCacheContainerProvider.getCaches());
         caches.putAll(tenantCacheContainerProvider.getCaches());
+        caches.putAll(esPopulationService.getCaches());
         caches = new TreeMap<String, Cache>(caches);
 
         for (Entry<String, Cache> cache : caches.entrySet()) {
@@ -181,6 +187,7 @@ public class CacheBean implements Serializable {
         notificationCacheContainerProvider.refreshCache(cacheName);
         customFieldsCacheContainerProvider.refreshCache(cacheName);
         jobCacheContainerProvider.refreshCache(cacheName);
+        esPopulationService.refreshCache(cacheName);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 
@@ -190,6 +197,7 @@ public class CacheBean implements Serializable {
         notificationCacheContainerProvider.refreshCache(null);
         customFieldsCacheContainerProvider.refreshCache(null);
         jobCacheContainerProvider.refreshCache(null);
+        esPopulationService.refreshCache(null);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 
@@ -317,6 +325,22 @@ public class CacheBean implements Serializable {
     }
 
     /**
+     * Get a friendly representation of a key
+     * 
+     * @param item Item to convert to string
+     * @return A string representation of an item.
+     */
+    public String getShortRepresentationOfCachedKey(Object item) {
+
+        if (item instanceof String[]) {
+            return StringUtils.concatenate(", ", (String[]) item);
+
+        } else {
+            return item.toString();
+        }
+    }
+
+    /**
      * Extract values of cached object to show in a list. In case of list of items, show only the first 10 items, in case of mapped items - only first 2 entries.
      * 
      * @param item Item to convert to string
@@ -360,6 +384,9 @@ public class CacheBean implements Serializable {
             }
             return builder.toString();
 
+        } else if (item instanceof String[]) {
+            return StringUtils.concatenate(", ", (String[]) item);
+
         } else if (returnToStringForSimpleObjects) {
             return item.toString();
 
@@ -397,7 +424,5 @@ public class CacheBean implements Serializable {
                 return item.toString();
             }
         }
-
     }
-
 }

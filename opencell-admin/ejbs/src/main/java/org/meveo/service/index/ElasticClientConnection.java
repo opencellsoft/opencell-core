@@ -1,8 +1,5 @@
 package org.meveo.service.index;
 
-import java.net.InetAddress;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Lock;
@@ -11,13 +8,14 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.cluster.node.DiscoveryNode;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.apache.http.HttpHost;
+import org.elasticsearch.action.main.MainResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.StringUtils;
 import org.slf4j.Logger;
 
 /**
@@ -44,7 +42,7 @@ public class ElasticClientConnection {
     /**
      * The actual ES client
      */
-    private TransportClient client = null;
+    private RestHighLevelClient client = null;
 
     /**
      * Is Elastic Search enabled/connected
@@ -57,41 +55,34 @@ public class ElasticClientConnection {
     @PostConstruct
     private void initES() {
 
-        String clusterName = null;
         String[] hosts = null;
-        String portStr = null;
 
         try {
-            clusterName = paramBean.getProperty("elasticsearch.cluster.name", "");
-            hosts = paramBean.getProperty("elasticsearch.hosts", "localhost").split(";");
-            portStr = paramBean.getProperty("elasticsearch.port", "9300");
-            String sniffingStr = paramBean.getProperty("elasticsearch.client.transport.sniff", "false").toLowerCase();
-            if (!StringUtils.isBlank(portStr) && StringUtils.isNumeric(portStr) && (sniffingStr.equals("true") || sniffingStr.equals("false")) && !StringUtils.isBlank(clusterName)
-                    && hosts.length > 0) {
-                log.info("Connecting to elasticSearch cluster {} and hosts {}, port {}", clusterName, StringUtils.join(hosts, ";"), portStr);
-                boolean sniffing = Boolean.parseBoolean(sniffingStr);
-                Settings settings = Settings.settingsBuilder().put("client.transport.sniff", sniffing).put("cluster.name", clusterName).build();
-                client = TransportClient.builder().settings(settings).build();
-                int port = Integer.parseInt(portStr);
-                for (String host : hosts) {
-                    client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
-                }
-                List<DiscoveryNode> nodes = client.connectedNodes();
-                if (nodes.isEmpty()) {
-                    log.error("No nodes available. Verify ES is running!. Current settings: clusterName={}, hosts={}, port={}", clusterName, hosts, portStr);
-                    throw new RuntimeException("No nodes available. Verify ES is running!");
-                } else {
-                    log.info("connected elasticsearch to {} nodes. Current settings: clusterName={}, hosts={}, port={}", nodes.size(), clusterName, hosts, portStr);
-                }
+
+            String restUri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+            hosts = restUri.split(";");
+
+            if (StringUtils.isBlank(restUri) || hosts.length == 0) {
+                log.warn("Elastic search is not enabled. Current settings: hosts={}", hosts.toString());
+
             } else {
-                log.warn("Elastic search is not enabled. Current settings: clusterName={}, hosts={}, port={}", clusterName, hosts, portStr);
+                HttpHost[] httpHosts = new HttpHost[hosts.length];
+
+                for (int i = 0; i < hosts.length; i++) {
+                    httpHosts[i] = HttpHost.create(hosts[i]);
+                }
+
+                client = new RestHighLevelClient(RestClient.builder(httpHosts));
+
+                @SuppressWarnings("unused")
+                MainResponse response = client.info(RequestOptions.DEFAULT);
             }
 
         } catch (Exception e) {
-            log.error("Error while initializing elastic search. Current settings: clusterName={}, hosts={}, port={}", clusterName, hosts, portStr, e);
+            log.error("Error while initializing elastic search. Current settings:  hosts={}", hosts, e);
             shutdownES();
             throw new RuntimeException(
-                "Failed to connect to or initialize elastic search client. Application will be stopped. You can disable Elastic Search integration by clearing 'elasticsearch.cluster.name' property in opencell-admin.properties file.");
+                "Failed to connect to or initialize elastic search client. Application will be stopped. You can disable Elastic Search integration by clearing 'elasticsearch.restUri' property in opencell-admin.properties file.");
         }
 
         try {
@@ -146,7 +137,7 @@ public class ElasticClientConnection {
      * 
      * @return Elastic Search client instance
      */
-    public TransportClient getClient() {
+    public RestHighLevelClient getClient() {
         return client;
     }
 }

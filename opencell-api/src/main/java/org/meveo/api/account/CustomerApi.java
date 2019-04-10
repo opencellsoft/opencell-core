@@ -54,6 +54,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.export.CustomBigDecimalConverter;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -64,7 +65,9 @@ import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.sequence.GenericSequence;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
@@ -82,8 +85,9 @@ import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Mohamed El Youssoufi
- * @lastModifiedVersion 5.2
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class CustomerApi extends AccountEntityApi {
@@ -129,8 +133,14 @@ public class CustomerApi extends AccountEntityApi {
     @Inject
     private CustomerSequenceApi customerSequenceApi;
 
-    public void create(CustomerDto postData) throws MeveoApiException, BusinessException {
-        create(postData, true);
+    @Inject
+    private AccountingCodeService accountingCodeService;
+
+    @Inject
+    private CustomGenericEntityCodeService customGenericEntityCodeService;
+
+    public Customer create(CustomerDto postData) throws MeveoApiException, BusinessException {
+        return create(postData, true);
     }
 
     public Customer create(CustomerDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
@@ -139,9 +149,6 @@ public class CustomerApi extends AccountEntityApi {
 
     public Customer create(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
-        }
         if (StringUtils.isBlank(postData.getCustomerCategory())) {
             missingParameters.add("customerCategory");
         }
@@ -152,7 +159,7 @@ public class CustomerApi extends AccountEntityApi {
             missingParameters.add("name.lastName");
         }
 
-        handleMissingParametersAndValidate(postData);
+        handleMissingParameters(postData);
 
         // check if customer already exists
         if (customerService.findByCode(postData.getCode()) != null) {
@@ -190,6 +197,10 @@ public class CustomerApi extends AccountEntityApi {
             customer.setBusinessAccountModel(businessAccountModel);
         }
 
+        if (StringUtils.isBlank(postData.getCode())) {
+            customer.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
+        }
+
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customer, true, checkCustomFields);
@@ -220,8 +231,8 @@ public class CustomerApi extends AccountEntityApi {
         return customer;
     }
 
-    public void update(CustomerDto postData) throws MeveoApiException, BusinessException {
-        update(postData, true);
+    public Customer update(CustomerDto postData) throws MeveoApiException, BusinessException {
+        return update(postData, true);
     }
 
     public Customer update(CustomerDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
@@ -479,6 +490,13 @@ public class CustomerApi extends AccountEntityApi {
         customerCategory.setExonerationTaxElSpark(postData.getExonerationTaxElSpark());
         customerCategory.setExonerationReason(postData.getExonerationReason());
 
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            customerCategory.setAccountingCode(accountingCode);
+        }
         customerCategoryService.create(customerCategory);
     }
 
@@ -519,6 +537,14 @@ public class CustomerApi extends AccountEntityApi {
         if (postData.getExonerationReason() != null && StringUtils.compare(postData.getExonerationReason(), customerCategory.getExonerationReason()) != 0) {
             customerCategory.setExonerationReason(postData.getExonerationReason());
             toUpdate = true;
+        }
+
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            customerCategory.setAccountingCode(accountingCode);
         }
 
         if (toUpdate) {
@@ -606,12 +632,14 @@ public class CustomerApi extends AccountEntityApi {
         }
     }
 
-    public void createOrUpdate(CustomerDto postData) throws MeveoApiException, BusinessException {
-        if (customerService.findByCode(postData.getCode()) == null) {
-            create(postData);
+    public Customer createOrUpdate(CustomerDto postData) throws MeveoApiException, BusinessException {
+        Customer customer = customerService.findByCode(postData.getCode());
+        if (customer == null) {
+            customer = create(postData);
         } else {
-            update(postData);
+            customer = update(postData);
         }
+        return customer;
     }
 
     /**

@@ -27,6 +27,9 @@ public class AccountCodeGenerationListener {
 
     @PrePersist
     public void prePersist(AccountEntity account) {
+        //TODO : remove this code for two reasons
+        // 1 - the identifier is not created yet
+        // 2 - to have a custom code, there is an "adm_custom_generic_entity_code" table which must be added
         if (account.getCode() == null) {
             account.setCode("A" + account.getId());
         }

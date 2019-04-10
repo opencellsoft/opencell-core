@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -37,6 +38,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class InvoicingJob launch invoicing for the available BillingRuns.
+ * @author HORRI Khalid
+ * @lastModifiedVersion 5.4
  */
 @Stateless
 public class InvoicingJob extends Job {
@@ -82,6 +85,16 @@ public class InvoicingJob extends Job {
         customFieldNbWaiting.setValueRequired(false);
         result.put("waitingMillis", customFieldNbWaiting);
 
+        CustomFieldTemplate customFieldBR = new CustomFieldTemplate();
+        customFieldBR.setCode("billingRuns");
+        customFieldBR.setAppliesTo("JOB_InvoicingJob");
+        customFieldBR.setActive(true);
+        customFieldBR.setDescription(resourceMessages.getString("jobExecution.billingRuns"));
+        customFieldBR.setFieldType(CustomFieldTypeEnum.ENTITY);
+        customFieldBR.setStorageType(CustomFieldStorageTypeEnum.LIST);
+        customFieldBR.setEntityClazz("org.meveo.model.billing.BillingRun");
+        customFieldBR.setValueRequired(false);
+        result.put("billingRuns", customFieldBR);
         return result;
     }
 }

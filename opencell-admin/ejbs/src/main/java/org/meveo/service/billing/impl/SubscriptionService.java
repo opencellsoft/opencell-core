@@ -18,14 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
@@ -33,20 +25,31 @@ import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditableFieldNameEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.Renewal;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionRenewal;
-import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
-import org.meveo.model.billing.SubscriptionRenewal.InitialTermTypeEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
@@ -54,11 +57,25 @@ import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.offer.OfferModelScriptService;
 import org.primefaces.model.SortOrder;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
+
 /**
  * @author Edward P. Legaspi
  * @author khalid HORRI
  * @author Mounir BAHIJE
- * @lastModifiedVersion 5.3
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class SubscriptionService extends BusinessService<Subscription> {
@@ -77,7 +94,15 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @Inject
     private OfferTemplateService offerTemplateService;
-    
+
+    @Inject
+    private DiscountPlanInstanceService discountPlanInstanceService;
+
+
+    @Inject
+    private AuditableFieldService auditableFieldService;
+
+
     @MeveoAudit
     @Override
     public void create(Subscription subscription) throws BusinessException {
@@ -87,6 +112,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.createAutoRenewDate();
 
         super.create(subscription);
+
+        //Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
+        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "", String.valueOf(subscription.getStatus()));
 
         // execute subscription script
         OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
@@ -259,12 +287,18 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     private Subscription terminateSubscriptionWithFutureDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason) throws BusinessException {
-    	subscription.setSubscribedTillDate(terminationDate);
-		subscription.getSubscriptionRenewal().setTerminationReason(terminationReason);
-		subscription.getSubscriptionRenewal().setInitialTermType(InitialTermTypeEnum.FIXED);
-		subscription.getSubscriptionRenewal().setAutoRenew(false);		
-		subscription.getSubscriptionRenewal().setEndOfTermAction(EndOfTermActionEnum.TERMINATE);
-		
+
+        SubscriptionRenewal subscriptionRenewal = subscription.getSubscriptionRenewal();
+        subscriptionRenewal.setTerminationReason(PersistenceUtils.initializeAndUnproxy(subscriptionRenewal.getTerminationReason()));
+        Renewal renewal = new Renewal(subscriptionRenewal, subscription.getSubscribedTillDate());
+        subscription.setInitialSubscriptionRenewal(JacksonUtil.toString(renewal));
+
+        subscription.setSubscribedTillDate(terminationDate);
+        subscriptionRenewal.setTerminationReason(terminationReason);
+        subscriptionRenewal.setInitialTermType(SubscriptionRenewal.InitialTermTypeEnum.FIXED);
+        subscriptionRenewal.setAutoRenew(false);
+        subscriptionRenewal.setEndOfTermAction(SubscriptionRenewal.EndOfTermActionEnum.TERMINATE);
+
 		subscription = update(subscription);
 		
 		return subscription;
@@ -372,11 +406,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
     
 	public void activateInstantiatedService(Subscription sub) throws BusinessException {
-		for (ServiceInstance si : sub.getServiceInstances()) {
-			if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
-				serviceInstanceService.serviceActivation(si, null, null);
-			}
-		}
+    	// using a new ArrayList (cloning the original one) to avoid ConcurrentModificationException
+	    for (ServiceInstance si : new ArrayList<>(emptyIfNull(sub.getServiceInstances()))) {
+	        if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
+                serviceInstanceService.serviceActivation(si, null, null);
+            }
+	    }
 	}
  
     /**
@@ -402,11 +437,218 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		}
 	}
 
-	public void cancelSubscriptionRenewal(Subscription entity) throws BusinessException {
-		entity.setSubscribedTillDate(null);
-		entity.setSubscriptionTerminationReason(null);
-		entity.getSubscriptionRenewal().setInitialyActiveFor(null);
-		entity.setSubscriptionRenewal(new SubscriptionRenewal());
-	}
+    public void cancelSubscriptionRenewal(Subscription entity) throws BusinessException {
+        entity.setSubscribedTillDate(null);
+        entity.setSubscriptionTerminationReason(null);
+        entity.getSubscriptionRenewal().setInitialyActiveFor(null);
+        entity.setSubscriptionRenewal(new SubscriptionRenewal());
+    }
 
+	/**
+     * Subscription balance due.
+     *
+     * @param subscription the Subscription
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
+    public BigDecimal subscriptionBalanceDue(Subscription subscription, Date to) throws BusinessException {
+        log.info("subscriptionBalanceDue  subscription:" + (subscription == null ? "null" : subscription.getCode()) + " toDate:" + to);
+        return computeBalance(subscription, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+    }
+
+    /**
+     * Subscription balance exigible without litigation.
+     *
+     * @param subscription the Subscription
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
+    public BigDecimal subscriptionBalanceExigibleWithoutLitigation(Subscription subscription, Date to) throws BusinessException {
+        log.info("subscriptionBalanceExigibleWithoutLitigation  subscription:" + (subscription == null ? "null" : subscription.getCode()) + " toDate:" + to);
+        return computeBalance(subscription, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
+    }
+
+    /**
+     * Compute balance.
+     *
+     * @param subscription the Subscription
+     * @param to the to
+     * @param isDue the is due
+     * @param status the status
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
+    private BigDecimal computeBalance(Subscription subscription, Date to, boolean isDue, MatchingStatusEnum... status) throws BusinessException {
+        return computeBalance(subscription, to, false, isDue, status);
+    }
+
+    /**
+     * Computes a balance given a subscription. to and isDue parameters are ignored when isFuture is true.
+     * 
+     * @param subscription of the customer
+     * @param to compare the invoice due or transaction date here
+     * @param isFuture includes the future due or transaction date
+     * @param isDue if true filter via dueDate else transactionDate
+     * @param status can be a list of MatchingStatusEnum
+     * @return the computed balance
+     * @throws BusinessException when an error in computation is encoutered
+     */
+    private BigDecimal computeBalance(Subscription subscription, Date to, boolean isFuture, boolean isDue, MatchingStatusEnum... status) throws BusinessException {
+        log.trace("start computeBalance subscription:{}, toDate:{}, isDue:{}", (subscription == null ? "null" : subscription.getCode()), to, isDue);
+        if (subscription == null) {
+            log.warn("Error when subscription is null!");
+            throw new BusinessException("subscription is null");
+        }
+        if (!isFuture && to == null) {
+            log.warn("Error when toDate is null!");
+            throw new BusinessException("toDate is null");
+        }
+        BigDecimal balance = null, balanceDebit = null, balanceCredit = null;
+        try {
+            balanceDebit = computeOccAmount(subscription, OperationCategoryEnum.DEBIT, isFuture, isDue, to, status);
+            balanceCredit = computeOccAmount(subscription, OperationCategoryEnum.CREDIT, isFuture, isDue, to, status);
+            if (balanceDebit == null) {
+                balanceDebit = BigDecimal.ZERO;
+            }
+            if (balanceCredit == null) {
+                balanceCredit = BigDecimal.ZERO;
+            }
+            balance = balanceDebit.subtract(balanceCredit);
+            ParamBean param = paramBeanFactory.getInstance();
+            int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
+            balance = balance.multiply(new BigDecimal(balanceFlag));
+            log.debug("end computeBalance subscription code:{} , balance:{}", subscription.getCode(), balance);
+        } catch (Exception e) {
+            throw new BusinessException("Internal error");
+        }
+        return balance;
+
+    }
+
+    /**
+     * Compute occ amount.
+     *
+     * @param subscription the Subscription
+     * @param operationCategoryEnum the operation category enum
+     * @param isFuture the is future
+     * @param isDue the is due
+     * @param to the to
+     * @param status the status
+     * @return the big decimal
+     * @throws Exception the exception
+     */
+    private BigDecimal computeOccAmount(Subscription subscription, OperationCategoryEnum operationCategoryEnum, boolean isFuture, boolean isDue, Date to,
+            MatchingStatusEnum... status) throws Exception {
+        BigDecimal balance = null;
+        QueryBuilder queryBuilder = new QueryBuilder("select sum(unMatchingAmount) from AccountOperation");
+        queryBuilder.addCriterionEnum("transactionCategory", operationCategoryEnum);
+
+        if (!isFuture) {
+            if (isDue) {
+                queryBuilder.addCriterion("dueDate", "<=", to, false);
+
+            } else {
+                queryBuilder.addCriterion("transactionDate", "<=", to, false);
+            }
+        }
+
+        queryBuilder.addCriterionEntity("subscription", subscription);
+        if (status.length == 1) {
+            queryBuilder.addCriterionEnum("matchingStatus", status[0]);
+        } else {
+            queryBuilder.startOrClause();
+            for (MatchingStatusEnum st : status) {
+                queryBuilder.addCriterionEnum("matchingStatus", st);
+            }
+            queryBuilder.endOrClause();
+        }
+        log.debug("query={}", queryBuilder.getSqlString());
+        Query query = queryBuilder.getQuery(getEntityManager());
+        balance = (BigDecimal) query.getSingleResult();
+        return balance;
+    }
+
+    /**
+    * Returns all subscriptions to the given offer by code
+    *
+    * @param offerCode code of the Offer to search
+    * @param sortBy sort criteria
+    * @param sortOrder sort order
+    * @return list of Subscription
+    */
+    public List<Subscription> listByOffer(String offerCode, String sortBy, SortOrder sortOrder) {
+        QueryBuilder qb = new QueryBuilder(Subscription.class, "c");
+        qb.addCriterionEntity("offer.code", offerCode);
+
+        boolean ascending = true;
+        if (sortOrder != null) {
+            ascending = sortOrder.equals(SortOrder.ASCENDING);
+        }
+        qb.addOrderCriterion(sortBy, ascending);
+
+        try {
+            return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.trace("No subscription found for offer code " + offerCode, e);
+            return null;
+        }
+    }
+
+    public Subscription instantiateDiscountPlan(Subscription entity, DiscountPlan dp) throws BusinessException {
+        if(!entity.getOffer().getAllowedDiscountPlans().contains(dp)){
+            throw new BusinessException("DiscountPlan " + dp .getCode() +" is not allowed in this offer.");
+        }
+        BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
+        for(DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()){
+            if(dp.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
+                throw new BusinessException("DiscountPlan " + dp.getCode() + " is already instantiated in Billing Account "+ billingAccount.getCode() +".");
+            }
+        }
+        return (Subscription) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null);
+    }
+
+    public void terminateDiscountPlan(Subscription entity, DiscountPlanInstance dpi) throws BusinessException {
+        discountPlanInstanceService.terminateDiscountPlan(entity,dpi);
+    }
+
+    /**
+     * check if the subscription will be terminated in future
+     *
+     * @param subscription the subscription
+     * @return true is the subscription will be terminated in future.
+     */
+    public boolean willBeTerminatedInFuture(Subscription subscription) {
+        SubscriptionRenewal subscriptionRenewal = subscription != null ? subscription.getSubscriptionRenewal() : null;
+        return (subscription != null && (subscription.getStatus() == SubscriptionStatusEnum.CREATED || subscription.getStatus() == SubscriptionStatusEnum.ACTIVE) &&
+                subscription.getSubscribedTillDate() != null && subscription.getSubscribedTillDate().compareTo(new Date()) > 0 &&
+                subscriptionRenewal != null && !subscriptionRenewal.isAutoRenew() && subscriptionRenewal.getTerminationReason() != null &&
+                subscriptionRenewal.getEndOfTermAction() == SubscriptionRenewal.EndOfTermActionEnum.TERMINATE);
+    }
+
+    /**
+     * cancel subscription termination
+     *
+     * @param subscription the subscription
+     * @throws BusinessException business exception
+     */
+    public void cancelSubscriptionTermination(Subscription subscription) throws BusinessException {
+        SubscriptionRenewal subscriptionRenewal = null;
+        Date subscribedTillDate = null;
+
+        String initialRenewal = subscription.getInitialSubscriptionRenewal();
+        if (!StringUtils.isBlank(initialRenewal)) {
+
+            Renewal renewal = JacksonUtil.fromString(initialRenewal, Renewal.class);
+            subscriptionRenewal = renewal.getValue();
+            subscriptionRenewal.setTerminationReason(subscriptionRenewal.getTerminationReason() != null && subscriptionRenewal.getTerminationReason().getId() != null ?
+                    subscriptionRenewal.getTerminationReason() : null);
+            subscribedTillDate = renewal.getSubscribedTillDate();
+
+        }
+        subscription.setSubscriptionRenewal(subscriptionRenewal);
+        subscription.setSubscribedTillDate(subscribedTillDate);
+        update(subscription);
+    }
 }

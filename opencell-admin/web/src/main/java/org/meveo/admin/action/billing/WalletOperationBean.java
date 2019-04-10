@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Produces;
 import javax.faces.view.ViewScoped;
@@ -43,6 +44,10 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.primefaces.model.LazyDataModel;
 
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Named
 @ViewScoped
 public class WalletOperationBean extends BaseBean<WalletOperation> {
@@ -131,61 +136,54 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 			filters.remove("offerTemplate");
 		}
 		if (filters.containsKey("billingRun")) {
-			List<Long> walletOperationIds=new ArrayList<Long>();
-			BillingRun br=(BillingRun)filters.get("billingRun");
-			List<RatedTransaction> ListRated=ratedTransactionService.getRatedTransactionsByBillingRun(br);
-			if(ListRated.size()>0 && !ListRated.isEmpty()){
-			for(RatedTransaction rated : ListRated){
-				walletOperationIds.add(rated.getWalletOperationId());
-			} 
-			   StringBuffer wpIds=new StringBuffer();
-			   String sep="";
-			   for(Long ids:walletOperationIds){
-			    wpIds.append(sep);
-			    wpIds.append(ids.toString());
-			    sep=",";
-			   }
-			   filters.put("inList id", wpIds);
-			  }
-			else{
+			List<Long> walletOperationIds = new ArrayList<Long>();
+			BillingRun br = (BillingRun) filters.get("billingRun");
+			List<RatedTransaction> listRated = ratedTransactionService.getRatedTransactionsByBillingRun(br);
+			if (!listRated.isEmpty()) {
+				for (RatedTransaction rated : listRated) {
+					walletOperationIds.addAll(
+							rated.getWalletOperations().stream().map(o -> o.getId()).collect(Collectors.toList()));
+				}
+				filters.put("inList id", walletOperationIds);
+			} else {
 				return null;
 			}
-			 filters.remove("billingRun");
+			filters.remove("billingRun");
 		}
 	
 		return super.getLazyDataModel();
 	}
 	
-	
-
 	public void updatedToRerate(WalletOperation walletOperation) {
-		 try{
-			  List<Long> walletIdList=new ArrayList<Long>();
-			  walletIdList.add(walletOperation.getId());
-			  if(walletOperationService.updateToRerate(walletIdList)>0){
-				  walletOperationService.refresh(walletOperation);
-			      messages.info(new BundleKey("messages","update.successful"));
-			  }else{
-			 messages.info(new BundleKey("messages","walletOperation.alreadyBilled"));
-			 }
-			  }catch (Exception e) {
-			   log.error("failed to updated to rerate ",e); 
-			    messages.error(new BundleKey("messages","update.failed"));
-			  }}
+		try {
+			List<Long> walletIdList = new ArrayList<Long>();
+			walletIdList.add(walletOperation.getId());
+			if (walletOperationService.updateToRerate(walletIdList) > 0) {
+				walletOperationService.refresh(walletOperation);
+				messages.info(new BundleKey("messages", "update.successful"));
+			} else {
+				messages.info(new BundleKey("messages", "walletOperation.alreadyBilled"));
+			}
+		} catch (Exception e) {
+			log.error("failed to updated to rerate ", e);
+			messages.error(new BundleKey("messages", "update.failed"));
+		}
+	}
 	
 	public String massToRerate() {
-		try{
-		List<Long> walletIdList=null;
-		if (getSelectedEntities() != null) {
-			walletIdList=new ArrayList<Long>();
-			for (WalletOperation wallet : getSelectedEntities()) {
-				walletIdList.add(wallet.getId());	
-			}}
-			int count=walletOperationService.updateToRerate(walletIdList); 
-			messages.info(new BundleKey("messages", "walletOperation.updateToRerate"),count);
-		}catch (Exception e) {
-			log.error("error while updating to rerate",e);
-			messages.error(new BundleKey("messages","update.failed"));
+		try {
+			List<Long> walletIdList = null;
+			if (getSelectedEntities() != null) {
+				walletIdList = new ArrayList<Long>();
+				for (WalletOperation wallet : getSelectedEntities()) {
+					walletIdList.add(wallet.getId());
+				}
+			}
+			int count = walletOperationService.updateToRerate(walletIdList);
+			messages.info(new BundleKey("messages", "walletOperation.updateToRerate"), count);
+		} catch (Exception e) {
+			log.error("error while updating to rerate", e);
+			messages.error(new BundleKey("messages", "update.failed"));
 		}
 		conversation.end();
 		return "walletOperations";

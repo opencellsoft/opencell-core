@@ -6,7 +6,7 @@
         <groupId>com.opencellsoft</groupId>
         <artifactId>opencell</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>6.0.1</version>
+        <version>7.0.0</version>
     </parent>
     <artifactId>opencell-api</artifactId>
     <name>Opencell API</name>
@@ -34,14 +34,14 @@
             <artifactId>opencell-tmforum</artifactId>
         </dependency>
 
-		<dependency>
-			<groupId>org.apache.pdfbox</groupId>
-			<artifactId>pdfbox</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.barcode4j</groupId>
-			<artifactId>barcode4j</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.barcode4j</groupId>
+            <artifactId>barcode4j</artifactId>
+        </dependency>
 
         <!-- Libraries included in JBoss -->
 
@@ -86,9 +86,15 @@
         </dependency>
 
         <dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxb-provider</artifactId>
-			<scope>provided</scope>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxb-provider</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+		<dependency>
+		    <groupId>org.jboss.resteasy</groupId>
+		    <artifactId>resteasy-jackson2-provider</artifactId>
+		    <scope>provided</scope>
 		</dependency>
 
         <!-- <dependency> -->
@@ -103,13 +109,18 @@
             <scope>provided</scope>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- End of libraries provided in Jboss -->
-
+        
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
+            <version>6.6.1</version>
         </dependency>
 
         <dependency>
@@ -331,6 +342,11 @@
                                 <artifactId>xercesImpl</artifactId>
                                 <version>2.11.0</version>
                             </dependency>
+                            <dependency>
+							    <groupId>com.fasterxml.jackson.jaxrs</groupId>
+							    <artifactId>jackson-jaxrs-json-provider</artifactId>
+							    <version>2.6.3</version>
+							</dependency>         
                         </dependencies>
                     </plugin>
                 </plugins>

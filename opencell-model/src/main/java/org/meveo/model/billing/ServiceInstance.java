@@ -18,11 +18,26 @@
  */
 package org.meveo.model.billing;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
+import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.order.OrderHistory;
+import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.payments.PaymentScheduleInstance;
+import org.meveo.model.shared.DateUtils;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -46,32 +61,22 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.order.OrderHistory;
-import org.meveo.model.order.OrderItemActionEnum;
-import org.meveo.model.payments.PaymentScheduleInstance;
-import org.meveo.model.shared.DateUtils;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * Service subscribed to.
  *
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
+@WorkflowedEntity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SERVICE_INSTANCE", inheritCFValuesFrom = "serviceTemplate")
 @Table(name = "billing_service_instance")
@@ -81,7 +86,7 @@ import org.meveo.model.shared.DateUtils;
 @NamedQueries({
         @NamedQuery(name = "ServiceInstance.getExpired", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
         @NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)") })
-public class ServiceInstance extends BusinessCFEntity {
+public class ServiceInstance extends BusinessCFEntity implements IWFEntity {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -107,6 +112,7 @@ public class ServiceInstance extends BusinessCFEntity {
     /** Status. */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
+    @AuditTarget(type = AuditChangeTypeEnum.STATUS, history = true, notif = true)
     private InstanceStatusEnum status;
 
     /** Last status change timestamp. */
@@ -204,6 +210,7 @@ public class ServiceInstance extends BusinessCFEntity {
 
     /** Service renewal configuration. */
     @Embedded
+    @AuditTarget(type = AuditChangeTypeEnum.RENEWAL, history = true, notif = true)
     private SubscriptionRenewal serviceRenewal = new SubscriptionRenewal();
 
     /**
@@ -262,6 +269,12 @@ public class ServiceInstance extends BusinessCFEntity {
     /** Order item action. */
     @Transient
     private OrderItemActionEnum orderItemAction;
+
+    /**
+     * Initial service renewal configuration
+     */
+    @Column(name = "initial_renewal", columnDefinition = "text")
+    private String initialServiceRenewal;
 
     /**
      * Gets the end agreement date.
@@ -1001,4 +1014,21 @@ public class ServiceInstance extends BusinessCFEntity {
         this.paymentDayInMonthPS = paymentDayInMonthPS;
     }
 
+    /**
+     * Gets the initial service renewal
+     *
+     * @return the initial service renewal
+     */
+    public String getInitialServiceRenewal() {
+        return initialServiceRenewal;
+    }
+
+    /**
+     * Sets the initial service renewal.
+     *
+     * @param initialServiceRenewal the new initial service renewal
+     */
+    public void setInitialServiceRenewal(String initialServiceRenewal) {
+        this.initialServiceRenewal = initialServiceRenewal;
+    }
 }

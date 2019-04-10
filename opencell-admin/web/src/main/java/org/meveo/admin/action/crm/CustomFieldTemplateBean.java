@@ -7,14 +7,13 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.catalog.Calendar;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -33,6 +32,9 @@ import java.lang.reflect.Modifier;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -68,6 +70,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
      * To what entity class CFT should be copied to - a appliesTo value
      */
     private String copyCftTo;
+    private Set<CustomizedEntity> allClassNames;
 
     public CustomFieldTemplateBean() {
         super(CustomFieldTemplate.class);
@@ -152,46 +155,32 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
      * @return A list of matching values
      */
     public List<String> autocompleteClassNames(String query) {
-        List<String> clazzNames = new ArrayList<String>();
-
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, false, null, null);
-        entities.addAll(calendarsAsCustomEntities(query)); // #3603 : Allow reference Custom Fields to Calendar
-        entities.addAll(scriptsAsCustomEntities(query)); 
-
-        for (CustomizedEntity customizedEntity : entities) {
-            clazzNames.add(customizedEntity.getClassnameToDisplay());
+        if(allClassNames == null){
+            allClassNames = getAllClassName();
         }
-
-        return clazzNames;
-    }
-    
-    private Collection<? extends CustomizedEntity> scriptsAsCustomEntities(String entityName) {
-        Reflections reflections = new Reflections("org.meveo.model.scripts");
-        
-        List<CustomizedEntity> targetTypes = new ArrayList<>();
-        targetTypes.add(new CustomizedEntity(ScriptInstance.class));
-        
-        Set<Class<? extends ScriptInstance>> foundClasses = reflections.getSubTypesOf(ScriptInstance.class);
-        for (Class<? extends ScriptInstance> calendarClass : foundClasses) {
-            String classSimpleName = calendarClass.getSimpleName();
-            if ( !Modifier.isAbstract(calendarClass.getModifiers()) && ( (isEmpty(entityName) || classSimpleName.toLowerCase().contains(entityName)) ) ) {
-                targetTypes.add(new CustomizedEntity(calendarClass));
-            }
-        }
-        return targetTypes;
+        return allClassNames.stream()
+                .filter(businessEntity -> isClassNameMatchQuery(query, businessEntity.getEntityClass()))
+                .map(customizedEntity -> customizedEntity.getClassnameToDisplay())
+                .distinct()
+                .collect(Collectors.toList());
     }
 
-    private Collection<? extends CustomizedEntity> calendarsAsCustomEntities(String entityName) {
-        Reflections reflections = new Reflections("org.meveo.model.catalog");
-        Set<Class<? extends Calendar>> calendarClasses = reflections.getSubTypesOf(Calendar.class);
-        List<CustomizedEntity> calendars = new ArrayList<>();
-        for (Class<? extends Calendar> calendarClass : calendarClasses) {
-            String classSimpleName = calendarClass.getSimpleName();
-            if (!Modifier.isAbstract(calendarClass.getModifiers()) && ((isEmpty(entityName) || classSimpleName.toLowerCase().contains(entityName)))) {
-                calendars.add(new CustomizedEntity(calendarClass));
-            }
-        }
-        return calendars;
+    private Set<CustomizedEntity> getAllClassName() {
+        Set<CustomizedEntity> allClassName = new HashSet<>();
+        Reflections reflections = new Reflections("org.meveo.model");
+        Set<CustomizedEntity> customizedBusinessEntities = reflections.getSubTypesOf(BusinessEntity.class).stream()
+                .filter(businessEntity -> !Modifier.isAbstract(businessEntity.getModifiers()))
+                .map(businessEntity -> new CustomizedEntity(businessEntity))
+                .collect(Collectors.toSet());
+
+        allClassName.addAll(customizedBusinessEntities);
+        allClassName.addAll(customizedEntityService.getCustomizedEntities("", false, true, false, null, null));
+        return allClassName;
+    }
+
+    private boolean isClassNameMatchQuery(String query, Class businessEntity) {
+        return isEmpty(query) || businessEntity.getSimpleName().toLowerCase()
+                .contains(query.toLowerCase());
     }
 
     /**

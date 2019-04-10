@@ -46,10 +46,7 @@ import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.CounterInstanceService;
-import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.primefaces.model.DualListModel;
@@ -118,18 +115,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
         selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
 
-        if (entity.getAddress() == null) {
-            entity.setAddress(new Address());
-        }
-        if (entity.getName() == null) {
-            entity.setName(new Name());
-        }
-        if (entity.getContactInformation() == null) {
-            entity.setContactInformation(new ContactInformation());
-        }
-		if (entity.getDiscountPlanInstances() == null) {
-			entity.setDiscountPlanInstances(new ArrayList<>());
-		}
+        this.initNestedFields(entity);
+		
 		if (discountPlanDM == null) {
 			List<DiscountPlan> sourceDS = null;
 			sourceDS = discountPlanService.list();
@@ -140,18 +127,21 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     }
 
     @ActionMethod
-	public void instantiateDiscountPlan() throws BusinessException {
+	public String instantiateDiscountPlan() throws BusinessException {
 		if (entity.getDiscountPlan() != null) {
 			DiscountPlan dp = entity.getDiscountPlan();
-			entity = billingAccountService.refreshOrRetrieve(entity);
-			entity = billingAccountService.instantiateDiscountPlan(entity, dp, null);
+			entity = billingAccountService.instantiateDiscountPlan(entity, dp);
 			entity.setDiscountPlan(null);
 		}
+		
+		return getEditViewName();
 	}
 	
 	@ActionMethod
-	public void deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
-		billingAccountService.terminateDiscountPlan(entity, dpi);
+	public String deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
+        billingAccountService.terminateDiscountPlan(entity, dpi);
+		return getEditViewName();
+//		messages.warn(new BundleKey("messages", "message.discount.terminate.warning"));
 	}
 
     @Override
@@ -166,19 +156,38 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
                 billingAccountService.initBillingAccount(entity);
             }
 
-//			entity.setDiscountPlans(new HashSet<>(discountPlanService.refreshOrRetrieve(discountPlanDM.getTarget())));
-
             String outcome = super.saveOrUpdate(killConversation);
 
             if (outcome != null) {
-                return getEditViewName(); // "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() +
-                                          // "&faces-redirect=true&includeViewParams=true";
+                return getEditViewName();
             }
 
         } catch (DuplicateDefaultAccountException e1) {
             messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
         }
         return null;
+    }
+    
+    @Override
+    public BillingAccount getEntity() {
+        BillingAccount ba = super.getEntity();
+       this.initNestedFields(ba);
+        return ba;
+    }
+
+    private void initNestedFields(BillingAccount ba) {
+        if (ba.getAddress() == null) {
+            ba.setAddress(new Address());
+        }
+        if (ba.getName() == null) {
+            ba.setName(new Name());
+        }
+        if (ba.getContactInformation() == null) {
+            ba.setContactInformation(new ContactInformation());
+        }
+        if (ba.getDiscountPlanInstances() == null) {
+            ba.setDiscountPlanInstances(new ArrayList<>());
+        }
     }
 
     @Override
