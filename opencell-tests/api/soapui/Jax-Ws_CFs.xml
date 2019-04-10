@@ -31025,8 +31025,8 @@ public class Action1 extends Script {
     <description>English pudding</description>
   </languageDescriptions>
   <fieldType>STRING</fieldType>
-  <accountLevel>JOB_PurgeJob</accountLevel>
-  <appliesTo>JOB_PurgeJob</appliesTo>
+  <accountLevel>JobInstance_PurgeJob</accountLevel>
+  <appliesTo>JobInstance_PurgeJob</appliesTo>
   <defaultValue>Hello</defaultValue>
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
@@ -31051,8 +31051,8 @@ public class Action1 extends Script {
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>LONG</fieldType>
-  <accountLevel>JOB_PurgeJob</accountLevel>
-  <appliesTo>JOB_PurgeJob</appliesTo>
+  <accountLevel>JobInstance_PurgeJob</accountLevel>
+  <appliesTo>JobInstance_PurgeJob</appliesTo>
   <defaultValue>15</defaultValue>
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
@@ -31071,7 +31071,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="9426c99d-dc19-4f1c-9ee3-33e56c4d25fc" name="XPath Match 2">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1"]</path>
-                <content><![CDATA[<action appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1" description="Action 1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1" description="Action 1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{!entity.active}</applicableOnEl>
@@ -31092,7 +31092,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="6dd4ef3d-519a-423b-baf0-d48de1e233f2" name="XPath Match 3">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
-                <content><![CDATA[<action appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
@@ -31126,8 +31126,8 @@ public class Action1 extends Script {
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
-  <accountLevel>JOB_PurgeJob</accountLevel>
-  <appliesTo>JOB_PurgeJob</appliesTo>
+  <accountLevel>JobInstance_PurgeJob</accountLevel>
+  <appliesTo>JobInstance_PurgeJob</appliesTo>
   <defaultValue>15</defaultValue>
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>MATRIX</storageType>
@@ -31155,8 +31155,8 @@ public class Action1 extends Script {
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>MULTI_VALUE</fieldType>
-  <accountLevel>JOB_PurgeJob</accountLevel>
-  <appliesTo>JOB_PurgeJob</appliesTo>
+  <accountLevel>JobInstance_PurgeJob</accountLevel>
+  <appliesTo>JobInstance_PurgeJob</appliesTo>
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>MATRIX</storageType>
   <valueRequired>false</valueRequired>
@@ -31185,8 +31185,8 @@ public class Action1 extends Script {
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>MULTI_VALUE</fieldType>
-  <accountLevel>JOB_PurgeJob</accountLevel>
-  <appliesTo>JOB_PurgeJob</appliesTo>
+  <accountLevel>JobInstance_PurgeJob</accountLevel>
+  <appliesTo>JobInstance_PurgeJob</appliesTo>
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>MATRIX</storageType>
   <valueRequired>false</valueRequired>
@@ -31332,8 +31332,8 @@ public class Action1 extends Script {
     <description>English pudding</description>
   </languageDescriptions>
   <fieldType>STRING</fieldType>
-  <accountLevel>JOB_PurgeJob</accountLevel>
-  <appliesTo>JOB_PurgeJob</appliesTo>
+  <accountLevel>JobInstance_PurgeJob</accountLevel>
+  <appliesTo>JobInstance_PurgeJob</appliesTo>
   <defaultValue>Hello</defaultValue>
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
@@ -31358,8 +31358,8 @@ public class Action1 extends Script {
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
-  <accountLevel>JOB_PurgeJob</accountLevel>
-  <appliesTo>JOB_PurgeJob</appliesTo>
+  <accountLevel>JobInstance_PurgeJob</accountLevel>
+  <appliesTo>JobInstance_PurgeJob</appliesTo>
   <defaultValue>Help</defaultValue>
   <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
@@ -31378,7 +31378,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="c789fd9f-bbd8-4397-b577-b2f1f19aaefb" name="XPath Match 2">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
-                <content><![CDATA[<action appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
@@ -31408,7 +31408,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="da534676-c16e-45ba-aeaa-3b5a5e33c9b1" name="XPath Match 3">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3"]</path>
-                <content><![CDATA[<action appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
@@ -31560,8 +31560,8 @@ public class Action1 extends Script {
     <description>English pudding - updated</description>
   </languageDescriptions>
   <fieldType>STRING</fieldType>
-  <accountLevel>JOB_PurgeJob</accountLevel>
-  <appliesTo>JOB_PurgeJob</appliesTo>
+  <accountLevel>JobInstance_PurgeJob</accountLevel>
+  <appliesTo>JobInstance_PurgeJob</appliesTo>
   <defaultValue>Hello</defaultValue>
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
@@ -31586,8 +31586,8 @@ public class Action1 extends Script {
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
-  <accountLevel>JOB_PurgeJob</accountLevel>
-  <appliesTo>JOB_PurgeJob</appliesTo>
+  <accountLevel>JobInstance_PurgeJob</accountLevel>
+  <appliesTo>JobInstance_PurgeJob</appliesTo>
   <defaultValue>Help-updated</defaultValue>
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
@@ -31606,7 +31606,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="c789fd9f-bbd8-4397-b577-b2f1f19aaefb" name="XPath Match 2">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
-                <content><![CDATA[<action appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
@@ -31636,7 +31636,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="da534676-c16e-45ba-aeaa-3b5a5e33c9b1" name="XPath Match 3">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3"]</path>
-                <content><![CDATA[<action appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3 - updated" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3 - updated" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{!entity.active}</applicableOnEl>
@@ -31723,7 +31723,7 @@ public class Action1 extends Script {
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createAction>\r
-         <entityAction code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 4" appliesTo="JOB_PurgeJob">\r
+         <entityAction code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 4" appliesTo="JobInstance_PurgeJob">\r
             <script>\r
                <type>JAVA</type>\r
                <script>import org.meveo.service.script.Script;
@@ -31770,7 +31770,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:findAction>\r
          <actionCode>${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4</actionCode>\r
-         <appliesTo>JOB_PurgeJob</appliesTo>\r
+         <appliesTo>JobInstance_PurgeJob</appliesTo>\r
       </ws:findAction>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -31785,7 +31785,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="85385f3d-0cd4-472b-9961-2e08b8bf9899" name="XPath Match">
               <con:configuration>
                 <path>//entityAction[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4"]</path>
-                <content><![CDATA[<entityAction appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 4" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<entityAction appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 4" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
@@ -31829,7 +31829,7 @@ public class Action1 extends Script {
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateAction>\r
-         <entityAction code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" appliesTo="JOB_PurgeJob">\r
+         <entityAction code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" appliesTo="JobInstance_PurgeJob">\r
             <script>\r
                <type>JAVA</type>\r
                <script>import org.meveo.service.script.Script;
@@ -31876,7 +31876,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:findAction>\r
          <actionCode>${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4</actionCode>\r
-         <appliesTo>JOB_PurgeJob</appliesTo>\r
+         <appliesTo>JobInstance_PurgeJob</appliesTo>\r
       </ws:findAction>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -31891,7 +31891,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="86b418fd-4827-4c7e-ae3b-f09e6a8314b9" name="XPath Match">
               <con:configuration>
                 <path>//entityAction[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4"]</path>
-                <content><![CDATA[<entityAction appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<entityAction appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
@@ -31950,7 +31950,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="17bccab4-8f48-4db8-9363-e21f8369520a" name="XPath Match">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4"]</path>
-                <content><![CDATA[<action appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="opencell.admin" updater="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
@@ -31995,7 +31995,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeAction>\r
          <actionCode>${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4</actionCode>
-         <appliesTo>JOB_PurgeJob</appliesTo>
+         <appliesTo>JobInstance_PurgeJob</appliesTo>
       </ws:removeAction>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
