@@ -134,69 +134,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * A mapping between providerCode, classname, custom entity code (if applicable) and index name and type (if applicable)
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-es-index-cache")
-    private Cache<ESIndexKey, String[]> indices;
+    private Cache<CacheKeyESIndex, ESIndexNameAndType> indices;
 
     private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
-
-    /**
-     * A cache key: providerCode, classname, custom entity code (if applicable)
-     */
-    private class ESIndexKey implements Serializable {
-
-        private static final long serialVersionUID = -7102146427175802501L;
-        public String providerCode;
-        public String classname;
-        public String cetCode;
-
-        /**
-         * Constructor
-         */
-        public ESIndexKey() {
-        }
-
-        /**
-         * Constructor
-         * 
-         * @param providerCode Provider code
-         * @param classname Full class name
-         * @param cetCode Custom entity template code
-         */
-        public ESIndexKey(String providerCode, String classname, String cetCode) {
-            this.providerCode = providerCode;
-            this.classname = classname;
-
-            if (classname.equals(CustomTableRecord.class.getName())) {
-                cetCode = BaseEntity.cleanUpAndLowercaseCodeOrId(cetCode);
-            }
-            this.cetCode = cetCode;
-        }
-
-        @Override
-        public String toString() {
-            return providerCode + ", " + classname + ", " + cetCode;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            ESIndexKey other = (ESIndexKey) obj;
-
-            if (other == null) {
-                return false;
-            }
-
-            return (providerCode + "_" + classname + "_" + cetCode).equals(other.providerCode + "_" + other.classname + "_" + other.cetCode);
-        }
-
-        @Override
-        public int hashCode() {
-            return (providerCode + "_" + classname + "_" + cetCode).hashCode();
-        }
-
-        public boolean isMatchProvider(String codeToMatch) {
-            return (providerCode == null && codeToMatch == null) || (providerCode != null && providerCode.equals(codeToMatch));
-        }
-
-    }
 
     /**
      * Populate index with data of a given entity class
@@ -230,13 +170,13 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
         boolean isCEI = classname.equals(CustomEntityInstance.class.getName());
 
-        String[] indexAndType = null;
+        ESIndexNameAndType indexAndType = null;
         String indexName = null;
 
         // For CEI index has to be looked for every entity as index and type might depend in custom entity template code
         if (!isCEI) {
             indexAndType = getIndexAndType(entities.get(0));
-            indexName = indexAndType[0];
+            indexName = indexAndType.getIndexName();
         }
         Object lastId = null;
         String idForES = null;
@@ -251,15 +191,15 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
             if (isCEI) {
                 indexAndType = getIndexAndType(entity);
-                indexName = indexAndType[0];
+                indexName = indexAndType.getIndexName();
             }
             lastId = entity.getId();
             idForES = ElasticSearchIndexPopulationService.buildId(entity);
-            if (indexAndType[1] != null) {
-                idForES = indexAndType[1] + "_" + idForES;
+            if (indexAndType.getType() != null) {
+                idForES = indexAndType.getType() + "_" + idForES;
             }
 
-            Map<String, Object> valueMap = convertEntityToJson(entity, cftIndexable, cftNotIndexable, indexAndType[1]);
+            Map<String, Object> valueMap = convertEntityToJson(entity, cftIndexable, cftNotIndexable, indexAndType.getType());
 
             try {
                 bulkRequest.add(new IndexRequest(indexName, ElasticSearchConfiguration.MAPPING_DOC_TYPE, idForES).source(valueMap));
@@ -635,7 +575,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     public void repopulateIndexAndTypeCache(boolean populateCets) {
 
         // Clean up cache for current provider
-        Set<ESIndexKey> cacheKeys = new HashSet<>();
+        Set<CacheKeyESIndex> cacheKeys = new HashSet<>();
 
         indices.forEach((key, value) -> {
             if (key.isMatchProvider(currentUser.getProviderCode())) {
@@ -643,7 +583,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             }
         });
 
-        for (ESIndexKey key : cacheKeys) {
+        for (CacheKeyESIndex key : cacheKeys) {
             indices.remove(key);
         }
 
@@ -672,7 +612,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     public void createCETIndex(CustomEntityTemplate cet) throws BusinessException {
 
         Class<? extends ISearchable> instanceClass = cet.isStoreAsTable() ? CustomTableRecord.class : CustomEntityInstance.class;
-        String[] indexAndType = addToIndexAndTypeCache(instanceClass, cet.getCode());
+        ESIndexNameAndType indexAndType = addToIndexAndTypeCache(instanceClass, cet.getCode());
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
@@ -680,7 +620,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             return;
         }
 
-        String indexName = indexAndType[0];
+        String indexName = indexAndType.getIndexName();
 
         String modelJson = esConfiguration.getCetIndexConfiguration(cet);
         if (modelJson == null) {
@@ -788,14 +728,14 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             return;
         }
 
-        String[] indexAndType = getIndexAndType(entityClass, entityCode);
+        ESIndexNameAndType indexAndType = getIndexAndType(entityClass, entityCode);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
             return;
         }
 
-        String indexName = indexAndType[0];
+        String indexName = indexAndType.getIndexName();
 
         log.debug("Updating index {} mapping with custom field {} mapping {}", indexName, cleanupCFTFieldname, fieldMappingJson);
 
@@ -861,8 +801,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             return new Object[] { 0, null };
         }
 
-        String[] indexAndType = getIndexAndType(CustomTableRecord.class, tableName);
-        String indexName = indexAndType[0];
+        ESIndexNameAndType indexAndType = getIndexAndType(CustomTableRecord.class, tableName);
+        String indexName = indexAndType.getIndexName();
 
         // Process results
 
@@ -892,9 +832,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             lastId = values.get(NativePersistenceService.FIELD_ID);
 
             idForES = lastId.toString();
-            if (indexAndType[1] != null) {
-                idForES = indexAndType[1] + "_" + idForES;
-                values.put(ElasticSearchConfiguration.MAPPING_FIELD_TYPE, indexAndType[1]);
+            if (indexAndType.getType() != null) {
+                idForES = indexAndType.getType() + "_" + idForES;
+                values.put(ElasticSearchConfiguration.MAPPING_FIELD_TYPE, indexAndType.getType());
             }
 
             bulkRequest.add(new IndexRequest(indexName, ElasticSearchConfiguration.MAPPING_DOC_TYPE, idForES).source(convertedValues));
@@ -933,19 +873,19 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     public void removeCETIndex(CustomEntityTemplate cet) throws BusinessException {
 
         Class<? extends ISearchable> instanceClass = cet.isStoreAsTable() ? CustomTableRecord.class : CustomEntityInstance.class;
-        String[] indexAndType = getIndexAndType(instanceClass, cet.getCode());
+        ESIndexNameAndType indexAndType = getIndexAndType(instanceClass, cet.getCode());
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
             log.warn("No matching index found for CET {}", cet.getCode());
             return;
 
-        } else if (indexAndType[1] != null) {
+        } else if (indexAndType.getType() != null) {
             log.warn("CET {} shares an index with other entity types and therefore index won't be removed", cet.getCode());
             return;
         }
 
-        String indexName = indexAndType[0];
+        String indexName = indexAndType.getIndexName();
 
         // Find what is a real index name, as we know only the alias
         GetIndexRequest getIndexRequest = new GetIndexRequest();
@@ -1022,11 +962,11 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * Get a unique list of indexes and type for given entity classes. All indexes of a <b>current provider</b> will be returned if no class information is provided.
      * 
      * @param classesInfo A list of entity class information
-     * @return A set of arrays with full index name and type names in that order. Index names are prefixed by provider code (removed spaces and lowercase).
+     * @return A set of Full index name and type information. Index names are prefixed by provider code (removed spaces and lowercase).
      */
-    public Set<String[]> getIndexAndTypes(List<ElasticSearchClassInfo> classesInfo) {
+    public Set<ESIndexNameAndType> getIndexAndTypes(List<ElasticSearchClassInfo> classesInfo) {
 
-        Set<String[]> indexes = new HashSet<>();
+        Set<ESIndexNameAndType> indexes = new HashSet<>();
 
         if (classesInfo == null || classesInfo.isEmpty()) {
 
@@ -1038,7 +978,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
         } else {
             for (ElasticSearchClassInfo classInfo : classesInfo) {
-                String[] indexAndType = getIndexAndType(classInfo.getClazz(), classInfo.getCetCode());
+                ESIndexNameAndType indexAndType = getIndexAndType(classInfo.getClazz(), classInfo.getCetCode());
                 if (indexAndType != null) {
                     indexes.add(indexAndType);
                 }
@@ -1052,23 +992,23 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * 
      * @param clazzToConvert Entity class that extends ISearchable interface
      * @param cetCode Custom entity template/custom table code
-     * @return An array with full index name and type in that order. Or null if no match was found e.g. not interested in storing in ES. Index names are prefixed by provider code
-     *         (removed spaces and lowercase).
+     * @return A full index name and type. Or null if no match was found e.g. not interested in storing in ES. Index names are prefixed by provider code (removed spaces and
+     *         lowercase).
      */
-    public String[] getIndexAndType(Class<? extends ISearchable> clazzToConvert, String cetCode) {
+    public ESIndexNameAndType getIndexAndType(Class<? extends ISearchable> clazzToConvert, String cetCode) {
 
         String classname = ReflectionUtils.getCleanClassName(clazzToConvert.getName());
 
-        return indices.get(new ESIndexKey(currentUser.getProviderCode(), classname, cetCode));
+        return indices.get(new CacheKeyESIndex(currentUser.getProviderCode(), classname, cetCode));
     }
 
     /**
      * Determine index and type value for Elastic Search for a given entity. Index names are prefixed by provider code (removed spaces and lowercase).
      * 
      * @param entity ISearchable entity to be stored/indexed in Elastic Search
-     * @return An array with full index name and type in that order. Index names are prefixed by provider code (removed spaces and lowercase).
+     * @return A full index name and type. Index names are prefixed by provider code (removed spaces and lowercase).
      */
-    public String[] getIndexAndType(ISearchable entity) {
+    public ESIndexNameAndType getIndexAndType(ISearchable entity) {
         String cetCode = null;
         if (entity instanceof CustomEntityInstance) {
             cetCode = ((CustomEntityInstance) entity).getCetCode();
@@ -1083,9 +1023,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * 
      * @param clazz Entity class that extends ISearchable interface
      * @param cetCode Custom entity template/custom table code
-     * @return An array with a full index name and type in that order
+     * @return A full index name and type
      */
-    private String[] addToIndexAndTypeCache(Class<? extends ISearchable> clazz, String cetCode) {
+    private ESIndexNameAndType addToIndexAndTypeCache(Class<? extends ISearchable> clazz, String cetCode) {
 
         String classname = ReflectionUtils.getCleanClassName(clazz.getName());
         return addToIndexAndTypeCache(classname, cetCode);
@@ -1096,9 +1036,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * 
      * @param clazzToConvert Entity class that extends ISearchable interface
      * @param cetCode Custom entity template/custom table code
-     * @return An array with a full index name and type in that order
+     * @return A full index name and type
      */
-    private String[] addToIndexAndTypeCache(String classname, String cetCode) {
+    private ESIndexNameAndType addToIndexAndTypeCache(String classname, String cetCode) {
 
         String indexName = esConfiguration.getIndexName(classname);
 
@@ -1120,8 +1060,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
         indexName = currentUser.getProviderCode() + "_" + indexName;
 
-        String[] indexAndType = new String[] { BaseEntity.cleanUpAndLowercaseCodeOrId(indexName), type };
-        indices.put(new ESIndexKey(currentUser.getProviderCode(), classname, cetCode), indexAndType);
+        ESIndexNameAndType indexAndType = new ESIndexNameAndType(BaseEntity.cleanUpAndLowercaseCodeOrId(indexName), type);
+        indices.put(new CacheKeyESIndex(currentUser.getProviderCode(), classname, cetCode), indexAndType);
 
         return indexAndType;
     }
@@ -1135,26 +1075,23 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     private void removeFromIndexAndTypeCache(Class<? extends ISearchable> clazzToConvert, String cetCode) {
 
         String classname = ReflectionUtils.getCleanClassName(clazzToConvert.getName());
-        indices.remove(new ESIndexKey(currentUser.getProviderCode(), classname, cetCode));
+        indices.remove(new CacheKeyESIndex(currentUser.getProviderCode(), classname, cetCode));
     }
 
     /**
      * Determine a classname and a Custom entity template code from index name and entity type
      * 
      * @param fullIndexName Full index name
-     * @param type Entity type value as stored in Elastic search datatable value
-     * @param Entity type as stored in Elastic search index
+     * @param type Entity type value as stored in Elastic search index data
      * @return An array with a full classname and a Custom entity code (when applicable). OR null if no match was found.
      */
     public String[] getClassnameAndCETCodeFromIndex(String fullIndexName, String type) {
 
-        for (Entry<ESIndexKey, String[]> keyValue : indices.entrySet()) {
-            ESIndexKey key = keyValue.getKey();
-            String[] value = keyValue.getValue();
+        for (Entry<CacheKeyESIndex, ESIndexNameAndType> keyValue : indices.entrySet()) {
+            CacheKeyESIndex key = keyValue.getKey();
 
-            if ((value[0].equals(fullIndexName) || fullIndexName.startsWith(value[0])) && ((value[1] == null && type == null) || (value[1] != null && value[1].equals(type)))
-                    && (key.isMatchProvider(currentUser.getProviderCode()))) {
-                return new String[] { key.classname, key.cetCode };
+            if (keyValue.getValue().isMatchIndexNameAndType(fullIndexName, type) && (key.isMatchProvider(currentUser.getProviderCode()))) {
+                return new String[] { key.getClassname(), key.getCetCode() };
             }
         }
 
@@ -1165,7 +1102,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * Construct identifier for Elastic search for a given entity.
      * 
      * @param entity Entity to construct ID for
-     * @return Identifier value. Its either code, id or <code>_<id> of an entity
+     * @return Identifier value. Its either code, id or &lt;code&gt;_&lt;id&gt; of an entity
      */
     protected static String buildId(ISearchable entity) {
         if (entity instanceof BusinessEntity) {
