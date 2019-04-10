@@ -3,6 +3,17 @@
  */
 package org.meveo.model.payments;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.ModuleItem;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BankCoordinates;
+import org.meveo.model.billing.Country;
+import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.scripts.ScriptInstance;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -17,17 +28,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.ModuleItem;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BankCoordinates;
-import org.meveo.model.billing.Country;
-import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * The PaymentGateway on opencell exists in 2 types {@link org.meveo.model.payments.PaymentGatewayTypeEnum PaymentGatewayTypeEnum}: &lt;ul&gt; &lt;li&gt;Custom: The administrator
@@ -169,9 +169,9 @@ public class PaymentGateway extends EnableBusinessCFEntity {
      */
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
-    
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private Seller seller;
 
