@@ -902,14 +902,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                 if (appProvider.isEntreprise()) {
                                     diff = serviceMinAmount.subtract(totalServiceAmountWithoutTax);
                                     if (totalServiceAmountWithoutTax.compareTo(BigDecimal.ZERO) != 0) {
-                                        ratio = serviceAmountWithoutTax.divide(totalServiceAmountWithoutTax, 2, RoundingMode.HALF_UP);
+                                        ratio = serviceAmountWithoutTax.divide(totalServiceAmountWithoutTax, RoundingMode.HALF_UP);
                                     } else {
                                         ratio = BigDecimal.ONE;
                                     }
                                 } else {
                                     diff = serviceMinAmount.subtract(totalServiceAmountWithTax);
                                     if (totalServiceAmountWithTax.compareTo(BigDecimal.ZERO) != 0) {
-                                        ratio = serviceAmountWithTax.divide(totalServiceAmountWithTax, 2, RoundingMode.HALF_UP);
+                                        ratio = serviceAmountWithTax.divide(totalServiceAmountWithTax, RoundingMode.HALF_UP);
                                     } else {
                                         ratio = BigDecimal.ONE;
                                     }
@@ -929,9 +929,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                     }
 
                                     BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
-                                            : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+                                            : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), RoundingMode.HALF_UP));
                                     BigDecimal unitAmountWithTax = appProvider.isEntreprise()
-                                            ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP))
+                                            ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), RoundingMode.HALF_UP))
                                             : rtMinAmount;
                                     BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                                     BigDecimal amountWithoutTax = unitAmountWithoutTax;
@@ -995,14 +995,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                         if (appProvider.isEntreprise()) {
                             diff = subscriptionMinAmount.subtract(totalSubscriptionAmountWithoutTax);
                             if (totalSubscriptionAmountWithoutTax.compareTo(BigDecimal.ZERO) != 0) {
-                                ratio = subscriptionAmountWithoutTax.divide(totalSubscriptionAmountWithoutTax, 2, RoundingMode.HALF_UP);
+                                ratio = subscriptionAmountWithoutTax.divide(totalSubscriptionAmountWithoutTax, RoundingMode.HALF_UP);
                             } else {
                                 ratio = BigDecimal.ONE;
                             }
                         } else {
                             diff = subscriptionMinAmount.subtract(totalSubscriptionAmountWithTax);
                             if (totalSubscriptionAmountWithTax.compareTo(BigDecimal.ZERO) != 0) {
-                                ratio = subscriptionAmountWithTax.divide(totalSubscriptionAmountWithTax, 2, RoundingMode.HALF_UP);
+                                ratio = subscriptionAmountWithTax.divide(totalSubscriptionAmountWithTax, RoundingMode.HALF_UP);
                             } else {
                                 ratio = BigDecimal.ONE;
                             }
@@ -1023,9 +1023,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                             }
 
                             BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
-                                    : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+                                    : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), RoundingMode.HALF_UP));
                             BigDecimal unitAmountWithTax = appProvider.isEntreprise()
-                                    ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP))
+                                    ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), RoundingMode.HALF_UP))
                                     : rtMinAmount;
                             BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                             BigDecimal amountWithoutTax = unitAmountWithoutTax;
@@ -1089,14 +1089,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                     if (appProvider.isEntreprise()) {
                         diff = billingAccountMinAmount.subtract(totalBillingAccountAmountWithoutTax);
                         if (totalBillingAccountAmountWithoutTax.compareTo(BigDecimal.ZERO) != 0) {
-                            ratio = billingAccountAmountWithoutTax.divide(totalBillingAccountAmountWithoutTax, 2, RoundingMode.HALF_UP);
+                            ratio = billingAccountAmountWithoutTax.divide(totalBillingAccountAmountWithoutTax, RoundingMode.HALF_UP);
                         } else {
                             ratio = BigDecimal.ONE;
                         }
                     } else {
                         diff = billingAccountMinAmount.subtract(totalBillingAccountAmountWithTax);
                         if (totalBillingAccountAmountWithTax.compareTo(BigDecimal.ZERO) != 0) {
-                            ratio = billingAccountAmountWithTax.divide(totalBillingAccountAmountWithTax, 2, RoundingMode.HALF_UP);
+                            ratio = billingAccountAmountWithTax.divide(totalBillingAccountAmountWithTax, RoundingMode.HALF_UP);
                         } else {
                             ratio = BigDecimal.ONE;
                         }
@@ -1117,9 +1117,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                         }
     
                         BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
-                                : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+                                : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), RoundingMode.HALF_UP));
                         BigDecimal unitAmountWithTax = appProvider.isEntreprise()
-                                ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP))
+                                ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), RoundingMode.HALF_UP))
                                 : rtMinAmount;
                         BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                         BigDecimal amountWithoutTax = unitAmountWithoutTax;
