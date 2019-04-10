@@ -15,9 +15,11 @@ import org.meveo.model.CustomFieldEntity;
 
 /**
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "BUNDLE")
+@CustomFieldEntity(cftCodePrefix = "BundleTemplate")
 @DiscriminatorValue("BUNDLE")
 @NamedQueries({ @NamedQuery(name = "BundleTemplate.countActive", query = "SELECT COUNT(*) FROM BundleTemplate WHERE disabled=false"),
         @NamedQuery(name = "BundleTemplate.countDisabled", query = "SELECT COUNT(*) FROM BundleTemplate WHERE disabled=true"),

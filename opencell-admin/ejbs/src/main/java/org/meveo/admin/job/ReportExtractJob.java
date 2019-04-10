@@ -20,10 +20,11 @@ import org.meveo.service.job.Job;
  * When executed this job will run all the ReportExtract and generates the file with matching records.
  * 
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
  * @version %I%, %G%
  * @since 5.0
- * @lastModifiedVersion 5.1
- **/
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class ReportExtractJob extends Job {
 
@@ -47,7 +48,7 @@ public class ReportExtractJob extends Job {
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("nbRuns");
-        customFieldNbRuns.setAppliesTo("JOB_ReportExtractJob");
+        customFieldNbRuns.setAppliesTo("JobInstance_ReportExtractJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -57,7 +58,7 @@ public class ReportExtractJob extends Job {
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("waitingMillis");
-        customFieldNbWaiting.setAppliesTo("JOB_ReportExtractJob");
+        customFieldNbWaiting.setAppliesTo("JobInstance_ReportExtractJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
@@ -67,7 +68,7 @@ public class ReportExtractJob extends Job {
 
         CustomFieldTemplate customFieldStartDate = new CustomFieldTemplate();
         customFieldStartDate.setCode("startDate");
-        customFieldStartDate.setAppliesTo("JOB_ReportExtractJob");
+        customFieldStartDate.setAppliesTo("JobInstance_ReportExtractJob");
         customFieldStartDate.setActive(true);
         customFieldStartDate.setDescription(resourceMessages.getString("jobExecution.startDate"));
         customFieldStartDate.setFieldType(CustomFieldTypeEnum.DATE);
@@ -76,7 +77,7 @@ public class ReportExtractJob extends Job {
 
         CustomFieldTemplate customFieldEndDate = new CustomFieldTemplate();
         customFieldEndDate.setCode("endDate");
-        customFieldEndDate.setAppliesTo("JOB_ReportExtractJob");
+        customFieldEndDate.setAppliesTo("JobInstance_ReportExtractJob");
         customFieldEndDate.setActive(true);
         customFieldEndDate.setDescription(resourceMessages.getString("jobExecution.endDate"));
         customFieldEndDate.setFieldType(CustomFieldTypeEnum.DATE);

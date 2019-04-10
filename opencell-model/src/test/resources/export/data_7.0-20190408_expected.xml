@@ -1,0 +1,1114 @@
+<meveoExport version="7.0-20190408">
+    <exportTemplate canDeleteAfterExport="false" entityToExport="org.meveo.model.crm.CustomFieldTemplate" name="CustomFieldTemplate" xsId="1">
+        <exportAllClassesAsFull>false</exportAllClassesAsFull>
+        <classesToExportAsFull xsId="2"/>
+        <classesToExportAsShort xsId="3"/>
+        <classesToExportAsId xsId="4"/>
+        <classesToIgnoreFKNotFound xsId="5"/>
+        <groupedTemplates xsId="6"/>
+    </exportTemplate>
+    <data>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="7">
+            <id>1</id>
+            <version>0</version>
+            <auditable xsId="8">
+                <created class="sql-timestamp" xsId="9">2019-04-08 10:26:22.561</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>PROVIDER</code>
+            <description>PROVIDER</description>
+            <disabled>false</disabled>
+            <fieldType>LONG</fieldType>
+            <appliesTo>Provider</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="10"/>
+            <matrixColumns xsId="11"/>
+            <versionable>false</versionable>
+            <defaultValue>0</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="12">
+            <id>2</id>
+            <version>0</version>
+            <auditable xsId="13">
+                <created class="sql-timestamp" xsId="14">2019-04-08 10:26:22.576</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>PRODUCT</code>
+            <description>PRODUCT</description>
+            <disabled>false</disabled>
+            <fieldType>LONG</fieldType>
+            <appliesTo>ProductTemplate</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="15"/>
+            <matrixColumns xsId="16"/>
+            <versionable>false</versionable>
+            <defaultValue>1</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="17">
+            <id>3</id>
+            <version>0</version>
+            <auditable xsId="18">
+                <created class="sql-timestamp" xsId="19">2019-04-08 10:26:23.158</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>PRODUCT_INSTANCE</code>
+            <description>PRODUCT_INSTANCE</description>
+            <disabled>false</disabled>
+            <fieldType>BOOLEAN</fieldType>
+            <appliesTo>ProductInstance</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="20"/>
+            <matrixColumns xsId="21"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="22">
+            <id>4</id>
+            <version>0</version>
+            <auditable xsId="23">
+                <created class="sql-timestamp" xsId="24">2019-04-08 10:26:23.16</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>OFFER</code>
+            <description>OFFER</description>
+            <disabled>false</disabled>
+            <fieldType>STRING</fieldType>
+            <appliesTo>OfferTemplate</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="25"/>
+            <matrixColumns xsId="26"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <maxValue>9223372036854775807</maxValue>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="27">
+            <id>5</id>
+            <version>0</version>
+            <auditable xsId="28">
+                <created class="sql-timestamp" xsId="29">2019-04-08 10:26:23.363</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>SELLER</code>
+            <description>SELLER</description>
+            <disabled>false</disabled>
+            <fieldType>STRING</fieldType>
+            <appliesTo>Seller</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="30"/>
+            <matrixColumns xsId="31"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>MAP</storageType>
+            <mapKeyType>STRING</mapKeyType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <maxValue>256</maxValue>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="32">
+            <id>6</id>
+            <version>0</version>
+            <auditable xsId="33">
+                <created class="sql-timestamp" xsId="34">2019-04-08 10:26:23.365</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>CUST</code>
+            <description>CUST</description>
+            <disabled>false</disabled>
+            <fieldType>STRING</fieldType>
+            <appliesTo>Customer</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="35"/>
+            <matrixColumns xsId="36"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <maxValue>256</maxValue>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="37">
+            <id>7</id>
+            <version>0</version>
+            <auditable xsId="38">
+                <created class="sql-timestamp" xsId="39">2019-04-08 10:26:23.367</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>CA</code>
+            <description>CA</description>
+            <disabled>false</disabled>
+            <fieldType>TEXT_AREA</fieldType>
+            <appliesTo>CustomerAccount</appliesTo>
+            <valueRequired>true</valueRequired>
+            <listValues xsId="40"/>
+            <matrixColumns xsId="41"/>
+            <versionable>false</versionable>
+            <defaultValue/>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="42">
+            <id>8</id>
+            <version>0</version>
+            <auditable xsId="43">
+                <created class="sql-timestamp" xsId="44">2019-04-08 10:26:23.371</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>BA</code>
+            <description>BA</description>
+            <disabled>false</disabled>
+            <fieldType>STRING</fieldType>
+            <appliesTo>BillingAccount</appliesTo>
+            <valueRequired>true</valueRequired>
+            <listValues xsId="45"/>
+            <matrixColumns xsId="46"/>
+            <versionable>false</versionable>
+            <defaultValue>record</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <maxValue>50</maxValue>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="47">
+            <id>9</id>
+            <version>0</version>
+            <auditable xsId="48">
+                <created class="sql-timestamp" xsId="49">2019-04-08 10:26:23.377</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>UA</code>
+            <description>UA</description>
+            <disabled>false</disabled>
+            <fieldType>LIST</fieldType>
+            <appliesTo>UserAccount</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="50">
+                <entry>
+                    <string>CONTINUE</string>
+                    <string>Continue</string>
+                </entry>
+                <entry>
+                    <string>STOP</string>
+                    <string>Stop</string>
+                </entry>
+                <entry>
+                    <string>ROLLBBACK</string>
+                    <string>Rollback</string>
+                </entry>
+            </listValues>
+            <matrixColumns xsId="51"/>
+            <versionable>false</versionable>
+            <defaultValue>CONTINUE</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="52">
+            <id>10</id>
+            <version>0</version>
+            <auditable xsId="53">
+                <created class="sql-timestamp" xsId="54">2019-04-08 10:26:23.38</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>SERVICE</code>
+            <description>SERVICE</description>
+            <disabled>false</disabled>
+            <fieldType>STRING</fieldType>
+            <appliesTo>ServiceTemplate</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="55"/>
+            <matrixColumns xsId="56"/>
+            <versionable>false</versionable>
+            <defaultValue>origin_filename</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <maxValue>256</maxValue>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="57">
+            <id>11</id>
+            <version>0</version>
+            <auditable xsId="58">
+                <created class="sql-timestamp" xsId="59">2019-04-08 10:26:23.382</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>SERVICE_INSTANCE</code>
+            <description>SERVICE_INSTANCE</description>
+            <disabled>false</disabled>
+            <fieldType>STRING</fieldType>
+            <appliesTo>ServiceInstance</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="60"/>
+            <matrixColumns xsId="61"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <maxValue>256</maxValue>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="62">
+            <id>12</id>
+            <version>0</version>
+            <auditable xsId="63">
+                <created class="sql-timestamp" xsId="64">2019-04-08 10:26:23.384</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>SUB</code>
+            <description>SUB</description>
+            <disabled>false</disabled>
+            <fieldType>STRING</fieldType>
+            <appliesTo>Subscription</appliesTo>
+            <valueRequired>true</valueRequired>
+            <listValues xsId="65"/>
+            <matrixColumns xsId="66"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <maxValue>256</maxValue>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="67">
+            <id>13</id>
+            <version>0</version>
+            <auditable xsId="68">
+                <created class="sql-timestamp" xsId="69">2019-04-08 10:26:23.387</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>ACC</code>
+            <description>ACC</description>
+            <disabled>false</disabled>
+            <fieldType>STRING</fieldType>
+            <appliesTo>Access</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="70"/>
+            <matrixColumns xsId="71"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <maxValue>256</maxValue>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="72">
+            <id>14</id>
+            <version>0</version>
+            <auditable xsId="73">
+                <created class="sql-timestamp" xsId="74">2019-04-08 10:26:23.393</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>CHARGE</code>
+            <description>CHARGE</description>
+            <disabled>false</disabled>
+            <fieldType>STRING</fieldType>
+            <appliesTo>ChargeTemplate</appliesTo>
+            <valueRequired>true</valueRequired>
+            <listValues xsId="75"/>
+            <matrixColumns xsId="76"/>
+            <versionable>false</versionable>
+            <defaultValue>csv</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <maxValue>256</maxValue>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="77">
+            <id>15</id>
+            <version>0</version>
+            <auditable xsId="78">
+                <created class="sql-timestamp" xsId="79">2019-04-08 10:26:23.396</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>PRICEPLAN</code>
+            <description>PRICEPLAN</description>
+            <disabled>false</disabled>
+            <fieldType>LIST</fieldType>
+            <appliesTo>PricePlanMatrix</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="80">
+                <entry>
+                    <string>Xlsx_to_Csv</string>
+                    <string>Excel cvs</string>
+                </entry>
+                <entry>
+                    <string>None</string>
+                    <string>Aucune</string>
+                </entry>
+            </listValues>
+            <matrixColumns xsId="81"/>
+            <versionable>false</versionable>
+            <defaultValue>None</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="82">
+            <id>16</id>
+            <version>0</version>
+            <auditable xsId="83">
+                <created class="sql-timestamp" xsId="84">2019-04-08 10:26:23.399</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>BILLING_CYCLE</code>
+            <description>BILLING_CYCLE</description>
+            <disabled>false</disabled>
+            <fieldType>STRING</fieldType>
+            <appliesTo>BillingCycle</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="85"/>
+            <matrixColumns xsId="86"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <maxValue>256</maxValue>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="87">
+            <id>17</id>
+            <version>0</version>
+            <auditable xsId="88">
+                <created class="sql-timestamp" xsId="89">2019-04-08 10:26:23.401</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>TAX</code>
+            <description>TAX</description>
+            <disabled>false</disabled>
+            <fieldType>STRING</fieldType>
+            <appliesTo>Tax</appliesTo>
+            <valueRequired>true</valueRequired>
+            <listValues xsId="90"/>
+            <matrixColumns xsId="91"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <maxValue>256</maxValue>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="92">
+            <id>18</id>
+            <version>0</version>
+            <auditable xsId="93">
+                <created class="sql-timestamp" xsId="94">2019-04-08 10:26:23.498</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>INV_CAT</code>
+            <description>INV_CAT</description>
+            <disabled>false</disabled>
+            <fieldType>LONG</fieldType>
+            <appliesTo>InvoiceCategory</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="95"/>
+            <matrixColumns xsId="96"/>
+            <versionable>false</versionable>
+            <defaultValue>0</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="97">
+            <id>19</id>
+            <version>0</version>
+            <auditable xsId="98">
+                <created class="sql-timestamp" xsId="99">2019-04-08 10:26:23.5</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>INVOICE</code>
+            <description>INVOICE</description>
+            <disabled>false</disabled>
+            <fieldType>DATE</fieldType>
+            <appliesTo>Invoice</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="100"/>
+            <matrixColumns xsId="101"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="102">
+            <id>20</id>
+            <version>0</version>
+            <auditable xsId="103">
+                <created class="sql-timestamp" xsId="104">2019-04-08 10:26:23.504</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>ACCT_CODE</code>
+            <description>ACCT_CODE</description>
+            <disabled>false</disabled>
+            <fieldType>LONG</fieldType>
+            <appliesTo>AccountingCode</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="105"/>
+            <matrixColumns xsId="106"/>
+            <versionable>false</versionable>
+            <defaultValue>1</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="107">
+            <id>21</id>
+            <version>0</version>
+            <auditable xsId="108">
+                <created class="sql-timestamp" xsId="109">2019-04-08 10:26:23.548</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>FILTER</code>
+            <description>FILTER</description>
+            <disabled>false</disabled>
+            <fieldType>LONG</fieldType>
+            <appliesTo>Filter</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="110"/>
+            <matrixColumns xsId="111"/>
+            <versionable>false</versionable>
+            <defaultValue>0</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="112">
+            <id>22</id>
+            <version>0</version>
+            <auditable xsId="113">
+                <created class="sql-timestamp" xsId="114">2019-04-08 10:26:23.55</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>QUOTE</code>
+            <description>QUOTE</description>
+            <disabled>false</disabled>
+            <fieldType>LIST</fieldType>
+            <appliesTo>Quote</appliesTo>
+            <valueRequired>true</valueRequired>
+            <listValues xsId="115">
+                <entry>
+                    <string>Debit</string>
+                    <string>Refund</string>
+                </entry>
+                <entry>
+                    <string>Credit</string>
+                    <string>Payment</string>
+                </entry>
+            </listValues>
+            <matrixColumns xsId="116"/>
+            <versionable>false</versionable>
+            <defaultValue>Credit</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="117">
+            <id>23</id>
+            <version>0</version>
+            <auditable xsId="118">
+                <created class="sql-timestamp" xsId="119">2019-04-08 10:26:23.552</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>ORDER</code>
+            <description>ORDER</description>
+            <disabled>false</disabled>
+            <fieldType>ENTITY</fieldType>
+            <appliesTo>Order</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="120"/>
+            <matrixColumns xsId="121"/>
+            <versionable>false</versionable>
+            <defaultValue/>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <entityClazz>org.meveo.model.scripts.ScriptInstance</entityClazz>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="122">
+            <id>24</id>
+            <version>0</version>
+            <auditable xsId="123">
+                <created class="sql-timestamp" xsId="124">2019-04-08 10:26:23.554</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>USER</code>
+            <description>USER</description>
+            <disabled>false</disabled>
+            <fieldType>LIST</fieldType>
+            <appliesTo>User</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="125">
+                <entry>
+                    <string>NO</string>
+                    <string>NO</string>
+                </entry>
+                <entry>
+                    <string>YES</string>
+                    <string>YES</string>
+                </entry>
+            </listValues>
+            <matrixColumns xsId="126"/>
+            <versionable>false</versionable>
+            <defaultValue>YES</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="127">
+            <id>25</id>
+            <version>0</version>
+            <auditable xsId="128">
+                <created class="sql-timestamp" xsId="129">2019-04-08 10:26:23.555</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>JOB</code>
+            <description>JOB</description>
+            <disabled>false</disabled>
+            <fieldType>LIST</fieldType>
+            <appliesTo>JobInstance</appliesTo>
+            <valueRequired>true</valueRequired>
+            <listValues xsId="130">
+                <entry>
+                    <string>DIRECTDEBIT</string>
+                    <string>Sepa</string>
+                </entry>
+                <entry>
+                    <string>CARD</string>
+                    <string>Card</string>
+                </entry>
+            </listValues>
+            <matrixColumns xsId="131"/>
+            <versionable>false</versionable>
+            <defaultValue>CARD</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="132">
+            <id>26</id>
+            <version>0</version>
+            <auditable xsId="133">
+                <created class="sql-timestamp" xsId="134">2019-04-08 10:26:23.557</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>DISCOUNT_PLAN_INSTANCE</code>
+            <description>DISCOUNT_PLAN_INSTANCE</description>
+            <disabled>false</disabled>
+            <fieldType>ENTITY</fieldType>
+            <appliesTo>DiscountPlanInstance</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="135"/>
+            <matrixColumns xsId="136"/>
+            <versionable>false</versionable>
+            <defaultValue/>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <entityClazz>org.meveo.model.scripts.ScriptInstance</entityClazz>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="137">
+            <id>27</id>
+            <version>0</version>
+            <auditable xsId="138">
+                <created class="sql-timestamp" xsId="139">2019-04-08 10:26:23.558</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>DISCOUNT_PLAN</code>
+            <description>DISCOUNT_PLAN</description>
+            <disabled>false</disabled>
+            <fieldType>DATE</fieldType>
+            <appliesTo>DiscountPlan</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="140"/>
+            <matrixColumns xsId="141"/>
+            <versionable>false</versionable>
+            <defaultValue/>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="142">
+            <id>28</id>
+            <version>0</version>
+            <auditable xsId="143">
+                <created class="sql-timestamp" xsId="144">2019-04-08 10:26:23.564</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>OFFER_CATEGORY</code>
+            <description>OFFER_CATEGORY</description>
+            <disabled>false</disabled>
+            <fieldType>ENTITY</fieldType>
+            <appliesTo>OfferTemplateCategory</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="145"/>
+            <matrixColumns xsId="146"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <entityClazz>org.meveo.model.payments.PaymentGateway</entityClazz>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="147">
+            <id>29</id>
+            <version>0</version>
+            <auditable xsId="148">
+                <created class="sql-timestamp" xsId="149">2019-04-08 10:26:23.566</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>INV_SUB_CAT</code>
+            <description>INV_SUB_CAT</description>
+            <disabled>false</disabled>
+            <fieldType>DATE</fieldType>
+            <appliesTo>InvoiceSubCategory</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="150"/>
+            <matrixColumns xsId="151"/>
+            <versionable>false</versionable>
+            <defaultValue/>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="152">
+            <id>30</id>
+            <version>0</version>
+            <auditable xsId="153">
+                <created class="sql-timestamp" xsId="154">2019-04-08 10:26:23.568</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>ACC_OP</code>
+            <description>ACC_OP</description>
+            <disabled>false</disabled>
+            <fieldType>LIST</fieldType>
+            <appliesTo>AccountOperation</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="155">
+                <entry>
+                    <string>NO</string>
+                    <string>NO</string>
+                </entry>
+                <entry>
+                    <string>YES</string>
+                    <string>YES</string>
+                </entry>
+            </listValues>
+            <matrixColumns xsId="156"/>
+            <versionable>false</versionable>
+            <defaultValue>YES</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="157">
+            <id>31</id>
+            <version>0</version>
+            <auditable xsId="158">
+                <created class="sql-timestamp" xsId="159">2019-04-08 10:26:23.57</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>BILLING_RUN</code>
+            <description>BILLING_RUN</description>
+            <disabled>false</disabled>
+            <fieldType>LONG</fieldType>
+            <appliesTo>BillingRun</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="160"/>
+            <matrixColumns xsId="161"/>
+            <versionable>false</versionable>
+            <defaultValue>1</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="162">
+            <id>32</id>
+            <version>0</version>
+            <auditable xsId="163">
+                <created class="sql-timestamp" xsId="164">2019-04-08 10:26:23.572</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>INVOICE_TYPE</code>
+            <description>INVOICE_TYPE</description>
+            <disabled>false</disabled>
+            <fieldType>LIST</fieldType>
+            <appliesTo>InvoiceType</appliesTo>
+            <valueRequired>true</valueRequired>
+            <listValues xsId="165">
+                <entry>
+                    <string>AO</string>
+                    <string>AO</string>
+                </entry>
+                <entry>
+                    <string>CA</string>
+                    <string>CA</string>
+                </entry>
+            </listValues>
+            <matrixColumns xsId="166"/>
+            <versionable>false</versionable>
+            <defaultValue>CA</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="167">
+            <id>33</id>
+            <version>0</version>
+            <auditable xsId="168">
+                <created class="sql-timestamp" xsId="169">2019-04-08 10:26:23.997</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>DISCOUNT_PLAN_ITEM</code>
+            <description>DISCOUNT_PLAN_ITEM</description>
+            <disabled>false</disabled>
+            <fieldType>LONG</fieldType>
+            <appliesTo>DiscountPlanItem</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="170"/>
+            <matrixColumns xsId="171"/>
+            <versionable>false</versionable>
+            <defaultValue>1</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="172">
+            <id>34</id>
+            <version>0</version>
+            <auditable xsId="173">
+                <created class="sql-timestamp" xsId="174">2019-04-08 10:26:23.999</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>OTH_TR</code>
+            <description>OTH_TR</description>
+            <disabled>false</disabled>
+            <fieldType>LONG</fieldType>
+            <appliesTo>OtherTransaction</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="175"/>
+            <matrixColumns xsId="176"/>
+            <versionable>false</versionable>
+            <defaultValue>0</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="177">
+            <id>35</id>
+            <version>0</version>
+            <auditable xsId="178">
+                <created class="sql-timestamp" xsId="179">2019-04-08 10:26:24.002</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>REPORT</code>
+            <description>REPORT</description>
+            <disabled>false</disabled>
+            <fieldType>ENTITY</fieldType>
+            <appliesTo>ReportExtract</appliesTo>
+            <valueRequired>true</valueRequired>
+            <listValues xsId="180"/>
+            <matrixColumns xsId="181"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <entityClazz>org.meveo.model.generic.wf.GenericWorkflow</entityClazz>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="182">
+            <id>36</id>
+            <version>0</version>
+            <auditable xsId="183">
+                <created class="sql-timestamp" xsId="184">2019-04-08 10:26:24.07</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>BUNDLE</code>
+            <description>BUNDLE</description>
+            <disabled>false</disabled>
+            <fieldType>LONG</fieldType>
+            <appliesTo>BundleTemplate</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="185"/>
+            <matrixColumns xsId="186"/>
+            <versionable>false</versionable>
+            <defaultValue>0</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="187">
+            <id>37</id>
+            <version>0</version>
+            <auditable xsId="188">
+                <created class="sql-timestamp" xsId="189">2019-04-08 10:26:24.072</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>PAYMENT_SCH_INSTANCE</code>
+            <description>PAYMENT_SCH_INSTANCE</description>
+            <disabled>false</disabled>
+            <fieldType>DATE</fieldType>
+            <appliesTo>PaymentScheduleInstance</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="190"/>
+            <matrixColumns xsId="191"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <maxValue>50</maxValue>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="192">
+            <id>38</id>
+            <version>0</version>
+            <auditable xsId="193">
+                <created class="sql-timestamp" xsId="194">2019-04-08 10:26:24.074</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>DDREQ_BUILDER</code>
+            <description>DDREQ_BUILDER</description>
+            <disabled>false</disabled>
+            <fieldType>STRING</fieldType>
+            <appliesTo>DDRequestBuilder</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="195"/>
+            <matrixColumns xsId="196"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <maxValue>50</maxValue>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="197">
+            <id>39</id>
+            <version>0</version>
+            <auditable xsId="198">
+                <created class="sql-timestamp" xsId="199">2019-04-08 10:26:24.076</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>PAYMENT_SCH</code>
+            <description>PAYMENT_SCH</description>
+            <disabled>false</disabled>
+            <fieldType>LONG</fieldType>
+            <appliesTo>PaymentScheduleTemplate</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="200"/>
+            <matrixColumns xsId="201"/>
+            <versionable>false</versionable>
+            <defaultValue>1</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="202">
+            <id>40</id>
+            <version>0</version>
+            <auditable xsId="203">
+                <created class="sql-timestamp" xsId="204">2019-04-08 10:26:24.176</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>waitingMillis</code>
+            <description>Waiting before next launch (ms)</description>
+            <disabled>false</disabled>
+            <fieldType>LONG</fieldType>
+            <appliesTo>JobInstance_ReportExtractJob</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="205"/>
+            <matrixColumns xsId="206"/>
+            <versionable>false</versionable>
+            <defaultValue>0</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="207">
+            <id>41</id>
+            <version>0</version>
+            <auditable xsId="208">
+                <created class="sql-timestamp" xsId="209">2019-04-08 10:26:24.178</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>endDate</code>
+            <description>End date</description>
+            <disabled>false</disabled>
+            <fieldType>DATE</fieldType>
+            <appliesTo>JobInstance_ReportExtractJob</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="210"/>
+            <matrixColumns xsId="211"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="212">
+            <id>42</id>
+            <version>0</version>
+            <auditable xsId="213">
+                <created class="sql-timestamp" xsId="214">2019-04-08 10:26:24.18</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>Demo1</code>
+            <description>Demo1</description>
+            <disabled>false</disabled>
+            <fieldType>LONG</fieldType>
+            <appliesTo>Demo1</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="215"/>
+            <matrixColumns xsId="216"/>
+            <versionable>false</versionable>
+            <defaultValue>1</defaultValue>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="217">
+            <id>43</id>
+            <version>0</version>
+            <auditable xsId="218">
+                <created class="sql-timestamp" xsId="219">2019-04-08 10:26:24.182</created>
+                <creator>applicationInitializer</creator>
+            </auditable>
+            <code>Demo2</code>
+            <description>Demo2</description>
+            <disabled>false</disabled>
+            <fieldType>DATE</fieldType>
+            <appliesTo>Demo2</appliesTo>
+            <valueRequired>false</valueRequired>
+            <listValues xsId="220"/>
+            <matrixColumns xsId="221"/>
+            <versionable>false</versionable>
+            <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+            <protectable>false</protectable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+        </org.meveo.model.crm.CustomFieldTemplate>
+
+    </data>
+</meveoExport>

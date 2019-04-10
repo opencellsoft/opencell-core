@@ -47,11 +47,12 @@ import org.meveo.model.payments.CustomerAccount;
  * Customer
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @WorkflowedEntity
-@CustomFieldEntity(cftCodePrefix = "CUST", inheritCFValuesFrom = "seller")
+@CustomFieldEntity(cftCodePrefix = "Customer", inheritCFValuesFrom = "seller")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "crm_customer")

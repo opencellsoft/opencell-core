@@ -20,10 +20,11 @@ import org.meveo.model.ICustomFieldEntity;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "PRODUCT")
+@CustomFieldEntity(cftCodePrefix = "ProductTemplate")
 @DiscriminatorValue("PRODUCT")
 @NamedQueries({ @NamedQuery(name = "ProductTemplate.countActive", query = "SELECT COUNT(*) FROM ProductTemplate WHERE lifeCycleStatus='ACTIVE' "),
         @NamedQuery(name = "ProductTemplate.countDisabled", query = "SELECT COUNT(*) FROM ProductTemplate WHERE lifeCycleStatus<>'ACTIVE'"),

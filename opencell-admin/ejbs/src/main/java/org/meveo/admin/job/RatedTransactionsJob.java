@@ -39,6 +39,7 @@ import org.meveo.service.job.Job;
 /**
  * The Class RatedTransactionsJob create RatedTransaction for all opened WalletOperations.
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
 @Stateless
@@ -65,7 +66,7 @@ public class RatedTransactionsJob extends Job {
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("nbRuns");
-        customFieldNbRuns.setAppliesTo("JOB_RatedTransactionsJob");
+        customFieldNbRuns.setAppliesTo("JobInstance_RatedTransactionsJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -76,7 +77,7 @@ public class RatedTransactionsJob extends Job {
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("waitingMillis");
-        customFieldNbWaiting.setAppliesTo("JOB_RatedTransactionsJob");
+        customFieldNbWaiting.setAppliesTo("JobInstance_RatedTransactionsJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
@@ -89,7 +90,7 @@ public class RatedTransactionsJob extends Job {
         
         CustomFieldTemplate cfActivateAggregation = new CustomFieldTemplate();
         cfActivateAggregation.setCode("activateAggregation");
-        cfActivateAggregation.setAppliesTo("JOB_RatedTransactionsJob");
+        cfActivateAggregation.setAppliesTo("JobInstance_RatedTransactionsJob");
         cfActivateAggregation.setActive(true);
         cfActivateAggregation.setDescription(resourceMessages.getString("ratedTransactionsJob.activateAggregation"));
         cfActivateAggregation.setFieldType(CustomFieldTypeEnum.BOOLEAN);
@@ -100,7 +101,7 @@ public class RatedTransactionsJob extends Job {
         
         CustomFieldTemplate cfGlobalAggregation = new CustomFieldTemplate();
         cfGlobalAggregation.setCode("globalAggregation");
-        cfGlobalAggregation.setAppliesTo("JOB_RatedTransactionsJob");
+        cfGlobalAggregation.setAppliesTo("JobInstance_RatedTransactionsJob");
         cfGlobalAggregation.setActive(true);
         cfGlobalAggregation.setDescription(resourceMessages.getString("ratedTransactionsJob.globalAggregation"));
         cfGlobalAggregation.setFieldType(CustomFieldTypeEnum.BOOLEAN);
@@ -111,7 +112,7 @@ public class RatedTransactionsJob extends Job {
         
         CustomFieldTemplate cfAggregateByDay = new CustomFieldTemplate();
         cfAggregateByDay.setCode("aggregateByDay");
-        cfAggregateByDay.setAppliesTo("JOB_RatedTransactionsJob");
+        cfAggregateByDay.setAppliesTo("JobInstance_RatedTransactionsJob");
         cfAggregateByDay.setActive(true);
         cfAggregateByDay.setDescription(resourceMessages.getString("ratedTransactionsJob.aggregateByDay"));
         cfAggregateByDay.setFieldType(CustomFieldTypeEnum.BOOLEAN);
@@ -130,7 +131,7 @@ public class RatedTransactionsJob extends Job {
         
         CustomFieldTemplate cfAggregationLevel = new CustomFieldTemplate();
         cfAggregationLevel.setCode("aggregationLevel");
-        cfAggregationLevel.setAppliesTo("JOB_RatedTransactionsJob");
+        cfAggregationLevel.setAppliesTo("JobInstance_RatedTransactionsJob");
         cfAggregationLevel.setActive(true);
         cfAggregationLevel.setDescription(resourceMessages.getString("ratedTransactionsJob.aggregationLevel"));
         cfAggregationLevel.setFieldType(CustomFieldTypeEnum.LIST);
@@ -142,7 +143,7 @@ public class RatedTransactionsJob extends Job {
         
         CustomFieldTemplate cfCriteriaOrder = new CustomFieldTemplate();
         cfCriteriaOrder.setCode("aggregateByOrder");
-        cfCriteriaOrder.setAppliesTo("JOB_RatedTransactionsJob");
+        cfCriteriaOrder.setAppliesTo("JobInstance_RatedTransactionsJob");
         cfCriteriaOrder.setActive(true);
         cfCriteriaOrder.setDescription(resourceMessages.getString("ratedTransactionsJob.aggregateByOrder"));
         cfCriteriaOrder.setFieldType(CustomFieldTypeEnum.BOOLEAN);
@@ -153,7 +154,7 @@ public class RatedTransactionsJob extends Job {
         
         CustomFieldTemplate cfCriteriaParam1 = new CustomFieldTemplate();
         cfCriteriaParam1.setCode("aggregateByParam1");
-        cfCriteriaParam1.setAppliesTo("JOB_RatedTransactionsJob");
+        cfCriteriaParam1.setAppliesTo("JobInstance_RatedTransactionsJob");
         cfCriteriaParam1.setActive(true);
         cfCriteriaParam1.setDescription(resourceMessages.getString("ratedTransactionsJob.aggregateByParam1"));
         cfCriteriaParam1.setFieldType(CustomFieldTypeEnum.BOOLEAN);
@@ -164,7 +165,7 @@ public class RatedTransactionsJob extends Job {
         
         CustomFieldTemplate cfCriteriaParam2 = new CustomFieldTemplate();
         cfCriteriaParam2.setCode("aggregateByParam2");
-        cfCriteriaParam2.setAppliesTo("JOB_RatedTransactionsJob");
+        cfCriteriaParam2.setAppliesTo("JobInstance_RatedTransactionsJob");
         cfCriteriaParam2.setActive(true);
         cfCriteriaParam2.setDescription(resourceMessages.getString("ratedTransactionsJob.aggregateByParam2"));
         cfCriteriaParam2.setFieldType(CustomFieldTypeEnum.BOOLEAN);
@@ -175,7 +176,7 @@ public class RatedTransactionsJob extends Job {
         
         CustomFieldTemplate cfCriteriaParam3 = new CustomFieldTemplate();
         cfCriteriaParam3.setCode("aggregateByParam3");
-        cfCriteriaParam3.setAppliesTo("JOB_RatedTransactionsJob");
+        cfCriteriaParam3.setAppliesTo("JobInstance_RatedTransactionsJob");
         cfCriteriaParam3.setActive(true);
         cfCriteriaParam3.setDescription(resourceMessages.getString("ratedTransactionsJob.aggregateByParam3"));
         cfCriteriaParam3.setFieldType(CustomFieldTypeEnum.BOOLEAN);
@@ -186,7 +187,7 @@ public class RatedTransactionsJob extends Job {
         
         CustomFieldTemplate cfCriteriaExtra = new CustomFieldTemplate();
         cfCriteriaExtra.setCode("aggregateByExtraParam");
-        cfCriteriaExtra.setAppliesTo("JOB_RatedTransactionsJob");
+        cfCriteriaExtra.setAppliesTo("JobInstance_RatedTransactionsJob");
         cfCriteriaExtra.setActive(true);
         cfCriteriaExtra.setDescription(resourceMessages.getString("ratedTransactionsJob.aggregateByExtraParam"));
         cfCriteriaExtra.setFieldType(CustomFieldTypeEnum.BOOLEAN);

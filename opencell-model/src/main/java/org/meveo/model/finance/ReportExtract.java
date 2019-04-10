@@ -39,10 +39,11 @@ import org.meveo.model.scripts.ScriptInstance;
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0
- * @lastModifiedVersion 5.1
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "REPORT")
+@CustomFieldEntity(cftCodePrefix = "ReportExtract")
 @Table(name = "dwh_report_extract", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dwh_report_extract_seq"), })
