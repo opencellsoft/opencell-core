@@ -64696,7 +64696,7 @@
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="password" description="password"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>CUST</appliesTo>
+  <appliesTo>Customer</appliesTo>
   <storageType>SINGLE</storageType>
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -64710,7 +64710,7 @@
            <moduleItems>
 		<customFieldTemplate code="password" description="password">
 		<fieldType>STRING</fieldType>
-		<appliesTo>CUST</appliesTo>
+		<appliesTo>Customer</appliesTo>
 		<storageType>SINGLE</storageType>
 		</customFieldTemplate>
 		</moduleItems>

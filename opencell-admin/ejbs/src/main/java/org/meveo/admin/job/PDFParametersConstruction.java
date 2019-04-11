@@ -50,9 +50,9 @@ import net.sf.jasperreports.engine.JRParameter;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
+ *
  */
 @Stateless
 public class PDFParametersConstruction {
@@ -115,7 +115,9 @@ public class PDFParametersConstruction {
             for (String key : baCustomFields.keySet()) {
                 parameters.put(key, baCustomFields.get(key));
             }
+
             parameters.put(JRParameter.REPORT_LOCALE, getLocal(invoice));
+
             return parameters;
         } catch (Exception e) {
             log.error("failed to construct parameters ", e);

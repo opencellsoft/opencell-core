@@ -61,12 +61,14 @@ import org.meveo.model.finance.RevenueRecognitionRule;
  * Charge template/definition
  * 
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ModuleItem
 @ObservableEntity
 @Cacheable
-@CustomFieldEntity(cftCodePrefix = "CHARGE")
+@CustomFieldEntity(cftCodePrefix = "ChargeTemplate")
 @ExportIdentifier({ "code" })
 @Table(name = "cat_charge_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

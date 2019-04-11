@@ -415,6 +415,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             // If tax calculation is done on subcategory level, evaluate tax again in case it was changed
             if (calculateTaxOnSubCategoryLevel) {
                 Tax tax = null;
+                
+                //use Tax selected at rating
+                if ((scAggregate.getTaxPercent() != null) ) {
+            		tax= scAggregate.getTax();
+                }
 
                 // If there is a taxScript in invoiceSubCategory and script is applicable, use it to compute external taxes
                 if (calculateExternalTax && (invoiceSubCategory.getTaxScript() != null)) {

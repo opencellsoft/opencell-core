@@ -15908,7 +15908,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_TEMPLATE_CODE" description="Template code">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>OFFER</appliesTo>\r
+            <appliesTo>OfferTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
@@ -15958,7 +15958,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_TEMPLATE_LABEL" description="Template label">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>OFFER</appliesTo>\r
+            <appliesTo>OfferTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
@@ -16012,7 +16012,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_NAME" description="Provider Address Name">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <defaultValue>${#Project#providerAddrName}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -16063,7 +16063,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_LINE1" description="Provider Address line 1">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <defaultValue>${#Project#providerAddrLine1}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -16114,7 +16114,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_LINE2" description="Provider Address line 2">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <defaultValue>${#Project#providerAddrLine2}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -16165,7 +16165,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_ZIP" description="Provider Address Zip code">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <defaultValue>${#Project#providerAddrZip}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -16216,7 +16216,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_CITY" description="Provider Address City">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <defaultValue>${#Project#providerAddrCity}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -16267,7 +16267,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_PHONE" description="Provider Address Phone">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <defaultValue>${#Project#providerAddrPhone}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -16318,7 +16318,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_EMAIL" description="Provider Address Email">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SELLER</appliesTo>\r
+            <appliesTo>Seller</appliesTo>\r
             <defaultValue>${#Project#providerAddrEmail}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -16376,7 +16376,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:findCustomFieldTemplate>
         <customFieldTemplateCode>CF_${#Project#templateCode}_PRICE_OS</customFieldTemplateCode>
-        <appliesTo>SERVICE</appliesTo>
+        <appliesTo>ServiceTemplate</appliesTo>
       </ws:findCustomFieldTemplate>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -16416,7 +16416,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_PRICE_OS" description="One-off price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>30</defaultValue>\r
@@ -16467,7 +16467,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_OS" description="Volume based pricing">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
@@ -16518,7 +16518,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_PRICE_REC" description="Recurring price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>10</defaultValue>\r
@@ -16569,7 +16569,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_REC" description="Volume based pricing">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
@@ -16621,7 +16621,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_${#Project#templateCode}_PRICE_USG" description="Usage price per unit">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
 		  <defaultValue>0.1</defaultValue>
@@ -16672,7 +16672,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_USG" description="Volume based pricing">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
@@ -16723,7 +16723,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_PRICE_PRD" description="Product price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>PRODUCT</appliesTo>\r
+            <appliesTo>ProductTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>20</defaultValue>\r
@@ -16774,7 +16774,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_PLAN_QUANTITY_USG" description="Quantity included in plan">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>100</defaultValue>\r
@@ -16825,7 +16825,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_10TIERS_QUANTITY_USG" description="Thresholds for 10TIERS">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
@@ -16876,7 +16876,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_10TIERS_PRICE_USG" description="Prices for 10TIERS">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
@@ -16931,7 +16931,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION" description="Trigger commissioning">\r
             <fieldType>LIST</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>false</versionable>\r
@@ -16993,7 +16993,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_COMMISSION_PARTNER" description="Commissioned partner account code">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <defaultValue>${#Project#provider}.partner.${#Project#templateCode}</defaultValue>\r
@@ -17044,7 +17044,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_COMMISSION_RATE" description="Commission rate (%)">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <defaultValue>10</defaultValue>\r
@@ -17104,7 +17104,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_PRICE_OS" description="One-off price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>30</defaultValue>\r
@@ -17155,7 +17155,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_OS" description="Volume based pricing">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
@@ -17206,7 +17206,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_PRICE_REC" description="Recurring price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>10</defaultValue>\r
@@ -17257,7 +17257,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_REC" description="Volume based pricing">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
@@ -17308,7 +17308,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_PRICE_USG" description="Usage price per unit">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>0.1</defaultValue>\r
@@ -17359,7 +17359,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_USG" description="Volume based pricing">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
@@ -17410,7 +17410,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_PRICE_PRD" description="Product price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>PRODUCT_INSTANCE</appliesTo>\r
+            <appliesTo>ProductInstance</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>20</defaultValue>\r
@@ -17461,7 +17461,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_PLAN_QUANTITY_USG" description="Quantity included in plan">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>100</defaultValue>\r
@@ -17512,7 +17512,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_10TIERS_QUANTITY_USG" description="Thresholds for 10TIERS">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
@@ -17563,7 +17563,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_10TIERS_PRICE_USG" description="Prices for 10TIERS">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
@@ -17618,7 +17618,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION" description="Trigger commissioning">\r
             <fieldType>LIST</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>false</versionable>\r
@@ -17680,7 +17680,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_COMMISSION_PARTNER" description="Commissioned partner account code">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <defaultValue>${#Project#provider}.partner.${#Project#templateCode}</defaultValue>\r
@@ -17731,7 +17731,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateCustomFieldTemplate>\r
          <customField code="CF_${#Project#templateCode}_COMMISSION_RATE" description="Commission rate (%)">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <defaultValue>10</defaultValue>\r
@@ -23561,8 +23561,8 @@ public class InvoiceCreateScript extends Script {
                   </script>
                   <customFieldTemplate code="MSD_USERNAME" description="Username for Microsoft Dynamics">
                      <fieldType>STRING</fieldType>
-                     <accountLevel>PROVIDER</accountLevel>
-                     <appliesTo>PROVIDER</appliesTo>
+                     <accountLevel>Provider</accountLevel>
+                     <appliesTo>Provider</appliesTo>
                      <storageType>SINGLE</storageType>
                      <valueRequired>false</valueRequired>
                      <versionable>false</versionable>
@@ -23575,8 +23575,8 @@ public class InvoiceCreateScript extends Script {
                   </customFieldTemplate>
                   <customFieldTemplate code="MSD_PASSWORD" description="Password for Microsoft Dynamics">
                      <fieldType>STRING</fieldType>
-                     <accountLevel>PROVIDER</accountLevel>
-                     <appliesTo>PROVIDER</appliesTo>
+                     <accountLevel>Provider</accountLevel>
+                     <appliesTo>Provider</appliesTo>
                      <storageType>SINGLE</storageType>
                      <valueRequired>false</valueRequired>
                      <versionable>false</versionable>
@@ -23589,8 +23589,8 @@ public class InvoiceCreateScript extends Script {
                   </customFieldTemplate>
                   <customFieldTemplate code="MSD_URL" description="URL for Microsoft Dynamics">
                      <fieldType>STRING</fieldType>
-                     <accountLevel>PROVIDER</accountLevel>
-                     <appliesTo>PROVIDER</appliesTo>
+                     <accountLevel>Provider</accountLevel>
+                     <appliesTo>Provider</appliesTo>
                      <storageType>SINGLE</storageType>
                      <valueRequired>false</valueRequired>
                      <versionable>false</versionable>
@@ -25318,7 +25318,7 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
                </script>
                 <customFieldTemplate code="PROV_CUSTOM_INV_XML_SCRIPT_CODE" description="Custom invoice XML Script code">
                   <fieldType>STRING</fieldType>                  
-                  <appliesTo>PROVIDER</appliesTo>                 
+                  <appliesTo>Provider</appliesTo>
                   <storageType>SINGLE</storageType>
                   <valueRequired>false</valueRequired>                             
                   <cacheValue>true</cacheValue>                  
@@ -25635,7 +25635,7 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
                </script>
                 <customFieldTemplate code="PROV_CUSTOM_INV_XML_SCRIPT_CODE" description="Custom invoice XML Script code">
                   <fieldType>STRING</fieldType>                  
-                  <appliesTo>PROVIDER</appliesTo>                 
+                  <appliesTo>Provider</appliesTo>
                   <storageType>SINGLE</storageType>
                   <valueRequired>false</valueRequired>                             
                   <cacheValue>true</cacheValue>  
@@ -26953,7 +26953,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
          
          <actionCode>BTN_ADVANCE_WF</actionCode>
          
-         <appliesTo>CUST</appliesTo>
+         <appliesTo>Customer</appliesTo>
       </ws:findAction>
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -27013,7 +27013,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
          \r
          <customField code="CF_REBATE_PRICE_REC" description="Rebate amount">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
 		  <defaultValue>20</defaultValue>
@@ -27065,8 +27065,8 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
          \r
          <customField code="CF_REBATE_DURATION_SELECT" description="Rebate duration (months)">\r
             <fieldType>LIST</fieldType>
-            <accountLevel>SERVICE</accountLevel>
-            <appliesTo>SERVICE</appliesTo>
+            <accountLevel>ServiceTemplate</accountLevel>
+            <appliesTo>ServiceTemplate</appliesTo>
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>false</versionable>\r
@@ -27136,7 +27136,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
          \r
          <customField code="CF_REBATE_PRICE_REC" description="Rebate amount">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
 		  <defaultValue>20</defaultValue>
@@ -27188,8 +27188,8 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
          \r
          <customField code="CF_REBATE_DURATION_SELECT" description="Rebate duration (months)">\r
             <fieldType>LIST</fieldType>
-            <accountLevel>SERVICE</accountLevel>
-            <appliesTo>SERVICE_INSTANCE</appliesTo>
+            <accountLevel>ServiceTemplate</accountLevel>
+            <appliesTo>ServiceInstance</appliesTo>
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>false</versionable>\r
@@ -45460,7 +45460,7 @@ public class ForgotPassword extends ModuleScript{
          \r
          <customField code="CF_SERVICE_PRICE_OS" description="Price at service level">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
 		  <defaultValue>10</defaultValue>
@@ -45512,7 +45512,7 @@ public class ForgotPassword extends ModuleScript{
          \r
          <customField code="CF_OFFER_PRICE_OS" description="Price at offer level">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>OFFER</appliesTo>\r
+            <appliesTo>OfferTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
 		  <defaultValue>20</defaultValue>
@@ -45564,7 +45564,7 @@ public class ForgotPassword extends ModuleScript{
          \r
          <customField code="CF_OFFER_PRICE_OS" description="Price at subscription level">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SUB</appliesTo>\r
+            <appliesTo>Subscription</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
 		  <defaultValue>22</defaultValue>
@@ -57705,7 +57705,7 @@ select
          \r
          <customField code="CF_MQ_MRR_OFFER_LABELS" description="MRR Offer Labels">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
+            <appliesTo>Provider</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <maxValue>1000</maxValue>
@@ -59801,7 +59801,7 @@ select
    <soapenv:Body>
       <ws:findCustomFieldTemplate>
         <customFieldTemplateCode>CF_TICKETS_SEQ</customFieldTemplateCode>
-        <appliesTo>PROVIDER</appliesTo>
+        <appliesTo>Provider</appliesTo>
       </ws:findCustomFieldTemplate>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -59842,8 +59842,8 @@ select
          \r
             <customField code="CF_TICKETS_SEQ" description="Ticket sequence">
                <fieldType>LONG</fieldType>
-               <accountLevel>PROVIDER</accountLevel>
-               <appliesTo>PROVIDER</appliesTo>
+               <accountLevel>Provider</accountLevel>
+               <appliesTo>Provider</appliesTo>
                <defaultValue>0</defaultValue>
                <storageType>SINGLE</storageType>
                <valueRequired>false</valueRequired>
@@ -59894,8 +59894,8 @@ select
          \r
             <customField code="CF_EVENTS_SEQ" description="Event sequence">
                <fieldType>LONG</fieldType>
-               <accountLevel>PROVIDER</accountLevel>
-               <appliesTo>PROVIDER</appliesTo>
+               <accountLevel>Provider</accountLevel>
+               <appliesTo>Provider</appliesTo>
                <defaultValue>0</defaultValue>
                <storageType>SINGLE</storageType>
                <valueRequired>false</valueRequired>
@@ -59955,8 +59955,8 @@ select
          \r
          <customField code="CF_${#Project#templateCode}_REC_SELECTOR_FLAT_Prorata_Subscription" description="Prorated at subscription">\r
                <fieldType>LIST</fieldType>
-               <accountLevel>SERVICE</accountLevel>
-               <appliesTo>SERVICE</appliesTo>
+               <accountLevel>ServiceTemplate</accountLevel>
+               <appliesTo>ServiceTemplate</appliesTo>
                <storageType>SINGLE</storageType>
                <valueRequired>true</valueRequired>
                <versionable>false</versionable>
@@ -60019,8 +60019,8 @@ select
          \r
            <customField code="CF_${#Project#templateCode}_REC_SELECTOR_FLAT_Prorata_Termination" description="Prorated at Termination">
                <fieldType>LIST</fieldType>
-               <accountLevel>SERVICE</accountLevel>
-               <appliesTo>SERVICE</appliesTo>
+               <accountLevel>ServiceTemplate</accountLevel>
+               <appliesTo>ServiceTemplate</appliesTo>
                <storageType>SINGLE</storageType>
                <valueRequired>true</valueRequired>
                <versionable>false</versionable>
@@ -60083,8 +60083,8 @@ select
          \r
            <customField code="CF_${#Project#templateCode}_REC_SELECTOR_FLAT_Agreement" description="Agreement period">
                <fieldType>LIST</fieldType>
-               <accountLevel>SERVICE</accountLevel>
-               <appliesTo>SERVICE</appliesTo>
+               <accountLevel>ServiceTemplate</accountLevel>
+               <appliesTo>ServiceTemplate</appliesTo>
                <storageType>SINGLE</storageType>
                <valueRequired>true</valueRequired>
                <versionable>false</versionable>
@@ -60163,8 +60163,8 @@ select
          \r
             <customField code="CF_${#Project#templateCode}_REC_SELECTOR_FLAT_Discount" description="Discounted">
                <fieldType>LIST</fieldType>
-               <accountLevel>SERVICE</accountLevel>
-               <appliesTo>SERVICE</appliesTo>
+               <accountLevel>ServiceTemplate</accountLevel>
+               <appliesTo>ServiceTemplate</appliesTo>
                <storageType>SINGLE</storageType>
                <valueRequired>true</valueRequired>
                <versionable>false</versionable>
@@ -60227,7 +60227,7 @@ select
          \r
          <customField code="CF_${#Project#templateCode}_DISCOUNT_PRICE_REC" description="Discount amount">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>ServiceTemplate</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
 		  <defaultValue>0</defaultValue>

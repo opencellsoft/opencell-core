@@ -39,7 +39,8 @@ import org.meveo.service.job.Job;
 /**
  * The Class InvoicingJob launch invoicing for the available BillingRuns.
  * @author HORRI Khalid
- * @lastModifiedVersion 5.4
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class InvoicingJob extends Job {
@@ -67,7 +68,7 @@ public class InvoicingJob extends Job {
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("nbRuns");
-        customFieldNbRuns.setAppliesTo("JOB_InvoicingJob");
+        customFieldNbRuns.setAppliesTo("JobInstance_InvoicingJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -77,7 +78,7 @@ public class InvoicingJob extends Job {
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("waitingMillis");
-        customFieldNbWaiting.setAppliesTo("JOB_InvoicingJob");
+        customFieldNbWaiting.setAppliesTo("JobInstance_InvoicingJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
@@ -87,7 +88,7 @@ public class InvoicingJob extends Job {
 
         CustomFieldTemplate customFieldBR = new CustomFieldTemplate();
         customFieldBR.setCode("billingRuns");
-        customFieldBR.setAppliesTo("JOB_InvoicingJob");
+        customFieldBR.setAppliesTo("JobInstance_InvoicingJob");
         customFieldBR.setActive(true);
         customFieldBR.setDescription(resourceMessages.getString("jobExecution.billingRuns"));
         customFieldBR.setFieldType(CustomFieldTypeEnum.ENTITY);

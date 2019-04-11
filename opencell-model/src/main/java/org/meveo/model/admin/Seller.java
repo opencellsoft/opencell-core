@@ -65,13 +65,14 @@ import org.meveo.model.shared.ContactInformation;
  * @author akadid abdelmounaim
  * @author Khalid HORRI
  * @author Amine BEN AICHA
- * @lastModifiedVersion 5.3
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 
 @Entity
 @WorkflowedEntity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "SELLER", inheritCFValuesFrom = "seller", inheritFromProvider = true)
+@CustomFieldEntity(cftCodePrefix = "Seller", inheritCFValuesFrom = "seller", inheritFromProvider = true)
 @ExportIdentifier({ "code" })
 @Table(name = "crm_seller", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

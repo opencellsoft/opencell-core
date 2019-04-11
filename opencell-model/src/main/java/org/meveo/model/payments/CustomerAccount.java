@@ -61,11 +61,12 @@ import org.meveo.model.shared.ContactInformation;
  * Customer Account
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @WorkflowedEntity
-@CustomFieldEntity(cftCodePrefix = "CA", inheritCFValuesFrom = "customer")
+@CustomFieldEntity(cftCodePrefix = "CustomerAccount", inheritCFValuesFrom = "customer")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CA")
 @Table(name = "ar_customer_account")

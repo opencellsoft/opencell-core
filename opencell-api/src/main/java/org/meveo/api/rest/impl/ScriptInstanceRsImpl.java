@@ -85,7 +85,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
     }
 
     @Override
-    public Response execute(String scriptInstanceCode) {
+	public Response execute(String scriptInstanceCode) {
         Response.ResponseBuilder responseBuilder = null;
         Map<String, Object> result = null;
         Map<String, Object> context = new HashMap<String, Object>();
@@ -111,6 +111,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
             responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result);
             responseBuilder.entity(e.getLocalizedMessage());
         }
+
         return responseBuilder.build();
     }
 

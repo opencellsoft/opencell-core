@@ -34,10 +34,11 @@ import org.meveo.model.catalog.Calendar;
  *
  * @author anasseh
  * @since Opencell 5.2
- * @lastModifiedVersion 5.3
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "PAYMENT_SCH_INSTANCE", inheritCFValuesFrom = "paymentScheduleTemplate")
+@CustomFieldEntity(cftCodePrefix = "PaymentScheduleInstance", inheritCFValuesFrom = "paymentScheduleTemplate")
 @Table(name = "ar_payment_schedule_inst")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_payment_schedule_inst_seq"), })

@@ -34,8 +34,8 @@ import org.meveo.service.payments.impl.DDRequestBuilderService;
  * 
  * @author anasseh
  * @author Wassim Drira
- * @lastModifiedVersion 5.3
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class SepaRejectedTransactionsJob extends Job {
@@ -115,7 +115,7 @@ public class SepaRejectedTransactionsJob extends Job {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
         CustomFieldTemplate inputDirectoryCF = new CustomFieldTemplate();
         inputDirectoryCF.setCode("RejectSepaJob_inputDir");
-        inputDirectoryCF.setAppliesTo("JOB_SepaRejectedTransactionsJob");
+        inputDirectoryCF.setAppliesTo("JobInstance_SepaRejectedTransactionsJob");
         inputDirectoryCF.setActive(true);
         inputDirectoryCF.setDescription(resourceMessages.getString("flatFile.inputDir"));
         inputDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
@@ -126,7 +126,7 @@ public class SepaRejectedTransactionsJob extends Job {
 
         CustomFieldTemplate fileNamePrefixCF = new CustomFieldTemplate();
         fileNamePrefixCF.setCode("RejectSepaJob_fileNamePrefix");
-        fileNamePrefixCF.setAppliesTo("JOB_SepaRejectedTransactionsJob");
+        fileNamePrefixCF.setAppliesTo("JobInstance_SepaRejectedTransactionsJob");
         fileNamePrefixCF.setActive(true);
         fileNamePrefixCF.setDescription(resourceMessages.getString("flatFile.fileNamePrefix"));
         fileNamePrefixCF.setFieldType(CustomFieldTypeEnum.STRING);
@@ -137,7 +137,7 @@ public class SepaRejectedTransactionsJob extends Job {
 
         CustomFieldTemplate fileNameExtensionCF = new CustomFieldTemplate();
         fileNameExtensionCF.setCode("RejectSepaJob_fileNameExtension");
-        fileNameExtensionCF.setAppliesTo("JOB_SepaRejectedTransactionsJob");
+        fileNameExtensionCF.setAppliesTo("JobInstance_SepaRejectedTransactionsJob");
         fileNameExtensionCF.setActive(true);
         fileNameExtensionCF.setDescription(resourceMessages.getString("flatFile.fileNameExtension"));
         fileNameExtensionCF.setFieldType(CustomFieldTypeEnum.STRING);
@@ -148,7 +148,7 @@ public class SepaRejectedTransactionsJob extends Job {
 
         CustomFieldTemplate payentGatewayCF = new CustomFieldTemplate();
         payentGatewayCF.setCode("RejectSepaJob_ddRequestBuilder");
-        payentGatewayCF.setAppliesTo("JOB_SepaRejectedTransactionsJob");
+        payentGatewayCF.setAppliesTo("JobInstance_SepaRejectedTransactionsJob");
         payentGatewayCF.setActive(true);
         payentGatewayCF.setDescription("DDRequest builder");
         payentGatewayCF.setFieldType(CustomFieldTypeEnum.ENTITY);
@@ -162,7 +162,7 @@ public class SepaRejectedTransactionsJob extends Job {
 
         CustomFieldTemplate creditOrDebitCF = new CustomFieldTemplate();
         creditOrDebitCF.setCode("RejectSepaJob_creditOrDebit");
-        creditOrDebitCF.setAppliesTo("JOB_SepaRejectedTransactionsJob");
+        creditOrDebitCF.setAppliesTo("JobInstance_SepaRejectedTransactionsJob");
         creditOrDebitCF.setActive(true);
         creditOrDebitCF.setDefaultValue("Credit");
         creditOrDebitCF.setDescription(resourceMessages.getString("jobExecution.paymentOrRefund"));

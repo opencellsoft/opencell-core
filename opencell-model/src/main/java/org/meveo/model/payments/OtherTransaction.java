@@ -58,8 +58,8 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  * Other transaction
  *
  * @author Amine BEN AICHA
- * @lastModifiedVersion 5.3
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
@@ -67,7 +67,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @DiscriminatorColumn(name = "transaction_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_other_transaction_seq"), })
-@CustomFieldEntity(cftCodePrefix = "OTH_TR")
+@CustomFieldEntity(cftCodePrefix = "OtherTransaction")
 public class OtherTransaction extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
