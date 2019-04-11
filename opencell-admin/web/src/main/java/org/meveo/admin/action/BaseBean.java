@@ -983,39 +983,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                     return fullTextValue;
                 }
 
-                @Override
-                public List<T> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
-                    if (clazz != null && clazz == AccountEntity.class) {
-                        return listDistinctCrmAccounts(super.load(first, pageSize, sortField, sortOrder, loadingFilters));
-                    }
-                    return super.load(first, pageSize, sortField, sortOrder, loadingFilters);
-                }
-
             };
         }
 
         listFiltered = false;
 
         return dataModel;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<T> listDistinctCrmAccounts(List<T> fetchedAccountEntities) {
-        log.info(fetchedAccountEntities.size() + "");
-        List<AccountEntity> accountEntities = new ArrayList<>();
-        boolean accountWithCodeExists = false;
-        for (T ae : fetchedAccountEntities) {
-            AccountEntity aec = (AccountEntity) ae;
-            for (AccountEntity e : accountEntities) {
-                if (aec.getCode().equals(e.getCode())) {
-                    accountWithCodeExists = true;
-                }
-            }
-            if (!accountWithCodeExists) {
-                accountEntities.add(aec);
-            }
-        }
-        return (List<T>) accountEntities;
     }
 
     /**
