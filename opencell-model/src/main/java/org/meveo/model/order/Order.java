@@ -53,13 +53,14 @@ import org.meveo.model.shared.Address;
  * 
  * @author Andrius Karpavicius
  * @author Khalid HORRI
+ * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
 @Entity
 @WorkflowedEntity
 @ObservableEntity
 @ExportIdentifier({ "code" })
-@CustomFieldEntity(cftCodePrefix = "ORDER")
+@CustomFieldEntity(cftCodePrefix = "Order")
 @Table(name = "ord_order", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_order_seq"), })

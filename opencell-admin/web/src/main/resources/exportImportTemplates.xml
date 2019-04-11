@@ -223,13 +223,13 @@
             <entry>
                 <string>appliesTo_in</string>
                 <list>
-                    <string>OFFER</string>
-                    <string>SERVICE</string>
-                    <string>CHARGE</string>
-                    <string>OFFER_CATEGORY</string>
-                    <string>PRODUCT</string>
-                    <string>BUNDLE</string>
-                    <string>PRICEPLAN</string>
+                    <string>OfferTemplate</string>
+                    <string>ServiceTemplate</string>
+                    <string>ChargeTemplate</string>
+                    <string>OfferTemplateCategory</string>
+                    <string>ProductTemplate</string>
+                    <string>BundleTemplate</string>
+                    <string>PricePlanMatrix</string>
                 </list>
             </entry>
         </filters>

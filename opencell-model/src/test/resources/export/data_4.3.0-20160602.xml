@@ -24,7 +24,7 @@
             </script>
             <sourceTypeEnum>JAVA</sourceTypeEnum>
             <error>true</error>
-            <appliesTo>ACC</appliesTo>
+            <appliesTo>Access</appliesTo>
             <applicableOnEl>true</applicableOnEl>
             <label>AK Action</label>
         </org.meveo.model.scripts.EntityActionScript>
