@@ -33,6 +33,7 @@ import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -91,6 +92,9 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     @Convert(converter = CustomFieldValuesConverter.class)
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
+    
+    @Transient
+    private String cftAppliesTo;
 
     public Date getStartDate() {
         return startDate;
@@ -195,4 +199,13 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     public ICustomFieldEntity[] getParentCFEntities() {
         return new ICustomFieldEntity[] { subscription };
     }
+
+	public String getCftAppliesTo() {
+		return cftAppliesTo;
+	}
+
+	public void setCftAppliesTo(String cftAppliesTo) {
+		this.cftAppliesTo = cftAppliesTo;
+	}
+    
 }

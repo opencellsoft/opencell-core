@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -28,9 +29,7 @@ public class AppliesToValuesCalculator {
 		for (Subscription subscription : subscriptions) {
 
 			try {
-				String subscriptionAppliesToValue = CustomFieldTemplateService.calculateAppliesToValue(subscription);
-				subscription.setCftAppliesTo(subscriptionAppliesToValue);
-				allAtvs.add(subscriptionAppliesToValue);
+				addAppliesToValue(subscription);
 			} catch (CustomFieldException e) {
 				log.error(e.getLocalizedMessage(), e);
 			}
@@ -39,9 +38,7 @@ public class AppliesToValuesCalculator {
 			if (accessPoints != null) {
 				for (Access ap : accessPoints) {
 					try {
-						String atv = CustomFieldTemplateService.calculateAppliesToValue(ap);
-						ap.setCftAppliesTo(atv);
-						allAtvs.add(atv);
+						addAppliesToValue(ap);
 					} catch (CustomFieldException e) {
 						log.error(e.getLocalizedMessage(), e);
 					}
@@ -52,9 +49,7 @@ public class AppliesToValuesCalculator {
 			if (servicesInstances != null) {
 				for (ServiceInstance si : servicesInstances) {
 					try {
-						String atv = CustomFieldTemplateService.calculateAppliesToValue(si);
-						si.setCftAppliesTo(atv);
-						allAtvs.add(atv);
+						addAppliesToValue(si);
 					} catch (CustomFieldException e) {
 						log.error(e.getLocalizedMessage(), e);
 					}
@@ -65,9 +60,7 @@ public class AppliesToValuesCalculator {
 			if (productsInstances != null) {
 				for (ProductInstance pi : productsInstances) {
 					try {
-						String atv = CustomFieldTemplateService.calculateAppliesToValue(pi);
-						pi.setCftAppliesTo(atv);
-						allAtvs.add(atv);
+						addAppliesToValue(pi);
 					} catch (CustomFieldException e) {
 						log.error(e.getLocalizedMessage(), e);
 					}
@@ -76,6 +69,26 @@ public class AppliesToValuesCalculator {
 			}
 		}
 
+	}
+
+	private void addAppliesToValue(BusinessCFEntity businessCFEntity) throws CustomFieldException {
+		String appliesToValue = CustomFieldTemplateService.calculateAppliesToValue(businessCFEntity);
+		if (appliesToValue != null) {
+			businessCFEntity.setCftAppliesTo(appliesToValue);
+			allAtvs.add(appliesToValue);
+		} else {
+			businessCFEntity.setCftAppliesTo(null);
+		}
+	}
+
+	private void addAppliesToValue(Access access) throws CustomFieldException {
+		String appliesToValue = CustomFieldTemplateService.calculateAppliesToValue(access);
+		if (appliesToValue != null) {
+			access.setCftAppliesTo(appliesToValue);
+			allAtvs.add(appliesToValue);
+		} else {
+			access.setCftAppliesTo(null);
+		}
 	}
 
 	public Set<String> getAllAtvs() {

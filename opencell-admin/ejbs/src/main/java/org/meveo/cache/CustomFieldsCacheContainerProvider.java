@@ -498,9 +498,9 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         cftsByAppliesTo.clear();
     }
 
-	public Map<String, CustomFieldTemplate> getCustomFieldTemplates(Set<String> subscriptionsDistinctAtvs) {
+	public Map<String, CustomFieldTemplate> getCustomFieldTemplates(Set<String> appliesToValues) {
 		Map<String, CustomFieldTemplate> res = new HashMap<>();
-		for(String appliesTo : subscriptionsDistinctAtvs) {
+		for(String appliesTo : appliesToValues) {
 			CacheKeyStr key = new CacheKeyStr(currentUser.getProviderCode(), appliesTo);
 			if(key != null && cftsByAppliesTo.get(key) != null) {
 				res.putAll(cftsByAppliesTo.get(key));
@@ -509,8 +509,8 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         return res;
 	}
 
-	public void markNoCustomFieldTemplates(Set<String> subscriptionsDistinctAtvs) {
-		for(String appliesTo : subscriptionsDistinctAtvs) {
+	public void markNoCustomFieldTemplates(Set<String> appliesToValues) {
+		for(String appliesTo : appliesToValues) {
 			CacheKeyStr cacheKeyByAppliesTo = new CacheKeyStr(currentUser.getProviderCode(), appliesTo);
 	        if (!cftsByAppliesTo.getAdvancedCache().containsKey(cacheKeyByAppliesTo)) {
 	            cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, new HashMap<String, CustomFieldTemplate>());

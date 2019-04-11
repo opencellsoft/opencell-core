@@ -28,7 +28,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.TypeDef;
@@ -57,9 +56,6 @@ public abstract class BaseEntity implements Serializable, IEntity, IJPAVersioned
     @Version
     @Column(name = "version")
     private Integer version;
-    
-    @Transient
-    private String cftAppliesTo;
 
     public Long getId() {
         return id;
@@ -76,14 +72,6 @@ public abstract class BaseEntity implements Serializable, IEntity, IJPAVersioned
     public void setVersion(Integer version) {
         this.version = version;
     }
-
-    public String getCftAppliesTo() {
-		return cftAppliesTo;
-	}
-
-	public void setCftAppliesTo(String cftAppliesTo) {
-		this.cftAppliesTo = cftAppliesTo;
-	}
 
 	public boolean isTransient() {
         return id == null;

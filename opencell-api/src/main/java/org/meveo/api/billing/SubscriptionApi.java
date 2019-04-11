@@ -928,7 +928,7 @@ public class SubscriptionApi extends BaseApi {
             List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
             if (subscriptions != null) {
             	result.getSubscriptions().setSubscription(loadSubscriptionsDtos(subscriptions, inheritCF));
-            }
+            } 
         }
 
         return result;
@@ -977,7 +977,7 @@ public class SubscriptionApi extends BaseApi {
 			dto.setRenewalRule(new SubscriptionRenewalDto(subscription.getSubscriptionRenewal()));
 
 			if (allCfts != null && allCfts.size() > 0) {
-
+				
 				List<Access> aps = subscription.getAccessPoints();
 				for (Access ap : aps) {
 					try {

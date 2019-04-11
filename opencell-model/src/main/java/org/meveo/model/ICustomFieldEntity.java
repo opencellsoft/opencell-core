@@ -37,8 +37,4 @@ public interface ICustomFieldEntity {
     
     public void clearCfValues();
     
-    public void setCftAppliesTo(String appliesTo);
-    
-    public String getCftAppliesTo();
-    
 }

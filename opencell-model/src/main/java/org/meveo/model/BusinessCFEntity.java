@@ -23,6 +23,7 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -43,6 +44,9 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     @Convert(converter = CustomFieldValuesConverter.class)
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
+    
+    @Transient
+    private String cftAppliesTo;
 
     @Override
     public String getUuid() {
@@ -90,4 +94,13 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     public ICustomFieldEntity[] getParentCFEntities() {
         return null;
     }
+    
+    public String getCftAppliesTo() {
+		return cftAppliesTo;
+	}
+
+	public void setCftAppliesTo(String cftAppliesTo) {
+		this.cftAppliesTo = cftAppliesTo;
+	}
+	
 }
