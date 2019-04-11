@@ -31,7 +31,7 @@
         "org.meveo.model.customEntities.CustomTableRecord": {
             "index": "#{cetCode}"
         },
-        "org.meveo.model.hierarchy.UserHierarchyLevel": {
+        "org.meveo.model.hierarchy.UserHierarchyLevel, org.meveo.model.admin.User": {
             "index": "user"
         }
     },
@@ -158,6 +158,16 @@
             "customerAccount.name.lastName": "getCustomerAccount().getName().lastName",
             "customerAccount.name.title": "getCustomerAccount().getName().title.description",
             "customerAccount.description": "getCustomerAccount().getDescription()"
+        },
+        "org.meveo.model.admin.User": {
+            "userName":"getUserName()",
+            "name.fullName": "getName().getFullName()",
+            "name.firstName": "name.firstName",
+            "name.lastName": "name.lastName",
+            "email":"email",
+            "roles":"getRolesLabel()",
+            "lastLoginDate":"getLastLoginDate()",
+            "auditable.created": "auditable.created"
         }
     },
     "customFieldTemplates": {
