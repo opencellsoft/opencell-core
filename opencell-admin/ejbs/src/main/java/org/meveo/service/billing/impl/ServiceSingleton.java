@@ -12,10 +12,13 @@ import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
@@ -35,7 +38,8 @@ import org.slf4j.Logger;
  * @author Andrius Karpavicius
  * @author Edward Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.2
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  */
 @Singleton
 @Lock(LockType.WRITE)
@@ -59,6 +63,11 @@ public class ServiceSingleton {
 
     @Inject
     private SellerService sellerService;
+    /**
+     * The invoice service instance
+     */
+    @Inject
+    private InvoiceService invoiceService;
 
     @Inject
     private Logger log;
@@ -92,6 +101,8 @@ public class ServiceSingleton {
      * @param seller Seller
      * @param cfName CFT name
      * @param incrementBy A number to increment by
+     * @param invoice  the invoice
+     * @param assignNumber assign the number to the invoice if true
      * @return An invoice numbering sequence with Sequence.previousInvoiceNb set to previous value of Sequence.currentInvoiceNb and Sequence.currentInvoiceNb incremented by
      *         numberOfInvoices value
      * @throws BusinessException business exception
@@ -99,10 +110,10 @@ public class ServiceSingleton {
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public InvoiceSequence incrementInvoiceNumberSequence(Date invoiceDate, InvoiceType invoiceType, Seller seller, String cfName, long incrementBy) throws BusinessException {
+    public InvoiceSequence incrementInvoiceNumberSequence(Date invoiceDate, InvoiceType invoiceType, Seller seller, String cfName, long incrementBy, Invoice invoice,
+            boolean assignNumber) throws BusinessException {
         Long currentNbFromCF = null;
         Long previousInvoiceNb = null;
-
         Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName, invoiceDate);
         if (currentValObj != null) {
             currentNbFromCF = (Long) currentValObj;
@@ -121,7 +132,6 @@ public class ServiceSingleton {
         }
 
         InvoiceSequence sequence = getSequenceFromSellerHierarchy(invoiceType, seller);
-        		
         if (sequence == null) {
             sequence = new InvoiceSequence();
             sequence.setCurrentInvoiceNb(0L);
@@ -142,26 +152,55 @@ public class ServiceSingleton {
                 sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
                 //invoiceType = invoiceTypeService.update(invoiceType);
             } else {
-                InvoiceSequence sequenceGlobal = new InvoiceSequence();
-                sequenceGlobal.setSequenceSize(sequence.getSequenceSize());               
-                
+                sequence = new InvoiceSequence();
+                sequence.setSequenceSize(sequence.getSequenceSize());
                 previousInvoiceNb = invoiceTypeService.getCurrentGlobalInvoiceBb();
-                sequenceGlobal.setCurrentInvoiceNb(previousInvoiceNb + incrementBy);
-                sequenceGlobal.setPreviousInvoiceNb(previousInvoiceNb);
+                sequence.setCurrentInvoiceNb(previousInvoiceNb + incrementBy);
                 invoiceTypeService.setCurrentGlobalInvoiceBb(previousInvoiceNb + incrementBy);
-                return sequenceGlobal;
             }
         }
-        
         // As previousInVoiceNb is a transient value, set it after the update is called
         sequence.setPreviousInvoiceNb(previousInvoiceNb);
-
+        if (assignNumber) {
+            assignInvoiceNumber(invoice, invoiceType, seller, sequence);
+        }
         return sequence;
     }
 
     /**
+     * @param invoice     the invoice
+     * @param invoiceType the invoice type
+     * @param seller      the seller
+     * @param sequence    the invoice's sequence
+     * @throws BusinessException
+     */
+    private void assignInvoiceNumber(Invoice invoice, InvoiceType invoiceType, Seller seller, InvoiceSequence sequence) throws BusinessException {
+        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
+        if (seller != null) {
+            invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
+        }
+
+        int sequenceSize = sequence.getSequenceSize();
+        String prefix = invoiceType.getPrefixEL();
+        if (invoiceTypeSellerSequence != null) {
+            prefix = invoiceTypeSellerSequence.getPrefixEL();
+        }
+        if (prefix != null && !StringUtils.isBlank(prefix)) {
+            prefix = invoiceService.evaluatePrefixElExpression(prefix, invoice);
+        } else {
+            prefix = "";
+        }
+
+        long nextInvoiceNb = sequence.getCurrentInvoiceNb();
+        String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
+        // request to store invoiceNo in alias field
+        invoice.setAlias(invoiceNumber);
+        invoice.setInvoiceNumber(prefix + invoiceNumber);
+    }
+
+    /**
      * Reserve invoice numbers for a given invoice type, seller and invoice date match. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
-     * 
+     *
      * @param invoiceTypeId Invoice type identifier
      * @param sellerId Seller identifier
      * @param invoiceDate Invoice date
@@ -183,7 +222,7 @@ public class ServiceSingleton {
         Seller seller = sellerService.findById(sellerId);
         seller = seller.findSellerForInvoiceNumberingSequence(cfName, invoiceDate, invoiceType);
 
-        InvoiceSequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
+        InvoiceSequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices, null, false);
 
         try {
             sequence = (InvoiceSequence) BeanUtils.cloneBean(sequence);

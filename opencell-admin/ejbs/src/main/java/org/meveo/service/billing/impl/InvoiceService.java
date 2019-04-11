@@ -137,7 +137,8 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
@@ -148,7 +149,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /** The Constant INVOICE_SEQUENCE. */
     public final static String INVOICE_SEQUENCE = "INVOICE_SEQUENCE";
 
-    /** The p DF parameters construction. */
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
+    /**
+     * The invoice service instance
+     */
+    @EJB
+    InvoiceService invoiceService;
+
+    /**
+     * The p DF parameters construction.
+     */
     @EJB
     private PDFParametersConstruction pDFParametersConstruction;
 
@@ -209,13 +220,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private UserAccountService userAccountService;
 
     @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
-
-    @Inject
     private PaymentMethodService paymentMethodService;
-
-    @EJB
-    InvoiceService invoiceService;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -348,7 +353,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Assign invoice number to an invoice
-     * 
+     *
      * @param invoice invoice
      * @throws BusinessException business exception
      */
@@ -364,29 +369,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
         }
 
-        InvoiceSequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
-        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
-        if (seller != null) {
-            invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
-        }
-
-        int sequenceSize = sequence.getSequenceSize();
-        String prefix = invoiceType.getPrefixEL();
-        if (invoiceTypeSellerSequence != null) {
-            prefix = invoiceTypeSellerSequence.getPrefixEL();
-        }
-        if (prefix != null && !StringUtils.isBlank(prefix)) {
-            prefix = evaluatePrefixElExpression(prefix, invoice);
-        } else {
-            prefix = "";
-        }
-
-        long nextInvoiceNb = sequence.getCurrentInvoiceNb();
-        String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
-        // request to store invoiceNo in alias field
-        invoice.setAlias(invoiceNumber);
-        invoice.setInvoiceNumber(prefix + invoiceNumber);
+        serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1, invoice, true);
     }
+
 
     /**
      * Assign invoice number from reserve.
@@ -425,7 +410,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get a list of invoices that are validated, but PDF was not yet generated.
-     * 
+     *
      * @param billingRunId An optional billing run identifier for filtering
      * @return A list of invoice ids
      */
@@ -491,7 +476,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get rated transactions for entity grouped by billing account and seller, which allows invoice generation by seller and billing account
-     * 
+     *
      * @param entity entity to be billed
      * @param billingRun billing run
      * @param ratedTransactionFilter rated transaction filter
@@ -614,7 +599,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
-        
+
         lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
 
         if (billingRun == null) {
@@ -796,7 +781,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     if (assignNumber) {
                         assignInvoiceNumber(invoice);
                     }
-
                     postCreate(invoice);
 
                     invoiceList.add(invoice);
