@@ -325,8 +325,46 @@ public class EntityToDtoConverter {
 			return getCustomFieldsDTO(inheritCF, cfts, (BusinessCFEntity) entity);
 		} else if (entity instanceof Access) {
 			return getAccessCustomFieldsDTO(inheritCF, cfts, (Access) entity);
+		} else if (entity instanceof Provider) {
+			return getProviderCustomFieldsDTO(inheritCF, cfts, (Provider) entity);
 		}
 		return new CustomFieldsDto();
+	}
+
+	private CustomFieldsDto getProviderCustomFieldsDTO(CustomFieldInheritanceEnum inheritCF,
+			Map<String, CustomFieldTemplate> cfts, Provider entity) throws CustomFieldException {
+
+		CustomFieldsDto currentEntityCFs = new CustomFieldsDto();
+
+		if (entity != null && entity.getCftAppliesTo() != null) {
+
+			for (Map.Entry<String, CustomFieldTemplate> entry : cfts.entrySet()) {
+
+				CustomFieldTemplate cft = entry.getValue();
+
+				if (entity.getCftAppliesTo().equals(cft.getAppliesTo())) {
+
+					Map<String, List<CustomFieldValue>> cfValuesByCode = entity.getCfValues() != null
+							? entity.getCfValues().getValuesByCode()
+							: new HashMap<>();
+
+					addCustomFieldsDto(inheritCF, cfts, currentEntityCFs, cfValuesByCode);
+
+					boolean mergeMapValues = inheritCF == CustomFieldInheritanceEnum.INHERIT_MERGED;
+					boolean includeInheritedCF = mergeMapValues
+							|| inheritCF == CustomFieldInheritanceEnum.INHERIT_NO_MERGE;
+
+					// add parent cf values if inherited
+					if (includeInheritedCF) {
+						ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
+						includeInheritedCustomFields(parentEntities, inheritCF, currentEntityCFs, cfts, mergeMapValues);
+					}
+					break;
+				}
+			}
+		}
+		return currentEntityCFs.isEmpty() ? null : currentEntityCFs;
+
 	}
 
 	private void addCustomFieldsDto(CustomFieldInheritanceEnum inheritCF, Map<String, CustomFieldTemplate> cfts,
@@ -357,24 +395,8 @@ public class EntityToDtoConverter {
 		if (parentEntities != null) {
 
 			Set<String> peDistinctAtvs = new HashSet<String>();
-			for (ICustomFieldEntity pentity : parentEntities) {
 
-				String peAppliesToValue = CustomFieldTemplateService.calculateAppliesToValue(pentity);
-				if (peAppliesToValue != null) {
-					peDistinctAtvs.add(peAppliesToValue);
-				}
-
-				if (pentity instanceof BusinessCFEntity) {
-					BusinessCFEntity businessCFEntity = (BusinessCFEntity) pentity;
-					businessCFEntity.setCftAppliesTo(peAppliesToValue);
-					pentity = (ICustomFieldEntity) businessCFEntity;
-				} else if (pentity instanceof Access) {
-					Access access = (Access) pentity;
-					access.setCftAppliesTo(peAppliesToValue);
-					pentity = (ICustomFieldEntity) access;
-				}
-
-			}
+			keepAppliesToValue(parentEntities, peDistinctAtvs);
 
 			if (peDistinctAtvs.size() > 0) {
 
@@ -406,6 +428,37 @@ public class EntityToDtoConverter {
 			}
 		}
 
+	}
+
+	private void keepAppliesToValue(ICustomFieldEntity[] parentEntities, Set<String> peDistinctAtvs)
+			throws CustomFieldException {
+		for (ICustomFieldEntity pentity : parentEntities) {
+
+			String peAppliesToValue = CustomFieldTemplateService.calculateAppliesToValue(pentity);
+			if (peAppliesToValue != null) {
+				peDistinctAtvs.add(peAppliesToValue);
+			}
+			if (pentity instanceof BusinessCFEntity) {
+				BusinessCFEntity businessCFEntity = (BusinessCFEntity) pentity;
+				businessCFEntity.setCftAppliesTo(peAppliesToValue);
+				pentity = (ICustomFieldEntity) businessCFEntity;
+			} else if (pentity instanceof Access) {
+				Access access = (Access) pentity;
+				access.setCftAppliesTo(peAppliesToValue);
+				pentity = (ICustomFieldEntity) access;
+			} else if (pentity instanceof Provider) {
+				if (appProvider != null) {
+					appProvider.setCftAppliesTo(peAppliesToValue);
+					pentity = (ICustomFieldEntity) appProvider;
+				} else {
+					Provider provider = (Provider) pentity;
+					provider.setCftAppliesTo(peAppliesToValue);
+					pentity = (ICustomFieldEntity) provider;
+				}
+
+			}
+
+		}
 	}
 
 	private CustomFieldsDto getAccessCustomFieldsDTO(CustomFieldInheritanceEnum inheritCF,

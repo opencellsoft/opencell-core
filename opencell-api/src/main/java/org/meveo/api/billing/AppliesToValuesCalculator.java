@@ -22,9 +22,11 @@ public class AppliesToValuesCalculator {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
-	Set<String> allAtvs = new HashSet<String>();
+	Set<String> allAtvs;
 
 	public AppliesToValuesCalculator(List<Subscription> subscriptions) {
+		
+		allAtvs = new HashSet<String>();
 
 		for (Subscription subscription : subscriptions) {
 

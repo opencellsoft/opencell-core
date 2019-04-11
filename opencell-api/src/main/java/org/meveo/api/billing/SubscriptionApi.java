@@ -916,20 +916,15 @@ public class SubscriptionApi extends BaseApi {
     public SubscriptionsListResponseDto list(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
         PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
-
-        Long totalCount = subscriptionService.count(paginationConfiguration);
-
         SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
-
         result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
-        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+        result.getPaging().setTotalNumberOfRecords(0);
 
-        if (totalCount > 0) {
             List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
             if (subscriptions != null) {
             	result.getSubscriptions().setSubscription(loadSubscriptionsDtos(subscriptions, inheritCF));
+            	result.getPaging().setTotalNumberOfRecords(subscriptions.size());
             } 
-        }
 
         return result;
 
