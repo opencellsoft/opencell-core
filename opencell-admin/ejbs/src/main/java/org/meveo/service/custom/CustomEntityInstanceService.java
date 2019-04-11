@@ -11,7 +11,7 @@ import org.meveo.service.base.BusinessService;
 
 /**
  * CustomEntityInstance persistence service implementation.
- * 
+ * @author Adnane Boubia
  */
 @Stateless
 public class CustomEntityInstanceService extends BusinessService<CustomEntityInstance> {
@@ -39,10 +39,23 @@ public class CustomEntityInstanceService extends BusinessService<CustomEntityIns
         return qb.getQuery(getEntityManager()).getResultList();
     }
     
+    /**
+     * List of custom entity instances by custom entity template
+     * 
+     * @param cetCode code of CustomEntityTemplate
+     * @return list of CustomEntityInstance
+     */
 	public List<CustomEntityInstance> listByCet(String cetCode) {
         return listByCet(cetCode, null);
     }
     
+	/**
+     * List of custom entity instances by custom entity template
+     * 
+     * @param cetCode code of CustomEntityTemplate
+     * @param active Custom entity template's status
+     * @return list of CustomEntityInstance
+     */
     @SuppressWarnings("unchecked")
 	public List<CustomEntityInstance> listByCet(String cetCode, Boolean active) {
         QueryBuilder qb = new QueryBuilder(getEntityClass(), "cei", null);
