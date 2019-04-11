@@ -128,7 +128,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRPropertiesUtil;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -224,7 +226,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private EmailSender emailSender;
-    
+
     @Inject
     private SellerService sellerService;
 
@@ -356,9 +358,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
     }
-    
+
     /**
      * Returns {@link InvoiceTypeSellerSequence} from the nearest parent.
+     * 
      * @param invoiceType {@link InvoiceType}
      * @param seller {@link Seller}
      * @return {@link InvoiceTypeSellerSequence}
@@ -394,7 +397,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         InvoiceSequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
         int sequenceSize = sequence.getSequenceSize();
-        
+
         InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
         InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
         String prefix = invoiceType.getPrefixEL();
@@ -855,6 +858,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Check if the electronic billing is enabled.
+     * 
      * @param invoice the invoice.
      * @return True if electronic billing is enabled for any Billable entity, false else.
      */
@@ -1111,6 +1115,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 jasperReportMap.put(fileKey, jasperReport);
             }
 
+            DefaultJasperReportsContext context = DefaultJasperReportsContext.getInstance();
+            JRPropertiesUtil.getInstance(context).setProperty("net.sf.jasperreports.xpath.executer.factory", "net.sf.jasperreports.engine.util.xml.JaxenXPathExecuterFactory");
+
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename);
@@ -1299,7 +1306,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             BigDecimal amountWithoutTax = subCategoryInvoiceAgregate.getAmountWithoutTax();
             subCategoryInvoiceAgregate
-                    .setAmountWithoutTax(amountWithoutTax != null ? amountWithoutTax.setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode()) : BigDecimal.ZERO);
+                .setAmountWithoutTax(amountWithoutTax != null ? amountWithoutTax.setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode()) : BigDecimal.ZERO);
 
             subCategoryInvoiceAgregate.getCategoryInvoiceAgregate().addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
 
@@ -2077,20 +2084,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         if (referenceDateEnum != null) {
             switch (referenceDateEnum) {
-                case TODAY:
-                    referenceDate = new Date();
-                    break;
-                case NEXT_INVOICE_DATE:
-                    referenceDate = invoice.getBillingAccount() != null ? invoice.getBillingAccount().getNextInvoiceDate() : null;
-                    break;
-                case LAST_TRANSACTION_DATE:
-                    referenceDate = billingRun.getLastTransactionDate();
-                    break;
-                case END_DATE:
-                    referenceDate = billingRun.getEndDate();
-                    break;
-                default:
-                    break;
+            case TODAY:
+                referenceDate = new Date();
+                break;
+            case NEXT_INVOICE_DATE:
+                referenceDate = invoice.getBillingAccount() != null ? invoice.getBillingAccount().getNextInvoiceDate() : null;
+                break;
+            case LAST_TRANSACTION_DATE:
+                referenceDate = billingRun.getLastTransactionDate();
+                break;
+            case END_DATE:
+                referenceDate = billingRun.getEndDate();
+                break;
+            default:
+                break;
             }
         }
         return referenceDate;
@@ -2099,7 +2106,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Assign invoice number and increment BA invoice date.
      *
-     * @param invoiceId            invoice id
+     * @param invoiceId invoice id
      * @param invoicesToNumberInfo instance of InvoicesToNumberInfo
      * @throws BusinessException business exception
      */
@@ -2167,7 +2174,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public List<Long> getInvoiceIds(Long billingRunId, Long invoiceTypeId, Long sellerId, Date invoiceDate) {
         return getEntityManager().createNamedQuery("Invoice.byBrItSelDate", Long.class).setParameter("billingRunId", billingRunId).setParameter("invoiceTypeId", invoiceTypeId)
-                .setParameter("sellerId", sellerId).setParameter("invoiceDate", invoiceDate).getResultList();
+            .setParameter("sellerId", sellerId).setParameter("invoiceDate", invoiceDate).getResultList();
     }
 
     /**
@@ -2256,8 +2263,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (invoice instanceof ICustomFieldEntity) {
             customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) invoice);
         }
-        //activate/deactivate sending invoice by Emails
-        if(!isElectronicBillingEnabled(invoice)){
+        // activate/deactivate sending invoice by Emails
+        if (!isElectronicBillingEnabled(invoice)) {
             invoice.setDontSend(true);
         }
 
@@ -2280,8 +2287,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         log.trace("end of post create {}. entity id={}.", invoice.getClass().getSimpleName(), invoice.getId());
     }
+
     /**
      * Send the invoice by email
+     * 
      * @param invoice the invoice
      * @param mailingTypeEnum : Mailing type
      * @param overrideEmail : override Email
@@ -2369,7 +2378,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             if (electronicBilling && mailingTypeEnum.equals(mailingType)) {
                 emailSender.send(seller.getContactInformation().getEmail(), to, to, cc, null, emailTemplate.getSubject(), emailTemplate.getTextContent(),
-                        emailTemplate.getHtmlContent(), files, null);
+                    emailTemplate.getHtmlContent(), files, null);
                 invoice.setAlreadySent(true);
                 update(invoice);
 
@@ -2377,12 +2386,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             return false;
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
             throw new BusinessException(e.getMessage(), e);
         }
     }
+
     /**
      * Return a list of invoices that not already sent and can be sent : dontsend:false.
+     * 
      * @return a list of invoices
      * @throws BusinessException
      */
@@ -2399,8 +2410,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return result;
     }
 
-     /**
-      * Check if an invoice is draft.
+    /**
+     * Check if an invoice is draft.
+     * 
      * @param invoice the invoice
      * @return true if is draft else return false.
      * @throws BusinessException
@@ -2414,6 +2426,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Evaluate the override Email EL
+     * 
      * @param overrideEmailEl override Email
      * @param userMap the userMap
      * @param invoice the invoice
