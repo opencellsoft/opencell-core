@@ -32,14 +32,31 @@ public class ConfigIssuesReportingDTO implements Serializable {
     private Integer nbrWalletOpReserved;
     private Integer nbrWalletOpTorerate;
     private Integer nbrWalletOpRerated;
+    private Integer nbrWalletOpScheduled;
     private Integer nbrEdrRejected;
     private Integer nbrEdrRated;
     private Integer nbrEdrOpen;
+    private Integer nbrEdrMediating;
+    private Integer nbrEdrAggregated;
     private Integer nbrJasperDir;
     
   
 	public ConfigIssuesReportingDTO() {
 		super();
+		this.nbrRejectedEDR = 0;
+		this.nbrWalletOpOpen = 0;
+		this.nbrWalletOpTreated = 0;
+		this.nbrWalletOpCancled = 0;
+		this.nbrWalletOpReserved = 0;
+		this.nbrWalletOpTorerate = 0;
+		this.nbrWalletOpRerated = 0;
+		this.nbrWalletOpScheduled = 0;
+		this.nbrEdrRejected = 0;
+		this.nbrEdrRated = 0;
+		this.nbrEdrOpen = 0;
+		this.nbrEdrMediating = 0;
+		this.nbrEdrAggregated = 0;
+		this.nbrJasperDir = 0;
 	}
 
    public ConfigIssuesReportingDTO(Integer nbrLanguagesNotAssociated,
@@ -177,7 +194,29 @@ public class ConfigIssuesReportingDTO implements Serializable {
 		this.nbrJasperDir = nbrJasperDir;
 	}
 
-	
+	public Integer getNbrWalletOpScheduled() {
+		return nbrWalletOpScheduled;
+	}
+
+	public void setNbrWalletOpScheduled(Integer nbrWalletOpScheduled) {
+		this.nbrWalletOpScheduled = nbrWalletOpScheduled;
+	}
+
+	public Integer getNbrEdrMediating() {
+		return nbrEdrMediating;
+	}
+
+	public void setNbrEdrMediating(Integer nbrEdrMediating) {
+		this.nbrEdrMediating = nbrEdrMediating;
+	}
+
+	public Integer getNbrEdrAggregated() {
+		return nbrEdrAggregated;
+	}
+
+	public void setNbrEdrAggregated(Integer nbrEdrAggregated) {
+		this.nbrEdrAggregated = nbrEdrAggregated;
+	}
 
 	
 
