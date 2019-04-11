@@ -51,7 +51,8 @@ import net.sf.jasperreports.engine.JRParameter;
 /**
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
- *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class PDFParametersConstruction {
@@ -114,7 +115,7 @@ public class PDFParametersConstruction {
             for (String key : baCustomFields.keySet()) {
                 parameters.put(key, baCustomFields.get(key));
             }
-
+            parameters.put(JRParameter.REPORT_LOCALE, getLocal(invoice));
             return parameters;
         } catch (Exception e) {
             log.error("failed to construct parameters ", e);
@@ -170,4 +171,32 @@ public class PDFParametersConstruction {
         return (name + "\n" + address);
     }
 
+    /**
+     * Gets the locale value of the billing account
+     *
+     * @param invoice the invoice
+     * @return the locale value of the billing account
+     */
+    private Locale getLocal(Invoice invoice) {
+
+        if (invoice != null && invoice.getBillingAccount() != null) {
+            BillingAccount billingAccount = invoice.getBillingAccount();
+
+            String languageCode = billingAccount.getTradingLanguage() != null ? billingAccount.getTradingLanguage().getLanguageCode() : null;
+            if (languageCode == null) {
+                return Locale.getDefault();
+            }
+
+            String country = billingAccount.getTradingCountry() != null ? billingAccount.getTradingCountry().getCountryCode() : "";
+
+            String[] languages = Locale.getISOLanguages();
+            for (String language : languages) {
+                Locale locale = new Locale(language, country);
+                if (locale.getISO3Language().toUpperCase().equals(languageCode)) {
+                    return locale;
+                }
+            }
+        }
+        return Locale.getDefault();
+    }
 }
