@@ -29,6 +29,9 @@ public class ReportExtractDto extends EnableBusinessDto {
 
     /** The category. */
     private String category;
+    
+    /** The output directory. */
+    private String outputDir;
 
     /** The script instance code. */
     private String scriptInstanceCode;
@@ -65,6 +68,7 @@ public class ReportExtractDto extends EnableBusinessDto {
         super(reportExtract);
 
         setCategory(reportExtract.getCategory());
+        setOutputDir(reportExtract.getOutputDir());
         setCode(reportExtract.getCode());
         setDescription(reportExtract.getDescription());
         setEndDate(reportExtract.getEndDate());
@@ -225,6 +229,24 @@ public class ReportExtractDto extends EnableBusinessDto {
      */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+    
+    /**
+     * Gets the output directory.
+     *      
+     * @return the outputDir
+     */
+    public String getOutputDir() {
+        return outputDir;
+    }
+
+    /**
+     * Sets the output directory.
+     * 
+     * @param outputDir the outputDir to set
+     */
+    public void setOutputDir(String outputDir) {
+        this.outputDir = outputDir;
     }
 
     public ReportExtractResultTypeEnum getReportExtractResultType() {
