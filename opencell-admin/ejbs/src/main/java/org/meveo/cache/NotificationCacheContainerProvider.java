@@ -61,7 +61,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
      * Contains association between event type, entity class and notifications. Key format: &lt;eventTypeFilter&gt;-&lt;entity class&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-notification-cache")
-    private Cache<CacheKeyStr, List<Notification>> eventNotificationCache;
+    private Cache<CacheKeyStr, Set<Notification>> eventNotificationCache;
 
     @Inject
     @CurrentUser
@@ -123,14 +123,14 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
         try {
 
-            List<Notification> notificationsOld = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+            Set<Notification> notificationsOld = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
             Set<Notification> notificationsSet = new HashSet<Notification>();
             notificationsSet.add(notif);
             if (notificationsOld != null) {
                 notificationsSet.addAll(notificationsOld);
             }
-            List<Notification> notifications = new ArrayList<Notification>(notificationsSet);
+            Set<Notification> notifications = new HashSet<Notification>(notificationsSet);
             eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, notifications);
 
         } catch (Exception e) {
@@ -153,10 +153,10 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
         log.trace("Removing notification {} from notification cache under key {}", notif.getId(), cacheKey);
 
-        List<Notification> notifsOld = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+        Set<Notification> notifsOld = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
         if (notifsOld != null && !notifsOld.isEmpty()) {
-            List<Notification> notifs = new ArrayList<>(notifsOld);
+            Set<Notification> notifs = new HashSet<>(notifsOld);
             boolean removed = notifs.remove(notif);
             if (removed) {
                 // Remove cached value altogether if no value are left in the list
@@ -291,7 +291,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
         CacheKeyStr cacheKey = getCacheKey(eventType, entity.getClass());
         if (!eventNotificationCache.getAdvancedCache().containsKey(cacheKey)) {
-            eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, new ArrayList<Notification>());
+            eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, new HashSet<Notification>());
         }
     }
 
