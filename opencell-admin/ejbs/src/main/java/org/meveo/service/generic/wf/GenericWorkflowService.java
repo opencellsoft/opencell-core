@@ -113,7 +113,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
      */
     public WorkflowInstance executeWorkflow(BusinessEntity businessEntity, GenericWorkflow genericWorkflow) throws BusinessException {
 
-        WorkflowInstance workflowInstance = workflowInstanceService.findByCodeAndGenericWorkflow(businessEntity.getCode(), genericWorkflow);
+        WorkflowInstance workflowInstance = workflowInstanceService.findByEntityIdAndGenericWorkflow(businessEntity.getId(), genericWorkflow);
 
         if (workflowInstance == null) {
             throw new BusinessException("No workflow instance for business entity " + businessEntity.getCode());
