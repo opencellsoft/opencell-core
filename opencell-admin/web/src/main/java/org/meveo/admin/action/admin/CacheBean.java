@@ -18,19 +18,6 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCache;
@@ -50,6 +37,19 @@ import org.meveo.util.view.LazyDataModelWSize;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 @Named
 @ViewScoped
@@ -350,7 +350,20 @@ public class CacheBean implements Serializable {
     @SuppressWarnings("rawtypes")
     public String getShortRepresentationOfCachedValue(Object item, boolean returnToStringForSimpleObjects) {
 
-        if (item instanceof List) {
+        if (item instanceof Set) {
+            StringBuilder builder = new StringBuilder();
+            Set setObject = (Set) item;
+            int index = 0;
+            for (Object setItem : setObject) {
+                if (index < 10) {
+                    builder.append(getShortRepresentationOfCachedValue(setItem, false));
+                } else {
+                    builder.append(", ...");
+                }
+                index++;
+            }
+            return builder.toString();
+        } else if (item instanceof List) {
             StringBuilder builder = new StringBuilder();
             List listObject = (List) item;
             for (int i = 0; i < 10 && i < listObject.size(); i++) {
