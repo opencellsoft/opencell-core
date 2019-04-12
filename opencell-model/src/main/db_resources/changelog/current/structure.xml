@@ -2068,5 +2068,16 @@ $$ LANGUAGE plpgsql;
             end where applies_to is not null
         </sql>
     </changeSet>
+    
+    <changeSet id="#4117_20190405" author="AmineBENAICHA">
+    	<addColumn tableName="wf_instance">
+            <column name="entity_instance_id" type="bigint" >
+            	<constraints nullable="false" />
+            </column>
+        </addColumn>
+        <createIndex tableName="wf_instance" indexName="wf_instance_entity_id_idx">
+            <column name="entity_instance_id" type="bigint"/>
+        </createIndex>
+    </changeSet>
 
 </databaseChangeLog>
