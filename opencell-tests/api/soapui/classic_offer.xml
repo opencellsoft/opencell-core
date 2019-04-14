@@ -55480,7 +55480,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
                </notification>\r
                <timerEntity code="Monthly" description="Monthly" hour="23" minute="59" second="59" year="*" month="*" dayOfMonth="Last" dayOfWeek="*"/>\r
                <jobInstance jobTemplate="PaymentJob" code="PaymentCard_Job">\r
-                  <jobCategory>ACCOUNT_RECEIVABLES</jobCategory>\r
+                  <jobCategory>PAYMENT</jobCategory>\r
                   <active>false</active>\r
                   <customFields>\r
                      <customField code="PaymentJob_createAO">\r
@@ -55495,7 +55495,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
                   </customFields>\r
                </jobInstance>\r
                <jobInstance jobTemplate="PaymentJob" code="RefundCard_Job">
-                  <jobCategory>ACCOUNT_RECEIVABLES</jobCategory>
+                  <jobCategory>PAYMENT</jobCategory>
                   <active>false</active>
                   <customFields>
                      <customField code="PaymentJob_createAO">
@@ -56301,7 +56301,7 @@ public class CreateMandateCallBackScript_${#TestSuite#index} extends Script {
                   </scriptParams>
                </notification>           
                <jobInstance jobTemplate="PaymentJob" code="PaymentSepa_Job">\r
-                  <jobCategory>ACCOUNT_RECEIVABLES</jobCategory>\r
+                  <jobCategory>PAYMENT</jobCategory>\r
                   <active>false</active>\r
                   <customFields>\r
                      <customField code="PaymentJob_createAO">\r
@@ -56795,7 +56795,7 @@ public class CheckPaymentScript_${#TestSuite#index} extends Script {
 		  </filter>]]]]>><![CDATA[</inputXml>
 					</filter>          
                <jobInstance jobTemplate="PaymentJob" code="PaymentIngenicoSepa_Job">\r
-                  <jobCategory>ACCOUNT_RECEIVABLES</jobCategory>\r
+                  <jobCategory>PAYMENT</jobCategory>\r
                   <active>false</active>\r
                   <customFields>\r
                      <customField code="PaymentJob_createAO">\r
