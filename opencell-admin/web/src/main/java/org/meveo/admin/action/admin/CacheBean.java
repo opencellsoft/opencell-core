@@ -42,6 +42,7 @@ import javax.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -271,7 +272,14 @@ public class CacheBean implements Serializable {
 
                 @Override
                 public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
-                    List valueList = (List) selectedCacheItem.getValue();
+                    List valueList;
+                    if (selectedCacheItem.getValue() instanceof HashSet) {
+                        valueList = (List) new ArrayList<>((HashSet)selectedCacheItem.getValue());
+
+                    } else {
+                        valueList = (List) selectedCacheItem.getValue();
+
+                    }
                     setRowCount(valueList.size());
 
                     if (getRowCount() > 0) {
@@ -323,16 +331,20 @@ public class CacheBean implements Serializable {
         if (item instanceof Set) {
             StringBuilder builder = new StringBuilder();
             Set setObject = (Set) item;
-            int index = 0;
-            for (Object setItem : setObject) {
-                if (index < 10) {
-                    builder.append(getShortRepresentationOfCachedValue(setItem, false));
-                } else {
-                    builder.append(", ...");
-                }
-                index++;
+            List listObject = (List) new ArrayList<>(setObject);
+
+            for (int i = 0; i < 10 && i < listObject.size(); i++) {
+                builder.append(builder.length() == 0 ? "" : ", ");
+                Object listItem = listObject.get(i);
+                builder.append(getShortRepresentationOfCachedValue(listItem, false));
             }
+
+            if (listObject.size() > 10) {
+                builder.append(", ...");
+            }
+
             return builder.toString();
+
         } else if (item instanceof List) {
             StringBuilder builder = new StringBuilder();
             List listObject = (List) item;
