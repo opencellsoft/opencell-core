@@ -9803,14 +9803,10 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="82a7b33d-dbd9-4409-a358-7c6f76941944">
-              <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_ChargeTemplate_DOUBLE_SINGLE_V" description="ChargeTemplate_DOUBLE_SINGLE_V field" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone2}" valuePeriodPriority="1">
+              <con:configuration><token><![CDATA[<customField code="${#Project#baseEntityPrefix}_ChargeTemplate_DOUBLE_SINGLE_V" description="ChargeTemplate_DOUBLE_SINGLE_V field" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone2}" valuePeriodPriority="1">
                      <fieldType>DOUBLE</fieldType>
                      <doubleValue>26.27</doubleValue>
-                  </customField>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="8a6b9f42-8d9c-41df-a3a5-9aa94cbee382">
               <con:configuration>
@@ -10122,27 +10118,24 @@ public class Action1 extends Script {
               <con:configuration><token><![CDATA[<customField code="PurgeJob_counterPeriod_nbDays" description="Purge periods with end date older than (in days) *">
                      <fieldType>LONG</fieldType>
                      <longValue>19</longValue>
+                     <guiPosition>tab:Configuration:0;fieldGroup:Purge counter periods:1;field:0</guiPosition>
                   </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="6297569b-77e3-452c-94d1-888f3f69e8af" name="Contains 2">
-              <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_jobName" description="Job name">
+              <con:configuration><token><![CDATA[<customField code="PurgeJob_jobExecHistory_jobName" description="Job name">
                      <fieldType>STRING</fieldType>
                      <stringValue>KUKU</stringValue>
-                  </customField>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                     <guiPosition>tab:Configuration:0;fieldGroup:Purge job execution history:0;field:0</guiPosition>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="3d7e54ff-929a-49cb-89f1-970f4064076a" name="Contains 3">
-              <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_nbDays" description="Purge history older than (in days) *">
+              <con:configuration><token><![CDATA[<customField code="PurgeJob_jobExecHistory_nbDays" description="Purge history older than (in days) *">
                      <fieldType>LONG</fieldType>
                      <longValue>15</longValue>
-                  </customField>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+                     <guiPosition>tab:Configuration:0;fieldGroup:Purge job execution history:0;field:1</guiPosition>
+                  </customField>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -34315,7 +34308,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>82</con:value>
+        <con:value>84</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36947,7 +36940,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>122</con:value>
+        <con:value>124</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38496,7 +38489,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>84</con:value>
+        <con:value>86</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39719,7 +39712,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>74</con:value>
+        <con:value>76</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -49953,11 +49946,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>integration.i.opencellsoft.com</con:value>
     </con:property>
     <con:property>
       <con:name>opencell.url2</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>integration.i.opencellsoft.com</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
