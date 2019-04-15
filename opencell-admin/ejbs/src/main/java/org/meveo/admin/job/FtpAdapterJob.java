@@ -20,6 +20,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class FtpAdapterJob connect to the given ftp server and get files from the given remote path.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class FtpAdapterJob extends Job {
@@ -75,7 +77,7 @@ public class FtpAdapterJob extends Job {
 
         CustomFieldTemplate localDirectory = new CustomFieldTemplate();
         localDirectory.setCode("FtpAdapterJob_localDirectory");
-        localDirectory.setAppliesTo("JOB_FtpAdapterJob");
+        localDirectory.setAppliesTo("JobInstance_FtpAdapterJob");
         localDirectory.setActive(true);
         localDirectory.setDescription(resourceMessages.getString("FtpAdapter.localDirectory"));
         localDirectory.setFieldType(CustomFieldTypeEnum.STRING);
@@ -85,7 +87,7 @@ public class FtpAdapterJob extends Job {
 
         CustomFieldTemplate remoteServer = new CustomFieldTemplate();
         remoteServer.setCode("FtpAdapterJob_remoteServer");
-        remoteServer.setAppliesTo("JOB_FtpAdapterJob");
+        remoteServer.setAppliesTo("JobInstance_FtpAdapterJob");
         remoteServer.setActive(true);
         remoteServer.setDescription(resourceMessages.getString("FtpAdapter.remoteServer"));
         remoteServer.setFieldType(CustomFieldTypeEnum.STRING);
@@ -95,7 +97,7 @@ public class FtpAdapterJob extends Job {
 
         CustomFieldTemplate remotePort = new CustomFieldTemplate();
         remotePort.setCode("FtpAdapterJob_remotePort");
-        remotePort.setAppliesTo("JOB_FtpAdapterJob");
+        remotePort.setAppliesTo("JobInstance_FtpAdapterJob");
         remotePort.setActive(true);
         remotePort.setDescription(resourceMessages.getString("FtpAdapter.remotePort"));
         remotePort.setFieldType(CustomFieldTypeEnum.LONG);
@@ -104,7 +106,7 @@ public class FtpAdapterJob extends Job {
 
         CustomFieldTemplate removeOriginalFile = new CustomFieldTemplate();
         removeOriginalFile.setCode("FtpAdapterJob_removeOriginalFile");
-        removeOriginalFile.setAppliesTo("JOB_FtpAdapterJob");
+        removeOriginalFile.setAppliesTo("JobInstance_FtpAdapterJob");
         removeOriginalFile.setActive(true);
         removeOriginalFile.setDescription(resourceMessages.getString("FtpAdapter.removeOriginalFile"));
         removeOriginalFile.setFieldType(CustomFieldTypeEnum.LIST);
@@ -117,7 +119,7 @@ public class FtpAdapterJob extends Job {
 
         CustomFieldTemplate remoteDirectory = new CustomFieldTemplate();
         remoteDirectory.setCode("FtpAdapterJob_remoteDirectory");
-        remoteDirectory.setAppliesTo("JOB_FtpAdapterJob");
+        remoteDirectory.setAppliesTo("JobInstance_FtpAdapterJob");
         remoteDirectory.setActive(true);
         remoteDirectory.setDescription(resourceMessages.getString("FtpAdapter.remoteDirectory"));
         remoteDirectory.setFieldType(CustomFieldTypeEnum.STRING);
@@ -127,7 +129,7 @@ public class FtpAdapterJob extends Job {
 
         CustomFieldTemplate ftpUsername = new CustomFieldTemplate();
         ftpUsername.setCode("FtpAdapterJob_ftpUsername");
-        ftpUsername.setAppliesTo("JOB_FtpAdapterJob");
+        ftpUsername.setAppliesTo("JobInstance_FtpAdapterJob");
         ftpUsername.setActive(true);
         ftpUsername.setDescription(resourceMessages.getString("FtpAdapter.ftpUsername"));
         ftpUsername.setFieldType(CustomFieldTypeEnum.STRING);
@@ -137,7 +139,7 @@ public class FtpAdapterJob extends Job {
 
         CustomFieldTemplate ftpPassword = new CustomFieldTemplate();
         ftpPassword.setCode("FtpAdapterJob_ftpPassword");
-        ftpPassword.setAppliesTo("JOB_FtpAdapterJob");
+        ftpPassword.setAppliesTo("JobInstance_FtpAdapterJob");
         ftpPassword.setActive(true);
         ftpPassword.setDescription(resourceMessages.getString("FtpAdapter.ftpPassword"));
         ftpPassword.setFieldType(CustomFieldTypeEnum.STRING);
@@ -147,7 +149,7 @@ public class FtpAdapterJob extends Job {
 
         CustomFieldTemplate ftpExtension = new CustomFieldTemplate();
         ftpExtension.setCode("FtpAdapterJob_ftpFileExtension");
-        ftpExtension.setAppliesTo("JOB_FtpAdapterJob");
+        ftpExtension.setAppliesTo("JobInstance_FtpAdapterJob");
         ftpExtension.setActive(true);
         ftpExtension.setDescription(resourceMessages.getString("FtpAdapter.fileExtension"));
         ftpExtension.setFieldType(CustomFieldTypeEnum.STRING);
@@ -157,7 +159,7 @@ public class FtpAdapterJob extends Job {
 
         CustomFieldTemplate ftpProtocol = new CustomFieldTemplate();
         ftpProtocol.setCode("FtpAdapterJob_ftpProtocol");
-        ftpProtocol.setAppliesTo("JOB_FtpAdapterJob");
+        ftpProtocol.setAppliesTo("JobInstance_FtpAdapterJob");
         ftpProtocol.setActive(true);
         ftpProtocol.setDescription(resourceMessages.getString("FtpAdapter.ftpProtocol"));
         ftpProtocol.setFieldType(CustomFieldTypeEnum.LIST);
@@ -170,7 +172,7 @@ public class FtpAdapterJob extends Job {
 
         CustomFieldTemplate operation = new CustomFieldTemplate();
         operation.setCode("FtpAdapterJob_operation");
-        operation.setAppliesTo("JOB_FtpAdapterJob");
+        operation.setAppliesTo("JobInstance_FtpAdapterJob");
         operation.setActive(true);
         operation.setDescription(resourceMessages.getString("FtpAdapter.operation"));
         operation.setFieldType(CustomFieldTypeEnum.LIST);

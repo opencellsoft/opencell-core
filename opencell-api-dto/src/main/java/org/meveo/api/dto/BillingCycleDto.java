@@ -91,7 +91,7 @@ public class BillingCycleDto extends BusinessEntityDto {
     private ReferenceDateEnum referenceDate;
 
     /**
-     * The Script Instance code
+     * Code of the script instance.
      */
     private String scriptInstanceCode;
 
@@ -125,6 +125,9 @@ public class BillingCycleDto extends BusinessEntityDto {
             invoiceTypeEl = billingCycleEntity.getInvoiceTypeEl();
             invoiceTypeElSpark = billingCycleEntity.getInvoiceTypeElSpark();
             referenceDate = billingCycleEntity.getReferenceDate();
+			if (billingCycleEntity.getScriptInstance() != null) {
+				scriptInstanceCode = billingCycleEntity.getScriptInstance().getCode();
+			}
 
             if (billingCycleEntity.getInvoiceType() != null) {
                 invoiceTypeCode = billingCycleEntity.getInvoiceType().getCode();
@@ -132,10 +135,6 @@ public class BillingCycleDto extends BusinessEntityDto {
             if (billingCycleEntity.getCalendar() != null) {
                 calendar = billingCycleEntity.getCalendar().getCode();
             }
-            if (billingCycleEntity.getScriptInstance() != null) {
-                scriptInstanceCode = billingCycleEntity.getScriptInstance().getCode();
-            }
-
             customFields = customFieldInstances;
         }
     }
@@ -434,18 +433,19 @@ public class BillingCycleDto extends BusinessEntityDto {
     }
 
     /**
-     * Gets the script instance code.
-     * @return the script instance code
+     * Gets the scriptInstanceCode.
+     * @return code of script instance
      */
-    public String getScriptInstanceCode() {
-        return scriptInstanceCode;
-    }
+	public String getScriptInstanceCode() {
+		return scriptInstanceCode;
+	}
 
-    /**
-     * Sets the script instance code.
-     * @param scriptInstanceCode the script instance code.
-     */
-    public void setScriptInstanceCode(String scriptInstanceCode) {
-        this.scriptInstanceCode = scriptInstanceCode;
-    }
+	/**
+	 * Sets the scriptInstanceCode.
+	 * @param scriptInstanceCode code of script instance
+	 */
+	public void setScriptInstanceCode(String scriptInstanceCode) {
+		this.scriptInstanceCode = scriptInstanceCode;
+	}
+
 }

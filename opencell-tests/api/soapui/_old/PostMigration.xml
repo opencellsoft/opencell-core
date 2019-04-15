@@ -18029,8 +18029,8 @@
       <ws:createCustomFieldTemplate>
          <customField code="INVOICE_ADJUSTMENT_SEQUENCE" description="invoice adjustement sequence">
             <fieldType>LONG</fieldType> 
-            <accountLevel>SELLER</accountLevel> 
-            <appliesTo>SELLER</appliesTo> 
+            <accountLevel>Seller</accountLevel>
+            <appliesTo>Seller</appliesTo>
             <storageType>SINGLE</storageType> 
              <versionable>true</versionable>
             <calendar>MONTHLY</calendar> 

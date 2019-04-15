@@ -73,12 +73,13 @@ import org.meveo.model.shared.InterBankTitle;
  * 
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
 @Cacheable
-@CustomFieldEntity(cftCodePrefix = "PROVIDER")
+@CustomFieldEntity(cftCodePrefix = "Provider")
 @ExportIdentifier("code")
 @Table(name = "crm_provider", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -751,6 +752,8 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     /**
      * Check if this is a main provider A hardcoded ID = 1 of a current provider/tenant. Each provider/tenant has its's own schema and all should have same ID for fast retrieval
      * instead of ordering and taking a first record
+     * 
+     * @return True if its a provider with ID=1
      */
     public boolean isCurrentProvider() {
         return id != null && id == CURRENT_PROVIDER_ID;

@@ -1,5 +1,17 @@
 package org.meveo.admin.job.importexport;
 
+import org.meveo.admin.async.ImportSubscriptionsAsync;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.job.Job;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,21 +19,10 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
-import org.meveo.admin.async.ImportSubscriptionsAsync;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.ResourceBundle;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.jobs.JobCategoryEnum;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.job.Job;
-
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class ImportSubscriptionsJob extends Job {
 
@@ -89,7 +90,7 @@ public class ImportSubscriptionsJob extends Job {
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("nbRuns");
-        customFieldNbRuns.setAppliesTo("JOB_ImportSubscriptionsJob");
+        customFieldNbRuns.setAppliesTo("JobInstance_ImportSubscriptionsJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -99,7 +100,7 @@ public class ImportSubscriptionsJob extends Job {
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("waitingMillis");
-        customFieldNbWaiting.setAppliesTo("JOB_ImportSubscriptionsJob");
+        customFieldNbWaiting.setAppliesTo("JobInstance_ImportSubscriptionsJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);

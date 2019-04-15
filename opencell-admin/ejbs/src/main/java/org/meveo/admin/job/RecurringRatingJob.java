@@ -19,6 +19,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class RecurringRatingJob apply recurring charge for next billingCycle.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class RecurringRatingJob extends Job {
@@ -47,7 +49,7 @@ public class RecurringRatingJob extends Job {
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("nbRuns");
-        customFieldNbRuns.setAppliesTo("JOB_RecurringRatingJob");
+        customFieldNbRuns.setAppliesTo("JobInstance_RecurringRatingJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -57,7 +59,7 @@ public class RecurringRatingJob extends Job {
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("waitingMillis");
-        customFieldNbWaiting.setAppliesTo("JOB_RecurringRatingJob");
+        customFieldNbWaiting.setAppliesTo("JobInstance_RecurringRatingJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
@@ -67,7 +69,7 @@ public class RecurringRatingJob extends Job {
 
         CustomFieldTemplate rateUntilDate = new CustomFieldTemplate();
         rateUntilDate.setCode("rateUntilDate");
-        rateUntilDate.setAppliesTo("JOB_RecurringRatingJob");
+        rateUntilDate.setAppliesTo("JobInstance_RecurringRatingJob");
         rateUntilDate.setActive(true);
         rateUntilDate.setDescription(resourceMessages.getString("jobExecution.rateUntilDate"));
         rateUntilDate.setFieldType(CustomFieldTypeEnum.DATE);

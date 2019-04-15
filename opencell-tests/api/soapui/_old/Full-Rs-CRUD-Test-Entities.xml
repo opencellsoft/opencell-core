@@ -13783,7 +13783,7 @@
 	"code" : "CRM_ACCOUNT_TEST",
 	"description" : "Test data for custom field template",
 	"fieldType" : "LONG",
-	"accountLevel" : "CUST",
+	"accountLevel" : "Customer",
 	"storageType" : "SINGLE"
 }</con:request>
             <con:originalUri>http://localhost/opencell/api/rest/catalog/counterTemplate</con:originalUri>

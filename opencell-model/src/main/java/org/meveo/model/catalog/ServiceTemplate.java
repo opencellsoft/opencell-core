@@ -54,13 +54,14 @@ import org.meveo.model.billing.SubscriptionRenewal;
  * This represents a service that is part of an offer. It contains charges of different types.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ModuleItem
 @ObservableEntity
 @Cacheable
-@CustomFieldEntity(cftCodePrefix = "SERVICE")
+@CustomFieldEntity(cftCodePrefix = "ServiceTemplate")
 @ExportIdentifier({ "code" })
 @Table(name = "cat_service_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

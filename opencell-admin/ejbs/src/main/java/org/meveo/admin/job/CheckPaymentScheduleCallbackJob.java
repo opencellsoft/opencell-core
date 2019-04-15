@@ -37,6 +37,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class CheckPaymentScheduleCallbackJob launch check if a payment was rejected or not.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class CheckPaymentScheduleCallbackJob extends Job {
@@ -64,7 +66,7 @@ public class CheckPaymentScheduleCallbackJob extends Job {
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("nbRuns");
-        customFieldNbRuns.setAppliesTo("JOB_CheckPaymentScheduleCallbackJob");
+        customFieldNbRuns.setAppliesTo("JobInstance_CheckPaymentScheduleCallbackJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -74,7 +76,7 @@ public class CheckPaymentScheduleCallbackJob extends Job {
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("waitingMillis");
-        customFieldNbWaiting.setAppliesTo("JOB_CheckPaymentScheduleCallbackJob");
+        customFieldNbWaiting.setAppliesTo("JobInstance_CheckPaymentScheduleCallbackJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);

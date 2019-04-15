@@ -2175,4 +2175,13 @@ group by s.code
 			<where>code = 'UNBILLED_UA'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="#4150_20190415 - Disable standard jobs" author="EdwardPLegaspi">
+		<update tableName="meveo_job_instance">
+			<column name="timerentity_id" value="NULL"></column>
+			<column name="disabled" valueNumeric="0"></column>
+		</update>
+		<delete tableName="meveo_timer">
+		</delete>
+	</changeSet>
 </databaseChangeLog>

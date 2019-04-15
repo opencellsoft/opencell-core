@@ -18,6 +18,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class XMLInvoiceGenerationJob generate XML for all valid invoices that dont have it..
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class XMLInvoiceGenerationJob extends Job {
@@ -44,7 +46,7 @@ public class XMLInvoiceGenerationJob extends Job {
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("nbRuns");
-        customFieldNbRuns.setAppliesTo("JOB_XMLInvoiceGenerationJob");
+        customFieldNbRuns.setAppliesTo("JobInstance_XMLInvoiceGenerationJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -54,7 +56,7 @@ public class XMLInvoiceGenerationJob extends Job {
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("waitingMillis");
-        customFieldNbWaiting.setAppliesTo("JOB_XMLInvoiceGenerationJob");
+        customFieldNbWaiting.setAppliesTo("JobInstance_XMLInvoiceGenerationJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);

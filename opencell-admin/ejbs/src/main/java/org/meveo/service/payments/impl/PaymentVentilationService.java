@@ -14,13 +14,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.MatchingTypeEnum;
-import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.OtherTransactionGeneral;
-import org.meveo.model.payments.Payment;
-import org.meveo.model.payments.PaymentVentilation;
-import org.meveo.model.payments.VentilationActionStatusEnum;
+import org.meveo.model.payments.*;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -37,8 +31,11 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
 
     @Inject
     private MatchingCodeService matchingCodeService;
-    
-    
+
+    @Inject
+    private CustomerAccountService customerAccountService;
+
+
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void ventilatePayment(PaymentVentilation entity) throws Exception {
@@ -80,7 +77,8 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
         OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) paymentVentilation.getOriginalOT();
 
         Payment payment = new Payment();
-        payment.setCustomerAccount(paymentVentilation.getCustomerAccount());
+        CustomerAccount customerAccount = customerAccountService.retrieveIfNotManaged(paymentVentilation.getCustomerAccount());
+        payment.setCustomerAccount(customerAccount);
         payment.setDescription(originalOTG.getDescription());
         payment.setPaymentMethod(originalOTG.getPaymentMethod());
         payment.setAmount(ventilationAmout);
