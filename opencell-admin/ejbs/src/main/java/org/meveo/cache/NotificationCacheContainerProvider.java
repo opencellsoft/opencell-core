@@ -125,12 +125,11 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
             Set<Notification> notificationsOld = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
-            Set<Notification> notificationsSet = new HashSet<Notification>();
-            notificationsSet.add(notif);
+            Set<Notification> notifications = new HashSet<Notification>();
+            notifications.add(notif);
             if (notificationsOld != null) {
-                notificationsSet.addAll(notificationsOld);
+                notifications.addAll(notificationsOld);
             }
-            Set<Notification> notifications = new HashSet<Notification>(notificationsSet);
             eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, notifications);
 
         } catch (Exception e) {
