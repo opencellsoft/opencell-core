@@ -178,7 +178,7 @@ public class CatalogHierarchyBuilderService {
         ProductTemplate newProductTemplate = new ProductTemplate();
 
         duplicateProductTemplate(prefix, serviceConfiguration != null ? serviceConfiguration.getDescription() : "", productTemplate, newProductTemplate, pricePlansInMemory,
-            chargeTemplateInMemory, serviceConfiguration != null ? serviceConfiguration.getCfValues() : null);
+            chargeTemplateInMemory, serviceConfiguration != null ? serviceConfiguration.getCfValues() : null); // TODO note, that this value is available in GUI only - see serviceConfiguration.getCfValues() comment 
         newOfferProductTemplate.setProductTemplate(newProductTemplate);
 
         return newOfferProductTemplate;
@@ -413,7 +413,7 @@ public class CatalogHierarchyBuilderService {
             newServiceTemplate.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
             newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
             newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
-            try {
+            try { 
                 ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
                 String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceTemplate.getImagePath());
                 newServiceTemplate.setImagePath(newImagePath);
@@ -422,7 +422,7 @@ public class CatalogHierarchyBuilderService {
             }
 
             // set custom fields
-            if (serviceConfiguration != null && serviceConfiguration.getCfValues() != null) {
+            if (serviceConfiguration != null && serviceConfiguration.getCfValues() != null) { // TODO note, that this value is available in GUI only - see serviceConfiguration.getCfValues() comment
                 newServiceTemplate.getCfValuesNullSafe().setValuesByCode(serviceConfiguration.getCfValues());
             } else {
                 newServiceTemplate.setCfValues(serviceTemplate.getCfValues());
