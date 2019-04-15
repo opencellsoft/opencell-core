@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -36,6 +37,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.util.ApplicationProvider;
+import org.meveo.util.AppliesToValuesCalculator;
 import org.slf4j.Logger;
 
 @Stateless
@@ -271,21 +273,17 @@ public class EntityToDtoConverter {
 		if (listValue == null) {
 			return null;
 		}
+
 		List<CustomFieldValueDto> dtos = new ArrayList<CustomFieldValueDto>();
 
 		for (Object listItem : listValue) {
 			CustomFieldValueDto dto = new CustomFieldValueDto();
 			if (listItem instanceof EntityReferenceWrapper) {
 				if (isChildEntityTypeField) {
-					CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(
-							((EntityReferenceWrapper) listItem).getClassnameCode(),
-							((EntityReferenceWrapper) listItem).getCode());
-					if (cei == null) {
-						continue;
-					}
-
-					dto.setValue(CustomEntityInstanceDto.toDTO(cei, getCustomFieldsDTO(cei)));
-
+					// keep query params in dto ==> used in one query later in
+					// loadDtosCustomEntityInstances method
+					dto.setSearchClassnameCode(((EntityReferenceWrapper) listItem).getClassnameCode());
+					dto.setSearchCode(((EntityReferenceWrapper) listItem).getCode());
 				} else {
 					dto.setValue(new EntityReferenceDto((EntityReferenceWrapper) listItem));
 				}
@@ -294,7 +292,64 @@ public class EntityToDtoConverter {
 			}
 			dtos.add(dto);
 		}
+
+		loadDtosCustomEntityInstances(dtos);
+
 		return dtos;
+	}
+
+	private void loadDtosCustomEntityInstances(List<CustomFieldValueDto> dtos) {
+
+		List<CustomFieldValueDto> dtosWithCustomEntityInstances = dtos.stream()
+				.filter(dto -> dto.getSearchCode() != null || dto.getSearchClassnameCode() != null)
+				.collect(Collectors.toList());
+
+		if (dtosWithCustomEntityInstances != null && !dtosWithCustomEntityInstances.isEmpty()) {
+
+			List<CustomEntityInstance> ceis = customEntityInstanceService
+					.findByCodeByCet(dtosWithCustomEntityInstances);
+			if (ceis != null && !ceis.isEmpty()) {
+
+				AppliesToValuesCalculator appliesToValuesCalculator = new AppliesToValuesCalculator();
+				appliesToValuesCalculator.calculateCustomEntityInstancesAtvs(ceis);
+
+				Map<String, CustomFieldTemplate> allCfts = null;
+				if (appliesToValuesCalculator != null && appliesToValuesCalculator.getAllAtvs() != null
+						&& !appliesToValuesCalculator.getAllAtvs().isEmpty()) {
+					allCfts = findByAppliesTo(appliesToValuesCalculator.getAllAtvs());
+				}
+
+				if (allCfts != null && !allCfts.isEmpty() && ceis != null && !ceis.isEmpty()) {
+
+					for (CustomFieldValueDto dto : dtosWithCustomEntityInstances) {
+						for (CustomEntityInstance cei : ceis) {
+							if (dto.getSearchClassnameCode() != null && dto.getSearchCode() != null) {
+								if (cei.getCetCode() != null && cei.getCode() != null) {
+									if (dto.getSearchClassnameCode().equals(cei.getCetCode())
+											&& dto.getSearchCode().equals(cei.getCode())) {
+										try {
+											dto.setValue(CustomEntityInstanceDto.toDTO(cei, getCustomFieldsDTO(
+													CustomFieldInheritanceEnum.INHERIT_NONE, allCfts, cei)));
+										} catch (CustomFieldException e) {
+											dto.setValue(null);
+										}
+									}
+								}
+							}
+						}
+					}
+
+					dtos.removeAll(dtos.stream()
+							.filter(dto -> dto.getSearchCode() != null || dto.getSearchClassnameCode() != null)
+							.collect(Collectors.toList()));
+
+					dtos.addAll(dtosWithCustomEntityInstances);
+
+				}
+
+			}
+
+		}
 	}
 
 	private LinkedHashMap<String, CustomFieldValueDto> customFieldValueToDTO(Map<String, Object> mapValue) {

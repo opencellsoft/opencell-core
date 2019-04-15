@@ -94,6 +94,7 @@ import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.order.OrderService;
+import org.meveo.util.AppliesToValuesCalculator;
 
 /**
  * @author Edward P. Legaspi
@@ -935,7 +936,8 @@ public class SubscriptionApi extends BaseApi {
 
 		List<SubscriptionDto> res = new ArrayList<SubscriptionDto>(subscriptions.size());
 
-		AppliesToValuesCalculator appliesToValues = new AppliesToValuesCalculator(subscriptions);
+		AppliesToValuesCalculator appliesToValues = new AppliesToValuesCalculator();
+		appliesToValues.calculateSubscriptionsAtvs(subscriptions);
 
 		Map<String, CustomFieldTemplate> allCfts = null;
 		if (appliesToValues.getAllAtvs().size() > 0) {

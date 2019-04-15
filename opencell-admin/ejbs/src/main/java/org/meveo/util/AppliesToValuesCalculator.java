@@ -1,4 +1,4 @@
-package org.meveo.api.billing;
+package org.meveo.util;
 
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +8,8 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -24,8 +26,26 @@ public class AppliesToValuesCalculator {
 
 	Set<String> allAtvs;
 
-	public AppliesToValuesCalculator(List<Subscription> subscriptions) {
-		
+	public AppliesToValuesCalculator() {
+		allAtvs = new HashSet<String>();
+	}
+
+	public void calculateOfferTemplatesAtvs(List<OfferTemplate> offerTemplates) {
+
+		allAtvs = new HashSet<String>();
+
+		for (OfferTemplate ot : offerTemplates) {
+			try {
+				addAppliesToValue(ot);
+			} catch (CustomFieldException e) {
+				log.error(e.getLocalizedMessage(), e);
+			}
+		}
+
+	}
+
+	public void calculateSubscriptionsAtvs(List<Subscription> subscriptions) {
+
 		allAtvs = new HashSet<String>();
 
 		for (Subscription subscription : subscriptions) {
@@ -68,6 +88,20 @@ public class AppliesToValuesCalculator {
 					}
 
 				}
+			}
+		}
+
+	}
+
+	public void calculateCustomEntityInstancesAtvs(List<CustomEntityInstance> customEntityInstances) {
+
+		allAtvs = new HashSet<String>();
+
+		for (CustomEntityInstance cei : customEntityInstances) {
+			try {
+				addAppliesToValue(cei);
+			} catch (CustomFieldException e) {
+				log.error(e.getLocalizedMessage(), e);
 			}
 		}
 
