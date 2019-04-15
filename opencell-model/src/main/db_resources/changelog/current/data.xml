@@ -2181,7 +2181,7 @@ group by s.code
             <column name="timerentity_id" value="NULL"></column>
             <column name="disabled" valueNumeric="0"></column>
         </update>
-        <!--delete tableName="meveo_timer">
-        </delete-->
+        <delete tableName="meveo_timer">
+        </delete>
     </changeSet>
 </databaseChangeLog>
