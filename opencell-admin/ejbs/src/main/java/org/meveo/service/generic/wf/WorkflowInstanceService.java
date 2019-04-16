@@ -23,9 +23,10 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
@@ -44,42 +45,25 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
     @Inject
     private WFStatusService wfStatusService;
 
-    public WorkflowInstance findByCodeAndGenericWorkflow(String entityInstanceCode, GenericWorkflow genericWorkflow) throws BusinessException {
+    public WorkflowInstance findByEntityIdAndGenericWorkflow(Long entityInstanceId, GenericWorkflow genericWorkflow) throws BusinessException {
+        TypedQuery<WorkflowInstance> query = getEntityManager()
+            .createQuery("select be from " + entityClass.getSimpleName() + " wi where wi.entityInstanceId = :entityInstanceId and wi.genericWorkflow = :genericWorkflow",
+                WorkflowInstance.class)
+            .setParameter("entityInstanceId", entityInstanceId).setParameter("genericWorkflow", genericWorkflow).setMaxResults(1);
 
-        Map<String, Object> params = Maps.newHashMap();
-        String query = "From WorkflowInstance wi where wi.entityInstanceCode = :entityInstanceCode and wi.genericWorkflow = :genericWorkflow";
-        params.put("entityInstanceCode", entityInstanceCode);
-        params.put("genericWorkflow", genericWorkflow);
-
-        List<WorkflowInstance> wfInstances = (List<WorkflowInstance>) executeSelectQuery(query, params);
-
-        if (wfInstances.size() > 1) {
-            throw new BusinessException("Multiple instances result for entity " + entityInstanceCode);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No {} of entity id {} found", entityClass.getSimpleName(), entityInstanceId);
+            return null;
         }
-
-        if (!wfInstances.isEmpty()) {
-            return wfInstances.iterator().next();
-        }
-
-        return null;
     }
 
-    public List<WorkflowInstance> findByCodeAndClazz(String entityInstanceCode, Class<?> clazz) {
+    public List<WorkflowInstance> findByEntityIdAndClazz(Long entityInstanceId, Class<?> clazz) {
 
         Map<String, Object> params = Maps.newHashMap();
-        String query = "From WorkflowInstance wi where wi.entityInstanceCode = :entityInstanceCode and wi.targetEntityClass = :clazz";
-        params.put("entityInstanceCode", entityInstanceCode);
-        params.put("clazz", clazz.getName());
-
-        return (List<WorkflowInstance>) executeSelectQuery(query, params);
-    }
-
-    public List<WorkflowInstance> findByCodeAndCetAndClazz(String entityInstanceCode, String targetCetCode, Class<?> clazz) {
-
-        Map<String, Object> params = Maps.newHashMap();
-        String query = "From WorkflowInstance wi where wi.entityInstanceCode = :entityInstanceCode and wi.targetCetCode = :targetCetCode and wi.targetEntityClass = :clazz";
-        params.put("entityInstanceCode", entityInstanceCode);
-        params.put("targetCetCode", targetCetCode);
+        String query = "From WorkflowInstance wi where wi.entityInstanceId = :entityInstanceId and wi.targetEntityClass = :clazz";
+        params.put("entityInstanceId", entityInstanceId);
         params.put("clazz", clazz.getName());
 
         return (List<WorkflowInstance>) executeSelectQuery(query, params);
@@ -103,15 +87,8 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
 
         Map<String, Object> params = Maps.newHashMap();
         String query = "From " + gwf.getTargetEntityClass()
-                + " be where be.code not in (select wi.entityInstanceCode from WorkflowInstance wi where wi.targetEntityClass=:entityClass)";
+                + " be where be.id not in (select wi.entityInstanceId from WorkflowInstance wi where wi.targetEntityClass=:entityClass)";
         params.put("entityClass", gwf.getTargetEntityClass());
-
-        if (!StringUtils.isBlank(gwf.getTargetCetCode())) {
-            query = "From " + gwf.getTargetEntityClass() + " be where be.code not in "
-                    + "(select wi.entityInstanceCode from WorkflowInstance wi where wi.targetEntityClass=:entityClass and wi.targetCetCode = :cetCode)"
-                    + " and be.cetCode=:cetCode";
-            params.put("cetCode", gwf.getTargetCetCode());
-        }
 
         return (List<BusinessEntity>) executeSelectQuery(query, params);
     }
@@ -119,6 +96,7 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
     public void create(BusinessEntity e, GenericWorkflow genericWorkflow) throws BusinessException {
         WorkflowInstance linkedWFIns = new WorkflowInstance();
         linkedWFIns.setTargetEntityClass(genericWorkflow.getTargetEntityClass());
+        linkedWFIns.setEntityInstanceId(e.getId());
         linkedWFIns.setEntityInstanceCode(e.getCode());
         linkedWFIns.setGenericWorkflow(genericWorkflow);
         linkedWFIns.setTargetCetCode(genericWorkflow.getTargetCetCode());

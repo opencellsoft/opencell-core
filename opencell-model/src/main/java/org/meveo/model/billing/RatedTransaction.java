@@ -47,6 +47,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ISearchable;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -64,6 +65,7 @@ import org.meveo.model.rating.EDR;
  * @lastModifiedVersion 7.0
  */
 @Entity
+@ObservableEntity
 @Table(name = "billing_rated_transaction")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), })

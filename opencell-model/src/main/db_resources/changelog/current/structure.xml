@@ -2006,6 +2006,16 @@ $$ LANGUAGE plpgsql;
 			<modifyDataType tableName="wf_history_action" columnName="result" newDataType="varchar(2000)" />
 	</changeSet>
 
+	<changeSet id="#4127_10042019" author="AbdelmounaimAkadid">
+		<addColumn tableName="dwh_report_extract">
+            <column name="output_dir" type="varchar(255)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = concat('reports/', category) where category is not null or category != ''
+        </sql>
+        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = 'reports' where category is null or category = ''
+        </sql>
+	</changeSet>
+
     <changeSet id="#4089_20190404" author="AbdellatifBARI">
         <sql>update ${db.schema.adapted}crm_custom_field_tmpl set applies_to = case
 
@@ -2058,4 +2068,16 @@ $$ LANGUAGE plpgsql;
             end where applies_to is not null
         </sql>
     </changeSet>
+    
+    <changeSet id="#4117_20190405" author="AmineBENAICHA">
+    	<addColumn tableName="wf_instance">
+            <column name="entity_instance_id" type="bigint" >
+            	<constraints nullable="false" />
+            </column>
+        </addColumn>
+        <createIndex tableName="wf_instance" indexName="wf_instance_entity_id_idx">
+            <column name="entity_instance_id" type="bigint"/>
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>
