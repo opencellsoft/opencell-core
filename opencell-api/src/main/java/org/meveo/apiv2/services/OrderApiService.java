@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class OrderService implements ApiService<Order> {
+public class OrderApiService implements ApiService<Order> {
 
     private List<String> fetchFields;
     @Inject
@@ -25,7 +25,7 @@ public class OrderService implements ApiService<Order> {
     @Inject
     private PaymentMethodService paymentMethodService;
     @Inject
-    private OrderItemService orderItemService;
+    private OrderItemApiService orderItemService;
 
     @PostConstruct
     public void initService(){
@@ -57,8 +57,8 @@ public class OrderService implements ApiService<Order> {
             }
             populateOrderFields(order);
             orderService.create(order);
-        }catch (BusinessException e){
-            throw new BadRequestException(e.getCause());
+        }catch (Exception e){
+            throw new BadRequestException(e);
         }
         return order;
     }
@@ -117,8 +117,8 @@ public class OrderService implements ApiService<Order> {
                 orderToUpdate.setOrderItems(order.getOrderItems());
 
                 orderService.update(orderToUpdate);
-            } catch (BusinessException e) {
-                throw new BadRequestException(e.getCause());
+            } catch (Exception e) {
+                throw new BadRequestException(e);
             }
         }
         return orderOptional;
@@ -171,8 +171,8 @@ public class OrderService implements ApiService<Order> {
                 }
 
                 orderService.update(orderToUpdate);
-            } catch (BusinessException e) {
-                throw new BadRequestException(e.getCause());
+            } catch (Exception e) {
+                throw new BadRequestException(e);
             }
         }
         return orderOptional;
@@ -184,8 +184,8 @@ public class OrderService implements ApiService<Order> {
         if(order.isPresent()){
             try {
                 orderService.remove(id);
-            } catch (BusinessException e) {
-                throw new BadRequestException(e.getCause());
+            } catch (Exception e) {
+                throw new BadRequestException(e);
             }
         }
         return order;

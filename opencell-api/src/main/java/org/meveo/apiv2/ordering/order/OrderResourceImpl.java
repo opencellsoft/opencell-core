@@ -1,7 +1,7 @@
 package org.meveo.apiv2.ordering.order;
 
 import org.meveo.apiv2.common.LinkGenerator;
-import org.meveo.apiv2.services.ApiService;
+import org.meveo.apiv2.services.OrderApiService;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class OrderResourceImpl implements OrderResource {
     @Inject
-    private ApiService<org.meveo.model.order.Order> orderService;
+    private OrderApiService orderService;
     private final OrderMapper orderMapper = new OrderMapper();
 
     @Override
@@ -84,6 +84,13 @@ public class OrderResourceImpl implements OrderResource {
         return orderService.delete(id)
                 .map(orderEntity -> Response.ok().entity(toResourceOrderWithLink(orderMapper.toResource(orderEntity))).build())
                 .orElseThrow(NotFoundException::new);
+    }
+
+    @Override
+    public Response deleteOrder(List<Long> ids) {
+        ids.forEach(id -> orderService.delete(id)
+                        .orElseThrow(() -> new NotFoundException("order with id "+id+" does not exist !")));
+        return Response.ok().entity("Successfully deleted all order").build();
     }
 
     private org.meveo.apiv2.ordering.order.Order toResourceOrderWithLink(org.meveo.apiv2.ordering.order.Order order) {

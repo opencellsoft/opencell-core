@@ -13,6 +13,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("ordering/products")
 @Produces({ "application/json"})
@@ -121,4 +122,18 @@ public interface ProductResource {
             })
     Response deleteProduct(
             @Parameter(description = "id of the product to delete", required = true) @PathParam("id") Long id);
+
+    @DELETE
+    @Operation(summary = "delete more than one product",
+            tags = { "Products" },
+            description = "delete more than one product, and returns the deleted products",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "the products deletion went ok ", content = @Content(schema = @Schema(implementation = String.class))
+                    ),
+                    @ApiResponse(responseCode = "404", description = "product not found", content = @Content(schema = @Schema(implementation = ApiException.class)))
+            })
+    Response deleteProducts(
+            @Parameter(description = "ids of products to delete", required = true) @QueryParam("id") List<Long> ids);
 }

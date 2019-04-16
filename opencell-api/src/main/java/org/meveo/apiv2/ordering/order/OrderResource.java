@@ -13,6 +13,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("ordering/orders")
 @Produces({ "application/json"})
@@ -122,5 +123,20 @@ public interface OrderResource {
             })
     Response deleteOrder(
             @Parameter(description = "id of the order to delete", required = true) @PathParam("id") Long id);
+
+
+    @DELETE
+    @Operation(summary = "delete more than one order",
+            tags = { "Orders" },
+            description = "delete more than one order",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "the order deletion went ok ", content = @Content(schema = @Schema(implementation = String.class))
+                    ),
+                    @ApiResponse(responseCode = "404", description = "order not found", content = @Content(schema = @Schema(implementation = ApiException.class)))
+            })
+    Response deleteOrder(
+            @Parameter(description = "ids of orders to delete", required = true) @QueryParam("id") List<Long> ids);
 
 }

@@ -1,8 +1,7 @@
 package org.meveo.apiv2.ordering.product;
 
 import org.meveo.apiv2.common.LinkGenerator;
-import org.meveo.apiv2.services.ApiService;
-import org.meveo.apiv2.services.ProductService;
+import org.meveo.apiv2.services.ProductApiService;
 import org.meveo.model.catalog.ProductTemplate;
 
 import javax.inject.Inject;
@@ -15,7 +14,7 @@ import java.util.List;
 
 public class ProductResourceImpl implements ProductResource {
     @Inject
-    private ApiService<ProductTemplate> productService;
+    private ProductApiService productService;
     private ProductMapper productMapper = new ProductMapper();
 
     @Override
@@ -72,7 +71,7 @@ public class ProductResourceImpl implements ProductResource {
         return productService.update(id, productMapper.toEntity(product))
         .map(productTemplate -> {
             if(product.getImageUrl() != null){
-                ((ProductService)productService).saveImage(productTemplate, product.getImageUrl(),product.getImage64());
+                productService.saveImage(productTemplate, product.getImageUrl(),product.getImage64());
             }
             return Response.ok().entity(toResourceProductWithLink(productMapper.toResource(productTemplate))).build();
         }).orElseThrow(NotFoundException::new);
@@ -83,7 +82,7 @@ public class ProductResourceImpl implements ProductResource {
         return productService.patch(id, productMapper.toEntity(product))
                 .map(productTemplate -> {
                     if(product.getImageUrl() != null){
-                        ((ProductService)productService).saveImage(productTemplate, product.getImageUrl(),product.getImage64());
+                        productService.saveImage(productTemplate, product.getImageUrl(),product.getImage64());
                     }
                     return Response.ok().entity(toResourceProductWithLink(productMapper.toResource(productTemplate))).build();
                 }).orElseThrow(NotFoundException::new);
@@ -95,6 +94,14 @@ public class ProductResourceImpl implements ProductResource {
                 Response.ok().entity(toResourceProductWithLink(productMapper.toResource(productTemplate))).build())
                 .orElseThrow(NotFoundException::new);
     }
+
+    @Override
+    public Response deleteProducts(List<Long> ids) {
+        ids.forEach(id -> productService.delete(id)
+                        .orElseThrow(() -> new NotFoundException("product with id "+id+" does not exist !")));
+        return Response.ok().entity("Successfully deleted all products").build();
+    }
+
     // TODO : move to mapper
     private Product toResourceProductWithLink(Product product) {
         return ImmutableProduct.copyOf(product).withLinks(new LinkGenerator.SelfLinkGenerator(ProductResource.class)

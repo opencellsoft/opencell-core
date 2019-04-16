@@ -5,6 +5,7 @@ import org.meveo.apiv2.ordering.orderItem.ImmutableOrderItem;
 import org.meveo.apiv2.ordering.orderItem.ImmutableOrderItems;
 import org.meveo.apiv2.ordering.orderItem.OrderItems;
 import org.meveo.apiv2.services.ApiService;
+import org.meveo.apiv2.services.OrderItemApiService;
 import org.meveo.model.order.OrderItem;
 
 import javax.inject.Inject;
@@ -19,7 +20,7 @@ public class OrderItemResourceImpl implements OrderItemResource {
 
     private final OrderItemMapper orderItemMapper = new OrderItemMapper();
     @Inject
-    private ApiService<OrderItem> orderItemService;
+    private OrderItemApiService orderItemService;
 
     @Override
     public Response getOrderItems(Long offset, Long limit, String sort, String orderBy, String filter, Request request) {
@@ -93,6 +94,13 @@ public class OrderItemResourceImpl implements OrderItemResource {
         return orderItemService.delete(id)
                 .map(orderItemEntity -> Response.ok().entity(toResourceOrderItemWithLink(orderItemMapper.toResource(orderItemEntity))).build())
                 .orElseThrow(NotFoundException::new);
+    }
+
+    @Override
+    public Response deleteOrderItem(List<Long> ids) {
+        ids.forEach(id -> orderItemService.delete(id)
+                        .orElseThrow(() -> new NotFoundException("order-Item with id "+id+" does not exist !")));
+        return Response.ok().entity("Successfully deleted all order-Item").build();
     }
 
     // TODO : move to mapper

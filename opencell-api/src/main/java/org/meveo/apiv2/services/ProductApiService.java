@@ -19,13 +19,15 @@ import org.meveo.service.catalog.impl.ProductTemplateService;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.PersistenceException;
+import javax.transaction.RollbackException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotAuthorizedException;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
 
-public class ProductService implements ApiService<ProductTemplate> {
+public class ProductApiService implements ApiService<ProductTemplate> {
 
     @Inject
     @CurrentUser
@@ -68,8 +70,8 @@ public class ProductService implements ApiService<ProductTemplate> {
             populateProductTemplateFields(productTemplate);
 
             productTemplateService.create(productTemplate);
-        }catch (BusinessException e){
-            throw new BadRequestException(e.getCause());
+        }catch (Exception e){
+            throw new BadRequestException(e);
         }
         return productTemplate;
     }
@@ -93,8 +95,8 @@ public class ProductService implements ApiService<ProductTemplate> {
                 productTemplateToUpdate.setChannels(productTemplate.getChannels());
                 productTemplateToUpdate.setOfferTemplateCategories(productTemplate.getOfferTemplateCategories());
                 productTemplateService.update(productTemplateToUpdate);
-            } catch (BusinessException e) {
-                throw new BadRequestException(e.getCause());
+            } catch (Exception e) {
+                throw new BadRequestException(e);
             }
         }
         return productTemplateOptional;
@@ -132,8 +134,8 @@ public class ProductService implements ApiService<ProductTemplate> {
                     productTemplateToUpdate.setOfferTemplateCategories(productTemplate.getOfferTemplateCategories());
                 }
                 productTemplateService.update(productTemplateToUpdate);
-            } catch (BusinessException e) {
-                throw new BadRequestException(e.getCause());
+            } catch (Exception e) {
+                throw new BadRequestException(e);
             }
         }
         return productTemplateOptional;
@@ -145,8 +147,8 @@ public class ProductService implements ApiService<ProductTemplate> {
         if(productTemplateOptional.isPresent()){
             try {
                 productTemplateService.remove(id);
-            } catch (BusinessException e) {
-                throw new BadRequestException(e.getCause());
+            } catch (Exception e) {
+                throw new BadRequestException(e);
             }
         }
         return productTemplateOptional;
