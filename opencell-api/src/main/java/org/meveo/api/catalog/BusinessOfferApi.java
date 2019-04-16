@@ -39,6 +39,8 @@ import org.meveo.service.catalog.impl.BusinessProductModelService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 
 /**
  * @author Said Ramli
@@ -61,6 +63,12 @@ public class BusinessOfferApi extends BaseApi {
 
     @Inject
     private OfferTemplateService offerTemplateService;
+
+    @Inject
+    private ServiceTemplateService serviceTemplateService;
+
+    @Inject
+    private ProductTemplateService productTemplateService;
 
     public Long instantiateBOM(BomOfferDto postData) throws MeveoApiException, BusinessException {
 
@@ -133,8 +141,7 @@ public class BusinessOfferApi extends BaseApi {
 
             for (ServiceConfigurationDto serviceConfigurationDto : postData.getServicesToActivate()) {
 
-                // Caution the servicode building algo must match that of
-                // BusinessOfferModelService.createOfferFromBOM
+                // Caution the service code also must match that of BusinessOfferModelService.createOfferFromBOM
                 String serviceTemplateCode = constructServiceTemplateCode(newOfferTemplate, ost, serviceTemplate, serviceConfigurationDto);
 
                 if (serviceTemplateCode.equals(serviceTemplate.getCode()) && serviceConfigurationDto.getCustomFields() != null && !serviceConfigurationDto.isMatch()) {
@@ -142,6 +149,10 @@ public class BusinessOfferApi extends BaseApi {
                         CustomFieldsDto cfsDto = new CustomFieldsDto();
                         cfsDto.setCustomField(serviceConfigurationDto.getCustomFields());
                         populateCustomFields(cfsDto, serviceTemplate, true);
+
+                        serviceTemplate = serviceTemplateService.update(serviceTemplate);
+                        ost.setServiceTemplate(serviceTemplate);
+
                     } catch (MissingParameterException | InvalidParameterException e) {
                         log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
                         throw e;
@@ -169,6 +180,10 @@ public class BusinessOfferApi extends BaseApi {
                             CustomFieldsDto cfsDto = new CustomFieldsDto();
                             cfsDto.setCustomField(productCodeDto.getCustomFields());
                             populateCustomFields(cfsDto, productTemplate, true);
+
+                            productTemplate = productTemplateService.update(productTemplate);
+                            opt.setProductTemplate(productTemplate);
+
                         } catch (MissingParameterException e) {
                             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
                             throw e;
