@@ -10,11 +10,13 @@ import org.meveo.api.rest.PATCH;
 import org.meveo.apiv2.models.ApiException;
 import org.meveo.apiv2.ordering.orderItem.OrderItem;
 import org.meveo.apiv2.ordering.orderItem.OrderItems;
+import org.meveo.apiv2.ordering.product.Products;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("ordering/order-items")
 @Produces({ "application/json"})
@@ -125,4 +127,17 @@ public interface OrderItemResource {
     Response deleteOrderItem(
             @Parameter(description = "id of the order-item to delete", required = true) @PathParam("id") Long id);
 
+    @DELETE
+    @Operation(summary = "delete more than one order-item",
+            tags = { "Order-items" },
+            description = "delete more than one order-item",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "the order-items deletion went ok ", content = @Content(schema = @Schema(implementation = String.class))
+                    ),
+                    @ApiResponse(responseCode = "404", description = "order-item not found", content = @Content(schema = @Schema(implementation = ApiException.class)))
+            })
+    Response deleteOrderItem(
+            @Parameter(description = "ids of order-items to delete", required = true) @QueryParam("id") List<Long> ids);
 }

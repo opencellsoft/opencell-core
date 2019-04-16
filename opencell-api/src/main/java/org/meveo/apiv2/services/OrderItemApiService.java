@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class OrderItemService implements ApiService<OrderItem> {
+public class OrderItemApiService implements ApiService<OrderItem> {
     private List<String> fetchFields;
 
     @Inject
@@ -66,7 +66,7 @@ public class OrderItemService implements ApiService<OrderItem> {
         if(orderItem != null){
             orderItem.setProductInstances(
                     orderItem.getProductInstances().stream()
-                            .peek(productInstance -> productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate())))
+                            .peek(productInstance -> productInstance.setProductTemplate(productTemplateService.retrieveIfNotManaged(productInstance.getProductTemplate())))
                             .collect(Collectors.toList()));
         }
         return orderItem;
@@ -88,13 +88,13 @@ public class OrderItemService implements ApiService<OrderItem> {
         try {
             populateOrderItemFields(orderItem);
             orderItemService.create(orderItem);
-        }catch (BusinessException e){
-            throw new BadRequestException(e.getCause());
+        }catch (Exception e){
+            throw new BadRequestException(e);
         }
         return orderItem;
     }
 
-    public void populateOrderItemFields(OrderItem orderItem) throws BusinessException {
+    void populateOrderItemFields(OrderItem orderItem) throws BusinessException {
         if(orderItem.getOrder() != null && orderItem.getOrder().getId() != null) {
             Order orderById = orderService.findById(orderItem.getOrder().getId());
             orderItem.setOrder(orderById);
@@ -143,11 +143,10 @@ public class OrderItemService implements ApiService<OrderItem> {
         if(productInstance.getProductTemplate() !=null){
             productInstance.setProductTemplate(productTemplateService.findById(productInstance.getProductTemplate().getId()));
         }
-        productInstance.setQuantity(productInstance.getQuantity());
         try {
             productInstanceService.create(productInstance);
-        } catch (BusinessException e) {
-            throw new BadRequestException(e.getCause());
+        } catch (Exception e) {
+            throw new BadRequestException(e);
         }
         return productInstance;
     }
@@ -169,8 +168,8 @@ public class OrderItemService implements ApiService<OrderItem> {
 
                 orderItemService.update(oldOrderItem);
                 refreshOrRetrieveOrderItemProductInstanceProduct(oldOrderItem);
-            } catch (BusinessException e) {
-                throw new BadRequestException(e.getCause());
+            } catch (Exception e) {
+                throw new BadRequestException(e);
             }
         }
         return OrderItemOptional;
@@ -204,8 +203,8 @@ public class OrderItemService implements ApiService<OrderItem> {
                 }
                 orderItemService.update(oldOrderItem);
                 refreshOrRetrieveOrderItemProductInstanceProduct(oldOrderItem);
-            } catch (BusinessException e) {
-                throw new BadRequestException(e.getCause());
+            } catch (Exception e) {
+                throw new BadRequestException(e);
             }
         }
         return OrderItemOptional;
@@ -217,8 +216,8 @@ public class OrderItemService implements ApiService<OrderItem> {
         if(OrderItemOptional.isPresent()){
             try {
                 orderItemService.remove(id);
-            } catch (BusinessException e) {
-                throw new BadRequestException(e.getCause());
+            } catch (Exception e) {
+                throw new BadRequestException(e);
             }
         }
         return OrderItemOptional;
