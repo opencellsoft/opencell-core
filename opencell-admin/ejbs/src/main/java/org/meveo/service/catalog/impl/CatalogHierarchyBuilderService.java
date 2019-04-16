@@ -177,8 +177,9 @@ public class CatalogHierarchyBuilderService {
 
         ProductTemplate newProductTemplate = new ProductTemplate();
 
+        // TODO note, that this value is available in GUI only - see serviceConfiguration.getCfValues() comment
         duplicateProductTemplate(prefix, serviceConfiguration != null ? serviceConfiguration.getDescription() : "", productTemplate, newProductTemplate, pricePlansInMemory,
-            chargeTemplateInMemory, serviceConfiguration != null ? serviceConfiguration.getCfValues() : null); // TODO note, that this value is available in GUI only - see serviceConfiguration.getCfValues() comment 
+            chargeTemplateInMemory, serviceConfiguration != null ? serviceConfiguration.getCfValues() : null);
         newOfferProductTemplate.setProductTemplate(newProductTemplate);
 
         return newOfferProductTemplate;
@@ -235,8 +236,8 @@ public class CatalogHierarchyBuilderService {
             // set custom fields
             if (customFieldValues != null) {
                 newProductTemplate.getCfValuesNullSafe().setValuesByCode(customFieldValues);
-            } else {
-                newProductTemplate.setCfValues(productTemplate.getCfValues());
+            } else if (productTemplate.getCfValues() != null) {
+                newProductTemplate.getCfValuesNullSafe().setValuesByCode(productTemplate.getCfValues().getValuesByCode());
             }
 
             // needs a refresh here so CF will not be saved.
@@ -413,7 +414,7 @@ public class CatalogHierarchyBuilderService {
             newServiceTemplate.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
             newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
             newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
-            try { 
+            try {
                 ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
                 String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceTemplate.getImagePath());
                 newServiceTemplate.setImagePath(newImagePath);
@@ -422,10 +423,12 @@ public class CatalogHierarchyBuilderService {
             }
 
             // set custom fields
-            if (serviceConfiguration != null && serviceConfiguration.getCfValues() != null) { // TODO note, that this value is available in GUI only - see serviceConfiguration.getCfValues() comment
+            // TODO note, that this value is available in GUI only - see serviceConfiguration.getCfValues() comment
+            if (serviceConfiguration != null && serviceConfiguration.getCfValues() != null) {
                 newServiceTemplate.getCfValuesNullSafe().setValuesByCode(serviceConfiguration.getCfValues());
-            } else {
-                newServiceTemplate.setCfValues(serviceTemplate.getCfValues());
+
+            } else if (serviceTemplate.getCfValues() != null) {
+                newServiceTemplate.getCfValuesNullSafe().setValuesByCode(serviceTemplate.getCfValues().getValuesByCode());
             }
 
             serviceTemplateService.refresh(serviceTemplate);
