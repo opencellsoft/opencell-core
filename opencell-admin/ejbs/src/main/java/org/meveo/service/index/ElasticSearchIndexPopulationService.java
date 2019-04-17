@@ -385,29 +385,33 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             for (Entry<String, Object> cfValueInfo : cfEntity.getCfValuesAsValues().entrySet()) {
 
                 String cfCode = cfValueInfo.getKey();
-                Object value = cfValueInfo.getValue();
-                if (value instanceof Map || value instanceof EntityReferenceWrapper) {
-                    value = JsonUtils.toJson(value, false);
-                }
 
-                if (cftIndexable != null && cftIndexable.contains(entity.getClass().getName() + "_" + cfCode)) {
-                    jsonValueMap.put(cfCode, value);
-
-                } else if (cftNotIndexable != null && cftNotIndexable.contains(entity.getClass().getName() + "_" + cfCode)) {
+                if (cftNotIndexable != null && cftNotIndexable.contains(entity.getClass().getName() + "_" + cfCode)) {
                     continue;
 
-                } else {
+                } else if (cftIndexable == null || !cftIndexable.contains(entity.getClass().getName() + "_" + cfCode)) {
                     CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(cfCode, (ICustomFieldEntity) entity);
-                    if (cft != null && cft.getIndexType() != null) {
-                        if (cftIndexable != null) {
-                            cftIndexable.add(entity.getClass().getName() + "_" + cfCode);
+                    if (cft == null || cft.getIndexType() == null) {
+                        if (cftNotIndexable != null) {
+                            cftNotIndexable.add(entity.getClass().getName() + "_" + cfCode);
                         }
-                        jsonValueMap.put(cfCode, value);
+                        continue;
 
-                    } else if (cftNotIndexable != null) {
-                        cftNotIndexable.add(entity.getClass().getName() + "_" + cfCode);
+                    } else if (cftIndexable != null) {
+                        cftIndexable.add(entity.getClass().getName() + "_" + cfCode);
                     }
                 }
+
+                Object value = cfValueInfo.getValue();
+                if (value instanceof Map) {
+                    value = JsonUtils.toJson(value, false);
+
+                } else if (value instanceof EntityReferenceWrapper) {
+                    value = ((EntityReferenceWrapper) value).toMap();
+                }
+
+                jsonValueMap.put(cfCode, value);
+
             }
         }
 
@@ -1082,8 +1086,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * Determine a classname and a Custom entity template code from index name and entity type
      * 
      * @param fullIndexName Full index name
-     * @param type Entity type value as stored in Elastic search datatable value
-     * @param Entity type as stored in Elastic search index
+     * @param type Entity type value as stored in Elastic search index data
      * @return An array with a full classname and a Custom entity code (when applicable). OR null if no match was found.
      */
     public String[] getClassnameAndCETCodeFromIndex(String fullIndexName, String type) {
@@ -1103,7 +1106,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * Construct identifier for Elastic search for a given entity.
      * 
      * @param entity Entity to construct ID for
-     * @return Identifier value. Its either code, id or <code>_<id> of an entity
+     * @return Identifier value. Its either code, id or &lt;code&gt;_&lt;id&gt; of an entity
      */
     protected static String buildId(ISearchable entity) {
         if (entity instanceof BusinessEntity) {

@@ -19,6 +19,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class PurgeJob purge old data for job execution history, counter periods .
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class PurgeJob extends Job {
@@ -46,7 +48,7 @@ public class PurgeJob extends Job {
 
         CustomFieldTemplate cft = new CustomFieldTemplate();
         cft.setCode("PurgeJob_jobExecHistory_jobName");
-        cft.setAppliesTo("JOB_PurgeJob");
+        cft.setAppliesTo("JobInstance_PurgeJob");
         cft.setActive(true);
         cft.setDescription("Job name");
         cft.setFieldType(CustomFieldTypeEnum.STRING);
@@ -57,7 +59,7 @@ public class PurgeJob extends Job {
 
         cft = new CustomFieldTemplate();
         cft.setCode("PurgeJob_jobExecHistory_nbDays");
-        cft.setAppliesTo("JOB_PurgeJob");
+        cft.setAppliesTo("JobInstance_PurgeJob");
         cft.setActive(true);
         cft.setDescription("Purge history older than (in days) *");
         cft.setFieldType(CustomFieldTypeEnum.LONG);
@@ -67,7 +69,7 @@ public class PurgeJob extends Job {
 
         cft = new CustomFieldTemplate();
         cft.setCode("PurgeJob_counterPeriod_nbDays");
-        cft.setAppliesTo("JOB_PurgeJob");
+        cft.setAppliesTo("JobInstance_PurgeJob");
         cft.setActive(true);
         cft.setDescription("Purge periods with end date older than (in days) *");
         cft.setFieldType(CustomFieldTypeEnum.LONG);
@@ -77,7 +79,7 @@ public class PurgeJob extends Job {
 
         cft = new CustomFieldTemplate();
         cft.setCode("PurgeJob_notificationHistory_notifCode");
-        cft.setAppliesTo("JOB_PurgeJob");
+        cft.setAppliesTo("JobInstance_PurgeJob");
         cft.setActive(true);
         cft.setDescription("Notification code");
         cft.setFieldType(CustomFieldTypeEnum.STRING);
@@ -88,7 +90,7 @@ public class PurgeJob extends Job {
 
         cft = new CustomFieldTemplate();
         cft.setCode("PurgeJob_notificationHistory_nbDays");
-        cft.setAppliesTo("JOB_PurgeJob");
+        cft.setAppliesTo("JobInstance_PurgeJob");
         cft.setActive(true);
         cft.setDescription("Purge events older than (in days) *");
         cft.setFieldType(CustomFieldTypeEnum.LONG);
@@ -98,7 +100,7 @@ public class PurgeJob extends Job {
 
         cft = new CustomFieldTemplate();
         cft.setCode("PurgeJob_inboundRequests_nbDays");
-        cft.setAppliesTo("JOB_PurgeJob");
+        cft.setAppliesTo("JobInstance_PurgeJob");
         cft.setActive(true);
         cft.setDescription("Purge requests older than (in days) *");
         cft.setFieldType(CustomFieldTypeEnum.LONG);

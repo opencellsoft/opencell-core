@@ -1017,7 +1017,7 @@ public class KPICustomerPerOfferReporting extends ReportExtractScript {
             <column name="job_template" value="SendInvoiceJob" />
             <column name="code" value="SendInvoice_Job" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="timerentity_id" valueNumeric="-2" />
+            <column name="timerentity_id" valueNumeric="-3" />
             <column name="uuid" value="JOB_SendInvoiceJob" />
         </insert>
     </changeSet>
@@ -1043,7 +1043,7 @@ public class KPICustomerPerOfferReporting extends ReportExtractScript {
             <column name="job_template" value="CustomTableImportJob" />
             <column name="code" value="Custom_table_data_import_Job" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="timerentity_id" valueNumeric="-1" />
+            <column name="timerentity_id" valueNumeric="-3" />
             <column name="uuid" value="Custom_table_data_import_Job" />
         </insert>
     </changeSet>
@@ -2174,5 +2174,815 @@ group by s.code
             </column>
 			<where>code = 'UNBILLED_UA'</where>
 		</update>
+	</changeSet>
+	<changeSet id="#4082_20190404" author="SaidRamli">
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-20, 0, 0, now(), 'org.meveo.service.script.DeleteCustomersScript', 'DeleteCustomersScript', 'JAVA', '
+package org.meveo.service.script;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections4.MapUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.crm.Customer;
+import org.meveo.service.base.BusinessEntityService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.CounterInstanceService;
+import org.meveo.service.billing.impl.CounterPeriodService;
+import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.ProductInstanceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.RejectedBillingAccountService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.billing.impl.WalletService;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.medina.impl.AccessService;
+import org.meveo.service.order.OrderItemService;
+import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.payments.impl.MatchingAmountService;
+
+/**
+ * 
+ * @author Said Ramli
+ */
+@SuppressWarnings({ "unchecked", "unused" })
+public class DeleteCustomersScript extends Script {
+
+	private final AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(
+			AccountOperationService.class.getSimpleName());
+	private final CustomerService customerService = (CustomerService) getServiceInterface(
+			CustomerService.class.getSimpleName());
+	private final InvoiceService invoiceService = (InvoiceService) getServiceInterface(
+			InvoiceService.class.getSimpleName());
+	private final SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(
+			SubscriptionService.class.getSimpleName());
+	private final RatedTransactionService ratedTransactionService = (RatedTransactionService) getServiceInterface(
+			RatedTransactionService.class.getSimpleName());
+	private final WalletService walletService = (WalletService) getServiceInterface(
+			WalletService.class.getSimpleName());
+	private final RejectedBillingAccountService rejectedBillingAccountService = (RejectedBillingAccountService) getServiceInterface(
+			RejectedBillingAccountService.class.getSimpleName());
+	private final CounterInstanceService counterInstanceService = (CounterInstanceService) getServiceInterface(
+			CounterInstanceService.class.getSimpleName());
+	private final CounterPeriodService counterPeriodService = (CounterPeriodService) getServiceInterface(
+			CounterPeriodService.class.getSimpleName());
+	private final OrderItemService orderItemService = (OrderItemService) getServiceInterface(
+			OrderItemService.class.getSimpleName());
+	private final ProductInstanceService productInstanceService = (ProductInstanceService) getServiceInterface(
+			ProductInstanceService.class.getSimpleName());
+	private final BusinessEntityService businessEntityService = (BusinessEntityService) getServiceInterface(
+			BusinessEntityService.class.getSimpleName());
+	private final WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface(
+			WalletOperationService.class.getSimpleName());
+	private final ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(
+			ServiceInstanceService.class.getSimpleName());
+
+	private final EdrService edrService = (EdrService) getServiceInterface(EdrService.class.getSimpleName());
+	
+	@SuppressWarnings("rawtypes")
+	private final ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface(
+			ChargeInstanceService.class.getSimpleName());
+
+	private static final List<String> noCheckAllowedValues = Arrays.asList("0", "1");
+
+	@Override
+	public void execute(Map<String, Object> methodContext) throws BusinessException {
+
+		log.debug(" >>> execute {} ", methodContext.entrySet());
+
+		try {
+
+			Map<String, String> record = (Map<String, String>) methodContext.get("RECORD");
+			if (MapUtils.isEmpty(record)) {
+				throw new BusinessException(String.format("Parameter RECORD is missing"));
+			}
+
+			final String customerCode = record.get("customerCode");
+			Customer customer = customerService.findByCode(customerCode);
+			if (customer == null) {
+				throw new BusinessException(String.format("No customer found having code = %s ", customerCode));
+			}
+
+			String noCheckVal = record.get("noCheck");
+			if (isNotBlank(noCheckVal) && !noCheckAllowedValues.contains(noCheckVal)) {
+				throw new BusinessException(
+						String.format("Invalid ''noCheck'' value = %s , allowed values are [0,1]", noCheckVal));
+			}
+			boolean noCheck = "1".contentEquals(noCheckVal);
+
+			if (!noCheck) {
+				// If noCheck is 0 then the following conditions must be met in order to allow
+				// deletion:
+				// No unmatched AO
+				// No open EDR/WO/RT
+
+				this.checkUnmatchedAOs(customer);
+				this.checkOpenEDRs(customer);
+				this.checkOpenWOs(customer);
+				this.checkOpenRTs(customer);
+			}
+
+			this.removeCustomerHirarchy(customer);
+
+		} catch (BusinessException be) {
+			throw be;
+		} catch (Exception e) {
+			log.error(" Error executing DeleteCustomersScript ", e);
+			throw new BusinessException(e.getMessage());
+		}
+	}
+
+	private void checkOpenEDRs(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start checkOpenEDRs for customer = {} ", customer);
+			String query = "select count(edr.id) from EDR edr where edr.status = ''OPEN'' and edr.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+			
+			Object count = edrService.getEntityManager().createQuery(query).setParameter("customerId", customer.getId())
+					.getSingleResult();
+			log.debug(" count of open EDRs = {} ", count);
+			log.debug(" End checkOpenEDRs for customer = {} ", customer);
+
+			if (((Long) count).intValue() > 0) {
+				throw new BusinessException(" Customer has [" + count + "] open EDRs ");
+			}
+		} catch (Exception e) {
+			log.error(" Error on checkOpenEDRs : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void checkOpenWOs(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start checkOpenWOs for customer = {} ", customer);
+			String query = "select count(wo.id) from WalletOperation wo where wo.status = ''OPEN'' and wo.chargeInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+			final WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface(
+					WalletOperationService.class.getSimpleName());
+
+			Object count = walletOperationService.getEntityManager().createQuery(query)
+					.setParameter("customerId", customer.getId()).getSingleResult();
+			log.debug(" count of open WOs = {} ", count);
+			log.debug(" End checkOpenWOs for customer = {} ", customer);
+
+			if (((Long) count).intValue() > 0) {
+				throw new BusinessException(" Customer has [" + count + "] open WOs ");
+			}
+		} catch (Exception e) {
+			log.error(" Error on checkOpenWOs : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void checkOpenRTs(Customer customer) throws BusinessException {
+		try {
+
+			log.debug(" Start checkOpenRTs for customer = {} ", customer);
+			String query = "select count(rt.id) from RatedTransaction rt where rt.status = ''OPEN'' and rt.billingAccount.customerAccount.customer.id =:customerId ";
+			Object count = this.ratedTransactionService.getEntityManager().createQuery(query)
+					.setParameter("customerId", customer.getId()).getSingleResult();
+			log.debug(" count of open RTs = {} ", count);
+			log.debug(" End checkOpenRTs for customer = {} ", customer);
+
+			if (((Long) count).intValue() > 0) {
+				throw new BusinessException(" Customer has [" + count + "] open RTs ");
+			}
+		} catch (Exception e) {
+			log.error(" Error on checkOpenRTs : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void checkUnmatchedAOs(Customer customer) throws BusinessException {
+		try {
+
+			log.debug(" Start checkUnmatchedAOs for customer = {} ", customer);
+			String query = "select count(ao.id) from AccountOperation ao where ao.matchingStatus = ''O'' and ao.customerAccount.customer.id =:customerId ";
+			final AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(
+					AccountOperationService.class.getSimpleName());
+			Object count = accountOperationService.getEntityManager().createQuery(query)
+					.setParameter("customerId", customer.getId()).getSingleResult();
+			log.debug(" count of unmatched AOs = {} ", count);
+			log.debug(" End checkUnmatchedAOs for customer = {} ", customer);
+
+			if (((Long) count).intValue() > 0) {
+				throw new BusinessException(" Customer has [" + count + "] unmatched AOs ");
+			}
+		} catch (Exception e) {
+			log.error(" Error on checkUnmatchedAOs : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeCustomerHirarchy(Customer customer) throws BusinessException {
+		log.debug(" Start removeCustomerHirarchy for customer = {} ", customer);
+
+		//
+		// A workaround for #4134 , no need for this method if #4134 is fixed (only
+		// 6.1.X is concerned)!
+		this.nullifyAOsSeller(customer);
+      
+      	this.removeWalletOperations(customer);
+		this.removeChargeInstances(customer);
+		// the relationship [SubCategoryInvoiceAgregate <=> WalletInstance] should be broke fisrt
+		this.nullifySubCategoryInvoiceAgregatesWallet(customer);
+		this.removeWalletInstances(customer);
+		
+		this.removePaymentHistory(customer);
+		this.removeRatedTransactions(customer);
+		this.removeInvoices(customer);
+
+
+		this.removeServiceInstances(customer);
+		this.removeAccess(customer);
+		this.removeEDRs(customer);
+		this.removeSubscriptions(customer);
+
+		this.removeRejectedBAs(customer);
+
+		this.removeCounterPeriods(customer);
+		this.removeCounterInstances(customer);
+		this.removeOrderItems(customer);
+		this.removeProductInstances(customer);
+		this.removeMatchingAmounts(customer);
+
+		this.customerService.remove(customer);
+
+		log.debug(" End removeCustomerHirarchy for customer = {} ", customer);
+	}
+
+	private void removeEDRs(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeEDRs for customer = {} ", customer);
+
+			String query = "select edr.id from EDR edr where edr.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customerId", customer.getId());
+			Object result = edrService.executeSelectQuery(query.toString(), queryParams);
+
+			Collection<Long> ids = safe(result != null ? ((List<Long>) result) : null);
+			log.debug(" {} EDR to delete ", ids.size());
+
+			for (Long id : ids) {
+				edrService.remove(id);
+			}
+
+			log.debug(" End removeEDRs for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeEDRs : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeMatchingAmounts(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeMatchingAmounts for customer = {} ", customer);
+
+			final MatchingAmountService matchingAmountService = (MatchingAmountService) getServiceInterface(MatchingAmountService.class.getSimpleName());
+			final String query = "select ma.id from MatchingAmount ma where ma.accountOperation.customerAccount.customer.id =:customerId ";
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customerId", customer.getId());
+			Object result = matchingAmountService.executeSelectQuery(query.toString(), queryParams);
+
+			Collection<Long> ids = safe(result != null ? ((List<Long>) result) : null);
+			log.debug(" {} MatchingAmount to delete ", ids.size());
+
+			for (Long id : ids) {
+				matchingAmountService.remove(id);
+			}
+
+			log.debug(" End removeMatchingAmounts for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeMatchingAmounts : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeAccess(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeAccess for customer = {} ", customer);
+
+			final AccessService accessService = (AccessService) getServiceInterface(
+					AccessService.class.getSimpleName());
+
+			final String query = "select a.id from Access a where a.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customerId", customer.getId());
+			Object result = accessService.executeSelectQuery(query.toString(), queryParams);
+
+			Collection<Long> ids = safe(result != null ? ((List<Long>) result) : null);
+			log.debug(" {} Access to delete ", ids.size());
+
+			for (Long id : ids) {
+				accessService.remove(id);
+			}
+
+			log.debug(" End removeAccess for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeAccess : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeServiceInstances(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeServiceInstances for customer = {} ", customer);
+
+			Collection<Long> ids = safe(this.findServiceInstances(customer));
+			log.debug(" {} ServiceInstance to delete ", ids.size());
+
+			for (Long id : ids) {
+				this.serviceInstanceService.remove(id);
+			}
+
+			log.debug(" End removeServiceInstances for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeServiceInstances : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private List<Long> findServiceInstances(Customer customer) {
+		try {
+			log.debug(" findServiceInstances for customer={} ", customer);
+			String query = "select si.id from ServiceInstance si where si.subscription.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customerId", customer.getId());
+			Object ids = this.serviceInstanceService.executeSelectQuery(query.toString(), queryParams);
+
+			return ids != null ? ((List<Long>) ids) : null;
+		} catch (Exception e) {
+			log.error(" Error on findServiceInstances : [{}] ", e.getMessage(), e);
+			return null;
+		}
+	}
+
+	private void removeWalletOperations(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeWalletOperations for customer = {} ", customer);
+
+			Collection<Long> ids = safe(this.findWalletOperations(customer));
+			log.debug(" {} WalletOperation to delete ", ids.size());
+
+			for (Long id : ids) {
+				this.walletOperationService.remove(id);
+			}
+
+			log.debug(" End removeWalletOperations for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeWalletOperations : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private List<Long> findWalletOperations(Customer customer) {
+		try {
+			log.debug(" findWalletOperations for customer={} ", customer);
+			String query = "select wo.id from WalletOperation wo where wo.chargeInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customerId", customer.getId());
+			Object ids = this.walletOperationService.executeSelectQuery(query.toString(), queryParams);
+
+			return ids != null ? ((List<Long>) ids) : null;
+		} catch (Exception e) {
+			log.error(" Error on findWalletOperations : [{}] ", e.getMessage(), e);
+			return null;
+		}
+	}
+
+	/**
+	 * using Sub-queries to Resolve Error: ERROR: syntax error at or near "cross"
+	 * 
+	 * @param customer
+	 * @throws BusinessException
+	 */
+	private void removePaymentHistory(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removePaymentHistory for customer = {} ", customer);
+
+			String query = "delete from PaymentHistory ph1 where ph1.id in (select ph2.id from PaymentHistory ph2 where ph2.customerCode=:customerCode) ";
+			int count = this.businessEntityService.getEntityManager().createQuery(query)
+					.setParameter("customerCode", customer.getCode()).executeUpdate();
+
+			log.debug(" {} PaymentHistory to delete ", count);
+			log.debug(" End removePaymentHistory for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removePaymentHistory : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	/**
+	 * using Sub-queries to Resolve Error: ERROR: syntax error at or near "cross"
+	 * 
+	 * @param customer
+	 * @throws BusinessException
+	 */
+	private void nullifyAOsSeller(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start nullifyAOsSeller for customer = {} ", customer);
+
+			String query = "UPDATE AccountOperation ao1 SET ao1.seller = null where ao1.id in (select ao2.id from AccountOperation ao2 where ao2.customerAccount.customer.id =:customerId) ";
+			int count = this.accountOperationService.getEntityManager().createQuery(query)
+					.setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" seller to nullify for {} AOs ", count);
+			log.debug(" End nullifyAOsSeller for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on nullifyAOsSeller : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+	
+	private void nullifySubCategoryInvoiceAgregatesWallet(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start nullifySubCategoryInvoiceAgregatesWallet for customer = {} ", customer);
+
+			StringBuilder query = new StringBuilder( "UPDATE SubCategoryInvoiceAgregate subCat SET subCat.wallet = null ")
+					.append(" where subCat.id in (select subCatIn.id from SubCategoryInvoiceAgregate subCatIn where subCatIn.wallet.userAccount.billingAccount.customerAccount.customer.id =:customerId) ");
+			
+			int count = this.accountOperationService.getEntityManager().createQuery(query.toString()).setParameter("customerId", customer.getId()).executeUpdate();
+
+			log.debug(" wallet to nullify for {} SubCategoryInvoiceAgregate ", count);
+			log.debug(" End nullifySubCategoryInvoiceAgregatesWallet for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on nullifySubCategoryInvoiceAgregatesWallet : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+		
+	}
+
+
+	private void removeProductInstances(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeProductInstances for customer = {} ", customer);
+
+			Collection<Long> ids = safe(this.findProductInstances(customer));
+			log.debug(" {} ProductInstance to delete ", ids.size());
+
+			for (Long id : ids) {
+				this.productInstanceService.remove(id);
+			}
+
+			log.debug(" End removeProductInstances for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeProductInstances : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private List<Long> findProductInstances(Customer customer) {
+		try {
+			log.debug(" findProductInstances for customer={} ", customer);
+			String query = "select p.id from ProductInstance p where p.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customerId", customer.getId());
+			Object ids = this.productInstanceService.executeSelectQuery(query.toString(), queryParams);
+
+			return ids != null ? ((List<Long>) ids) : null;
+		} catch (Exception e) {
+			log.error(" Error on findProductInstances : [{}] ", e.getMessage(), e);
+			return null;
+		}
+	}
+
+	private void removeOrderItems(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeOrderItem for customer = {} ", customer);
+
+			Collection<Long> ids = safe(this.findOrderItems(customer));
+			log.debug(" {} OrderItem to delete ", ids.size());
+
+			for (Long id : ids) {
+				this.orderItemService.remove(id);
+			}
+
+			log.debug(" End removeOrderItem for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeOrderItem : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private List<Long> findOrderItems(Customer customer) {
+		try {
+			log.debug(" findOrderItems for customer={} ", customer);
+			String query = "select p.id from OrderItem p where p.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customerId", customer.getId());
+			Object ids = this.orderItemService.executeSelectQuery(query.toString(), queryParams);
+
+			return ids != null ? ((List<Long>) ids) : null;
+		} catch (Exception e) {
+			log.error(" Error on findCounterPeriods : [{}] ", e.getMessage(), e);
+			return null;
+		}
+	}
+
+	private void removeCounterPeriods(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeCounterPeriods for customer = {} ", customer);
+
+			Collection<Long> ids = safe(this.findCounterPeriods(customer));
+			log.debug(" {} CounterPeriod to delete ", ids.size());
+
+			for (Long id : ids) {
+				this.counterPeriodService.remove(id);
+			}
+
+			log.debug(" End removeCounterPeriods for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeCounterPeriods : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private List<Long> findCounterPeriods(Customer customer) {
+		try {
+			log.debug(" findCounterPeriods for customer={} ", customer);
+			String query = "select c.id from CounterPeriod c where c.counterInstance.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customerId", customer.getId());
+			Object ids = this.counterPeriodService.executeSelectQuery(query.toString(), queryParams);
+
+			return ids != null ? ((List<Long>) ids) : null;
+		} catch (Exception e) {
+			log.error(" Error on findCounterPeriods : [{}] ", e.getMessage(), e);
+			return null;
+		}
+	}
+
+	private void removeCounterInstances(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeCounterInstances for customer = {} ", customer);
+
+			Collection<Long> ids = safe(this.findCounterInstances(customer));
+			log.debug(" {} CounterInstance to delete ", ids.size());
+
+			for (Long id : ids) {
+				this.counterInstanceService.remove(id);
+			}
+
+			log.debug(" End removeCounterInstances for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeCounterInstances : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private List<Long> findCounterInstances(Customer customer) {
+		try {
+			log.debug(" findCounterInstances for customer={} ", customer);
+			String query = "select c.id from CounterInstance c where c.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customerId", customer.getId());
+			Object ids = this.counterInstanceService.executeSelectQuery(query.toString(), queryParams);
+
+			return ids != null ? ((List<Long>) ids) : null;
+		} catch (Exception e) {
+			log.error(" Error on findCounterInstances : [{}] ", e.getMessage(), e);
+			return null;
+		}
+	}
+
+	private void removeRejectedBAs(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeRejectedBAs for customer = {} ", customer);
+
+			Collection<Long> ids = safe(this.findRejectedBillingAccounts(customer));
+			log.debug(" {} RejectedBillingAccount to delete ", ids.size());
+
+			for (Long id : ids) {
+				this.rejectedBillingAccountService.remove(id);
+			}
+
+			log.debug(" End removeRejectedBAs for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeRejectedBAs : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private List<Long> findRejectedBillingAccounts(Customer customer) {
+		try {
+			log.debug(" findRejectedBillingAccounts for customer={} ", customer);
+			String query = "select rba.id from RejectedBillingAccount rba where rba.billingAccount.customerAccount.customer.id =:customerId ";
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customerId", customer.getId());
+			Object ids = this.rejectedBillingAccountService.executeSelectQuery(query.toString(), queryParams);
+
+			return ids != null ? ((List<Long>) ids) : null;
+		} catch (Exception e) {
+			log.error(" Error on findRejectedBillingAccounts : [{}] ", e.getMessage(), e);
+			return null;
+		}
+	}
+
+	private void removeInvoices(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeInvoices for customer = {} ", customer);
+
+			Collection<Long> ids = safe(this.findInvoicesIds(customer));
+			log.debug(" {} Invoices to delete ", ids.size());
+
+			for (Long id : ids) {
+				this.invoiceService.remove(id);
+			}
+
+			log.debug(" End removeInvoices for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeInvoices : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeWalletInstances(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeWalletInstances for customer = {} ", customer);
+
+			Collection<Long> ids = safe(this.findWalletInstances(customer));
+			log.debug(" {} WalletInstance to delete ", ids.size());
+
+			for (Long id : ids) {
+				// a workaround for #4132
+				WalletInstance wallet = this.walletService.findById(id);
+				wallet.getUserAccount().setWallet(null);
+
+				this.walletService.remove(id);
+			}
+
+			log.debug(" End removeWalletInstances for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeWalletInstances : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private List<Long> findWalletInstances(Customer customer) {
+		try {
+			log.debug(" findWalletInstances for customer={} ", customer);
+			String query = "select wi.id from WalletInstance wi where wi.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customerId", customer.getId());
+			Object ids = this.walletService.executeSelectQuery(query.toString(), queryParams);
+
+			return ids != null ? ((List<Long>) ids) : null;
+		} catch (Exception e) {
+			log.error(" Error on findWalletInstances : [{}] ", e.getMessage(), e);
+			return null;
+		}
+	}
+
+	private void removeRatedTransactions(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeRatedTransactions for customer = {} ", customer);
+
+			Collection<Long> ids = safe(this.findRatedTransactions(customer));
+			log.debug(" {} RTs to delete ", ids.size());
+
+			for (Long id : ids) {
+				this.ratedTransactionService.remove(id);
+			}
+
+			log.debug(" End removeRatedTransactions for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeRatedTransactions : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+
+	}
+
+	private List<Long> findRatedTransactions(Customer customer) {
+		try {
+			log.debug(" findRatedTransactions for customer={} ", customer);
+			String query = "select rt.id from RatedTransaction rt where rt.billingAccount.customerAccount.customer.id =:customerId ";
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customerId", customer.getId());
+			Object ids = this.ratedTransactionService.executeSelectQuery(query, queryParams);
+
+			return ids != null ? ((List<Long>) ids) : null;
+		} catch (Exception e) {
+			log.error(" Error on findRatedTransactions : [{}] ", e.getMessage(), e);
+			return null;
+		}
+	}
+
+	private void removeChargeInstances(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeChargeInstances for customer = {} ", customer);
+
+			Collection<Long> ids = safe(this.findChargeInstances(customer));
+			log.debug(" {} ChargeInstance to delete ", ids.size());
+			for (Long ciId : ids) {
+				this.chargeInstanceService.remove(ciId);
+			}
+			log.debug(" End removeChargeInstances for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeChargeInstances : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private List<Long> findChargeInstances(Customer customer) {
+		try {
+			log.debug(" findChargeInstances for customer={} ", customer);
+			String query = "select ci.id from ChargeInstance ci where ci.userAccount.billingAccount.customerAccount.customer.id =:customerId ";
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customerId", customer.getId());
+			Object ids = this.chargeInstanceService.executeSelectQuery(query, queryParams);
+
+			return ids != null ? ((List<Long>) ids) : null;
+		} catch (Exception e) {
+			log.error(" Error on findChargeInstances : [{}] ", e.getMessage(), e);
+			return null;
+		}
+	}
+
+	private void removeSubscriptions(Customer customer) throws BusinessException {
+		try {
+			log.debug(" Start removeSubscriptions for customer = {} ", customer);
+			Collection<Long> ids = safe(this.findSubscriptions(customer));
+			log.debug(" {} Subscription to delete ", ids.size());
+
+			for (Long subscriptionId : ids) {
+				this.subscriptionService.remove(subscriptionId);
+			}
+			log.debug(" End removeSubscriptions for customer = {} ", customer);
+		} catch (Exception e) {
+			log.error(" Error on removeSubscriptions : [{}] ", e.getMessage(), e);
+			throw new BusinessException(e);
+		}
+	}
+
+	private List<Long> findSubscriptions(Customer customer) {
+		try {
+			log.debug(" findSubscriptions for customer={} ", customer);
+			StringBuffer query = new StringBuffer(
+					"select s.id from Subscription s where s.userAccount.billingAccount.customerAccount.customer =:customer ");
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customer", customer);
+			Object ids = this.subscriptionService.executeSelectQuery(query.toString(), queryParams);
+
+			return ids != null ? ((List<Long>) ids) : null;
+		} catch (Exception e) {
+			log.error(" Error on findSubscriptions : [{}] ", e.getMessage(), e);
+			return null;
+		}
+	}
+
+	private List<Long> findInvoicesIds(Customer customer) {
+		try {
+			log.debug(" findInvoicesIds for customer={} ", customer);
+			StringBuffer query = new StringBuffer(
+					"select inv.id from Invoice inv where inv.billingAccount.customerAccount.customer =:customer ");
+
+			Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("customer", customer);
+			Object ids = this.invoiceService.executeSelectQuery(query.toString(), queryParams);
+
+			return ids != null ? ((List<Long>) ids) : null;
+		} catch (Exception e) {
+			log.error(" Error on getSubscription : [{}] ", e.getMessage(), e);
+			return null;
+		}
+	}
+
+	private <T> Collection<T> safe(Collection<T> collection) {
+		return collection == null ? Collections.EMPTY_LIST : collection;
+	}
+}');]]>
+		</sql>	
+		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-20, 0, 0, now(), now(), 'DeleteCustomersScript_JOB', NULL, 'MEDIATION', 'FlatFileProcessingJob',
+			 NULL, 'opencell.admin', 'opencell.admin', NULL, NULL, 'DeleteCustomersScript_JOB', NULL, 1, 
+			 '{"FlatFileProcessingJob_mappingConf":[{"string":"\n    <beanio xmlns=\"http://www.beanio.org/2012/03\" \n      xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n      xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\n      <stream name=\"RECORD\" format=\"csv\" strict=\"true\">\n        <parser>\n          <property name=\"delimiter\" value=\";\" />\n        </parser>     \n        <record name=\"customer\"  minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">  \n           <field name=\"customerCode\" minOccurs=\"0\" position=\"0\" />\n           <field name=\"noCheck\" minOccurs=\"0\" position=\"1\"/>\n        </record> \n      </stream>\n    </beanio>\n"}],
+			 "FlatFileProcessingJob_recordVariableName":[{"string":"RECORD"}],
+			 "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
+			 "FlatFileProcessingJob_fileNameExtension":[{"string":"csv"}],
+			 "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.DeleteCustomersScript"}],
+			 "FlatFileProcessingJob_inputDir":[{"string":"/batch/customer/delete"}]}', 
+			 NULL);]]>
+         </sql>	
 	</changeSet>
 </databaseChangeLog>

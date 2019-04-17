@@ -46,12 +46,13 @@ import org.meveo.model.ObservableEntity;
  * Tax
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
 @Cacheable
-@CustomFieldEntity(cftCodePrefix = "TAX")
+@CustomFieldEntity(cftCodePrefix = "Tax")
 @ExportIdentifier({ "code" })
 @Table(name = "billing_tax", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

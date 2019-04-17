@@ -16,7 +16,7 @@
             </auditable>
             <code>AK action|ACC</code>
             <description>ak action </description>
-            <appliesTo>ACC</appliesTo>
+            <appliesTo>Access</appliesTo>
             <applicableOnEl>true</applicableOnEl>
             <label>AK Action</label>
             <script xsId="20007">

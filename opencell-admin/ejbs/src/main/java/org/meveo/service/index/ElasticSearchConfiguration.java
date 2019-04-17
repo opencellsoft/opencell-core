@@ -52,7 +52,7 @@ public class ElasticSearchConfiguration implements Serializable {
 
     private static String MAPPING_DEFAULT = "default";
 
-    protected static String MAPPING_FIELD_TYPE = "entityType";
+    public static String MAPPING_FIELD_TYPE = "entityType";
 
     private static String MAPPING_CFT_INDEX_VALUE_PLACEHOLDER = "<indexValue>";
 

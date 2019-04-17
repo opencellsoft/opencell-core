@@ -35,6 +35,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class InternalNotificationJob fire the given notification for each entity returned from the given filter.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class InternalNotificationJob extends Job {
@@ -62,7 +64,7 @@ public class InternalNotificationJob extends Job {
 
         CustomFieldTemplate filterCode = new CustomFieldTemplate();
         filterCode.setCode("InternalNotificationJob_filterCode");
-        filterCode.setAppliesTo("JOB_InternalNotificationJob");
+        filterCode.setAppliesTo("JobInstance_InternalNotificationJob");
         filterCode.setActive(true);
         filterCode.setDescription("Filter (sql query)");
         filterCode.setFieldType(CustomFieldTypeEnum.STRING);
@@ -72,7 +74,7 @@ public class InternalNotificationJob extends Job {
 
         CustomFieldTemplate notificationCode = new CustomFieldTemplate();
         notificationCode.setCode("InternalNotificationJob_notificationCode");
-        notificationCode.setAppliesTo("JOB_InternalNotificationJob");
+        notificationCode.setAppliesTo("JobInstance_InternalNotificationJob");
         notificationCode.setActive(true);
         notificationCode.setDescription("Notification code");
         notificationCode.setFieldType(CustomFieldTypeEnum.STRING);
