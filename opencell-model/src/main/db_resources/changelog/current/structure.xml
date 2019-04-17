@@ -94,7 +94,7 @@
         </delete>
     </changeSet>
 
-    <changeSet id="#3644_20181004" author="AbdellatifBari">
+    <changeSet id="#3644_04102018" author="AbdellatifBari">
         <addColumn tableName="crm_custom_field_tmpl">
             <column name="display_format" type="varchar(80)" />
         </addColumn>
