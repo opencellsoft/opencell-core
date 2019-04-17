@@ -1,5 +1,20 @@
 package org.meveo.service.notification;
 
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -61,21 +76,6 @@ import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
-
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Handles events associated with CDRUD operations on entities
@@ -155,6 +155,8 @@ public class DefaultObserver {
 
         try {
 
+            context.put("entityOrEvent", entityOrEvent);
+
             Map<Object, Object> userMap = new HashMap<>();
             userMap.put("event", entityOrEvent);
             userMap.put("manager", manager);
@@ -163,12 +165,14 @@ public class DefaultObserver {
                 context.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression(entry.getValue(), userMap, Object.class));
             }
 
-            context.put("entityOrEvent", entityOrEvent);
-
-            scriptInstanceService.executeWInitAndFinalize(entityOrEvent, scriptInstance.getCode(), context);
+            if (scriptInstance.getReuse()) {
+                scriptInstanceService.executeCached(entityOrEvent, scriptInstance.getCode(), context);
+            } else {
+                scriptInstanceService.executeWInitAndFinalize(entityOrEvent, scriptInstance.getCode(), context);
+            }
 
         } catch (Exception e) {
-            log.error("failed script execution", e);
+            log.error("failed script {} execution", scriptInstance.getCode(), e);
             if (e instanceof BusinessException) {
                 throw e;
             } else {
@@ -439,11 +443,11 @@ public class DefaultObserver {
         try {
             BeanUtils.copyProperties(field, fieldHistory);
             field.setEntity(entity);
-            //In the case of a status field, we fire an status event.
+            // In the case of a status field, we fire an status event.
             if (fieldHistory.getAuditType() == AuditChangeTypeEnum.STATUS) {
                 fieldUpdated(entity, field, NotificationEventTypeEnum.STATUS_UPDATED);
             }
-            //In the case of a renewal field, we fire an renewal event.
+            // In the case of a renewal field, we fire an renewal event.
             if (fieldHistory.getAuditType() == AuditChangeTypeEnum.RENEWAL) {
                 fieldUpdated(entity, field, NotificationEventTypeEnum.RENEWAL_UPDATED);
             }

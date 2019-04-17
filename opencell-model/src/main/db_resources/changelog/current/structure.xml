@@ -2080,4 +2080,9 @@ $$ LANGUAGE plpgsql;
         </createIndex>
     </changeSet>
 
+    <changeSet id="#4179_20190417" author="AndriusKarpavicius">
+        <addColumn tableName="meveo_script_instance">
+            <column name="reuse" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -24,6 +24,12 @@ public abstract class CustomScriptDto extends EnableBusinessDto {
     @XmlElement
     private ScriptSourceTypeEnum type;
 
+    /**
+     * Shall same script instance be utilized in repeated calls
+     */
+    @XmlElement
+    private Boolean reuse;
+
     /** The script. */
     @XmlElement(required = true)
     private String script;
@@ -44,6 +50,7 @@ public abstract class CustomScriptDto extends EnableBusinessDto {
         super(scriptInstance);
         this.type = scriptInstance.getSourceTypeEnum();
         this.script = scriptInstance.getScript();
+        this.reuse = scriptInstance.getReuse();
     }
 
     /**
@@ -80,6 +87,20 @@ public abstract class CustomScriptDto extends EnableBusinessDto {
      */
     public void setScript(String script) {
         this.script = script;
+    }
+
+    /**
+     * @return Shall same script instance be utilized in repeated calls
+     */
+    public Boolean getReuse() {
+        return reuse;
+    }
+
+    /**
+     * @param reuse Shall same script instance be utilized in repeated calls
+     */
+    public void setReuse(Boolean reuse) {
+        this.reuse = reuse;
     }
 
     /**
