@@ -2085,4 +2085,10 @@ $$ LANGUAGE plpgsql;
             <column name="reuse" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#4148_20190418 - Add runAsync on notification" author="EdwardPLegaspi">
+    	<addColumn tableName="adm_notification">
+            <column name="run_async" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
