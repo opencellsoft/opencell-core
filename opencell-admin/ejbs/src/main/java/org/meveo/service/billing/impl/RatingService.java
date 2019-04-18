@@ -1091,7 +1091,6 @@ public class RatingService extends BusinessService<WalletOperation> {
             context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
             script.execute(context);
         } catch (Exception e) {
-            log.error("Error when run script {}", scriptInstanceCode, e);
             throw new RatingScriptExecutionErrorException("failed when run script " + scriptInstanceCode + ", info " + e.getMessage());
         }
     }
