@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 
 /**
  * @author phung
+ * @author Edward P. Legaspi
+ * @lastMofiedVersion 7.0
  *
  */
 @Stateless
@@ -50,6 +52,19 @@ public class EmailNotifier {
      *        expirations), current user might be lost, thus there is a need to reestablish.
      */
     @Asynchronous
+    public void sendEmailAsync(EmailNotification notification, Object entityOrEvent, Map<String, Object> context, MeveoUser lastCurrentUser) {
+    	sendEmail(notification, entityOrEvent, context, lastCurrentUser);
+    }
+    
+    /**
+     * Send email message as fired notification result
+     * 
+     * @param notification Email type notification that was fired
+     * @param entityOrEvent Entity or event that triggered notification
+     * @param context Execution context
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     */
     public void sendEmail(EmailNotification notification, Object entityOrEvent, Map<String, Object> context, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
