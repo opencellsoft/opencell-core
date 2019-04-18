@@ -417,9 +417,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 Tax tax = null;
                 
                 //use Tax selected at rating
-                if ((scAggregate.getTaxPercent() != null) ) {
-            		tax= scAggregate.getTax();
-                }
+                // TODO: breaks the tax calculation at line 436.
+//                if ((scAggregate.getTaxPercent() != null) ) {
+//            		tax= scAggregate.getTax();
+//                }
 
                 // If there is a taxScript in invoiceSubCategory and script is applicable, use it to compute external taxes
                 if (calculateExternalTax && (invoiceSubCategory.getTaxScript() != null)) {
