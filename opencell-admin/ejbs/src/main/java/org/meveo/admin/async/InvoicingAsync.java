@@ -149,7 +149,7 @@ public class InvoicingAsync {
 
                 if (!isForced) {
                     billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
-                    invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
+                    // TODO cause deadlock see #3666 comments. Do this batch update somewhere before processing starts. invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
                 }
 
             } catch (Exception e) {

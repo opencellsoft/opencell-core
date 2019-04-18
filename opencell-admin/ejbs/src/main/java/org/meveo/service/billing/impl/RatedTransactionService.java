@@ -991,14 +991,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
-		
-        walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
 
         if (!isVirtual) {
             create(ratedTransaction);
+        }		
+        walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
+        walletOperation.setRatedTransaction(ratedTransaction);
+        
+        if (!isVirtual) {
             walletOperationService.updateNoCheck(walletOperation);
         }
-        walletOperation.setRatedTransaction(ratedTransaction);
         
         return ratedTransaction;
     }
@@ -1330,7 +1332,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if ((invoicingThreshold == null) && (billingRun.getBillingCycle() != null)) {
                 invoicingThreshold = billingRun.getBillingCycle().getInvoicingThreshold();
             }
-
 
             if (invoicingThreshold != null) {
                 if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
