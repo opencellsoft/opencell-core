@@ -901,11 +901,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public void createRatedTransaction(Long walletOperationId) throws BusinessException {
         WalletOperation walletOperation = walletOperationService.findById(walletOperationId);
-        if (isPrepaidWalletOperation(walletOperation)) {
+        /*if (isPrepaidWalletOperation(walletOperation)) {
             walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
             walletOperationService.updateNoCheck(walletOperation);
            return;
-        }
+        }*/
         createRatedTransaction(walletOperation, false);
     }
     /**
@@ -931,11 +931,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         for (WalletOperation walletOp : walletOps) {
             // Exclude prepaid WO to create ratedTx
-            if (isPrepaidWalletOperation(walletOp)) {
+            /*if (isPrepaidWalletOperation(walletOp)) {
                 walletOp.setStatus(WalletOperationStatusEnum.TREATED);
                 walletOperationService.updateNoCheck(walletOp);
                 continue;
-            }
+            }*/
             createRatedTransaction(walletOp, false);
         }
     }
