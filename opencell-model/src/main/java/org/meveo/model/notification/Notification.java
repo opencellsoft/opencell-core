@@ -121,7 +121,7 @@ public class Notification extends EnableBusinessEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "run_async")
-    private boolean runAsync = false;
+    private Boolean runAsync = false;
 
     public String getClassNameFilter() {
         return classNameFilter;
@@ -210,7 +210,7 @@ public class Notification extends EnableBusinessEntity {
      * Gets boolean value of whether this notification will be run in async mode.
      * @return true / false
      */
-	public boolean isRunAsync() {
+	public Boolean isRunAsync() {
 		return runAsync;
 	}
 
@@ -218,7 +218,7 @@ public class Notification extends EnableBusinessEntity {
      * Sets boolean value of whether this notification will be run in async mode.
      * @return true / false
      */
-	public void setRunAsync(boolean runAsync) {
+	public void setRunAsync(Boolean runAsync) {
 		this.runAsync = runAsync;
 	}
 }

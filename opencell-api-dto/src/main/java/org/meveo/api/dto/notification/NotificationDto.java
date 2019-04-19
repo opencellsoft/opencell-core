@@ -61,7 +61,7 @@ public abstract class NotificationDto extends EnableBusinessDto {
     /**
      * Whether this notification will be run in async mode.
      */
-    private boolean runAsync = false;
+    private Boolean runAsync = false;
 
     /**
      * Instantiates a new notification dto.
@@ -89,6 +89,7 @@ public abstract class NotificationDto extends EnableBusinessDto {
         }
         priority = notification.getPriority();
         active = notification.isActive();
+        runAsync = notification.isRunAsync();
     }
 
     /**
@@ -251,7 +252,7 @@ public abstract class NotificationDto extends EnableBusinessDto {
      * Gets boolean value of whether this notification will be run in async mode.
      * @return true / false
      */
-	public boolean isRunAsync() {
+	public Boolean isRunAsync() {
 		return runAsync;
 	}
 
@@ -259,7 +260,7 @@ public abstract class NotificationDto extends EnableBusinessDto {
      * Sets boolean value of whether this notification will be run in async mode.
      * @return true / false
      */
-	public void setRunAsync(boolean runAsync) {
+	public void setRunAsync(Boolean runAsync) {
 		this.runAsync = runAsync;
 	}
 }

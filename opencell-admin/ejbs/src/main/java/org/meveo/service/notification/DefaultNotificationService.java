@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Basically an extension of {@link DefaultObserver} to call notification asychronously.
  * @author Edward P. Legaspi
  * @lastModifiedVersion 7.0
  */
@@ -74,6 +75,13 @@ public class DefaultNotificationService {
 	@CurrentUser
 	protected MeveoUser currentUser;
 
+	/**
+	 * Evaluates an expression with the given parameter as context.
+	 * @param expression evaluatable expression
+	 * @param entityOrEvent entity or event
+	 * @return boolean value
+	 * @throws BusinessException exception when evaluation on expression failed
+	 */
 	private boolean matchExpression(String expression, Object entityOrEvent) throws BusinessException {
 		Boolean result = true;
 		if (StringUtils.isBlank(expression)) {
@@ -94,6 +102,14 @@ public class DefaultNotificationService {
 		return result == null ? false : result;
 	}
 
+	/**
+	 * Executes a given script instance creating a context from the given parameter.
+	 * @param scriptInstance the ScriptInstance
+	 * @param entityOrEvent entity or event
+	 * @param params map of parameters
+	 * @param context map of context
+	 * @throws BusinessException exception when script fails to run
+	 */
 	private void executeScript(ScriptInstance scriptInstance, Object entityOrEvent, Map<String, String> params,
 			Map<String, Object> context) throws BusinessException {
 		log.debug("execute notification script: {}", scriptInstance.getCode());
@@ -128,6 +144,12 @@ public class DefaultNotificationService {
 		}
 	}
 
+	/**
+	 * Fires a CDR notification. It will execute the script linked to Notification with CDR as parameter if present.
+	 * @param notif Notification object
+	 * @param cdr the CDR
+	 * @throws BusinessException exception when notification fail
+	 */
 	public void fireCdrNotification(Notification notif, Object cdr) throws BusinessException {
 		log.debug("Fire Cdr Notification for notif {} and  cdr {}", notif, cdr);
 		try {
@@ -142,11 +164,25 @@ public class DefaultNotificationService {
 
 	}
 
+	/**
+	 * Fire notification asynchronously.
+	 * @param notif the Notification object
+	 * @param entityOrEvent entity or event context
+	 * @return Future boolean value
+	 * @throws BusinessException exception when notification fail
+	 */
 	@Asynchronous
 	public Future<Boolean> fireNotificationAsync(Notification notif, Object entityOrEvent) throws BusinessException {
 		return new AsyncResult<>(fireNotification(notif, entityOrEvent));
 	}
 
+	/**
+	 * Fire notification.
+	 * @param notif the Notification object
+	 * @param entityOrEvent entity or event context
+	 * @return Future boolean value
+	 * @throws BusinessException exception when notification fail
+	 */
 	public boolean fireNotification(Notification notif, Object entityOrEvent) throws BusinessException {
 
 		if (notif == null) {
