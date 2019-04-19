@@ -4,7 +4,7 @@
 		<artifactId>opencell-admin</artifactId>
 		<groupId>com.opencellsoft</groupId>
 		<relativePath>../pom.xml</relativePath>
-		<version>6.2.0</version>
+		<version>6.2.1-SNAPSHOT-SNAPSHOT</version>
 	</parent>
 	<artifactId>opencell-admin-web</artifactId>
 	<name>Opencell Admin Web Application - Web Module</name>
