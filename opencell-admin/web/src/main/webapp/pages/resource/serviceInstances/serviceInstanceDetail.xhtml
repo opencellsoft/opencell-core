@@ -41,14 +41,16 @@
             <p:tabView id="tabView" activeIndex="#{serviceInstanceBean.activeTab}">
                 <p:tab title="#{messages['commons.tab.information']}">
 
-                    <hftl:formField id="serviceSelectedId" label="#{messages['serviceInstance.code']}" field="serviceTemplate" valueLabelField="code" required="true" popup="true"
-                        popupId="serviceTemplatePopup" allowEdit="false" />
-                    <h:panelGroup layout="block" styleClass="clearLeft">
+					<h:panelGroup layout="block" styleClass="clearLeft">
 						<h:outputFormat styleClass="note" rendered="#{serviceInstanceBean.isTerminatedService()}"
-									  value="#{messages['serviceInstance.serviceTerminationMessage']}">
+										value="#{messages['serviceInstance.serviceTerminationMessage']}">
 							<f:param value="#{serviceInstanceBean.entity.subscribedTillDate}"/>
 						</h:outputFormat>
 					</h:panelGroup>
+
+                    <hftl:formField id="serviceSelectedId" label="#{messages['serviceInstance.code']}" field="serviceTemplate" valueLabelField="code" required="true" popup="true"
+                        popupId="serviceTemplatePopup" allowEdit="false" />
+
 
                     <hftl:formField id="subscriptionSelectedId" label="#{messages['serviceInstance.subscription']}" field="subscription" valueLabelField="code" required="true"
                         popup="true" popupId="subscriptionPopup" allowEdit="false" />
