@@ -38,7 +38,6 @@ public class ScriptingJob extends Job {
     @Inject
     ScriptingJobBean scriptingJobBean;
 
-
     @SuppressWarnings("unchecked")
     @Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -52,6 +51,10 @@ public class ScriptingJob extends Job {
                 context = new HashMap<String, Object>();
             }
             context.put(Script.CONTEXT_ENTITY, jobInstance);
+            context.put(Script.CONTEXT_ACTION, scriptCode);
+            context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+            context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+
             scriptingJobBean.init(result, scriptCode, context);
             scriptingJobBean.execute(result, scriptCode, context);
             scriptingJobBean.finalize(result, scriptCode, context);
@@ -62,12 +65,10 @@ public class ScriptingJob extends Job {
         }
     }
 
-
     @Override
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.MEDIATION;
     }
-
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {

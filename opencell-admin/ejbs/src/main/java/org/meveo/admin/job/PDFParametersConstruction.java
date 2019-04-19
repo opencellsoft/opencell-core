@@ -173,7 +173,6 @@ public class PDFParametersConstruction {
         return (name + "\n" + address);
     }
 
-
     /**
      * Gets the locale value of the billing account
      *
@@ -202,5 +201,4 @@ public class PDFParametersConstruction {
         }
         return Locale.getDefault();
     }
-
 }

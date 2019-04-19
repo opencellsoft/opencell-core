@@ -22,6 +22,10 @@ import org.slf4j.Logger;
 import com.skype.Skype;
 
 //TODO : transform that into MDB to correctly handle retries
+/**
+ * @author Edward P. Legaspi
+ * @lastMofiedVersion 7.0
+ */
 @Stateless
 public class InstantMessagingNotifier {
 
@@ -49,6 +53,18 @@ public class InstantMessagingNotifier {
      *        expirations), current user might be lost, thus there is a need to reestablish.
      */
     @Asynchronous
+    public void sendInstantMessageAsync(InstantMessagingNotification notification, Object entityOrEvent, MeveoUser lastCurrentUser) {
+    	sendInstantMessage(notification, entityOrEvent, lastCurrentUser);
+    }
+    
+    /**
+     * Send instant message as fired notification result
+     * 
+     * @param notification Instant message type notification that was fired
+     * @param entityOrEvent Entity or event that triggered notification
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     */
     public void sendInstantMessage(InstantMessagingNotification notification, Object entityOrEvent, MeveoUser lastCurrentUser) {
         
 

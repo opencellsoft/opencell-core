@@ -97,6 +97,7 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         notif.setSubject(postData.getSubject());
         notif.setBody(postData.getBody());
         notif.setHtmlBody(postData.getHtmlBody());
+        notif.setRunAsync(postData.isRunAsync());
 
         Set<String> emails = new HashSet<String>();
         for (String email : postData.getSendToMail()) {
@@ -198,6 +199,9 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
             emails.add(email);
         }
         notif.setEmails(emails);
+		if (postData.isRunAsync() != null) {
+			notif.setRunAsync(postData.isRunAsync());
+		}
 
         notif = emailNotificationService.update(notif);
 

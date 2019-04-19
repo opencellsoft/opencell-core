@@ -52,7 +52,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
 
 		try {
 			RatedTransactionsJobAggregationSetting aggregationSetting = new RatedTransactionsJobAggregationSetting();
-			Long nbRuns = 1L;
+			Long nbRuns = -1L;
 			Long waitingMillis = 0L;
 			try {
 				nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
@@ -94,8 +94,6 @@ public class RatedTransactionsJobBean extends BaseJobBean {
 				} catch (NullPointerException e) {
 				}
 			} catch (Exception e) {
-				nbRuns = 1L;
-				waitingMillis = 0L;
 				log.warn("Cant get customFields for {} with message {}", jobInstance.getJobTemplate(), e.getMessage());
 			}
 
