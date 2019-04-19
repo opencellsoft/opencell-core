@@ -2296,4 +2296,17 @@
             <column name="rejected_file_name" type="varchar(1000)" />
         </addColumn>
     </changeSet>
+
+    <changeSet id="#3108_20190213_1" author="AbdellatifBari">
+        <addColumn tableName="billing_subscription">
+            <column name="initial_renewal" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#3108_20190213_2" author="AbdellatifBari">
+        <addColumn tableName="billing_service_instance">
+            <column name="initial_renewal" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

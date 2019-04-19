@@ -106,7 +106,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.PersistenceUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.primefaces.model.LazyDataModel;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -134,8 +134,8 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * @author Andrius Karpavicius
- * @lastModifiedVersion 5.0
- *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Lock(LockType.READ)
 @Singleton

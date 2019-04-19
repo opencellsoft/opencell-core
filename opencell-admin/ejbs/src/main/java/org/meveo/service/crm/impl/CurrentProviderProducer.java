@@ -8,8 +8,12 @@ import javax.inject.Named;
 
 import org.meveo.model.crm.Provider;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.PersistenceUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class CurrentProviderProducer {
 

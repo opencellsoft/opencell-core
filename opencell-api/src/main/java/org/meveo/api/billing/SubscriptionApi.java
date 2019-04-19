@@ -153,6 +153,37 @@ public class SubscriptionApi extends BaseApi {
 
     private ParamBean paramBean = ParamBean.getInstance();
 
+    private void setRenewalTermination(SubscriptionRenewal renewal, String terminationReason) throws EntityDoesNotExistsException {
+        SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(terminationReason);
+        if (subscriptionTerminationReason == null) {
+            throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, terminationReason);
+        }
+        renewal.setTerminationReason(subscriptionTerminationReason);
+        renewal.setInitialTermType(SubscriptionRenewal.InitialTermTypeEnum.FIXED);
+        renewal.setAutoRenew(false);
+        renewal.setEndOfTermAction(EndOfTermActionEnum.TERMINATE);
+    }
+
+    private void setSubscriptionFutureTermination(SubscriptionDto postData, Subscription subscription) throws EntityDoesNotExistsException {
+        if (postData.getTerminationDate() != null && postData.getTerminationDate().compareTo(new Date()) > 0 &&
+                !StringUtils.isBlank(postData.getTerminationReason())) {
+
+            subscription.setTerminationDate(postData.getTerminationDate());
+            subscription.setSubscribedTillDate(postData.getTerminationDate());
+            setRenewalTermination(subscription.getSubscriptionRenewal(), postData.getTerminationReason());
+        }
+    }
+
+    private void setServiceFutureTermination(ServiceToUpdateDto serviceToUpdateDto, ServiceInstance serviceInstance) throws EntityDoesNotExistsException {
+        if (serviceToUpdateDto.getTerminationDate() != null && serviceToUpdateDto.getTerminationDate().compareTo(new Date()) > 0 &&
+                !StringUtils.isBlank(serviceToUpdateDto.getTerminationReason())) {
+
+            serviceInstance.setTerminationDate(serviceToUpdateDto.getTerminationDate());
+            serviceInstance.setSubscribedTillDate(serviceToUpdateDto.getTerminationDate());
+            setRenewalTermination(serviceInstance.getServiceRenewal(), serviceToUpdateDto.getTerminationReason());
+        }
+    }
+
     /**
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
@@ -229,12 +260,15 @@ public class SubscriptionApi extends BaseApi {
             subscription.setBillingCycle(billingCycle);
         }
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
-        subscription.setTerminationDate(postData.getTerminationDate());
+        //subscription.setTerminationDate(postData.getTerminationDate());
+        SubscriptionRenewal subscriptionRenewal = null;
         if (postData.getRenewalRule() == null) {
-            subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), null, false));
+            subscriptionRenewal = subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), null, false);
         } else {
-            subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(null, postData.getRenewalRule(), false));
+            subscriptionRenewal = subscriptionRenewalFromDto(null, postData.getRenewalRule(), false);
         }
+        subscription.setSubscriptionRenewal(subscriptionRenewal);
+        setSubscriptionFutureTermination(postData, subscription);
         
         Boolean subscriptionAutoEndOfEngagement = postData.getAutoEndOfEngagement();
         if (subscriptionAutoEndOfEngagement == null) {
@@ -337,11 +371,15 @@ public class SubscriptionApi extends BaseApi {
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
-        subscription.setTerminationDate(postData.getTerminationDate());
-        
-        subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(subscription.getSubscriptionRenewal(), postData.getRenewalRule(), subscription.isRenewed()));
+
+        SubscriptionRenewal subscriptionRenewal = subscriptionRenewalFromDto(subscription.getSubscriptionRenewal(), postData.getRenewalRule(), subscription.isRenewed());
+        subscription.setSubscriptionRenewal(subscriptionRenewal);
+
+        setSubscriptionFutureTermination(postData, subscription);
+
         subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
         subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
+
 
         if (postData.getAutoEndOfEngagement() != null) {
             subscription.setAutoEndOfEngagement(postData.getAutoEndOfEngagement());
@@ -1503,6 +1541,11 @@ public class SubscriptionApi extends BaseApi {
             if (serviceToUpdateDto.getQuantity() != null) {
                 serviceToUpdate.setQuantity(serviceToUpdateDto.getQuantity());
             }
+
+            SubscriptionRenewal serviceRenewal = subscriptionRenewalFromDto(serviceToUpdate.getServiceRenewal(), serviceToUpdateDto.getServiceRenewal(), serviceToUpdate.isRenewed());
+            serviceToUpdate.setServiceRenewal(serviceRenewal);
+
+            setServiceFutureTermination(serviceToUpdateDto, serviceToUpdate);
 
             // populate customFields
             try {

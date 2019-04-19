@@ -22,6 +22,8 @@ import org.meveo.model.billing.UsageChargeInstance;
  * The Class ServiceInstanceDto.
  * 
  * @author anasseh
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceInstanceDto extends BusinessEntityDto {
@@ -91,6 +93,14 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     private Boolean autoEndOfEngagement;
 
     /**
+     * A date till which service is activate. After this date it will either be extended or terminated
+     */
+    private Date subscribedTillDate;
+
+    /** The renewal service. */
+    private SubscriptionRenewalDto serviceRenewal;
+
+    /**
      * Instantiates a new service instance dto.
      */
     public ServiceInstanceDto() {
@@ -117,6 +127,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
         }
         endAgreementDate = serviceInstance.getEndAgreementDate();
 
+        subscribedTillDate = serviceInstance.getSubscribedTillDate();
+        serviceRenewal = new SubscriptionRenewalDto(serviceInstance.getServiceRenewal());
         if (serviceInstance.getRecurringChargeInstances() != null) {
             recurringChargeInstances = new ArrayList<ChargeInstanceDto>();
 
@@ -414,5 +426,41 @@ public class ServiceInstanceDto extends BusinessEntityDto {
      */
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
+    }
+
+    /**
+     * Gets the subscribed till date.
+     *
+     * @return the subscribedTillDate
+     */
+    public Date getSubscribedTillDate() {
+        return subscribedTillDate;
+    }
+
+    /**
+     * Sets the subscribed till date.
+     *
+     * @param subscribedTillDate the new subscribedTillDate
+     */
+    public void setSubscribedTillDate(Date subscribedTillDate) {
+        this.subscribedTillDate = subscribedTillDate;
+    }
+
+    /**
+     * Gets the service renewal
+     *
+     * @return the service renewal
+     */
+    public SubscriptionRenewalDto getServiceRenewal() {
+        return serviceRenewal;
+    }
+
+    /**
+     * Sets the service renewal.
+     *
+     * @param serviceRenewal the new service renewal
+     */
+    public void setServiceRenewal(SubscriptionRenewalDto serviceRenewal) {
+        this.serviceRenewal = serviceRenewal;
     }
 }

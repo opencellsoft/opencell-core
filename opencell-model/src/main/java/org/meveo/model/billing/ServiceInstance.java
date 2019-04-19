@@ -221,6 +221,18 @@ public class ServiceInstance extends BusinessCFEntity implements HibernateAudita
     @Transient
     private OrderItemActionEnum orderItemAction;
 
+
+    /**
+     * Initial service renewal configuration
+     */
+    @Column(name = "initial_renewal")
+    private String initialServiceRenewal;
+
+    /**
+     * Gets the end agreement date.
+     *
+     * @return the end agreement date
+     */
     public Date getEndAgreementDate() {
         return endAgreementDate;
     }
@@ -619,4 +631,21 @@ public class ServiceInstance extends BusinessCFEntity implements HibernateAudita
         this.dueDateDaysPS = dueDateDaysPS;
     }
 
+    /**
+     * Gets the initial service renewal
+     *
+     * @return the initial service renewal
+     */
+    public String getInitialServiceRenewal() {
+        return initialServiceRenewal;
+    }
+
+    /**
+     * Sets the initial service renewal.
+     *
+     * @param initialServiceRenewal the new initial service renewal
+     */
+    public void setInitialServiceRenewal(String initialServiceRenewal) {
+        this.initialServiceRenewal = initialServiceRenewal;
+    }
 }

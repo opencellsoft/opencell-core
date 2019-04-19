@@ -45,7 +45,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.BaseService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.util.PersistenceUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -54,8 +54,8 @@ import org.w3c.dom.Element;
 /**
  * @author Wassim Drira
  * @author Said Ramli
- * @lastModifiedVersion 5.1
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class CustomFieldInstanceService extends BaseService {
