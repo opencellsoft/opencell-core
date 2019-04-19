@@ -2175,6 +2175,399 @@ group by s.code
 			<where>code = 'UNBILLED_UA'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="#4150_20190415 - Disable standard jobs" author="EdwardPLegaspi">
+		<update tableName="meveo_job_instance">
+			<column name="timerentity_id" value="NULL"></column>
+			<column name="disabled" valueNumeric="0"></column>
+		</update>
+		<delete tableName="meveo_timer">
+		</delete>
+	</changeSet>
+	
+	<changeSet id="#4092_20190415 - Add SelfCare Settings" author="EdwardPLegaspi">
+		<insert tableName="adm_permission">
+            <column name="id" valueNumeric="-117" />
+            <column name="name" value="API User" />
+            <column name="permission" value="apiAccess" />
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-118" />
+            <column name="name" value="Administration visualization" />
+            <column name="permission" value="administrationVisualization" />
+        </insert>
+		<insert tableName="adm_role">
+            <column name="id" valueNumeric="-112" />
+            <column name="version" valueNumeric="0" />
+            <column name="role_description" value="selfcareDefault" />
+            <column name="role_name" value="selfcareDefault" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" value="-112"></column>
+            <column name="permission_id" value="-117"></column>
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" value="-112"></column>
+            <column name="permission_id" value="-118"></column>
+        </insert>
+        <insert tableName="adm_user">
+            <column name="id" valueNumeric="-5" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="email" value="DEMO.selfcare.api@opencellsoft.com"/>
+            <column name="firstname" value="selfcare.api"/>
+            <column name="lastname" value="DEMO"/>
+            <column name="username" value="DEMO.selfcare.api" />
+            <column name="uuid" value="DEMO.selfcare.api" />
+        </insert>
+        <insert tableName="adm_user_role">
+            <column name="user_id" value="-5"></column>
+            <column name="role_id" value="-112"></column>
+        </insert>
+        
+        <sql><![CDATA[
+        INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-20, 0, 0, now(), 'org.meveo.service.script.selfcare.CreateAccess', 'AddAccess', 'JAVA', '
+			package org.meveo.service.script.selfcare;
+			
+			import java.util.Date;
+			import java.util.Map;
+			
+			import org.meveo.admin.exception.BusinessException;
+			import org.meveo.model.admin.User;
+			import org.meveo.model.billing.Subscription;
+			import org.meveo.service.medina.impl.AccessService;
+			import org.meveo.service.script.module.ModuleScript;
+			import org.slf4j.Logger;
+			import org.slf4j.LoggerFactory;
+			
+			public class CreateAccess extends ModuleScript {	
+				private static final Logger log = LoggerFactory.getLogger(CreateAccess.class);		
+				
+				@Override
+			    public void execute(Map<String, Object> methodContext) throws BusinessException {
+					AccessService accessService = (AccessService) getServiceInterface("AccessService");
+					Subscription subscription = (Subscription) methodContext.get("subscription");
+					if(subscription == null){
+						throw new BusinessException("subscription is null");
+					}
+					log.debug("subscription.getCode() : "+subscription.getCode());		
+					org.meveo.model.mediation.Access access = new org.meveo.model.mediation.Access();
+					access.setSubscription(subscription);
+					access.setAccessUserId("ACC_"+subscription.getCode());
+					access.setStartDate(new Date());
+					access.setEndDate(null);
+					accessService.create(access);
+			    }	
+			}
+        ');
+        ]]></sql>
+        
+        <insert tableName="meveo_module">
+        	<column name="id" valueNumeric="-1"></column>
+        	<column name="version" value="0"></column>
+        	<column name="disabled" value="0"></column>
+        	<column name="created" valueDate="now()"></column>
+        	<column name="creator" value="applicationInitializer"></column>
+        	<column name="code" value="AddAccessModule"></column>
+        	<column name="description" value="AddAccessModule"></column>
+        	<column name="module_license" value="GPL"></column>
+        	<column name="installed" value="0"></column>
+        	<column name="script_instance_id" valueNumeric="-20"></column>
+        </insert>
+        
+        <sql>
+        	<![CDATA[UPDATE ${db.schema.adapted}meveo_module 
+        		SET module_source='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+				<Module license="GPL" code="AddAccessModule" description="AddAccessModule">
+				    <script code="org.meveo.service.script.selfcare.CreateAccess" description="AddAccess"></script>
+				    <moduleItems>
+				        <notification code="AddAccessNotif">
+				            <classNameFilter>org.meveo.model.billing.Subscription</classNameFilter>
+				            <eventTypeFilter>CREATED</eventTypeFilter>
+				            <elFilter></elFilter>
+				            <scriptInstanceCode>org.meveo.service.script.selfcare.CreateAccess</scriptInstanceCode>
+				            <scriptParams>
+				                <entry>
+				                    <key>subscription</key>
+				                    <value>#{event}</value>
+				                </entry>
+				            </scriptParams>
+				            <priority>0</priority>
+				        </notification>
+				    </moduleItems>
+				</Module>
+	        	'
+			WHERE id=-1;]]>
+        </sql>
+        
+        <sql><![CDATA[
+        INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-21, 0, 0, now(), 'org.meveo.service.script.SelfcareAccountScript', 'Script BAM for selfcare accounts', 'JAVA', '
+			package org.meveo.service.script;
+			import java.math.BigDecimal;
+			import java.nio.charset.Charset;
+			import java.security.MessageDigest;
+			import java.security.NoSuchAlgorithmException; 
+			import java.util.List;
+			import java.util.HashSet;
+			import java.util.Map;
+			import org.meveo.admin.exception.BusinessException;
+			import org.meveo.api.dto.account.CRMAccountHierarchyDto;   
+			import org.meveo.api.dto.UserDto; 
+			import org.meveo.api.exception.MeveoApiException;
+			import org.meveo.commons.utils.StringUtils;
+			import org.meveo.model.admin.User;    
+			import org.meveo.service.script.account.AccountScript;
+			import org.meveo.model.AccountEntity;
+			import org.slf4j.Logger;
+			import java.util.Set;
+			import java.util.ArrayList;
+			import org.meveo.model.security.Role;
+			import org.meveo.service.crm.impl.CustomerService;
+			import org.slf4j.LoggerFactory;
+			import org.meveo.model.crm.Customer;
+			import org.meveo.service.crm.impl.CustomFieldInstanceService;
+			import org.meveo.api.UserApi;
+			
+			public class SelfcareAccountScript extends AccountScript {
+			
+				private static final Logger log = LoggerFactory.getLogger(SelfcareAccountScript.class);
+				private Map<String, Object> initContext = null;
+			
+				static MessageDigest messageDigest = null;
+				static {
+					try {
+						messageDigest = MessageDigest.getInstance("MD5");
+					} 
+					catch (NoSuchAlgorithmException e) {
+					}
+				}
+				CustomFieldInstanceService customFieldInstanceService = (CustomFieldInstanceService) getServiceInterface("CustomFieldInstanceService");
+				CustomerService customerService = (CustomerService) getServiceInterface("CustomerService");
+				UserApi userApi = (UserApi) getServiceInterface("UserApi");
+			
+				@Override
+				public void createAccount(Map<String, Object> methodContext) throws BusinessException { 
+					AccountEntity account = (AccountEntity) methodContext.get(Script.CONTEXT_ENTITY);
+					UserDto user = new UserDto();
+					CRMAccountHierarchyDto accountDto = (CRMAccountHierarchyDto) methodContext.get(AccountScript.CONTEXT_ACCOUNT_HIERARCHY_DTO);
+					Customer customer = customerService.findByCode(accountDto.getCode());
+			
+					log.debug("accountCode : "+accountDto.getCode(), " crmAccountType :"+accountDto.getCrmAccountType());
+					  
+					String email = accountDto.getContactInformation().getEmail(); 
+					user.setEmail(email);
+					if(accountDto.getName()!=null){
+						user.setFirstName(accountDto.getName().getFirstName());
+						user.setLastName(accountDto.getName().getLastName());
+					}
+					user.setUsername(accountDto.getCode());
+			
+					/*
+					String password =(String) customFieldInstanceService.getCFValue(customer, "password");
+					if( password != null )
+					{
+						user.setPassword(password);
+					}
+					else
+					{
+						log.warn("password CF is null, using username");
+						user.setPassword(user.getUsername());
+					}
+					*/    
+			
+					List<String> roles = new ArrayList<String>();
+					roles.add("selfcareDefault");
+					user.setRoles(roles);
+					log.debug("lastName :"+user.getLastName() + " firstName : "+user.getFirstName() + " email : "+user.getEmail());
+					try{
+						userApi.createOrUpdate(user);
+					}
+					catch(MeveoApiException e){
+						log.error("failed to create user ",e); 
+						e.printStackTrace();
+					}
+				}
+			}
+        ');
+        ]]></sql>
+        
+        <sql><![CDATA[
+        INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-22, 0, 0, now(), 'org.meveo.service.script.selfcare.RegisterHierarchy', 'Register crm hierarchy', 'JAVA', '
+			package org.meveo.service.script.selfcare;
+
+			import java.util.Map;
+			
+			import org.meveo.admin.exception.BusinessException;
+			import org.meveo.api.account.AccountHierarchyApi;
+			import org.meveo.api.dto.account.CRMAccountHierarchyDto;
+			import org.meveo.api.exception.MeveoApiException;
+			import org.meveo.commons.utils.JsonUtils;
+			import org.meveo.model.admin.User;
+			import org.slf4j.Logger;
+			import org.slf4j.LoggerFactory;
+			
+			public class RegisterHierarchy extends org.meveo.service.script.Script {	
+				private static final Logger log = LoggerFactory.getLogger(RegisterHierarchy.class);			
+				public void execute(Map<String, Object> initContext) throws BusinessException {		
+					log.info("Execute...");
+					AccountHierarchyApi accountHierarchyApi = (AccountHierarchyApi) getServiceInterface("AccountHierarchyApi");
+					String body = (String) initContext.get("body");
+					log.info("body:"+body);
+					CRMAccountHierarchyDto crmAccountHierarchyDto = JsonUtils.toObject(body, CRMAccountHierarchyDto.class);
+					log.info("crmAccountHierarchyDto"+crmAccountHierarchyDto);	
+						
+					try {
+						accountHierarchyApi.createCRMAccountHierarchy(crmAccountHierarchyDto);
+					} catch (MeveoApiException e) {			
+						e.printStackTrace();
+					}	
+				}
+			}
+        ');
+        ]]></sql>
+        
+        <insert tableName="meveo_module">
+        	<column name="id" valueNumeric="-2"></column>
+        	<column name="version" value="0"></column>
+        	<column name="disabled" value="0"></column>
+        	<column name="created" valueDate="now()"></column>
+        	<column name="creator" value="applicationInitializer"></column>
+        	<column name="code" value="Client"></column>
+        	<column name="description" value="Individual customer"></column>
+        	<column name="module_license" value="GPL"></column>
+        	<column name="installed" value="0"></column>
+        	<column name="script_instance_id" valueNumeric="-21"></column>
+        </insert>
+        
+        <insert tableName="crm_business_account_model">
+        	<column name="id" valueNumeric="-2"></column>
+        	<column name="hierarchy_type" value="C_UA"></column>
+        </insert>
+        
+        <sql>
+        	<![CDATA[UPDATE ${db.schema.adapted}meveo_module 
+        		SET module_source='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+				<BusinessAccountModel license="GPL" code="Client" description="Individual customer">
+				    <script code="org.meveo.service.script.SelfcareAccountScript" description="Script BAM for selfcare accounts"></script>
+				    <moduleItems>
+				        <emailNotif code="AccountCreationNotif">
+				            <classNameFilter>org.meveo.model.admin.User</classNameFilter>
+				            <eventTypeFilter>CREATED</eventTypeFilter>
+				            <scriptParams/>
+				            <priority>0</priority>
+				            <emailFrom>bot@opencellsoft.com</emailFrom>
+				            <emailToEl>#{event.email}</emailToEl>
+				            <subject>Account creation confirmation</subject>
+				            <body>Hello,
+				                Your login has been created:
+				                user name :  #{event.userName}
+				                access url : http://integration.i.opencellsoft.com/opencell/frontend/DEMO/cc/index.html
+								</body>
+				        </emailNotif>
+				        <notification code="SelfcareRegistration">
+				            <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
+				            <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
+				            <elFilter>#{event.pathInfo.startsWith("/I66_HIGHWAY/registration")}</elFilter>
+				            <scriptInstanceCode>org.meveo.service.script.selfcare.RegisterHierarchy</scriptInstanceCode>
+				            <scriptParams>
+				                <entry>
+				                    <key>body</key>
+				                    <value>#{event.getBody()}</value>
+				                </entry>
+				            </scriptParams>
+				            <priority>0</priority>
+				        </notification>
+				        <script code="org.meveo.service.script.selfcare.RegisterHierarchy" description="Register crm hierarchy">
+				            <type>JAVA</type>
+				            <script>
+								package org.meveo.service.script.selfcare;
+								
+								import java.util.Map;
+								
+								import org.meveo.admin.exception.BusinessException;
+								import org.meveo.api.account.AccountHierarchyApi;
+								import org.meveo.api.dto.account.CRMAccountHierarchyDto;
+								import org.meveo.api.exception.MeveoApiException;
+								import org.meveo.commons.utils.JsonUtils;
+								import org.meveo.model.admin.User;
+								import org.slf4j.Logger;
+								import org.slf4j.LoggerFactory;
+								
+								public class RegisterHierarchy extends org.meveo.service.script.Script {	
+									private static final Logger log = LoggerFactory.getLogger(RegisterHierarchy.class);			
+									public void execute(Map&lt;String, Object&gt; initContext) throws BusinessException {		
+										log.info("Execute...");
+										AccountHierarchyApi accountHierarchyApi = (AccountHierarchyApi) getServiceInterface("AccountHierarchyApi");
+										String body = (String) initContext.get("body");
+										log.info("body:"+body);
+										CRMAccountHierarchyDto crmAccountHierarchyDto = JsonUtils.toObject(body, CRMAccountHierarchyDto.class);
+										log.info("crmAccountHierarchyDto"+crmAccountHierarchyDto);		
+										try {
+											accountHierarchyApi.createCRMAccountHierarchy(crmAccountHierarchyDto);
+										} catch (MeveoApiException e) {			
+											e.printStackTrace();
+										}	
+									}
+								}
+				           </script>
+				        </script>
+				    </moduleItems>
+				    <hierarchyType>C_UA</hierarchyType>
+				</BusinessAccountModel>
+	        	'
+			WHERE id=-2;]]>
+        </sql>
+        
+        <insert tableName="meveo_module">
+        	<column name="id" valueNumeric="-3"></column>
+        	<column name="version" value="0"></column>
+        	<column name="disabled" value="0"></column>
+        	<column name="created" valueDate="now()"></column>
+        	<column name="creator" value="applicationInitializer"></column>
+        	<column name="code" value="aBOM2"></column>
+        	<column name="description" value="aBOM"></column>
+        	<column name="module_license" value="GPL"></column>
+        	<column name="installed" value="0"></column>
+        	<column name="script_instance_id" valueNumeric="-20"></column>
+        </insert>
+        
+        <insert tableName="cat_business_offer_model">
+        	<column name="id" valueNumeric="-3"></column>
+        </insert>
+        
+        <sql>
+        	<![CDATA[UPDATE ${db.schema.adapted}meveo_module 
+        		SET module_source='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+				<BusinessOfferModel license="GPL" code="aBOM2" description="description aBOM">
+				    <script code="org.meveo.service.script.selfcare.CreateAccess" description="add access"></script>
+				    <offerTemplate code="OF_DUMMY">
+				        <lifeCycleStatus>IN_DESIGN</lifeCycleStatus>
+				    </offerTemplate>
+				</BusinessOfferModel>
+	        	'
+			WHERE id=-3;]]>
+        </sql>
+        
+        <insert tableName="crm_custom_field_tmpl">
+        	<column name="id" valueNumeric="-1"></column>
+        	<column name="version" value="0"></column>
+        	<column name="disabled" value="0"></column>
+        	<column name="created" valueDate="now()"></column>
+        	<column name="creator" value="applicationInitializer"></column>
+        	<column name="code" value="SELFCARE_PASSWORD"></column>
+        	<column name="description" value="SelfCare password"></column>
+        	<column name="field_type" value="STRING"></column>
+        	<column name="versionable" value="0"></column>
+        	<column name="storage_type" value="SINGLE"></column>
+        	<column name="applies_to" value="Customer"></column>
+        	<column name="gui_position" value="tab:Custom fields:0;field:0"></column>
+        	<column name="allow_edit" value="1"></column>
+        	<column name="hide_on_new" value="1"></column>
+        	<column name="max_value" valueNumeric="50"></column>
+        	<column name="cf_protectable" valueNumeric="1"></column>
+        </insert>
+	</changeSet>
+
 	<changeSet id="#4082_20190404" author="SaidRamli">
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-20, 0, 0, now(), 'org.meveo.service.script.DeleteCustomersScript', 'DeleteCustomersScript', 'JAVA', '
 package org.meveo.service.script;

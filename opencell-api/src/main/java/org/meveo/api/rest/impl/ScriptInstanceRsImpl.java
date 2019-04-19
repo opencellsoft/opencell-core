@@ -111,7 +111,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
             responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result);
             responseBuilder.entity(e.getLocalizedMessage());
         }
-        
+
         return responseBuilder.build();
     }
 

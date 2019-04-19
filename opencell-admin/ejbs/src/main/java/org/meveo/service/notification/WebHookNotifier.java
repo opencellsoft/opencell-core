@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class WebHookNotifier {
@@ -77,6 +77,19 @@ public class WebHookNotifier {
      *        expirations), current user might be lost, thus there is a need to reestablish.
      */
     @Asynchronous
+    public void sendRequestAsync(WebHook webHook, Object entityOrEvent, Map<String, Object> context, MeveoUser lastCurrentUser) {
+    	sendRequest(webHook, entityOrEvent, context, lastCurrentUser);
+    }
+    
+    /**
+     * Access web URL as fired notification result
+     * 
+     * @param webHook Webhook type notification that was fired
+     * @param entityOrEvent Entity or event that triggered notification
+     * @param context Execution context
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     */
     public void sendRequest(WebHook webHook, Object entityOrEvent, Map<String, Object> context, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -179,7 +192,11 @@ public class WebHookNotifier {
                             paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, String.class));
                         }
                         paramsEvaluated.put("response", result);
-                        scriptInstanceService.execute(webHook.getScriptInstance().getCode(), paramsEvaluated);
+                        if (webHook.getScriptInstance().isReuse()) {
+                            scriptInstanceService.executeCached(webHook.getScriptInstance().getCode(), paramsEvaluated);
+                        } else {
+                            scriptInstanceService.executeWInitAndFinalize(webHook.getScriptInstance().getCode(), paramsEvaluated);
+                        }
 
                     } catch (Exception ee) {
                         log.error("Failed to execute a script {}", webHook.getScriptInstance().getCode(), ee);

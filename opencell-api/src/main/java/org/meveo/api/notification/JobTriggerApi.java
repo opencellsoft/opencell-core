@@ -99,6 +99,7 @@ public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
         if (postData.isDisabled() != null) {
             notif.setDisabled(postData.isDisabled());
         }
+        notif.setRunAsync(postData.isRunAsync());
         jobTriggerService.create(notif);
 
         return notif;
@@ -187,6 +188,9 @@ public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
         notif.setCounterTemplate(counterTemplate);
         notif.setJobInstance(jobInstance);
         notif.setJobParams(postData.getJobParams());
+		if (postData.isRunAsync() != null) {
+			notif.setRunAsync(postData.isRunAsync());
+		}
 
         notif = jobTriggerService.update(notif);
 

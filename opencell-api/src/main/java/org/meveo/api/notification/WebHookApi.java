@@ -116,6 +116,7 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         if (postData.isDisabled() != null) {
             webHook.setDisabled(postData.isDisabled());
         }
+        webHook.setRunAsync(postData.isRunAsync());
         webHookService.create(webHook);
 
         return webHook;
@@ -217,6 +218,9 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         if (postData.getParams() != null) {
             webHook.getWebhookParams().putAll(postData.getParams());
         }
+		if (postData.isRunAsync() != null) {
+			webHook.setRunAsync(postData.isRunAsync());
+		}
 
         webHook = webHookService.update(webHook);
 

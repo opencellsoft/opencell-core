@@ -550,7 +550,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Execute action on an entity/event. Does not call init() or finalize() methods of the script.
+     * Execute action on an entity/event. Does not call init() nor finalize() methods of the script.
      * 
      * @param entityOrEvent Entity or event to execute action on
      * @param scriptCode Script to execute, identified by a code
@@ -566,10 +566,10 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Execute action on an entity/event. Does not call init() or finalize() methods of the script.
+     * Execute action on an entity/event. Does not call init() nor finalize() methods of the script.
      * 
-     * @param entityOrEvent Entity or event to execute action on
-     * @param scriptCode Script to execute, identified by a code
+     * @param entityOrEvent Entity or event to execute action on. Will be added to context under Script.CONTEXT_ENTITY key.
+     * @param scriptCode Script to execute, identified by a code. Will be added to context under Script.CONTEXT_ACTION key.
      * @param context Additional parameters
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidScriptException Were not able to instantiate or compile a script
@@ -583,40 +583,15 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             context = new HashMap<>();
         }
         context.put(Script.CONTEXT_ENTITY, entityOrEvent);
-        context.put(Script.CONTEXT_ACTION, scriptCode);
         Map<String, Object> result = execute(scriptCode, context);
-        return result;
-    }
-
-    /**
-     * Execute action on an entity/event. Does not call init() or finalize() methods of the script.
-     * 
-     * @param entityOrEvent Entity or event to execute action on
-     * @param scriptCode Script to execute, identified by a code
-     * @param context Additional parameters
-     * @return Context parameters. Will not be null even if "context" parameter is null.
-     * @throws InvalidScriptException Were not able to instantiate or compile a script
-     * @throws ElementNotFoundException Script not found
-     * @throws InvalidPermissionException Insufficient access to run the script
-     * @throws BusinessException Any execution exception
-     */
-    public Map<String, Object> executeWInitAndFinalize(Object entityOrEvent, String scriptCode, Map<String, Object> context) throws BusinessException {
-
-        if (context == null) {
-            context = new HashMap<>();
-        }
-        context.put(Script.CONTEXT_ENTITY, entityOrEvent);
-        context.put(Script.CONTEXT_ACTION, scriptCode);
-        Map<String, Object> result = executeWInitAndFinalize(scriptCode, context);
         return result;
     }
 
     /**
      * Execute script. Does not call init() or finalize() methods of the script.
      * 
-     * @param scriptCode Script to execute, identified by a code
+     * @param scriptCode Script to execute, identified by a code. Will be added to context under Script.CONTEXT_ACTION key.
      * @param context Method context
-     * 
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
@@ -630,6 +605,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         if (context == null) {
             context = new HashMap<String, Object>();
         }
+        context.put(Script.CONTEXT_ACTION, scriptCode);
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
@@ -641,11 +617,83 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
+     * Execute action on an entity/event. Reuse an existing, earlier initialized script interface. Does not call init() nor finalize() methods of the script.
+     * 
+     * @param entityOrEvent Entity or event to execute action on. Will be added to context under Script.CONTEXT_ENTITY key.
+     * @param scriptCode Script to execute, identified by a code. Will be added to context under Script.CONTEXT_ACTION key.
+     * @param context Additional parameters
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws BusinessException Any execution exception
+     */
+    public Map<String, Object> executeCached(Object entityOrEvent, String scriptCode, Map<String, Object> context) throws BusinessException {
+
+        if (context == null) {
+            context = new HashMap<String, Object>();
+        }
+        context.put(Script.CONTEXT_ENTITY, entityOrEvent);
+
+        return executeCached(scriptCode, context);
+    }
+
+    /**
+     * Execute action on an entity/event. Reuse an existing, earlier initialized script interface. Does not call init() nor finalize() methods of the script.
+     * 
+     * @param scriptCode Script to execute, identified by a code. Will be added to context under Script.CONTEXT_ACTION key.
+     * @param context Additional parameters
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws BusinessException Any execution exception
+     */
+    public Map<String, Object> executeCached(String scriptCode, Map<String, Object> context) throws BusinessException {
+
+        log.trace("Script (cached) {} to be executed with parameters {}", scriptCode, context);
+
+        if (context == null) {
+            context = new HashMap<String, Object>();
+        }
+        context.put(Script.CONTEXT_ACTION, scriptCode);
+        context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+        context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+
+        SI classInstance = getCachedScriptInstance(scriptCode);
+        classInstance.execute(context);
+
+        log.trace("Script (cached) {} executed with parameters {}", scriptCode, context);
+        return context;
+    }
+
+    /**
+     * Execute action on an entity/event. DOES call init() and finalize() methods of the script.
+     * 
+     * @param entityOrEvent Entity or event to execute action on. Will be added to context under Script.CONTEXT_ENTITY key.
+     * @param scriptCode Script to execute, identified by a code. Will be added to context under Script.CONTEXT_ACTION key.
+     * @param context Additional parameters
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws BusinessException Any execution exception
+     */
+    public Map<String, Object> executeWInitAndFinalize(Object entityOrEvent, String scriptCode, Map<String, Object> context) throws BusinessException {
+
+        if (context == null) {
+            context = new HashMap<>();
+        }
+        context.put(Script.CONTEXT_ENTITY, entityOrEvent);
+        Map<String, Object> result = executeWInitAndFinalize(scriptCode, context);
+        return result;
+    }
+
+    /**
      * Execute script. DOES call init() or finalize() methods of the script.
      * 
-     * @param scriptCode Script to execute, identified by a code
+     * @param scriptCode Script to execute, identified by a code. Will be added to context under Script.CONTEXT_ACTION key.
      * @param context Method context
-     * 
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
@@ -659,6 +707,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         if (context == null) {
             context = new HashMap<String, Object>();
         }
+        context.put(Script.CONTEXT_ACTION, scriptCode);
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
@@ -680,7 +729,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> executeWInitAndFinalize(SI compiledScript, Map<String, Object> context) throws BusinessException {
+    protected Map<String, Object> executeWInitAndFinalize(SI compiledScript, Map<String, Object> context) throws BusinessException {
 
         if (context == null) {
             context = new HashMap<String, Object>();
@@ -695,33 +744,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         compiledScript.finalize(context);
 
         log.trace("Script {} executed with parameters {}", compiledScript.getClass(), context);
-        return context;
-    }
-
-    /**
-     * Execute a class that extends Script
-     * 
-     * @param compiledScript Compiled script class
-     * @param context Method context
-     * 
-     * @return Context parameters. Will not be null even if "context" parameter is null.
-     * @throws BusinessException Any execution exception
-     */
-    protected Map<String, Object> execute(SI compiledScript, Map<String, Object> context) throws BusinessException {
-
-        if (context == null) {
-            context = new HashMap<String, Object>();
-        }
-
-        context.put(Script.CONTEXT_CURRENT_USER, currentUser);
-        context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
-
-        log.trace("Script {} to be executed with parameters {}", compiledScript.getClass(), context);
-
-        compiledScript.execute(context);
-
-        log.trace("Script {} executed with parameters {}", compiledScript.getClass(), context);
-
         return context;
     }
 

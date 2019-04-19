@@ -239,6 +239,10 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
         scriptInstance.setCode(dto.getCode());
         scriptInstance.setDescription(dto.getDescription());
         scriptInstance.setScript(dto.getScript());
+        
+        if (dto.getReuse()!=null) {
+            scriptInstance.setReuse(dto.getReuse());
+        }
 
         if (!StringUtils.isBlank(dto.getScriptInstanceCategoryCode())) {
             ScriptInstanceCategory scriptInstanceCategory = scriptInstanceCategoryService.findByCode(dto.getScriptInstanceCategoryCode());
