@@ -2569,7 +2569,7 @@ group by s.code
 	</changeSet>
 
 	<changeSet id="#4082_20190404" author="SaidRamli">
-        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-20, 0, 0, now(), 'org.meveo.service.script.DeleteCustomersScript', 'DeleteCustomersScript', 'JAVA', '
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-23, 0, 0, now(), 'org.meveo.service.script.DeleteCustomersScript', 'DeleteCustomersScript', 'JAVA', '
 package org.meveo.service.script;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -3367,7 +3367,7 @@ public class DeleteCustomersScript extends Script {
 	}
 }');]]>
 		</sql>	
-		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-20, 0, 0, now(), now(), 'DeleteCustomersScript_JOB', NULL, 'MEDIATION', 'FlatFileProcessingJob',
+		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-24, 0, 0, now(), now(), 'DeleteCustomersScript_JOB', NULL, 'MEDIATION', 'FlatFileProcessingJob',
 			 NULL, 'opencell.admin', 'opencell.admin', NULL, NULL, 'DeleteCustomersScript_JOB', NULL, 1, 
 			 '{"FlatFileProcessingJob_mappingConf":[{"string":"\n    <beanio xmlns=\"http://www.beanio.org/2012/03\" \n      xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n      xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\n      <stream name=\"RECORD\" format=\"csv\" strict=\"true\">\n        <parser>\n          <property name=\"delimiter\" value=\";\" />\n        </parser>     \n        <record name=\"customer\"  minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">  \n           <field name=\"customerCode\" minOccurs=\"0\" position=\"0\" />\n           <field name=\"noCheck\" minOccurs=\"0\" position=\"1\"/>\n        </record> \n      </stream>\n    </beanio>\n"}],
 			 "FlatFileProcessingJob_recordVariableName":[{"string":"RECORD"}],
