@@ -44,24 +44,18 @@ public class InvoicingJobBean extends BaseJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running for parameter={}", jobInstance.getParametres());
 
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+
         try {
             List<BillingRun> billingRuns = getBillingRuns(this.getParamOrCFValue(jobInstance, "billingRuns"));
 
             log.info("BillingRuns to process={}", billingRuns.size());
             result.setNbItemsToProcess(billingRuns.size());
-            Long nbRuns = new Long(1);
-            Long waitingMillis = new Long(0);
-            try {
-                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
-                if (nbRuns == -1) {
-                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
-                }
-            } catch (Exception e) {
-                nbRuns = new Long(1);
-                waitingMillis = new Long(0);
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
-            }
+
             for (BillingRun billingRun : billingRuns) {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                     break;
@@ -88,6 +82,7 @@ public class InvoicingJobBean extends BaseJobBean {
      * @param billingRunsCF the billing runs getting from the custom field
      * @return
      */
+    @SuppressWarnings("unchecked")
     private List<BillingRun> getBillingRuns(Object billingRunsCF) {
         List<EntityReferenceWrapper> brList = (List<EntityReferenceWrapper>) billingRunsCF;
         List<BillingRun> billingRuns = new ArrayList<>();
