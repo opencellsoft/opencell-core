@@ -115,7 +115,7 @@ public class Notification extends EnableBusinessEntity {
      */
     @Column(name = "priority", columnDefinition = "int DEFAULT 1")
     private int priority = 1;
-    
+
     /**
      * Run in async mode?
      */
@@ -208,17 +208,28 @@ public class Notification extends EnableBusinessEntity {
 
     /**
      * Gets boolean value of whether this notification will be run in async mode.
+     * 
      * @return true / false
      */
-	public Boolean isRunAsync() {
-		return runAsync;
-	}
+    public Boolean isRunAsync() {
+        return runAsync;
+    }
 
-	/**
-     * Sets boolean value of whether this notification will be run in async mode.
+    /**
+     * Gets boolean value of whether this notification will be run in async mode.
+     * 
      * @return true / false
      */
-	public void setRunAsync(Boolean runAsync) {
-		this.runAsync = runAsync;
-	}
+    public Boolean getRunAsync() {
+        return runAsync;
+    }
+
+    /**
+     * Sets boolean value of whether this notification will be run in async mode.
+     * 
+     * @return true / false
+     */
+    public void setRunAsync(Boolean runAsync) {
+        this.runAsync = runAsync;
+    }
 }

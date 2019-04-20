@@ -43,13 +43,20 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, String parameter, JobInstance jobInstance) {
         log.debug("Running for parameter={}", parameter);
+
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+
         try {
-        	
-        	InvoicesToProcessEnum invoicesToProcessEnum = InvoicesToProcessEnum.valueOf( (String) this.getParamOrCFValue(jobInstance, "invoicesToProcess"));
-        	if (invoicesToProcessEnum == null) {
-        		invoicesToProcessEnum = InvoicesToProcessEnum.FinalOnly;
-        	}
-        	
+
+            InvoicesToProcessEnum invoicesToProcessEnum = InvoicesToProcessEnum.valueOf((String) this.getParamOrCFValue(jobInstance, "invoicesToProcess"));
+            if (invoicesToProcessEnum == null) {
+                invoicesToProcessEnum = InvoicesToProcessEnum.FinalOnly;
+            }
+
             Long billingRunId = null;
             if (parameter != null && parameter.trim().length() > 0) {
                 try {
@@ -60,23 +67,8 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
                 }
             }
 
-            Long nbRuns = new Long(1);
-            Long waitingMillis = new Long(0);
-            nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
-            waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
-
-            try {
-                if (nbRuns == -1) {
-                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
-                }
-            } catch (Exception e) {
-                nbRuns = new Long(1);
-                waitingMillis = new Long(0);
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
-            }
-            
             List<Long> invoiceIds = this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId);
-            
+
             log.info("invoices to process={}", invoiceIds == null ? null : invoiceIds.size());
             List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
             SubListCreator subListCreator = new SubListCreator(invoiceIds, nbRuns.intValue());
@@ -118,24 +110,24 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
         }
     }
 
-	private List<Long> fetchInvoiceIdsToProcess(InvoicesToProcessEnum invoicesToProcessEnum, Long billingRunId) {
-		
-		log.debug(" fetchInvoiceIdsToProcess for invoicesToProcessEnum = {} and billingRunId = {} ",invoicesToProcessEnum  ,billingRunId);
-		List<Long> invoiceIds = null;
-		
-		switch (invoicesToProcessEnum) {
-		case FinalOnly:
-			  invoiceIds = invoiceService.getInvoiceIdsByBRWithNoXml(billingRunId);
-			break;
-			
-		case DraftOnly:
-			  invoiceIds = invoiceService.getDraftInvoiceIdsByBRWithNoXml(billingRunId);
-			break;
+    private List<Long> fetchInvoiceIdsToProcess(InvoicesToProcessEnum invoicesToProcessEnum, Long billingRunId) {
 
-		case All:
-			  invoiceIds = invoiceService.getInvoiceIdsIncludeDraftByBRWithNoXml(billingRunId);
-			break;
-		}
-		return invoiceIds;
-	}
+        log.debug(" fetchInvoiceIdsToProcess for invoicesToProcessEnum = {} and billingRunId = {} ", invoicesToProcessEnum, billingRunId);
+        List<Long> invoiceIds = null;
+
+        switch (invoicesToProcessEnum) {
+        case FinalOnly:
+            invoiceIds = invoiceService.getInvoiceIdsByBRWithNoXml(billingRunId);
+            break;
+
+        case DraftOnly:
+            invoiceIds = invoiceService.getDraftInvoiceIdsByBRWithNoXml(billingRunId);
+            break;
+
+        case All:
+            invoiceIds = invoiceService.getInvoiceIdsIncludeDraftByBRWithNoXml(billingRunId);
+            break;
+        }
+        return invoiceIds;
+    }
 }
