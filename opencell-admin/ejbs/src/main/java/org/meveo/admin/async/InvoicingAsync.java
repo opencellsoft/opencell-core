@@ -126,7 +126,6 @@ public class InvoicingAsync {
      * @param billingRun the billing run to process
      * @param invoiceIds the invoice ids
      * @param invoicesToNumberInfo the invoices to number info
-     * @param isForced is forced action
      * @param jobInstanceId the job instance id
      * @param result the Job execution result
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
@@ -136,7 +135,7 @@ public class InvoicingAsync {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(BillingRun billingRun, List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo,
-            boolean isForced, Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+            Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -146,11 +145,6 @@ public class InvoicingAsync {
             }
             try {
                 invoiceService.assignInvoiceNumberAndIncrementBAInvoiceDate(invoiceId, invoicesToNumberInfo);
-
-                if (!isForced) {
-                    billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
-                    // TODO cause deadlock see #3666 comments. Do this batch update somewhere before processing starts. invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
-                }
 
             } catch (Exception e) {
                 log.error("Failed to increment invoice date for invoice {}", invoiceId, e);
