@@ -442,40 +442,40 @@ public class ProviderApi extends BaseApi {
                 provider.setBankCoordinates(new BankCoordinates());
             }
             BankCoordinates bankCoordinates = provider.getBankCoordinates();
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
+            if (postData.getBankCoordinates().getBankCode() != null) {
                 bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());
             }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
+            if (postData.getBankCoordinates().getBranchCode() != null) {
                 bankCoordinates.setBranchCode(postData.getBankCoordinates().getBranchCode());
             }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
+            if (postData.getBankCoordinates().getAccountNumber() != null) {
                 bankCoordinates.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
             }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
+            if (postData.getBankCoordinates().getKey() != null) {
                 bankCoordinates.setKey(postData.getBankCoordinates().getKey());
             }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
+            if (postData.getBankCoordinates().getIban() != null) {
                 bankCoordinates.setIban(postData.getBankCoordinates().getIban());
             }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getBic())) {
+            if (postData.getBankCoordinates().getBic() != null) {
                 bankCoordinates.setBic(postData.getBankCoordinates().getBic());
             }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountOwner())) {
+            if (postData.getBankCoordinates().getAccountOwner() != null) {
                 bankCoordinates.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
             }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getBankName())) {
+            if (postData.getBankCoordinates().getBankName() != null) {
                 bankCoordinates.setBankName(postData.getBankCoordinates().getBankName());
             }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getBankId())) {
+            if (postData.getBankCoordinates().getBankId() != null) {
                 bankCoordinates.setBankId(postData.getBankCoordinates().getBankId());
             }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerNumber())) {
+            if (postData.getBankCoordinates().getIssuerNumber() != null) {
                 bankCoordinates.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
             }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerName())) {
+            if (postData.getBankCoordinates().getIssuerName() != null) {
                 bankCoordinates.setIssuerName(postData.getBankCoordinates().getIssuerName());
             }
-            if (!StringUtils.isBlank(postData.getBankCoordinates().getIcs())) {
+            if (postData.getBankCoordinates().getIcs() != null) {
                 bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
             }
         }

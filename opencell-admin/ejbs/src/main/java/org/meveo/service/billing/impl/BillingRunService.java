@@ -505,15 +505,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Query queryForDeletion = getEntityManager().createQuery("delete from " + SubCategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
         queryForDeletion.setParameter("billingRun", billingRun);
         queryForDeletion.executeUpdate();
-        
+
         queryForDeletion = getEntityManager().createQuery("delete from " + CategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
         queryForDeletion.setParameter("billingRun", billingRun);
         queryForDeletion.executeUpdate();
-        
+
         queryForDeletion = getEntityManager().createQuery("delete from " + TaxInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
         queryForDeletion.setParameter("billingRun", billingRun);
         queryForDeletion.executeUpdate();
-        
+
         queryForDeletion = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
         queryForDeletion.setParameter("billingRun", billingRun);
         queryForDeletion.executeUpdate();
@@ -550,16 +550,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     public void rerateBillingRunTransactions(BillingRun billingRun) throws BusinessException {
         for (RatedTransaction ratedTransaction : billingRun.getRatedTransactions()) {
-        	List<WalletOperation> walletOperations = getEntityManager()
-    				.createNamedQuery("WalletOperation.listByRatedTransactionId", WalletOperation.class)
-    				.setParameter("ratedTransactionId", ratedTransaction.getId()).getResultList();
-        	
-			if (!walletOperations.isEmpty()) {
-				for (WalletOperation walletOperation : walletOperations) {
-					walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE);
-					walletOperationService.update(walletOperation);
-				}
-			}
+            List<WalletOperation> walletOperations = getEntityManager().createNamedQuery("WalletOperation.listByRatedTransactionId", WalletOperation.class)
+                .setParameter("ratedTransactionId", ratedTransaction.getId()).getResultList();
+
+            if (!walletOperations.isEmpty()) {
+                for (WalletOperation walletOperation : walletOperations) {
+                    walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE);
+                    walletOperationService.update(walletOperation);
+                }
+            }
         }
     }
 
@@ -658,7 +657,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param jobInstanceId the job instance id
      * @throws BusinessException the business exception
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws BusinessException {
 
@@ -704,7 +703,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param entities list of entities
      * @throws BusinessException business exception.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, List<? extends IBillableEntity> entities)
             throws BusinessException {
@@ -744,13 +743,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param waitingMillis The waiting millis
      * @param jobInstanceId The job instance id
      * @param result the Job execution result
-     * @param isForced is forced action
      * @throws BusinessException the business exception
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void assignInvoiceNumberAndIncrementBAInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result,
-            boolean isForced) throws BusinessException {
+    public void assignInvoiceNumberAndIncrementBAInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result)
+            throws BusinessException {
         List<InvoicesToNumberInfo> invoiceSummary = invoiceService.getInvoicesToNumberSummary(billingRun.getId());
         // Reserve invoice number for each invoice type/seller/invoice date combination
         for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
@@ -781,8 +779,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                asyncReturns.add(invoicingAsync.assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(billingRun, subListCreator.getNextWorkSet(), invoicesToNumberInfo, isForced,
-                    jobInstanceId, result, lastCurrentUser));
+                asyncReturns.add(invoicingAsync.assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(billingRun, subListCreator.getNextWorkSet(), invoicesToNumberInfo, jobInstanceId,
+                    result, lastCurrentUser));
                 try {
                     Thread.sleep(waitingMillis);
                 } catch (InterruptedException e) {
@@ -871,7 +869,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param result the Job execution result
      * @throws Exception the exception
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result) throws Exception {
         log.debug("Processing billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
@@ -925,7 +923,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
 
         if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
-            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId, result, false);
+            invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
+            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
         }
     }
 
@@ -946,7 +946,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         case POSTINVOICED:
         case POSTVALIDATED:
-            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, 1, 0, null, null, true);
+            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, 1, 0, null, null);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
             break;
 
