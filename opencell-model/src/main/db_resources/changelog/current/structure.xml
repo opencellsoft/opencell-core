@@ -909,4 +909,9 @@
 	<changeSet id="#4010_20190206" author="anasseh">
             <modifyDataType tableName="wf_history_action" columnName="result" newDataType="${type.text}"/>
    </changeSet>
+   
+   <changeSet id="#4164_21042019" author="SaidRamli">
+        <modifyDataType columnName="iban" newDataType="varchar(80)" tableName="crm_provider"/>
+    </changeSet>
+    
 </databaseChangeLog>
