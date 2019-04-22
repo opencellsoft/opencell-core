@@ -296,7 +296,7 @@
                                     </p:fieldset>
                                 </h:panelGroup>
                                <h:form>
-                                <p:dataTable id="wallet#{wallet.key}datatable" var="e" paginator="true" resizableColumns="true"
+                                <p:dataTable id="wallet#{wallet.key}datatable" var="e" paginator="true" lazy="true" resizableColumns="true"
                                     value="#{userAccountBean.getWalletOperations(wallet.key)}" rows="10" rowKey="#{e.id}" widget="walletOperationsTable"
                                     styleClass="verticalSpaceSmall custom-grid">
                                     <p:column>
@@ -334,7 +334,7 @@
                                     </p:column>
                                 </p:dataTable>
 								</h:form>
-                                <!-- <p:commandButton rendered="#{wallet.key!='PRINCIPAL'}"
+                             <!--     <p:commandButton rendered="#{wallet.key!='PRINCIPAL'}"
 											value="#{messages['action.reload']}"
 											update=":#{p:component('reloadPopup')}"
 											actionListener="#{userAccountBean.setSelectedWalletCode(wallet.key)}"

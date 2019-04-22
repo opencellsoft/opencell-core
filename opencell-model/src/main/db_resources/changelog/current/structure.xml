@@ -899,4 +899,7 @@
             <column name="trigger_next_charge_el" type="${type.text}"/>
         </addColumn>
     </changeSet>
+    <changeSet id="#4140_08042019" author="hznibar">
+			<modifyDataType tableName="wf_history_action" columnName="result" newDataType="varchar(2000)" />
+	</changeSet>
 </databaseChangeLog>

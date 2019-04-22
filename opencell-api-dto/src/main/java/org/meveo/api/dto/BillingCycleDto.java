@@ -14,6 +14,7 @@ import org.meveo.model.billing.BillingEntityTypeEnum;
  * The Class BillingCycleDto.
  *
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 6.1
  */
 @XmlRootElement(name = "BillingCycle")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -83,6 +84,11 @@ public class BillingCycleDto extends BusinessEntityDto {
     /** The billing cycle type. */
     @XmlElement
     private BillingEntityTypeEnum type;
+  
+    /**
+     * Code of the script instance.
+     */
+    private String scriptInstanceCode;
 
     /**
      * Instantiates a new billing cycle dto.
@@ -119,7 +125,10 @@ public class BillingCycleDto extends BusinessEntityDto {
             }
             if (billingCycleEntity.getCalendar() != null) {
                 calendar = billingCycleEntity.getCalendar().getCode();
-            }
+			}
+			if (billingCycleEntity.getScriptInstance() != null) {
+				scriptInstanceCode = billingCycleEntity.getScriptInstance().getCode();
+			}
             customFields = customFieldInstances;
         }
     }
@@ -398,5 +407,21 @@ public class BillingCycleDto extends BusinessEntityDto {
     public void setType(BillingEntityTypeEnum type) {
         this.type = type;
     }
+
+    /**
+     * Gets the script instance code.
+     * @return script instance code
+     */
+	public String getScriptInstanceCode() {
+		return scriptInstanceCode;
+	}
+
+	/**
+     * Sets the script instance code.
+     * @param scriptInstance script instance code
+     */
+	public void setScriptInstanceCode(String scriptInstanceCode) {
+		this.scriptInstanceCode = scriptInstanceCode;
+	}
 
 }

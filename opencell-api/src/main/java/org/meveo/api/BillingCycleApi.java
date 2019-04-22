@@ -16,9 +16,11 @@ import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -34,6 +36,9 @@ public class BillingCycleApi extends BaseApi {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
+    
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     public void create(BillingCycleDto postData) throws MeveoApiException, BusinessException {
 
@@ -91,6 +96,12 @@ public class BillingCycleApi extends BaseApi {
         } else {
             billingCycle.setType(postData.getType());
         }
+		if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+			ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
+			if (scriptInstance != null) {
+				billingCycle.setScriptInstance(scriptInstance);
+			}
+		}
         
         // populate customFields
         try {
@@ -179,6 +190,16 @@ public class BillingCycleApi extends BaseApi {
         if (postData.getType() != null) {
             billingCycle.setType(postData.getType());
         }
+		if (postData.getScriptInstanceCode() != null) {
+			if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+				ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
+				if (scriptInstance != null) {
+					billingCycle.setScriptInstance(scriptInstance);
+				}
+			}
+		} else {
+			billingCycle.setScriptInstance(null);
+		}
 
         // populate customFields
         try {

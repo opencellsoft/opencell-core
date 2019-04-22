@@ -54,6 +54,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
@@ -131,7 +132,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     private Map<Long, Amounts> openBalance = new HashMap<>();
 
     // Retrieved wallet operations to improve GUI performance for Ajax request
-    private Map<String, List<WalletOperation>> walletOperations = new HashMap<String, List<WalletOperation>>();
+    private Map<String, LazyDataModel<WalletOperation>> walletOperations = new HashMap<String, LazyDataModel<WalletOperation>>();
 
     private EntityListDataModelPF<ProductInstance> productInstances = null;
 
@@ -166,17 +167,28 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
         }
         selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
-
-        if (entity.getAddress() == null) {
-            entity.setAddress(new Address());
-        }
-        if (entity.getName() == null) {
-            entity.setName(new Name());
-        }
-        if (entity.getContactInformation() == null) {
-            entity.setContactInformation(new ContactInformation());
-        }
+        this.initNestedFields(entity);
         return entity;
+    }
+    
+    
+    @Override
+    public UserAccount getEntity() {
+        UserAccount ua = super.getEntity();
+        this.initNestedFields(ua);
+        return ua;
+    }
+
+    private void initNestedFields(UserAccount ua) {
+        if (ua.getAddress() == null) {
+            ua.setAddress(new Address());
+        }
+        if (ua.getName() == null) {
+            ua.setName(new Name());
+        }
+        if (ua.getContactInformation() == null) {
+            ua.setContactInformation(new ContactInformation());
+        }
     }
 
     /*
@@ -305,15 +317,16 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         return result;
     }
 
-    public List<WalletOperation> getWalletOperations(String walletCode) {
-
-        if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
-            log.debug("getWalletOperations {}", walletCode);
-            walletOperations.put(walletCode, walletOperationService.findByUserAccountAndWalletCode(walletCode, entity, false));
-        }
-
-        return walletOperations.get(walletCode);
-    }
+    public LazyDataModel<WalletOperation> getWalletOperations(String walletCode) {   	
+   	 HashMap<String, Object> filters = new HashMap<String, Object>();
+   	 filters.put("wallet.code", walletCode);
+   	 
+		if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
+			log.debug("getWalletOperations {}", walletCode);
+			walletOperations.put(walletCode,walletOperationBean.getLazyDataModel(filters, true));
+		}		 
+		return walletOperations.get(walletCode);
+   }
 
     @Produces
     @Named("getRatedTransactionsInvoiced")
