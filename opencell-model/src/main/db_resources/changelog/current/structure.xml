@@ -94,7 +94,7 @@
         </delete>
     </changeSet>
 
-    <changeSet id="#3644_20181004" author="AbdellatifBari">
+    <changeSet id="#3644_04102018" author="AbdellatifBari">
         <addColumn tableName="crm_custom_field_tmpl">
             <column name="display_format" type="varchar(80)" />
         </addColumn>
@@ -758,7 +758,7 @@
         </addColumn>
     </changeSet>
     
-    <changeSet id="#3543_20180927" author="AbdellatifBari">
+    <changeSet id="#3543_27092018" author="AbdellatifBari">
 
         <addColumn tableName="cat_serv_rec_charge_template">
             <column name="counter_template_id" type="bigint" />
@@ -2016,6 +2016,16 @@ $$ LANGUAGE plpgsql;
         </sql>
 	</changeSet>
 
+	<changeSet id="#4127_10042019" author="AbdelmounaimAkadid">
+		<addColumn tableName="dwh_report_extract">
+            <column name="output_dir" type="varchar(255)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = concat('reports/', category) where category is not null or category != ''
+        </sql>
+        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = 'reports' where category is null or category = ''
+        </sql>
+	</changeSet>
+
     <changeSet id="#4089_20190404" author="AbdellatifBARI">
         <sql>update ${db.schema.adapted}crm_custom_field_tmpl set applies_to = case
 
@@ -2068,5 +2078,27 @@ $$ LANGUAGE plpgsql;
             end where applies_to is not null
         </sql>
     </changeSet>
+    
+    <changeSet id="#4117_20190405" author="AmineBENAICHA">
+    	<addColumn tableName="wf_instance">
+            <column name="entity_instance_id" type="bigint" >
+            	<constraints nullable="false" />
+            </column>
+        </addColumn>
+        <createIndex tableName="wf_instance" indexName="wf_instance_entity_id_idx">
+            <column name="entity_instance_id" type="bigint"/>
+        </createIndex>
+    </changeSet>
 
+    <changeSet id="#4179_20190417" author="AndriusKarpavicius">
+        <addColumn tableName="meveo_script_instance">
+            <column name="reuse" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#4148_20190418 - Add runAsync on notification" author="EdwardPLegaspi">
+    	<addColumn tableName="adm_notification">
+            <column name="run_async" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

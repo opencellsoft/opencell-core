@@ -48,28 +48,25 @@ public class GenericWorkflowJobBean extends BaseJobBean {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running with parameter={}", jobInstance.getParametres());
 
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+
         try {
-            Long nbRuns = new Long(1);
-            Long waitingMillis = new Long(0);
+
             String genericWfCode = null;
             try {
-                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "gwfJob_nbRuns");
-                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "gwfJob_waitingMillis");
-                if (nbRuns == -1) {
-                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
-                }
                 genericWfCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "gwfJob_generic_wf")).getCode();
             } catch (Exception e) {
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
-                log.error("error:", e);
-                nbRuns = new Long(1);
-                waitingMillis = new Long(0);
             }
 
             GenericWorkflow genericWf = genericWorkflowService.findByCode(genericWfCode);

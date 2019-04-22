@@ -52,8 +52,8 @@
 	  </h:panelGroup>
 
 	  <h:panelGroup id="wfHistoryDetails">
-	  		<c:if test="#{workflowInstanceHistoryBean.selectedGenericWF != null}">
-	  			<p:fieldset legend="#{messages['workflowHistory.tabLabel']} for #{workflowInstanceHistoryBean.selectedGenericWF.code}">
+	  		<c:if test="#{workflowInstanceHistoryBean.selectedWFInstance != null}">
+	  			<p:fieldset legend="#{messages['workflowHistory.tabLabel']} for #{workflowInstanceHistoryBean.selectedWFInstance.code}">
 		             <p:dataTable var="histo" backingBean="#{workflowInstanceHistoryBean}" value="#{workflowInstanceHistoryBean.getWorkflowHistories(entity)}" paginator="true" rows="10" 
 		                 sortField="#{'actionDate'}" sortBy="#{histo.actionDate}" sortOrder="DESCENDING" paginatorAlwaysVisible="false"
 		                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20"

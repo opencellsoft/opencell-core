@@ -57,6 +57,13 @@ public abstract class CustomScript extends EnableBusinessEntity {
     protected Boolean error = false;
 
     /**
+     * Shall same script instance be utilized in repeated calls
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "reuse")
+    protected Boolean reuse = false;
+
+    /**
      * @return Script language
      */
     public ScriptSourceTypeEnum getSourceTypeEnum() {
@@ -117,5 +124,26 @@ public abstract class CustomScript extends EnableBusinessEntity {
      */
     public void setError(Boolean error) {
         this.error = error;
+    }
+
+    /**
+     * @return Shall same script instance be utilized in repeated calls
+     */
+    public Boolean getReuse() {
+        return reuse;
+    }
+
+    /**
+     * @return Shall same script instance be utilized in repeated calls
+     */
+    public Boolean isReuse() {
+        return reuse;
+    }
+
+    /**
+     * @param reuse Shall same script instance be utilized in repeated calls
+     */
+    public void setReuse(Boolean reuse) {
+        this.reuse = reuse;
     }
 }

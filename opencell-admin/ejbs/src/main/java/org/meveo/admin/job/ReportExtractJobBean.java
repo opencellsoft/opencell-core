@@ -45,31 +45,29 @@ public class ReportExtractJobBean extends BaseJobBean implements Serializable {
 
     @Inject
     private ReportExtractAsync reportExtractAsync;
-    
+
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("start in running with parameter={}", jobInstance.getParametres());
+
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+
         try {
-            Long nbRuns = new Long(1);
-            Long waitingMillis = new Long(0);
             Date startDate = null, endDate = null;
             try {
-                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
                 startDate = (Date) this.getParamOrCFValue(jobInstance, "startDate");
                 endDate = (Date) this.getParamOrCFValue(jobInstance, "endDate");
-                if (nbRuns == -1) {
-                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
-                }
             } catch (Exception e) {
-                nbRuns = new Long(1);
-                waitingMillis = new Long(0);
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
             }
 

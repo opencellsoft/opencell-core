@@ -54,6 +54,12 @@ public class WorkflowInstance extends BaseEntity {
     private String targetEntityClass;
 
     /**
+     * Affected entity instance id
+     */
+    @Column(name = "entity_instance_id", nullable = false)
+    private Long entityInstanceId;
+
+    /**
      * Affected entity instance code
      */
     @Column(name = "entity_instance_code", length = 255, nullable = false)
@@ -115,6 +121,14 @@ public class WorkflowInstance extends BaseEntity {
 
     public void setWfHistories(List<WorkflowInstanceHistory> wfHistories) {
         this.wfHistories = wfHistories;
+    }
+
+    public Long getEntityInstanceId() {
+        return entityInstanceId;
+    }
+
+    public void setEntityInstanceId(Long entityInstanceId) {
+        this.entityInstanceId = entityInstanceId;
     }
 
     public String getEntityInstanceCode() {
