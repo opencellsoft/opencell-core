@@ -630,8 +630,11 @@
     	<sql>UPDATE ${db.schema.adapted}cat_discount_plan_item SET discount_percent=discount_amount WHERE discount_percent is null;</sql>
     </changeSet>
     
-    <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
+   <changeSet id="#3767_20181112 - Discount fields refactor_pg" author="EdwardPLegaspi" dbms="postgresql">
         <sql><![CDATA[ALTER TABLE ${db.schema.adapted}cat_discount_plan_item DROP CONSTRAINT cat_discount_plan_item_discount_percent_check;]]></sql>
+  </changeSet>
+    
+    <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">        
         <renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
     	<dropColumn tableName="cat_discount_plan_item">
     		<column name="discount_amount"></column>
@@ -902,4 +905,8 @@
     <changeSet id="#4140_08042019" author="hznibar">
 			<modifyDataType tableName="wf_history_action" columnName="result" newDataType="varchar(2000)" />
 	</changeSet>
+	
+	<changeSet id="#4010_20190206" author="anasseh">
+            <modifyDataType tableName="wf_history_action" columnName="result" newDataType="${type.text}"/>
+   </changeSet>
 </databaseChangeLog>

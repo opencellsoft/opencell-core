@@ -371,8 +371,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
         Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
-
+        
         Seller seller = invoice.getSeller();
+        
+        if(seller == null && invoice.getSubscription() != null && invoice.getSubscription().getSeller() != null) {
+        	seller  = invoice.getSubscription().getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
+        }
+
         if (seller == null && cust.getSeller() != null) {
             seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
         }
@@ -898,16 +903,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param ratedTransactions list of rated transaction
      * @param billingAccount billing account
      * @param invoiceType type of invoice
+     * @param Seller seller
      * @return invoice
      * @throws BusinessException business exception
      */
-    public Invoice createAgregatesAndInvoiceVirtual(List<RatedTransaction> ratedTransactions, BillingAccount billingAccount, InvoiceType invoiceType) throws BusinessException {
+    public Invoice createAgregatesAndInvoiceVirtual(List<RatedTransaction> ratedTransactions, BillingAccount billingAccount, InvoiceType invoiceType,Seller seller) throws BusinessException {
 
         if (invoiceType == null) {
             invoiceType = invoiceTypeService.getDefaultCommertial();
         }
-        Invoice invoice = new Invoice();
-        invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
+        
+        Invoice invoice = new Invoice();        
+        invoice.setSeller(seller);
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(billingAccount);
         invoice.setInvoiceDate(new Date());
@@ -919,7 +926,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactions, false, true);
-
+        invoice.setRatedTransactions(ratedTransactions);
         invoice.setTemporaryInvoiceNumber(UUID.randomUUID().toString());
 
         return invoice;

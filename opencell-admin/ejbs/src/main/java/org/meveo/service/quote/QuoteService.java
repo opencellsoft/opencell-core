@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -193,11 +194,15 @@ public class QuoteService extends BusinessService<Quote> {
                 }
             }            
             // Create rated transactions from wallet operations
+            Seller seller = null;
             for (WalletOperation walletOperation : walletOperations) {
                 RatedTransaction createdRatedTransaction = ratedTransactionService.createRatedTransaction(walletOperation, true);
                 ratedTransactions.add(createdRatedTransaction);
+                if(walletOperation.getSeller() != null) {
+                	seller = walletOperation.getSeller();
+                }
             }
-            Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());
+            Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote(),seller);
             File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
             
             if(generatePdf) {

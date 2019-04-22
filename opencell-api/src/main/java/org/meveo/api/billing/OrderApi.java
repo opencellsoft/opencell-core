@@ -534,6 +534,7 @@ public class OrderApi extends BaseApi {
         Product subscriptionProduct = productOrderItem.getProduct();
         String subscriptionCode = (String) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_CODE.getCharacteristicName(), String.class,
             UUID.randomUUID().toString());
+        String sellerCode = (String) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_SELLER.getCharacteristicName(), String.class,null);
         if (subscriptionService.findByCode(subscriptionCode) != null) {
             throw new BusinessException("Subscription with code " + subscriptionCode + " already exists");
         }
@@ -549,6 +550,7 @@ public class OrderApi extends BaseApi {
             (Date) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
         subscriptionDto.setRenewalRule(extractSubscriptionRenewalDto(subscriptionProduct));
         subscriptionDto.setCustomFields(extractCustomFields(subscriptionProduct, Subscription.class));
+        subscriptionDto.setSeller(sellerCode);
 
         // instantiate and activate services
         extractServices(subscriptionDto, services);

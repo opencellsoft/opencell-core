@@ -5,7 +5,7 @@
 	<groupId>com.opencellsoft</groupId>
 	<artifactId>opencell</artifactId>
 	<packaging>pom</packaging>
-	<version>6.1.1-SNAPSHOT</version>
+	<version>6.2.1-SNAPSHOT-SNAPSHOT</version>
 	<name>Opencell Parent Project</name>
 
 	<modules>
@@ -777,7 +777,7 @@
 				<db.driver>org.mariadb.jdbc.Driver</db.driver>
 				<db.url>jdbc:mariadb://localhost:3306/meveo</db.url>
 				<db.username>root</db.username>
-				<db.password></db.password>
+				<db.password>mysqlDev</db.password>
 			</properties>
 			<dependencies>
 				<!-- Dependency for liquibase plugin -->
