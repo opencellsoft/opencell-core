@@ -370,8 +370,10 @@ public abstract class BaseApi {
                             Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
                             hasValue = value != null;
                         }
-
-                        if (!hasValue && isNewEntity && cft.getDefaultValue() != null) { // No need to check for !cft.isInheritedAsDefaultValue() as it was checked above
+                        
+                        // Don't filter existing Entities (isNewEntity) , in order to let update also, the already created ones  
+                        // whit [CF values null & required & having default value]
+                        if (!hasValue && cft.getDefaultValue() != null) { // No need to check for !cft.isInheritedAsDefaultValue() as it was checked above
                             Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode());
                             hasValue = value != null;
                         }
