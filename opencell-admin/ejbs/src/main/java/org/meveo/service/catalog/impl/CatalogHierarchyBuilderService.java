@@ -1,5 +1,7 @@
 package org.meveo.service.catalog.impl;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -414,13 +416,8 @@ public class CatalogHierarchyBuilderService {
             newServiceTemplate.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
             newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
             newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
-            try {
-                ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
-                String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceTemplate.getImagePath());
-                newServiceTemplate.setImagePath(newImagePath);
-            } catch (IOException e1) {
-                log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());
-            }
+            
+            this.duplicateAndSetImgPath(serviceTemplate, newServiceTemplate, serviceConfiguration.getImagePath());
 
             // set custom fields
             // TODO note, that this value is available in GUI only - see serviceConfiguration.getCfValues() comment
@@ -458,6 +455,19 @@ public class CatalogHierarchyBuilderService {
             throw new BusinessException(e.getMessage());
         }
     }
+
+	private void duplicateAndSetImgPath(ServiceTemplate serviceTemplate, ServiceTemplate newServiceTemplate, String cfgImgPath) {
+		try {
+		    ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
+		     
+            final String sourceImgPath = isNotBlank(cfgImgPath) ? cfgImgPath : serviceTemplate.getImagePath();
+		    String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, sourceImgPath);
+		    
+		    newServiceTemplate.setImagePath(newImagePath);
+		} catch (IOException e1) {
+		    log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());
+		}
+	}
 
     private void duplicatePrices(ServiceTemplate serviceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory) throws BusinessException {
 
