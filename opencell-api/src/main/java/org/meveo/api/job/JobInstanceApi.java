@@ -110,6 +110,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
                 throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
             }
         }
+		jobInstance.setVerboseReport(postData.getVerboseReport());
 
         // Create any missing CFT for a given provider and job
         Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
@@ -178,6 +179,9 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         if (postData.getLimitToSingleNode() != null) {
             jobInstance.setLimitToSingleNode(postData.getLimitToSingleNode());
         }
+		if (postData.getVerboseReport() != null) {
+			jobInstance.setVerboseReport(postData.getVerboseReport());
+		}
 
         if (!StringUtils.isBlank(postData.getTimerCode())) {
             TimerEntity timerEntity = timerEntityService.findByCode(postData.getTimerCode());
