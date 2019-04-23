@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -20,8 +23,10 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
-import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
@@ -38,7 +43,8 @@ import org.primefaces.model.UploadedFile;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Youssef IZEM
+ * @lastModifiedVersion 7.0
  * 
  */
 @Named
@@ -82,6 +88,13 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
         super(EmailNotification.class);
     }
 
+    @Override
+    public EmailNotification initEntity() {
+        super.initEntity();
+        refreshCustomFieldsAndActions();
+        return entity;
+    }
+    
     @Override
     protected IPersistenceService<EmailNotification> getPersistenceService() {
         return emailNotificationService;
@@ -142,9 +155,9 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
                         emailNotif.getEmails().add(email);
                     }
                 }
-                emailNotif.setSubject(values[SUBJECT]);
-                emailNotif.setBody(values[TEXT_BODY]);
-                emailNotif.setHtmlBody(values[HTML_BODY]);
+                emailNotif.getEmailTemplate().setSubject(values[SUBJECT]);
+                emailNotif.getEmailTemplate().setTextContent(values[TEXT_BODY]);
+                emailNotif.getEmailTemplate().setHtmlContent(values[HTML_BODY]);
                 if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
                     CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE]);
                     emailNotif.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
@@ -171,7 +184,6 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
             existingEntity.setEmailFrom(values[SENT_FROM]);
             existingEntity.setEmailToEl(values[SEND_TO_EL]);
             String emails = values[SEND_TO_MAILING_LIST].replace("[", "").replace("]", "");
-            ;
             if (!StringUtils.isBlank(emails)) {
                 String[] emailList = emails.split(",");
                 List<String> listMail = Arrays.asList(emailList);
@@ -183,9 +195,12 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
                     existingEntity.getEmails().add(email);
                 }
             }
-            existingEntity.setSubject(values[SUBJECT]);
-            existingEntity.setBody(values[TEXT_BODY]);
-            existingEntity.setHtmlBody(values[HTML_BODY]);
+            if (existingEntity.getEmailTemplate() == null) {
+                existingEntity.setEmailTemplate(new EmailTemplate());
+            }
+            existingEntity.getEmailTemplate().setSubject(values[SUBJECT]);
+            existingEntity.getEmailTemplate().setTextContent(values[TEXT_BODY]);
+            existingEntity.getEmailTemplate().setHtmlContent(values[HTML_BODY]);
             if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
                 CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE]);
                 existingEntity.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
@@ -232,5 +247,33 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
 
     public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
         this.strategyImportType = strategyImportType;
+    }
+    
+    public void refreshCustomFieldsAndActions() {
+
+        createMissingCustomFieldTemplates();
+        customFieldDataEntryBean.refreshFieldsAndActions(entity);
+    }
+
+    /**
+     * Synchronize definition of custom field templates specified in EmailNotification class to those found in DB. Register in DB if was missing.
+     */
+    private void createMissingCustomFieldTemplates() {
+
+        Map<String, CustomFieldTemplate> emailCustomFields = entity.getCustomFields();
+
+        // Create missing custom field templates if needed
+        Collection<CustomFieldTemplate> cft = null;
+        if (emailCustomFields == null) {
+            cft = new ArrayList<CustomFieldTemplate>();
+        } else {
+            cft = emailCustomFields.values();
+        }
+
+        try {
+            customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, cft);
+        } catch (BusinessException e) {
+            log.error("Failed to create missing custom field templates", e);
+        }
     }
 }

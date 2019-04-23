@@ -2567,5 +2567,5 @@ group by s.code
         	<column name="cf_protectable" valueNumeric="1"></column>
         </insert>
 	</changeSet>
-
+	
 </databaseChangeLog>

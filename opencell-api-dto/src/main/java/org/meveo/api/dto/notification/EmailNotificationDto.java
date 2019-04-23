@@ -15,6 +15,8 @@ import org.meveo.model.notification.Notification;
  * The Class EmailNotificationDto.
  *
  * @author Edward P. Legaspi
+ * @author Youssef IZEM
+ * @lastModifiedVersion 7.0
  */
 @XmlRootElement(name = "EmailNotification")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,9 +62,11 @@ public class EmailNotificationDto extends NotificationDto {
         super((Notification) emailNotification);
         emailFrom = emailNotification.getEmailFrom();
         emailToEl = emailNotification.getEmailToEl();
-        subject = emailNotification.getSubject();
-        body = emailNotification.getSubject();
-        htmlBody = emailNotification.getHtmlBody();
+        if (emailNotification != null && emailNotification.getEmailTemplate() != null) {
+            subject = emailNotification.getEmailTemplate().getSubject();
+            body = emailNotification.getEmailTemplate().getTextContent();
+            htmlBody = emailNotification.getEmailTemplate().getHtmlContent();
+        }
     }
 
     /**
