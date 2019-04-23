@@ -20,7 +20,7 @@
             <hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{emailNotificationListBean}"
                 autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
             <hftl:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
-            <hftl:searchField label="#{messages['entity.emailNotification.subject']}" field="subject" newLine="true"/>
+            <hftl:searchField label="#{messages['entity.emailNotification.subject']}" field="emailTemplate.subject" newLine="true"/>
             <hftl:searchField label="#{messages['entity.emailNotification.emailFrom']}" field="emailFrom" />
         </hftl:searchPanel>
 
@@ -38,7 +38,7 @@
             <hftl:column label="#{messages['entity.emailNotification.emailFrom']}" field="emailFrom" />
             <hftl:column label="#{messages['entity.emailNotification.emailToEl']}" field="emailToEl" />
             <!--             <hftl:column style="display:none" label="#{messages['entity.emailNotification.emails']}" field="emails" /> -->
-            <hftl:column label="#{messages['entity.emailNotification.subject']}" field="subject" />
+            <hftl:column label="#{messages['entity.emailNotification.subject']}" field="emailTemplate.subject" />
             <!--             <hftl:column style="display:none" label="#{messages['entity.emailNotification.body']}" field="body" /> -->
             <!--             <hftl:column style="display:none" label="#{messages['entity.emailNotification.htmlBody']}" field="htmlBody" /> -->
             <!--             <hftl:column style="display:none" label="#{messages['counterTemplate.title']}" field="counterTemplate.code" /> -->
