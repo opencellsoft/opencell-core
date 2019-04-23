@@ -16,8 +16,11 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
@@ -55,6 +58,9 @@ public class ServiceSingleton {
     private InvoiceSequenceService invoiceSequenceService;
 
     @Inject
+    private InvoiceService invoiceService;
+
+    @Inject
     private OCCTemplateService oCCTemplateService;
 
     @Inject
@@ -63,36 +69,37 @@ public class ServiceSingleton {
 
     @Inject
     private SellerService sellerService;
-    
+
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
 
     @Inject
     private Logger log;
-    
+
     /**
      * Gets the sequence from the seller or its parent hierarchy. Otherwise return the sequence from invoiceType.
+     * 
      * @param invoiceType {@link InvoiceType}
      * @param seller {@link Seller}
      * @return {@link InvoiceSequence}
      */
-	private InvoiceSequence getSequenceFromSellerHierarchy(InvoiceType invoiceType, Seller seller) {
-		InvoiceSequence sequence = invoiceType.getSellerSequenceSequenceByType(seller);
+    private InvoiceSequence getSequenceFromSellerHierarchy(InvoiceType invoiceType, Seller seller) {
+        InvoiceSequence sequence = invoiceType.getSellerSequenceSequenceByType(seller);
 
-		if (sequence == null) {
-			// gets the sequence from parent seller
-			if (seller.getSeller() != null) {
-				sequence = getSequenceFromSellerHierarchy(invoiceType, seller.getSeller());
-			} else {
-				sequence = invoiceType.getInvoiceSequence();
-			}
-		}
+        if (sequence == null) {
+            // gets the sequence from parent seller
+            if (seller.getSeller() != null) {
+                sequence = getSequenceFromSellerHierarchy(invoiceType, seller.getSeller());
+            } else {
+                sequence = invoiceType.getInvoiceSequence();
+            }
+        }
 
-		return sequence;
-	}
+        return sequence;
+    }
 
     /**
-     * Get invoice number sequence. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
+     * Get invoice number sequence.
      * 
      * @param invoiceDate Invoice date
      * @param invoiceType Invoice type
@@ -103,10 +110,7 @@ public class ServiceSingleton {
      *         numberOfInvoices value
      * @throws BusinessException business exception
      */
-    @Lock(LockType.WRITE)
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public InvoiceSequence incrementInvoiceNumberSequence(Date invoiceDate, InvoiceType invoiceType, Seller seller, String cfName, long incrementBy) throws BusinessException {
+    private InvoiceSequence incrementInvoiceNumberSequence(Date invoiceDate, InvoiceType invoiceType, Seller seller, String cfName, long incrementBy) throws BusinessException {
         Long currentNbFromCF = null;
         Long previousInvoiceNb = null;
 
@@ -128,7 +132,7 @@ public class ServiceSingleton {
         }
 
         InvoiceSequence sequence = getSequenceFromSellerHierarchy(invoiceType, seller);
-        		
+
         if (sequence == null) {
             sequence = new InvoiceSequence();
             sequence.setCurrentInvoiceNb(0L);
@@ -147,11 +151,11 @@ public class ServiceSingleton {
                 }
                 previousInvoiceNb = sequence.getCurrentInvoiceNb();
                 sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
-                //invoiceType = invoiceTypeService.update(invoiceType);
+                // invoiceType = invoiceTypeService.update(invoiceType);
             } else {
                 InvoiceSequence sequenceGlobal = new InvoiceSequence();
-                sequenceGlobal.setSequenceSize(sequence.getSequenceSize());               
-                
+                sequenceGlobal.setSequenceSize(sequence.getSequenceSize());
+
                 previousInvoiceNb = invoiceTypeService.getCurrentGlobalInvoiceBb();
                 sequenceGlobal.setCurrentInvoiceNb(previousInvoiceNb + incrementBy);
                 sequenceGlobal.setPreviousInvoiceNb(previousInvoiceNb);
@@ -159,7 +163,7 @@ public class ServiceSingleton {
                 return sequenceGlobal;
             }
         }
-        
+
         // As previousInVoiceNb is a transient value, set it after the update is called
         sequence.setPreviousInvoiceNb(previousInvoiceNb);
 
@@ -248,42 +252,40 @@ public class ServiceSingleton {
     }
 
     @Lock(LockType.WRITE)
-	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public GenericSequence getNextSequenceNumber(SequenceTypeEnum type) {
-		GenericSequence sequence = appProvider.getRumSequence();
-		if (type == SequenceTypeEnum.CUSTOMER_NO) {
-			sequence = appProvider.getCustomerNoSequence();
-		}
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public GenericSequence getNextSequenceNumber(SequenceTypeEnum type) {
+        GenericSequence sequence = appProvider.getRumSequence();
+        if (type == SequenceTypeEnum.CUSTOMER_NO) {
+            sequence = appProvider.getCustomerNoSequence();
+        }
 
-		if (sequence == null) {
-			sequence = new GenericSequence();
-		}
+        if (sequence == null) {
+            sequence = new GenericSequence();
+        }
 
-		sequence.setCurrentSequenceNb(sequence.getCurrentSequenceNb() + 1L);
+        sequence.setCurrentSequenceNb(sequence.getCurrentSequenceNb() + 1L);
 
-		return sequence;
-	}
-    
-	@Lock(LockType.WRITE)
-	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public CustomerSequence getPaymentGatewayRumSequenceNumber(CustomerSequence customerSequence) {
-		customerSequence.getGenericSequence()
-				.setCurrentSequenceNb(customerSequence.getGenericSequence().getCurrentSequenceNb() + 1L);
+        return sequence;
+    }
 
-		return customerSequence;
-	}
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public CustomerSequence getPaymentGatewayRumSequenceNumber(CustomerSequence customerSequence) {
+        customerSequence.getGenericSequence().setCurrentSequenceNb(customerSequence.getGenericSequence().getCurrentSequenceNb() + 1L);
 
-	@Lock(LockType.WRITE)
-	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public PaymentGatewayRumSequence getPaymentGatewayRumSequenceNumber(PaymentGatewayRumSequence rumSequence) {
-		rumSequence.getGenericSequence()
-				.setCurrentSequenceNb(rumSequence.getGenericSequence().getCurrentSequenceNb() + 1L);
+        return customerSequence;
+    }
 
-		return rumSequence;
-	}
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public PaymentGatewayRumSequence getPaymentGatewayRumSequenceNumber(PaymentGatewayRumSequence rumSequence) {
+        rumSequence.getGenericSequence().setCurrentSequenceNb(rumSequence.getGenericSequence().getCurrentSequenceNb() + 1L);
+
+        return rumSequence;
+    }
 
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
@@ -293,10 +295,109 @@ public class ServiceSingleton {
         if (!StringUtils.isBlank(entityClass)) {
             customGenericEntityCode = customGenericEntityCodeService.findByClass(entityClass);
             if (customGenericEntityCode != null) {
-                customGenericEntityCode.setSequenceCurrentValue(customGenericEntityCode.getSequenceCurrentValue() != null ? customGenericEntityCode.getSequenceCurrentValue() + 1 : 0);
+                customGenericEntityCode
+                    .setSequenceCurrentValue(customGenericEntityCode.getSequenceCurrentValue() != null ? customGenericEntityCode.getSequenceCurrentValue() + 1 : 0);
             }
         }
         return customGenericEntityCode;
     }
 
+    /**
+     * Assign invoice number to a virtual invoice. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
+     *
+     * @param invoice invoice
+     * @throws BusinessException business exception
+     */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Invoice assignInvoiceNumberVirtual(Invoice invoice) throws BusinessException {
+        return assignInvoiceNumber(invoice, false);
+    }
+
+    /**
+     * Assign invoice number to an invoice. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
+     *
+     * @param invoice invoice
+     * @throws BusinessException business exception
+     */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {
+        invoice = assignInvoiceNumber(invoice, true);        
+        return invoice;
+    }
+
+    /**
+     * Assign invoice number to an invoice
+     *
+     * @param invoice invoice
+     * @param update Should invoice be persisted
+     * @throws BusinessException business exception
+     */
+    @SuppressWarnings("deprecation")
+    private Invoice assignInvoiceNumber(Invoice invoice, boolean update) throws BusinessException {
+
+        InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
+
+        String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
+        Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
+
+        Seller seller = invoice.getSeller();
+        if (seller == null && cust.getSeller() != null) {
+            seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
+        }
+        seller = sellerService.refreshOrRetrieve(seller);
+
+        InvoiceSequence sequence = incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
+        int sequenceSize = sequence.getSequenceSize();
+
+        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
+        InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
+        String prefix = invoiceType.getPrefixEL();
+        if (invoiceTypeSellerSequencePrefix != null) {
+            prefix = invoiceTypeSellerSequencePrefix.getPrefixEL();
+
+        } else if (seller != null) {
+            invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
+            if (invoiceTypeSellerSequence != null) {
+                prefix = invoiceTypeSellerSequence.getPrefixEL();
+            }
+        }
+
+        if (prefix != null && !StringUtils.isBlank(prefix)) {
+            prefix = InvoiceService.evaluatePrefixElExpression(prefix, invoice);
+
+        } else {
+            prefix = "";
+        }
+
+        long nextInvoiceNb = sequence.getCurrentInvoiceNb();
+        String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
+        // request to store invoiceNo in alias field
+        invoice.setAlias(invoiceNumber);
+        invoice.setInvoiceNumber(prefix + invoiceNumber);
+        if (update) {
+            invoice = invoiceService.update(invoice);
+        }
+        return invoice;
+    }
+
+    /**
+     * Returns {@link InvoiceTypeSellerSequence} from the nearest parent.
+     * 
+     * @param invoiceType {@link InvoiceType}
+     * @param seller {@link Seller}
+     * @return {@link InvoiceTypeSellerSequence}
+     */
+    private InvoiceTypeSellerSequence getInvoiceTypeSellerSequence(InvoiceType invoiceType, Seller seller) {
+        InvoiceTypeSellerSequence sequence = invoiceType.getSellerSequenceByType(seller);
+
+        if (sequence == null && seller.getSeller() != null) {
+            sequence = getInvoiceTypeSellerSequence(invoiceType, seller.getSeller());
+        }
+
+        return sequence;
+    }
 }
