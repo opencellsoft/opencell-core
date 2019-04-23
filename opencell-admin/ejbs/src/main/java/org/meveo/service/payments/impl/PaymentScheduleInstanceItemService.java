@@ -44,6 +44,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.util.ApplicationProvider;
 
@@ -85,6 +86,9 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
     @Inject
     private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
+    @Inject
+    private ServiceSingleton serviceSingleton;
+    
     /** The Constant HUNDRED. */
     private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -189,11 +193,12 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             invoice.setAmountTax(amounts[1]);
             invoice.setAmountWithTax(amounts[2]);
             invoice.setNetToPay(amounts[2]);
-
-            invoiceService.assignInvoiceNumber(invoice);
-            invoiceService.create(invoice);
+           
+            invoiceService.create(invoice);            
             invoiceService.postCreate(invoice);
 
+            invoice = serviceSingleton.assignInvoiceNumber(invoice);
+            
             paymentScheduleInstanceItem.setInvoice(invoice);
         }
         recordedInvoicePS = createRecordedInvoicePS(amounts, customerAccount, invoiceType, preferredMethod.getPaymentType(), invoice, aoIdsToPay, paymentScheduleInstanceItem);
