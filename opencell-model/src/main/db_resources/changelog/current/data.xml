@@ -2567,5 +2567,25 @@ group by s.code
         	<column name="cf_protectable" valueNumeric="1"></column>
         </insert>
 	</changeSet>
-
+	
+	<changeSet author="SaidRamli" id="#4202_23042019">
+		<update  tableName="meveo_job_instance">
+			<column name="cf_values">
+                <![CDATA[{"invoicesToProcess":[{"string":"FinalOnly"}],"waitingMillis":[{"long":0}],"nbRuns":[{"long":-1}]}]]>
+            </column>
+            <column name="cf_values_accum">
+                <![CDATA[{"invoicesToProcess":[{"string":"FinalOnly"}],"waitingMillis":[{"long":0}],"nbRuns":[{"long":-1}]}]]>
+            </column>
+			<where>code = 'PDF_Job'</where>
+		</update>
+		<update  tableName="meveo_job_instance">
+			<column name="cf_values">
+                <![CDATA[{"invoicesToProcess":[{"string":"FinalOnly"}],"waitingMillis":[{"long":0}],"nbRuns":[{"long":-1}]}]]>
+            </column>
+            <column name="cf_values_accum">
+                <![CDATA[{"invoicesToProcess":[{"string":"FinalOnly"}],"waitingMillis":[{"long":0}],"nbRuns":[{"long":-1}]}]]>
+            </column>
+			<where>code = 'XML_Job'</where>
+		</update>
+    </changeSet>
 </databaseChangeLog>
