@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
@@ -69,6 +71,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -120,7 +123,6 @@ public class InvoiceApi extends BaseApi {
     @Inject
     private RatedTransactionService ratedTransactionService;
 
-
     @Inject
     private InvoiceService invoiceService;
 
@@ -131,12 +133,15 @@ public class InvoiceApi extends BaseApi {
     private InvoiceCategoryService invoiceCategoryService;
 
     @Inject
+    private ServiceSingleton serviceSingleton;
+
+    @Inject
     private FilteredListApi filteredListApi;
 
     @Inject
     @MeveoParamBean
     private ParamBean paramBean;
-    
+
     /**
      * Create an invoice based on the DTO object data and current user
      *
@@ -144,16 +149,16 @@ public class InvoiceApi extends BaseApi {
      * @return CreateInvoiceResponseDto
      * @throws MeveoApiException Meveo Api exception
      * @throws BusinessException Business exception
-     * @throws Exception         exception
+     * @throws Exception exception
      */
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO) throws MeveoApiException, BusinessException, Exception {
         log.debug("InvoiceDto:" + JsonUtils.toJson(invoiceDTO, true));
         validateInvoiceDto(invoiceDTO);
-        
+
         boolean isEnterprise = appProvider.isEntreprise();
         int invoiceRounding = appProvider.getInvoiceRounding();
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
-        
+
         Auditable auditable = new Auditable(currentUser);
         Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
 
@@ -182,7 +187,7 @@ public class InvoiceApi extends BaseApi {
                     throw new EntityDoesNotExistsException(UserAccount.class, catInvAgrDto.getUserAccountCode());
                 } else if (!userAccount.getBillingAccount().equals(billingAccount)) {
                     throw new InvalidParameterException(
-                            "User account code " + catInvAgrDto.getUserAccountCode() + " does not correspond to a Billing account " + billingAccount.getCode());
+                        "User account code " + catInvAgrDto.getUserAccountCode() + " does not correspond to a Billing account " + billingAccount.getCode());
                 }
             } else {
                 userAccount = billingAccount.getUsersAccounts().get(0);
@@ -216,28 +221,27 @@ public class InvoiceApi extends BaseApi {
                 if (subCatInvAgrDTO.getRatedTransactions() != null) {
                     for (RatedTransactionDto ratedTransactionDto : subCatInvAgrDTO.getRatedTransactions()) {
 
-						BigDecimal tempAmountWithoutTax = BigDecimal.ZERO;
-						if (ratedTransactionDto.getUnitAmountWithoutTax() != null) {
-							tempAmountWithoutTax = ratedTransactionDto.getUnitAmountWithoutTax()
-									.multiply(ratedTransactionDto.getQuantity());
-						}
-						BigDecimal tempAmountWithTax = BigDecimal.ZERO;
-						if (ratedTransactionDto.getUnitAmountWithTax() != null) {
-							tempAmountWithTax = ratedTransactionDto.getUnitAmountWithTax()
-									.multiply(ratedTransactionDto.getQuantity());
-						}
-						
-                        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(tempAmountWithoutTax, tempAmountWithTax, tax.getPercent(), isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
+                        BigDecimal tempAmountWithoutTax = BigDecimal.ZERO;
+                        if (ratedTransactionDto.getUnitAmountWithoutTax() != null) {
+                            tempAmountWithoutTax = ratedTransactionDto.getUnitAmountWithoutTax().multiply(ratedTransactionDto.getQuantity());
+                        }
+                        BigDecimal tempAmountWithTax = BigDecimal.ZERO;
+                        if (ratedTransactionDto.getUnitAmountWithTax() != null) {
+                            tempAmountWithTax = ratedTransactionDto.getUnitAmountWithTax().multiply(ratedTransactionDto.getQuantity());
+                        }
+
+                        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(tempAmountWithoutTax, tempAmountWithTax, tax.getPercent(), isEnterprise, invoiceRounding,
+                            invoiceRoundingMode.getRoundingMode());
 
                         BigDecimal amountWithoutTax = amounts[0];
                         BigDecimal amountWithTax = amounts[1];
                         BigDecimal amountTax = amounts[2];
 
                         RatedTransaction meveoRatedTransaction = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(),
-                                ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax,
-                                amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, userAccount, invoiceSubCategory, null, null,
-                                null, null, null, null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(),
-                                ratedTransactionDto.getDescription(), ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent());
+                            ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax,
+                            amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, userAccount, invoiceSubCategory, null, null, null, null, null,
+                            null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
+                            ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent());
 
                         meveoRatedTransaction.setInvoice(invoice);
                         meveoRatedTransaction.setWallet(userAccount.getWallet());
@@ -288,13 +292,12 @@ public class InvoiceApi extends BaseApi {
                     invoiceAgregateSubcat.setAmountWithoutTax(subCatAmountWithoutTax);
                     invoiceAgregateSubcat.setAmountTax(subCatAmountTax);
                     invoiceAgregateSubcat.setAmountWithTax(subCatAmountWithTax);
-                
+
                 } else {
-                	// we add subCatAmountWithoutTax, in the case if there any opened RT to includ
-					BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(invoiceAgregateSubcat.getAmountWithoutTax(),
-							invoiceAgregateSubcat.getAmountWithTax(), tax.getPercent(), isEnterprise, invoiceRounding,
-							invoiceRoundingMode.getRoundingMode());
-                	
+                    // we add subCatAmountWithoutTax, in the case if there any opened RT to includ
+                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(invoiceAgregateSubcat.getAmountWithoutTax(), invoiceAgregateSubcat.getAmountWithTax(),
+                        tax.getPercent(), isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
+
                     invoiceAgregateSubcat.setAmountWithoutTax(amounts[0]);
                     invoiceAgregateSubcat.setAmountWithTax(amounts[1]);
                     invoiceAgregateSubcat.setAmountTax(amounts[2]);
@@ -355,7 +358,7 @@ public class InvoiceApi extends BaseApi {
         invoice.setNetToPay(netToPay);
 
         if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
-            invoiceService.assignInvoiceNumber(invoice);
+            invoice = serviceSingleton.assignInvoiceNumber(invoice);
         }
         if (invoice.isDraft()) {
             this.setDraftSetting(invoiceDTO, seller, invoice);
@@ -396,7 +399,7 @@ public class InvoiceApi extends BaseApi {
 
     private void setDraftSetting(InvoiceDto invoiceDTO, Seller seller, Invoice invoice) throws BusinessException {
         if (invoice.getInvoiceNumber() == null) {
-            invoiceService.assignInvoiceNumber(invoice);
+            invoice = serviceSingleton.assignInvoiceNumber(invoice);
         }
         InvoiceType draftInvoiceType = invoiceTypeService.getDefaultDraft();
         InvoiceTypeSellerSequence invoiceTypeSellerSequence = draftInvoiceType.getSellerSequenceByType(seller);
@@ -598,14 +601,15 @@ public class InvoiceApi extends BaseApi {
         boolean produceXml = (generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
                 || (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
-        boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
         List<GenerateInvoiceResultDto> invoicesDtos = new ArrayList<>();
         List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
         if (invoices != null) {
             for (Invoice invoice : invoices) {
-                this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
-                invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
+                invoice = invoiceService.retrieveIfNotManaged(invoice);
+                
+                // TODO AKK need to extract custom fields and use them inside the generateInvoice()
+                // this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
 
                 GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
                 invoicesDtos.add(generateInvoiceResultDto);
@@ -733,8 +737,7 @@ public class InvoiceApi extends BaseApi {
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
         }
-        invoiceService.assignInvoiceNumber(invoice);
-        invoice = invoiceService.update(invoice);
+        invoice = serviceSingleton.assignInvoiceNumber(invoice);
         return invoice.getInvoiceNumber();
     }
 
@@ -1039,6 +1042,7 @@ public class InvoiceApi extends BaseApi {
 
     /**
      * Send the invoice by Email.
+     * 
      * @param invoiceDto The invoice DTO
      * @param mailingType The mailing type
      * @return True if sent, false else
@@ -1073,7 +1077,8 @@ public class InvoiceApi extends BaseApi {
 
     /**
      * Send a list of invoices
-     * @param invoicesResult  the invoice result
+     * 
+     * @param invoicesResult the invoice result
      * @return GenerateInvoiceResultDto
      * @throws MissingParameterException
      * @throws EntityDoesNotExistsException

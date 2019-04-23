@@ -67,6 +67,7 @@ import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.view.LazyDataModelWSize;
@@ -74,7 +75,6 @@ import org.omnifaces.cdi.Param;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -117,6 +117,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     @Param
     private Long adjustedInvoiceIdParam;
 
+    @Inject
+    private ServiceSingleton serviceSingleton;
+    
     @Inject
     @Param
     private Boolean detailedParam;
@@ -710,7 +713,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             if (billingAccountId != 0) {
                 BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
                 entity.setBillingAccount(billingAccount);
-                invoiceService.assignInvoiceNumber(entity);
+                entity = serviceSingleton.assignInvoiceNumber(entity);
             }
 
             super.saveOrUpdate(false);

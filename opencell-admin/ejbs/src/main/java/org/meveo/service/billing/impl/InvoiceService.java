@@ -89,7 +89,6 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.RatedTransaction;
@@ -111,7 +110,6 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.communication.impl.EmailSender;
@@ -227,8 +225,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private EmailSender emailSender;
 
-    @Inject
-    private SellerService sellerService;
+    @EJB
+    private InvoiceService invoiceService;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -360,78 +358,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Returns {@link InvoiceTypeSellerSequence} from the nearest parent.
-     * 
-     * @param invoiceType {@link InvoiceType}
-     * @param seller {@link Seller}
-     * @return {@link InvoiceTypeSellerSequence}
-     */
-    public InvoiceTypeSellerSequence getInvoiceTypeSellerSequence(InvoiceType invoiceType, Seller seller) {
-        InvoiceTypeSellerSequence sequence = invoiceType.getSellerSequenceByType(seller);
-
-        if (sequence == null && seller.getSeller() != null) {
-            sequence = getInvoiceTypeSellerSequence(invoiceType, seller.getSeller());
-        }
-
-        return sequence;
-    }
-
-    /**
-     * Assign invoice number to an invoice
-     *
-     * @param invoice invoice
-     * @throws BusinessException business exception
-     */
-    public void assignInvoiceNumber(Invoice invoice) throws BusinessException {
-
-        InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
-
-        String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
-        Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
-
-        Seller seller = invoice.getSeller();
-        if (seller == null && cust.getSeller() != null) {
-            seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
-        }
-        seller = sellerService.refreshOrRetrieve(seller);
-
-        InvoiceSequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
-        int sequenceSize = sequence.getSequenceSize();
-
-        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
-        InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
-        String prefix = invoiceType.getPrefixEL();
-        if (invoiceTypeSellerSequencePrefix != null) {
-            prefix = invoiceTypeSellerSequencePrefix.getPrefixEL();
-
-        } else if (seller != null) {
-            invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
-            if (invoiceTypeSellerSequence != null) {
-                prefix = invoiceTypeSellerSequence.getPrefixEL();
-            }
-        }
-
-        if (prefix != null && !StringUtils.isBlank(prefix)) {
-            prefix = evaluatePrefixElExpression(prefix, invoice);
-
-        } else {
-            prefix = "";
-        }
-
-        long nextInvoiceNb = sequence.getCurrentInvoiceNb();
-        String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
-        // request to store invoiceNo in alias field
-        invoice.setAlias(invoiceNumber);
-        invoice.setInvoiceNumber(prefix + invoiceNumber);
-    }
-
-    /**
      * Assign invoice number from reserve.
      *
      * @param invoice invoice
      * @param invoicesToNumberInfo instance of InvoicesToNumberInfo
      * @throws BusinessException business exception
      */
+    @SuppressWarnings("deprecation")
     private void assignInvoiceNumberFromReserve(Invoice invoice, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
         InvoiceType invoiceType = invoice.getInvoiceType();
         String prefix = invoiceType.getPrefixEL();
@@ -475,37 +408,36 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return getEntityManager().createNamedQuery("Invoice.validatedNoPdfByBR", Long.class).setParameter("billingRunId", billingRunId).getResultList();
         }
     }
-    
-    
+
     /**
-     * Get list of Draft invoice Ids that belong to the given Billing Run and not having  PDF generated yet.
+     * Get list of Draft invoice Ids that belong to the given Billing Run and not having PDF generated yet.
      * 
      * @param billingRunId An optional billing run identifier for filtering
      * @return A list of invoice ids
      */
     public List<Long> getDraftInvoiceIdsByBRWithNoPdf(Long billingRunId) {
-    	if (billingRunId == null) {
+        if (billingRunId == null) {
             return getEntityManager().createNamedQuery("Invoice.draftNoPdf", Long.class).getResultList();
 
         } else {
             return getEntityManager().createNamedQuery("Invoice.draftNoPdfByBR", Long.class).setParameter("billingRunId", billingRunId).getResultList();
         }
-	}
+    }
 
     /**
-     * Get list of Draft and validated invoice Ids that belong to the given Billing Run and not having  PDF generated yet.
+     * Get list of Draft and validated invoice Ids that belong to the given Billing Run and not having PDF generated yet.
      * 
      * @param billingRunId An optional billing run identifier for filtering
      * @return A list of invoice ids
      */
-	public List<Long> getInvoiceIdsIncludeDraftByBRWithNoPdf(Long billingRunId) {
-		if (billingRunId == null) {
+    public List<Long> getInvoiceIdsIncludeDraftByBRWithNoPdf(Long billingRunId) {
+        if (billingRunId == null) {
             return getEntityManager().createNamedQuery("Invoice.allNoPdf", Long.class).getResultList();
 
         } else {
             return getEntityManager().createNamedQuery("Invoice.allNoPdfByBR", Long.class).setParameter("billingRunId", billingRunId).getResultList();
         }
-	}
+    }
 
     /**
      * Gets the invoice ids with no account operation.
@@ -669,13 +601,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param lastTransactionDate date of last transaction
      * @param minAmountTransactions Min amount rated transactions
      * @param isDraft Is this a draft invoice
-     * @param assignNumber Should a number be assigned to the invoice
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<Invoice> createAgregatesAndInvoice(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate, Date firstTransactionDate,
-            Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean isDraft, boolean assignNumber) throws BusinessException {
+            Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean isDraft) throws BusinessException {
 
         log.debug("Will create invoice and aggregates for {}/{}", entity.getClass().getSimpleName(), entity.getId());
 
@@ -832,6 +764,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     this.create(invoice);
 
+                    invoice.assignTemporaryInvoiceNumber();
+
                     // Create aggregates
                     ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionSelection, false, false);
 
@@ -857,12 +791,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             orders.add(orderService.findByCodeOrExternalId(orderNum));
                         }
                         invoice.setOrders(orders);
-                    }
-
-                    invoice.assignTemporaryInvoiceNumber();
-
-                    if (assignNumber) {
-                        assignInvoiceNumber(invoice);
                     }
 
                     postCreate(invoice);
@@ -908,6 +836,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return isElectronicBillingEnabled;
     }
 
+    @SuppressWarnings("unchecked")
     private Map<InvoiceType, List<RatedTransaction>> executeBCScript(BillingRun billingRun, InvoiceType invoiceType, List<RatedTransaction> ratedTransactions,
             IBillableEntity entity, String scriptInstanceCode) throws BusinessException {
         try {
@@ -937,6 +866,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return invoice
      * @throws BusinessException business exception
      */
+    @SuppressWarnings("deprecation")
     public Invoice createAgregatesAndInvoiceVirtual(List<RatedTransaction> ratedTransactions, BillingAccount billingAccount, InvoiceType invoiceType) throws BusinessException {
 
         if (invoiceType == null) {
@@ -947,7 +877,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(billingAccount);
         invoice.setInvoiceDate(new Date());
-        assignInvoiceNumber(invoice);
+        serviceSingleton.assignInvoiceNumberVirtual(invoice);
 
         PaymentMethod preferedPaymentMethod = invoice.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {
@@ -1254,7 +1184,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return evaluated value
      * @throws BusinessException business exception
      */
-    public String evaluatePrefixElExpression(String prefix, Invoice invoice) throws BusinessException {
+    public static String evaluatePrefixElExpression(String prefix, Invoice invoice) throws BusinessException {
 
         if (StringUtils.isBlank(prefix)) {
             return null;
@@ -1834,19 +1764,59 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Create RatedTransaction and generate invoice for the billingAccount.
-     *
-     * @param entity entity to be billed.
-     * @param generateInvoiceRequestDto the generate invoice request dto
-     * @param ratedTxFilter the rated tx filter
-     * @param isDraft the is draft
-     * @return the invoice
-     * @throws BusinessException the business exception
-     * @throws InvoiceExistException the invoice exist exception
-     * @throws ImportInvoiceException the import invoice exception
+     * 
+     * Create pending Rated transactions and generate invoice for the billingAccount. DOES assign an invoice number AND create XML/PDF files or account operation if requested.
+     * 
+     * @param entity Entity to invoice
+     * @param generateInvoiceRequestDto Generate invoice request
+     * @param ratedTxFilter A filter to select rated transactions
+     * @param isDraft Is it a draft invoice
+     * @return A list of generated invoices
+     * @throws BusinessException General business exception
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public List<Invoice> generateInvoice(IBillableEntity entity, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft)
-            throws BusinessException, InvoiceExistException, ImportInvoiceException {
+            throws BusinessException {
+
+        boolean produceXml = (generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
+                || (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
+        boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
+        boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
+
+        List<Invoice> invoices = invoiceService.createInvoice(entity, generateInvoiceRequestDto, ratedTxFilter, isDraft);
+
+        List<Invoice> invoicesWNumber = new ArrayList<Invoice>();
+        for (Invoice invoice : invoices) {
+            try {
+                invoicesWNumber.add(serviceSingleton.assignInvoiceNumber(invoice));
+            } catch (Exception e) {
+                log.error("Failed to assign invoice number for invoice {}/{}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber(), e);
+                continue;
+            }
+            try {
+                produceFilesAndAO(produceXml, producePdf, generateAO, invoice.getId(), isDraft);
+            } catch (Exception e) {
+                log.error("Failed to generate XML/PDF files or recorded invoice AO for invoice {}/{}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber(), e);
+            }
+        }
+        return refreshOrRetrieve(invoices);
+    }
+
+    /**
+     * Create pending Rated transactions and generate invoice for the billingAccount. DOES NOT assign an invoice number NOR create XML/PDF files nor account operation. Use
+     * generateInvoice() instead.
+     * 
+     * @param entity Entity to invoice
+     * @param generateInvoiceRequestDto Generate invoice request
+     * @param ratedTxFilter A filter to select rated transactions
+     * @param isDraft Is it a draft invoice
+     * @return A list of invoices
+     * @throws BusinessException General business exception
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public List<Invoice> createInvoice(IBillableEntity entity, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft)
+            throws BusinessException {
 
         Date invoiceDate = generateInvoiceRequestDto.getInvoicingDate();
         Date firstTransactionDate = generateInvoiceRequestDto.getFirstTransactionDate();
@@ -1877,14 +1847,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         ratedTransactionService.createRatedTransaction(entity, lastTransactionDate);
 
         ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entity, firstTransactionDate, lastTransactionDate);
-        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(),
-            isDraft, true);
 
-        // TODO : delete this commit since generating PDF/XML and producing AOs are now outside this service !
-        // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
-        // Why not add a new method on another bean with Tx.Requires_New?
-        commit();
+        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(),
+            isDraft);
+
         return invoices;
+
     }
 
     /**
@@ -1899,62 +1867,35 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws InvoiceExistException Invoice already exist exception
      * @throws ImportInvoiceException Import invoice exception
      */
-    public void produceFilesAndAO(boolean produceXml, boolean producePdf, boolean generateAO, Invoice invoice, boolean isDraft)
+    public void produceFilesAndAO(boolean produceXml, boolean producePdf, boolean generateAO, Long invoiceId, boolean isDraft)
             throws BusinessException, InvoiceExistException, ImportInvoiceException {
+     
         if (produceXml) {
-            produceInvoiceXmlNoUpdate(invoice);
+            invoiceService.produceInvoiceXmlInNewTransaction(invoiceId);
         }
         if (producePdf) {
-            produceInvoicePdfNoUpdate(invoice);
+            invoiceService.produceInvoicePdfInNewTransaction(invoiceId);
         }
         if (generateAO && !isDraft) {
-            recordedInvoiceService.generateRecordedInvoice(invoice);
+            invoiceService.generateRecordedInvoiceAO(invoiceId);
         }
-        invoice = update(invoice);
     }
 
     /**
-     * Create RatedTransaction and generate invoice for the billingAccount.
-     *
-     * @param billingAccount billing account
-     * @param invoiceDate date of invoice
-     * @param firstTransactionDate first transaction date.
-     * @param lastTransactionDate date of last transaction
-     * @param ratedTxFilter rated transaction filter
-     * @param orderNumber Order number associated to subscription
-     * @param isDraft Is it a draft
-     * @param produceXml Produce invoice XML file
-     * @param producePdf Produce invoice PDF file
-     * @param generateAO Generate AOs
-     * @return invoice
-     * @throws BusinessException business exception
-     * @throws ImportInvoiceException import invoice exception
-     * @throws InvoiceExistException invoice exists exception
-     *
-     * @deprecated : - It contains a lot of args. - It breaks the 'Separation of responsibilities' pattern by creating the Invoice, creating the PDF/XML file and producing the AOs
-     *             !! <br>
-     *             use generateInvoice(BillingAccount, GenerateInvoiceRequestDto) + produceFilesAndAO(boolean, boolean, boolean, Invoice) instead.
+     * Generate Recorded invoice account operation
+     * 
+     * @param invoiceId Invoice identifier
+     * @throws InvoiceExistException Invoice already exists exception
+     * @throws ImportInvoiceException Failed to import invoice exception
+     * @throws BusinessException General business exception
      */
-    @Deprecated
-    public List<Invoice> generateInvoice(BillingAccount billingAccount, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTxFilter,
-            String orderNumber, boolean isDraft, boolean produceXml, boolean producePdf, boolean generateAO)
-            throws BusinessException, InvoiceExistException, ImportInvoiceException {
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void generateRecordedInvoiceAO(Long invoiceId) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
-        GenerateInvoiceRequestDto generateInvoiceRequestDto = new GenerateInvoiceRequestDto();
-        generateInvoiceRequestDto.setGenerateXML(produceXml);
-        generateInvoiceRequestDto.setGeneratePDF(producePdf);
-        generateInvoiceRequestDto.setGenerateAO(generateAO);
-        generateInvoiceRequestDto.setInvoicingDate(invoiceDate);
-        generateInvoiceRequestDto.setFirstTransactionDate(firstTransactionDate);
-        generateInvoiceRequestDto.setLastTransactionDate(lastTransactionDate);
-        generateInvoiceRequestDto.setOrderNumber(orderNumber);
-
-        List<Invoice> invoices = this.generateInvoice(billingAccount, generateInvoiceRequestDto, ratedTxFilter, isDraft);
-        for (Invoice invoice : invoices) {
-            this.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
-        }
-
-        return invoices;
+        Invoice invoice = findById(invoiceId);
+        recordedInvoiceService.generateRecordedInvoice(invoice);
+        invoice = update(invoice);
     }
 
     /**
@@ -2174,35 +2115,34 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return getEntityManager().createNamedQuery("Invoice.validatedByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
     }
-    
+
     /**
-     * Get list of Draft invoice Ids that belong to the given Billing Run and not having  XML generated yet.
+     * Get list of Draft invoice Ids that belong to the given Billing Run and not having XML generated yet.
      * 
      * 
      * @param billingRunId Billing run id
      * @return A list of invoice identifiers
      */
     public List<Long> getDraftInvoiceIdsByBRWithNoXml(Long billingRunId) {
-    	 if (billingRunId == null) {
-             return getEntityManager().createNamedQuery("Invoice.draftNoXml", Long.class).getResultList();
-         }
-         return getEntityManager().createNamedQuery("Invoice.draftByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
-	}
-    
+        if (billingRunId == null) {
+            return getEntityManager().createNamedQuery("Invoice.draftNoXml", Long.class).getResultList();
+        }
+        return getEntityManager().createNamedQuery("Invoice.draftByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+    }
 
     /**
-     * Get list of Draft and validated invoice Ids that belong to the given Billing Run and not having  XML generated yet.
+     * Get list of Draft and validated invoice Ids that belong to the given Billing Run and not having XML generated yet.
      * 
      * 
      * @param billingRunId Billing run id
      * @return A list of invoice identifiers
      */
-	public List<Long> getInvoiceIdsIncludeDraftByBRWithNoXml(Long billingRunId) {
-		 if (billingRunId == null) {
-             return getEntityManager().createNamedQuery("Invoice.allNoXml", Long.class).getResultList();
-         }
-         return getEntityManager().createNamedQuery("Invoice.allByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
-	}
+    public List<Long> getInvoiceIdsIncludeDraftByBRWithNoXml(Long billingRunId) {
+        if (billingRunId == null) {
+            return getEntityManager().createNamedQuery("Invoice.allNoXml", Long.class).getResultList();
+        }
+        return getEntityManager().createNamedQuery("Invoice.allByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+    }
 
     /**
      * Get a summarized information for invoice numbering. Contains grouping by invoice type, seller, invoice date and a number of invoices.
@@ -2384,7 +2324,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             EmailTemplate emailTemplate = invoice.getInvoiceType().getEmailTemplate();
             MailingTypeEnum mailingType = invoice.getInvoiceType().getMailingType();
             BillingAccount billingAccount = invoice.getBillingAccount();
-            Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
+            Seller seller = invoice.getSeller();
             if (billingAccount.getContactInformation() != null) {
                 to.add(billingAccount.getContactInformation().getEmail());
             }
@@ -2459,6 +2399,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return a list of invoices
      * @throws BusinessException
      */
+    @SuppressWarnings("unchecked")
     public List<Invoice> findByNotAlreadySentAndDontSend() throws BusinessException {
         List<Invoice> result = new ArrayList<Invoice>();
         QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null);

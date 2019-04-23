@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -112,7 +111,7 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, entity.getMinRatedTransactions(), false, false);
+                invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, entity.getMinRatedTransactions(), false);
             } catch (Exception e) {
                 log.error("Error for entity {}/{}", entity.getClass().getSimpleName(), entity.getId(), e);
             }
