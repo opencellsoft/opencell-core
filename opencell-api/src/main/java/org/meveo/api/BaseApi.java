@@ -336,11 +336,13 @@ public abstract class BaseApi {
         // After saving passed CF values, validate that CustomField value is not
         // empty when field is mandatory. Check inherited values as well.
         // Instantiate CF with default value in case of a new entity
-
         if (customFieldTemplates != null) {
 
             for (CustomFieldTemplate cft : customFieldTemplates.values()) {
-                if (cft.isDisabled() || (!cft.isValueRequired() && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
+            	
+                boolean cftValueRequired = cft.isValueRequired();
+                
+				if (cft.isDisabled() || (!cftValueRequired && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
                     continue;
                 }
 
@@ -371,15 +373,13 @@ public abstract class BaseApi {
                             hasValue = value != null;
                         }
                         
-                        // Don't filter existing Entities (isNewEntity) , in order to let update also, the already created ones  
-                        // whit [CF values null & required & having default value]
-                        if (!hasValue && cft.getDefaultValue() != null) { // No need to check for !cft.isInheritedAsDefaultValue() as it was checked above
+                        if (!hasValue && cft.getDefaultValue() != null && (isNewEntity || cftValueRequired)) { // No need to check for !cft.isInheritedAsDefaultValue() as it was checked above
                             Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode());
                             hasValue = value != null;
                         }
                     }
 
-                    if (!hasValue && cft.isValueRequired()) {
+                    if (!hasValue && cftValueRequired) {
                         missingParameters.add(cft.getCode());
                     }
 
@@ -395,7 +395,7 @@ public abstract class BaseApi {
                         if (isNewEntity && !emptyValue && ((value == null && cft.getDefaultValue() != null) || cft.isUseInheritedAsDefaultValue())) {
                             value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
                         }
-                        if (value == null && cft.isValueRequired()) {
+                        if (value == null && cftValueRequired) {
                             missingParameters.add(cft.getCode());
                         }
                     }
