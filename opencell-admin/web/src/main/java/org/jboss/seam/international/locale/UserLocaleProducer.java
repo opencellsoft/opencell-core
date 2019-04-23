@@ -25,7 +25,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.seam.international.status.Client;
+import org.meveo.admin.util.Client;
 
 /**
  * Locale for a User Session. Defaults to the Locale within DefaultLocale and is altered when it receives the @Changed event.

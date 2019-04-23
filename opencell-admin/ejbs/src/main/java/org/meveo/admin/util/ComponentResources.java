@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Locale;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -12,6 +13,8 @@ import javax.inject.Named;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.util.MeveoParamBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Wassim Drira
@@ -20,9 +23,14 @@ import org.meveo.util.MeveoParamBean;
  */
 public class ComponentResources implements Serializable {
 
+	private Logger log = LoggerFactory.getLogger(this.getClass());
     private static final long serialVersionUID = 1L;
 
     private Locale locale = Locale.ENGLISH;
+    
+    @Inject
+    @Client
+    private Event<Locale> currentLocaleEventProducer;
 
     @Inject
     private LocaleSelector localeSelector;
@@ -36,11 +44,10 @@ public class ComponentResources implements Serializable {
         if (FacesContext.getCurrentInstance() != null) {
             try {
                 locale = localeSelector.getCurrentLocale();
-            } catch (Exception e) {
-            }
-            try {
+                currentLocaleEventProducer.fire(locale);
                 bundleName = FacesContext.getCurrentInstance().getApplication().getMessageBundle();
             } catch (Exception e) {
+            	log.error(e.getMessage(), e);
             }
         }
 

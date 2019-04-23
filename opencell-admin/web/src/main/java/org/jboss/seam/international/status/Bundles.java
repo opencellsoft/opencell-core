@@ -27,6 +27,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.admin.util.Client;
+
 
 /**
  * Access to map of {@link ResourceBundle} objects for user locale.
