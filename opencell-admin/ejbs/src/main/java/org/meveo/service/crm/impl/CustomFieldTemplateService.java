@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author melyoussoufi
+ * @lastModifiedVersion 5.0.7
  * 
  */
 @Stateless
@@ -102,6 +103,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
     
 
+	/**
+	 * Find a list of custom field templates corresponding to a given appliesToValues list 
+	 * 
+	 * @param appliesToValues
+	 * @return
+	 */
 	public Map<String, CustomFieldTemplate> findByAppliesTo(Set<String> appliesToValues) {
 		
 		if (useCFTCache) {
@@ -123,6 +130,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 		
 	}
 
+	/**
+	 * Find a list of custom field templates corresponding to a given appliesToValues list from DB
+	 * 
+	 * @param appliesToValues
+	 * @return
+	 */
 	private Map<String, CustomFieldTemplate> findByAppliesToNoCache(Set<String> appliesToValues) {
 		List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTByAppliesTo", CustomFieldTemplate.class)
 	            .setParameter("appliesTo", appliesToValues).getResultList();

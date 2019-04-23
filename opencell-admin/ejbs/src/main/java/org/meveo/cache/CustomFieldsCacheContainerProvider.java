@@ -43,7 +43,8 @@ import org.slf4j.Logger;
  * 
  * @author Andrius Karpavicius
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author melyoussoufi
+ * @lastModifiedVersion 5.0.7
  * 
  */
 @Stateless
@@ -498,6 +499,12 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         cftsByAppliesTo.clear();
     }
 
+	/**
+	 * gets Custom Field Templates
+	 * 
+	 * @param appliesToValues
+	 * @return Map<String, CustomFieldTemplate>
+	 */
 	public Map<String, CustomFieldTemplate> getCustomFieldTemplates(Set<String> appliesToValues) {
 		Map<String, CustomFieldTemplate> res = new HashMap<>();
 		for(String appliesTo : appliesToValues) {
@@ -509,6 +516,11 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         return res;
 	}
 
+	/**
+	 * mark No Custom Field Templates
+	 * 
+	 * @param appliesToValues
+	 */
 	public void markNoCustomFieldTemplates(Set<String> appliesToValues) {
 		for(String appliesTo : appliesToValues) {
 			CacheKeyStr cacheKeyByAppliesTo = new CacheKeyStr(currentUser.getProviderCode(), appliesTo);

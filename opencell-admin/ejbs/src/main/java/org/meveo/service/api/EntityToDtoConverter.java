@@ -40,6 +40,10 @@ import org.meveo.util.ApplicationProvider;
 import org.meveo.util.AppliesToValuesCalculator;
 import org.slf4j.Logger;
 
+/**
+ * @author melyoussoufi
+ * @lastModifiedVersion 5.0.7
+ */
 @Stateless
 public class EntityToDtoConverter {
 
@@ -370,10 +374,25 @@ public class EntityToDtoConverter {
 		return dtos;
 	}
 
+	/**
+	 * Find a list of custom field templates corresponding to a given appliesToValues list 
+	 * 
+	 * @param appliesToValues
+	 * @return Map<String, CustomFieldTemplate>
+	 */
 	public Map<String, CustomFieldTemplate> findByAppliesTo(Set<String> appliesToValues) {
 		return customFieldTemplateService.findByAppliesTo(appliesToValues);
 	}
 
+	/**
+	 * gets Custom Fields DTO
+	 * 
+	 * @param inheritCF
+	 * @param cfts
+	 * @param entity
+	 * @return CustomFieldsDto
+	 * @throws CustomFieldException
+	 */
 	public CustomFieldsDto getCustomFieldsDTO(CustomFieldInheritanceEnum inheritCF,
 			Map<String, CustomFieldTemplate> cfts, ICustomFieldEntity entity) throws CustomFieldException {
 		if (entity instanceof BusinessCFEntity) {
@@ -422,6 +441,14 @@ public class EntityToDtoConverter {
 
 	}
 
+	/**
+	 * add Custom Fields Dto to currentEntityCFs
+	 * 
+	 * @param inheritCF
+	 * @param cfts
+	 * @param currentEntityCFs
+	 * @param cfValuesByCode
+	 */
 	private void addCustomFieldsDto(CustomFieldInheritanceEnum inheritCF, Map<String, CustomFieldTemplate> cfts,
 			CustomFieldsDto currentEntityCFs, Map<String, List<CustomFieldValue>> cfValuesByCode) {
 
@@ -443,6 +470,16 @@ public class EntityToDtoConverter {
 
 	}
 
+	/**
+	 * includes Inherited Custom Fields
+	 * 
+	 * @param parentEntities
+	 * @param inheritCF
+	 * @param currentEntityCFs
+	 * @param cfts
+	 * @param mergeMapValues
+	 * @throws CustomFieldException
+	 */
 	private void includeInheritedCustomFields(ICustomFieldEntity[] parentEntities, CustomFieldInheritanceEnum inheritCF,
 			CustomFieldsDto currentEntityCFs, Map<String, CustomFieldTemplate> cfts, boolean mergeMapValues)
 			throws CustomFieldException {
@@ -485,6 +522,13 @@ public class EntityToDtoConverter {
 
 	}
 
+	/**
+	 * keep Applies To Values in entities (transient fields) 
+	 * 
+	 * @param parentEntities
+	 * @param peDistinctAtvs
+	 * @throws CustomFieldException
+	 */
 	private void keepAppliesToValue(ICustomFieldEntity[] parentEntities, Set<String> peDistinctAtvs)
 			throws CustomFieldException {
 		for (ICustomFieldEntity pentity : parentEntities) {
@@ -516,7 +560,16 @@ public class EntityToDtoConverter {
 		}
 	}
 
-	private CustomFieldsDto getAccessCustomFieldsDTO(CustomFieldInheritanceEnum inheritCF,
+	/**
+	 * gets Access Point Custom Fields DTO
+	 * 
+	 * @param inheritCF
+	 * @param cfts
+	 * @param entity
+	 * @return
+	 * @throws CustomFieldException
+	 */
+	public CustomFieldsDto getAccessCustomFieldsDTO(CustomFieldInheritanceEnum inheritCF,
 			Map<String, CustomFieldTemplate> cfts, Access entity) throws CustomFieldException {
 
 		CustomFieldsDto currentEntityCFs = new CustomFieldsDto();
@@ -552,6 +605,15 @@ public class EntityToDtoConverter {
 
 	}
 
+	/**
+	 * gets Custom Fields DTO for BusinessCF Entity 
+	 * 
+	 * @param inheritCF
+	 * @param cfts
+	 * @param entity
+	 * @return
+	 * @throws CustomFieldException
+	 */
 	public CustomFieldsDto getCustomFieldsDTO(CustomFieldInheritanceEnum inheritCF,
 			Map<String, CustomFieldTemplate> cfts, BusinessCFEntity entity) throws CustomFieldException {
 

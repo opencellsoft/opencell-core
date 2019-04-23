@@ -17,7 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This class is used to calculate applies to values
+ * 
  * @author melyoussoufi
+ * @lastModifiedVersion 5.0.7
  *
  */
 public class AppliesToValuesCalculator {

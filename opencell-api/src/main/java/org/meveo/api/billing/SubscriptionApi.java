@@ -100,7 +100,8 @@ import org.meveo.util.AppliesToValuesCalculator;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
- * @lastModifiedVersion 5.0.1
+ * @author melyoussoufi
+ * @lastModifiedVersion 5.0.7
  */
 @Stateless
 public class SubscriptionApi extends BaseApi {
@@ -914,6 +915,14 @@ public class SubscriptionApi extends BaseApi {
         return list(pagingAndFiltering, CustomFieldInheritanceEnum.getInheritCF(true, merge));
     }
 
+    /**
+     * List subscriptions
+
+     * @param pagingAndFiltering
+     * @param inheritCF
+     * @return
+     * @throws MeveoApiException
+     */
     public SubscriptionsListResponseDto list(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
         PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
@@ -931,6 +940,13 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
+	/**
+	 * load Subscriptions Dtos
+	 * 
+	 * @param subscriptions
+	 * @param inheritCF
+	 * @return
+	 */
 	private List<SubscriptionDto> loadSubscriptionsDtos(List<Subscription> subscriptions,
 			CustomFieldInheritanceEnum inheritCF) {
 
@@ -978,7 +994,7 @@ public class SubscriptionApi extends BaseApi {
 				List<Access> aps = subscription.getAccessPoints();
 				for (Access ap : aps) {
 					try {
-						CustomFieldsDto apDto = entityToDtoConverter.getCustomFieldsDTO(inheritCF, allCfts, ap);
+						CustomFieldsDto apDto = entityToDtoConverter.getAccessCustomFieldsDTO(inheritCF, allCfts, ap);
 						AccessDto accessDto = new AccessDto(ap, apDto);
 						dto.getAccesses().getAccess().add(accessDto);
 					} catch (CustomFieldException e) {
