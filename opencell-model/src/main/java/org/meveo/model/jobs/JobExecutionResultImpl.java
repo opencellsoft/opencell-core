@@ -416,9 +416,9 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
 
     public void addReport(String messageToAppend) {
-        if (!StringUtils.isBlank(messageToAppend)) {
-            this.report = (this.report == null ? "" : (this.report + " \n ")) + messageToAppend;
-        }
+		if (jobInstance.getVerboseReport() && !StringUtils.isBlank(messageToAppend)) {
+			this.report = (this.report == null ? "" : (this.report + " \n ")) + messageToAppend;
+		}
     }
 
     /**

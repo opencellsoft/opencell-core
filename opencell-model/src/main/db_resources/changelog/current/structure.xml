@@ -914,4 +914,14 @@
         <modifyDataType columnName="iban" newDataType="varchar(80)" tableName="crm_provider"/>
     </changeSet>
     
+    <changeSet id="#4156_20190423" author="EdwardPLegaspi">
+    	<addColumn tableName="meveo_job_instance">
+    		<column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1"/>
+    	</addColumn>
+    	
+    	<update tableName="meveo_job_instance">
+    		<column name="verbose_report" valueNumeric="1"></column>
+    	</update>
+    </changeSet>
+    
 </databaseChangeLog>

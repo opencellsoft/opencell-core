@@ -124,6 +124,13 @@ public class JobInstance extends EnableBusinessCFEntity {
     @Column(name = "exclude_inv_without_amount")
     private Boolean excludeInvoicesWithoutAmount;
 
+    /**
+     * Whether a verbose error log will be kept.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "verbose_report")
+    private Boolean verboseReport = true;
+    
     /** Code of provider, that job belongs to. */
     @Transient
     private String providerCode;
@@ -402,4 +409,21 @@ public class JobInstance extends EnableBusinessCFEntity {
         }
         return this.runTimeValues.get(key);
     }
+
+    /**
+     * Are error logs recorded?
+     * @return boolean value
+     */
+	public Boolean getVerboseReport() {
+		return verboseReport;
+	}
+
+	/**
+	 * Sets whether error logs are recorded
+	 * @param verboseReport boolean value
+	 */
+	public void setVerboseReport(Boolean verboseReport) {
+		this.verboseReport = verboseReport;
+	}
+
 }
