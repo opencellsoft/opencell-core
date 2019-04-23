@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.5.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -35,7 +35,7 @@
   </con:settings>
   <con:interface xsi:type="con:WsdlInterface" id="6525abb5-8ba3-41fe-82de-1f972b44d134" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/AccountWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b2e65184-0a07-4efe-b806-cf19123b4dd3" isOneWay="false" action="" name="addLitigation" bindingOperationName="addLitigation" type="Request-Response" outputName="addLitigationResponse" inputName="addLitigation" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -257,7 +257,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0452a833-b399-485e-ad93-15f1e0a8ca1f" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/CatalogWs</con:endpoint>
     </con:endpoints>
     <con:operation id="72a49db8-bcef-486e-9671-de5b708d7070" isOneWay="false" action="" name="createBusinessOfferModel" bindingOperationName="createBusinessOfferModel" type="Request-Response" outputName="createBusinessOfferModelResponse" inputName="createBusinessOfferModel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -461,7 +461,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="b037c488-90b4-4d4f-80d6-b060bc44907c" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="ae9cb189-0221-4e04-bf8f-dfb88acf74a3" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -536,7 +536,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="32ff6d91-bacd-454b-b5de-4a57ecf8c57f" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/JobWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/JobWs</con:endpoint>
     </con:endpoints>
     <con:operation id="4ffe8a54-5903-483e-b0c1-8647717699f1" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -581,7 +581,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="4ec8e092-5cf5-4d58-99b8-1820735211c8" wsaVersion="NONE" name="ModuleWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ModuleWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ModuleWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/ModuleWs</con:endpoint>
     </con:endpoints>
     <con:operation id="d448977e-a42b-4430-a185-07dc5987ccca" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -608,7 +608,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="dd5ee2d6-be0e-43bb-9323-e7b7fbcb62a4" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/SettingsWs</con:endpoint>
     </con:endpoints>
     <con:operation id="76101927-a2ad-47ed-9128-eeb6341b1df1" isOneWay="false" action="" name="createBillingCycle" bindingOperationName="createBillingCycle" type="Request-Response" outputName="createBillingCycleResponse" inputName="createBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -920,7 +920,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="5bc32de0-5b17-4a66-b85b-746eb0521c91" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/SubscriptionWs</con:endpoint>
     </con:endpoints>
     <con:operation id="01920c32-0161-4c09-84a7-528acd168aea" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -959,7 +959,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="03f488f9-f60e-4aef-ad70-b3cdb58831b8" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://localhost:8080" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080</con:endpoint>
     </con:endpoints>
     <con:resource name="Customer" path="/api/rest/account/customer" id="1224e4ed-0996-4503-b004-a449dd20884d">
@@ -1070,7 +1070,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/InvoiceWs?wsdl" id="3d2d8e46-81dd-4e9b-868b-1da64fe62cc2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/opencell/InvoiceWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/opencell/InvoiceWs</con:endpoint>
       <con:endpoint>http://localhost:8080/opencell/InvoiceWs</con:endpoint>
@@ -1108,7 +1108,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="113af333-62db-47ab-b545-ba7add0056c2" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/NotificationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/NotificationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b0e86045-32da-40b4-8faa-4dd1aef403ce" isOneWay="false" action="" name="createEmailNotification" bindingOperationName="createEmailNotification" type="Request-Response" outputName="createEmailNotificationResponse" inputName="createEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1168,7 +1168,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="6d7ccb5c-e1f9-4338-bf86-f62b3673643b" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/ScriptInstanceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="f9f2f711-974a-4052-b02d-9b3c68b71f86" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1192,7 +1192,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="6606b221-c407-4821-9c32-6a6b4b4769d5" wsaVersion="NONE" name="AccountingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
     </con:endpoints>
     <con:operation id="4db59560-9a43-4034-b85e-0536393d1729" isOneWay="false" action="" name="createAccountingCode" bindingOperationName="createAccountingCode" type="Request-Response" outputName="createAccountingCodeResponse" inputName="createAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -10049,7 +10049,8 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="6a7d7ee6-0330-479d-bbeb-c5fc385a008c">
-              <con:configuration><token><![CDATA[<customField code="${#Project#baseEntityPrefix}_OfferTemplate_ENTITY_MAP_V" description="OfferTemplate_ENTITY_MAP_V field" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone2}" valuePeriodPriority="1">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_OfferTemplate_ENTITY_MAP_V" description="OfferTemplate_ENTITY_MAP_V field" valuePeriodStartDate="2015-09-04T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-09-30T00:00:00${#Project#timezone2}" valuePeriodPriority="1">
                      <fieldType>ENTITY</fieldType>
                      <mapValue>
                         <entry>
@@ -10059,10 +10060,14 @@ public class Action1 extends Script {
                            </value>
                         </entry>
                      </mapValue>
-                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 2" id="cf1a9840-3a04-4956-b5eb-1cca872d648d">
-              <con:configuration><token><![CDATA[<customField code="${#Project#baseEntityPrefix}_OfferTemplate_ENTITY_MAP_V" description="OfferTemplate_ENTITY_MAP_V field" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="2">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_OfferTemplate_ENTITY_MAP_V" description="OfferTemplate_ENTITY_MAP_V field" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="2">
                      <fieldType>ENTITY</fieldType>
                      <mapValue>
                         <entry>
@@ -10078,7 +10083,10 @@ public class Action1 extends Script {
                            </value>
                         </entry>
                      </mapValue>
-                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -10119,10 +10127,14 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="f3ad376a-43bb-4a13-9b26-692b82856714" name="Contains 1">
-              <con:configuration><token><![CDATA[<customField code="PurgeJob_counterPeriod_nbDays" description="Purge periods with end date older than (in days) *">
+              <con:configuration>
+                <token><![CDATA[<customField code="PurgeJob_counterPeriod_nbDays" description="Purge periods with end date older than (in days) *">
                      <fieldType>LONG</fieldType>
                      <longValue>19</longValue>
-                  </customField>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="6297569b-77e3-452c-94d1-888f3f69e8af" name="Contains 2">
               <con:configuration>
@@ -13552,6 +13564,7 @@ public class Action1 extends Script {
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
+   <reuse>false</reuse>
     <script>import org.meveo.service.script.Script;
                   public class Action1 extends Script {}</script>
   </script>
@@ -13573,6 +13586,7 @@ public class Action1 extends Script {
     <auditable created="*" creator="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
+    <reuse>false</reuse>
     <script>import org.meveo.service.script.Script;
                   public class Action3 extends Script {}</script>
   </script>
@@ -21326,10 +21340,18 @@ public class Action1 extends Script {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
             <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
-              <con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;status>FAIL&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="cfdc5ee4-56b3-4e32-80e9-fbc78d7f2f13" name="Contains 1">
-              <con:configuration><token>The following parameters are required or contain invalid values: ${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MAP_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED.</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>The following parameters are required or contain invalid values: ${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MAP_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED.</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -21367,7 +21389,11 @@ public class Action1 extends Script {
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
             <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
-              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -31080,6 +31106,7 @@ public class Action1 extends Script {
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
+    <reuse>false</reuse>
     <script>import org.meveo.service.script.Script;
                   public class Action1 extends Script {}</script>
   </script>
@@ -31109,6 +31136,7 @@ public class Action1 extends Script {
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
+    <reuse>false</reuse>
     <script>import org.meveo.service.script.Script;
                   public class Action2 extends Script {}</script>
   </script>
@@ -31395,6 +31423,7 @@ public class Action1 extends Script {
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
+    <reuse>false</reuse>
     <script>import org.meveo.service.script.Script;
                   public class Action2 extends Script {}</script>
   </script>
@@ -31417,6 +31446,7 @@ public class Action1 extends Script {
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
+    <reuse>false</reuse>
     <script>import org.meveo.service.script.Script;
                   public class Action3 extends Script {}</script>
   </script>
@@ -31623,6 +31653,7 @@ public class Action1 extends Script {
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
+    <reuse>false</reuse>
     <script>import org.meveo.service.script.Script;
                   public class Action2 extends Script {}</script>
   </script>
@@ -31645,6 +31676,7 @@ public class Action1 extends Script {
     <auditable created="*" creator="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
+    <reuse>false</reuse>
     <script>import org.meveo.service.script.Script;
                   public class Action34 extends Script {}</script>
   </script>
@@ -31794,6 +31826,7 @@ public class Action1 extends Script {
     <auditable created="*" creator="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
+    <reuse>false</reuse>
     <script>import org.meveo.service.script.Script;
                   public class Action4 extends Script {}</script>
   </script>
@@ -31900,6 +31933,7 @@ public class Action1 extends Script {
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
+    <reuse>false</reuse>
     <script>import org.meveo.service.script.Script;
                   public class Action4 extends Script {}</script>
   </script>
@@ -31959,6 +31993,7 @@ public class Action1 extends Script {
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
+    <reuse>false</reuse>
     <script>import org.meveo.service.script.Script;
                   public class Action4 extends Script {}</script>
   </script>
