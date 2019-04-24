@@ -590,7 +590,7 @@ public class CustomFieldValues implements Serializable {
 
     private CustomFieldValue getCfValueByPeriod(String cfCode, DatePeriod period, boolean strictMatch, Boolean createIfNotFound) {
         CustomFieldValue valueFound = null;
-        if (valuesByCode.containsKey(cfCode)) {
+        if (valuesByCode != null && valuesByCode.containsKey(cfCode)) {
             for (CustomFieldValue value : valuesByCode.get(cfCode)) {
                 if (value.getPeriod() == null && (valueFound == null || valueFound.getPriority() < value.getPriority())) {
                     valueFound = value;

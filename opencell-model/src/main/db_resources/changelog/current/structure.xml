@@ -2101,4 +2101,31 @@ $$ LANGUAGE plpgsql;
             <column name="run_async" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#3683_20190415" author="YoussefIZEM">
+         <addColumn tableName="adm_notif_email">
+            <column name="email_template_id" type="bigint"></column>
+        </addColumn>
+         <addColumn tableName="adm_notification">
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}adm_notification set uuid = id</sql>
+        <sql>update ${db.schema.adapted}adm_notif_email set email_template_id=NEXTVAL('${db.schema.adapted}com_msg_tmpl_seq')</sql>
+        <sql>
+            INSERT INTO ${db.schema.adapted}com_message_template(id, version, created, code, subject, textcontent, htmlcontent, media)   
+            SELECT email_template_id, 0, now(), notif.code, email_subject, email_body, email_html_body, 'EMAIL' as media
+            FROM ${db.schema.adapted}adm_notif_email email
+            LEFT JOIN ${db.schema.adapted}adm_notification notif  on notif.id = email.id
+        </sql>
+        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="adm_notif_email" constraintName="fk_com_message_template" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template" />
+                    
+        <dropColumn tableName="adm_notif_email">
+            <column name="email_body"></column>
+            <column name="email_html_body"></column>
+            <column name="email_subject"></column>
+        </dropColumn>
+     </changeSet>
 </databaseChangeLog>

@@ -252,7 +252,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public ArrayList<InvoiceCategoryDTO> initInvoiceCategories() {
-        entity = invoiceService.refreshOrRetrieve(entity);
         LinkedHashMap<String, InvoiceCategoryDTO> headerCategories = new LinkedHashMap<String, InvoiceCategoryDTO>();
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
         for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
