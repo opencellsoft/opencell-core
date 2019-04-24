@@ -3378,4 +3378,49 @@ public class DeleteCustomersScript extends Script {
 			 NULL);]]>
          </sql>	
 	</changeSet>
+	
+	<changeSet author="EdwardPLegaspi" id="#4150_20190424 - Bring back the timers">
+        <insert tableName="meveo_timer">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="sc_d_o_month" value="*" />
+            <column name="sc_d_o_week" value="*" />
+            <column name="sc_hour" value="*" />
+            <column name="sc_min" value="0" />
+            <column name="sc_month" value="*" />
+            <column name="sc_sec" value="0" />
+            <column name="sc_year" value="*" />
+            <column name="code" value="Hourly" />
+            
+            <column name="created" valueDate="2015-03-19 00:04:19.913" />
+        </insert>
+        <insert tableName="meveo_timer">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="sc_d_o_month" value="Last" />
+            <column name="sc_d_o_week" value="0" />
+            <column name="sc_hour" value="23" />
+            <column name="sc_min" value="59" />
+            <column name="sc_month" value="*" />
+            <column name="sc_sec" value="59" />
+            <column name="sc_year" value="*" />
+            <column name="code" value="Monthly" />
+            
+            <column name="created" valueDate="2015-03-19 00:04:19.913" />
+        </insert>
+        <insert tableName="meveo_timer">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="sc_d_o_month" value="*" />
+            <column name="sc_d_o_week" value="*" />
+            <column name="sc_hour" value="23" />
+            <column name="sc_min" value="59" />
+            <column name="sc_month" value="*" />
+            <column name="sc_sec" value="59" />
+            <column name="sc_year" value="*" />
+            <column name="code" value="Daily-midnight" />
+            
+            <column name="created" valueDate="2017-06-29 00:04:19.913" />
+        </insert>
+    </changeSet>
 </databaseChangeLog>
