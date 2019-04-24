@@ -36,4 +36,5 @@ public interface ICustomFieldEntity {
     public CustomFieldValues getCfValuesNullSafe();
     
     public void clearCfValues();
+    
 }

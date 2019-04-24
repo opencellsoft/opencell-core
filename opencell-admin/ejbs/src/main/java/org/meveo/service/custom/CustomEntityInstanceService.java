@@ -1,11 +1,14 @@
 package org.meveo.service.custom;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
+import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.service.base.BusinessService;
 
@@ -38,4 +41,16 @@ public class CustomEntityInstanceService extends BusinessService<CustomEntityIns
 
         return qb.getQuery(getEntityManager()).getResultList();
     }
+
+	public List<CustomEntityInstance> findByCodeByCet(List<CustomFieldValueDto> dtosTo) {
+
+		return getEntityManager()
+				.createNamedQuery("CustomEntityInstance.getCEIByCetCodeAndCod", CustomEntityInstance.class)
+				.setParameter("codes",
+						dtosTo.stream().map(CustomFieldValueDto::getSearchCode).collect(Collectors.toList()))
+				.setParameter("cetCodes",
+						dtosTo.stream().map(CustomFieldValueDto::getSearchClassnameCode).collect(Collectors.toList()))
+				.getResultList();
+
+	}
 }

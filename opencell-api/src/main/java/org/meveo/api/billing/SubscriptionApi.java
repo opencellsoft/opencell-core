@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -71,6 +72,7 @@ import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.Order;
@@ -90,13 +92,16 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.order.OrderService;
+import org.meveo.util.AppliesToValuesCalculator;
 
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
- * @lastModifiedVersion 5.0.1
+ * @author melyoussoufi
+ * @lastModifiedVersion 5.0.7
  */
 @Stateless
 public class SubscriptionApi extends BaseApi {
@@ -917,31 +922,132 @@ public class SubscriptionApi extends BaseApi {
         return list(pagingAndFiltering, CustomFieldInheritanceEnum.getInheritCF(true, merge));
     }
 
+    /**
+     * List subscriptions
+
+     * @param pagingAndFiltering
+     * @param inheritCF
+     * @return
+     * @throws MeveoApiException
+     */
     public SubscriptionsListResponseDto list(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
         PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
-
-        Long totalCount = subscriptionService.count(paginationConfiguration);
-
         SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
-
         result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
-        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+        result.getPaging().setTotalNumberOfRecords(0);
 
-        if (totalCount > 0) {
             List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
             if (subscriptions != null) {
-                for (Subscription subscription : subscriptions) {
-                    result.getSubscriptions().getSubscription().add(subscriptionToDto(subscription, inheritCF));
-                }
-            }
-        }
+            	result.getSubscriptions().setSubscription(loadSubscriptionsDtos(subscriptions, inheritCF));
+            	result.getPaging().setTotalNumberOfRecords(subscriptions.size());
+            } 
 
         return result;
 
     }
 
-    /**
+	/**
+	 * load Subscriptions Dtos
+	 * 
+	 * @param subscriptions
+	 * @param inheritCF
+	 * @return
+	 */
+	private List<SubscriptionDto> loadSubscriptionsDtos(List<Subscription> subscriptions,
+			CustomFieldInheritanceEnum inheritCF) {
+
+		List<SubscriptionDto> res = new ArrayList<SubscriptionDto>(subscriptions.size());
+
+		AppliesToValuesCalculator appliesToValues = new AppliesToValuesCalculator();
+		appliesToValues.calculateSubscriptionsAtvs(subscriptions);
+
+		Map<String, CustomFieldTemplate> allCfts = null;
+		if (appliesToValues.getAllAtvs().size() > 0) {
+			allCfts = entityToDtoConverter.findByAppliesTo(appliesToValues.getAllAtvs());
+		}
+
+		for (Subscription subscription : subscriptions) {
+
+			SubscriptionDto dto = new SubscriptionDto();
+			dto.setCode(subscription.getCode());
+			dto.setDescription(subscription.getDescription());
+			dto.setStatus(subscription.getStatus());
+			dto.setStatusDate(subscription.getStatusDate());
+			dto.setOrderNumber(subscription.getOrderNumber());
+
+			if (subscription.getUserAccount() != null) {
+				dto.setUserAccount(subscription.getUserAccount().getCode());
+			}
+
+			if (subscription.getOffer() != null) {
+				dto.setOfferTemplate(subscription.getOffer().getCode());
+			}
+
+			dto.setSubscriptionDate(subscription.getSubscriptionDate());
+			dto.setTerminationDate(subscription.getTerminationDate());
+			if (subscription.getSubscriptionTerminationReason() != null) {
+				dto.setTerminationReason(subscription.getSubscriptionTerminationReason().getCode());
+			}
+
+			dto.setEndAgreementDate(subscription.getEndAgreementDate());
+			dto.setSubscribedTillDate(subscription.getSubscribedTillDate());
+			dto.setRenewed(subscription.isRenewed());
+			dto.setRenewalNotifiedDate(subscription.getRenewalNotifiedDate());
+			dto.setRenewalRule(new SubscriptionRenewalDto(subscription.getSubscriptionRenewal()));
+
+			if (allCfts != null && allCfts.size() > 0) {
+				
+				List<Access> aps = subscription.getAccessPoints();
+				for (Access ap : aps) {
+					try {
+						CustomFieldsDto apDto = entityToDtoConverter.getAccessCustomFieldsDTO(inheritCF, allCfts, ap);
+						AccessDto accessDto = new AccessDto(ap, apDto);
+						dto.getAccesses().getAccess().add(accessDto);
+					} catch (CustomFieldException e) {
+						log.error(e.getLocalizedMessage(), e);
+					}
+				}
+				
+				try {
+					dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(inheritCF, allCfts, subscription));
+				} catch (CustomFieldException e) {
+					log.error(e.getLocalizedMessage(), e);
+				}
+				
+				try {
+					if (subscription.getServiceInstances() != null) {
+						for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+							CustomFieldsDto customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(inheritCF, allCfts, serviceInstance);
+							ServiceInstanceDto serviceInstanceDto = new ServiceInstanceDto(serviceInstance, customFieldsDTO);
+							dto.getServices().addServiceInstance(serviceInstanceDto);
+						}
+					}
+				} catch (CustomFieldException e) {
+					log.error(e.getLocalizedMessage(), e);
+				}
+				
+				try {
+					if (subscription.getProductInstances() != null) {
+						for (ProductInstance productInstance : subscription.getProductInstances()) {
+							CustomFieldsDto customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(inheritCF, allCfts, productInstance);
+							dto.getProductInstances().add(new ProductInstanceDto(productInstance, customFieldsDTO));
+						}
+					}
+				} catch (CustomFieldException e) {
+					log.error(e.getLocalizedMessage(), e);
+				}
+
+			}
+
+			res.add(dto);
+
+		}
+
+		return res;
+	}
+
+	/**
      * Find subscription by code
      * 
      * @param subscriptionCode code of subscription to find

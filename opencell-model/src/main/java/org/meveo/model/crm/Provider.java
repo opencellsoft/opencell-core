@@ -40,6 +40,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -201,13 +202,24 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "recognize_revenue")
     private boolean recognizeRevenue;
+    
+    @Transient
+    private String cftAppliesTo;
 
     // @Type(type = "json")
     @Convert(converter = CustomFieldValuesConverter.class)
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
-    public String getCode() {
+    public String getCftAppliesTo() {
+		return cftAppliesTo;
+	}
+
+	public void setCftAppliesTo(String cftAppliesTo) {
+		this.cftAppliesTo = cftAppliesTo;
+	}
+
+	public String getCode() {
         return code;
     }
 

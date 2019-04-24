@@ -3,6 +3,9 @@ package org.meveo.model.customEntities;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -22,6 +25,9 @@ import org.meveo.model.ObservableEntity;
 @ExportIdentifier({ "code", "cetCode"})
 @Table(name = "cust_cei", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cet_code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cust_cei_seq"), })
+@NamedQueries({
+    @NamedQuery(name = "CustomEntityInstance.getCEIByCetCodeAndCod", query = "SELECT cei from CustomEntityInstance cei where cei.cetCode in (:cetCodes) or cei.code in (:codes)", hints = {
+            @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class CustomEntityInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 8281478284763353310L;
