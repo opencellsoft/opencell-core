@@ -320,6 +320,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public LazyDataModel<WalletOperation> getWalletOperations(String walletCode) {   	
    	 HashMap<String, Object> filters = new HashMap<String, Object>();
    	 filters.put("wallet.code", walletCode);
+   	 filters.put("wallet.userAccount", entity);
    	 
 		if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
 			log.debug("getWalletOperations {}", walletCode);
