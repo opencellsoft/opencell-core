@@ -177,7 +177,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private Date rtStartDate;
     private Date rtEndDate;
 
-    private Integer invoiceRounding = appProvider != null ? (appProvider.getInvoiceRounding()) : 2;
     private RoundingModeEnum invoiceRoundingMode = appProvider != null ? appProvider.getInvoiceRoundingMode() : RoundingModeEnum.DOWN;
 
     /**
@@ -344,9 +343,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         subCategoryInvoiceAggregates = new ArrayList<SubCategoryInvoiceAgregate>(agregateHandler.getSubCatInvAgregateMap().values());
         categoryInvoiceAggregates = new ArrayList<CategoryInvoiceAgregate>(agregateHandler.getCatInvAgregateMap().values());
 
-        entity.setAmountWithoutTax(round(agregateHandler.getInvoiceAmountWithoutTax(), invoiceRounding, invoiceRoundingMode));
-        entity.setAmountTax(round(agregateHandler.getInvoiceAmountTax(), invoiceRounding, invoiceRoundingMode));
-        entity.setAmountWithTax(round(agregateHandler.getInvoiceAmountWithTax(), invoiceRounding, invoiceRoundingMode));
+        entity.setAmountWithoutTax(round(agregateHandler.getInvoiceAmountWithoutTax(), appProvider.getInvoiceRounding(), invoiceRoundingMode));
+        entity.setAmountTax(round(agregateHandler.getInvoiceAmountTax(), appProvider.getInvoiceRounding(), invoiceRoundingMode));
+        entity.setAmountWithTax(round(agregateHandler.getInvoiceAmountWithTax(), appProvider.getInvoiceRounding(), invoiceRoundingMode));
 
         BigDecimal netToPay = entity.getAmountWithTax();
         if (appProvider != null && !appProvider.isEntreprise() && isIncludeBalance()) {
@@ -354,7 +353,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");
             }
-            netToPay = entity.getAmountWithTax().add(round(balance, invoiceRounding, invoiceRoundingMode));
+            netToPay = entity.getAmountWithTax().add(round(balance, appProvider.getInvoiceRounding(), invoiceRoundingMode));
         }
         entity.setNetToPay(netToPay);
     }
