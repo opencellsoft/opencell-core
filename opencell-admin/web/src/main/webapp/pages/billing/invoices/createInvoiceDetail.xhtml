@@ -29,14 +29,14 @@
 		<c:if test="#{creationInvoiceBean.edit}">
 			<hftl:entityPopup id="billingAccountPopup"
 				header="#{messages['billingAccount']}"
-				updateField=":invoicePopup :formId:tabView:billingAccountSelectedId :formId:tabView:billingAccountSelectedId_text"
+				updateField=":invoicePopup :formId:tabView:billingAccountSelectedId :formId:tabView:billingAccountSelectedId_text :formId:tabView:sellerSelectedId :formId:tabView:sellerSelectedId_text"
 				selection="#{creationInvoiceBean.entity.billingAccount}"
 				backingBean="#{billingAccountBean}"
 				searchField1Label="#{messages['billingAccount.code']}"
 				searchField1="code"
 				column1Label="#{messages['billingAccount.code']}" column1="code"
 				column2Label="#{messages['BusinessEntity.description']}"
-				column2="description">
+				column2="description" selectionListenerBean="#{creationInvoiceBean}" selectionListenerMethod="onBillingAccountSet">
 			</hftl:entityPopup>
 			<hftl:entityPopup id="invoicePopup" header="#{messages['invoice']}"
 				updateField=":formId:tabView:linkedInvoices :formId:tabView:ImportRTs"
@@ -67,7 +67,11 @@
 									label="#{messages['invoice.invoiceType']}"
 									valueLabelField="descriptionOrCode"
 									listBean="#{invoiceTypeBean}" listenerUpdate="invoicePopup :formId:tabView:ImportRTs :formId:tabView:panelAddLinkedInvoice"></hftl:formField>
-
+								<hftl:formField id="sellerSelectedId"
+									label="#{messages['seller']}" field="seller"
+									valueLabelField="code" popup="true"
+									popupId="sellerPopup" required="true"
+									showPopupOnlyOnNew="true" listenerUpdate=":formId:tabView:ImportRTs :formId:tabView:panelAddLinkedInvoice" />
 								<hftl:formField id="billingAccountSelectedId"
 									label="#{messages['billingAccount']}" field="billingAccount"
 									valueLabelField="code" popup="true"
