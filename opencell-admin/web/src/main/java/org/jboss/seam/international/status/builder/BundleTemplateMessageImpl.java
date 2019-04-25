@@ -22,8 +22,8 @@ import javax.faces.application.FacesMessage.Severity;
 import javax.inject.Inject;
 
 import org.jboss.seam.international.status.ApplicationBundles;
-import org.jboss.seam.international.status.Client;
 import org.jboss.seam.international.status.Message;
+import org.meveo.admin.util.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
