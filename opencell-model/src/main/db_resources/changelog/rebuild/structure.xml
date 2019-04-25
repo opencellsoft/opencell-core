@@ -8679,8 +8679,6 @@
         <sql>CREATE INDEX cat_rwt_wallet_template_index ON ${db.schema.adapted}cat_serv_rec_wallet_template(wallet_template_id);</sql>
         <sql>CREATE INDEX cat_su_wallet_template_index ON ${db.schema.adapted}cat_serv_usage_wallet_template(wallet_template_id);</sql>
         <sql>CREATE INDEX cat_ofrt_bp_model_index ON ${db.schema.adapted}cat_offer_template(business_product_model_id);</sql>
-        <sql>CREATE INDEX cat_ofrt_valid_to_index ON ${db.schema.adapted}cat_offer_template(valid_to);</sql>
-        <sql>CREATE INDEX cat_ofrt_valid_from_index ON ${db.schema.adapted}cat_offer_template(valid_from);</sql>
         <sql>CREATE INDEX cat_ofrpt_ofr_template_index ON ${db.schema.adapted}cat_offer_product_template(offer_template_id);</sql>
         <sql>CREATE INDEX cat_ofrpt_pr_template_index ON ${db.schema.adapted}cat_offer_product_template(product_template_id);</sql>
         <sql>CREATE INDEX account_entity_bam_id_index ON ${db.schema.adapted}account_entity(bam_id);</sql>
@@ -8733,6 +8731,10 @@
         <sql>CREATE INDEX billing_service_instance_code_index ON ${db.schema.adapted} billing_service_instance(lower(code));</sql>
         <sql>CREATE INDEX billing_charge_instance_code_index ON ${db.schema.adapted} billing_charge_instance(lower(code));</sql>
         <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(UPPER(code))</sql>
+        <sql>CREATE INDEX cat_ofrt_valid_to_index ON ${db.schema.adapted}cat_offer_template(valid_to nulls first);</sql>
+        <sql>CREATE INDEX cat_ofrt_valid_from_index ON ${db.schema.adapted}cat_offer_template(valid_from nulls first);</sql>
+        <sql>CREATE INDEX cust_cei_cet_code_index ON ${db.schema.adapted}cust_cei((lower(cet_code)));</sql>
+        <sql>CREATE INDEX cust_cei_code_index ON ${db.schema.adapted}cust_cei((lower(code)));</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-998" dbms="mysql">
@@ -8749,6 +8751,10 @@
         <sql>CREATE INDEX billing_service_instance_code_index ON ${db.schema.adapted} billing_service_instance(code);</sql>
         <sql>CREATE INDEX billing_charge_instance_code_index ON ${db.schema.adapted} billing_charge_instance(code);</sql>
         <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(code)</sql>
+        <sql>CREATE INDEX cat_ofrt_valid_to_index ON ${db.schema.adapted}cat_offer_template(valid_to);</sql>
+        <sql>CREATE INDEX cat_ofrt_valid_from_index ON ${db.schema.adapted}cat_offer_template(valid_from);</sql>
+        <sql>CREATE INDEX cust_cei_cet_code_index ON ${db.schema.adapted}cust_cei(cet_code);</sql>
+        <sql>CREATE INDEX cust_cei_code_index ON ${db.schema.adapted}cust_cei(code);</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-func-999" dbms="postgresql">
