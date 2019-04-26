@@ -61,7 +61,8 @@ import org.meveo.model.rating.EDR;
  * @see WalletOperation
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
- * @lastModifiedVersion 7.0
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.1
  */
 @Entity
 @Table(name = "billing_rated_transaction")
@@ -122,10 +123,20 @@ import org.meveo.model.rating.EDR;
                 + " AND r.doNotTriggerInvoicing=false AND r.invoice is null and r.chargeInstance in (:chargeInstances)"
                 + " GROUP BY r.invoiceSubCategory.id"),
 
+        @NamedQuery(name = "RatedTransaction.sumByChargeExcludePrepaidWO", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id  FROM RatedTransaction r "
+                        + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+                        + " AND r.doNotTriggerInvoicing=false AND r.invoice is null and r.chargeInstance in (:chargeInstances) AND r.wallet.id NOT IN (:walletsIds)"
+                        + " GROUP BY r.invoiceSubCategory.id"),
+
         @NamedQuery(name = "RatedTransaction.sumBySubscription", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id  FROM RatedTransaction r "
                 + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " AND r.doNotTriggerInvoicing=false AND r.invoice is null and r.subscription = :subscription"
                 + " GROUP BY r.invoiceSubCategory.id"),
+
+        @NamedQuery(name = "RatedTransaction.sumBySubscriptionExcludePrepaidWO", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id  FROM RatedTransaction r "
+                        + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+                        + " AND r.doNotTriggerInvoicing=false AND r.invoice is null and r.subscription = :subscription AND r.wallet.id NOT IN (:walletsIds)"
+                        + " GROUP BY r.invoiceSubCategory.id"),
 
         @NamedQuery(name = "RatedTransaction.sumByBillingAccountNoSubscription", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.seller.id  FROM RatedTransaction r "
                 + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "

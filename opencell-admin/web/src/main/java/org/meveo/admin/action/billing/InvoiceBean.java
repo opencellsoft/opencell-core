@@ -70,10 +70,10 @@ import org.primefaces.model.LazyDataModel;
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
- * 
+ *
  * @author anasseh
  * @author Khalid HORRI
- * @lastModifiedVersion 5.3
+ * @lastModifiedVersion 7.1
  */
 @Named
 @ViewScoped
@@ -137,7 +137,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     /**
      * Method, that is invoked in billing account screen. This method returns invoices associated with current Billing Account.
-     * 
+     *
      * @param ba Billing account
      * @return Data model of Invoice
      */
@@ -159,7 +159,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     /**
      * Method, that is invoked in billing run screen. This method returns invoices associated with current Billing Run.
-     * 
+     *
      * @param br Billing run
      * @return Data model of invoice
      */
@@ -207,10 +207,12 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return return true if BillingAccounts list is null or empty
      */
     private boolean isNullOrEmpty(Object billingAccounts) {
-        if (billingAccounts == null)
+        if (billingAccounts == null) {
             return true;
-        if (billingAccounts instanceof List && ((List) billingAccounts).isEmpty())
+        }
+        if (billingAccounts instanceof List && ((List) billingAccounts).isEmpty()) {
             return true;
+        }
         return false;
     }
 
@@ -564,7 +566,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     /**
      * Detail invoice adjustments without tax.
-     * 
+     *
      * @return Total of invoice adjustment detail unit amount without tax
      */
     public BigDecimal totalInvoiceAdjustmentDetailUnitAmountWithoutTax() {
@@ -582,7 +584,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     /**
      * Detail invoice adjustments with tax.
-     * 
+     *
      * @return Total of invoice adjustment detail unit amount with tax
      */
     public BigDecimal totalInvoiceAdjustmentDetailUnitAmountWithTax() {
@@ -737,7 +739,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
         return detailedInvoiceAdjustment;
     }
-    
+
     /**
      * Checks if list of selectedEntities is empty to disable or not the exclude button
      *
@@ -796,10 +798,14 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGeneratePdfBtnActive() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
+        }
         String value = ParamBean.getInstance().getProperty("billing.activateGenaratePdfBtn", "true");
         if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
             return Boolean.valueOf(value);
         }
+
         return true;
     }
 
@@ -809,9 +815,24 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGenerateXmlBtnActive() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
+        }
         String value = ParamBean.getInstance().getProperty("billing.activateGenarateXmlBtn", "true");
         if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
             return Boolean.valueOf(value);
+        }
+        return true;
+    }
+
+    /**
+     * Activate/deactivate Send by Email button
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getSendByEmailBtnActive() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
         }
         return true;
     }
@@ -824,6 +845,30 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             messages.error(new BundleKey("messages", "invoice.send.error"));
         }
 
+    }
+
+    /**
+     * Activate/deactivate New aggregated invoice adjustment
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getShowBtnNewIAAggregateds() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Activate/deactivate New detailed invoice adjustment
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getShowBtnNewIADetailed() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
+        }
+        return true;
     }
 
 }

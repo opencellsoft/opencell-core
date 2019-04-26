@@ -76,7 +76,26 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.BillingWalletTypeEnum;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceSequence;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionGroup;
+import org.meveo.model.billing.ReferenceDateEnum;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
@@ -121,7 +140,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author Said Ramli
  * @author Khalid HORRI
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 7.1
  */
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
@@ -201,8 +220,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private EmailSender emailSender;
 
-    @Inject
-    private WalletService walletService;
 
     /**
      * folder for pdf .
@@ -702,14 +719,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
                     }
                     // get prepaid ratedTransaction
-                    List<RatedTransaction> prepaidRatedTx = getPrepaidRatedTransactions(ratedTransactions);
+                    List<RatedTransaction> prepaidRatedTx = ratedTransactionService.filterPrepaidRatedTransactions(ratedTransactions);
                     if (prepaidRatedTx != null && !prepaidRatedTx.isEmpty()) {
                         InvoiceType prePaidInvoiceType = invoiceTypeService.getDefaultPrepaid();
+                        if (prePaidInvoiceType == null) {
+                            throw new BusinessException("Prepaid invoice type is null");
+                        }
                         mapInvTypeRT.put(prePaidInvoiceType, prepaidRatedTx);
-                        ratedTransactions.removeAll(prepaidRatedTx);
+                        List<Long> prePaidRatedTxIds = prepaidRatedTx.stream().map(RatedTransaction::getId).collect(Collectors.toList());
+                        ratedTransactions = ratedTransactions.stream().filter(rt -> !prePaidRatedTxIds.contains(rt.getId())).collect(Collectors.toList());
                     }
-
-                    mapInvTypeRT.put(invoiceType, ratedTransactions);
+                    if (ratedTransactions != null && !ratedTransactions.isEmpty()) {
+                        mapInvTypeRT.put(invoiceType, ratedTransactions);
+                    }
 
                 }
 
@@ -722,7 +744,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     invoice.setSeller(ratedTransactionGroup.getSeller());
                     invoice.setInvoiceType(invoiceType);
                     invoice.setBillingAccount(billingAccount);
-
+                    invoice.getRatedTransactions().addAll(ratedTransactionSelection);
                     if (billingRun != null) {
                         invoice.setBillingRun(em.getReference(BillingRun.class, billingRun.getId()));
                     }
@@ -838,25 +860,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoiceList;
     }
 
-    private List<RatedTransaction> getPrepaidRatedTransactions(List<RatedTransaction> ratedTransactions) {
-        if (ratedTransactions == null || ratedTransactions.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-        return ratedTransactions.stream().filter(ratedTransaction -> {
 
-            if (ratedTransaction.getWallet() == null) {
-                return false;
-            }
-
-            WalletInstance wallet = walletService.refreshOrRetrieve(ratedTransaction.getWallet());
-
-            if (wallet == null || wallet.getWalletTemplate() == null) {
-                return false;
-            }
-            return "PREPAID".equals(wallet.getWalletTemplate().getWalletType());
-
-        }).collect(Collectors.toList());
-    }
 
     /**
      * Check if the WO is from a prepaid wallet
@@ -1681,6 +1685,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public String getInvoiceXml(Invoice invoice) throws BusinessException {
 
+        if (isPrepaidReport(invoice)) {
+            throw new BusinessException("Invoice XML is disabled for prepaid invoice: " + invoice.getInvoiceNumber());
+        }
         String xmlFileName = getFullXmlFilePath(invoice, false);
         File xmlFile = new File(xmlFileName);
         if (!xmlFile.exists()) {
@@ -1774,7 +1781,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public Invoice generateXmlAndPdfInvoice(Invoice invoice, boolean regenerate) throws BusinessException {
-
+        if (isPrepaidReport(invoice)) {
+            return invoice;
+        }
         if (regenerate || invoice.getXmlFilename() == null || !isInvoiceXmlExist(invoice)) {
             produceInvoiceXmlNoUpdate(invoice);
         }
@@ -1884,9 +1893,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public void produceFilesAndAO(boolean produceXml, boolean producePdf, boolean generateAO, Invoice invoice, boolean isDraft)
             throws BusinessException, InvoiceExistException, ImportInvoiceException {
+        if (isPrepaidReport(invoice)) {
+            return;
+        }
         if (produceXml) {
             produceInvoiceXmlNoUpdate(invoice);
         }
+
         if (producePdf) {
             produceInvoicePdfNoUpdate(invoice);
         }
@@ -1934,6 +1947,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         List<Invoice> invoices = this.generateInvoice(billingAccount, generateInvoiceRequestDto, ratedTxFilter, isDraft);
         for (Invoice invoice : invoices) {
+            if (isPrepaidReport(invoice)) {
+                continue;
+            }
             this.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
         }
 
@@ -2450,5 +2466,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
         return result;
+    }
+
+    /**
+     * Check whether the invoice is a prepaid report
+     *
+     * @param invoice The invoice
+     * @return true if the invoice is prepaid report
+     */
+    public Boolean isPrepaidReport(Invoice invoice) {
+        return ratedTransactionService.isPrepaidRatedTransactions(invoice.getRatedTransactions());
     }
 }
