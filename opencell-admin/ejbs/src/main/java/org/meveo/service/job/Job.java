@@ -240,7 +240,23 @@ public abstract class Job {
 
         return null;
     }
-    
+
+    /**
+     * Gets the parameter CF value if found, otherwise return CF value from job definition
+     *
+     * @param jobInstance the job instance
+     * @param cfCode Custom field code
+     * @param defaultValue Default value if no value found
+     * @return Parameter or custom field value
+     */
+    protected Object getParamOrCFValue(JobInstance jobInstance, String cfCode, Object defaultValue) {
+        Object value = getParamOrCFValue(jobInstance, cfCode);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
+    }
+
     /**
      * Gets the parameter CF value if found , otherwise return CF value from customFieldInstanceService
      *

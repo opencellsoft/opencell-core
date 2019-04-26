@@ -133,76 +133,81 @@
 														            <p:column>#{messages['invoice.amountWithTax']}</p:column>
 														        </p:row>
 						                                    	<p:row>
-						                                    		<p:column>#{subCat.amountWithoutTax}</p:column>
-						                                    		<p:column>#{subCat.amountWithTax}</p:column>
-						                                    	</p:row>
+							                                    	<p:column>
+																		<h:outputText value="#{subCat.amountWithoutTax}" styleClass="field-value">
+																			<f:converter converterId="bigDecimal4DigitsConverter" />
+																		</h:outputText>
+																	</p:column>
+																	<p:column>
+																		<h:outputText value="#{subCat.amountWithTax}" styleClass="field-value">
+																			<f:converter converterId="bigDecimal4DigitsConverter" />
+																		</h:outputText>
+																	</p:column>
+																</p:row>
 					                                    	</p:panelGrid>
 					                                    	
-					                                    	<p:dataTable rendered="#{subCat.ratedTransactions.size() != 0}" var="rated" resizableColumns="true" value="#{invoiceBean.getRatedTransactions(subCat.getCode())}" rows="30"
-			                                                	lazy="true" rowKey="#{rated.id}"
-												                paginator="true"
-												                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-												                rowsPerPageTemplate="30">
-			                                                    <p:column headerText="#{messages['ratedTransaction.usageDate']}">
-			                                                        <h:outputText value="#{rated.usageDate}">
-			                                                            <f:convertDateTime pattern="#{datePattern}"/>
-			                                                        </h:outputText>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['subscription.offer']}">
-			                                                        <h:outputText value="#{rated.offerCode}"/>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['walletOperation.chargeInstance']}">
-			                                                    	<ui:repeat value="#{ratedTransactionBean.getWalletOperationCodes(rated.getId())}" var="wo" varStatus="loop">
+															<p:dataTable rendered="#{subCat.ratedTransactions!=null and !subCat.ratedTransactions.isEmpty()}" var="rated" resizableColumns="true" value="#{invoiceBean.getRatedTransactions(subCat)}" rows="30" lazy="true" rowKey="#{rated.id}" paginator="true"
+																paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="30">
+																<p:column headerText="#{messages['ratedTransaction.usageDate']}">
+																	<h:outputText value="#{rated.usageDate}">
+																		<f:convertDateTime pattern="#{datePattern}" />
+																	</h:outputText>
+																</p:column>
+																<p:column headerText="#{messages['subscription.offer']}">
+																	<h:outputText value="#{rated.offerCode}" />
+																</p:column>
+																<p:column headerText="#{messages['walletOperation.chargeInstance']}">
+																	<ui:repeat value="#{ratedTransactionBean.getWalletOperationCodes(rated.getId())}" var="wo" varStatus="loop">
 																	    #{wo}#{not loop.last ? ', ' : ''}
 																	</ui:repeat>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['billingRun.panel']}">
-			                                                        <h:outputText value="#{rated.billingRun.id}"/>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['pricePlan.panel']}">
-			                                                        <h:outputText value="#{rated.priceplan.code}"/>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['pricePlanMatrix.amountWithoutTax']}">
-			                                                        <h:outputText value="#{rated.amountWithoutTax}" converter="bigDecimal4DigitsConverter"/>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['walletOperation.amountTax']}">
-			                                                        <h:outputText value="#{rated.amountTax}" converter="bigDecimal4DigitsConverter"/>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}">
-			                                                        <h:outputText value="#{rated.amountWithTax}" converter="bigDecimal4DigitsConverter"/>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['serviceInstance.quantity']}" width="50">
-			                                                        <h:outputText value="#{rated.quantity}" converter="bigDecimal4DigitsConverter"/>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['ratedTransaction.param1']}">
-			                                                        <h:outputText value="#{rated.parameter1}"/>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['ratedTransaction.param2']}">
-			                                                        <h:outputText value="#{rated.parameter2}"/>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['ratedTransaction.param3']}">
-			                                                        <h:outputText value="#{rated.parameter3}"/>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['ratedTransaction.startDate']}">
-			                                                        <h:outputText value="#{rated.startDate}">
-			                                                            <f:convertDateTime pattern="#{datePattern}"/>
-			                                                        </h:outputText>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['ratedTransaction.endDate']}">
-			                                                        <h:outputText value="#{rated.endDate}">
-			                                                            <f:convertDateTime pattern="#{datePattern}"/>
-			                                                        </h:outputText>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['order.number']}">
-			                                                        <h:outputText value="#{rated.orderNumber}"/>
-			                                                    </p:column>
-			                                                    <p:column headerText="#{messages['ratedTransaction.status']}">
-			                                                        <h:outputText value="#{rated.status}"/>
-			                                                    </p:column>
-		                                                    </p:dataTable>
-			                                                    
-		                                                </p:tab>
-		                        					</p:accordionPanel>
+																</p:column>
+																<p:column headerText="#{messages['billingRun.panel']}">
+																	<h:outputText value="#{rated.billingRun.id}" />
+																</p:column>
+																<p:column headerText="#{messages['pricePlan.panel']}">
+																	<h:outputText value="#{rated.priceplan.code}" />
+																</p:column>
+																<p:column headerText="#{messages['pricePlanMatrix.amountWithoutTax']}">
+																	<h:outputText value="#{rated.amountWithoutTax}" converter="bigDecimal4DigitsConverter" />
+																</p:column>
+																<p:column headerText="#{messages['walletOperation.amountTax']}">
+																	<h:outputText value="#{rated.amountTax}" converter="bigDecimal4DigitsConverter" />
+																</p:column>
+																<p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}">
+																	<h:outputText value="#{rated.amountWithTax}" converter="bigDecimal4DigitsConverter" />
+																</p:column>
+																<p:column headerText="#{messages['serviceInstance.quantity']}" width="50">
+																	<h:outputText value="#{rated.quantity}" converter="bigDecimal4DigitsConverter" />
+																</p:column>
+																<p:column headerText="#{messages['ratedTransaction.param1']}">
+																	<h:outputText value="#{rated.parameter1}" />
+																</p:column>
+																<p:column headerText="#{messages['ratedTransaction.param2']}">
+																	<h:outputText value="#{rated.parameter2}" />
+																</p:column>
+																<p:column headerText="#{messages['ratedTransaction.param3']}">
+																	<h:outputText value="#{rated.parameter3}" />
+																</p:column>
+																<p:column headerText="#{messages['ratedTransaction.startDate']}">
+																	<h:outputText value="#{rated.startDate}">
+																		<f:convertDateTime pattern="#{datePattern}" />
+																	</h:outputText>
+																</p:column>
+																<p:column headerText="#{messages['ratedTransaction.endDate']}">
+																	<h:outputText value="#{rated.endDate}">
+																		<f:convertDateTime pattern="#{datePattern}" />
+																	</h:outputText>
+																</p:column>
+																<p:column headerText="#{messages['order.number']}">
+																	<h:outputText value="#{rated.orderNumber}" />
+																</p:column>
+																<p:column headerText="#{messages['ratedTransaction.status']}">
+																	<h:outputText value="#{rated.status}" />
+																</p:column>
+															</p:dataTable>
+
+													</p:tab>
+		                        				</p:accordionPanel>
 		                        			</p:column>
 		                        		</p:row>
 		                        	</p:repeat>

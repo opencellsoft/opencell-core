@@ -74,6 +74,7 @@ import org.omnifaces.cdi.Param;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -133,8 +134,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     private Boolean xmlGenerated;
 
-    private LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories;
-
     private Map<String, LazyDataModelWSize<RatedTransaction>> ratedTransactionsDM = new HashMap<>();
 
     private List<InvoiceCategoryDTO> categoryDTOs;
@@ -148,10 +147,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     @Override
     public Invoice initEntity() {
-    	entity = super.initEntity();
-    	if(categoryDTOs == null) {
-    		categoryDTOs = initInvoiceCategories();
-    	}
+        entity = super.initEntity();
+        if (categoryDTOs == null) {
+            categoryDTOs = initInvoiceCategories();
+        }
 
         return entity;
     }
@@ -251,11 +250,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public List<InvoiceCategoryDTO> getInvoiceCategories() {
-    	return categoryDTOs;
+        return categoryDTOs;
     }
 
     public ArrayList<InvoiceCategoryDTO> initInvoiceCategories() {
-        entity = invoiceService.refreshOrRetrieve(entity);
         LinkedHashMap<String, InvoiceCategoryDTO> headerCategories = new LinkedHashMap<String, InvoiceCategoryDTO>();
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
         for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
@@ -291,7 +289,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             }
 
             Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
-            headerSubCategories = headerCat.getInvoiceSubCategoryDTOMap();
+            LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = headerCat.getInvoiceSubCategoryDTOMap();
             for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
                 InvoiceSubCategory invoiceSubCategory = subCatInvoiceAgregate.getInvoiceSubCategory();
                 InvoiceSubCategoryDTO headerSubCat = null;
@@ -764,7 +762,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
         return detailedInvoiceAdjustment;
     }
-    
+
     /**
      * Checks if list of selectedEntities is empty to disable or not the exclude button
      *
@@ -871,38 +869,30 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     }
 
-	public LazyDataModelWSize<RatedTransaction> getRatedTransactions(String invoiceSubCategoryCode) {
-		LazyDataModelWSize<RatedTransaction> lazyRatedTransactions = ratedTransactionsDM.get(invoiceSubCategoryCode);
-		if (lazyRatedTransactions != null) {
-			return lazyRatedTransactions;
-		}
+    public LazyDataModelWSize<RatedTransaction> getRatedTransactions(InvoiceSubCategoryDTO invoiceSubCategoryDTO) {
+        LazyDataModelWSize<RatedTransaction> lazyRatedTransactions = ratedTransactionsDM.get(invoiceSubCategoryDTO.getCode());
+        if (lazyRatedTransactions != null) {
+            return lazyRatedTransactions;
+        }
 
-		InvoiceSubCategoryDTO invoiceSubCategoryDTO = headerSubCategories.get(invoiceSubCategoryCode);
+        LazyDataModelWSize<RatedTransaction> lazyDataModelWSize = new LazyDataModelWSize<RatedTransaction>() {
+            private static final long serialVersionUID = 1L;
 
-		if (invoiceSubCategoryDTO == null) {
-			return new LazyDataModelWSize<>();
-		}
+            @Override
+            public List<RatedTransaction> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
 
-		LazyDataModelWSize<RatedTransaction> lazyDataModelWSize = new LazyDataModelWSize<RatedTransaction>() {
-			private static final long serialVersionUID = 1L;
+                List<RatedTransaction> entities = invoiceSubCategoryDTO.getRatedTransactions();
 
-			@Override
-			public List<RatedTransaction> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-					Map<String, Object> loadingFilters) {
+                setRowCount(entities.size());
 
-				List<RatedTransaction> entities = invoiceSubCategoryDTO.getRatedTransactions();
+                return invoiceSubCategoryDTO.getRatedTransactions().subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
+            }
+        };
 
-				setRowCount(entities.size());
+        ratedTransactionsDM.put(invoiceSubCategoryDTO.getCode(), lazyDataModelWSize);
 
-				return invoiceSubCategoryDTO.getRatedTransactions().subList(first,
-						(first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
-			}
-		};
-
-		ratedTransactionsDM.put(invoiceSubCategoryCode, lazyDataModelWSize);
-
-		return lazyDataModelWSize;
-	}
+        return lazyDataModelWSize;
+    }
 
     /**
      * Activate/deactivate New aggregated invoice adjustment
@@ -927,5 +917,4 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         }
         return true;
     }
-
 }

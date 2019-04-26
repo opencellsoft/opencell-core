@@ -87,10 +87,10 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         }
 
         StringBuilder reportDir = new StringBuilder(ParamBean.getInstance().getChrootDir(appProvider.getCode()));
-        reportDir.append(File.separator + ReportExtractScript.REPORTS_DIR);
-
-        if (!StringUtils.isBlank(entity.getCategory())) {
-            reportDir.append(File.separator + entity.getCategory());
+        if(!StringUtils.isBlank(entity.getOutputDir())) {
+            reportDir.append(File.separator + entity.getOutputDir());
+        } else {
+            reportDir.append(File.separator + ReportExtractScript.REPORTS_DIR);
         }
 
         String filename = DateUtils.evaluteDateFormat(entity.getFilenameFormat());

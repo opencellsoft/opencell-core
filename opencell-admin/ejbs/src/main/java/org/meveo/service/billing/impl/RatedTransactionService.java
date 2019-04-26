@@ -418,9 +418,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 Tax tax = null;
 
                 //use Tax selected at rating
-                if ((scAggregate.getTaxPercent() != null)) {
-                    tax = scAggregate.getTax();
-                }
+                // TODO: breaks the tax calculation at line 436.
+//                if ((scAggregate.getTaxPercent() != null) ) {
+//            		tax= scAggregate.getTax();
+//                }
 
                 // If there is a taxScript in invoiceSubCategory and script is applicable, use it to compute external taxes
                 if (calculateExternalTax && (invoiceSubCategory.getTaxScript() != null)) {
@@ -990,13 +991,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
-        walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
 
         if (!isVirtual) {
             create(ratedTransaction);
+        }
+        walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
+        walletOperation.setRatedTransaction(ratedTransaction);
+
+        if (!isVirtual) {
             walletOperationService.updateNoCheck(walletOperation);
         }
-        walletOperation.setRatedTransaction(ratedTransaction);
+
         return ratedTransaction;
     }
 
@@ -1216,6 +1221,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public List<RatedTransaction> listByInvoice(Invoice invoice) {
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "r");
         qb.addCriterionEntity("invoice", invoice);
+        qb.addOrderCriterion("id", true);
 
         try {
             return qb.getQuery(getEntityManager()).getResultList();
@@ -1362,7 +1368,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if ((invoicingThreshold == null) && (billingRun.getBillingCycle() != null)) {
                 invoicingThreshold = billingRun.getBillingCycle().getInvoicingThreshold();
             }
-
 
             if (invoicingThreshold != null) {
                 if (invoicingThreshold.compareTo(invoiceAmount) > 0) {

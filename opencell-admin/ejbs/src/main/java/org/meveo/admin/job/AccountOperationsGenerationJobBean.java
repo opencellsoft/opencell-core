@@ -48,38 +48,36 @@ public class AccountOperationsGenerationJobBean extends BaseJobBean {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-    
+
     /** The script instance service. */
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        try {
 
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+
+        try {
             boolean excludeInvoicesWithoutAmount = jobInstance.getExcludeInvoicesWithoutAmount() == null ? false : jobInstance.getExcludeInvoicesWithoutAmount();
             List<Long> ids = invoiceService.queryInvoiceIdsWithNoAccountOperation(null, excludeInvoicesWithoutAmount);
             log.debug("invoices to traite:" + (ids == null ? null : ids.size()));
 
-            Long nbRuns = new Long(1);
-            Long waitingMillis = new Long(0);
             String scriptInstanceCode = null;
             Map<String, Object> context = new HashMap<String, Object>();
             try {
-                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
-                if (nbRuns == -1) {
-                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
-                }
+
                 scriptInstanceCode = (String) this.getParamOrCFValue(jobInstance, "scriptInstanceCode");
                 if (this.getParamOrCFValue(jobInstance, "scriptInstanceVariables") != null) {
                     context = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "scriptInstanceVariables");
                 }
             } catch (Exception e) {
-                nbRuns = new Long(1);
-                waitingMillis = new Long(0);
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
             }
             List<Future<String>> futures = new ArrayList<Future<String>>();
@@ -91,7 +89,7 @@ public class AccountOperationsGenerationJobBean extends BaseJobBean {
                 script = scriptInstanceService.getScriptInstance(scriptInstanceCode);
                 script.init(context);
             }
-            
+
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
                 futures.add(accOpGenerationAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser, script));
