@@ -501,27 +501,79 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             remove(InvoiceAgregate.class, invoiceAgregate);
         }
         getEntityManager().flush();
+        
+		// deleting SubCategoryInvoiceAgregate
+		this.cleanSubCategoryInvoiceAgregateByBR(billingRun);
 
-        Query queryForDeletion = getEntityManager().createQuery("delete from " + SubCategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
-        queryForDeletion.setParameter("billingRun", billingRun);
-        queryForDeletion.executeUpdate();
+		// deleting CategoryInvoiceAgregate
+		this.cleanCategoryInvoiceAgregateByBR(billingRun);
 
-        queryForDeletion = getEntityManager().createQuery("delete from " + CategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
-        queryForDeletion.setParameter("billingRun", billingRun);
-        queryForDeletion.executeUpdate();
+		// deleting TaxInvoiceAgregate
+		this.cleanTaxInvoiceAgregateByBR(billingRun);
 
-        queryForDeletion = getEntityManager().createQuery("delete from " + TaxInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
-        queryForDeletion.setParameter("billingRun", billingRun);
-        queryForDeletion.executeUpdate();
-
-        queryForDeletion = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
-        queryForDeletion.setParameter("billingRun", billingRun);
-        queryForDeletion.executeUpdate();
+		// deleting Invoice
+		this.cleanInvoiceByBR(billingRun);
 
         Query queryBA = getEntityManager().createQuery("update " + BillingAccount.class.getName() + " set billingRun=null where billingRun=:billingRun");
         queryBA.setParameter("billingRun", billingRun);
         queryBA.executeUpdate();
     }
+    
+	private void cleanInvoiceByBR(BillingRun billingRun) {
+		Query queryInvoice = getEntityManager()
+				.createQuery(new StringBuilder("update RatedTransaction rt set rt.invoice = null ").append(
+						" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoice.billingRun=:billingRun ) ")
+						.toString());
+		queryInvoice.setParameter("billingRun", billingRun);
+		queryInvoice.executeUpdate();
+
+		Query queryForDeletion = getEntityManager()
+				.createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
+		queryForDeletion.setParameter("billingRun", billingRun);
+		queryForDeletion.executeUpdate();
+	}
+
+	private void cleanTaxInvoiceAgregateByBR(BillingRun billingRun) {
+		Query queryTaxInv = getEntityManager()
+				.createQuery(new StringBuilder("update RatedTransaction rt set rt.invoiceAgregateT = null ").append(
+						" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoiceAgregateT.billingRun=:billingRun ) ")
+						.toString());
+		queryTaxInv.setParameter("billingRun", billingRun);
+		queryTaxInv.executeUpdate();
+
+		Query queryForDeletion = getEntityManager()
+				.createQuery("delete from " + TaxInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+		queryForDeletion.setParameter("billingRun", billingRun);
+		queryForDeletion.executeUpdate();
+	}
+
+	private void cleanCategoryInvoiceAgregateByBR(BillingRun billingRun) {
+		Query queryCatInv = getEntityManager()
+				.createQuery(new StringBuilder("update RatedTransaction rt set rt.invoiceAgregateR = null ").append(
+						" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoiceAgregateR.billingRun=:billingRun ) ")
+						.toString());
+		queryCatInv.setParameter("billingRun", billingRun);
+		queryCatInv.executeUpdate();
+
+		Query queryForDeletion = getEntityManager().createQuery(
+				"delete from " + CategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+		queryForDeletion.setParameter("billingRun", billingRun);
+		queryForDeletion.executeUpdate();
+	}
+
+	private void cleanSubCategoryInvoiceAgregateByBR(BillingRun billingRun) {
+		Query querySubCat = getEntityManager()
+				.createQuery(new StringBuilder("update RatedTransaction rt set rt.invoiceAgregateF = null ").append(
+						" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoiceAgregateF.billingRun=:billingRun ) ")
+						.toString());
+		querySubCat.setParameter("billingRun", billingRun);
+		querySubCat.executeUpdate();
+
+		Query queryForDeletion = getEntityManager().createQuery(
+				"delete from " + SubCategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+		queryForDeletion.setParameter("billingRun", billingRun);
+		queryForDeletion.executeUpdate();
+	}
 
     /**
      * Checks if is active billing runs exist.
