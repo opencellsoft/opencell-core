@@ -45,7 +45,7 @@ import java.util.Map;
  */
 public abstract class Job {
 
-    public static String CFT_PREFIX = "JOB";
+    public static String CFT_PREFIX = "JobInstance";
 
     @Resource
     protected TimerService timerService;

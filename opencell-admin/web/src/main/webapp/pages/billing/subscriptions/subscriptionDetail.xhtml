@@ -632,7 +632,8 @@
                                     </c:if>
 
 									<hftl:customFields backingBean="#{subscriptionBean}" messagesId=":subscriptionTab:subscriptionFormId:messages" />
-									<hftl:displayWorkflowsHistory entity="#{subscriptionBean.entity}" />
+									<!-- <hftl:displayWorkflowsHistory entity="#{subscriptionBean.entity}" /> -->
+									<hftl:displayGenericWFsHistory backingBean="#{subscriptionBean}" />
 
 								</p:tabView>
 								<ui:param name="buttons" value="true" />

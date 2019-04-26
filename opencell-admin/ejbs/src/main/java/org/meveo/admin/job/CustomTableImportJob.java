@@ -37,8 +37,8 @@ import org.meveo.service.job.Job;
  * Import data to custom tables
  * 
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
- * 
  */
 @Stateless
 public class CustomTableImportJob extends Job {
@@ -213,7 +213,7 @@ public class CustomTableImportJob extends Job {
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("nbRuns");
-        nbRuns.setAppliesTo("JOB_CustomTableImportJob");
+        nbRuns.setAppliesTo("JobInstance_CustomTableImportJob");
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -223,7 +223,7 @@ public class CustomTableImportJob extends Job {
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
         waitingMillis.setCode("waitingMillis");
-        waitingMillis.setAppliesTo("JOB_CustomTableImportJob");
+        waitingMillis.setAppliesTo("JobInstance_CustomTableImportJob");
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);

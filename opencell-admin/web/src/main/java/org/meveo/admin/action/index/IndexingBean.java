@@ -36,6 +36,9 @@ public class IndexingBean implements Serializable {
 
     private Future<ReindexingStatistics> reindexingFuture;
 
+    /**
+     * Drop and recreate index and reindex data of current provider
+     */
     public void cleanAndReindex() {
         reindexingFuture = null;
 
@@ -45,7 +48,28 @@ public class IndexingBean implements Serializable {
         }
 
         try {
-            reindexingFuture = elasticClient.cleanAndReindex(currentUser.unProxy());
+            reindexingFuture = elasticClient.cleanAndReindex(currentUser.unProxy(), true);
+            messages.info(new BundleKey("messages", "indexing.started"));
+
+        } catch (Exception e) {
+            log.error("Failed to initiate Elastic Search cleanup and population", e);
+            messages.info(new BundleKey("messages", "indexing.startFailed"), e.getMessage());
+        }
+    }
+
+    /**
+     * Drop and recreate index and reindex data of all providers
+     */
+    public void cleanAndReindexAll() {
+        reindexingFuture = null;
+
+        if (!elasticClient.isEnabled()) {
+            messages.error(new BundleKey("messages", "indexing.notEnabled"));
+            return;
+        }
+
+        try {
+            reindexingFuture = elasticClient.cleanAndReindexAll(currentUser.unProxy(), true);
             messages.info(new BundleKey("messages", "indexing.started"));
 
         } catch (Exception e) {

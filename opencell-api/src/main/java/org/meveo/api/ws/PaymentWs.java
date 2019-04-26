@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.ws.rs.QueryParam;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CreditCategoryDto;
@@ -25,6 +26,7 @@ import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
@@ -537,6 +539,15 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public ActionStatus updatePaymentScheduleInstance(@WebParam(name = "paymentScheduleInstanceDto") PaymentScheduleInstanceDto paymentScheduleInstanceDto);
+    
+    /**
+     * Find  PaymentScheduleInstance by ID
+     * 
+     * @param id PaymentScheduleInstance ID
+     * @return A paymentScheduleInstance dto
+     */
+    @WebMethod
+    public PaymentScheduleInstanceResponseDto findPaymentScheduleInstance(@WebParam(name = "paymentScheduleInstanceId") Long id);
     
     /**
      * List payment PaymentScheduleInstance matching a given criteria

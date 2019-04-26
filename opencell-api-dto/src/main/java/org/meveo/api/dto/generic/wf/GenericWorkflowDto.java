@@ -46,6 +46,9 @@ public class GenericWorkflowDto extends EnableBusinessDto {
     @XmlElement(required = true)
     private String targetEntityClass;
 
+    /** The target custom entity template code. */
+    private String targetCetCode;
+
     /** The init status. */
     @XmlElement(required = true)
     private String initStatus;
@@ -78,6 +81,7 @@ public class GenericWorkflowDto extends EnableBusinessDto {
         super(genericWorkflow);
 
         this.targetEntityClass = genericWorkflow.getTargetEntityClass();
+        this.targetCetCode = genericWorkflow.getTargetCetCode();
         this.enableHistory = genericWorkflow.isEnableHistory();
         this.initStatus = genericWorkflow.getInitStatus();
         this.transitions = new ArrayList<>();
@@ -98,6 +102,14 @@ public class GenericWorkflowDto extends EnableBusinessDto {
 
     public void setTargetEntityClass(String targetEntityClass) {
         this.targetEntityClass = targetEntityClass;
+    }
+
+    public String getTargetCetCode() {
+        return targetCetCode;
+    }
+
+    public void setTargetCetCode(String targetCetCode) {
+        this.targetCetCode = targetCetCode;
     }
 
     public String getInitStatus() {

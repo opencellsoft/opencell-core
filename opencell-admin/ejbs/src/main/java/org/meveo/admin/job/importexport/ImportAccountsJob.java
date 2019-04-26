@@ -1,5 +1,17 @@
 package org.meveo.admin.job.importexport;
 
+import org.meveo.admin.async.ImportAccountsAsync;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.job.Job;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,24 +19,10 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
-import org.meveo.admin.async.ImportAccountsAsync;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.ResourceBundle;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.jobs.JobCategoryEnum;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.job.Job;
-
 /**
  * @author phung
- *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class ImportAccountsJob extends Job {
@@ -95,7 +93,7 @@ public class ImportAccountsJob extends Job {
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("nbRuns");
-        customFieldNbRuns.setAppliesTo("JOB_ImportAccountsJob");
+        customFieldNbRuns.setAppliesTo("JobInstance_ImportAccountsJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -105,7 +103,7 @@ public class ImportAccountsJob extends Job {
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("waitingMillis");
-        customFieldNbWaiting.setAppliesTo("JOB_ImportAccountsJob");
+        customFieldNbWaiting.setAppliesTo("JobInstance_ImportAccountsJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);

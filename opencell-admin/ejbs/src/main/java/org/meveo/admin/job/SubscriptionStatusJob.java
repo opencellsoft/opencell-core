@@ -93,7 +93,7 @@ public class SubscriptionStatusJob extends Job {
 
         CustomFieldTemplate untilDate = new CustomFieldTemplate();
         untilDate.setCode("untilDate");
-        untilDate.setAppliesTo("JOB_SubscriptionStatusJob");
+        untilDate.setAppliesTo("JobInstance_SubscriptionStatusJob");
         untilDate.setActive(true);
         untilDate.setDescription(resourceMessages.getString("jobExecution.subscriptionUntilDate"));
         untilDate.setFieldType(CustomFieldTypeEnum.DATE);

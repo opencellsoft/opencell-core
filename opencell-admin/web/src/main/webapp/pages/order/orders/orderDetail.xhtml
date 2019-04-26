@@ -642,7 +642,8 @@
                     </h:panelGroup>
                 </p:tab>
                 <hftl:customFields prefix="order" backingBean="#{orderBean}" messagesId=":orderForm:messages" />
-                <hftl:displayWorkflowsHistory entity="#{orderBean.entity}" />
+                <!-- <hftl:displayWorkflowsHistory entity="#{orderBean.entity}" /> -->
+                <hftl:displayGenericWFsHistory backingBean="#{orderBean}" />
             </p:tabView>
 
             <ui:param name="buttons" value="true" />

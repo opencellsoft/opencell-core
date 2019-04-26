@@ -579,19 +579,19 @@
 							</p:accordionPanel>
 							<p:accordionPanel activeIndex="null" dynamic="true" cache="false">
 								<p:ajax event="tabChange"
-									listener="#{configIssuesReportingBean.jasperFilesNotFound}" />
+									listener="#{configIssuesReportingBean.getJasperFilesNotFound}" />
 								<p:tab>
 									<f:facet name="title">
 										<h:outputText
 											value="#{messages['configIssuesReporting.jasperFiles']} : " />
 										<h:outputText
-											value="#{configIssuesReportingBean.reportConfigDto.nbrJasperDir}"
+											value="#{configIssuesReportingBean.nbrJasperDir}"
 											style="color:#3FCA21"
-											rendered="#{configIssuesReportingBean.reportConfigDto.nbrJasperDir==0}" />
+											rendered="#{configIssuesReportingBean.nbrJasperDir==0}" />
 										<h:outputText
-											value="#{configIssuesReportingBean.reportConfigDto.nbrJasperDir}"
+											value="#{configIssuesReportingBean.nbrJasperDir}"
 											style="color:red"
-											rendered="#{configIssuesReportingBean.reportConfigDto.nbrJasperDir!=0}" />
+											rendered="#{configIssuesReportingBean.nbrJasperDir!=0}" />
 									</f:facet>
 									<p:dataTable var="jasper"
 										value="#{configIssuesReportingBean.jaspers}"
@@ -879,6 +879,8 @@
 								</p:tab>
 							</p:accordionPanel>
 							<p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+							<p:ajax event="tabChange"
+									listener="#{configIssuesReportingBean.constructWalletOperation}" />
 								<p:tab
 									title="#{messages['configIssuesReporting.walletOperationStatus']}">
 									<h:panelGrid columns="4">
@@ -907,11 +909,17 @@
 												value="#{messages['walletOperationStatus.treated']} :" />
 											<h:outputText
 												value="#{configIssuesReportingBean.reportConfigDto.nbrWalletOpTreated}" />
+											<h:outputLabel
+												value="#{messages['walletOperationStatus.scheduled']} :" />
+											<h:outputText
+												value="#{configIssuesReportingBean.reportConfigDto.nbrWalletOpScheduled}" />	
 										</hftl:panelGroup>
 									</h:panelGrid>
 								</p:tab>
 							</p:accordionPanel>
 							<p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+							<p:ajax event="tabChange"
+									listener="#{configIssuesReportingBean.constructEdr}" />
 								<p:tab title="#{messages['configIssuesReporting.edrStatus']}">
 									<h:panelGrid>
 										<hftl:panelGroup columns="4">
@@ -924,6 +932,12 @@
 											<h:outputLabel value="#{messages['edrStatus.rated']} :" />
 											<h:outputText
 												value="#{configIssuesReportingBean.reportConfigDto.nbrEdrRated}" />
+												<h:outputLabel value="#{messages['edrStatus.aggregated']} :" />
+											<h:outputText
+												value="#{configIssuesReportingBean.reportConfigDto.nbrEdrAggregated}" />
+												<h:outputLabel value="#{messages['edrStatus.mediating']} :" />
+											<h:outputText
+												value="#{configIssuesReportingBean.reportConfigDto.nbrEdrMediating}" />
 										</hftl:panelGroup>
 									</h:panelGrid>
 								</p:tab>

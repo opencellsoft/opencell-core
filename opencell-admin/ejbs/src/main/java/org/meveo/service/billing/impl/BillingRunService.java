@@ -48,6 +48,7 @@ import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSequence;
@@ -56,6 +57,8 @@ import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RejectedBillingAccount;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -425,7 +428,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @throws BusinessException the business exception
      */
     public void cancel(BillingRun billingRun) throws BusinessException {
-        billingRun.setStatus(BillingRunStatusEnum.CANCELLED);
+        billingRun.setStatus(BillingRunStatusEnum.CANCELED);
         update(billingRun);
     }
 
@@ -499,9 +502,21 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
         getEntityManager().flush();
 
-        Query queryInvoices = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
-        queryInvoices.setParameter("billingRun", billingRun);
-        queryInvoices.executeUpdate();
+        Query queryForDeletion = getEntityManager().createQuery("delete from " + SubCategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+        queryForDeletion.setParameter("billingRun", billingRun);
+        queryForDeletion.executeUpdate();
+        
+        queryForDeletion = getEntityManager().createQuery("delete from " + CategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+        queryForDeletion.setParameter("billingRun", billingRun);
+        queryForDeletion.executeUpdate();
+        
+        queryForDeletion = getEntityManager().createQuery("delete from " + TaxInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+        queryForDeletion.setParameter("billingRun", billingRun);
+        queryForDeletion.executeUpdate();
+        
+        queryForDeletion = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
+        queryForDeletion.setParameter("billingRun", billingRun);
+        queryForDeletion.executeUpdate();
 
         Query queryBA = getEntityManager().createQuery("update " + BillingAccount.class.getName() + " set billingRun=null where billingRun=:billingRun");
         queryBA.setParameter("billingRun", billingRun);
@@ -942,7 +957,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             break;
 
         case VALIDATED:
-        case CANCELLED:
+        case CANCELED:
         case NEW:
         default:
             throw new BusinessException("BillingRun with status " + billingRun.getStatus() + " cannot be validated");

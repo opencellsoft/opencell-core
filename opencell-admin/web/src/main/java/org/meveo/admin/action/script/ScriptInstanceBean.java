@@ -210,7 +210,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 
     @ActionMethod
     public String execute() {
-        logMessages = scriptInstanceService.test(entity.getCode(), null);
+        logMessages = scriptInstanceService.test(entity, null);
         messages.info(new BundleKey("messages", "message.scriptInstance.executed"));
         return null;
     }

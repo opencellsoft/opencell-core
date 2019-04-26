@@ -18,6 +18,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class BillingRunJob create a BillingRun for the given BillingCycle, lastTransactionDate,invoiceDate. 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class BillingRunJob extends Job {
@@ -48,7 +50,7 @@ public class BillingRunJob extends Job {
 
         CustomFieldTemplate lastTransactionDate = new CustomFieldTemplate();
         lastTransactionDate.setCode("BillingRunJob_lastTransactionDate");
-        lastTransactionDate.setAppliesTo("JOB_BillingRunJob");
+        lastTransactionDate.setAppliesTo("JobInstance_BillingRunJob");
         lastTransactionDate.setActive(true);
         lastTransactionDate.setDescription("last transaction date");
         lastTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
@@ -57,7 +59,7 @@ public class BillingRunJob extends Job {
 
         CustomFieldTemplate invoiceDate = new CustomFieldTemplate();
         invoiceDate.setCode("BillingRunJob_invoiceDate");
-        invoiceDate.setAppliesTo("JOB_BillingRunJob");
+        invoiceDate.setAppliesTo("JobInstance_BillingRunJob");
         invoiceDate.setActive(true);
         invoiceDate.setDescription("invoice date");
         invoiceDate.setFieldType(CustomFieldTypeEnum.DATE);
@@ -66,7 +68,7 @@ public class BillingRunJob extends Job {
 
         CustomFieldTemplate billingCycle = new CustomFieldTemplate();
         billingCycle.setCode("BillingRunJob_billingCycle");
-        billingCycle.setAppliesTo("JOB_BillingRunJob");
+        billingCycle.setAppliesTo("JobInstance_BillingRunJob");
         billingCycle.setActive(true);
         billingCycle.setDescription("billing cycle");
         billingCycle.setFieldType(CustomFieldTypeEnum.STRING);

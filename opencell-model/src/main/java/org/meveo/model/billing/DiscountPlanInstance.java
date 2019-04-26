@@ -25,12 +25,13 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  * date per BA.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.3
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
 @Table(name = "billing_discount_plan_instance")
-@CustomFieldEntity(cftCodePrefix = "DISCOUNT_PLAN_INSTANCE", inheritCFValuesFrom = { "discountPlan" })
+@CustomFieldEntity(cftCodePrefix = "DiscountPlanInstance", inheritCFValuesFrom = { "discountPlan" })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "billing_discount_plan_instance_seq"), })
 public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEntity {

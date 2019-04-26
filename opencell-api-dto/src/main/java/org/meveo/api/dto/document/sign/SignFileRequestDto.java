@@ -20,6 +20,9 @@ public class SignFileRequestDto  extends BaseEntityDto {
     
     /** The file path. */
     private String filePath;
+
+    /** The File order */
+    private int position;
     
     /** The internal position. */
     @Deprecated
@@ -190,4 +193,11 @@ public class SignFileRequestDto  extends BaseEntityDto {
         this.listExternalPositions = listExternalPositions;
     }
 
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 }

@@ -28,7 +28,8 @@ import org.meveo.service.script.Script;
  * The Class ScriptingJob execute the given script.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class ScriptingJob extends Job {
@@ -74,7 +75,7 @@ public class ScriptingJob extends Job {
 
         CustomFieldTemplate scriptCF = new CustomFieldTemplate();
         scriptCF.setCode("ScriptingJob_script");
-        scriptCF.setAppliesTo("JOB_ScriptingJob");
+        scriptCF.setAppliesTo("JobInstance_ScriptingJob");
         scriptCF.setActive(true);
         scriptCF.setDescription("Script to run");
         scriptCF.setFieldType(CustomFieldTypeEnum.ENTITY);
@@ -84,7 +85,7 @@ public class ScriptingJob extends Job {
 
         CustomFieldTemplate variablesCF = new CustomFieldTemplate();
         variablesCF.setCode("ScriptingJob_variables");
-        variablesCF.setAppliesTo("JOB_ScriptingJob");
+        variablesCF.setAppliesTo("JobInstance_ScriptingJob");
         variablesCF.setActive(true);
         variablesCF.setDescription("Script variables");
         variablesCF.setFieldType(CustomFieldTypeEnum.STRING);

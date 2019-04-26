@@ -19,6 +19,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class AccountOperationsGenerationJob generate the invoice account operation for all invoices that dont have it yet.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class AccountOperationsGenerationJob extends Job {
@@ -47,7 +49,7 @@ public class AccountOperationsGenerationJob extends Job {
 
    		CustomFieldTemplate nbRuns = new CustomFieldTemplate();
    		nbRuns.setCode("nbRuns");
-   		nbRuns.setAppliesTo("JOB_AccountOperationsGenerationJob");
+   		nbRuns.setAppliesTo("JobInstance_AccountOperationsGenerationJob");
    		nbRuns.setActive(true);
    		nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
    		nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -57,7 +59,7 @@ public class AccountOperationsGenerationJob extends Job {
 
    		CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
    		waitingMillis.setCode("waitingMillis");
-   		waitingMillis.setAppliesTo("JOB_AccountOperationsGenerationJob");
+   		waitingMillis.setAppliesTo("JobInstance_AccountOperationsGenerationJob");
    		waitingMillis.setActive(true);
    		waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
    		waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);

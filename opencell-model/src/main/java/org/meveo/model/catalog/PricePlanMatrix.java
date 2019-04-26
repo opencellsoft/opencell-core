@@ -57,12 +57,14 @@ import org.meveo.model.scripts.ScriptInstance;
  * Price plan
  * 
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ModuleItem
 @ObservableEntity
 @Cacheable
-@CustomFieldEntity(cftCodePrefix = "PRICEPLAN")
+@CustomFieldEntity(cftCodePrefix = "PricePlanMatrix")
 @ExportIdentifier({ "code" })
 @Table(name = "cat_price_plan_matrix", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -799,8 +801,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	}
 
 	/**
-	 * Expression to set the minimum allowed amount. 
-	 * @param minimumAmountEL
+	 * @param minimumAmountEL Expression to set the minimum allowed amount. 
 	 */
 	public void setMinimumAmountEL(String minimumAmountEL) {
 		this.minimumAmountEL = minimumAmountEL;
@@ -815,8 +816,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	}
 
 	/**
-	 * Expression to set the minimum allowed amount - for Spark.
-	 * @param minimumAmountELSpark
+	 * @param minimumAmountELSpark Expression to set the minimum allowed amount - for Spark.
 	 */
 	public void setMinimumAmountELSpark(String minimumAmountELSpark) {
 		this.minimumAmountELSpark = minimumAmountELSpark;

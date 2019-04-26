@@ -19,6 +19,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class PDFInvoiceGenerationJob generate PDF for all valid invoices that dont have it.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class PDFInvoiceGenerationJob extends Job {
@@ -45,7 +47,7 @@ public class PDFInvoiceGenerationJob extends Job {
 
 		CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
 		customFieldNbRuns.setCode("nbRuns");
-		customFieldNbRuns.setAppliesTo("JOB_PDFInvoiceGenerationJob");
+		customFieldNbRuns.setAppliesTo("JobInstance_PDFInvoiceGenerationJob");
 		customFieldNbRuns.setActive(true);
 		customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
 		customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -55,7 +57,7 @@ public class PDFInvoiceGenerationJob extends Job {
 
 		CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
 		customFieldNbWaiting.setCode("waitingMillis");
-		customFieldNbWaiting.setAppliesTo("JOB_PDFInvoiceGenerationJob");
+		customFieldNbWaiting.setAppliesTo("JobInstance_PDFInvoiceGenerationJob");
 		customFieldNbWaiting.setActive(true);
 		customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
 		customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);

@@ -22,6 +22,10 @@ import com.thoughtworks.xstream.io.xml.XppReader;
 
 import junit.framework.Assert;
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 public class ExportTest {
 
     private Map<ExportTemplate, XStream> xstreams = new HashMap<ExportTemplate, XStream>();
@@ -91,11 +95,11 @@ public class ExportTest {
         template.setName("Template One");
 
         List<String> filterList = new ArrayList<>();
-        filterList.addAll(Arrays.asList("OFFER", "SERVICE", "CHARGE", "OFFER_CATEGORY", "PRODUCT", "BUNDLE", "PRICEPLAN"));
+        filterList.addAll(Arrays.asList("OfferTemplate", "ServiceTemplate", "ChargeTemplate", "OfferTemplateCategory", "ProductTemplate", "BundleTemplate", "PricePlanMatrix"));
 
         template.setFilters(new HashMap<>());
         template.getFilters().put("disabled", false);
-        template.getFilters().put("appliesTo", "OFFER");
+        template.getFilters().put("appliesTo", "OfferTemplate");
         template.getFilters().put("appliesTo2", filterList);
 
         template.setRelatedEntities(new ArrayList<RelatedEntityToExport>());

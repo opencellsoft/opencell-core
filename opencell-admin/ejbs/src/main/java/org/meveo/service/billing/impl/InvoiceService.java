@@ -31,7 +31,14 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -107,6 +114,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.communication.impl.EmailSender;
@@ -220,10 +228,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private EmailSender emailSender;
 
+    @Inject
+    private SellerService sellerService;
 
-    /**
-     * folder for pdf .
-     */
+    /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
 
     /** folder for adjustment pdf. */
@@ -351,7 +359,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
     }
-
+    
     /**
      * Returns {@link InvoiceTypeSellerSequence} from the nearest parent.
      * @param invoiceType {@link InvoiceType}
@@ -385,10 +393,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (seller == null && cust.getSeller() != null) {
             seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
         }
+        seller = sellerService.refreshOrRetrieve(seller);
 
         InvoiceSequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
         int sequenceSize = sequence.getSequenceSize();
-
+        
         InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
         InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
         String prefix = invoiceType.getPrefixEL();
@@ -589,6 +598,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             Map<Long, List<RatedTransaction>> mapSellerRT = new HashMap<Long, List<RatedTransaction>>();
             for (RatedTransaction rt : ratedTransactions) {
+                rt.setBillingRun(billingRun);
                 Seller seller = rt.getSeller();
 
                 List<RatedTransaction> rtsBySeller = mapSellerRT.get(seller.getId());
@@ -705,7 +715,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 } else {
                     InvoiceType invoiceType = null;
                     if (!StringUtils.isBlank(billingCycle.getInvoiceTypeEl())) {
-                        String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun);
+                        String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun, billingAccount);
                         invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
                     }
                     if (isDraft) {
@@ -1040,14 +1050,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (!destDir.exists()) {
 
-                String sourcePath =
-                        Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + File.separator + "invoice";
+                String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + File.separator
+                        + "invoice";
 
                 File sourceFile = new File(sourcePath);
                 if (!sourceFile.exists()) {
-                    VirtualFile vfDir = VFS.getChild(
-                            "content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/"
-                                    + billingTemplateName + File.separator + "invoice");
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell")
+                            + ".war/WEB-INF/classes/jasper/" + billingTemplateName + File.separator + "invoice");
                     log.info("default jaspers path :" + vfDir.getPathName());
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFile = new File(vfPath.getPath());
@@ -1072,9 +1081,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment").getPath();
                 File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
                 if (!sourceFileInvoiceAdjustment.exists()) {
-                    VirtualFile vfDir = VFS.getChild(
-                            "content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/"
-                                    + billingTemplateName + "/invoiceAdjustment");
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell")
+                            + ".war/WEB-INF/classes/jasper/" + billingTemplateName + "/invoiceAdjustment");
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFileInvoiceAdjustment = new File(vfPath.getPath());
                     if (!sourceFileInvoiceAdjustment.exists()) {
@@ -1139,8 +1147,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename);
             if ("true".equals(paramBeanFactory.getInstance().getProperty("invoice.pdf.addWaterMark", "true"))) {
-                if (invoice.getInvoiceType().getCode().equals(paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT")) || (invoice.isDraft() != null
-                        && invoice.isDraft())) {
+                if (invoice.getInvoiceType().getCode().equals(paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT"))
+                        || (invoice.isDraft() != null && invoice.isDraft())) {
                     PdfWaterMark.add(pdfFullFilename, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
                 }
             }
@@ -1187,7 +1195,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     private File getJasperTemplateFile(String resDir, String billingTemplate, PaymentMethodEnum paymentMethod, boolean isInvoiceAdjustment) {
         String pdfDirName = new StringBuilder(resDir).append(File.separator).append(billingTemplate).append(File.separator)
-                .append(isInvoiceAdjustment ? ADJUSTEMENT_DIR_NAME : PDF_DIR_NAME).toString();
+            .append(isInvoiceAdjustment ? ADJUSTEMENT_DIR_NAME : PDF_DIR_NAME).toString();
 
         File pdfDir = new File(pdfDirName);
         String paymentMethodFileName = new StringBuilder("invoice_").append(paymentMethod).append(".jasper").toString();
@@ -1517,12 +1525,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
 
             BillingRun billingRun = invoice.getBillingRun();
-            String brPath = billingRun == null ?
-                    DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss")) :
-                    billingRun.getId().toString();
+            String brPath = billingRun == null ? DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss"))
+                    : billingRun.getId().toString();
 
-            xmlFileName = brPath + File.separator + (isInvoiceAdjustment ? paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") : "") + (!StringUtils
-                    .isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
+            xmlFileName = brPath + File.separator + (isInvoiceAdjustment ? paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") : "")
+                    + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
         }
 
         if (xmlFileName != null && !xmlFileName.toLowerCase().endsWith(".xml")) {
@@ -1592,9 +1599,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
 
-            pdfFileName = formatInvoiceDate(invoice.getInvoiceDate()) + (isInvoiceAdjustment ?
-                    paramBeanFactory.getInstance().getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") :
-                    "_") + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
+            pdfFileName = formatInvoiceDate(invoice.getInvoiceDate())
+                    + (isInvoiceAdjustment ? paramBeanFactory.getInstance().getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") : "_")
+                    + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
         }
 
         if (pdfFileName != null && !pdfFileName.toLowerCase().endsWith(".pdf")) {
@@ -1859,8 +1866,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             lastTransactionDate = invoiceDate;
         }
 
-        if (entity.getBillingRun() != null && (entity.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW) || entity.getBillingRun().getStatus()
-                .equals(BillingRunStatusEnum.PREVALIDATED) || entity.getBillingRun().getStatus().equals(BillingRunStatusEnum.POSTVALIDATED))) {
+        if (entity.getBillingRun() != null && (entity.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)
+                || entity.getBillingRun().getStatus().equals(BillingRunStatusEnum.PREVALIDATED) || entity.getBillingRun().getStatus().equals(BillingRunStatusEnum.POSTVALIDATED))) {
 
             throw new BusinessException("The entity is already in an billing run with status " + entity.getBillingRun().getStatus());
         }
@@ -2048,12 +2055,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return billingTemplateName;
     }
 
-    public String evaluateInvoiceType(String expression, BillingRun billingRun) {
+    public String evaluateInvoiceType(String expression, BillingRun billingRun, BillingAccount billingAccount) {
         String invoiceTypeCode = null;
 
         if (!StringUtils.isBlank(expression)) {
             Map<Object, Object> contextMap = new HashMap<>();
             contextMap.put("br", billingRun);
+            contextMap.put("ba", billingAccount);
 
             try {
                 String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
@@ -2113,20 +2121,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         if (referenceDateEnum != null) {
             switch (referenceDateEnum) {
-            case TODAY:
-                referenceDate = new Date();
-                break;
-            case NEXT_INVOICE_DATE:
-                referenceDate = invoice.getBillingAccount() != null ? invoice.getBillingAccount().getNextInvoiceDate() : null;
-                break;
-            case LAST_TRANSACTION_DATE:
-                referenceDate = billingRun.getLastTransactionDate();
-                break;
-            case END_DATE:
-                referenceDate = billingRun.getEndDate();
-                break;
-            default:
-                break;
+                case TODAY:
+                    referenceDate = new Date();
+                    break;
+                case NEXT_INVOICE_DATE:
+                    referenceDate = invoice.getBillingAccount() != null ? invoice.getBillingAccount().getNextInvoiceDate() : null;
+                    break;
+                case LAST_TRANSACTION_DATE:
+                    referenceDate = billingRun.getLastTransactionDate();
+                    break;
+                case END_DATE:
+                    referenceDate = billingRun.getEndDate();
+                    break;
+                default:
+                    break;
             }
         }
         return referenceDate;

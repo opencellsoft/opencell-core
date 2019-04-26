@@ -9,6 +9,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.BundleTemplate;
@@ -140,7 +141,10 @@ public class FullTextSearchBean implements Serializable {
 
         String viewName = null;
 
-        // TODO this does not cover dynamic index names as in case of custom entity instances or custom tables when no type is stored
+        if (StringUtils.isBlank(type)) {
+            type = null;
+        }
+
         ElasticSearchClassInfo scopeInfo = elasticClient.getSearchScopeInfo(indexName, type);
 
         if (scopeInfo != null) {
@@ -155,11 +159,12 @@ public class FullTextSearchBean implements Serializable {
                 if (getCurrentUser().hasRole("marketingCatalogManager") || getCurrentUser().hasRole("marketingCatalogVisualization")) {
                     viewName = "mm_" + viewName;
                 }
-
-            } else {
-                log.warn("Could not resolve view and ID for {}/{} {}", indexName, type, id);
-                viewName = "fullTextSearch";
             }
+        }
+
+        if (viewName == null) {
+            log.warn("Could not resolve view and ID for {}/{} {}", indexName, type, id);
+            viewName = "fullTextSearch";
         }
         return viewName;
     }

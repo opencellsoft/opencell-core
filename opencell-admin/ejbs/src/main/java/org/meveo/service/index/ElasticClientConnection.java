@@ -59,11 +59,11 @@ public class ElasticClientConnection {
 
         try {
 
-			String restUri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
-			hosts = restUri.split(";");
+            String restUri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+            hosts = restUri.split(";");
 
-			if (StringUtils.isBlank(restUri) || hosts.length == 0) {
-				log.warn("Elastic search is not enabled. Current settings: hosts={}", hosts.toString());
+            if (StringUtils.isBlank(restUri) || hosts.length == 0) {
+                log.warn("Elastic search is not enabled. Current settings: hosts={}", hosts.toString());
 
             } else {
                 HttpHost[] httpHosts = new HttpHost[hosts.length];

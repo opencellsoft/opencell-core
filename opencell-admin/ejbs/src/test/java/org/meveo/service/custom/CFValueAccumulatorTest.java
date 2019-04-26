@@ -13,6 +13,10 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 public class CFValueAccumulatorTest {
 
     @Test
@@ -20,7 +24,7 @@ public class CFValueAccumulatorTest {
 
         List<CustomFieldTemplate> cfts = new ArrayList<>();
 
-        String[] appliesTos = new String[] { "PROVIDER", "SELLER", "CUST", "BA", "SUB", "OFFER" };
+        String[] appliesTos = new String[] { "Provider", "Seller", "Customer", "BillingAccount", "Subscription", "OfferTemplate" };
 
         for (String appliesTo : appliesTos) {
             CustomFieldTemplate cft = new CustomFieldTemplate();

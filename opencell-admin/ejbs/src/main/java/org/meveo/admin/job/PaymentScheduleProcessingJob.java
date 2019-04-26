@@ -20,7 +20,8 @@ import org.meveo.service.job.Job;
  * The Class PaymentScheduleProcessingJob, process PaymentScheduleInstanceItems
  * 
  * @author anasseh
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class PaymentScheduleProcessingJob extends Job {
@@ -46,7 +47,7 @@ public class PaymentScheduleProcessingJob extends Job {
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("nbRuns");
-        nbRuns.setAppliesTo("JOB_PaymentScheduleProcessingJob");
+        nbRuns.setAppliesTo("JobInstance_PaymentScheduleProcessingJob");
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -56,7 +57,7 @@ public class PaymentScheduleProcessingJob extends Job {
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
         waitingMillis.setCode("waitingMillis");
-        waitingMillis.setAppliesTo("JOB_PaymentScheduleProcessingJob");
+        waitingMillis.setAppliesTo("JobInstance_PaymentScheduleProcessingJob");
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);

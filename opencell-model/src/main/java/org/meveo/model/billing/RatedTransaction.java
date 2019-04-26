@@ -80,6 +80,11 @@ import org.meveo.model.rating.EDR;
                 + " AND r.orderNumber=:orderNumber AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " AND r.doNotTriggerInvoicing=false AND r.invoice is null"),
 
+        @NamedQuery(name = "RatedTransaction.sumByOrderNumberExcludePrepaidWO", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax) FROM RatedTransaction r "
+                        + "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
+                        + " AND r.orderNumber=:orderNumber AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+                        + " AND r.doNotTriggerInvoicing=false AND r.invoice is null AND r.wallet.id NOT IN (:walletsIds)"),
+
         @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscription", query = "SELECT r FROM RatedTransaction r where r.subscription=:subscription"
                 + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " AND r.invoice is null order by r.usageDate desc "),
@@ -999,6 +1004,41 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 		}
 
 		return null;
+	}
+	
+	public void resetAmounts() {
+		unitAmountWithoutTax = BigDecimal.ZERO;
+		unitAmountWithTax = BigDecimal.ZERO;
+		unitAmountTax = BigDecimal.ZERO;
+		amountWithoutTax = BigDecimal.ZERO;
+		amountWithTax = BigDecimal.ZERO;
+		amountTax = BigDecimal.ZERO;
+	}
+	
+	public BigDecimal getIsEnterpriseAmount(boolean isEnterprise) {
+		return isEnterprise ? getAmountWithoutTax() : getAmountWithTax();
+	}
+	
+	public BigDecimal getIsEnterpriseUnitAmount(boolean isEnterprise) {
+		return isEnterprise ? getUnitAmountWithoutTax() : getUnitAmountWithTax();
+	}
+	
+	public void setIsEnterpriseAmount(boolean isEnterprise, BigDecimal amount) {
+		if (isEnterprise) {
+			setAmountWithoutTax(amount);
+
+		} else {
+			setAmountWithTax(amount);
+		}
+	}
+
+	public void setIsEnterpriseUnitAmount(boolean isEnterprise, BigDecimal amount) {
+		if (isEnterprise) {
+			setUnitAmountWithoutTax(amount);
+
+		} else {
+			setUnitAmountWithTax(amount);
+		}		
 	}
 	
 }

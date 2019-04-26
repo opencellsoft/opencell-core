@@ -29,6 +29,8 @@ import org.meveo.service.job.Job;
  * @author anasseh
  *
  * @lastModifiedVersion willBeSetLater
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class FlatFileProcessingJob extends Job {
@@ -39,7 +41,7 @@ public class FlatFileProcessingJob extends Job {
 
     private static final String FLAT_FILE_PROCESSING_JOB_REJECT_DIR = "FlatFileProcessingJob_rejectDir";
 
-    private static final String JOB_FLAT_FILE_PROCESSING_JOB = "JOB_FlatFileProcessingJob";
+    private static final String JOB_FLAT_FILE_PROCESSING_JOB = "JobInstance_FlatFileProcessingJob";
 
     private static final String FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR = "FlatFileProcessingJob_outputDir";
 

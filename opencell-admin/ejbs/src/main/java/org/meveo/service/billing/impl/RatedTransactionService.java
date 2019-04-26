@@ -345,6 +345,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         Map<InvoiceSubCategory, BigDecimal> minAmountsWithTax = new HashMap<InvoiceSubCategory, BigDecimal>();
         String scaKey = null;
+
+        log.debug("ratedTransactions.totalAmountWithoutTax={}",
+                ratedTransactions != null ? ratedTransactions.stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum() : "0");
+
         Boolean isPrepaid = isPrepaidRatedTransactions(ratedTransactions);
         for (RatedTransaction ratedTransaction : ratedTransactions) {
 
@@ -400,6 +404,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
 
+        log.debug("subCategoryAggregates.total={}",
+                subCategoryAggregates != null ? subCategoryAggregates.values().stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum() : "0");
+
         // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates
         BigDecimal[] amounts = null;
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates.values()) {
@@ -409,6 +416,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             // If tax calculation is done on subcategory level, evaluate tax again in case it was changed
             if (calculateTaxOnSubCategoryLevel) {
                 Tax tax = null;
+
+                //use Tax selected at rating
+                if ((scAggregate.getTaxPercent() != null)) {
+                    tax = scAggregate.getTax();
+                }
 
                 // If there is a taxScript in invoiceSubCategory and script is applicable, use it to compute external taxes
                 if (calculateExternalTax && (invoiceSubCategory.getTaxScript() != null)) {
@@ -429,10 +441,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     log.trace("Will update {} rated transactions in subcategory {} with new tax from {} to {}", scAggregate.getItemNumber(),
                         scAggregate.getInvoiceSubCategory().getCode(), scAggregate.getTaxPercent(), tax.getPercent());
                     for (RatedTransaction ratedTransaction : scAggregate.getRatedtransactions()) {
-                        if ("NO_OFFER".equals(ratedTransaction.getOfferCode())) {
-                            int i = 5;
-                        }
-
                         ratedTransaction.setTax(tax);
                         ratedTransaction.setTaxPercent(tax.getPercent());
                         ratedTransaction.computeDerivedAmounts(isEnterprise, rtRounding, rtRoundingMode);
@@ -453,6 +461,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             BigDecimal amount = isEnterprise ? scAggregate.getAmountWithoutTax() : scAggregate.getAmountWithTax();
             BigDecimal amountCumulativeForTax = amount;
+
+            log.debug("scAggregate.amount={}", amount);
 
             // Create category aggregates or update their amounts
 
@@ -506,7 +516,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 // Add tax aggregate or update its amounts
                 BigDecimal amountCumulativeForTaxAbsoluteValue = (isPrepaid) ? amountCumulativeForTax.abs() : amountCumulativeForTax;
 
-                if (calculateTaxOnSubCategoryLevel && (amountCumulativeForTaxAbsoluteValue.compareTo(BigDecimal.ZERO) > 0)) {
+                if (calculateTaxOnSubCategoryLevel && !BigDecimal.ZERO.equals(amountCumulativeForTaxAbsoluteValue)) {
 
                     TaxInvoiceAgregate taxAggregate = taxAggregates.get(scAggregate.getTax().getCode());
                     if (taxAggregate == null) {
@@ -529,14 +539,22 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         invoice.addInvoiceAggregate(taxAggregate);
                     }
 
+                    log.debug("adding cumulative amount={}", amountCumulativeForTax);
+
                     if (isEnterprise) {
                         taxAggregate.addAmountWithoutTax(amountCumulativeForTax);
+
                     } else {
                         taxAggregate.addAmountWithTax(amountCumulativeForTax);
                     }
+
+                    log.debug("taxAggregate.currentTotal={}",
+                            taxAggregates != null ? taxAggregates.values().stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum() : "0");
                 }
             }
         }
+
+        log.debug("taxAggregate.grantTotal={}", taxAggregates != null ? taxAggregates.values().stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum() : "0");
 
         // Calculate derived tax aggregate amounts
         if (calculateTaxOnSubCategoryLevel) {
@@ -801,7 +819,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             .setParameter("walletOperationId", id).getResultList();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
             BillingRun billingRun = ratedTransaction.getBillingRun();
-            if ((billingRun != null) && (billingRun.getStatus() != BillingRunStatusEnum.CANCELLED)) {
+            if ((billingRun != null) && (billingRun.getStatus() != BillingRunStatusEnum.CANCELED)) {
                 throw new UnrolledbackBusinessException("A rated transaction " + ratedTransaction.getId() + " forbid rerating of wallet operation " + id);
             }
             ratedTransaction.setStatus(RatedTransactionStatusEnum.RERATED);
@@ -2014,8 +2032,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public Object[] computeOrderInvoiceAmount(Order order, Date firstTransactionDate, Date lastTransactionDate) {
         List<Long> prePaidWalletsIds = walletService.getWalletsIdsForCache();
-        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumByOrderNumber").setParameter("orderNumber", order.getOrderNumber())
+        String query = "RatedTransaction.sumByOrderNumber";
+        if (prePaidWalletsIds != null && !prePaidWalletsIds.isEmpty()) {
+            query = "RatedTransaction.sumByOrderNumberExcludePrepaidWO";
+        }
+        Query q = getEntityManager().createNamedQuery(query).setParameter("orderNumber", order.getOrderNumber())
                 .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+        if (prePaidWalletsIds != null && !prePaidWalletsIds.isEmpty()) {
+            q = q.setParameter("walletsIds", prePaidWalletsIds);
+        }
         Object[] amounts = (Object[]) q.getSingleResult();
         return amounts;
     }

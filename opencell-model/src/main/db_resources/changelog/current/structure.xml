@@ -1182,7 +1182,7 @@
     <changeSet id="#3842_20190111 - Trigger next charge" author="EdwardPLegaspi">
         <addColumn tableName="cat_usage_charge_template">
             <column name="trigger_next_charge" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="trigger_next_charge_el" type="${type.text}"/>
+            <column name="trigger_next_charge_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
     
@@ -1215,13 +1215,14 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="customer_account_id" type="bigint" >
-                <constraints nullable="false" foreignKeyName="fk_dunning_document_ca" references="ar_customer_account(id)"/>
-            </column>
-            <column name="billing_subscription_id" type="bigint">
-                <constraints nullable="true" foreignKeyName="fk_dunning_document_subscription" references="billing_subscription(id)"/>
-            </column>
+            <column name="customer_account_id" type="bigint" />
+            <column name="billing_subscription_id" type="bigint"/>
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="dunning_document" constraintName="fk_dunning_document_ca" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
+        <addForeignKeyConstraint baseColumnNames="billing_subscription_id" baseTableName="dunning_document" constraintName="fk_dunning_document_subscription" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+            
         <createSequence sequenceName="dunning_document_seq"/>
         <addColumn tableName="ar_account_operation">
             <column name="dunning_document_id" type="bigint">
@@ -1891,9 +1892,9 @@ $$ LANGUAGE plpgsql;
 			baseColumnNames="service_instance_id"
 			baseTableName="billing_wallet_operation" referencedColumnNames="id" />
 
-		<sql>UPDATE billing_wallet_operation o SET
+		<sql>UPDATE ${db.schema.adapted}billing_wallet_operation o SET
 			rated_transaction_id=(SELECT
-			r.id FROM billing_rated_transaction r WHERE r.wallet_operation_id=o.id
+			r.id FROM ${db.schema.adapted}billing_rated_transaction r WHERE r.wallet_operation_id=o.id
 			LIMIT 1);
 		</sql>
 		<dropColumn tableName="billing_rated_transaction">
@@ -1973,5 +1974,88 @@ $$ LANGUAGE plpgsql;
             <column name="reference_date" type="varchar(255)" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#4070_20190313" author="AmineBENAICHA">
+    	<dropColumn tableName="wf_generic_workflow">
+			<column name="init_status" />
+		</dropColumn>
+        <addColumn tableName="wf_generic_workflow">
+            <column name="init_status" type="varchar(255)" />
+            <column name="target_cet_code" type="varchar(255)" />
+        </addColumn>
+        
+        <dropUniqueConstraint tableName="wf_instance" constraintName="uk_generic_wf_id_code_wf_instance" />
+        <dropColumn tableName="wf_instance">
+        	<column name="code" />
+            <column name="description" />
+        	<column name="disabled" />
+            <column name="created" />
+            <column name="updated" />
+            <column name="creator" />
+            <column name="updater" />
+        </dropColumn>
+        <addColumn tableName="wf_instance">
+        	<column name="entity_instance_code" type="varchar(255)" >
+        		<constraints nullable="false" />
+        	</column>
+            <column name="target_cet_code" type="varchar(255)" />
+        </addColumn>
+        <addUniqueConstraint tableName="wf_instance" constraintName="uk_wf_instance_code_gwf_id_cet_code" columnNames="entity_instance_code, generic_wf_id, target_cet_code" deferrable="false" disabled="false" initiallyDeferred="false" />
+    </changeSet>
+    <changeSet id="#4140_08042019" author="hznibar">
+			<modifyDataType tableName="wf_history_action" columnName="result" newDataType="varchar(2000)" />
+	</changeSet>
 
+    <changeSet id="#4089_20190404" author="AbdellatifBARI">
+        <sql>update ${db.schema.adapted}crm_custom_field_tmpl set applies_to = case
+
+            when applies_to = 'PROVIDER'                then 'Provider'
+            when applies_to = 'PRODUCT'                 then 'ProductTemplate'
+            when applies_to = 'PRODUCT_INSTANCE'        then 'ProductInstance'
+            when applies_to = 'OFFER'                   then 'OfferTemplate'
+            when applies_to = 'SELLER'                  then 'Seller'
+            when applies_to = 'CUST'                    then 'Customer'
+            when applies_to = 'CA'                      then 'CustomerAccount'
+            when applies_to = 'BA'                      then 'BillingAccount'
+            when applies_to = 'UA'                      then 'UserAccount'
+            when applies_to = 'SERVICE'                 then 'ServiceTemplate'
+            when applies_to = 'SERVICE_INSTANCE'        then 'ServiceInstance'
+            when applies_to = 'SUB'                     then 'Subscription'
+            when applies_to = 'ACC'                     then 'Access'
+            when applies_to = 'CHARGE'                  then 'ChargeTemplate'
+            when applies_to = 'PRICEPLAN'               then 'PricePlanMatrix'
+
+            when applies_to = 'BILLING_CYCLE'           then 'BillingCycle'
+            when applies_to = 'TAX'                     then 'Tax'
+            when applies_to = 'INV_CAT'                 then 'InvoiceCategory'
+            when applies_to = 'INVOICE'                 then 'Invoice'
+            when applies_to = 'ACCT_CODE'               then 'AccountingCode'
+            when applies_to = 'FILTER'                  then 'Filter'
+            when applies_to = 'QUOTE'                   then 'Quote'
+            when applies_to = 'ORDER'                   then 'Order'
+            when applies_to = 'USER'                    then 'User'
+            when applies_to = 'JOB'                     then 'JobInstance'
+            when applies_to = 'DISCOUNT_PLAN_INSTANCE'  then 'DiscountPlanInstance'
+            when applies_to = 'DISCOUNT_PLAN'           then 'DiscountPlan'
+            when applies_to = 'OFFER_CATEGORY'          then 'OfferTemplateCategory'
+            when applies_to = 'INV_SUB_CAT'             then 'InvoiceSubCategory'
+            when applies_to = 'ACC_OP'                  then 'AccountOperation'
+
+            when applies_to = 'BILLING_RUN'             then 'BillingRun'
+            when applies_to = 'INVOICE_TYPE'            then 'InvoiceType'
+            when applies_to = 'DISCOUNT_PLAN_ITEM'      then 'DiscountPlanItem'
+            when applies_to = 'OTH_TR'                  then 'OtherTransaction'
+            when applies_to = 'REPORT'                  then 'ReportExtract'
+            when applies_to = 'BUNDLE'                  then 'BundleTemplate'
+            when applies_to = 'PAYMENT_SCH_INSTANCE'    then 'PaymentScheduleInstance'
+            when applies_to = 'DDREQ_BUILDER'           then 'DDRequestBuilder'
+            when applies_to = 'PAYMENT_SCH'             then 'PaymentScheduleTemplate'
+
+            when applies_to like 'JOB_%'                then  concat('JobInstance_', substring(applies_to, length('JOB_')+1, length(applies_to)))
+
+            else applies_to
+
+            end where applies_to is not null
+        </sql>
+    </changeSet>
 </databaseChangeLog>

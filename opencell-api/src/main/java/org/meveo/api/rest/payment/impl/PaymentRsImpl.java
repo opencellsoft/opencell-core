@@ -26,6 +26,7 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
@@ -705,6 +706,17 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
         return result;
     }
+    
+    @Override
+    public PaymentScheduleInstanceResponseDto findPaymentScheduleInstance(Long id) {
+    	PaymentScheduleInstanceResponseDto response = new PaymentScheduleInstanceResponseDto();    	
+    	try {
+    		response = paymentScheduleApi.findPaymentScheduleInstance(id);
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+    	return response;
+    }
 
     @Override
     public PaymentScheduleInstancesDto listPaymentScheduleInstance(PagingAndFiltering pagingAndFiltering) {
@@ -731,6 +743,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
         return result;
     }
+  
 
     @Override
     public ActionStatus terminatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) {

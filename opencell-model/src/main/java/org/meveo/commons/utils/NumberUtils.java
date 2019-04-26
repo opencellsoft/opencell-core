@@ -27,6 +27,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.RoundingModeEnum;
 
 /**
+ * @author Edward P. Legaspi
  * @author R.AITYAAZZA
  * @author Said Ramli
  * @lastModifiedVersion 5.1

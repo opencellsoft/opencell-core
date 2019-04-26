@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -96,31 +95,29 @@ public class KeycloakAdminClientService {
      */
     private Keycloak getKeycloakClient(KeycloakSecurityContext session, KeycloakAdminClientConfig keycloakAdminClientConfig) {
 
-        KeycloakBuilder keycloakBuilder = KeycloakBuilder.builder() 
-                .serverUrl(keycloakAdminClientConfig.getServerUrl()) 
-                .realm(keycloakAdminClientConfig.getRealm()) 
-                .grantType(OAuth2Constants.CLIENT_CREDENTIALS) 
-                .clientId(keycloakAdminClientConfig.getClientId()) 
-                .clientSecret(keycloakAdminClientConfig.getClientSecret()) 
-                .authorization(session.getTokenString()); 
-                
-            keycloakBuilder.resteasyClient(new ResteasyClientProxyBuilder().connectionPoolSize(20).build());
-        
+        KeycloakBuilder keycloakBuilder = KeycloakBuilder.builder().serverUrl(keycloakAdminClientConfig.getServerUrl()).realm(keycloakAdminClientConfig.getRealm())
+            .grantType(OAuth2Constants.CLIENT_CREDENTIALS).clientId(keycloakAdminClientConfig.getClientId()).clientSecret(keycloakAdminClientConfig.getClientSecret())
+            .authorization(session.getTokenString());
+
+        keycloakBuilder.resteasyClient(new ResteasyClientProxyBuilder().connectionPoolSize(20).build());
+
         return keycloakBuilder.build();
     }
 
     /**
-     * Creates a user in keycloak. Also assigns the role.
+     * Creates a user in keycloak and assigns the role.
      * 
-     * @param httpServletRequest http request
-     * @param postData posted data to API
-     * @param provider provider code to be added as attribute
-     * @return user created id.
-     * @throws BusinessException business exception
-     * @throws EntityDoesNotExistsException entity does not exist exception.
+     * @param httpServletRequest Http request
+     * @param postData Posted data to API
+     * @param provider Provider code to be added as attribute
+     * @return User identifier in Keycloak. Returns null in case use already was present in Keycloak.
+     * @throws BusinessException User was not created in Keycloak.
      * @lastModifiedVersion 5.0.1
      */
-    public String createUser(HttpServletRequest httpServletRequest, UserDto postData, String provider) throws BusinessException, EntityDoesNotExistsException {
+    public String createUser(HttpServletRequest httpServletRequest, UserDto postData, String provider) throws BusinessException {
+
+        // TODO Should check if user already exists in Keycloak. If so - add roles requested. If not - create a user in Keycloak.
+
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
         Keycloak keycloak = getKeycloakClient(session, keycloakAdminClientConfig);
@@ -173,7 +170,8 @@ public class KeycloakAdminClientService {
                     RoleRepresentation tempRole = rolesResource.get(externalRole.getName()).toRepresentation();
                     externalRolesRepresentation.add(tempRole);
                 } catch (NotFoundException e) {
-                    throw new EntityDoesNotExistsException(RoleRepresentation.class, externalRole.getName());
+                    // Lets not care if roles exist - if not they will be assigned in Keycloak directly
+                    log.warn("Role {} not found in Keycloak. Please assign it to user {} manually in Keycloak", externalRole.getName(), user.getUsername());
                 }
             }
         }
@@ -185,7 +183,11 @@ public class KeycloakAdminClientService {
             log.error("Keycloak user creation with http status.code={} and reason={}", response.getStatus(), response.getStatusInfo().getReasonPhrase());
 
             if (response.getStatus() == HttpStatus.SC_CONFLICT) {
-                throw new BusinessException("Username or email already exists.");
+                UserRepresentation existingUser = getUserRepresentationByUsername(usersResource, postData.getUsername());
+
+                log.warn("A user with username {} and id {} already exists in Keycloak", user.getUsername(), existingUser.getId());
+                return existingUser.getId();
+
             } else {
                 throw new BusinessException("Unable to create user with httpStatusCode=" + response.getStatus());
             }
@@ -193,26 +195,20 @@ public class KeycloakAdminClientService {
 
         String userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
 
-        log.debug("User created with userId: {}", userId);
+        log.debug("User {} created in Keycloak with userId: {}", user.getUsername(), userId);
 
         usersResource.get(userId).roles().realmLevel().add(externalRolesRepresentation);
 
-        ClientRepresentation opencellWebClient = realmResource.clients() //
-            .findByClientId(keycloakAdminClientConfig.getClientId()).get(0);
+        ClientRepresentation opencellWebClient = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0);
 
         // Get client level role (requires view-clients role)
-        RoleRepresentation apiRole = realmResource.clients().get(opencellWebClient.getId()) //
-            .roles().get(KeycloakConstants.ROLE_API_ACCESS).toRepresentation();
-        RoleRepresentation guiRole = realmResource.clients().get(opencellWebClient.getId()) //
-            .roles().get(KeycloakConstants.ROLE_GUI_ACCESS).toRepresentation();
-        RoleRepresentation adminRole = realmResource.clients().get(opencellWebClient.getId()) //
-            .roles().get(KeycloakConstants.ROLE_ADMINISTRATEUR).toRepresentation();
-        RoleRepresentation userManagementRole = realmResource.clients().get(opencellWebClient.getId()) //
-            .roles().get(KeycloakConstants.ROLE_USER_MANAGEMENT).toRepresentation();
+        RoleRepresentation apiRole = realmResource.clients().get(opencellWebClient.getId()).roles().get(KeycloakConstants.ROLE_API_ACCESS).toRepresentation();
+        RoleRepresentation guiRole = realmResource.clients().get(opencellWebClient.getId()).roles().get(KeycloakConstants.ROLE_GUI_ACCESS).toRepresentation();
+        RoleRepresentation adminRole = realmResource.clients().get(opencellWebClient.getId()).roles().get(KeycloakConstants.ROLE_ADMINISTRATEUR).toRepresentation();
+        RoleRepresentation userManagementRole = realmResource.clients().get(opencellWebClient.getId()).roles().get(KeycloakConstants.ROLE_USER_MANAGEMENT).toRepresentation();
 
         // Assign client level role to user
-        usersResource.get(userId).roles() //
-            .clientLevel(opencellWebClient.getId()).add(Arrays.asList(apiRole, guiRole, adminRole, userManagementRole));
+        usersResource.get(userId).roles().clientLevel(opencellWebClient.getId()).add(Arrays.asList(apiRole, guiRole, adminRole, userManagementRole));
 
         // Define password credential
         CredentialRepresentation credential = new CredentialRepresentation();
@@ -251,10 +247,11 @@ public class KeycloakAdminClientService {
      * @param httpServletRequest http request
      * @param postData posted data.
      * @throws BusinessException business exception.
+     * @throws EntityDoesNotExistsException Role
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
-    public void updateUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException {
+    public void updateUser(HttpServletRequest httpServletRequest, UserDto postData) throws EntityDoesNotExistsException, BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
         Keycloak keycloak = getKeycloakClient(session, keycloakAdminClientConfig);
@@ -305,12 +302,6 @@ public class KeycloakAdminClientService {
 
                 // Set password credential
                 userResource.resetPassword(credential);
-            }
-        } catch (ClientErrorException e) {
-            if (e.getResponse().getStatus() == HttpStatus.SC_CONFLICT) {
-                throw new BusinessException("Username or email already exists.");
-            } else {
-                throw new BusinessException("Failed updating user with error=" + e.getMessage());
             }
         } catch (Exception e) {
             throw new BusinessException("Failed updating user with error=" + e.getMessage());

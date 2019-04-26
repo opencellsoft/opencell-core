@@ -87,7 +87,7 @@ import java.util.List;
 @Entity
 @WorkflowedEntity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "SUB", inheritCFValuesFrom = { "offer", "userAccount" })
+@CustomFieldEntity(cftCodePrefix = "Subscription", inheritCFValuesFrom = { "offer", "userAccount" })
 @ExportIdentifier({ "code" })
 @Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -362,7 +362,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     /**
      * Initial subscription renewal configuration
      */
-    @Column(name = "initial_renewal")
+    @Column(name = "initial_renewal", columnDefinition = "text")
     private String initialSubscriptionRenewal;
 
     public Date getEndAgreementDate() {

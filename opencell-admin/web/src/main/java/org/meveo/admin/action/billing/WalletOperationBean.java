@@ -44,6 +44,10 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.primefaces.model.LazyDataModel;
 
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Named
 @ViewScoped
 public class WalletOperationBean extends BaseBean<WalletOperation> {
@@ -140,14 +144,7 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 					walletOperationIds.addAll(
 							rated.getWalletOperations().stream().map(o -> o.getId()).collect(Collectors.toList()));
 				}
-				StringBuilder wpIds = new StringBuilder();
-				String sep = "";
-				for (Long ids : walletOperationIds) {
-					wpIds.append(sep);
-					wpIds.append(ids.toString());
-					sep = ",";
-				}
-				filters.put("inList id", wpIds);
+				filters.put("inList id", walletOperationIds);
 			} else {
 				return null;
 			}

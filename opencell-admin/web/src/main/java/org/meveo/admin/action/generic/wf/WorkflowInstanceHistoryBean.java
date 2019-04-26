@@ -26,6 +26,7 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
@@ -90,6 +91,12 @@ public class WorkflowInstanceHistoryBean extends BaseBean<WorkflowInstanceHistor
      */
 
     public List<WorkflowInstance> getWorkflowInstances(BusinessEntity entity, Class<?> clazz) {
+
+        if (entity instanceof CustomEntityInstance) {
+            CustomEntityInstance cei = (CustomEntityInstance) entity;
+            return workflowInstanceService.findByCodeAndCetAndClazz(cei.getCode(), cei.getCetCode(), clazz);
+        }
+
         return workflowInstanceService.findByCodeAndClazz(entity.getCode(), clazz);
     }
 
@@ -101,7 +108,7 @@ public class WorkflowInstanceHistoryBean extends BaseBean<WorkflowInstanceHistor
      */
 
     public List<WorkflowInstanceHistory> getWorkflowHistories(BusinessEntity entity) {
-        return workflowInstanceHistoryService.findByEntityInstanceCode(entity.getCode());
+        return workflowInstanceHistoryService.findByBusinessEntity(entity);
     }
 
     public List<WorkflowInstanceHistory> getWorkflowHistories(GenericWorkflow genericWorkflow) {

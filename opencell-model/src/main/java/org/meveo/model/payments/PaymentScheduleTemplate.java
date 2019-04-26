@@ -33,10 +33,11 @@ import org.meveo.model.scripts.ScriptInstance;
  *
  * @author anasseh
  * @since Opencell 5.2
- * @lastModifiedVersion 5.3
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "PAYMENT_SCH")
+@CustomFieldEntity(cftCodePrefix = "PaymentScheduleTemplate")
 @Table(name = "ar_payment_schedule_tmpl")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_payment_schedule_tmpl_seq"), })

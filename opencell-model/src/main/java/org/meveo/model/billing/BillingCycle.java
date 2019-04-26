@@ -34,7 +34,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -47,13 +46,14 @@ import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * Billing cycle
+ * @author Edward P. Legaspi
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
 @Entity
 @Cacheable
 @ExportIdentifier({ "code" })
-@CustomFieldEntity(cftCodePrefix = "BILLING_CYCLE")
+@CustomFieldEntity(cftCodePrefix = "BillingCycle")
 @Table(name = "billing_cycle", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_cycle_seq"), })

@@ -56,11 +56,12 @@ import org.meveo.model.payments.CustomerAccount;
  * 
  * @author Edward P. Legaspi
  * @author Khalid HORRI
+ * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
 @Entity
 @WorkflowedEntity
-@CustomFieldEntity(cftCodePrefix = "BA", inheritCFValuesFrom = "customerAccount")
+@CustomFieldEntity(cftCodePrefix = "BillingAccount", inheritCFValuesFrom = "customerAccount")
 @ExportIdentifier({ "code" })
 @Table(name = "billing_billing_account")
 @DiscriminatorValue(value = "ACCT_BA")
@@ -695,7 +696,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Gets cc Emails
-     * @return
+     * @return CC emails
      */
     public String getCcedEmails() {
         return ccedEmails;

@@ -17,7 +17,9 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.job.JobExecutionResultDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -26,6 +28,7 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 
 /**
+ * @author anasseh
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @lastModifiedVersion 5.1
@@ -61,6 +64,16 @@ public class JobApi extends BaseApi {
         org.meveo.model.jobs.JobInstance jobInstance = jobInstanceService.findByCode(code);
         if (jobInstance == null) {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
+        }
+        // populate customFields
+        try {
+            populateCustomFields(jobExecution.getCustomFields(), jobInstance, false);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
         }
         // #3063 Ability to pass parameters when running job instance                                                                                  
         this.setJobRunTimeJobValues(jobExecution, jobInstance);

@@ -1,45 +1,45 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import javax.ejb.Stateful;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 7.0
  */
 @Stateful
-public class InvoiceAgregateHandler {
-    private Logger log = LoggerFactory.getLogger(InvoiceAgregateHandler.class);
+public class InvoiceAggregateHandler {
+    private Logger log = LoggerFactory.getLogger(InvoiceAggregateHandler.class);
 
     private Map<String, CategoryInvoiceAgregate> catInvAgregateMap = new HashMap<String, CategoryInvoiceAgregate>();
     private Map<String, SubCategoryInvoiceAgregate> subCatInvAgregateMap = new HashMap<String, SubCategoryInvoiceAgregate>();
@@ -48,9 +48,6 @@ public class InvoiceAgregateHandler {
     private BigDecimal invoiceAmountWithoutTax = BigDecimal.ZERO;
     private BigDecimal invoiceAmountTax = BigDecimal.ZERO;
     private BigDecimal invoiceAmountWithTax = BigDecimal.ZERO;
-
-    @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
 
     @Inject
     private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
@@ -70,9 +67,9 @@ public class InvoiceAgregateHandler {
      * reset default values.
      */
     public void reset() {
-        catInvAgregateMap = new HashMap<String, CategoryInvoiceAgregate>();
-        subCatInvAgregateMap = new HashMap<String, SubCategoryInvoiceAgregate>();
-        taxInvAgregateMap = new HashMap<String, TaxInvoiceAgregate>();
+        catInvAgregateMap = new HashMap<>();
+        subCatInvAgregateMap = new HashMap<>();
+        taxInvAgregateMap = new HashMap<>();
 
         invoiceAmountWithoutTax = BigDecimal.ZERO;
         invoiceAmountTax = BigDecimal.ZERO;
@@ -86,12 +83,28 @@ public class InvoiceAgregateHandler {
      * @param billingAccount billing account
      * @param userAccount user account.
      * @param description description.
-     * @param amountWithoutTax amount without tax
+     * @param amount amount without tax if enterprise is true else amount with tax
      * @throws BusinessException business exception
      */
     public void addInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description,
-            BigDecimal amountWithoutTax) throws BusinessException {
-        addLine(invoiceSubCategory, billingAccount, userAccount, description, amountWithoutTax, null);
+            BigDecimal amount) throws BusinessException {
+    	addInvoiceSubCategory(null, null, invoiceSubCategory, billingAccount, userAccount, description, amount);
+
+    }
+    
+    /**
+     * @param seller Seller the seller
+     * @param invoiceDate the invoice date
+     * @param invoiceSubCategory invoice sub-category
+     * @param billingAccount billing account
+     * @param userAccount user account.
+     * @param description description.
+     * @param amount amount without tax if enterprise is true else amount with tax
+     * @throws BusinessException business exception
+     */
+    public void addInvoiceSubCategory(Seller seller, Date invoiceDate, InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description,
+            BigDecimal amount) throws BusinessException {
+        addLine(seller, invoiceDate, invoiceSubCategory, billingAccount, userAccount, description, amount, null);
 
     }
 
@@ -101,12 +114,12 @@ public class InvoiceAgregateHandler {
      * @param billingAccount billing account
      * @param userAccount user account.
      * @param description description
-     * @param amountWithoutTax amount without tax
+     * @param amount amount without tax if enterprise is true else amount with tax
      * @throws BusinessException business exception
      */
     public void removeInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description,
-            BigDecimal amountWithoutTax) throws BusinessException {
-        removeLine(invoiceSubCategory, billingAccount, userAccount, description, amountWithoutTax, null);
+            BigDecimal amount) throws BusinessException {
+        removeLine(invoiceSubCategory, billingAccount, userAccount, description, amount, null);
 
     }
 
@@ -121,7 +134,7 @@ public class InvoiceAgregateHandler {
     public void removeRT(RatedTransaction ratedTRansaction, String description, UserAccount userAccount) throws BusinessException {
         InvoiceSubCategory invoiceSubCategory = ratedTRansaction.getInvoiceSubCategory();
         BillingAccount billingAccount = ratedTRansaction.getBillingAccount();
-        removeLine(invoiceSubCategory, billingAccount, userAccount, description, ratedTRansaction.getAmountWithoutTax(), ratedTRansaction);
+        removeLine(invoiceSubCategory, billingAccount, userAccount, description, ratedTRansaction.getIsEnterpriseAmount(appProvider.isEntreprise()), ratedTRansaction);
     }
 
     /**
@@ -134,54 +147,88 @@ public class InvoiceAgregateHandler {
     public void addRT(RatedTransaction ratedTRansaction, String description, UserAccount userAccount) throws BusinessException {
         InvoiceSubCategory invoiceSubCategory = ratedTRansaction.getInvoiceSubCategory();
         BillingAccount billingAccount = ratedTRansaction.getBillingAccount();
-        if (ratedTRansaction.getAmountWithoutTax() == null) {
-            if (ratedTRansaction.getUnitAmountWithoutTax() == null || ratedTRansaction.getQuantity() == null) {
-                throw new BusinessException("RT.unitAmountWithoutTax or RT.quantity are null");
+        boolean isEnterprise = appProvider.isEntreprise();
+        if (ratedTRansaction.getIsEnterpriseAmount(isEnterprise) == null) {
+            if (ratedTRansaction.getIsEnterpriseUnitAmount(isEnterprise) == null || ratedTRansaction.getQuantity() == null) {
+                throw new BusinessException("RT.unitAmountWithoutTax/unitAmountWithTax or RT.quantity are null");
             }
-            ratedTRansaction.setAmountWithoutTax(ratedTRansaction.getUnitAmountWithoutTax().multiply(ratedTRansaction.getQuantity()));
+            ratedTRansaction.setIsEnterpriseAmount(isEnterprise, ratedTRansaction.getIsEnterpriseUnitAmount(isEnterprise).multiply(ratedTRansaction.getQuantity()));
         }
 
-        addLine(invoiceSubCategory, billingAccount, userAccount, description, ratedTRansaction.getAmountWithoutTax(), ratedTRansaction);
+        addLine(invoiceSubCategory, billingAccount, userAccount, description, ratedTRansaction.getIsEnterpriseAmount(isEnterprise), ratedTRansaction);
     }
 
     /**
-     * 
+     * Add a line. Seller will be fetch from the customer. Invoicing date is set to now.
      * @param invoiceSubCategory invoice sub-category
      * @param billingAccount billing account
      * @param userAccount user account.
      * @param description description.
-     * @param amountWithoutTax amount without tax
+     * @param amount amount without tax if enterprise is true else amount with tax
      * @param ratedTransaction rated transaction.
      * @throws BusinessException business exception
      */
-    private void addLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amountWithoutTax,
+    private void addLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amount,
             RatedTransaction ratedTransaction) throws BusinessException {
-        addOrRemoveLine(invoiceSubCategory, billingAccount, userAccount, description, amountWithoutTax, ratedTransaction, true);
+    	addLine(null, null, invoiceSubCategory, billingAccount, userAccount, description, amount, ratedTransaction);
     }
-
+    
     /**
-     * 
+     * Add a line.
+     * @param Seller the seller. If null use seller from customer.
+     * @param invoiceDate invoice date. If null use now.
+     * @param invoiceSubCategory invoice sub-category
+     * @param billingAccount billing account
+     * @param userAccount user account.
+     * @param description description.
+     * @param amount amount without tax if enterprise is true else amount with tax
+     * @param ratedTransaction rated transaction.
+     * @throws BusinessException business exception
+     */
+    private void addLine(Seller seller, Date invoiceDate, InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amount,
+            RatedTransaction ratedTransaction) throws BusinessException {
+        addOrRemoveLine(seller, invoiceDate, invoiceSubCategory, billingAccount, userAccount, description, amount, ratedTransaction, true);
+    }
+    
+    /**
+     * Removes a line. Seller will be fetch from the customer.
      * @param invoiceSubCategory invoice sub-category
      * @param billingAccount billing account
      * @param userAccount user account
      * @param description description.
-     * @param amountWithoutTax amount without tax
+     * @param amount amount without tax if enterprise is true else amount with tax
      * @param ratedTransaction rated transaction
      * @throws BusinessException business exception
      */
-    private void removeLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amountWithoutTax,
+    private void removeLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amount,
             RatedTransaction ratedTransaction) throws BusinessException {
-        addOrRemoveLine(invoiceSubCategory, billingAccount, userAccount, description, amountWithoutTax, ratedTransaction, false);
+    	removeLine(null, invoiceSubCategory, billingAccount, userAccount, description, amount, ratedTransaction);
     }
 
     /**
-     * v5.0: Fix tax added to invoice net amount when a customer has "no tax applied"
+     * Seller seller
+     * @param invoiceSubCategory invoice sub-category
+     * @param billingAccount billing account
+     * @param userAccount user account
+     * @param description description.
+     * @param amount amount without tax if enterprise is true else amount with tax
+     * @param ratedTransaction rated transaction
+     * @throws BusinessException business exception
+     */
+    private void removeLine(Seller seller, InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amount,
+            RatedTransaction ratedTransaction) throws BusinessException {
+        addOrRemoveLine(invoiceSubCategory, billingAccount, userAccount, description, amount, ratedTransaction, false);
+    }
+    
+    /**
+     * v5.0: Fix tax added to invoice net amount when a customer has "no tax applied". Seller will be fetch from the customer.
+     * Invoicing date is set to now.
      * 
      * @param invoiceSubCategory invoice sub-category
      * @param billingAccount billing account
      * @param userAccount user account.
      * @param description description.
-     * @param amountWithoutTax amount without tax
+     * @param amount amount without tax
      * @param ratedTransaction rated transaction.
      * @param isToAdd true if it is to be added.
      * @throws BusinessException business exception
@@ -189,25 +236,62 @@ public class InvoiceAgregateHandler {
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
-    private void addOrRemoveLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amountWithoutTax,
+    private void addOrRemoveLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amount,
             RatedTransaction ratedTransaction, boolean isToAdd) throws BusinessException {
-        log.debug("addOrRemoveLine amountWithoutTax {} ...", amountWithoutTax);
+        addOrRemoveLine(null, null, invoiceSubCategory, billingAccount, userAccount, description, amount, ratedTransaction, isToAdd);
+    }
+
+    /**
+     * v5.0: Fix tax added to invoice net amount when a customer has "no tax applied"
+     * 
+     * @param Seller the seller. If null use the one from customer.
+     * @param invoiceDate invoice date. If null use now.
+     * @param invoiceSubCategory invoice sub-category
+     * @param billingAccount billing account
+     * @param userAccount user account.
+     * @param description description.
+     * @param amount amount without tax if enterprise is true else amount with tax
+     * @param ratedTransaction rated transaction.
+     * @param isToAdd true if it is to be added.
+     * @throws BusinessException business exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
+    private void addOrRemoveLine(Seller seller, Date invoiceDate, InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amount,
+            RatedTransaction ratedTransaction, boolean isToAdd) throws BusinessException {
+        log.debug("addOrRemoveLine amountWithoutTax {} ...", amount);
 
         Auditable auditable = new Auditable(currentUser);
+        boolean isEnterprise = appProvider.isEntreprise();
+        int invoiceRounding = appProvider.getInvoiceRounding();
+        RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
 
         BigDecimal amountTax = BigDecimal.ZERO;
         BigDecimal amountWithTax = BigDecimal.ZERO;
-        Tax currentTax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, billingAccount.getCustomerAccount().getCustomer().getSeller(), billingAccount, new Date(), false);
+        BigDecimal amountWithoutTax = BigDecimal.ZERO;
+        
+		if (invoiceDate == null) {
+			invoiceDate = new Date();
+		}
+		if (seller == null) {
+			seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
+		}
+        Tax currentTax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, billingAccount, invoiceDate, false);
 
         if (amountWithoutTax == null) {
-            throw new BusinessException("AmountWithoutTax is null");
+            throw new BusinessException("AmountWithoutTax/AmountWithTax is null");
         }
 
         if (billingAccountService.isExonerated(billingAccount)) {
             amountWithTax = amountWithoutTax;
+            
         } else {
-            amountWithTax = getAmountWithTax(currentTax, amountWithoutTax);
-            amountTax = getAmountTax(amountWithTax, amountWithoutTax);
+			BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amount, amount, currentTax.getPercent(),
+					isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
+			amountWithoutTax = amounts[0];
+			amountWithTax = amounts[1];
+			amountTax = amounts[2];
         }
         log.trace("addOrRemoveLine amountWithTax {}", amountWithTax);
         log.trace("addOrRemoveLine amountTax {}", amountTax);
@@ -313,8 +397,6 @@ public class InvoiceAgregateHandler {
         }
     }
 
-
-
     /**
      * 
      * @param expression EL expression
@@ -357,27 +439,6 @@ public class InvoiceAgregateHandler {
             return mainValue.add(aValue);
         }
         return mainValue.subtract(aValue);
-    }
-
-    /**
-     * 
-     * @param tax tax
-     * @param amountWithoutTax amount without tax
-     * @return amount with tax
-     */
-    private BigDecimal getAmountWithTax(Tax tax, BigDecimal amountWithoutTax) {
-        return amountWithoutTax
-            .add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()));
-    }
-
-    /**
-     * 
-     * @param amountWithTax amount with tax
-     * @param amountWithoutTax amount without tax
-     * @return tax's amount.
-     */
-    private BigDecimal getAmountTax(BigDecimal amountWithTax, BigDecimal amountWithoutTax) {
-        return amountWithTax.subtract(amountWithoutTax);
     }
 
     /**
