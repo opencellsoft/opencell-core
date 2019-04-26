@@ -416,7 +416,7 @@ public class CatalogHierarchyBuilderService {
             newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
             newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
             
-            this.duplicateAndSetImgPath(serviceTemplate, newServiceTemplate, serviceConfiguration.getImagePath());
+            this.duplicateAndSetImgPath(serviceTemplate, newServiceTemplate, serviceConfiguration != null ? serviceConfiguration.getImagePath() : "");
 
             // set custom fields
             if (serviceConfiguration != null && serviceConfiguration.getCfValues() != null) {
