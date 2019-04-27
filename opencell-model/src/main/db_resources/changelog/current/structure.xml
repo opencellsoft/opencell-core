@@ -2128,4 +2128,17 @@ $$ LANGUAGE plpgsql;
             <column name="email_subject"></column>
         </dropColumn>
      </changeSet>
+     
+     <changeSet id="#4208_2019042601" author="MohamedElYoussoufi" dbms="postgresql" >
+     	
+        <sql>CREATE INDEX cust_cei_cet_and_code_index ON ${db.schema.adapted}cust_cei((lower(cet_code)),(lower(code)));</sql>
+        
+     </changeSet>
+     
+     <changeSet id="#4208_2019042602" author="MohamedElYoussoufi" dbms="mysql">
+     	
+        <sql>CREATE INDEX cust_cei_cet_and_code_index ON ${db.schema.adapted}cust_cei(cet_code,code);</sql>
+     	
+     </changeSet>
+     
 </databaseChangeLog>
