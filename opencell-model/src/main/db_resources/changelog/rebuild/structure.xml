@@ -3493,6 +3493,10 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
+            <column name="start_date" type="date" />
+            <column name="end_date" type="date" />
+            <column name="default_duration" type="int4" />
+            <column name="duration_unit" type="varchar(50)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -3513,7 +3517,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="discount_value" type="numeric(23, 12)" />
-
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="discount_plan_id" type="bigint">
@@ -3526,10 +3529,6 @@
             <column name="discount_value_el" type="varchar(2000)" />
             <column name="discount_value_el_sp" type="varchar(2000)" />
             <column name="discount_plan_item_type" type="varchar(25)" />
-            <column name="start_date" type="date" />
-            <column name="end_date" type="date" />
-            <column name="default_duration" type="int4" />
-            <column name="duration_unit" type="varchar(50)" />
             <column name="uuid" type="varchar(60)">
                 <constraints nullable="false" />
             </column>
