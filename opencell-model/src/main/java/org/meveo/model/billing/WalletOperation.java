@@ -402,7 +402,8 @@ public class WalletOperation extends BusinessEntity {
     /**
      * Offer template
      */
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
     public WalletInstance getWallet() {

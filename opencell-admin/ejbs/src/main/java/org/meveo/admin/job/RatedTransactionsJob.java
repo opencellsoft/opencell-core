@@ -71,7 +71,7 @@ public class RatedTransactionsJob extends Job {
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setValueRequired(false);
-        customFieldNbRuns.setDefaultValue("1");
+        customFieldNbRuns.setDefaultValue("-1");
         customFieldNbRuns.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:0");
         result.put("nbRuns", customFieldNbRuns);
 

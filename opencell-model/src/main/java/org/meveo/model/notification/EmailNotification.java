@@ -1,8 +1,10 @@
 package org.meveo.model.notification;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
@@ -10,12 +12,19 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.admin.User;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 
 /**
  * Notification by sending email
@@ -24,10 +33,13 @@ import org.meveo.model.admin.User;
  */
 @Entity
 @ModuleItem
+@CustomFieldEntity(cftCodePrefix = "EmailNotification")
 @Table(name = "adm_notif_email")
 public class EmailNotification extends Notification {
 
     private static final long serialVersionUID = -8948201462950547554L;
+    
+    public static final String EMAIL_TEMPLATE_PARAMS = "EmailTemplate_Params";
 
     /**
      * Sender's email
@@ -58,24 +70,11 @@ public class EmailNotification extends Notification {
     private Set<User> users;
 
     /**
-     * Expression to construct email's subject
+     * EmailTemplate containing subject and body email
      */
-    @Column(name = "email_subject", length = 500, nullable = false)
-    @NotNull
-    @Size(max = 500)
-    private String subject;
-
-    /**
-     * Expression to compose email's body
-     */
-    @Column(name = "email_body", columnDefinition = "TEXT")
-    private String body;
-
-    /**
-     * Expression to compose email's Html body
-     */
-    @Column(name = "email_html_body", columnDefinition = "TEXT")
-    private String htmlBody;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "email_template_id")
+    private EmailTemplate emailTemplate = new EmailTemplate();
 
     /**
      * A list of expressions to determine email's attachments
@@ -116,28 +115,12 @@ public class EmailNotification extends Notification {
         this.users = users;
     }
 
-    public String getSubject() {
-        return subject;
+    public EmailTemplate getEmailTemplate() {
+        return emailTemplate;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public String getHtmlBody() {
-        return htmlBody;
-    }
-
-    public void setHtmlBody(String htmlBody) {
-        this.htmlBody = htmlBody;
+    public void setEmailTemplate(EmailTemplate emailTemplate) {
+        this.emailTemplate = emailTemplate;
     }
 
     public Set<String> getAttachmentExpressions() {
@@ -152,7 +135,7 @@ public class EmailNotification extends Notification {
     public String toString() {
         final int maxLen = 10;
         return String.format("EmailNotification [emailFrom=%s, emailToEl=%s, emails=%s,  subject=%s, attachmentExpressions=%s, notification=%s]", emailFrom, emailToEl,
-            emails != null ? toString(emails, maxLen) : null, subject, attachmentExpressions != null ? toString(attachmentExpressions, maxLen) : null, super.toString());
+            emails != null ? toString(emails, maxLen) : null, emailTemplate != null ? emailTemplate.getSubject() : null, attachmentExpressions != null ? toString(attachmentExpressions, maxLen) : null, super.toString());
     }
 
     private String toString(Collection<?> collection, int maxLen) {
@@ -166,5 +149,23 @@ public class EmailNotification extends Notification {
         }
         builder.append("]");
         return builder.toString();
+    }
+    
+    public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
+
+        CustomFieldTemplate paramsCF = new CustomFieldTemplate();
+        paramsCF.setCode(EMAIL_TEMPLATE_PARAMS);
+        paramsCF.setAppliesTo("EmailNotification");
+        paramsCF.setActive(true);
+        paramsCF.setDescription("EmailTemplate parameters");
+        paramsCF.setFieldType(CustomFieldTypeEnum.STRING);
+        paramsCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
+        paramsCF.setValueRequired(false);
+        paramsCF.setMaxValue(256L);
+        paramsCF.setMapKeyType(CustomFieldMapKeyEnum.STRING);
+        result.put(EMAIL_TEMPLATE_PARAMS, paramsCF);
+
+        return result;
     }
 }

@@ -991,14 +991,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
-		
-        walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
 
         if (!isVirtual) {
             create(ratedTransaction);
+        }		
+        walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
+        walletOperation.setRatedTransaction(ratedTransaction);
+        
+        if (!isVirtual) {
             walletOperationService.updateNoCheck(walletOperation);
         }
-        walletOperation.setRatedTransaction(ratedTransaction);
         
         return ratedTransaction;
     }
@@ -1331,7 +1333,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 invoicingThreshold = billingRun.getBillingCycle().getInvoicingThreshold();
             }
 
-
             if (invoicingThreshold != null) {
                 if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
                     log.debug("updateEntityTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}", entity.getCode(),
@@ -1573,7 +1574,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 appProvider.getRoundingMode().getRoundingMode());
 
             RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1],
-                amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, "NO_OFFER", null,
+                amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, null, null,
                 RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), minAmountLabel, null, null, seller, tax, tax.getPercent());
 
             minAmountTransactions.add(ratedTransaction);
@@ -1710,7 +1711,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1],
                 amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, subscription, null, null, null,
-                "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode() + "_" + subscription.getCode(), minAmountLabel, null, null, seller, tax,
+                null, null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode() + "_" + subscription.getCode(), minAmountLabel, null, null, seller, tax,
                 tax.getPercent());
 
             minAmountTransactions.add(ratedTransaction);
@@ -1816,7 +1817,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 appProvider.getRoundingMode().getRoundingMode());
 
             RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1],
-                amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, "NO_OFFER", null,
+                amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, null, null,
                 RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_BA.getCode() + "_" + billingAccount.getCode(), minAmountLabel, null, null, seller, tax, tax.getPercent());
 
             minAmountTransactions.add(ratedTransaction);
