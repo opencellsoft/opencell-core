@@ -1767,7 +1767,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 									}
 
 									if (serviceInstance != null) {
-										addService(serviceInstance, doc, ratedTransaction.getOfferCode(), line);
+										String offerCode = ratedTransaction.getOfferTemplate() != null ? ratedTransaction.getOfferTemplate().getCode() : null;
+										addService(serviceInstance, doc, offerCode, line);
 									}
 								}
 							}

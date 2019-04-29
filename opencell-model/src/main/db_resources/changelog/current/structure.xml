@@ -144,4 +144,57 @@
      <changeSet id="#3692_20190426" author="AndriusKarpavicius">
         <modifyDataType tableName="ar_payment_gateway" columnName="iban" newDataType="varchar(80)" />
     </changeSet>
+    
+    <changeSet id="#4207_2019042901" author="MohamedElYoussoufi">
+     	
+     	<addColumn tableName="billing_rated_transaction">
+            <column name="offer_id" type="bigint"></column>
+        </addColumn>
+        
+        <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_offer_template" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+            
+        <addColumn tableName="billing_wallet_operation">
+            <column name="offer_id" type="bigint"></column>
+        </addColumn>
+        
+        <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_offer_template" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+            
+        <sql>
+        	update ${db.schema.adapted}billing_wallet_operation set offer_code = null where offer_code = 'NO_OFFER';
+        </sql>
+          
+      </changeSet>
+      
+      <changeSet id="#4207_2019042902" author="MohamedElYoussoufi" dbms="postgresql">
+      
+        <sql>
+        	 	update ${db.schema.adapted}billing_rated_transaction rt set offer_id = (select s.offer_id from ${db.schema.adapted}billing_subscription s where s.id=rt.subscription_id and rt.subscription_id is not null)
+        </sql>
+        
+        <sql>
+        		update ${db.schema.adapted}billing_wallet_operation wo set offer_id = (select s.offer_id from ${db.schema.adapted}billing_subscription s where s.id=wo.subscription_id and wo.subscription_id is not null)
+        </sql>
+      
+      </changeSet>
+      
+      <changeSet id="#4207_2019042903" author="MohamedElYoussoufi" dbms="mysql">
+      
+      	<sql>
+        	 update ${db.schema.adapted}billing_rated_transaction rt join ${db.schema.adapted}billing_subscription s on s.id=rt.subscription_id  set offer_id = s.offer_id where rt.subscription_id is not null
+        </sql>
+        
+        <sql>
+        	update ${db.schema.adapted}billing_wallet_operation wo join ${db.schema.adapted}billing_subscription s on s.id=wo.subscription_id  set offer_id = s.offer_id where wo.subscription_id is not null
+		</sql>
+      
+      </changeSet>
+      
+      <changeSet id="#4207_2019042904" author="MohamedElYoussoufi">
+      	<dropColumn tableName="billing_rated_transaction">
+            <column name="offer_code"></column>
+        </dropColumn>
+      </changeSet>
+    
 </databaseChangeLog>
