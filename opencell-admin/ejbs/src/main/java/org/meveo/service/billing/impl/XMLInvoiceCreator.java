@@ -298,6 +298,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String alias = invoice.getAlias();
         String invoiceNumber = invoice.getInvoiceNumber();
         BillingAccount billingAccount = invoice.getBillingAccount();
+        billingAccount = billingAccountService.retrieveIfNotManaged(billingAccount);
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
         Customer customer = customerAccount.getCustomer();
         String code = customerAccount.getCode();
@@ -305,9 +306,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         InvoiceType invoiceType = invoice.getInvoiceType();
         String invoiceTypeCode = invoiceType.getCode();
         boolean isInvoiceAdjustment = invoiceTypeCode.equals(invoiceTypeService.getAdjustementCode());
-        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         TradingLanguage tradingLanguageBA = billingAccount.getTradingLanguage();
-        tradingLanguageBA = tradingLanguageService.refreshOrRetrieve(tradingLanguageBA);
         String billingAccountLanguage = tradingLanguageBA.getLanguage().getLanguageCode();
         List<InvoiceAgregate> invoiceAgregates = invoice.getInvoiceAgregates();
         List<RatedTransaction> ratedTransactions = null;
