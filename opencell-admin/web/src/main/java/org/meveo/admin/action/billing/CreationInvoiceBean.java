@@ -73,6 +73,7 @@ import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -129,6 +130,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @Inject
     private SellerService sellerService;
+
+    @Inject
+    private ServiceSingleton serviceSingleton;
 
     private Invoice invoiceToAdd;
     private Invoice selectedInvoice;
@@ -607,7 +611,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             entity.setDetailedInvoice(isDetailed());
             entity.setSeller(customer.getSeller());
 
-            invoiceService.assignInvoiceNumber(entity);
 
             for (Entry<String, TaxInvoiceAgregate> entry : agregateHandler.getTaxInvAgregateMap().entrySet()) {
                 TaxInvoiceAgregate taxInvAgr = entry.getValue();
@@ -647,6 +650,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             }
 
             invoiceService.postCreate(entity);
+
+            entity = serviceSingleton.assignInvoiceNumber(entity);
 
             try {
                 // invoiceService.commit();
@@ -848,11 +853,13 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public List<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAggregates(CategoryInvoiceAgregate cat) {
-        if (cat == null)
+        if (cat == null) {
             return null;
+        }
         List<SubCategoryInvoiceAgregate> result = new ArrayList<>();
-        if (cat.getSubCategoryInvoiceAgregates() == null)
+        if (cat.getSubCategoryInvoiceAgregates() == null) {
             return result;
+        }
 
         for (SubCategoryInvoiceAgregate subCat : cat.getSubCategoryInvoiceAgregates()) {
             result.add(subCat);

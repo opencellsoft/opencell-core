@@ -165,6 +165,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
+    @Inject
+    private ServiceSingleton serviceSingleton;
+
     /** transformer factory. */
     private TransformerFactory transfac = TransformerFactory.newInstance();
 
@@ -331,7 +334,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode(); 
 
         if (!isInvoiceAdjustment && billingRun != null && BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus()) && invoiceNumber == null) {
-            invoiceService.assignInvoiceNumber(invoice);
+            invoice = serviceSingleton.assignInvoiceNumber(invoice);
         }
 
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();

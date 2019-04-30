@@ -35,6 +35,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.CounterInstance;
@@ -233,7 +234,15 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         log.info("generateInvoice billingAccountId:" + entity.getId());
         try {
             entity = billingAccountService.refreshOrRetrieve(entity);
-            List<Invoice> invoices = invoiceService.generateInvoice(entity, new Date(), null, new Date(), null, null, false, true, true, true);
+            GenerateInvoiceRequestDto generateInvoiceRequestDto = new GenerateInvoiceRequestDto();
+            generateInvoiceRequestDto.setGenerateXML(true);
+            generateInvoiceRequestDto.setGeneratePDF(true);
+            generateInvoiceRequestDto.setGenerateAO(true);
+            generateInvoiceRequestDto.setInvoicingDate(new Date());
+            generateInvoiceRequestDto.setFirstTransactionDate(null);
+            generateInvoiceRequestDto.setLastTransactionDate(new Date());
+            generateInvoiceRequestDto.setOrderNumber(null);
+            List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, null, false, null);
 
             StringBuilder invoiceNumbers = new StringBuilder();
             for(Invoice invoice : invoices) {
@@ -328,8 +337,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
                 invoicePrefix = "R_PART_";
             }
             entity.setInvoicePrefix(invoicePrefix + entity.getExternalRef2());
-        } else
+        } else {
             entity.setInvoicePrefix(null);
+        }
     }
 
     public void processValueChange(ValueChangeEvent value) {

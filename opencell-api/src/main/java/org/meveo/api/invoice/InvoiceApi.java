@@ -39,6 +39,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -52,6 +53,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -118,6 +120,9 @@ public class InvoiceApi extends BaseApi {
     @Inject
     @MeveoParamBean
     private ParamBean paramBean;
+
+    @Inject
+    private ServiceSingleton serviceSingleton;
     
     /**
      * Create an invoice based on the DTO object data and current user
@@ -318,7 +323,7 @@ public class InvoiceApi extends BaseApi {
         invoice.setNetToPay(netToPay);
 
         if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
-            invoiceService.assignInvoiceNumber(invoice);
+            invoice = serviceSingleton.assignInvoiceNumber(invoice);
         }
         if (invoice.isDraft()) {
             this.setDraftSetting(invoiceDTO, seller, invoice);
@@ -359,7 +364,7 @@ public class InvoiceApi extends BaseApi {
 
     private void setDraftSetting(InvoiceDto invoiceDTO, Seller seller, Invoice invoice) throws BusinessException {
         if (invoice.getInvoiceNumber() == null) {
-            invoiceService.assignInvoiceNumber(invoice);
+            invoice = serviceSingleton.assignInvoiceNumber(invoice);
         }
         InvoiceType draftInvoiceType = invoiceTypeService.getDefaultDraft();
         InvoiceTypeSellerSequence invoiceTypeSellerSequence = draftInvoiceType.getSellerSequenceByType(seller);
@@ -481,9 +486,9 @@ public class InvoiceApi extends BaseApi {
      * <li>Validate the postinvoicing report
      * <li>Vaidate the BillingRun
      * </ul>
-     * 
+     *
      * @param generateInvoiceRequestDto generate invoice request
-     * 
+     *
      * @return The invoiceNumber invoice number.
      * @throws BusinessException business exception
      * @throws MeveoApiException meveo api exception
@@ -561,14 +566,14 @@ public class InvoiceApi extends BaseApi {
         boolean produceXml = (generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
                 || (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
-        boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
         List<GenerateInvoiceResultDto> invoicesDtos = new ArrayList<>();
-        List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
+        ICustomFieldEntity customFieldEntity = new Invoice();
+        customFieldEntity = this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), customFieldEntity, false);
+        List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft, customFieldEntity.getCfValues());
         if (invoices != null) {
             for (Invoice invoice : invoices) {
-                this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
-                invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
+                invoice = invoiceService.retrieveIfNotManaged(invoice);
 
                 GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
                 invoicesDtos.add(generateInvoiceResultDto);
@@ -696,8 +701,7 @@ public class InvoiceApi extends BaseApi {
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
         }
-        invoiceService.assignInvoiceNumber(invoice);
-        invoice = invoiceService.update(invoice);
+        invoice = serviceSingleton.assignInvoiceNumber(invoice);
         return invoice.getInvoiceNumber();
     }
 
