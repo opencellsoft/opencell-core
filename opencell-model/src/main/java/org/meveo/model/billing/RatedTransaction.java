@@ -380,13 +380,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     private PricePlanMatrix priceplan;
 
     /**
-     * Offer code
-     */
-    @Column(name = "offer_code", length = 255)
-    @Size(max = 255, min = 1)
-    protected String offerCode;
-
-    /**
      * EDR that produced this operation
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -433,7 +426,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     /**
      * Offer template
      */
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
     
     public RatedTransaction() {
@@ -467,7 +461,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.setParameterExtra(ratedTransaction.getParameterExtra());
         this.setOrderNumber(ratedTransaction.getOrderNumber());
         this.setPriceplan(ratedTransaction.getPriceplan());
-        this.setOfferCode(ratedTransaction.getOfferCode());
         this.setEdr(ratedTransaction.getEdr());
         this.setOfferTemplate(ratedTransaction.getOfferTemplate());
         this.setRatingUnitDescription(ratedTransaction.getRatingUnitDescription());
@@ -482,7 +475,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     public RatedTransaction(Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity,
             BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount,
             UserAccount userAccount, InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber,
-            Subscription subscription, String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code,
+            Subscription subscription, String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan, OfferTemplate offerTemplate, EDR edr, String code,
             String description, Date startDate, Date endDate, Seller seller, Tax tax, BigDecimal taxPercent) {
 
         super();
@@ -509,7 +502,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.orderNumber = orderNumber;
         this.subscription = subscription;
         this.priceplan = priceplan;
-        this.offerCode = offerCode;
+        this.offerTemplate = offerTemplate;
         this.edr = edr;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -548,7 +541,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.orderNumber = walletOperation.getOrderNumber();
         this.subscription = walletOperation.getSubscription();
         this.priceplan = walletOperation.getPriceplan();
-        this.offerCode = walletOperation.getOfferCode();
+        this.offerTemplate = walletOperation.getOfferTemplate();
         this.edr = walletOperation.getEdr();
         this.startDate = walletOperation.getStartDate();
         this.endDate = walletOperation.getEndDate();
@@ -829,14 +822,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     public void setPriceplan(PricePlanMatrix priceplan) {
         this.priceplan = priceplan;
-    }
-
-    public String getOfferCode() {
-        return offerCode;
-    }
-
-    public void setOfferCode(String offerCode) {
-        this.offerCode = offerCode;
     }
 
     public EDR getEdr() {
