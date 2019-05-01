@@ -2,6 +2,7 @@ package org.meveo.api.dto.account;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
@@ -31,6 +32,10 @@ public class CustomerCategoryDto extends BusinessEntityDto {
     /** The exoneration reason. */
     private String exonerationReason;
 
+    /** The accounting code. */
+    @XmlElement(required = true)
+    private String accountingCode;
+
     /**
      * Instantiates a new customer category dto.
      */
@@ -49,6 +54,9 @@ public class CustomerCategoryDto extends BusinessEntityDto {
         exonerationReason = customerCategory.getExonerationReason();
         exonerationTaxEl = customerCategory.getExonerationTaxEl();
         exonerationTaxElSpark = customerCategory.getExonerationTaxElSpark();
+        if(customerCategory.getAccountingCode() != null) {
+            accountingCode = customerCategory.getAccountingCode().getCode();
+        }
     }
 
     /**
@@ -107,9 +115,22 @@ public class CustomerCategoryDto extends BusinessEntityDto {
         this.exonerationReason = exonerationReason;
     }
 
+    /**
+     * @return the accounting code
+     */
+    public String getAccountingCode() {
+        return accountingCode;
+    }
+    /**
+     * @param accountingCode the accounting code to set
+     */
+    public void setAccountingCode(String accountingCode) {
+        this.accountingCode = accountingCode;
+    }
+
     @Override
     public String toString() {
         return "CustomerCategoryDto [exoneratedFromTaxes=" + exoneratedFromTaxes + ", exonerationTaxEl=" + exonerationTaxEl + ", exonerationTaxElSpark=" + exonerationTaxElSpark
-                + ", exonerationReason=" + exonerationReason + "]";
+                + ", exonerationReason=" + exonerationReason + ", accountingCode=" + accountingCode + "]";
     }
 }

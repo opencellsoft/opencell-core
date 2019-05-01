@@ -98,7 +98,26 @@
         <constraint>currentUser.hasRole('administrationVisualization')</constraint>
     </page>
 
-	<page view-id=".+\/admin\/.+">
+    <page view-id=".+\/admin\/languages\/.*">
+		<constraint>currentUser.hasRole('languageManagement')</constraint>
+		<constraint type="READ">currentUser.hasRole('languageVisualization')</constraint>
+	</page>
+
+	<page view-id=".+\/admin\/countries\/.*">
+		<constraint>currentUser.hasRole('countryManagement')</constraint>
+		<constraint type="READ">currentUser.hasRole('countryVisualization')</constraint>
+	</page>
+
+	<page view-id=".+\/admin\/currencies\/.*">
+		<constraint>currentUser.hasRole('currencyManagement')</constraint>
+		<constraint type="READ">currentUser.hasRole('currencyVisualization')</constraint>
+	</page>
+
+    <page view-id=".+\/job\/jobInstanceDetail.jsf*">
+        <constraint>currentUser.hasRole('useJob')</constraint>
+    </page>
+
+    <page view-id=".+\/admin\/.+">
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>

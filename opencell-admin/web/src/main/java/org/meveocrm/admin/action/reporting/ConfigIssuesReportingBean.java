@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -165,6 +164,35 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     public void constructScriptInstancesWithError(TabChangeEvent event) {
         scriptInstanceWithErrorList = scriptInstanceService.getScriptInstancesWithError();
     }
+    
+    ConfigIssuesReportingDTO reportConfigDto;
+	public void constructWalletOperation(TabChangeEvent event) {
+    	 reportConfigDto = new ConfigIssuesReportingDTO();
+    	 List<Object[]> WOStatus= walletOperationService.getNbrWalletsOperationByStatus();
+    	 for (Object[] s: WOStatus) {
+    		 reportConfigDto.setNbrWalletOpOpen(((Long)(s[0].equals(WalletOperationStatusEnum.OPEN)? s[1]: reportConfigDto.getNbrWalletOpOpen().longValue())).intValue());
+             reportConfigDto.setNbrWalletOpRerated(((Long)(s[0].equals(WalletOperationStatusEnum.RERATED)? s[1]: reportConfigDto.getNbrWalletOpRerated().longValue())).intValue());
+             reportConfigDto.setNbrWalletOpReserved(((Long)(s[0].equals(WalletOperationStatusEnum.RESERVED)? s[1]: reportConfigDto.getNbrWalletOpReserved().longValue())).intValue());
+             reportConfigDto.setNbrWalletOpCancled(((Long)(s[0].equals(WalletOperationStatusEnum.CANCELED) ? s[1]: reportConfigDto.getNbrWalletOpCancled().longValue())).intValue());
+             reportConfigDto.setNbrWalletOpTorerate(((Long)(s[0].equals(WalletOperationStatusEnum.TO_RERATE)? s[1]: reportConfigDto.getNbrWalletOpTorerate().longValue())).intValue());
+             reportConfigDto.setNbrWalletOpTreated(((Long)(s[0].equals(WalletOperationStatusEnum.TREATED)? s[1]: reportConfigDto.getNbrWalletOpTreated().longValue())).intValue());
+             reportConfigDto.setNbrWalletOpScheduled(((Long)(s[0].equals(WalletOperationStatusEnum.SCHEDULED)? s[1]: reportConfigDto.getNbrWalletOpScheduled().longValue())).intValue());
+             
+    	 }
+	}
+    public void constructEdr(TabChangeEvent event) { 
+    	 reportConfigDto = new ConfigIssuesReportingDTO();
+    	 List<Object[]>  EdrStatus= walletOperationService.getNbrEdrByStatus();
+    	 for (Object[] e: EdrStatus) {
+    		 reportConfigDto.setNbrEdrOpen(((Long)(e[0].equals(EDRStatusEnum.OPEN)? e[1]: reportConfigDto.getNbrEdrOpen().longValue())).intValue());
+	         reportConfigDto.setNbrEdrRated(((Long)(e[0].equals(EDRStatusEnum.RATED)? e[1]: reportConfigDto.getNbrEdrRated().longValue())).intValue());
+	         reportConfigDto.setNbrEdrRejected(((Long)(e[0].equals(EDRStatusEnum.REJECTED)? e[1]: reportConfigDto.getNbrEdrRejected().longValue())).intValue());
+	         reportConfigDto.setNbrEdrMediating(((Long)(e[0].equals(EDRStatusEnum.MEDIATING)? e[1]: reportConfigDto.getNbrEdrMediating().longValue())).intValue());
+	         reportConfigDto.setNbrEdrAggregated(((Long)(e[0].equals(EDRStatusEnum.AGGREGATED)? e[1]: reportConfigDto.getNbrEdrAggregated().longValue())).intValue());
+    		 
+    	}
+    }
+    
 
     private Map<String, String> getJasperFiles() throws IOException {
         Map<String, String> jasperFiles = new HashMap<String, String>();
@@ -204,28 +232,11 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
         if (jasperFilesList != null && jasperFilesList.size() > 0) {
             jaspers = new ArrayList<>(jasperFilesList.entrySet());
         }
-    }
-
-    ConfigIssuesReportingDTO reportConfigDto;
-
-    @PostConstruct
-    public void init() {
         reportConfigDto = new ConfigIssuesReportingDTO();
-        reportConfigDto.setNbrWalletOpOpen(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.OPEN).intValue());
-        reportConfigDto.setNbrWalletOpRerated(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RERATED).intValue());
-        reportConfigDto.setNbrWalletOpReserved(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RESERVED).intValue());
-        reportConfigDto.setNbrWalletOpCancled(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.CANCELED).intValue());
-        reportConfigDto.setNbrWalletOpTorerate(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.TO_RERATE).intValue());
-        reportConfigDto.setNbrWalletOpTreated(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.TREATED).intValue());
-        reportConfigDto.setNbrEdrOpen(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.OPEN).intValue());
-        reportConfigDto.setNbrEdrRated(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.RATED).intValue());
-        reportConfigDto.setNbrEdrRejected(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.REJECTED).intValue());
-        try {
-            reportConfigDto.setNbrJasperDir(getJasperFiles().size());
-        } catch (IOException e) {
-            log.error("Failed to get number of jasper files", e);
-        }
+        reportConfigDto.setNbrJasperDir(jasperFilesList.size());
+       
     }
+
 
     public Integer getNbrChargesWithNotPricePlan() {
         return getNbrUsagesWithNotPricePlan() + getNbrRecurringWithNotPricePlan() + getNbrOneShotWithNotPricePlan();
@@ -351,6 +362,10 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
 
     public void setJaspers(List<Entry<String, String>> jaspers) {
         this.jaspers = jaspers;
+    }
+    
+    public Integer getNbrJasperDir() throws IOException {
+    	return getJasperFiles().size();
     }
 
 }

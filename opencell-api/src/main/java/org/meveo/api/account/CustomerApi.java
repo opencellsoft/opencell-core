@@ -35,7 +35,6 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
-import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -54,6 +53,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.export.CustomBigDecimalConverter;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -65,6 +65,7 @@ import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
@@ -127,7 +128,7 @@ public class CustomerApi extends AccountEntityApi {
     private ProviderService providerService;
 
     @Inject
-    private CustomerSequenceApi customerSequenceApi;
+    private AccountingCodeService accountingCodeService;
 
     public void create(CustomerDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -144,10 +145,7 @@ public class CustomerApi extends AccountEntityApi {
         }
         if (StringUtils.isBlank(postData.getCustomerCategory())) {
             missingParameters.add("customerCategory");
-        }
-        if (StringUtils.isBlank(postData.getSeller())) {
-            missingParameters.add("seller");
-        }
+        }       
         if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
             missingParameters.add("name.lastName");
         }
@@ -172,9 +170,12 @@ public class CustomerApi extends AccountEntityApi {
             }
         }
 
-        Seller seller = sellerService.findByCode(postData.getSeller());
-        if (seller == null) {
-            throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+        Seller seller = null;
+        if (!StringUtils.isBlank(postData.getSeller())) {
+        	seller = sellerService.findByCode(postData.getSeller());
+	        if (seller == null) {
+	            throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+	        }
         }
 
         Customer customer = new Customer();
@@ -479,6 +480,13 @@ public class CustomerApi extends AccountEntityApi {
         customerCategory.setExonerationTaxElSpark(postData.getExonerationTaxElSpark());
         customerCategory.setExonerationReason(postData.getExonerationReason());
 
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            customerCategory.setAccountingCode(accountingCode);
+        }
         customerCategoryService.create(customerCategory);
     }
 
@@ -519,6 +527,14 @@ public class CustomerApi extends AccountEntityApi {
         if (postData.getExonerationReason() != null && StringUtils.compare(postData.getExonerationReason(), customerCategory.getExonerationReason()) != 0) {
             customerCategory.setExonerationReason(postData.getExonerationReason());
             toUpdate = true;
+        }
+
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            customerCategory.setAccountingCode(accountingCode);
         }
 
         if (toUpdate) {

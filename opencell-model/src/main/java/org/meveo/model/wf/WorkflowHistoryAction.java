@@ -58,7 +58,7 @@ public class WorkflowHistoryAction extends BaseEntity {
     /**
      * Result obtained
      */
-    @Column(name = "result")
+    @Column(name = "result", columnDefinition = "text")
     private String result;
 
     public WorkflowHistoryAction() {

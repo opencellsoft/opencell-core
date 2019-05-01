@@ -17,8 +17,7 @@ public @interface CustomFieldEntity {
 
     /**
      * (Required) A custom field template code prefix.
-     */
-    /**
+     * 
      * @return cft code prefix
      */
     String cftCodePrefix() default "";

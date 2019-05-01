@@ -23,7 +23,6 @@
     <property name="db.schema.adapted" value="${db.schema}." dbms="postgresql"/>
     <property name="db.schema.adapted" value="" dbms="mysql"/>
 
-    <include file="current/columns-data-type-change.xml" relativeToChangelogFile="true" />
     <include file="current/structure.xml" relativeToChangelogFile="true" />
     <include file="current/data.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

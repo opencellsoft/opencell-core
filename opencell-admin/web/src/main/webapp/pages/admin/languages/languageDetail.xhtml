@@ -25,8 +25,7 @@
                 <p:menuitem value="#{messages['menu.language']} - #{languageBean.entity.languageCode}" disabled="true" rendered="#{!languageBean.entity.transient}"/>
             </p:breadCrumb>
         </h:form>
-        <hftl:formPanel label="#{messages['language.languagePanel']}"
-                        backingBean="#{languageBean}">
+        <hftl:formPanel label="#{messages['language.languagePanel']}" backingBean="#{languageBean}" >
             <hftl:formField label="#{messages['language.code']}"
                             field="languageCode" required="false"/>
             <hftl:formField label="#{messages['language.name']}"

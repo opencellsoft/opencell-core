@@ -1,5 +1,7 @@
 package org.meveo.model.notification;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -157,6 +159,8 @@ public class InboundRequest extends BusinessEntity {
      * Body of response
      */
     transient private String responseBody;
+
+    transient private byte[] bytes;
 
     /**
      * Cookies to set in response
@@ -448,4 +452,11 @@ public class InboundRequest extends BusinessEntity {
         return responseHeaders;
     }
 
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
 }

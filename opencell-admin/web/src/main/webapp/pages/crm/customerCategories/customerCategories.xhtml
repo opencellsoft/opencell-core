@@ -37,6 +37,8 @@
 			<hftl:column
 				label="#{messages['customerCategory.exoneratedFromTaxes']}"
 				field="exoneratedFromTaxes" isMessage="true" />
+			<hftl:column label="#{messages['customerCategory.accountingCode']}"
+						 field="accountingCode.code"  />
 			<hftl:actionsColumn
 				permission="#{currentUser.hasRole('administrationManagement')}" />
 		</hftl:dataList>

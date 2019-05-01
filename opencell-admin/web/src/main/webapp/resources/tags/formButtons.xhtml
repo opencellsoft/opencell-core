@@ -69,7 +69,7 @@
 
 	<h:panelGroup layout="block" styleClass="form-panel-actions" id="formPanelActions">
 		<p:button value="#{messages['commons.edit']}" includeViewParams="true"
-			rendered="#{!cc.attrs.edit and cc.attrs.showEditButton}">
+			rendered="#{!cc.attrs.edit and cc.attrs.showEditButton and cc.attrs.backingBean.canUserUpdateEntity()}">
 			<f:param name="edit" value="true" />
  			<f:param name="#{cc.attrs.objectIdParamName}"
  				value="#{cc.attrs.backingBean.objectId}" />

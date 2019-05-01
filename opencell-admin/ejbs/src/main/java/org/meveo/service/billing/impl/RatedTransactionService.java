@@ -537,7 +537,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                 // Add tax aggregate or update its amounts
 
-                if (calculateTaxOnSubCategoryLevel && amountCumulativeForTax.compareTo(BigDecimal.ZERO) > 0) {
+				if (calculateTaxOnSubCategoryLevel && !BigDecimal.ZERO.equals(amountCumulativeForTax)) {
 
                     TaxInvoiceAgregate taxAggregate = taxAggregates.get(scAggregate.getTax().getCode());
                     if (taxAggregate == null) {

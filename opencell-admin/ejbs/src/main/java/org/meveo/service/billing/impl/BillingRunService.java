@@ -488,7 +488,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         queryminTrans.executeUpdate();
 
         Query queryTrans = getEntityManager().createQuery("update " + RatedTransaction.class.getName()
-                + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where billingRun=:billingRun");
+                + " set invoice=null, invoiceAgregateF=null, invoiceAgregateR=null, invoiceAgregateT=null ,status=:status where billingRun=:billingRun");
         queryTrans.setParameter("billingRun", billingRun);
         queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
         queryTrans.executeUpdate();
@@ -503,27 +503,67 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             remove(InvoiceAgregate.class, invoiceAgregate);
         }
         getEntityManager().flush();
-
-        Query queryForDeletion = getEntityManager().createQuery("delete from " + SubCategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
-        queryForDeletion.setParameter("billingRun", billingRun);
-        queryForDeletion.executeUpdate();
         
-        queryForDeletion = getEntityManager().createQuery("delete from " + CategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
-        queryForDeletion.setParameter("billingRun", billingRun);
-        queryForDeletion.executeUpdate();
+        // deleting SubCategoryInvoiceAgregate
+		this.cleanSubCategoryInvoiceAgregateByBR(billingRun);
         
-        queryForDeletion = getEntityManager().createQuery("delete from " + TaxInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
-        queryForDeletion.setParameter("billingRun", billingRun);
-        queryForDeletion.executeUpdate();
+        // deleting CategoryInvoiceAgregate
+		this.cleanCategoryInvoiceAgregateByBR(billingRun);
         
-        queryForDeletion = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
-        queryForDeletion.setParameter("billingRun", billingRun);
-        queryForDeletion.executeUpdate();
+        // deleting TaxInvoiceAgregate
+		this.cleanTaxInvoiceAgregateByBR(billingRun);
+        
+        // deleting Invoice
+        this.cleanInvoiceByBR(billingRun);
 
         Query queryBA = getEntityManager().createQuery("update " + BillingAccount.class.getName() + " set billingRun=null where billingRun=:billingRun");
         queryBA.setParameter("billingRun", billingRun);
         queryBA.executeUpdate();
     }
+
+	private void cleanInvoiceByBR(BillingRun billingRun) {
+		Query queryInvoice = getEntityManager().createQuery(new StringBuilder("update RatedTransaction rt set rt.invoice = null ")
+        		.append(" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoice.billingRun=:billingRun ) ").toString());
+        queryInvoice.setParameter("billingRun", billingRun);
+        queryInvoice.executeUpdate();
+        
+        Query queryForDeletion = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
+        queryForDeletion.setParameter("billingRun", billingRun);
+        queryForDeletion.executeUpdate();
+	}
+
+	private void cleanTaxInvoiceAgregateByBR(BillingRun billingRun) {
+        Query queryTaxInv = getEntityManager().createQuery(new StringBuilder("update RatedTransaction rt set rt.invoiceAgregateT = null ")
+        		.append(" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoiceAgregateT.billingRun=:billingRun ) ").toString());
+        queryTaxInv.setParameter("billingRun", billingRun);
+        queryTaxInv.executeUpdate();
+        
+        Query queryForDeletion = getEntityManager().createQuery("delete from " + TaxInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+        queryForDeletion.setParameter("billingRun", billingRun);
+        queryForDeletion.executeUpdate();
+	}
+
+	private void cleanCategoryInvoiceAgregateByBR(BillingRun billingRun) {
+        Query queryCatInv = getEntityManager().createQuery(new StringBuilder("update RatedTransaction rt set rt.invoiceAgregateR = null ")
+        		.append(" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoiceAgregateR.billingRun=:billingRun ) ").toString());
+        queryCatInv.setParameter("billingRun", billingRun);
+        queryCatInv.executeUpdate();
+        
+        Query queryForDeletion = getEntityManager().createQuery("delete from " + CategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+        queryForDeletion.setParameter("billingRun", billingRun);
+        queryForDeletion.executeUpdate();
+	}
+
+	private void cleanSubCategoryInvoiceAgregateByBR(BillingRun billingRun) {
+		Query querySubCat = getEntityManager().createQuery(new StringBuilder("update RatedTransaction rt set rt.invoiceAgregateF = null ")
+        		.append(" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoiceAgregateF.billingRun=:billingRun ) ").toString());
+        querySubCat.setParameter("billingRun", billingRun);
+        querySubCat.executeUpdate();
+
+        Query queryForDeletion = getEntityManager().createQuery("delete from " + SubCategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+        queryForDeletion.setParameter("billingRun", billingRun);
+        queryForDeletion.executeUpdate();
+	}
 
     /**
      * Checks if is active billing runs exist.
@@ -871,7 +911,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         List<IBillableEntity> billableEntities = new ArrayList<>();
         
         if (!BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
-	        log.info("Will process {} entities of type {}", (entities != null ? entities.size() : 0), billingRun.getBillingCycle().getType());
+	        BillingCycle billingCycle = billingRun.getBillingCycle();
+	        BillingEntityTypeEnum type = null;
+	        if (billingCycle != null) {
+	            type = billingCycle.getType();
+	        }
+	        
+            log.info("Will process {} entities of type {}", (entities != null ? entities.size() : 0), type);
 	        if (entities != null && entities.size() > 0) {
 	            SubListCreator subListCreator = new SubListCreator(entities, (int) nbRuns);
 	            List<Future<List<IBillableEntity>>> asyncReturns = new ArrayList<Future<List<IBillableEntity>>>();
