@@ -277,8 +277,8 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     /**
      * Instance of discount plans. Once instantiated effectivity date is not affected when template is updated.
      */
-	@OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<DiscountPlanInstance> discountPlanInstances;
+    @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<DiscountPlanInstance> discountPlanInstances;
 
     /**
      * Total invoicing amount with tax
@@ -291,7 +291,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      */
     @Transient
     private BigDecimal totalInvoicingAmountTax;
-    
+
     /**
      * Applicable discount plan. Replaced by discountPlanInstances. Now used only in GUI.
      */
@@ -300,7 +300,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     /**
      * Email Template
      */
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email_template_id")
     private EmailTemplate emailTemplate;
 
@@ -317,7 +317,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Column(name = "cced_emails", length = 2000)
     @Size(max = 2000)
     private String ccedEmails;
-
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -632,10 +631,10 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
         this.totalInvoicingAmountTax = totalInvoicingAmountTax;
     }
-    
-	public List<DiscountPlanInstance> getDiscountPlanInstances() {
-		return discountPlanInstances;
-	}
+
+    public List<DiscountPlanInstance> getDiscountPlanInstances() {
+        return discountPlanInstances;
+    }
 
     @Override
     public List<DiscountPlanInstance> getAllDiscountPlanInstances() {
@@ -644,26 +643,27 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     @Override
     public void addDiscountPlanInstances(DiscountPlanInstance discountPlanInstance) {
-        if(this.getDiscountPlanInstances() == null){
+        if (this.getDiscountPlanInstances() == null) {
             this.setDiscountPlanInstances(new ArrayList<>());
         }
         this.getDiscountPlanInstances().add(discountPlanInstance);
     }
 
     public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstances) {
-		this.discountPlanInstances = discountPlanInstances;
-	}
+        this.discountPlanInstances = discountPlanInstances;
+    }
 
-	public DiscountPlan getDiscountPlan() {
-		return discountPlan;
-	}
+    public DiscountPlan getDiscountPlan() {
+        return discountPlan;
+    }
 
-	public void setDiscountPlan(DiscountPlan discountPlan) {
-		this.discountPlan = discountPlan;
-	}
+    public void setDiscountPlan(DiscountPlan discountPlan) {
+        this.discountPlan = discountPlan;
+    }
 
     /**
      * Gets Email Template.
+     * 
      * @return Email Template.
      */
     public EmailTemplate getEmailTemplate() {
@@ -672,6 +672,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Sets Email template.
+     * 
      * @param emailTemplate the Email template.
      */
     public void setEmailTemplate(EmailTemplate emailTemplate) {
@@ -680,6 +681,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Gets Mailing Type.
+     * 
      * @return Mailing Type.
      */
     public MailingTypeEnum getMailingType() {
@@ -688,6 +690,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Sets Mailing Type
+     * 
      * @param mailingType mailing type
      */
     public void setMailingType(MailingTypeEnum mailingType) {
@@ -696,6 +699,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Gets cc Emails
+     * 
      * @return CC emails
      */
     public String getCcedEmails() {
@@ -704,6 +708,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Sets cc Emails
+     * 
      * @param ccedEmails Cc Emails
      */
     public void setCcedEmails(String ccedEmails) {
