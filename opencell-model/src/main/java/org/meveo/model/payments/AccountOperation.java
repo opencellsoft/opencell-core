@@ -66,7 +66,7 @@ import org.meveo.model.finance.AccountingWriting;
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @lastModifiedVersion 5.2
- * 
+ *
  */
 @Entity
 @ObservableEntity
@@ -77,14 +77,14 @@ import org.meveo.model.finance.AccountingWriting;
         @Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
 @CustomFieldEntity(cftCodePrefix = "ACC_OP")
 @NamedQueries({
-        @NamedQuery(name = "AccountOperation.listAoToPayWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and " + 
-            "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
-            "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),  
-        @NamedQuery(name = "AccountOperation.listAoToPay", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.customerAccount.id=:caIdIN  and ao.transactionCategory='DEBIT' and " + 
+        @NamedQuery(name = "AccountOperation.listAoToPayWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and " +
+            "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
+            "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
+        @NamedQuery(name = "AccountOperation.listAoToPay", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.customerAccount.id=:caIdIN  and ao.transactionCategory='DEBIT' and " +
                 "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
-                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),       
+                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
         @NamedQuery(name = "AccountOperation.listAOIdsToRefund", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.customerAccount.id=:caIdIN and ao.type not in ('P','AP') and " +
-                "                               ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and " + 
+                "                               ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and " +
                 "                               pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN   "),
         @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao.customerAccount=:customerAccount")
 })
@@ -196,16 +196,16 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum paymentMethod;
-    
+
     @OneToMany(mappedBy = "recordedInvoice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invoice> invoices;
-    
+
     @Transient
     private String code;
 
     @Transient
     private String description;
-    
+
     @Column(name = "payment_info", length = 255)
     @Size(max = 255)
     private String paymentInfo;// IBAN for direct debit
@@ -237,11 +237,11 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "billing_account_name", length = 255)
     @Size(max = 255)
     private String billingAccountName;
-   
+
     @ManyToOne(optional = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "ddrequest_item_id")
     private DDRequestItem ddRequestItem;
-   
+
 
     public Date getDueDate() {
         return dueDate;
@@ -273,7 +273,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
-       
+
     }
 
     public BigDecimal getMatchingAmount() {
@@ -469,6 +469,14 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
         this.accountingCode = accountingCode;
     }
 
+    public AccountingWriting getAccountingWriting() {
+        return accountingWriting;
+    }
+
+    public void setAccountingWriting(AccountingWriting accountingWriting) {
+        this.accountingWriting = accountingWriting;
+    }
+
     /**
      * @return the amountWithoutTax
      */
@@ -660,6 +668,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     public void setDdRequestItem(DDRequestItem ddRequestItem) {
         this.ddRequestItem = ddRequestItem;
     }
-    
-    
+
+
 }
