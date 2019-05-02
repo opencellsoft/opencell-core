@@ -100,8 +100,10 @@ public class DWHQueryBean {
         
         EntityManager em = emWrapper.getEntityManager();
         
+        int ji = 0;
         for (MeasurableQuantity mq : mqList) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            ji++;
+            if (ji % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             if (StringUtils.isBlank(mq.getSqlQuery())) {

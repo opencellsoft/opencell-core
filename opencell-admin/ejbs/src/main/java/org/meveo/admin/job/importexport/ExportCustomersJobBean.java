@@ -76,8 +76,10 @@ public class ExportCustomersJobBean {
         List<Seller> sellersInDB = customerService.listSellersWithCustomers();
         sellers = new Sellers(sellersInDB);// ,param.getProperty("connectorCRM.dateFormat",
                                            // "yyyy-MM-dd"));
+        int i = 0;
         for (org.meveo.model.jaxb.customer.Seller seller : sellers.getSeller()) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             List<Customer> customers = customerService.listBySellerCode(seller.getCode());

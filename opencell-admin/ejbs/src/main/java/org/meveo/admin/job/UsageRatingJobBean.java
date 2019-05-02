@@ -68,12 +68,10 @@ public class UsageRatingJobBean extends BaseJobBean {
                 log.warn("Cant get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
             }
             List<Long> ids = edrService.getEDRidsToRate(rateUntilDate, ratingGroup);
-            log.debug("edr to rate={}", ids.size());
             result.setNbItemsToProcess(ids.size());
             List<Future<String>> futures = new ArrayList<>();
             SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
-            log.debug("block to run={}", subListCreator.getBlocToRun());
-            log.debug("nbThreads={}", nbRuns);
+            log.debug("edr to rate={}, block to run={} in {} threads", ids.size(), subListCreator.getBlocToRun(), nbRuns);
 
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {

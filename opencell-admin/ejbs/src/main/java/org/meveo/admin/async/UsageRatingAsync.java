@@ -19,7 +19,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
-import org.slf4j.Logger;
 
 /**
  * @author anasseh
@@ -34,9 +33,6 @@ public class UsageRatingAsync {
 
     @Inject
     private JobExecutionService jobExecutionService;
-
-    @Inject
-    private Logger log;
 
     @Inject
     private CurrentUserProvider currentUserProvider;
@@ -56,9 +52,10 @@ public class UsageRatingAsync {
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-
+        int i = 0;
         for (Long id : ids) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                 break;
             }
             try {

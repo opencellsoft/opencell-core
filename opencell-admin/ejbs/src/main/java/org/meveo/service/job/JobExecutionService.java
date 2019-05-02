@@ -52,6 +52,8 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
 
+    public static int CHECK_IS_JOB_RUNNING_EVERY_NR = 50;
+    
     /**
      * job instance service.
      */
