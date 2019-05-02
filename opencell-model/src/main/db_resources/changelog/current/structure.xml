@@ -2125,6 +2125,7 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_accounting_writing_seq" />
             </column>
+            <column name="version" type="int4" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
