@@ -71,14 +71,14 @@
         <hftl:entityPopup id="userAccountPopup"
 			header="#{messages['userAccount.popup.header']}"
 			backingBean="#{userAccountBean}"
-			 dataModel="#{userAccountBean.listAllUserAccountWithBillingAccountAndDiscountPlan()}"
 			searchField1Label="#{messages['userAccount.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['userAccount.name']}"
 			searchField2="name" column1Label="#{messages['userAccount.code']}"
 			column1="code" column2Label="#{messages['userAccount.name']}"
 			column2="name" selection="#{subscriptionBean.entity.userAccount}"
-			updateField=":subscriptionTab:subscriptionFormId:informationTab">
+			updateField=":subscriptionTab:subscriptionFormId:informationTab"
+			selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="refreshUAInformation">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="offerPopup"
