@@ -58,6 +58,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.model.finance.AccountingWriting;
 
 /**
  * Account Transaction.
@@ -115,6 +116,16 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 
+    /**
+     * Accounting writing
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_writing_id")
+    private AccountingWriting accountingWriting;
+
+    /**
+     * Deprecated in 5.2. Use accountingCode instead
+     */
     @Deprecated
     @Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
