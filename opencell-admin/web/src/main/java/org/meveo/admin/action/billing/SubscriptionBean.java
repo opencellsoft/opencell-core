@@ -265,7 +265,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             if (!allowServiceMultiInstantiation) {
                 for (ServiceInstance serviceInstance : serviceInstances) {
-                    if (serviceTemplate.getCode().equals(serviceInstance.getCode())) {
+                    if (serviceTemplate.getCode().equals(serviceInstance.getCode()) && !InstanceStatusEnum.TERMINATED.equals(serviceInstance.getStatus())) {
                         alreadyInstanciated = true;
                         break;
                     }
