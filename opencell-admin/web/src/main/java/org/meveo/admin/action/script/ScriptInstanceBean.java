@@ -39,9 +39,10 @@ import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.script.CustomScriptService;
 import org.meveo.service.script.ScriptInstanceCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInstanceServiceStateless;
+import org.meveo.service.script.ScriptUtils;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 
@@ -50,7 +51,8 @@ import org.primefaces.model.LazyDataModel;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.1
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
  */
 @Named
 @ViewScoped
@@ -62,6 +64,9 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
      */
     @Inject
     private ScriptInstanceService scriptInstanceService;
+    
+    @Inject
+    private ScriptInstanceServiceStateless scriptInstanceServiceStateless;
 
     @Inject
     private RoleService roleService;
@@ -166,10 +171,10 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        String code = CustomScriptService.getFullClassname(entity.getScript());
+        String code = ScriptUtils.getFullClassname(entity.getScript());
 
         // check script existed full class name in class path
-        if (CustomScriptService.isOverwritesJavaClass(code)) {
+        if (ScriptUtils.isOverwritesJavaClass(code)) {
             messages.error(new BundleKey("messages", "message.scriptInstance.classInvalid"), code);
             return null;
         }
@@ -220,14 +225,14 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     }
 
     public boolean isUserHasSourcingRole(ScriptInstance scriptInstance) {
-        return scriptInstanceService.isUserHasSourcingRole(scriptInstance);
+        return scriptInstanceServiceStateless.isUserHasSourcingRole(scriptInstance);
     }
 
     public void testCompilation() {
 
         // check script existed full class name in class path
-        String code = CustomScriptService.getFullClassname(entity.getScript());
-        if (CustomScriptService.isOverwritesJavaClass(code)) {
+        String code = ScriptUtils.getFullClassname(entity.getScript());
+        if (ScriptUtils.isOverwritesJavaClass(code)) {
             messages.error(new BundleKey("messages", "message.scriptInstance.classInvalid"), code);
             return;
         }

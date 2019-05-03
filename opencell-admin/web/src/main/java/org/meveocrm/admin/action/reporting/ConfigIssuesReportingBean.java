@@ -39,11 +39,13 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInstanceServiceStateless;
 import org.primefaces.event.TabChangeEvent;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
  *
  */
 @Named
@@ -83,7 +85,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     private CounterTemplateService counterTemplateService;
 
     @Inject
-    private ScriptInstanceService scriptInstanceService;
+    private ScriptInstanceServiceStateless scriptInstanceServiceStateless;
 
     private List<Entry<String, String>> jaspers;
 
@@ -162,7 +164,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     }
 
     public void constructScriptInstancesWithError(TabChangeEvent event) {
-        scriptInstanceWithErrorList = scriptInstanceService.getScriptInstancesWithError();
+        scriptInstanceWithErrorList = scriptInstanceServiceStateless.getScriptInstancesWithError();
     }
     
     ConfigIssuesReportingDTO reportConfigDto;
@@ -283,7 +285,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     }
 
     public long getNbrScriptInstanceWithError() {
-        return scriptInstanceService.countScriptInstancesWithError();
+        return scriptInstanceServiceStateless.countScriptInstancesWithError();
     }
 
     public ConfigIssuesReportingDTO getReportConfigDto() {

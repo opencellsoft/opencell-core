@@ -25,7 +25,6 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
@@ -58,9 +57,9 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.EntityCustomActionService;
-import org.meveo.service.script.CustomScriptService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptUtils;
 import org.meveo.util.EntityCustomizationUtils;
 import org.meveo.util.view.LazyDataModelWSize;
 import org.primefaces.event.FileUploadEvent;
@@ -83,7 +82,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
  * @author akadid abdelmounaim
  * @author Said Ramli
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
  */
 @Named
 @ViewScoped
@@ -917,7 +917,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             action = entityActionScriptService.retrieveIfNotManaged(action);
 
-            Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
+            Map<String, Object> context = ScriptUtils.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_ACTION, action.getCode());
             Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
 
@@ -961,7 +961,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         try {
 
-            Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
+            Map<String, Object> context = ScriptUtils.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_PARENT_ENTITY, parentEntity);
             context.put(Script.CONTEXT_ACTION, action.getCode());
 

@@ -18,18 +18,15 @@
  */
 package org.meveo.service.script;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
@@ -38,44 +35,28 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.admin.exception.InvalidScriptException;
-import org.meveo.commons.utils.EjbUtils;
-import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
-import org.meveo.model.security.Role;
 
+/**
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
+ *
+ */
 @Singleton
 @Lock(LockType.READ)
 public class ScriptInstanceService extends CustomScriptService<ScriptInstance, ScriptInterface> {
-
-    /**
-     * Get all ScriptInstances with error.
-     *
-     * @return list of custom script.
-     */
-    public List<CustomScript> getScriptInstancesWithError() {
-        return ((List<CustomScript>) getEntityManager().createNamedQuery("CustomScript.getScriptInstanceOnError", CustomScript.class).setParameter("isError", Boolean.TRUE)
-            .getResultList());
-    }
-
-    /**
-     * Count scriptInstances with error.
-     * 
-     * @return number of script instances with error.
-     */
-    public long countScriptInstancesWithError() {
-        return ((Long) getEntityManager().createNamedQuery("CustomScript.countScriptInstanceOnError", Long.class).setParameter("isError", Boolean.TRUE).getSingleResult());
-    }
+	
+	@Inject
+    private ScriptInstanceServiceStateless scriptInstanceServiceStateless;
 
     /**
      * Compile all scriptInstances.
      */
     public void compileAll() {
 
-        List<ScriptInstance> scriptInstances = findByType(ScriptSourceTypeEnum.JAVA);
+        List<ScriptInstance> scriptInstances = scriptInstanceServiceStateless.findByType(ScriptSourceTypeEnum.JAVA);
         compile(scriptInstances);
     }
 
@@ -95,7 +76,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
 
         ScriptInstance scriptInstance = findByCode(scriptCode);
         // Check access to the script
-        isUserHasExecutionRole(scriptInstance);
+        scriptInstanceServiceStateless.isUserHasExecutionRole(scriptInstance);
         return super.execute(scriptCode, context);
     }
 
@@ -109,7 +90,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
     public String test(ScriptInstance scriptInstance, Map<String, Object> context) {
         try {
 
-            isUserHasExecutionRole(scriptInstance);
+        	scriptInstanceServiceStateless.isUserHasExecutionRole(scriptInstance);
             String javaSrc = scriptInstance.getScript();
             javaSrc = javaSrc.replaceAll("\\blog.", "logTest.");
             Class<ScriptInterface> compiledScript = compileJavaSource(javaSrc);
@@ -152,83 +133,6 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
     }
 
     /**
-     * Only users having a role in executionRoles can execute the script, not having the role should throw an InvalidPermission exception that extends businessException. A script
-     * with no executionRoles can be executed by any user.
-     *
-     * @param scriptInstance instance of script
-     * @throws InvalidPermissionException invalid permission exception.
-     */
-    public void isUserHasExecutionRole(ScriptInstance scriptInstance) throws InvalidPermissionException {
-        if (scriptInstance != null && scriptInstance.getExecutionRoles() != null && !scriptInstance.getExecutionRoles().isEmpty()) {
-            Set<Role> execRoles = scriptInstance.getExecutionRoles();
-            for (Role role : execRoles) {
-                if (currentUser.hasRole(role.getName())) {
-                    return;
-                }
-            }
-            throw new InvalidPermissionException();
-        }
-    }
-
-    /**
-     * @param scriptInstance instance of script
-     * @return true if user have the souring role.
-     */
-    public boolean isUserHasSourcingRole(ScriptInstance scriptInstance) {
-        if (scriptInstance != null && scriptInstance.getSourcingRoles() != null && !scriptInstance.getSourcingRoles().isEmpty()) {
-            Set<Role> sourcingRoles = scriptInstance.getSourcingRoles();
-            for (Role role : sourcingRoles) {
-                if (currentUser.hasRole(role.getName())) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * This is used to invoke a method in a new transaction from a script.<br>
-     * This will prevent DB errors in the script from affecting notification history creation.
-     *
-     * @param workerName The name of the API or service that will be invoked.
-     * @param methodName The name of the method that will be invoked.
-     * @param parameters The array of parameters accepted by the method. They must be specified in exactly the same order as the target method.
-     * @throws BusinessException business exception.
-     */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void callWithNewTransaction(String workerName, String methodName, Object... parameters) throws BusinessException {
-        try {
-            Object worker = EjbUtils.getServiceInterface(workerName);
-            String workerClassName = ReflectionUtils.getCleanClassName(worker.getClass().getName());
-            Class<?> workerClass = Class.forName(workerClassName);
-            Method method = null;
-            if (parameters.length < 1) {
-                method = workerClass.getDeclaredMethod(methodName);
-            } else {
-                String className = null;
-                Object parameter = null;
-                Class<?>[] parameterTypes = new Class<?>[parameters.length];
-                for (int i = 0; i < parameters.length; i++) {
-                    parameter = parameters[i];
-                    className = ReflectionUtils.getCleanClassName(parameter.getClass().getName());
-                    parameterTypes[i] = Class.forName(className);
-                }
-                method = workerClass.getDeclaredMethod(methodName, parameterTypes);
-            }
-            method.setAccessible(true);
-            method.invoke(worker, parameters);
-        } catch (Exception e) {
-            if (e.getCause() != null) {
-                throw new BusinessException(e.getCause());
-            } else {
-                throw new BusinessException(e);
-            }
-        }
-    }
-
-    /**
      * Get all script interfaces with compiling those that are not compiled yet
      * 
      * @return the allScriptInterfaces
@@ -237,7 +141,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
 
         List<Class<ScriptInterface>> scriptInterfaces = new ArrayList<>();
 
-        List<ScriptInstance> scriptInstances = findByType(ScriptSourceTypeEnum.JAVA);
+        List<ScriptInstance> scriptInstances = scriptInstanceServiceStateless.findByType(ScriptSourceTypeEnum.JAVA);
         for (ScriptInstance scriptInstance : scriptInstances) {
             try {
                 scriptInterfaces.add(getScriptInterfaceWCompile(scriptInstance.getCode()));

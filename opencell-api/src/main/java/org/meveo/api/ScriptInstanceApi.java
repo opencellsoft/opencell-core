@@ -25,14 +25,16 @@ import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
-import org.meveo.service.script.CustomScriptService;
 import org.meveo.service.script.ScriptInstanceCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInstanceServiceStateless;
+import org.meveo.service.script.ScriptUtils;
 
 /**
  * @author Edward P. Legaspi
  * @author Mounir Bahije
- * @lastModifiedVersion 5.2
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
  *
  **/
 
@@ -41,6 +43,9 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
+    
+    @Inject
+    private ScriptInstanceServiceStateless scriptInstanceServiceStateless;
 
     @Inject
     private ScriptInstanceCategoryService scriptInstanceCategoryService;
@@ -122,7 +127,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
         if (scriptInstance == null) {
             throw new EntityDoesNotExistsException(ScriptInstance.class, scriptInstanceDto.getCode());
-        } else if (!scriptInstanceService.isUserHasSourcingRole(scriptInstance)) {
+        } else if (!scriptInstanceServiceStateless.isUserHasSourcingRole(scriptInstance)) {
             throw new MeveoApiException("User does not have a permission to update a given script");
         }
 
@@ -145,7 +150,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
             throw new EntityDoesNotExistsException(ScriptInstance.class, scriptInstanceCode);
         }
         scriptInstanceDtoResult = new ScriptInstanceDto(scriptInstance);
-        if (!scriptInstanceService.isUserHasSourcingRole(scriptInstance)) {
+        if (!scriptInstanceServiceStateless.isUserHasSourcingRole(scriptInstance)) {
             scriptInstanceDtoResult.setScript("InvalidPermission");
         }
         return scriptInstanceDtoResult;
@@ -206,13 +211,13 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
         handleMissingParameters();
 
-        String scriptCode = ScriptInstanceService.getFullClassname(dto.getScript());
+        String scriptCode = ScriptUtils.getFullClassname(dto.getScript());
         if (!StringUtils.isBlank(dto.getCode()) && !dto.getCode().equals(scriptCode)) {
             throw new BusinessApiException("The code and the canonical script class name must be identical");
         }
 
         // check script existed full class name in class path
-        if (CustomScriptService.isOverwritesJavaClass(scriptCode)) {
+        if (ScriptUtils.isOverwritesJavaClass(scriptCode)) {
             throw new InvalidParameterException("The class with such name already exists");
         }
 

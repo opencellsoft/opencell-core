@@ -28,14 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
@@ -47,7 +45,6 @@ import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.cache.CacheKeyStr;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.scripts.CustomScript;
@@ -55,6 +52,12 @@ import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.service.base.BusinessService;
 
+/**
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
+ * @param <T>
+ * @param <SI>
+ */
 public abstract class CustomScriptService<T extends CustomScript, SI extends ScriptInterface> extends BusinessService<T> {
 
     @Inject
@@ -62,7 +65,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     @Inject
     private ClusterEventPublisher clusterEventPublisher;
-
+    
     protected final Class<SI> scriptInterfaceClass;
 
     private Map<CacheKeyStr, Class<SI>> allScriptInterfaces = new HashMap<>();
@@ -92,33 +95,16 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         }
     }
 
-    /**
-     * Find scripts by source type.
-     * 
-     * @param type script source type
-     * @return list of scripts
-     */
-    @SuppressWarnings("unchecked")
-    protected List<T> findByType(ScriptSourceTypeEnum type) {
-        List<T> result = new ArrayList<T>();
-        try {
-            result = (List<T>) getEntityManager().createNamedQuery("CustomScript.getScriptInstanceByTypeActive").setParameter("sourceTypeEnum", type).getResultList();
-        } catch (NoResultException e) {
-
-        }
-        return result;
-    }
-
     @Override
     public void create(T script) throws BusinessException {
 
-        String className = getClassName(script.getScript());
+        String className = ScriptUtils.getClassName(script.getScript());
         if (className == null) {
             throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
         }
-        String fullClassName = getFullClassname(script.getScript());
+        String fullClassName = ScriptUtils.getFullClassname(script.getScript());
 
-        if (isOverwritesJavaClass(fullClassName)) {
+        if (ScriptUtils.isOverwritesJavaClass(fullClassName)) {
             throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid", fullClassName));
         }
         script.setCode(fullClassName);
@@ -132,13 +118,13 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     @Override
     public T update(T script) throws BusinessException {
 
-        String className = getClassName(script.getScript());
+        String className = ScriptUtils.getClassName(script.getScript());
         if (className == null) {
             throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
         }
 
-        String fullClassName = getFullClassname(script.getScript());
-        if (isOverwritesJavaClass(fullClassName)) {
+        String fullClassName = ScriptUtils.getFullClassname(script.getScript());
+        if (ScriptUtils.isOverwritesJavaClass(fullClassName)) {
             throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid", fullClassName));
         }
 
@@ -150,48 +136,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
         clusterEventPublisher.publishEvent(script, CrudActionEnum.update);
         return script;
-    }
-
-    @Override
-    public void remove(T script) throws BusinessException {
-        super.remove(script);
-
-        clusterEventPublisher.publishEvent(script, CrudActionEnum.remove);
-    }
-
-    @Override
-    public T enable(T script) throws BusinessException {
-
-        script = super.enable(script);
-
-        clusterEventPublisher.publishEvent(script, CrudActionEnum.enable);
-
-        return script;
-    }
-
-    @Override
-    public T disable(T script) throws BusinessException {
-
-        script = super.disable(script);
-
-        clusterEventPublisher.publishEvent(script, CrudActionEnum.disable);
-
-        return script;
-    }
-
-    /**
-     * Check full class name is existed class path or not.
-     * 
-     * @param fullClassName full class name
-     * @return true i class is overridden
-     */
-    public static boolean isOverwritesJavaClass(String fullClassName) {
-        try {
-            Class.forName(fullClassName);
-            return true;
-        } catch (ClassNotFoundException ex) {
-            return false;
-        }
     }
 
     /**
@@ -362,7 +306,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
         supplementClassPathWithMissingImports(javaSrc);
 
-        String fullClassName = getFullClassname(javaSrc);
+        String fullClassName = ScriptUtils.getFullClassname(javaSrc);
 
         log.trace("Compile JAVA script {} with classpath {}", fullClassName, classpath);
 
@@ -514,42 +458,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Find the package name in a source java text.
-     * 
-     * @param src Java source code
-     * @return Package name
-     */
-    public static String getPackageName(String src) {
-        return StringUtils.patternMacher("package (.*?);", src);
-    }
-
-    /**
-     * Find the class name in a source java text
-     * 
-     * @param src Java source code
-     * @return Class name
-     */
-    public static String getClassName(String src) {
-        String className = StringUtils.patternMacher("public class (.*) extends", src);
-        if (className == null) {
-            className = StringUtils.patternMacher("public class (.*) implements", src);
-        }
-        return className != null ? className.trim() : null;
-    }
-
-    /**
-     * Gets a full classname of a script by combining a package (if applicable) and a classname
-     * 
-     * @param script Java source code
-     * @return Full classname
-     */
-    public static String getFullClassname(String script) {
-        String packageName = getPackageName(script);
-        String className = getClassName(script);
-        return (packageName != null ? packageName.trim() + "." : "") + className;
-    }
-
-    /**
      * Execute action on an entity/event. Does not call init() nor finalize() methods of the script.
      * 
      * @param entityOrEvent Entity or event to execute action on
@@ -561,8 +469,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws BusinessException Any execution exception
      */
     public Map<String, Object> execute(Object entityOrEvent, String scriptCode, String encodedParameters) throws BusinessException {
-
-        return execute(entityOrEvent, scriptCode, CustomScriptService.parseParameters(encodedParameters));
+        return execute(entityOrEvent, scriptCode, ScriptUtils.parseParameters(encodedParameters));
     }
 
     /**
@@ -745,31 +652,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
         log.trace("Script {} executed with parameters {}", compiledScript.getClass(), context);
         return context;
-    }
-
-    /**
-     * Parse parameters encoded in URL like style param=value&amp;param=value.
-     * 
-     * @param encodedParameters Parameters encoded in URL like style param=value&amp;param=value
-     * @return A map of parameter keys and values
-     */
-    public static Map<String, Object> parseParameters(String encodedParameters) {
-        Map<String, Object> parameters = new HashMap<String, Object>();
-
-        if (!StringUtils.isBlank(encodedParameters)) {
-            StringTokenizer tokenizer = new StringTokenizer(encodedParameters, "&");
-            while (tokenizer.hasMoreElements()) {
-                String paramValue = tokenizer.nextToken();
-                String[] paramValueSplit = paramValue.split("=");
-                if (paramValueSplit.length == 2) {
-                    parameters.put(paramValueSplit[0], paramValueSplit[1]);
-                } else {
-                    parameters.put(paramValueSplit[0], null);
-                }
-            }
-
-        }
-        return parameters;
     }
 
     /**
