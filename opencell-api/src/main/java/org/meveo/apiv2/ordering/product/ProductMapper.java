@@ -1,5 +1,6 @@
 package org.meveo.apiv2.ordering.product;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.meveo.apiv2.NotYetImplementedResource;
 import org.meveo.apiv2.ResourceMapper;
 import org.meveo.model.DatePeriod;
@@ -9,11 +10,12 @@ import org.meveo.model.shared.DateUtils;
 import java.util.Date;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-class ProductMapper extends ResourceMapper<Product, ProductTemplate> {
+@VisibleForTesting
+public class ProductMapper extends ResourceMapper<Product, ProductTemplate> {
     @Override
     public Product toResource(ProductTemplate productTemplate) {
         return ImmutableProduct.builder().id(productTemplate.getId()).description(productTemplate.getDescription())
+                .longDescription(productTemplate.getLongDescription())
                 .addOfferTemplateCategories(getImmutableResources(productTemplate.getOfferTemplateCategories(), NotYetImplementedResource.class))
                 .addChannels(getImmutableResources(productTemplate.getChannels(), NotYetImplementedResource.class))
                 .addWalletTemplates(getImmutableResources(productTemplate.getWalletTemplates(), NotYetImplementedResource.class))

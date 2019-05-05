@@ -2,10 +2,12 @@ package org.meveo.apiv2.ordering.orderitem;
 
 import org.meveo.apiv2.NotYetImplementedResource;
 import org.meveo.apiv2.ResourceMapper;
+import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.orderItem.ImmutableOrderItem;
 import org.meveo.apiv2.ordering.orderItem.ImmutableProductInstance;
 import org.meveo.apiv2.ordering.orderItem.ImmutableSubscription;
 import org.meveo.apiv2.ordering.orderItem.ProductInstance;
+import org.meveo.apiv2.ordering.orderItem.ImmutableServiceInstance;
 import org.meveo.apiv2.ordering.product.ProductResource;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ServiceInstance;
@@ -16,8 +18,6 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItem;
-import org.meveo.model.order.OrderItemActionEnum;
-import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.shared.DateUtils;
 
 import java.math.BigDecimal;
@@ -36,8 +36,8 @@ public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.ord
         return ImmutableOrderItem.builder()
                 .id(entity.getId())
                 .itemId(entity.getItemId())
-                .status(entity.getStatus().getApiState())
-                .action(entity.getAction().getLabel())
+                .status(entity.getStatus())
+                .action(entity.getAction())
                 .order(buildImmutableResource(NotYetImplementedResource.class, entity.getOrder()))
                 .productInstance(toProductInstancesResources(entity.getProductInstances()))
                 .userAccount(buildImmutableResource(NotYetImplementedResource.class, entity.getUserAccount()))
@@ -56,6 +56,7 @@ public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.ord
                         .product(buildImmutableResource(ProductResource.class, productInstance.getProductTemplate()))
                         .quantity(productInstance.getQuantity().longValue())
                         .productPrice(getProductPrice(productInstance.getProductTemplate()))
+                        .seller(ImmutableResource.builder().id(productInstance.getSeller().getId()).build())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -79,7 +80,12 @@ public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.ord
                 .offerTemplate(buildImmutableResource(NotYetImplementedResource.class, subscription.getOffer()))
                 .subscriptionDate(DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), DateUtils.DATE_PATTERN))
                 .endAgreementDate(DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), DateUtils.DATE_PATTERN))
-                .addServices(getImmutableResources(subscription.getServiceInstances(), NotYetImplementedResource.class))
+                .serviceInstances(subscription.getServiceInstances().stream()
+                        .map(serviceInstance ->
+                                ImmutableServiceInstance.builder()
+                                        .serviceTemplate(buildImmutableResource(NotYetImplementedResource.class, serviceInstance.getServiceTemplate()))
+                                        .build()
+                        ).collect(Collectors.toList()))
                 .build();
     }
 
@@ -89,13 +95,13 @@ public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.ord
         orderItem.setId(resource.getId());
         orderItem.setItemId(resource.getItemId());
         if(resource.getStatus() != null){
-            orderItem.setStatus(OrderStatusEnum.valueByApiState(resource.getStatus()));
+            orderItem.setStatus(resource.getStatus());
         } else {
             orderItem.setStatus(null);
         }
 
         if(resource.getAction() != null){
-            orderItem.setAction(OrderItemActionEnum.valueOf(resource.getAction()));
+            orderItem.setAction(resource.getAction());
         }
 
         if(resource.getOrder() != null){
@@ -119,13 +125,17 @@ public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.ord
                         org.meveo.model.billing.ProductInstance productInstance = new org.meveo.model.billing.ProductInstance();
                         productInstance.setQuantity(new BigDecimal(productInstanceResource.getQuantity()));
                         productInstance.setCode(productInstanceResource.getCode());
-                        Seller seller = new Seller();
-                        seller.setId(productInstanceResource.getSeller().getId());
-                        productInstance.setSeller(seller);
-                        ProductTemplate productTemplate = new ProductTemplate();
-                        productTemplate.setId(productInstanceResource.getProduct().getId());
-                        productInstance.setProductTemplate(productTemplate);
-                        //productInstance.setCfValue("CF_CLASSIC_PRICE_PRD", new Double(productInstanceResource.getProductPrice()));
+                        if(productInstanceResource.getSeller() != null){
+                            Seller seller = new Seller();
+                            seller.setId(productInstanceResource.getSeller().getId());
+                            productInstance.setSeller(seller);
+                        }
+                        if(productInstanceResource.getProduct() != null){
+                            ProductTemplate productTemplate = new ProductTemplate();
+                            productTemplate.setId(productInstanceResource.getProduct().getId());
+                            productInstance.setProductTemplate(productTemplate);
+                            //productInstance.setCfValue("CF_CLASSIC_PRICE_PRD", new Double(productInstanceResource.getProductPrice()));
+                        }
                         return productInstance;
                     })
                     .collect(Collectors.toList()));
@@ -159,12 +169,12 @@ public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.ord
             subscription.setSeller(seller);
         }
 
-        if(resourceSubscription.getServices() != null){
-        subscription.setServiceInstances(resourceSubscription.getServices().stream()
+        if(resourceSubscription.getServiceInstances() != null){
+        subscription.setServiceInstances(resourceSubscription.getServiceInstances().stream()
                 .map(resourceService -> {
                     ServiceInstance serviceInstance = new ServiceInstance();
                     ServiceTemplate serviceTemplate = new ServiceTemplate();
-                    serviceTemplate.setId(resourceService.getId());
+                    serviceTemplate.setId(resourceService.getServiceTemplate().getId());
                     serviceInstance.setServiceTemplate(serviceTemplate);
                     return serviceInstance;
                 })

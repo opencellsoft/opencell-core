@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
+import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.order.OrderStatusEnum;
 
 import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlType;
@@ -17,11 +19,11 @@ public interface OrderItem extends Resource {
     @Nullable
     String getItemId();
     @Nullable
-    @Schema(description = "Action requested on a product or product offer", allowableValues = {"add","modify","delete"})
-    String getAction();
+    @Schema(description = "Action requested on a product or product offer")
+    OrderItemActionEnum getAction();
     @Nullable
-    @Schema(description = "Order status lifecycle", allowableValues = {"Acknowledged","InProgress","Cancelled","Completed","Rejected","Pending","Held","Failed","Partial"})
-    String getStatus();
+    @Schema(description = "Order status lifecycle")
+    OrderStatusEnum getStatus();
     @Nullable
     Resource getUserAccount();
     @Nullable
