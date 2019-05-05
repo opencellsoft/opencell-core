@@ -3,7 +3,6 @@ package org.meveo.apiv2.ordering.orderItem;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
-
 import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlType;
 import java.util.List;
@@ -26,5 +25,5 @@ public interface Subscription extends Resource {
     @Nullable
     Resource getUserAccount();
     @Nullable
-    List<Resource> getServices();
+    List<ServiceInstance> getServiceInstances();
 }

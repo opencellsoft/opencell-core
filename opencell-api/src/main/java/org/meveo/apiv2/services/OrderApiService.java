@@ -29,7 +29,7 @@ public class OrderApiService implements ApiService<Order> {
 
     @PostConstruct
     public void initService(){
-        fetchFields = Arrays.asList("paymentMethod", "billingCycle");
+        fetchFields = Arrays.asList("paymentMethod", "billingCycle", "orderItems");
     }
 
     @Override

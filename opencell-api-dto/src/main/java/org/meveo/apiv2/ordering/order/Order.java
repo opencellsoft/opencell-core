@@ -5,13 +5,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.ordering.orderItem.OrderItem;
+import org.meveo.model.order.OrderStatusEnum;
 
 import javax.annotation.Nullable;
+import javax.xml.bind.annotation.XmlType;
 import java.util.List;
 
 @Value.Immutable
 @Value.Style(jdkOnly=true)
 @JsonDeserialize(as = ImmutableOrder.class)
+@XmlType(propOrder = { "id", "code", "description", "priority", "deliveryInstructions", "category", "status", "statusMessage", "billingCycle", "orderDate" })
+
 public interface Order extends Resource {
     @Nullable
     String getCode();
@@ -22,8 +26,8 @@ public interface Order extends Resource {
     @Nullable
     String getCategory();
     @Nullable
-    @Schema(description = "Order status lifecycle", allowableValues = {"Acknowledged","InProgress","Cancelled","Completed","Rejected","Pending","Held","Failed","Partial"})
-    String getStatus();
+    @Schema(description = "Order status lifecycle")
+    OrderStatusEnum getStatus();
     @Nullable
     String getStatusMessage();
     @Nullable

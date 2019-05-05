@@ -1,9 +1,11 @@
 package org.meveo.apiv2.ordering.order;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.meveo.apiv2.NotYetImplementedResource;
 import org.meveo.apiv2.ResourceMapper;
 import org.meveo.apiv2.ordering.orderItem.ImmutableOrderItem;
 import org.meveo.apiv2.ordering.orderitem.OrderItemMapper;
+import org.meveo.apiv2.ordering.orderitem.OrderItemResource;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.order.OrderItem;
 import org.meveo.model.order.OrderStatusEnum;
@@ -20,14 +22,15 @@ import java.util.stream.Collectors;
 
 public class OrderMapper extends ResourceMapper<Order, org.meveo.model.order.Order> {
     @Override
-    protected Order toResource(org.meveo.model.order.Order entity) {
+    @VisibleForTesting
+    public  Order toResource(org.meveo.model.order.Order entity) {
         return ImmutableOrder.builder()
                 .code(entity.getCode())
                 .id(entity.getId())
                 .description(entity.getDescription())
                 .priority(Long.valueOf(entity.getPriority()))
                 .category(entity.getCategory())
-                .status(entity.getStatus().getApiState())
+                .status(entity.getStatus())
                 .statusMessage(entity.getStatusMessage())
                 .orderDate(DateUtils.formatDateWithPattern(entity.getOrderDate(), DateUtils.DATE_PATTERN))
                 .expectedCompletionDate(DateUtils.formatDateWithPattern(entity.getExpectedCompletionDate(), DateUtils.DATE_PATTERN))
@@ -37,24 +40,29 @@ public class OrderMapper extends ResourceMapper<Order, org.meveo.model.order.Ord
                 .deliveryInstructions(entity.getDeliveryInstructions())
                 .paymentMethod(entity.getPaymentMethod() == null? null : ImmutablePaymentMethod.builder()
                         .id(entity.getPaymentMethod().getId())
-                        .type(entity.getPaymentMethod().getPaymentType().name())
+                        .type(entity.getPaymentMethod().getPaymentType())
                         .build()
-                ).orderItems(entity.getOrderItems() == null? null : entity.getOrderItems().stream()
-                        .map(orderItem -> ImmutableOrderItem.builder().id(orderItem.getId()).build())
-                        .collect(Collectors.toList())
+                ).orderItems((entity.getOrderItems() == null) ?
+                        null :
+                        entity.getOrderItems().stream()
+                                .map(orderItem -> ImmutableOrderItem.builder().id(orderItem.getId()).build())
+                                .collect(Collectors.toList())
                 ).build();
     }
 
     @Override
-    protected org.meveo.model.order.Order toEntity(Order resource) {
+    @VisibleForTesting
+    public org.meveo.model.order.Order toEntity(Order resource) {
         OrderItemMapper orderItemMapper = new OrderItemMapper();
         org.meveo.model.order.Order order = new org.meveo.model.order.Order();
         order.setCode(resource.getCode());
         order.setId(resource.getId());
         order.setDescription(resource.getDescription());
-        order.setPriority(resource.getPriority().intValue());
+        if(resource.getPriority() != null){
+            order.setPriority(resource.getPriority().intValue());
+        }
         order.setCategory(resource.getCategory());
-        order.setStatus(OrderStatusEnum.valueByApiState(resource.getStatus()));
+        order.setStatus(resource.getStatus());
         order.setStatusMessage(resource.getStatusMessage());
         order.setOrderDate(DateUtils.parseDateWithPattern(resource.getOrderDate(), DateUtils.DATE_PATTERN));
         order.setExpectedCompletionDate(DateUtils.parseDateWithPattern(resource.getExpectedCompletionDate(), DateUtils.DATE_PATTERN));
@@ -74,10 +82,7 @@ public class OrderMapper extends ResourceMapper<Order, org.meveo.model.order.Ord
 
         if(resource.getOrderItems() != null){
             order.setOrderItems(resource.getOrderItems().stream()
-                    .map(orderItemResource -> {
-                        OrderItem orderItem = orderItemMapper.toEntity(orderItemResource);
-                        return orderItem;
-                    })
+                    .map(orderItemResource -> orderItemMapper.toEntity(orderItemResource))
                     .collect(Collectors.toList()));
         }
 
@@ -86,7 +91,7 @@ public class OrderMapper extends ResourceMapper<Order, org.meveo.model.order.Ord
 
     private PaymentMethod toPaymentMethodEntity(org.meveo.apiv2.ordering.order.PaymentMethod paymentMethodResource) {
         PaymentMethod paymentMethod = null;
-        switch (PaymentMethodEnum.valueOf(paymentMethodResource.getType())){
+        switch (paymentMethodResource.getType()){
         case CARD:
             paymentMethod = new CardPaymentMethod();
             break;
