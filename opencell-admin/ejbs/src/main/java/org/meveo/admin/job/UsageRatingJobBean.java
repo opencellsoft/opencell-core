@@ -29,6 +29,11 @@ import org.slf4j.Logger;
 @Stateless
 public class UsageRatingJobBean extends BaseJobBean {
 
+    /**
+     * Number of EDRS to process in a single job run
+     */
+    private static int PROCESS_NR_IN_JOB_RUN = 2000000;
+
     @Inject
     private Logger log;
 
@@ -67,7 +72,7 @@ public class UsageRatingJobBean extends BaseJobBean {
             } catch (Exception e) {
                 log.warn("Cant get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
             }
-            List<Long> ids = edrService.getEDRidsToRate(rateUntilDate, ratingGroup);
+            List<Long> ids = edrService.getEDRidsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
             result.setNbItemsToProcess(ids.size());
             List<Future<String>> futures = new ArrayList<>();
             SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
@@ -100,6 +105,11 @@ public class UsageRatingJobBean extends BaseJobBean {
                     log.error("Failed to execute async method", cause);
                 }
             }
+
+            // Check if there are any more EDRS to process and mark job as completed if there are none
+            ids = edrService.getEDRidsToRate(rateUntilDate, ratingGroup, 1);
+            result.setDone(ids.isEmpty());
+
         } catch (Exception e) {
             log.error("Failed to run usage rating job", e);
             result.registerError(e.getMessage());

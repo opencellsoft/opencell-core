@@ -55,7 +55,7 @@ public class UsageRatingAsync {
         int i = 0;
         for (Long id : ids) {
             i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_FAST == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                 break;
             }
             try {
