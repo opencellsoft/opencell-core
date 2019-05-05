@@ -18,10 +18,29 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.action.admin.ViewBean;
+import org.meveo.admin.action.catalog.OfferTemplateBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -47,8 +66,10 @@ import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -74,21 +95,7 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
-
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
@@ -156,6 +163,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @Inject
     private WalletTemplateService walletTemplateService;
 
+    @Inject
+    @ViewBean
+    private OfferTemplateBean offerTemplateBean;
+
     private ServiceInstance selectedServiceInstance;
 
     private ProductInstance productInstance;
@@ -181,6 +192,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private SubscriptionTerminationReason terminationReason;
 
     private ServiceInstance selectedTerminableService;
+
+    private LazyDataModel<OfferTemplate> activeOfferTemplateDataModel;
 
     /**
      * User Account Id passed as a parameter. Used when creating new subscription entry from user account definition window, so default uset Account will be set on newly created
@@ -1022,6 +1035,14 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     /**
+     * Subscription date change listener - clear offer template picklist and update subscrivedTillDate
+     */
+    public void onSubscriptionDateChange() {
+        activeOfferTemplateDataModel = null;
+        updateSubscribedTillDate();
+    }
+
+    /**
      * Update subscribedTillDate field in subscription
      */
     public void updateSubscribedTillDate() {
@@ -1053,8 +1074,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         if (entity.isTransient()) {
             return true;
         }
-        List<ServiceInstance> si = serviceInstanceService.findBySubscription(entity);
-        return (si == null || si.isEmpty()) ? true : false;
+        return serviceInstances.getRowCount() == 0;
     }
 
     public List<Seller> listProductSellers() {
@@ -1070,7 +1090,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public List<Seller> listSellers() {
-        if (entity.getOffer() != null) {
+
+        if (entity != null && entity.getOffer() != null) {
             offerTemplateService.retrieveIfNotManaged(entity.getOffer());
             if (entity.getOffer().getSellers().size() > 0) {
                 return entity.getOffer().getSellers();
@@ -1151,8 +1172,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public List<DiscountPlan> getAllowedDiscountPlans() {
         if (entity.getOffer() != null) {
             List<DiscountPlan> allowedDiscountPlans = entity.getOffer().getAllowedDiscountPlans();
-            BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
-            billingAccount.getDiscountPlanInstances().forEach(dpi -> allowedDiscountPlans.remove(dpi.getDiscountPlan()));
+            if (entity.getUserAccount() != null) {
+                BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
+                billingAccount.getDiscountPlanInstances().forEach(dpi -> allowedDiscountPlans.remove(dpi.getDiscountPlan()));
+            }
             return allowedDiscountPlans;
         }
         return Collections.emptyList();
@@ -1215,5 +1238,18 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         // Overcome lazy loading issue when later instantiating discount plans
         UserAccount ua = userAccountService.retrieveIfNotManaged(entity.getUserAccount());
         ua.getBillingAccount().getDiscountPlanInstances().size();
+    }
+
+    public LazyDataModel<OfferTemplate> getActiveOfferTemplateDataModel() {
+
+        if (activeOfferTemplateDataModel == null) {
+            HashMap<String, Object> filters = new HashMap<String, Object>();
+            filters.put("lifeCycleStatus", LifeCycleStatusEnum.ACTIVE);
+            if (entity != null && entity.getSubscriptionDate() != null) {
+                filters.put("minmaxOptionalRange validity.from validity.to", entity.getSubscriptionDate());
+            }
+            activeOfferTemplateDataModel = offerTemplateBean.getLazyDataModel(filters, true);
+        }
+        return activeOfferTemplateDataModel;
     }
 }
