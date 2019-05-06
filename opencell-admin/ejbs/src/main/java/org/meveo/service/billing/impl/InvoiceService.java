@@ -359,10 +359,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return list of invoice's which doesn't have the account operation.
      */
     public List<Long> getInvoiceIdsWithNoAccountOperation(BillingRun br) {
+        return getInvoiceIdsWithNoAccountOperation(br, null);
+    }
+    
+
+    /**
+     * @param br billing run
+     * @return list of invoice's which doesn't have the account operation.
+     */
+    public List<Long> getInvoiceIdsWithNoAccountOperation(BillingRun br, Boolean invoiceAccountable) {
         try {
             QueryBuilder qb = new QueryBuilder(Invoice.class, " i");
             qb.addSql("i.invoiceNumber is not null");
             qb.addSql("i.recordedInvoice is null");
+            if (invoiceAccountable != null) {
+               qb.addSql("i.invoiceType.invoiceAccountable = ".concat(invoiceAccountable.toString()));	
+            }
             if (br != null) {
                 qb.addCriterionEntity("i.billingRun", br);
             }
