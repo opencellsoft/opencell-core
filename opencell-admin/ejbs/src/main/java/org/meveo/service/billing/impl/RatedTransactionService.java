@@ -19,6 +19,7 @@
 package org.meveo.service.billing.impl;
 
 import static org.meveo.commons.utils.NumberUtils.getRoundingMode;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 
 import java.math.BigDecimal;
@@ -1062,11 +1063,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
         }
         
-        if (discountPlanItem.getDiscountValueEL() != null) {
-			discountValue = getDecimalExpression(discountPlanItem.getDiscountValueEL(), userAccount, wallet,
-					invoice, amount);
-			log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
-					discountValue, amount);
+        final String dpValueEL = discountPlanItem.getDiscountValueEL();
+        if (isNotBlank(dpValueEL)) {
+			final BigDecimal evalDiscountValue = getDecimalExpression(dpValueEL, userAccount, wallet, invoice, amount);
+			log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), evalDiscountValue, amount);
+			if (discountValue != null) {
+				discountValue = evalDiscountValue;
+			}
 		}
 
         if (amount != null && !BigDecimal.ZERO.equals(amount)) {            
