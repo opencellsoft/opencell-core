@@ -186,6 +186,7 @@ public abstract class AccountEntity extends BusinessCFEntity {
 	public void anonymize(String code) {
 		name.anonymize(code);
 		address.anonymize(code);
+		getContactInformationNullSafe().anonymize(code);
 	}
 	
 	public String getVatNo() {

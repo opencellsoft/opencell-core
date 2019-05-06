@@ -18,6 +18,8 @@
  */
 package org.meveo.model.payments;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -116,9 +118,6 @@ public class CustomerAccount extends AccountEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateDunningLevel;
 
-	@Embedded
-	private ContactInformation contactInformation;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
@@ -207,14 +206,6 @@ public class CustomerAccount extends AccountEntity {
 
 	public void setAccountOperations(List<AccountOperation> accountOperations) {
 		this.accountOperations = accountOperations;
-	}
-
-	public ContactInformation getContactInformation() {
-		return contactInformation;
-	}
-
-	public void setContactInformation(ContactInformation contactInformation) {
-		this.contactInformation = contactInformation;
 	}
 
 	public void setDunningLevel(DunningLevelEnum dunningLevel) {
@@ -503,11 +494,8 @@ public class CustomerAccount extends AccountEntity {
     @Override
 	public void anonymize(String code) {
 		super.anonymize(code);
-		getContactInformationNullSafe().anonymize(code);
-		if (getBillingAccounts() != null) {
-			for (BillingAccount ba : getBillingAccounts()) {
-				ba.anonymize(code);
-			}
+		if(isNotEmpty(this.billingAccounts) ) {
+			this.billingAccounts.forEach(ba -> ba.anonymize(code));
 		}
 	}
 }
