@@ -78,6 +78,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     private BillingAccountService billingAccountService;
 
     @Inject
+    private SubscriptionService subscriptionService;
+
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
+
+    @Inject
     private CounterPeriodService counterPeriodService;
 
     @EJB
@@ -100,43 +106,74 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         // we instanciate the counter only if there is no existing instance for
         // the same template
         if (counterTemplate.getCounterLevel() == CounterTemplateLevel.BA) {
-            BillingAccount billingAccount = userAccount.getBillingAccount();
-            if (!billingAccount.getCounters().containsKey(counterTemplate.getCode())) {
-                result = new CounterInstance();
-                result.setCounterTemplate(counterTemplate);
-                result.setBillingAccount(billingAccount);
-
-                if (!isVirtual) {
-                    create(result);
-                }
-
-                billingAccount.getCounters().put(counterTemplate.getCode(), result);
-
-                if (!isVirtual) {
-                    billingAccountService.update(billingAccount);
-                }
-            } else {
-                result = userAccount.getBillingAccount().getCounters().get(counterTemplate.getCode());
-            }
+            result = instantiateBACounter(userAccount, counterTemplate, isVirtual);
         } else {
-            if (!userAccount.getCounters().containsKey(counterTemplate.getCode())) {
-                result = new CounterInstance();
-                result.setCounterTemplate(counterTemplate);
-                result.setUserAccount(userAccount);
-
-                if (!isVirtual) {
-                    create(result);
-                }
-                userAccount.getCounters().put(counterTemplate.getCode(), result);
-
-                if (!isVirtual) {
-                    userAccountService.update(userAccount);
-                }
-            } else {
-                result = userAccount.getCounters().get(counterTemplate.getCode());
-            }
+            result = instantiateUACounter(userAccount, counterTemplate, isVirtual);
         }
 
+        return result;
+    }
+
+    private CounterInstance instantiateUACounter(UserAccount userAccount, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
+        CounterInstance result = new CounterInstance();
+        if (!userAccount.getCounters().containsKey(counterTemplate.getCode())) {
+            result.setCounterTemplate(counterTemplate);
+            result.setUserAccount(userAccount);
+
+            if (!isVirtual) {
+                create(result);
+            }
+            userAccount.getCounters().put(counterTemplate.getCode(), result);
+
+            if (!isVirtual) {
+                userAccountService.update(userAccount);
+            }
+        } else {
+            result = userAccount.getCounters().get(counterTemplate.getCode());
+        }
+        return result;
+    }
+
+    private CounterInstance instantiateBACounter(UserAccount userAccount, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
+        CounterInstance result = new CounterInstance();
+        BillingAccount billingAccount = userAccount.getBillingAccount();
+        if (!billingAccount.getCounters().containsKey(counterTemplate.getCode())) {
+            result.setCounterTemplate(counterTemplate);
+            result.setBillingAccount(billingAccount);
+
+            if (!isVirtual) {
+                create(result);
+            }
+
+            billingAccount.getCounters().put(counterTemplate.getCode(), result);
+
+            if (!isVirtual) {
+                billingAccountService.update(billingAccount);
+            }
+        } else {
+            result = userAccount.getBillingAccount().getCounters().get(counterTemplate.getCode());
+        }
+        return result;
+    }
+
+    private CounterInstance instantiateSubscriptionCounter(Subscription subscription, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
+        CounterInstance result = new CounterInstance();
+        if (!subscription.getCounters().containsKey(counterTemplate.getCode())) {
+            result.setCounterTemplate(counterTemplate);
+            result.setSubscription(subscription);
+
+            if (!isVirtual) {
+                create(result);
+            }
+
+            subscription.getCounters().put(counterTemplate.getCode(), result);
+
+            if (!isVirtual) {
+                subscriptionService.update(subscription);
+            }
+        } else {
+            result = subscription.getCounters().get(counterTemplate.getCode());
+        }
         return result;
     }
 

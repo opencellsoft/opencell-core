@@ -334,6 +334,13 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     private boolean electronicBilling;
 
     /**
+     * Counter instances
+     */
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
+    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+
+    /**
      * Extra Rated transactions to reach minimum invoice amount per subscription
      */
     @Transient
@@ -716,7 +723,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * update AutoRenewDate when AutoRenew change
-     * 
+     *
      * @param subscriptionOld
      */
     public void updateAutoRenewDate(Subscription subscriptionOld) {
@@ -828,7 +835,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Gets Email Template.
-     * 
+     *
      * @return Email Template.
      */
     public EmailTemplate getEmailTemplate() {
@@ -837,7 +844,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets Email template.
-     * 
+     *
      * @param emailTemplate the Email template.
      */
     public void setEmailTemplate(EmailTemplate emailTemplate) {
@@ -846,7 +853,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Gets Mailing Type.
-     * 
+     *
      * @return Mailing Type.
      */
     public MailingTypeEnum getMailingType() {
@@ -855,7 +862,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets Mailing Type.
-     * 
+     *
      * @param mailingType mailing type
      */
     public void setMailingType(MailingTypeEnum mailingType) {
@@ -864,7 +871,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Gets cc Emails.
-     * 
+     *
      * @return cc Emails
      */
     public String getCcedEmails() {
@@ -873,7 +880,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets cc Emails.
-     * 
+     *
      * @param ccedEmails Cc Emails
      */
     public void setCcedEmails(String ccedEmails) {
@@ -882,7 +889,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Gets Email address.
-     * 
+     *
      * @return The Email address
      */
     public String getEmail() {
@@ -891,7 +898,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets Email.
-     * 
+     *
      * @param email the Email address
      */
     public void setEmail(String email) {
@@ -900,7 +907,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Check id electronic billing is enabled.
-     * 
+     *
      * @return True if enabled, false else
      */
     public boolean getElectronicBilling() {
@@ -909,7 +916,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets the electronic billing.
-     * 
+     *
      * @param electronicBilling True or False
      */
     public void setElectronicBilling(boolean electronicBilling) {
@@ -961,5 +968,20 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     public void setInitialSubscriptionRenewal(String initialSubscriptionRenewal) {
         this.initialSubscriptionRenewal = initialSubscriptionRenewal;
+    }
+    /**
+     * Gets counters
+     * @return a map of counters
+     */
+    public Map<String, CounterInstance> getCounters() {
+        return counters;
+    }
+
+    /**
+     * Sets counters
+     * @param counters a map of counters
+     */
+    public void setCounters(Map<String, CounterInstance> counters) {
+        this.counters = counters;
     }
 }
