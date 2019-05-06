@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="be765fc2-377f-4484-9193-ff119e423633" activeEnvironment="Default" name="Mediation - wildfly" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="be765fc2-377f-4484-9193-ff119e423633" activeEnvironment="Default" name="Mediation - wildfly" resourceRoot="" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountWs?wsdl" id="ea4ccfc5-0bef-4d4a-8963-dd86a6dcf499" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createAccess" bindingOperationName="createAccess" type="Request-Response" outputName="createAccessResponse" inputName="createAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="49f6e7a0-8e5f-42db-8ab3-f765d8d28829">
@@ -153,7 +153,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" id="9eec342d-acf7-43af-af2e-c3e253644f5f" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createCounterTemplate" bindingOperationName="createCounterTemplate" type="Request-Response" outputName="createCounterTemplateResponse" inputName="createCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="82435ae6-a800-436a-8170-22e5542f3e8b">
@@ -291,7 +291,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="b7c9429b-1d05-4ac6-a0de-37a098d0ac40" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/InvoiceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="cb26d107-1bf6-46fb-9cd0-4e4ad1b64cf2" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -315,7 +315,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/MediationWs?wsdl" id="88ed7ad1-2063-493b-9c71-2ca85d5b9302" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/MediationWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="cancelReservation" bindingOperationName="cancelReservation" type="Request-Response" outputName="cancelReservationResponse" inputName="cancelReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="1f5fbd64-5362-4b5b-b7c2-90a2156c4d13">
@@ -339,7 +339,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SettingsWs?wsdl" id="3ae96632-2c43-4f00-af1f-fd5d718000ae" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createBillingCycle" bindingOperationName="createBillingCycle" type="Request-Response" outputName="createBillingCycleResponse" inputName="createBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="53dee0c5-502c-4da1-b276-034949fa50e6">
@@ -729,7 +729,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/NotificationWs?wsdl" id="c410cec5-50e9-4396-bc23-009c5c34afaf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createEmailNotification" bindingOperationName="createEmailNotification" type="Request-Response" outputName="createEmailNotificationResponse" inputName="createEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="7b07ab98-b0c5-491e-a715-e3a36ef39fbe">
@@ -780,7 +780,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="2032decc-1d69-4f76-8069-23b228e976c0" wsaVersion="NONE" name="FilteredListWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilteredListWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/FilteredListWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/FilteredListWs</con:endpoint>
     </con:endpoints>
     <con:operation id="faada9b9-3e7f-4437-b27c-4edadcfc979b" isOneWay="false" action="" name="reindex" bindingOperationName="reindex" type="Request-Response" outputName="reindexResponse" inputName="reindex" receivesAttachments="false" sendsAttachments="false">
@@ -801,7 +801,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/JobWs?wsdl" id="1357434a-a05f-403c-bd4a-7c42726e9529" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/JobWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="d15eac2f-9765-4bd2-b0ff-9b23d15f8884">
@@ -831,7 +831,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="16b43bcb-f0a2-4f58-ab72-a69229098c2e" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="9fe72545-27cc-492c-8043-17ef3994e8da" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -855,7 +855,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="3896cf0b-c25f-49e6-8605-c6cfe9bddf5a" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="12cf9d20-e961-4dd3-8f05-b6dd649ae3c4" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -930,7 +930,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="1207fd11-81fc-410d-a1a1-65aca01175d5" wsaVersion="NONE" name="FilterWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilterWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/FilterWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/FilterWs</con:endpoint>
     </con:endpoints>
     <con:operation id="50b03546-a8d2-4411-b58c-28c30ac8301d" isOneWay="false" action="" name="createOrUpdateFilter" bindingOperationName="createOrUpdateFilter" type="Request-Response" outputName="createOrUpdateFilterResponse" inputName="createOrUpdateFilter" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -942,7 +942,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="1e8e2033-b970-4a76-aebf-6e76888a12b0" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://integration.i.opencellsoft.com" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}</con:endpoint>
     </con:endpoints>
     <con:resource name="Mediation" path="/inbound/demo/mediation" id="167c13a6-0c9d-4b02-806e-6a2873fbcf9d">
@@ -3137,7 +3137,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>43</con:value>
+        <con:value>45</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -4562,7 +4562,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>40</con:value>
+        <con:value>42</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -6021,7 +6021,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>40</con:value>
+        <con:value>42</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -7475,7 +7475,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>42</con:value>
+        <con:value>44</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -7762,11 +7762,11 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>opencell.url2</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
