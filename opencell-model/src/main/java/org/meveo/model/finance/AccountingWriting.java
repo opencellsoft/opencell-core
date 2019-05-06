@@ -45,13 +45,6 @@ import java.util.List;
 public class AccountingWriting extends AuditableEntity {
 
     /**
-     * Associated Customer account
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_account_id")
-    private CustomerAccount customerAccount;
-
-    /**
      * Account operations associated with this Acc writing
      */
     @OneToMany(mappedBy = "accountingWriting", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
@@ -98,6 +91,13 @@ public class AccountingWriting extends AuditableEntity {
     @Column(name = "end_period")
     @Temporal(TemporalType.DATE)
     private Date endPeriod;
+    
+    /**
+     * Accounting extraction Period end
+     */
+    @Column(name = "writing_date")
+    @Temporal(TemporalType.DATE)
+    private Date writingDate;
 
     /**
      * writing total amount
@@ -135,14 +135,6 @@ public class AccountingWriting extends AuditableEntity {
      */
     @Column(name = "extra_param_3")
     private String extraParam3;
-
-    public CustomerAccount getCustomerAccount() {
-        return customerAccount;
-    }
-
-    public void setCustomerAccount(CustomerAccount customerAccount) {
-        this.customerAccount = customerAccount;
-    }
 
     public List<AccountOperation> getAccountOperations() {
         return accountOperations;
@@ -200,7 +192,16 @@ public class AccountingWriting extends AuditableEntity {
         this.endPeriod = endPeriod;
     }
 
-    public BigDecimal getAmount() {
+    
+    public Date getWritingDate() {
+		return writingDate;
+	}
+
+	public void setWritingDate(Date writingDate) {
+		this.writingDate = writingDate;
+	}
+
+	public BigDecimal getAmount() {
         return amount;
     }
 

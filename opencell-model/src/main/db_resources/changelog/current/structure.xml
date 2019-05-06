@@ -2132,13 +2132,13 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="customer_account_id" type="bigint" />
             <column name="origin_writing_id" type="bigint" />
             <column name="tax_id" type="bigint" />
             <column name="invoice_category_id" type="bigint" />
             <column name="accounting_code_id" type="bigint" />
             <column name="start_period" type="date" />
             <column name="end_period" type="date" />
+            <column name="writing_date" type="date" />
             <column name="amount" type="numeric(23, 12)" />
             <column name="event_type" type="varchar(255)" />
             <column name="status" type="varchar(255)" />
@@ -2146,9 +2146,6 @@
             <column name="extra_param_2" type="varchar(255)" />
             <column name="extra_param_3" type="varchar(255)" />
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="ar_accounting_writing"
-                                 constraintName="fk_accounting_writing_ca" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
         <addForeignKeyConstraint baseColumnNames="origin_writing_id" baseTableName="ar_accounting_writing"
                                  constraintName="fk_accounting_writing_origin_writing" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_accounting_writing" />

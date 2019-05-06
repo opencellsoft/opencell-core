@@ -2071,7 +2071,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<redirect include-view-params="true" />
 	</navigation-case>
 	<navigation-case>
-		<from-outcome>accountingWriting</from-outcome>
+		<from-outcome>accountingWritingDetail</from-outcome>
 		<to-view-id>/pages/finance/accountingWriting/accountingWritingDetail.xhtml
 		</to-view-id>
 		<redirect include-view-params="true" />
