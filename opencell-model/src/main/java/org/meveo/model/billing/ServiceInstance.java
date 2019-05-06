@@ -261,6 +261,14 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity {
     private Date renewalNotifiedDate;
 
     /**
+     * Counter instances
+     */
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
+    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+
+
+    /**
      * PK of OrderItem.id.
      */
     @Transient
@@ -1030,5 +1038,20 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity {
      */
     public void setInitialServiceRenewal(String initialServiceRenewal) {
         this.initialServiceRenewal = initialServiceRenewal;
+    }
+    /**
+     * Gets counters
+     * @return a map of counters
+     */
+    public Map<String, CounterInstance> getCounters() {
+        return counters;
+    }
+
+    /**
+     * Sets counters
+     * @param counters a map of counters
+     */
+    public void setCounters(Map<String, CounterInstance> counters) {
+        this.counters = counters;
     }
 }
