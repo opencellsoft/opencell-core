@@ -988,4 +988,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     public void setDontSend(boolean dontSend) {
         this.dontSend = dontSend;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s[%s, invoiceNumber=%s, invoiceType=%s]", this.getClass().getSimpleName(), super.toString(), invoiceNumber, invoiceType);
+    }
+
 }

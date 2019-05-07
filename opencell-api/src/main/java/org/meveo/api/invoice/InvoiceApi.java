@@ -607,7 +607,7 @@ public class InvoiceApi extends BaseApi {
                 this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
                 invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
 
-                GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
+                GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf, generateInvoiceRequestDto.isIncludeRatedTransactions());
                 invoicesDtos.add(generateInvoiceResultDto);
                 if (isDraft) {
                     invoiceService.cancelInvoice(invoice);
@@ -618,8 +618,8 @@ public class InvoiceApi extends BaseApi {
         return invoicesDtos;
     }
 
-    public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includeXml, boolean includePdf) throws BusinessException {
-        GenerateInvoiceResultDto dto = new GenerateInvoiceResultDto(invoice, false);
+    public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includeXml, boolean includePdf, Boolean includeRatedTransactions) throws BusinessException {
+        GenerateInvoiceResultDto dto = new GenerateInvoiceResultDto(invoice, includeRatedTransactions);
 
         if (invoiceService.isInvoicePdfExist(invoice)) {
             dto.setPdfFilename(invoice.getPdfFilename());

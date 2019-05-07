@@ -18,6 +18,8 @@
  */
 package org.meveo.service.billing.impl;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -627,11 +629,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         && discountPlanItem.getInvoiceCategory().getId().equals(scAggregate.getInvoiceSubCategory().getInvoiceCategory().getId()))) {
             BigDecimal discountValue = discountPlanItem.getDiscountValue();
 
-            if (discountPlanItem.getDiscountValueEL() != null) {
-                discountValue = evaluateDiscountPercentExpression(discountPlanItem.getDiscountValueEL(), scAggregate.getUserAccount(), scAggregate.getWallet(),
-                    invoice, amount);
-                log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
-                        discountValue, amount);
+            final String dpValueEL = discountPlanItem.getDiscountValueEL();
+            if (isNotBlank(dpValueEL)) {
+            	final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate.getUserAccount(), scAggregate.getWallet(), invoice, amount);
+                log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), discountValue, amount);
+                if (discountValue != null) {
+    				discountValue = evalDiscountValue;
+    			}
             }
 
             BigDecimal discountAmount = null;
@@ -1574,7 +1578,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 appProvider.getRoundingMode().getRoundingMode());
 
             RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1],
-                amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, "NO_OFFER", null,
+                amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, null, null,
                 RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), minAmountLabel, null, null, seller, tax, tax.getPercent());
 
             minAmountTransactions.add(ratedTransaction);
@@ -1711,7 +1715,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1],
                 amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, subscription, null, null, null,
-                "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode() + "_" + subscription.getCode(), minAmountLabel, null, null, seller, tax,
+                null, null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode() + "_" + subscription.getCode(), minAmountLabel, null, null, seller, tax,
                 tax.getPercent());
 
             minAmountTransactions.add(ratedTransaction);
@@ -1817,7 +1821,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 appProvider.getRoundingMode().getRoundingMode());
 
             RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1],
-                amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, "NO_OFFER", null,
+                amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, null, null,
                 RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_BA.getCode() + "_" + billingAccount.getCode(), minAmountLabel, null, null, seller, tax, tax.getPercent());
 
             minAmountTransactions.add(ratedTransaction);

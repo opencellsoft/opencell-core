@@ -175,7 +175,7 @@ public class WalletOperationDto extends BusinessEntityDto {
         subscriptionDate = walletOperation.getSubscriptionDate();
         walletTemplate = walletOperation.getWallet().getCode();
         userAccount = walletOperation.getWallet().getUserAccount().getCode();
-        offerCode = walletOperation.getOfferCode();
+        offerCode = walletOperation.getOfferCode() != null ? walletOperation.getOfferCode() : walletOperation.getOfferTemplate() != null ? walletOperation.getOfferTemplate().getCode() : null;
         chargeInstance = walletOperation.getChargeInstance().getCode();
         chargeInstanceId = walletOperation.getChargeInstance().getId();
         rawAmountWithoutTax = walletOperation.getRawAmountWithoutTax();
