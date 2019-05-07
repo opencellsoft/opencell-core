@@ -224,6 +224,8 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
         
+        customFieldInstanceService.instantiateCFWithDefaultValueIfNull(jobInstance);
+        
         JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, entityToDtoConverter.getCustomFieldsDTO(jobInstance, CustomFieldInheritanceEnum.INHERIT_NONE));
         return jobInstanceDto;
     }
