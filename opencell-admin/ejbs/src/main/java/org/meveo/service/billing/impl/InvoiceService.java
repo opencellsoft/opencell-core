@@ -371,8 +371,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
         Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
-
+        
         Seller seller = invoice.getSeller();
+        
+        if(seller == null && invoice.getSubscription() != null && invoice.getSubscription().getSeller() != null) {
+        	seller  = invoice.getSubscription().getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
+        }
+
         if (seller == null && cust.getSeller() != null) {
             seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
         }
@@ -457,6 +462,37 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return getEntityManager().createNamedQuery("Invoice.validatedNoPdfByBR", Long.class).setParameter("billingRunId", billingRunId).getResultList();
         }
     }
+    
+    
+    /**
+     * Get list of Draft invoice Ids that belong to the given Billing Run and not having  PDF generated yet.
+     * 
+     * @param billingRunId An optional billing run identifier for filtering
+     * @return A list of invoice ids
+     */
+    public List<Long> getDraftInvoiceIdsByBRWithNoPdf(Long billingRunId) {
+    	if (billingRunId == null) {
+            return getEntityManager().createNamedQuery("Invoice.draftNoPdf", Long.class).getResultList();
+
+        } else {
+            return getEntityManager().createNamedQuery("Invoice.draftNoPdfByBR", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+        }
+	}
+
+    /**
+     * Get list of Draft and validated invoice Ids that belong to the given Billing Run and not having  PDF generated yet.
+     * 
+     * @param billingRunId An optional billing run identifier for filtering
+     * @return A list of invoice ids
+     */
+	public List<Long> getInvoiceIdsIncludeDraftByBRWithNoPdf(Long billingRunId) {
+		if (billingRunId == null) {
+            return getEntityManager().createNamedQuery("Invoice.allNoPdf", Long.class).getResultList();
+
+        } else {
+            return getEntityManager().createNamedQuery("Invoice.allNoPdfByBR", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+        }
+	}
 
     /**
      * Gets the invoice ids with no account operation.
@@ -867,16 +903,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param ratedTransactions list of rated transaction
      * @param billingAccount billing account
      * @param invoiceType type of invoice
+     * @param Seller seller
      * @return invoice
      * @throws BusinessException business exception
      */
-    public Invoice createAgregatesAndInvoiceVirtual(List<RatedTransaction> ratedTransactions, BillingAccount billingAccount, InvoiceType invoiceType) throws BusinessException {
+    public Invoice createAgregatesAndInvoiceVirtual(List<RatedTransaction> ratedTransactions, BillingAccount billingAccount, InvoiceType invoiceType,Seller seller) throws BusinessException {
 
         if (invoiceType == null) {
             invoiceType = invoiceTypeService.getDefaultCommertial();
         }
-        Invoice invoice = new Invoice();
-        invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
+        
+        Invoice invoice = new Invoice();        
+        invoice.setSeller(seller);
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(billingAccount);
         invoice.setInvoiceDate(new Date());
@@ -888,7 +926,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactions, false, true);
-
+        invoice.setRatedTransactions(ratedTransactions);
         invoice.setTemporaryInvoiceNumber(UUID.randomUUID().toString());
 
         return invoice;
@@ -2068,6 +2106,35 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return getEntityManager().createNamedQuery("Invoice.validatedByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
     }
+    
+    /**
+     * Get list of Draft invoice Ids that belong to the given Billing Run and not having  XML generated yet.
+     * 
+     * 
+     * @param billingRunId Billing run id
+     * @return A list of invoice identifiers
+     */
+    public List<Long> getDraftInvoiceIdsByBRWithNoXml(Long billingRunId) {
+    	 if (billingRunId == null) {
+             return getEntityManager().createNamedQuery("Invoice.draftNoXml", Long.class).getResultList();
+         }
+         return getEntityManager().createNamedQuery("Invoice.draftByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+	}
+    
+
+    /**
+     * Get list of Draft and validated invoice Ids that belong to the given Billing Run and not having  XML generated yet.
+     * 
+     * 
+     * @param billingRunId Billing run id
+     * @return A list of invoice identifiers
+     */
+	public List<Long> getInvoiceIdsIncludeDraftByBRWithNoXml(Long billingRunId) {
+		 if (billingRunId == null) {
+             return getEntityManager().createNamedQuery("Invoice.allNoXml", Long.class).getResultList();
+         }
+         return getEntityManager().createNamedQuery("Invoice.allByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+	}
 
     /**
      * Get a summarized information for invoice numbering. Contains grouping by invoice type, seller, invoice date and a number of invoices.
@@ -2208,4 +2275,5 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         log.trace("end of post create {}. entity id={}.", invoice.getClass().getSimpleName(), invoice.getId());
     }
+
 }

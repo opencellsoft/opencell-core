@@ -65,7 +65,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  *
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 6.0
  * 
  */
 @Entity
@@ -359,7 +359,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @JoinColumn(name = "rejected_payment_id")
     private RejectedPayment rejectedPayment;
     
-    @ManyToOne(optional = true, cascade = CascadeType.ALL)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "seller_id")
     private Seller seller;
     

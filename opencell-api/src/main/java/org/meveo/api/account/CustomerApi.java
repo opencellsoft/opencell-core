@@ -35,7 +35,6 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
-import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -129,9 +128,6 @@ public class CustomerApi extends AccountEntityApi {
     private ProviderService providerService;
 
     @Inject
-    private CustomerSequenceApi customerSequenceApi;
-
-    @Inject
     private AccountingCodeService accountingCodeService;
 
     public void create(CustomerDto postData) throws MeveoApiException, BusinessException {
@@ -149,10 +145,7 @@ public class CustomerApi extends AccountEntityApi {
         }
         if (StringUtils.isBlank(postData.getCustomerCategory())) {
             missingParameters.add("customerCategory");
-        }
-        if (StringUtils.isBlank(postData.getSeller())) {
-            missingParameters.add("seller");
-        }
+        }       
         if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
             missingParameters.add("name.lastName");
         }
@@ -177,9 +170,12 @@ public class CustomerApi extends AccountEntityApi {
             }
         }
 
-        Seller seller = sellerService.findByCode(postData.getSeller());
-        if (seller == null) {
-            throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+        Seller seller = null;
+        if (!StringUtils.isBlank(postData.getSeller())) {
+        	seller = sellerService.findByCode(postData.getSeller());
+	        if (seller == null) {
+	            throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+	        }
         }
 
         Customer customer = new Customer();

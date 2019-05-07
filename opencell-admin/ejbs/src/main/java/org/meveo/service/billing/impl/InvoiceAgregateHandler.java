@@ -367,7 +367,7 @@ public class InvoiceAgregateHandler {
      */
     private BigDecimal getAmountWithTax(Tax tax, BigDecimal amountWithoutTax) {
         return amountWithoutTax
-            .add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()));
+            .add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), appProvider.getRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()));
     }
 
     /**

@@ -50,6 +50,7 @@ import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSequence;
@@ -58,6 +59,8 @@ import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RejectedBillingAccount;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.payments.PaymentMethod;
@@ -485,7 +488,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         queryminTrans.executeUpdate();
 
         Query queryTrans = getEntityManager().createQuery("update " + RatedTransaction.class.getName()
-                + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where billingRun=:billingRun");
+                + " set invoice=null, invoiceAgregateF=null, invoiceAgregateR=null, invoiceAgregateT=null ,status=:status where billingRun=:billingRun");
         queryTrans.setParameter("billingRun", billingRun);
         queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
         queryTrans.executeUpdate();
@@ -500,15 +503,67 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             remove(InvoiceAgregate.class, invoiceAgregate);
         }
         getEntityManager().flush();
-
-        Query queryInvoices = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
-        queryInvoices.setParameter("billingRun", billingRun);
-        queryInvoices.executeUpdate();
+        
+        // deleting SubCategoryInvoiceAgregate
+		this.cleanSubCategoryInvoiceAgregateByBR(billingRun);
+        
+        // deleting CategoryInvoiceAgregate
+		this.cleanCategoryInvoiceAgregateByBR(billingRun);
+        
+        // deleting TaxInvoiceAgregate
+		this.cleanTaxInvoiceAgregateByBR(billingRun);
+        
+        // deleting Invoice
+        this.cleanInvoiceByBR(billingRun);
 
         Query queryBA = getEntityManager().createQuery("update " + BillingAccount.class.getName() + " set billingRun=null where billingRun=:billingRun");
         queryBA.setParameter("billingRun", billingRun);
         queryBA.executeUpdate();
     }
+
+	private void cleanInvoiceByBR(BillingRun billingRun) {
+		Query queryInvoice = getEntityManager().createQuery(new StringBuilder("update RatedTransaction rt set rt.invoice = null ")
+        		.append(" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoice.billingRun=:billingRun ) ").toString());
+        queryInvoice.setParameter("billingRun", billingRun);
+        queryInvoice.executeUpdate();
+        
+        Query queryForDeletion = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
+        queryForDeletion.setParameter("billingRun", billingRun);
+        queryForDeletion.executeUpdate();
+	}
+
+	private void cleanTaxInvoiceAgregateByBR(BillingRun billingRun) {
+        Query queryTaxInv = getEntityManager().createQuery(new StringBuilder("update RatedTransaction rt set rt.invoiceAgregateT = null ")
+        		.append(" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoiceAgregateT.billingRun=:billingRun ) ").toString());
+        queryTaxInv.setParameter("billingRun", billingRun);
+        queryTaxInv.executeUpdate();
+        
+        Query queryForDeletion = getEntityManager().createQuery("delete from " + TaxInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+        queryForDeletion.setParameter("billingRun", billingRun);
+        queryForDeletion.executeUpdate();
+	}
+
+	private void cleanCategoryInvoiceAgregateByBR(BillingRun billingRun) {
+        Query queryCatInv = getEntityManager().createQuery(new StringBuilder("update RatedTransaction rt set rt.invoiceAgregateR = null ")
+        		.append(" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoiceAgregateR.billingRun=:billingRun ) ").toString());
+        queryCatInv.setParameter("billingRun", billingRun);
+        queryCatInv.executeUpdate();
+        
+        Query queryForDeletion = getEntityManager().createQuery("delete from " + CategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+        queryForDeletion.setParameter("billingRun", billingRun);
+        queryForDeletion.executeUpdate();
+	}
+
+	private void cleanSubCategoryInvoiceAgregateByBR(BillingRun billingRun) {
+		Query querySubCat = getEntityManager().createQuery(new StringBuilder("update RatedTransaction rt set rt.invoiceAgregateF = null ")
+        		.append(" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoiceAgregateF.billingRun=:billingRun ) ").toString());
+        querySubCat.setParameter("billingRun", billingRun);
+        querySubCat.executeUpdate();
+
+        Query queryForDeletion = getEntityManager().createQuery("delete from " + SubCategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+        queryForDeletion.setParameter("billingRun", billingRun);
+        queryForDeletion.executeUpdate();
+	}
 
     /**
      * Checks if is active billing runs exist.
