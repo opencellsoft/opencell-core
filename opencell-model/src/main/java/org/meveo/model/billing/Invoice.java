@@ -772,7 +772,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         this.linkedInvoices = linkedInvoices;
     }
 
-    public void addInvoiceAggregate(InvoiceAgregate obj) {
+	public void addInvoiceAggregate(InvoiceAgregate obj) {
         invoiceAgregates.add(obj);
     }
 
