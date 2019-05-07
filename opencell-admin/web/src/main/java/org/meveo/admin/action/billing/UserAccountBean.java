@@ -320,6 +320,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public LazyDataModel<WalletOperation> getWalletOperations(String walletCode) {   	
    	 HashMap<String, Object> filters = new HashMap<String, Object>();
    	 filters.put("wallet.code", walletCode);
+   	 filters.put("wallet.userAccount", entity);
    	 
 		if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
 			log.debug("getWalletOperations {}", walletCode);
@@ -494,11 +495,11 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public List<SelectItem> getWalletOperationStatusList() {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("messages", Faces.getLocale());
 
-        List<SelectItem> filterLockedOptions = new ArrayList<SelectItem>(Arrays.asList(new SelectItem("OPEN", resourceBundle.getString("walletOperationStatus.open")),
-            new SelectItem("TREATED", resourceBundle.getString("walletOperationStatus.treated")),
-            new SelectItem("CANCELED", resourceBundle.getString("walletOperationStatus.canceled")),
-            new SelectItem("RESERVED", resourceBundle.getString("walletOperationStatus.reserved")),
-            new SelectItem("TO_RERATE", resourceBundle.getString("walletOperationStatus.to_rerate"))));
+        List<SelectItem> filterLockedOptions = new ArrayList<SelectItem>(Arrays.asList(new SelectItem(WalletOperationStatusEnum.OPEN, resourceBundle.getString("walletOperationStatus.open")),
+            new SelectItem(WalletOperationStatusEnum.TREATED, resourceBundle.getString("walletOperationStatus.treated")),
+            new SelectItem(WalletOperationStatusEnum.CANCELED, resourceBundle.getString("walletOperationStatus.canceled")),
+            new SelectItem(WalletOperationStatusEnum.RESERVED, resourceBundle.getString("walletOperationStatus.reserved")),
+            new SelectItem(WalletOperationStatusEnum.TO_RERATE, resourceBundle.getString("walletOperationStatus.to_rerate"))));
 
         return filterLockedOptions;
     }
