@@ -51,7 +51,7 @@ public class AccountOperationsGenerationJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         try {
 
-            List<Long> ids = invoiceService.getInvoiceIdsWithNoAccountOperation(null);
+            List<Long> ids = invoiceService.getInvoiceIdsWithNoAccountOperation(null, Boolean.TRUE);
             log.debug("invoices to traite:" + (ids == null ? null : ids.size()));
 
             Long nbRuns = new Long(1);
