@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -2195,6 +2196,22 @@ public class CustomFieldInstanceService extends BaseService {
             }
         }
     }
+    
+    /**
+     * Just like {@link #instantiateCFWithDefaultValue(ICustomFieldEntity)} but checking if CF value is null before instantiating default value. 
+     * @param jobInstance
+     */
+    public void instantiateCFWithDefaultValueIfNull(ICustomFieldEntity entity) {
+    	Map<String, CustomFieldTemplate> cfts = cfTemplateService.findByAppliesTo(entity);
+        if (MapUtils.isNotEmpty(cfts)) {
+            for (CustomFieldTemplate cft : cfts.values()) {
+            	Object cfValue = entity.getCfValue(cft.getCode());
+            	if (cfValue == null) {
+            		instantiateCFWithDefaultValue(entity, cft);
+            	}
+            }
+        }
+	}
 
     /**
      * Instantiate a custom field value with default value for a given entity. If custom field is versionable, a current date will be used to access the value. Can be instantiated
