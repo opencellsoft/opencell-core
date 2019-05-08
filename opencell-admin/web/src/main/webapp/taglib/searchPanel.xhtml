@@ -44,7 +44,7 @@
     <h:form id="${empty(formId)?'searchForm':formId}">
         <p:panel>
             <h:panelGroup layout="block" styleClass="search-panel">
-                <p:messages id="search_messages" autoUpdate="true"/>
+                <p:messages id="search_messages" autoUpdate="true" redisplay="false"/>
                 <p:outputPanel styleClass="search-panel-fields">
                     <c:set var="id" value="${null}" />
                     <ui:insert />

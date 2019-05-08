@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.opencellsoft</groupId>
 	<artifactId>opencell</artifactId>
 	<packaging>pom</packaging>
-	<version>6.2.1-SNAPSHOT-SNAPSHOT</version>
+	<version>6.2.1-SNAPSHOT</version>
 	<name>Opencell Parent Project</name>
 
 	<modules>
@@ -19,8 +18,7 @@
   </modules>
 
 	<properties>
-		<!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific 
-			configuration (e.g.  import.sql) -->
+        <!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific configuration (e.g. import.sql) -->
 		<env>dev</env>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
@@ -238,6 +236,14 @@
 			</dependency>
 
 			<!-- <dependency> -->
+            <!-- <groupId>org.javassist</groupId> -->
+            <!-- <artifactId>javassist</artifactId> -->
+            <!-- <version>3.18.1-GA</version> -->
+            <!-- <scope>provided</scope> -->
+            <!-- </dependency> -->
+
+
+            <!-- <dependency> -->
 			<!-- <groupId>org.jboss.resteasy</groupId> -->
 			<!-- <artifactId>jaxrs-api</artifactId> -->
 			<!-- <version>3.0.6.Final</version> -->
@@ -413,13 +419,13 @@
 				<version>1.0.2.Final</version>
 			</dependency>
 
-			<dependency>
-				<groupId>org.elasticsearch</groupId>
-				<artifactId>elasticsearch</artifactId>
-				<version>2.3.3</version>
-			</dependency>
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-high-level-client</artifactId>
+                <version>6.6.1</version>
+            </dependency>
 
-			<dependency>
+            <dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
 				<version>${jackson.version}</version>
@@ -553,11 +559,11 @@
 		<!-- </dependency> -->
 
 		<!-- Needed for running tests (you may also use TestNG) -->
-		<!-- <dependency> -->
-		<!-- <groupId>junit</groupId> -->
-		<!-- <artifactId>junit</artifactId> -->
-		<!-- <scope>test</scope> -->
-		<!-- </dependency> -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
 		<!-- Optional, but highly recommended -->
 		<!-- Arquillian allows you to test enterprise code such as EJBs and Transactional(JTA) JPA from JUnit/TestNG -->
@@ -744,22 +750,32 @@
 				<db.driver>org.postgresql.Driver </db.driver>
 				<db.url>jdbc:postgresql://localhost/meveo</db.url>
                 <db.schema>public</db.schema>
-				<db.username>meveo</db.username>
-				<db.password>meveo</db.password>
-			</properties>
-			<dependencies>
-				<!-- Dependency for liquibase plugin -->
-				<dependency>
-					<groupId>org.postgresql</groupId>
-					<artifactId>postgresql</artifactId>
-					<version>9.4.1211</version>
-					<scope>provided</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.liquibase.ext</groupId>
-					<artifactId>liquibase-postgresql</artifactId>
-					<version>3.0</version>
-					<scope>provided</scope>
+                <db.username>meveo</db.username>
+                <db.password>meveo</db.password>
+            </properties>
+            <dependencies>
+                <!-- Dependency for liquibase plugin -->
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>42.2.5</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.liquibase.ext</groupId>
+                    <artifactId>liquibase-postgresql</artifactId>
+                    <version>3.0</version>
+                    <scope>provided</scope>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.liquibase</groupId>
+                            <artifactId>liquibase-core</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>postgresql</groupId>
+                            <artifactId>postgresql</artifactId>
+                        </exclusion>
+                    </exclusions>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -777,7 +793,7 @@
 				<db.driver>org.mariadb.jdbc.Driver</db.driver>
 				<db.url>jdbc:mariadb://localhost:3306/meveo</db.url>
 				<db.username>root</db.username>
-				<db.password>mysqlDev</db.password>
+				<db.password></db.password>
 			</properties>
 			<dependencies>
 				<!-- Dependency for liquibase plugin -->

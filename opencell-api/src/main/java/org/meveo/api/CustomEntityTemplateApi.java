@@ -25,6 +25,9 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -71,8 +74,38 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         handleMissingParameters();
 
+        if (dto.getStoreAsTable() == null) {
+            dto.setStoreAsTable(Boolean.FALSE);
+        }
+
         if (customEntityTemplateService.findByCode(dto.getCode()) != null) {
             throw new EntityAlreadyExistsException(CustomEntityTemplate.class, dto.getCode());
+        }
+
+        // Validate field types for custom table
+        if (dto.getStoreAsTable() && dto.getFields() != null) {
+            int pos = 0;
+            for (CustomFieldTemplateDto cftDto : dto.getFields()) {
+
+                // Default to 'Index but not analyze storage', 'single' storage type and sequential field position for custom tables
+                if (cftDto.getIndexType() == null) {
+                    cftDto.setIndexType(CustomFieldIndexTypeEnum.INDEX_NOT_ANALYZE);
+                }
+                if (cftDto.getStorageType() == null) {
+                    cftDto.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+                }
+                if (cftDto.getGuiPosition() == null) {
+                    cftDto.setGuiPosition("tab:" + dto.getName() + ":0;field:" + pos);
+                    pos++;
+                }
+
+                if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.DOUBLE && cftDto.getFieldType() != CustomFieldTypeEnum.LIST
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING)
+                        || (cftDto.isVersionable() != null && cftDto.isVersionable())) {
+                    throw new InvalidParameterException("Custom table supports only unversioned and simple Date, Double, Long, String and Select from list type fields");
+                }
+            }
         }
 
         CustomEntityTemplate cet = convertCustomEntityTemplateFromDTO(dto, null);
@@ -108,9 +141,36 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         handleMissingParameters();
 
-        CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCode());
+        CustomEntityTemplate cet = customEntityTemplateService.findByCodeNoCache(dto.getCode());
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCode());
+        }
+
+        // Validate field types for custom table
+        if (cet.isStoreAsTable() && dto.getFields() != null) {
+            int pos = 0;
+            for (CustomFieldTemplateDto cftDto : dto.getFields()) {
+
+                // Default to 'Index but not analyze storage' and 'single' storeage type for custom tables
+                if (cftDto.getIndexType() == null) {
+                    cftDto.setIndexType(CustomFieldIndexTypeEnum.INDEX_NOT_ANALYZE);
+                }
+                //
+                if (cftDto.getStorageType() == null) {
+                    cftDto.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+                }
+                if (cftDto.getGuiPosition() == null) {
+                    cftDto.setGuiPosition("tab:" + dto.getName() + ":0;field:" + pos);
+                    pos++;
+                }
+
+                if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.DOUBLE && cftDto.getFieldType() != CustomFieldTypeEnum.LIST
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING)
+                        || (cftDto.isVersionable() != null && cftDto.isVersionable())) {
+                    throw new InvalidParameterException("Custom table supports only unversioned and simple Date, Double, Long, String and Select from list type fields");
+                }
+            }
         }
 
         cet = convertCustomEntityTemplateFromDTO(dto, cet);
@@ -280,7 +340,8 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         return EntityCustomizationDto.toDTO(clazz, cetFields.values(), cetActions.values());
     }
 
-    public List<BusinessEntityDto> listBusinessEntityForCFVByCode(String code, String wildcode) throws MeveoApiException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public List<BusinessEntityDto> listBusinessEntityForCFVByCode(String code, String wildcode)
+            throws MeveoApiException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         List<BusinessEntityDto> result = new ArrayList<>();
 
         if (StringUtils.isBlank(code)) {
@@ -405,6 +466,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         if (cetToUpdate == null) {
             cet = new CustomEntityTemplate();
             cet.setCode(dto.getCode());
+            cet.setStoreAsTable(dto.getStoreAsTable());
             if (dto.isDisabled() != null) {
                 cet.setDisabled(dto.isDisabled());
             }
@@ -415,4 +477,41 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         return cet;
     }
 
+    @Override
+    public void enableOrDisable(String code, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        CustomEntityTemplate cet = customEntityTemplateService.findByCodeNoCache(code);
+        if (cet == null) {
+            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
+        }
+        if (enable) {
+            customEntityTemplateService.enable(cet);
+        } else {
+            customEntityTemplateService.disable(cet);
+        }
+    }
+
+    @Override
+    public void remove(String code) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        CustomEntityTemplate cet = customEntityTemplateService.findByCodeNoCache(code);
+
+        if (cet == null) {
+            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
+        }
+
+        customEntityTemplateService.remove(cet);
+    }
 }

@@ -89,7 +89,7 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         }
 
         super.initEntity();
-        
+
         if (entity.getId() != null && entity.getInvoiceConfiguration() == null) {
             InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
             entity.setInvoiceConfiguration(invoiceConfiguration);
@@ -98,23 +98,29 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         if (entity.getBankCoordinates() == null) {
             entity.setBankCoordinates(new BankCoordinates());
         }
-        
-        if(entity.getGdprConfiguration() == null) {
-        	GdprConfiguration gdprConfiguration = new GdprConfiguration();
-        	entity.setGdprConfiguration(gdprConfiguration);
-        }
-        
-        if(entity.getRumSequence() == null) {
-        	entity.setRumSequence(new GenericSequence());
-		}
 
-		if (entity.getCustomerNoSequence() == null) {
-			entity.setCustomerNoSequence(new GenericSequence());
-		}
-		
-		entity.getCurrency().getCurrencyCode();
-        entity.getCountry().getCountryCode();
-        entity.getLanguage().getLanguageCode();
+        if (entity.getGdprConfiguration() == null) {
+            GdprConfiguration gdprConfiguration = new GdprConfiguration();
+            entity.setGdprConfiguration(gdprConfiguration);
+        }
+
+        if (entity.getRumSequence() == null) {
+            entity.setRumSequence(new GenericSequence());
+        }
+
+        if (entity.getCustomerNoSequence() == null) {
+            entity.setCustomerNoSequence(new GenericSequence());
+        }
+
+        if (entity.getCurrency() != null) {
+            entity.getCurrency().getCurrencyCode();
+        }
+        if (entity.getCountry() != null) {
+            entity.getCountry().getCountryCode();
+        }
+        if (entity.getLanguage() != null) {
+            entity.getLanguage().getLanguageCode();
+        }
 
         return entity;
     }

@@ -547,6 +547,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
+    @SuppressWarnings("unchecked")
     public String getTranslation(Object fieldValue) {
         if (fieldValue instanceof Map<?, ?>) {
             String lang = FacesContext.getCurrentInstance().getViewRoot().getLocale().getISO3Language().toUpperCase();

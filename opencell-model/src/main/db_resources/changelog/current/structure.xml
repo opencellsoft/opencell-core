@@ -634,7 +634,7 @@
         <sql><![CDATA[ALTER TABLE ${db.schema.adapted}cat_discount_plan_item DROP CONSTRAINT cat_discount_plan_item_discount_percent_check;]]></sql>
   </changeSet>
     
-    <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">        
+    <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
         <renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
     	<dropColumn tableName="cat_discount_plan_item">
     		<column name="discount_amount"></column>
@@ -922,6 +922,13 @@
     	<update tableName="meveo_job_instance">
     		<column name="verbose_report" valueNumeric="1"></column>
     	</update>
+    </changeSet>
+    
+
+    <changeSet id="#3607_20190123" author="andrius.karpavicius">
+        <addColumn tableName="cust_cet">
+            <column name="store_as_table" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>        
     </changeSet>
     
 </databaseChangeLog>

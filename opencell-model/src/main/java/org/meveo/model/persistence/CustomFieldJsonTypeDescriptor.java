@@ -2,68 +2,30 @@ package org.meveo.model.persistence;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.java.AbstractTypeDescriptor;
-import org.hibernate.type.descriptor.java.MutableMutabilityPlan;
-import org.hibernate.usertype.DynamicParameterizedType;
+import org.hibernate.type.descriptor.java.ImmutableMutabilityPlan;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Object> implements DynamicParameterizedType {
+public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<CustomFieldValues> {
 
     private static final long serialVersionUID = -5030465106663645694L;
 
-    private Class<?> jsonObjectClass;
+    public static final CustomFieldJsonTypeDescriptor INSTANCE = new CustomFieldJsonTypeDescriptor();
 
-    @Override
-    public void setParameterValues(Properties parameters) {
-        jsonObjectClass = ((ParameterType) parameters.get(PARAMETER_TYPE)).getReturnedClass();
-
-    }
-
-    @SuppressWarnings("serial")
+    @SuppressWarnings("unchecked")
     public CustomFieldJsonTypeDescriptor() {
-        super(Object.class, new MutableMutabilityPlan<Object>() {
-            @Override
-            protected Object deepCopyNotNull(Object value) {
-                return JacksonUtil.clone(value);
-            }
-        });
+
+        super(CustomFieldValues.class, ImmutableMutabilityPlan.INSTANCE);
+
     }
 
     @Override
-    public boolean areEqual(Object one, Object another) {
-
-        // Logger log = LoggerFactory.getLogger(getClass());
-        // log.error("CF json compare {}", one);
-        // log.error("CF json compare to {}", another);
-
-        if (one == another) {
-            return true;
-            // } else if (one == null || another == null) {
-            // return false;
-        }
-
-        String json = one != null ? one.toString() : null;
-        String json2 = another != null ? another.toString() : null;
-
-        if (json == null && json2 == null) {
-            return true;
-        } else if (json == null || json2 == null) {
-            return false;
-        } else {
-            return json.equals(json2);
-        }
-    }
-
-    @Override
-    public String toString(Object value) {
+    public String toString(CustomFieldValues value) {
         // Logger log = LoggerFactory.getLogger(getClass());
         // log.error("AKK Json converter to string");
 
@@ -71,21 +33,12 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Object
             return null;
         }
 
-        if (value instanceof CustomFieldValues) {
-            return ((CustomFieldValues) value).asJson();
-
-        } else {
-            Logger log = LoggerFactory.getLogger(getClass());
-            log.error("Value of type {} can not be converted to CustomFieldValues type. Value: {}", value.getClass().getSimpleName(), value);
-
-            throw new RuntimeException(
-                "cfjson field type is for customFieldValues field only. Value of type " + value.getClass().getSimpleName() + " can not be converted to CustomFieldValues type");
-        }
+        return ((CustomFieldValues) value).asJson();
 
     }
 
     @Override
-    public Object fromString(String string) {
+    public CustomFieldValues fromString(String string) {
 
         if (string == null) {
             return null;
@@ -104,26 +57,25 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Object
         // }
     }
 
-    @SuppressWarnings({ "unchecked" })
     @Override
-    public <X> X unwrap(Object value, Class<X> type, WrapperOptions options) {
+    public <X> X unwrap(CustomFieldValues value, Class<X> type, WrapperOptions options) {
+
         if (value == null) {
             return null;
-        }
-        if (String.class.isAssignableFrom(type)) {
+        } else if (String.class.isAssignableFrom(type)) {
             return (X) toString(value);
-        }
-        if (Object.class.isAssignableFrom(type)) {
-            return (X) JacksonUtil.toJsonNode(toString(value));
         }
         throw unknownUnwrap(type);
     }
 
     @Override
-    public <X> Object wrap(X value, WrapperOptions options) {
+    public <X> CustomFieldValues wrap(X value, WrapperOptions options) {
+
         if (value == null) {
             return null;
+        } else if (String.class.isInstance(value)) {
+            return fromString((String) value);
         }
-        return fromString(value.toString());
+        throw unknownWrap(value.getClass());
     }
 }
