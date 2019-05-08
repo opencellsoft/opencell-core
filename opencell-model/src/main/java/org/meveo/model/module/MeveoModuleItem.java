@@ -2,6 +2,7 @@ package org.meveo.model.module;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -29,6 +30,7 @@ import org.meveo.model.ExportIdentifier;
  * @author Andrius Karpavicius
  */
 @Entity
+@Cacheable
 @ExportIdentifier({ "meveoModule.code", "appliesTo", "itemClass", "itemCode" })
 @Table(name = "meveo_module_item")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

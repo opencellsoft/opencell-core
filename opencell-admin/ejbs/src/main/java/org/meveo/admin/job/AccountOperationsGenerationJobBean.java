@@ -66,7 +66,8 @@ public class AccountOperationsGenerationJobBean extends BaseJobBean {
 
         try {
             boolean excludeInvoicesWithoutAmount = jobInstance.getExcludeInvoicesWithoutAmount() == null ? false : jobInstance.getExcludeInvoicesWithoutAmount();
-            List<Long> ids = invoiceService.queryInvoiceIdsWithNoAccountOperation(null, excludeInvoicesWithoutAmount);
+            List<Long> ids = invoiceService.queryInvoiceIdsWithNoAccountOperation(null, excludeInvoicesWithoutAmount, Boolean.TRUE);
+
             log.debug("invoices to traite:" + (ids == null ? null : ids.size()));
 
             String scriptInstanceCode = null;

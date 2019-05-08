@@ -25,6 +25,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
@@ -1665,12 +1666,23 @@ public class CustomFieldDataEntryBean implements Serializable {
         Object ronkey = key;
         if (ronkey != null) {
             String[] ron = ((String) ronkey).split(CustomFieldValue.RON_VALUE_SEPARATOR);
-            if (ron[0] == null && ron[1] == null) {
+
+            if(ron.length > 0 && !((String) ronkey).isEmpty()) {
+
+                for(String valueOfRON : ron) {
+                    if(!valueOfRON.isEmpty() && !NumberUtils.isParsable(valueOfRON)) {
+                        messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
+                        FacesContext.getCurrentInstance().validationFailed();
+                        return null;
+                    }
+                }
+
+                if (ron[0] == null && ron.length > 1 && ron[1] == null) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
                 FacesContext.getCurrentInstance().validationFailed();
                 return null;
 
-            } else if (ron[0] != null && ron[1] != null) {
+                } else if (ron[0] != null  && !ron[0].isEmpty() && ron.length > 1 && ron[1] != null) {
                 try {
                     if (Double.valueOf(ron[0]).compareTo(Double.valueOf(ron[1])) >= 0) {
                         messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
@@ -1683,6 +1695,19 @@ public class CustomFieldDataEntryBean implements Serializable {
                     FacesContext.getCurrentInstance().validationFailed();
                     return null;
                 }
+                } else if (ron[0] != null && ron.length == 1) {
+                    try {
+                        Double.parseDouble(ron[0]);
+                    } catch (NumberFormatException e) {
+                        messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
+                        FacesContext.getCurrentInstance().validationFailed();
+                        return null;
+            }
+                }
+        } else {
+                messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return null;
             }
         } else {
             messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyNotSpecified"));

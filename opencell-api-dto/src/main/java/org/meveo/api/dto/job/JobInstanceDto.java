@@ -60,6 +60,11 @@ public class JobInstanceDto extends EnableBusinessDto {
      * Can job be run in parallel on several cluster nodes. Value of True indicates that job can be run on a single node at a time.
      */
     private Boolean limitToSingleNode;
+    
+    /**
+     * Whether a verbose error log will be kept.
+     */
+    private Boolean verboseReport = true;
 
     /**
      * Instantiate a new JobInstance DTO
@@ -94,6 +99,7 @@ public class JobInstanceDto extends EnableBusinessDto {
         if (jobInstance.getFollowingJob() != null) {
             setFollowingJob(jobInstance.getFollowingJob().getCode());
         }
+        verboseReport = jobInstance.getVerboseReport();
     }
 
     /**
@@ -263,4 +269,12 @@ public class JobInstanceDto extends EnableBusinessDto {
         return "JobInstanceDto [jobCategory=" + jobCategory + ", jobTemplate=" + jobTemplate + ", followingJob=" + followingJob + ", parameter=" + parameter + ", active=" + active
                 + ", customFields=" + customFields + ", timerCode=" + timerCode + ", runOnNodes=" + runOnNodes + ", limitToSingleNode=" + limitToSingleNode + "]";
     }
+
+	public Boolean getVerboseReport() {
+		return verboseReport;
+	}
+
+	public void setVerboseReport(Boolean verboseReport) {
+		this.verboseReport = verboseReport;
+	}
 }

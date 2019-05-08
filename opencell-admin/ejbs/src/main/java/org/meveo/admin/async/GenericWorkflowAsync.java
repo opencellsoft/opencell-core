@@ -47,8 +47,10 @@ public class GenericWorkflowAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
+        int i = 0;
         for (WorkflowInstance workflowInstance : wfInstances) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             unitGenericWorkflowJobBean.execute(result, workflowInstance, genericWorkflow);

@@ -3,6 +3,7 @@ package org.meveo.model.scripts;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -24,6 +25,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  */
 @ExportIdentifier({ "code" })
 @MappedSuperclass
+@Cacheable
 public abstract class CustomScript extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 8176170199770220430L;

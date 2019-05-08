@@ -53,6 +53,16 @@ import org.meveo.service.base.PersistenceService;
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
 
     /**
+     * Check if job is still running (or is stopped) every 50 records being processed (per thread). Value to be used in jobs that run slower. 
+     */
+    public static int CHECK_IS_JOB_RUNNING_EVERY_NR = 50;
+    
+    /**
+     * Check if job is still running (or is stopped) every 100 records being processed (per thread). Value to be used in jobs that run faster. 
+     */
+    public static int CHECK_IS_JOB_RUNNING_EVERY_NR_FAST = 100;
+    
+    /**
      * job instance service.
      */
     @Inject
