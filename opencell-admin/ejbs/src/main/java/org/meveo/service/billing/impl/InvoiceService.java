@@ -544,11 +544,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param excludeInvoicesWithoutAmount exclude invoices without amount.
      * @return list of invoice's which doesn't have the account operation, and have an amount
      */
-    public List<Long> queryInvoiceIdsWithNoAccountOperation(BillingRun br, boolean excludeInvoicesWithoutAmount) {
+    public List<Long> queryInvoiceIdsWithNoAccountOperation(BillingRun br, boolean excludeInvoicesWithoutAmount, Boolean invoiceAccountable) {
         try {
             QueryBuilder qb = queryInvoiceIdsWithNoAccountOperation(br);
             if (excludeInvoicesWithoutAmount) {
                 qb.addSql("i.amount != 0 ");
+            }
+            if (invoiceAccountable != null) {
+                qb.addSql("i.invoiceType.invoiceAccountable = ".concat(invoiceAccountable.toString()));	
             }
             return qb.getIdQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {

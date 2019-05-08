@@ -12343,7 +12343,7 @@ public class Action1 extends Script {
                                     <longValue>0151</longValue>\r
                                  </customField>\r
                                  <customField code="${#Project#baseEntityPrefix}_CustomerAccount_DOUBLE_SINGLE_NV">\r
-                                    <doubleValue>16.171</doubleValue>\r
+                                    <doubleValue>16.17</doubleValue>\r
                                  </customField>\r
                               </customFields>\r
                               <billingAccounts>\r

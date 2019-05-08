@@ -38,18 +38,26 @@ public class UsageRatingAsync {
     private CurrentUserProvider currentUserProvider;
 
     /**
-     * Rate usage charges for a list of EDRs. One EDR at a time in a separate transaction.
+	 * Rate usage charges for a list of EDRs. One EDR at a time in a separate
+	 * transaction.
      * 
-     * @param ids A list of EDR ids
-     * @param result Job execution result
-     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
-     *        expirations), current user might be lost, thus there is a need to reestablish.
+	 * @param ids
+	 *            A list of EDR ids
+	 * @param result
+	 *            Job execution result
+	 * @param lastCurrentUser
+	 *            Current user. In case of multitenancy, when user authentication is
+	 *            forced as result of a fired trigger (scheduled jobs, other timed
+	 *            event expirations), current user might be lost, thus there is a
+	 *            need to reestablish.
      * @return Future String
-     * @throws BusinessException BusinessException
+	 * @throws BusinessException
+	 *             BusinessException
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, MeveoUser lastCurrentUser) throws BusinessException {
+	public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, MeveoUser lastCurrentUser)
+			throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         int i = 0;

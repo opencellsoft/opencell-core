@@ -18,6 +18,8 @@
  */
 package org.meveo.service.billing.impl;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -627,11 +629,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         && discountPlanItem.getInvoiceCategory().getId().equals(scAggregate.getInvoiceSubCategory().getInvoiceCategory().getId()))) {
             BigDecimal discountValue = discountPlanItem.getDiscountValue();
 
-            if (discountPlanItem.getDiscountValueEL() != null) {
-                discountValue = evaluateDiscountPercentExpression(discountPlanItem.getDiscountValueEL(), scAggregate.getUserAccount(), scAggregate.getWallet(),
-                    invoice, amount);
-                log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
-                        discountValue, amount);
+            final String dpValueEL = discountPlanItem.getDiscountValueEL();
+            if (isNotBlank(dpValueEL)) {
+            	final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate.getUserAccount(), scAggregate.getWallet(), invoice, amount);
+                log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), discountValue, amount);
+                if (discountValue != null) {
+    				discountValue = evalDiscountValue;
+    			}
             }
 
             BigDecimal discountAmount = null;
