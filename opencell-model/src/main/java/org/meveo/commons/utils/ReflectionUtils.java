@@ -52,11 +52,14 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Ignas Lelys
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author khalid HORRI
+ * @lastModifiedVersion 7.1
  */
 public class ReflectionUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
+
+    public static final String SET_PREFIX = "set";
 
     /**
      * Mapping between an entity class and entity classes containing a field that that class.
@@ -88,7 +91,7 @@ public class ReflectionUtils {
 
     /**
      * Get a list of classes from a given package
-     * 
+     *
      * @param packageName Package name
      * @return A list of classes
      * @throws ClassNotFoundException Class discovery issue
@@ -129,7 +132,7 @@ public class ReflectionUtils {
 
     /**
      * Get fields of a given class and it's superclasses
-     * 
+     *
      * @param fields A list of fields to supplement to
      * @param type Class
      * @return A list of field (same as fields parameter plus newly discovered fields
@@ -146,7 +149,7 @@ public class ReflectionUtils {
 
     /**
      * Get enum object from string value for a given enum type
-     * 
+     *
      * @param enumType Enum class
      * @param enumValue Enum value as string
      * @return Enum object
@@ -577,6 +580,17 @@ public class ReflectionUtils {
         }
         classReferences.put(fieldClass, matchedFields);
         return matchedFields;
+    }
+
+    public static List<Method> findAnnotatedMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+        Method[] methods = clazz.getMethods();
+        List<Method> annotatedMethods = new ArrayList<Method>(methods.length);
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(annotationClass)) {
+                annotatedMethods.add(method);
+            }
+        }
+        return annotatedMethods;
     }
 
 
