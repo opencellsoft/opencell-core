@@ -164,13 +164,21 @@
 								 renderDeleteLink="false" renderEditLink="true" backTab="psInstances" backView="serviceInstanceDetail" backEntityId="#{serviceInstanceBean.entity.id}"/>
 						</hftl:dataList>
 					</c:if>
-                </p:tab>                    
+                </p:tab>
 				<c:if test="#{serviceInstanceBean.entity.id != null}">
 					<ui:include src="../../audit/auditableField.xhtml">
 						<ui:param name="auditableEntity" value="#{serviceInstanceBean.entity}" />
 						<ui:param name="auditableFieldName" value="#{'STATUS'}" />
 					</ui:include>
 				</c:if>
+
+				<p:tab id="counterPeriodTab"
+					   title="#{messages['counterPeriod.title']}"
+					   rendered="#{not empty subscriptionBean.entity.id}">
+					<p:outputPanel id="counterPeriodTabPanel">
+						<ui:include src="counterPeriodTab.xhtml" />
+					</p:outputPanel>
+				</p:tab>
 
                 <hftl:customFields backingBean="#{serviceInstanceBean}" messagesId=":formId:messages" />
                 <hftl:displayGenericWFsHistory backingBean="#{serviceInstanceBean}" />

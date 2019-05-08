@@ -167,6 +167,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @ViewBean
     private OfferTemplateBean offerTemplateBean;
 
+    @Inject
+    private CounterInstanceService counterInstanceService;
+
     private ServiceInstance selectedServiceInstance;
 
     private ProductInstance productInstance;
@@ -194,6 +197,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private ServiceInstance selectedTerminableService;
 
     private LazyDataModel<OfferTemplate> activeOfferTemplateDataModel;
+
+    private CounterInstance selectedCounterInstance;
 
     /**
      * User Account Id passed as a parameter. Used when creating new subscription entry from user account definition window, so default uset Account will be set on newly created
@@ -246,6 +251,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             initServiceTemplates();
             initServiceInstances(entity.getServiceInstances());
             initTerminableServices(entity.getServiceInstances());
+            selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
+
         }
 
         return entity;
@@ -1267,5 +1274,20 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             activeOfferTemplateDataModel = offerTemplateBean.getLazyDataModel(filters, true);
         }
         return activeOfferTemplateDataModel;
+    }
+
+    public CounterInstance getSelectedCounterInstance() {
+        if (entity == null) {
+            initEntity();
+        }
+        return selectedCounterInstance;
+    }
+
+    public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+        if (selectedCounterInstance != null) {
+            this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
+        } else {
+            this.selectedCounterInstance = null;
+        }
     }
 }
