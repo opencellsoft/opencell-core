@@ -120,7 +120,7 @@ public class InvoiceType extends BusinessCFEntity {
     @Size(max = 2000)
     private String billingTemplateNameEL;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tax_script_instance_id")
     private ScriptInstance taxScript;
 
@@ -132,7 +132,7 @@ public class InvoiceType extends BusinessCFEntity {
     @Size(max = 2000)
     private String occTemplateNegativeCodeEl;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email_template_id")
     private EmailTemplate emailTemplate;
 

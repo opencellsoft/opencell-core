@@ -28,19 +28,19 @@ import org.meveo.service.job.JobExecutionService;
 @Stateless
 public class UsageRatingAsync {
 
-	@Inject
-	private UnitUsageRatingJobBean unitUsageRatingJobBean;
+    @Inject
+    private UnitUsageRatingJobBean unitUsageRatingJobBean;
 
-	@Inject
-	private JobExecutionService jobExecutionService;
+    @Inject
+    private JobExecutionService jobExecutionService;
 
-	@Inject
-	private CurrentUserProvider currentUserProvider;
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
-	/**
+    /**
 	 * Rate usage charges for a list of EDRs. One EDR at a time in a separate
 	 * transaction.
-	 * 
+     * 
 	 * @param ids
 	 *            A list of EDR ids
 	 * @param result
@@ -50,28 +50,29 @@ public class UsageRatingAsync {
 	 *            forced as result of a fired trigger (scheduled jobs, other timed
 	 *            event expirations), current user might be lost, thus there is a
 	 *            need to reestablish.
-	 * @return Future String
+     * @return Future String
 	 * @throws BusinessException
 	 *             BusinessException
-	 */
-	@Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
 	public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, MeveoUser lastCurrentUser)
 			throws BusinessException {
 
-		currentUserProvider.reestablishAuthentication(lastCurrentUser);
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+        int i = 0;
+        for (Long id : ids) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_FAST == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+                break;
+            }
+            try {
+                unitUsageRatingJobBean.execute(result, id);
 
-		for (Long id : ids) {
-			if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
-				break;
-			}
-			try {
-				unitUsageRatingJobBean.execute(result, id);
-
-			} catch (BusinessException be) {
-				unitUsageRatingJobBean.registerFailedEdr(result, id, be);
-			}
-		}
-		return new AsyncResult<String>("OK");
-	}
+            } catch (BusinessException be) {
+                unitUsageRatingJobBean.registerFailedEdr(result, id, be);
+            }
+        }
+        return new AsyncResult<String>("OK");
+    }
 }

@@ -166,11 +166,6 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getOrCreateCFValueFromParamValue(String cfCode, String defaultParamBeanValue, ICustomFieldEntity entity, boolean saveInCFIfNotExist) throws BusinessException {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
-
         Object value = getCFValue(entity, cfCode, true);
         if (value != null) {
             return value;
@@ -198,6 +193,12 @@ public class CustomFieldInstanceService extends BaseService {
             }
 
             if (saveInCFIfNotExist) {
+
+                // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+                if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+                    entity = providerService.findById(appProvider.getId());
+                }
+
                 entity.getCfValuesNullSafe().setValue(cfCode, value.toString());
             }
         } catch (CustomFieldException e) {
@@ -259,10 +260,10 @@ public class CustomFieldInstanceService extends BaseService {
             return getCFValue(entity, cfCode, new Date(), instantiateDefaultValue);
         }
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         Object value = entity.getCfValue(cfCode);
 
@@ -313,10 +314,10 @@ public class CustomFieldInstanceService extends BaseService {
             return getCFValue(entity, cfCode, instantiateDefaultValue);
         }
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         Object value = entity.getCfValue(cfCode, date);
 
@@ -347,10 +348,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public String getCFValuesAsJson(ICustomFieldEntity entity, boolean includeParent) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         String result = "";
         String sep = "";
@@ -408,10 +409,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Element getCFValuesAsDomElement(ICustomFieldEntity entity, Document doc, boolean includeParent) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         Element customFieldsTag = doc.createElement("customFields");
 
@@ -649,10 +650,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedOnlyCFValue(ICustomFieldEntity entity, String cfCode) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         ICustomFieldEntity[] parentCFEntities = entity.getParentCFEntities();
         if (parentCFEntities != null) {
@@ -660,11 +661,11 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                // If Parent entity is Provider, lookup provider from appProvider
                 if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
+                    parentCfEntity = appProvider;
                 } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                 }
                 Object value = getInheritedCFValue(parentCfEntity, cfCode);
                 if (value != null) {
@@ -684,10 +685,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public List<CustomFieldValue> getInheritedAllCFValues(ICustomFieldEntity entity, String cfCode) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         List<CustomFieldValue> allValues = new ArrayList<>();
 
@@ -714,11 +715,11 @@ public class CustomFieldInstanceService extends BaseService {
                     if (parentCfEntity == null) {
                         continue;
                     }
-                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    // If Parent entity is Provider, lookup provider from appProvider
                     if (parentCfEntity instanceof Provider) {
-                        parentCfEntity = providerService.findById(appProvider.getId());
+                        parentCfEntity = appProvider;
                     } else {
-                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                        parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                     }
                     allValues.addAll(getInheritedAllCFValues(parentCfEntity, cfCode));
                 }
@@ -736,10 +737,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public List<CustomFieldValue> getInheritedOnlyAllCFValues(ICustomFieldEntity entity, String cfCode) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         List<CustomFieldValue> allValues = new ArrayList<>();
 
@@ -749,11 +750,11 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                // If Parent entity is Provider, lookup provider from appProvider
                 if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
+                    parentCfEntity = appProvider;
                 } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                 }
                 allValues.addAll(getInheritedAllCFValues(parentCfEntity, cfCode));
             }
@@ -770,10 +771,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public boolean hasInheritedOnlyCFValue(ICustomFieldEntity entity, String cfCode) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         ICustomFieldEntity[] parentCFEntities = entity.getParentCFEntities();
         if (parentCFEntities != null) {
@@ -781,11 +782,11 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                // If Parent entity is Provider, lookup provider from appProvider
                 if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
+                    parentCfEntity = appProvider;
                 } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                 }
                 boolean hasValue = hasInheritedCFValue(parentCfEntity, cfCode);
                 if (hasValue) {
@@ -806,10 +807,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public boolean hasInheritedCFValue(ICustomFieldEntity entity, String cfCode) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if (accumulateCF) {
             if (entity.getCfAccumulatedValues() != null) {
@@ -828,11 +829,11 @@ public class CustomFieldInstanceService extends BaseService {
                     if (parentCfEntity == null) {
                         continue;
                     }
-                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    // If Parent entity is Provider, lookup provider from appProvider
                     if (parentCfEntity instanceof Provider) {
-                        parentCfEntity = providerService.findById(appProvider.getId());
+                        parentCfEntity = appProvider;
                     } else {
-                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                        parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                     }
                     hasValue = hasInheritedCFValue(parentCfEntity, cfCode);
                     if (hasValue) {
@@ -854,22 +855,12 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public boolean hasCFValue(ICustomFieldEntity entity, String cfCode) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
-        if (entity.getCfValues() == null) {
-            return false;
-        }
-        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(cfCode, entity);
-        if (cft == null) {
-            // log.trace("No CFT found {}/{}", entity, code);
-            return false;
-        }
-
-        return entity.getCfValues().hasCfValue(cfCode);
-
+        return entity.hasCfValue(cfCode);
     }
 
     /**
@@ -889,11 +880,11 @@ public class CustomFieldInstanceService extends BaseService {
             if (parentCfEntity == null) {
                 continue;
             }
-            // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+            // If Parent entity is Provider, lookup provider from appProvider
             if (parentCfEntity instanceof Provider) {
-                parentCfEntity = providerService.findById(appProvider.getId());
+                parentCfEntity = appProvider;
             } else {
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
             }
             result.add(parentCfEntity);
             ICustomFieldEntity[] recurseCfes = getHierarchyParentCFEntities(parentCfEntity);
@@ -919,10 +910,10 @@ public class CustomFieldInstanceService extends BaseService {
             return null;
         }
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         List<Object> cfValues = new ArrayList<>();
 
@@ -988,10 +979,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedOnlyCFValue(ICustomFieldEntity entity, String cfCode, Date date) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
         if (parentCfEntities != null) {
@@ -999,11 +990,11 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                // If Parent entity is Provider, lookup provider from appProvider
                 if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
+                    parentCfEntity = appProvider;
                 } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                 }
                 Object value = getInheritedCFValue(parentCfEntity, cfCode, date);
                 if (value != null) {
@@ -1023,10 +1014,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedCFValue(ICustomFieldEntity entity, String cfCode) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if (accumulateCF) {
             if (entity.getCfAccumulatedValues() != null) {
@@ -1050,11 +1041,11 @@ public class CustomFieldInstanceService extends BaseService {
                     if (parentCfEntity == null) {
                         continue;
                     }
-                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    // If Parent entity is Provider, lookup provider from appProvider
                     if (parentCfEntity instanceof Provider) {
-                        parentCfEntity = providerService.findById(appProvider.getId());
+                        parentCfEntity = appProvider;
                     } else {
-                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                        parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                     }
                     Object cfeValue = getInheritedCFValue(parentCfEntity, cfCode);
                     if (cfeValue != null) {
@@ -1079,10 +1070,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedCFValue(ICustomFieldEntity entity, String cfCode, Date date) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if (accumulateCF) {
             Object value = entity.getCfAccumulatedValue(cfCode, date);
@@ -1104,11 +1095,11 @@ public class CustomFieldInstanceService extends BaseService {
                     if (parentCfEntity == null) {
                         continue;
                     }
-                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    // If Parent entity is Provider, lookup provider from appProvider
                     if (parentCfEntity instanceof Provider) {
-                        parentCfEntity = providerService.findById(appProvider.getId());
+                        parentCfEntity = appProvider;
                     } else {
-                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                        parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                     }
                     Object cfeValue = getInheritedCFValue(parentCfEntity, cfCode, date);
                     if (cfeValue != null) {
@@ -1134,10 +1125,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedCFValueByClosestMatch(ICustomFieldEntity entity, String cfCode, String keyToMatch) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if (accumulateCF) {
             Object value = getCFValueByClosestMatch(entity, cfCode, true, keyToMatch);
@@ -1157,9 +1148,9 @@ public class CustomFieldInstanceService extends BaseService {
                     }
                     // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                     if (parentCfEntity instanceof Provider) {
-                        parentCfEntity = providerService.findById(appProvider.getId());
+                        parentCfEntity = appProvider;
                     } else {
-                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                        parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                     }
                     Object cfeValue = getInheritedCFValueByClosestMatch(parentCfEntity, cfCode, keyToMatch);
                     if (cfeValue != null) {
@@ -1185,10 +1176,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedCFValueByClosestMatch(ICustomFieldEntity entity, String code, Date date, String keyToMatch) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if (accumulateCF) {
             Object value = getCFValueByClosestMatch(entity, code, date, true, keyToMatch);
@@ -1205,11 +1196,12 @@ public class CustomFieldInstanceService extends BaseService {
                     if (parentCfEntity == null) {
                         continue;
                     }
-                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    // If Parent entity is Provider, lookup provider from appProvider
                     if (parentCfEntity instanceof Provider) {
-                        parentCfEntity = providerService.findById(appProvider.getId());
+
+                        parentCfEntity = appProvider;
                     } else {
-                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                        parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                     }
                     Object cfeValue = getInheritedCFValueByClosestMatch(parentCfEntity, code, date, keyToMatch);
                     if (cfeValue != null) {
@@ -1235,10 +1227,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedCFValueByKey(ICustomFieldEntity entity, String cfCode, Object... keys) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if (accumulateCF) {
             Object value = getCFValueByKey(entity, cfCode, true, keys);
@@ -1255,11 +1247,11 @@ public class CustomFieldInstanceService extends BaseService {
                     if (parentCfEntity == null) {
                         continue;
                     }
-                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    // If Parent entity is Provider, lookup provider from appProvider
                     if (parentCfEntity instanceof Provider) {
-                        parentCfEntity = providerService.findById(appProvider.getId());
+                        parentCfEntity = appProvider;
                     } else {
-                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                        parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                     }
                     Object cfeValue = getInheritedCFValueByKey(parentCfEntity, cfCode, keys);
                     if (cfeValue != null) {
@@ -1286,10 +1278,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedCFValueByKey(ICustomFieldEntity entity, String cfCode, Date date, Object... keys) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if (accumulateCF) {
             Object value = getCFValueByKey(entity, cfCode, date, true, keys);
@@ -1306,11 +1298,11 @@ public class CustomFieldInstanceService extends BaseService {
                     if (parentCfEntity == null) {
                         continue;
                     }
-                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    // If Parent entity is Provider, lookup provider from appProvider
                     if (parentCfEntity instanceof Provider) {
-                        parentCfEntity = providerService.findById(appProvider.getId());
+                        parentCfEntity = appProvider;
                     } else {
-                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                        parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                     }
                     Object cfeValue = getInheritedCFValueByKey(parentCfEntity, cfCode, date, keys);
                     if (cfeValue != null) {
@@ -1334,10 +1326,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedCFValueByRangeOfNumbers(ICustomFieldEntity entity, String cfCode, Object numberToMatch) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if (accumulateCF) {
             Object value = getCFValueByRangeOfNumbers(entity, cfCode, true, numberToMatch);
@@ -1353,11 +1345,11 @@ public class CustomFieldInstanceService extends BaseService {
                     if (parentCfEntity == null) {
                         continue;
                     }
-                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    // If Parent entity is Provider, lookup provider from appProvider
                     if (parentCfEntity instanceof Provider) {
-                        parentCfEntity = providerService.findById(appProvider.getId());
+                        parentCfEntity = appProvider;
                     } else {
-                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                        parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                     }
                     Object cfeValue = getInheritedCFValueByRangeOfNumbers(parentCfEntity, cfCode, numberToMatch);
                     if (cfeValue != null) {
@@ -1382,10 +1374,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedCFValueByRangeOfNumbers(ICustomFieldEntity entity, String cfCode, Date date, Object numberToMatch) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if (accumulateCF) {
             Object value = getCFValueByRangeOfNumbers(entity, cfCode, date, true, numberToMatch);
@@ -1402,11 +1394,11 @@ public class CustomFieldInstanceService extends BaseService {
                     if (parentCfEntity == null) {
                         continue;
                     }
-                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    // If Parent entity is Provider, lookup provider from appProvider
                     if (parentCfEntity instanceof Provider) {
-                        parentCfEntity = providerService.findById(appProvider.getId());
+                        parentCfEntity = appProvider;
                     } else {
-                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                        parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
                     }
                     Object cfeValue = getInheritedCFValueByRangeOfNumbers(parentCfEntity, cfCode, date, numberToMatch);
                     if (cfeValue != null) {
@@ -1463,15 +1455,14 @@ public class CustomFieldInstanceService extends BaseService {
         }
     }
 
-    private IEntity refreshOrRetrieveAny(IEntity entity) {
+    private IEntity retrieveIfNotManagedAny(IEntity entity) {
 
         if (entity.isTransient()) {
             return entity;
         }
 
         if (getEntityManager().contains(entity)) {
-            // Entity is managed already, no need to refresh
-            // getEntityManager().refresh(entity);
+            // Entity is managed already, no need to retrieve
             return entity;
 
         } else {
@@ -1510,10 +1501,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     private Object getCFValueByClosestMatch(ICustomFieldEntity entity, String cfCode, boolean accumulated, String keyToMatch) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return null;
@@ -1564,10 +1555,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     private Object getCFValueByClosestMatch(ICustomFieldEntity entity, String cfCode, Date date, boolean accumulated, String keyToMatch) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return null;
@@ -1619,10 +1610,10 @@ public class CustomFieldInstanceService extends BaseService {
     @SuppressWarnings("unchecked")
     private Object getCFValueByKey(ICustomFieldEntity entity, String cfCode, boolean accumulated, Object... keys) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return null;
@@ -1715,10 +1706,10 @@ public class CustomFieldInstanceService extends BaseService {
     @SuppressWarnings("unchecked")
     public Object getCFValueByKey(ICustomFieldEntity entity, String cfCode, Date date, boolean accumulated, Object... keys) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return null;
@@ -1804,10 +1795,10 @@ public class CustomFieldInstanceService extends BaseService {
     @SuppressWarnings("unchecked")
     public Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String cfCode, boolean accumulated, Object numberToMatch) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return null;
@@ -1861,10 +1852,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     private Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String cfCode, Date date, boolean accumulated, Object numberToMatch) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return null;
@@ -2121,11 +2112,6 @@ public class CustomFieldInstanceService extends BaseService {
             return null;
         }
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
-
         return instantiateCFWithDefaultValue(entity, cft);
     }
 
@@ -2225,7 +2211,17 @@ public class CustomFieldInstanceService extends BaseService {
 
         Object value = cft.getDefaultValueConverted();
 
-        if (value == null || StringUtils.isEmpty(value.toString()) || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !isCFTApplicableToEntity(cft, entity)) {
+        if (value == null || StringUtils.isEmpty(value.toString()) || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) {
+            // log.trace("No CFT found or no default value specified {}/{}", entity, cft.getCode());
+            return null;
+        }
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
+        if (!isCFTApplicableToEntity(cft, entity)) {
             // log.trace("No CFT found or no default value specified {}/{}", entity, cft.getCode());
             return null;
         }
@@ -2255,8 +2251,17 @@ public class CustomFieldInstanceService extends BaseService {
 
         Object value = cft.getDefaultValueConverted();
 
-        if (value == null || StringUtils.isEmpty(value.toString()) || cft.getCalendar() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
-                || !isCFTApplicableToEntity(cft, entity)) {
+        if (value == null || StringUtils.isEmpty(value.toString()) || cft.getCalendar() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) {
+            // log.trace("No CFT found or no default value or calendar specified {}/{}", entity, code);
+            return null;
+        }
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
+        if (!isCFTApplicableToEntity(cft, entity)) {
             // log.trace("No CFT found or no default value or calendar specified {}/{}", entity, code);
             return null;
         }
@@ -2294,10 +2299,10 @@ public class CustomFieldInstanceService extends BaseService {
     @SuppressWarnings("unchecked")
     private boolean isCFValueHasKey(ICustomFieldEntity entity, String cfCode, boolean accumulated, Object... keys) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return false;
@@ -2374,10 +2379,10 @@ public class CustomFieldInstanceService extends BaseService {
     @SuppressWarnings("unchecked")
     private boolean isCFValueHasKey(ICustomFieldEntity entity, String cfCode, Date date, boolean accumulated, Object... keys) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return false;
@@ -2439,10 +2444,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String cfCode, Object... keys) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if (accumulateCF) {
             boolean hasKey = isCFValueHasKey(entity, cfCode, true, keys);
@@ -2460,7 +2465,13 @@ public class CustomFieldInstanceService extends BaseService {
                     if (parentCfEntity == null) {
                         continue;
                     }
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+
+                    if (parentCfEntity instanceof Provider) {
+                        parentCfEntity = appProvider;
+                    } else {
+                        parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
+                    }
+
                     hasKey = isInheritedCFValueHasKey(parentCfEntity, cfCode, keys);
                     if (hasKey) {
                         return true;
@@ -2482,10 +2493,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String cfCode, Date date, Object... keys) {
 
-        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
-        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
-            entity = providerService.findById(appProvider.getId());
-        }
+//        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+//        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+//            entity = providerService.findById(appProvider.getId());
+//        }
 
         if (accumulateCF) {
             boolean hasKey = isCFValueHasKey(entity, cfCode, date, true, keys);
@@ -2502,7 +2513,12 @@ public class CustomFieldInstanceService extends BaseService {
                     if (parentCfEntity == null) {
                         continue;
                     }
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+
+                    if (parentCfEntity instanceof Provider) {
+                        parentCfEntity = appProvider;
+                    } else {
+                        parentCfEntity = (ICustomFieldEntity) retrieveIfNotManagedAny((IEntity) parentCfEntity);
+                    }
                     hasKey = isInheritedCFValueHasKey(parentCfEntity, cfCode, date, keys);
                     if (hasKey) {
                         return true;

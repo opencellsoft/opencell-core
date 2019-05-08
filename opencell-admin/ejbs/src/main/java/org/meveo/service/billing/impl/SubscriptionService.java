@@ -453,7 +453,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
      * @throws BusinessException the business exception
      */
     public BigDecimal subscriptionBalanceDue(Subscription subscription, Date to) throws BusinessException {
-        log.info("subscriptionBalanceDue  subscription:" + (subscription == null ? "null" : subscription.getCode()) + " toDate:" + to);
         return computeBalance(subscription, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
     }
 
@@ -466,7 +465,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
      * @throws BusinessException the business exception
      */
     public BigDecimal subscriptionBalanceExigibleWithoutLitigation(Subscription subscription, Date to) throws BusinessException {
-        log.info("subscriptionBalanceExigibleWithoutLitigation  subscription:" + (subscription == null ? "null" : subscription.getCode()) + " toDate:" + to);
         return computeBalance(subscription, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
     }
 
@@ -519,7 +517,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
             ParamBean param = paramBeanFactory.getInstance();
             int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
             balance = balance.multiply(new BigDecimal(balanceFlag));
-            log.debug("end computeBalance subscription code:{} , balance:{}", subscription.getCode(), balance);
+            log.debug("computeBalance subscription code:{} , balance:{}", subscription.getCode(), balance);
         } catch (Exception e) {
             throw new BusinessException("Internal error");
         }
@@ -564,7 +562,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
             }
             queryBuilder.endOrClause();
         }
-        log.debug("query={}", queryBuilder.getSqlString());
         Query query = queryBuilder.getQuery(getEntityManager());
         balance = (BigDecimal) query.getSingleResult();
         return balance;

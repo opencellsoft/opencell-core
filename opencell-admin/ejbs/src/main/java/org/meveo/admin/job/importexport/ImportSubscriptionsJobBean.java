@@ -170,11 +170,12 @@ public class ImportSubscriptionsJobBean {
         }
 
         for (org.meveo.model.jaxb.subscription.Subscription jaxbSubscription : jaxbSubscriptions.getSubscription()) {
-            if (!jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
-                log.debug("importing subscription index={}, code={}", i++, jaxbSubscription.getCode());
+                log.debug("importing subscription index={}, code={}", i, jaxbSubscription.getCode());
 
                 CheckedSubscription checkSubscription = subscriptionCheckError(jaxbSubscription);
 
