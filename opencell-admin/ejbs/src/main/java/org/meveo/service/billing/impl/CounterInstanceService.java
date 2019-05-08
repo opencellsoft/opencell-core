@@ -19,6 +19,8 @@
 package org.meveo.service.billing.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,13 +40,16 @@ import javax.persistence.TemporalType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.CounterPeriodEvent;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.ICounterEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
@@ -58,6 +63,7 @@ import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.notification.Notification;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
@@ -65,7 +71,8 @@ import org.meveo.service.base.ValueExpressionWrapper;
  * 
  * @author Said Ramli
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @author Khalid HORRI
+ * @lastModifiedVersion 6.1
  */
 @Stateless
 public class CounterInstanceService extends PersistenceService<CounterInstance> {
@@ -207,7 +214,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    private CounterInstance instantiateCounter(BusinessService service, ICounterEntity entity, Class clazz, CounterTemplate counterTemplate, boolean isVirtual)
+    private CounterInstance instantiateCounter(BusinessService service, BusinessEntity entity, Class clazz, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         CounterInstance result = new CounterInstance();
         if (!entity.getCounters().containsKey(counterTemplate.getCode())) {
