@@ -427,7 +427,7 @@ public class JobInstance extends EnableBusinessCFEntity {
      * 
      * @param verboseReport boolean value
      */
-    public void setVerboseReport(Boolean verboseReport) {
+    public void setVerboseReport(boolean verboseReport) {
         this.verboseReport = verboseReport;
     }
 }
