@@ -1270,16 +1270,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param walletOperationId the wallet operation id
      * @return the rated transaction
      */
-    public RatedTransaction findByWalletOperationId(Long walletOperationId) {
-        try {
-            QueryBuilder qb = new QueryBuilder(getEntityClass(), "rt");
-            qb.addCriterion("rt.walletOperationId", "=", walletOperationId, false);
-            return (RatedTransaction) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            log.warn("No Rated transaction foud for this walletOperationId {} ", walletOperationId);
-            return null;
-        }
-    }
+	public RatedTransaction findByWalletOperationId(Long walletOperationId) {
+		try {
+			return (RatedTransaction) getEntityManager().createNamedQuery("RatedTransaction.findByWalletOperationId")
+					.setParameter("walletOperationId", walletOperationId).getSingleResult();
+
+		} catch (NoResultException e) {
+			log.warn("No ratedTransaction found with the given walletOperation.id. {}", e.getMessage());
+			return null;
+		}
+	}
 
     /**
      * Call RatedTransaction.setStatusToCanceledByRsCodes Named query to cancel just opened RatedTransaction of all passed RatedTransaction ids.
