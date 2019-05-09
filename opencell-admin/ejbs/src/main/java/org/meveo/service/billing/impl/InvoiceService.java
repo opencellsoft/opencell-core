@@ -123,7 +123,6 @@ import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInterface;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -915,7 +914,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             IBillableEntity entity, String scriptInstanceCode) throws BusinessException {
         try {
             log.debug("execute priceplan script " + scriptInstanceCode);
-            ScriptInterface script = scriptInstanceService.getCachedScriptInstance(scriptInstanceCode);
             HashMap<String, Object> context = new HashMap<String, Object>();
             context.put(Script.CONTEXT_ENTITY, entity);
             context.put(Script.CONTEXT_CURRENT_USER, currentUser);
@@ -923,7 +921,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             context.put("br", billingRun);
             context.put("invoiceType", invoiceType);
             context.put("ratedTransactions", ratedTransactions);
-            script.execute(context);
+            scriptInstanceService.executeCached(scriptInstanceCode, context);
             return (Map<InvoiceType, List<RatedTransaction>>) context.get(Script.RESULT_VALUE);
         } catch (Exception e) {
             log.error("Error when run script {}", scriptInstanceCode, e);

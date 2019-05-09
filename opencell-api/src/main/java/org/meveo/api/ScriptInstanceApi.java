@@ -27,7 +27,7 @@ import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.script.ScriptInstanceCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInstanceServiceStateless;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptUtils;
 
 /**
@@ -45,7 +45,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
     private ScriptInstanceService scriptInstanceService;
     
     @Inject
-    private ScriptInstanceServiceStateless scriptInstanceServiceStateless;
+    private ScriptInstanceService scriptInstanceServiceStateless;
 
     @Inject
     private ScriptInstanceCategoryService scriptInstanceCategoryService;

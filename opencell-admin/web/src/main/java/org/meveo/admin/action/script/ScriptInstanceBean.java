@@ -32,7 +32,6 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceCategory;
 import org.meveo.model.security.Role;
@@ -41,7 +40,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.script.ScriptInstanceCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInstanceServiceStateless;
 import org.meveo.service.script.ScriptUtils;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
@@ -64,9 +62,6 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
      */
     @Inject
     private ScriptInstanceService scriptInstanceService;
-    
-    @Inject
-    private ScriptInstanceServiceStateless scriptInstanceServiceStateless;
 
     @Inject
     private RoleService roleService;
@@ -180,7 +175,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         }
 
         // check duplicate script
-        CustomScript scriptDuplicate = scriptInstanceService.findByCode(code); // genericScriptService
+        ScriptInstance scriptDuplicate = scriptInstanceService.findByCode(code);
         if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
             return null;
@@ -225,7 +220,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     }
 
     public boolean isUserHasSourcingRole(ScriptInstance scriptInstance) {
-        return scriptInstanceServiceStateless.isUserHasSourcingRole(scriptInstance);
+        return scriptInstanceService.isUserHasSourcingRole(scriptInstance);
     }
 
     public void testCompilation() {
@@ -238,7 +233,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         }
 
         // check duplicate script
-        CustomScript scriptDuplicate = scriptInstanceService.findByCode(code); // genericScriptService
+        ScriptInstance scriptDuplicate = scriptInstanceService.findByCode(code);
         if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
             return;
