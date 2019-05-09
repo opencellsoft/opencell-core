@@ -84,7 +84,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     private CounterTemplateService counterTemplateService;
 
     @Inject
-    private ScriptInstanceService scriptInstanceServiceStateless;
+    private ScriptInstanceService scriptInstanceService;
 
     private List<Entry<String, String>> jaspers;
 
@@ -163,7 +163,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     }
 
     public void constructScriptInstancesWithError(TabChangeEvent event) {
-        scriptInstanceWithErrorList = scriptInstanceServiceStateless.getScriptInstancesWithError();
+        scriptInstanceWithErrorList = scriptInstanceService.getScriptInstancesWithError();
     }
     
     ConfigIssuesReportingDTO reportConfigDto;
@@ -284,7 +284,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     }
 
     public long getNbrScriptInstanceWithError() {
-        return scriptInstanceServiceStateless.countScriptInstancesWithError();
+        return scriptInstanceService.countScriptInstancesWithError();
     }
 
     public ConfigIssuesReportingDTO getReportConfigDto() {

@@ -27,7 +27,6 @@ import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.script.ScriptInstanceCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptUtils;
 
 /**
@@ -40,12 +39,9 @@ import org.meveo.service.script.ScriptUtils;
 
 @Stateless
 public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanceDto> {
-
-    @Inject
-    private ScriptInstanceService scriptInstanceService;
     
     @Inject
-    private ScriptInstanceService scriptInstanceServiceStateless;
+    private ScriptInstanceService scriptInstanceService;
 
     @Inject
     private ScriptInstanceCategoryService scriptInstanceCategoryService;
@@ -127,7 +123,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
         if (scriptInstance == null) {
             throw new EntityDoesNotExistsException(ScriptInstance.class, scriptInstanceDto.getCode());
-        } else if (!scriptInstanceServiceStateless.isUserHasSourcingRole(scriptInstance)) {
+        } else if (!scriptInstanceService.isUserHasSourcingRole(scriptInstance)) {
             throw new MeveoApiException("User does not have a permission to update a given script");
         }
 
@@ -150,7 +146,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
             throw new EntityDoesNotExistsException(ScriptInstance.class, scriptInstanceCode);
         }
         scriptInstanceDtoResult = new ScriptInstanceDto(scriptInstance);
-        if (!scriptInstanceServiceStateless.isUserHasSourcingRole(scriptInstance)) {
+        if (!scriptInstanceService.isUserHasSourcingRole(scriptInstance)) {
             scriptInstanceDtoResult.setScript("InvalidPermission");
         }
         return scriptInstanceDtoResult;
