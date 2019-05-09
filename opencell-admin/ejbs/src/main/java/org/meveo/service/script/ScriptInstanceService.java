@@ -500,8 +500,19 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      */
-    @Lock(LockType.READ)
     public ScriptInterface getScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         return scriptCompilerService.getScriptInstance(scriptCode);
+    }
+
+    /**
+     * Find the script class for a given script code. Pass-through to ScriptCompilerService.getScriptInterface().
+     * 
+     * @param scriptCode Script code
+     * @return Script interface Class
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
+     */
+    public Class<ScriptInterface> getScriptInterface(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+        return scriptCompilerService.getScriptInterface(scriptCode);
     }
 }
