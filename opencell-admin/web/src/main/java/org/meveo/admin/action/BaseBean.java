@@ -542,15 +542,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Returns translation value for i18n map field, else the value itself
+     * Returns translation value for i18n map field, else the value itself or default value
      * 
      * @author akadid abdelmounaim
+     * @author Amine BEN AICHA
      * @lastModifiedVersion 5.0
      */
-    public String getTranslation(Object fieldValue) {
+    public String getTranslation(Object fieldValue, String defaultValue) {
         if (fieldValue instanceof Map<?, ?>) {
             String lang = FacesContext.getCurrentInstance().getViewRoot().getLocale().getISO3Language().toUpperCase();
             Map<String, String> translationMap = (Map<String, String>) fieldValue;
+
+            if (translationMap.isEmpty() || StringUtils.isBlank(translationMap.get(lang))) {
+                return defaultValue;
+            }
+
             return translationMap.get(lang);
         }
         return (String) fieldValue;

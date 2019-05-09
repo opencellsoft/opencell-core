@@ -148,7 +148,7 @@
                                         <hftl:formField label="#{messages['accountEntity.externalRef1']}" field="externalRef1" validateUnique="false" newLine="true" />
                                         <hftl:formField label="#{messages['accountEntity.externalRef2']}" field="externalRef2" />
 
-                                        <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" required="false"
+                                        <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" valueLabelField2="descriptionNotNull" required="false"
                                             listBean="#{titleBean}" listenerUpdate=":parentTab:userAccountFormId:userAccountTab:userNamePanel" styleClass="clearLeft" />
 
                                         <h:panelGroup id="userNamePanel" layout="block">
