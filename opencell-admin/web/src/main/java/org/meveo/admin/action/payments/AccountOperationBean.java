@@ -36,6 +36,7 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.IEntity;
 import org.meveo.model.MatchingReturnObject;
+import org.meveo.model.finance.AccountingWriting;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
@@ -241,6 +242,15 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
     public LazyDataModel<AccountOperation> getAccountOperations(CustomerAccount ca) {
         if (!ca.isTransient()) {
             filters.put("customerAccount", ca);
+            return getLazyDataModel();
+        } else {
+            return null;
+        }
+    }
+    
+    public LazyDataModel<AccountOperation> getAccountOperations(AccountingWriting accountingWriting) {
+        if (!accountingWriting.isTransient()) {
+            filters.put("accountingWriting", accountingWriting);
             return getLazyDataModel();
         } else {
             return null;

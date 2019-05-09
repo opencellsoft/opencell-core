@@ -1,30 +1,80 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:hftl="http://hftl.org"
-                xmlns:f="http://xmlns.jcp.org/jsf/core" template="/layout/template.xhtml"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:hftl="http://hftl.org" xmlns:f="http://xmlns.jcp.org/jsf/core"
+	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" >
 
-    <ui:define name="metadata">
-        <f:metadata>
-            <f:event type="preRenderView" listener="#{accountingWritingListBean.preRenderView}" />
-        </f:metadata>
-    </ui:define>
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{accountingWritingListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
 
-    <ui:define name="body">
-        <h:form id="crumbmenuForm">
-            <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                <p:menuitem value="#{messages['menu.finance']}" disabled="true" />
-                <p:menuitem outcome="accountingWritings" value="#{messages['menu.accountingWriting']}" />
-            </p:breadCrumb>
-        </h:form>
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.finance']}" disabled="true" />
+				<p:menuitem outcome="accountingWritings"
+					value="#{messages['menu.accountingWriting']}" />
+			</p:breadCrumb>
+		</h:form>
 
-        <hftl:searchPanel label="#{messages['accountingWriting.search']}" backingBean="#{accountingWritingListBean}">
-        </hftl:searchPanel>
+		<hftl:searchPanel label="#{messages['accountingWriting.search']}"  renderNewButton="false" 
+					backingBean="#{accountingWritingListBean}" columns="3">
+			<hftl:searchField label="#{messages['accountingWriting.startPeriod']}"
+				field="startPeriod" />
+			<hftl:searchField label="#{messages['accountingWriting.endPeriod']}"
+				field="endPeriod" />
+			<hftl:searchField label="#{messages['accountingWriting.writingDate']}"
+				field="writingDate" />
+			<hftl:searchField label="#{messages['accountingWriting.eventType']}"
+				field="eventType" />
+			<hftl:searchField id="accountingCodeField" label="#{messages['accountingWriting.accountingCode']}" field="accountingCode" valueLabelField="code"
+                listBean="#{accountingCodeBean}" />
+            <hftl:searchField id="invoiceCategoryField" label="#{messages['accountingWriting.invoiceCategory']}" field="invoiceCategory" valueLabelField="code"
+                listBean="#{invoiceCategoryBean}" />
+            <hftl:searchField label="#{messages['accountingWriting.status']}"
+				field="status" />
+		</hftl:searchPanel>
 
-        <hftl:dataList backingBean="#{accountingWritingListBean}" sortBy="startPeriod">
-            <hftl:column label="#{messages['accountingWriting.startPeriod']}" field="startPeriod" />
-            <hftl:column label="#{messages['accountingWriting.endPeriod']}" field="endPeriod" />
-            <hftl:column label="#{messages['accountingWriting.status']}" field="status" />
-        </hftl:dataList>
-    </ui:define>
+		<hftl:dataList backingBean="#{accountingWritingListBean}" sortBy="startPeriod">
+			<hftl:column label="#{messages['accountingWriting.startPeriod']}" field="startPeriod" isDate="true" />
+			<hftl:column label="#{messages['accountingWriting.endPeriod']}" field="endPeriod" isDate="true" />
+			<hftl:column label="#{messages['accountingWriting.writingDate']}" field="writingDate" isDate="true" />
+			<hftl:column label="#{messages['accountingWriting.eventType']}" field="eventType" />
+			<hftl:column label="#{messages['accountingWriting.accountingCode']}" field="accountingCode.code" />
+			<hftl:column label="#{messages['accountingWriting.invoiceCategory']}" field="invoiceCategory.code" />
+			<hftl:column label="#{messages['accountingWriting.tax']}" field="tax.code" />
+			<hftl:column label="#{messages['accountingWriting.amount']}" field="amount" converterParam="4digits" wrapHeader="true" />
+			<hftl:column label="#{messages['accountingWriting.status']}" field="status.label" isMessage="true" />
+			<p:column headerText="#{messages['commons.actions']}" width="6%" >
+				<f:facet name="header">
+					<h:outputText value="#{messages['commons.actions']}" />
+				</f:facet>
+				<p:commandButton id="accountOperationListBtn" icon="ui-icon-document" 
+							oncomplete="PF('accountOperationListDialog').show()" update="accountOperationListDialog"
+							action="#{accountingWritingListBean.setSelectedAccountingWriting(entity)}">
+					<f:actionListener></f:actionListener>
+                </p:commandButton>
+			</p:column>
+		</hftl:dataList>
+		
+		
+		<p:dialog id="accountOperationListDialog" header="#{messages['accountingWriting.accountOperationList']}" modal="true"
+					 closeOnEscape="true" widgetVar="accountOperationListDialog" width="50%" closable="false" appendTo="@(body)">
+			<c:if test="#{not empty accountingWritingListBean.selectedAccountingWriting}">
+				<hftl:dataList exportToXml="false" resultsId="resultsAO" id="accountOperationList" label="#{messages['accountOperation.title']}" 
+								dataModel="#{accountOperationBean.getAccountOperations(accountingWritingListBean.selectedAccountingWriting)}"
+								>    			    			
+	    			<hftl:column label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />	   
+	    			<hftl:column label="#{messages['accountOperation.amount']}" field="amount" />	   
+	    			<hftl:column label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />	       			      				    	
+	    			<hftl:column label="#{messages['accountOperation.dueDate']}" field="dueDate" />
+			   	</hftl:dataList>
+		 	</c:if>
+		</p:dialog>
+		
+	</ui:define>
 
 </ui:composition>

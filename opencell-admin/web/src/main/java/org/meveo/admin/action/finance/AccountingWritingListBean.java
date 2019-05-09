@@ -31,6 +31,16 @@ import javax.inject.Named;
 @Named
 @ConversationScoped
 public class AccountingWritingListBean extends AccountingWritingBean {
+	
+	private static final long serialVersionUID = 1L;
+	
+	private AccountingWriting selectedAccountingWriting;
 
-    private static final long serialVersionUID = 1L;
+	public AccountingWriting getSelectedAccountingWriting() {
+		return this.selectedAccountingWriting;
+	}
+
+	public void setSelectedAccountingWriting(AccountingWriting selectedAccountingWriting) {
+		this.selectedAccountingWriting = selectedAccountingWriting;
+	} 
 }
