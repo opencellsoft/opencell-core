@@ -217,5 +217,9 @@
         <sql>update ${db.schema.adapted}billing_invoice_type set invoice_accountable = 1 where code not in ('QUOTE','DRAFT','PREPAID')</sql>
         <sql>update ${db.schema.adapted}billing_invoice_type set invoice_accountable = 0 where code in ('QUOTE','DRAFT','PREPAID')</sql>
     </changeSet>
-    
+
+    <changeSet id="#4156_08052019" author="AndriusKarpavicius">
+        <addDefaultValue tableName="meveo_job_instance" columnName="exclude_inv_without_amount" defaultValueNumeric="0" />
+        <sql>update ${db.schema.adapted}meveo_job_instance set exclude_inv_without_amount = 0 where exclude_inv_without_amount is null</sql>
+    </changeSet>
 </databaseChangeLog> 
