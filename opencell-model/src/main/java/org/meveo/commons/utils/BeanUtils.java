@@ -80,4 +80,18 @@ public class BeanUtils {
 
         return 0;
     }
+
+    /**
+     * Shallow equality check for two objects using the equals operator while handling null values without exception
+     *
+     * @param one First object
+     * @param two Second string
+     * @return true if both objects are null or are equal using Object.equals
+     */
+    public static boolean equals(Object one, Object two) {
+        if (one == null && two == null) {
+            return true;
+        }
+        return one != null ? one.equals(two) : (two != null ? false : true);
+    }
 }
