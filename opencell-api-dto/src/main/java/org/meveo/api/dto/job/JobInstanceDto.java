@@ -99,7 +99,7 @@ public class JobInstanceDto extends EnableBusinessDto {
         if (jobInstance.getFollowingJob() != null) {
             setFollowingJob(jobInstance.getFollowingJob().getCode());
         }
-        verboseReport = jobInstance.getVerboseReport();
+        verboseReport = jobInstance.isVerboseReport();
     }
 
     /**

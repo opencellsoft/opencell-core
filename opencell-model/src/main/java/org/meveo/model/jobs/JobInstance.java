@@ -123,15 +123,15 @@ public class JobInstance extends EnableBusinessCFEntity {
     /** The include invoices without amount. */
     @Type(type = "numeric_boolean")
     @Column(name = "exclude_inv_without_amount")
-    private Boolean excludeInvoicesWithoutAmount;
+    private boolean excludeInvoicesWithoutAmount;
 
     /**
      * Whether a verbose error log will be kept.
      */
     @Type(type = "numeric_boolean")
     @Column(name = "verbose_report")
-    private Boolean verboseReport = true;
-    
+    private boolean verboseReport = true;
+
     /** Code of provider, that job belongs to. */
     @Transient
     private String providerCode;
@@ -373,14 +373,14 @@ public class JobInstance extends EnableBusinessCFEntity {
     /**
      * @return the excludeInvoicesWithoutAmount
      */
-    public Boolean getExcludeInvoicesWithoutAmount() {
+    public boolean isExcludeInvoicesWithoutAmount() {
         return excludeInvoicesWithoutAmount;
     }
 
     /**
      * @param excludeInvoicesWithoutAmount the excludeInvoicesWithoutAmount to set
      */
-    public void setExcludeInvoicesWithoutAmount(Boolean excludeInvoicesWithoutAmount) {
+    public void setExcludeInvoicesWithoutAmount(boolean excludeInvoicesWithoutAmount) {
         this.excludeInvoicesWithoutAmount = excludeInvoicesWithoutAmount;
     }
 
@@ -413,18 +413,19 @@ public class JobInstance extends EnableBusinessCFEntity {
 
     /**
      * Are error logs recorded?
+     * 
      * @return boolean value
      */
-	public Boolean getVerboseReport() {
-		return verboseReport;
-	}
+    public boolean isVerboseReport() {
+        return verboseReport;
+    }
 
-	/**
-	 * Sets whether error logs are recorded
-	 * @param verboseReport boolean value
-	 */
-	public void setVerboseReport(Boolean verboseReport) {
-		this.verboseReport = verboseReport;
-	}
-
+    /**
+     * Sets whether error logs are recorded
+     * 
+     * @param verboseReport boolean value
+     */
+    public void setVerboseReport(Boolean verboseReport) {
+        this.verboseReport = verboseReport;
+    }
 }
