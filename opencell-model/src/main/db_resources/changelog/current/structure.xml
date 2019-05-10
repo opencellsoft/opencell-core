@@ -2136,12 +2136,9 @@
             <column name="tax_id" type="bigint" />
             <column name="invoice_category_id" type="bigint" />
             <column name="accounting_code_id" type="bigint" />
-            <column name="start_period" type="date" />
-            <column name="end_period" type="date" />
-            <column name="writing_date" type="date" />
+            <column name="export_date" type="date" />
             <column name="amount" type="numeric(23, 12)" />
             <column name="event_type" type="varchar(255)" />
-            <column name="status" type="varchar(255)" />
             <column name="extra_param_1" type="varchar(255)" />
             <column name="extra_param_2" type="varchar(255)" />
             <column name="extra_param_3" type="varchar(255)" />
@@ -2159,11 +2156,12 @@
                                  constraintName="fk_accounting_writing_accounting_code" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
         <createSequence sequenceName="ar_accounting_writing_seq"/>
-        <addColumn tableName="ar_account_operation">
-            <column name="accounting_writing_id" type="bigint">
-                <constraints nullable="true" foreignKeyName="fk_ar_account_operation_accounting_writing" references="ar_accounting_writing(id)" />
-            </column>
-        </addColumn>
+        
+        <createTable tableName="ar_accounting_writing_acc_operations">
+            <column name="accounting_writing_id" type="bigint" />
+            <column name="account_operation_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="accounting_writing_id, account_operation_id" constraintName="ar_accounting_writing_acc_operations_pkey" tableName="ar_accounting_writing_acc_operations" />
     </changeSet>
     <changeSet id="##4160_20190105 - Accounting Writing - MYSQL sequence" author="MounirBOUKAYOUA" dbms="mysql">
         <createTable tableName="ar_accounting_writing_seq">

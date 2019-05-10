@@ -47,7 +47,8 @@ public class AccountingWriting extends AuditableEntity {
     /**
      * Account operations associated with this Acc writing
      */
-    @OneToMany(mappedBy = "accountingWriting", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "ar_accounting_writing_acc_operations", joinColumns = @JoinColumn(name = "accounting_writing_id"), inverseJoinColumns = @JoinColumn(name = "account_operation_id"))
     private List<AccountOperation> accountOperations = new ArrayList<>();
 
     /**
@@ -79,27 +80,6 @@ public class AccountingWriting extends AuditableEntity {
     private AccountingCode accountingCode;
 
     /**
-     * Accounting extraction Period start
-     */
-    @Column(name = "start_period")
-    @Temporal(TemporalType.DATE)
-    private Date startPeriod;
-
-    /**
-     * Accounting extraction Period end
-     */
-    @Column(name = "end_period")
-    @Temporal(TemporalType.DATE)
-    private Date endPeriod;
-    
-    /**
-     * Accounting extraction Period end
-     */
-    @Column(name = "writing_date")
-    @Temporal(TemporalType.DATE)
-    private Date writingDate;
-
-    /**
      * writing total amount
      */
     @Column(name = "amount")
@@ -114,9 +94,9 @@ public class AccountingWriting extends AuditableEntity {
     /**
      * writing status
      */
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private AccWritingStatusEnum status;
+    @Column(name = "export_date")
+    @Temporal(TemporalType.DATE)
+    private Date exportDate;
 
     /**
      * Extra param 1
@@ -136,116 +116,91 @@ public class AccountingWriting extends AuditableEntity {
     @Column(name = "extra_param_3")
     private String extraParam3;
 
-    public List<AccountOperation> getAccountOperations() {
-        return accountOperations;
-    }
-
-    public void setAccountOperations(List<AccountOperation> accountOperations) {
-        this.accountOperations = accountOperations;
-    }
-
-    public AccountingWriting getOriginWriting() {
-        return originWriting;
-    }
-
-    public void setOriginWriting(AccountingWriting originWriting) {
-        this.originWriting = originWriting;
-    }
-
-    public Tax getTax() {
-        return tax;
-    }
-
-    public void setTax(Tax tax) {
-        this.tax = tax;
-    }
-
-    public InvoiceCategory getInvoiceCategory() {
-        return invoiceCategory;
-    }
-
-    public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
-        this.invoiceCategory = invoiceCategory;
-    }
-
-    public AccountingCode getAccountingCode() {
-        return accountingCode;
-    }
-
-    public void setAccountingCode(AccountingCode accountingCode) {
-        this.accountingCode = accountingCode;
-    }
-
-    public Date getStartPeriod() {
-        return startPeriod;
-    }
-
-    public void setStartPeriod(Date startPeriod) {
-        this.startPeriod = startPeriod;
-    }
-
-    public Date getEndPeriod() {
-        return endPeriod;
-    }
-
-    public void setEndPeriod(Date endPeriod) {
-        this.endPeriod = endPeriod;
-    }
-
-    
-    public Date getWritingDate() {
-		return writingDate;
+	public List<AccountOperation> getAccountOperations() {
+		return accountOperations;
 	}
 
-	public void setWritingDate(Date writingDate) {
-		this.writingDate = writingDate;
+	public void setAccountOperations(List<AccountOperation> accountOperations) {
+		this.accountOperations = accountOperations;
+	}
+
+	public AccountingWriting getOriginWriting() {
+		return originWriting;
+	}
+
+	public void setOriginWriting(AccountingWriting originWriting) {
+		this.originWriting = originWriting;
+	}
+
+	public Tax getTax() {
+		return tax;
+	}
+
+	public void setTax(Tax tax) {
+		this.tax = tax;
+	}
+
+	public InvoiceCategory getInvoiceCategory() {
+		return invoiceCategory;
+	}
+
+	public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
+		this.invoiceCategory = invoiceCategory;
+	}
+
+	public AccountingCode getAccountingCode() {
+		return accountingCode;
+	}
+
+	public void setAccountingCode(AccountingCode accountingCode) {
+		this.accountingCode = accountingCode;
 	}
 
 	public BigDecimal getAmount() {
-        return amount;
-    }
+		return amount;
+	}
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
 
-    public String getEventType() {
-        return eventType;
-    }
+	public String getEventType() {
+		return eventType;
+	}
 
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
-    }
+	public void setEventType(String eventType) {
+		this.eventType = eventType;
+	}
 
-    public AccWritingStatusEnum getStatus() {
-        return status;
-    }
+	public Date getExportDate() {
+		return exportDate;
+	}
 
-    public void setStatus(AccWritingStatusEnum status) {
-        this.status = status;
-    }
+	public void setExportDate(Date exportDate) {
+		this.exportDate = exportDate;
+	}
 
-    public String getExtraParam1() {
-        return extraParam1;
-    }
+	public String getExtraParam1() {
+		return extraParam1;
+	}
 
-    public void setExtraParam1(String extraParam1) {
-        this.extraParam1 = extraParam1;
-    }
+	public void setExtraParam1(String extraParam1) {
+		this.extraParam1 = extraParam1;
+	}
 
-    public String getExtraParam2() {
-        return extraParam2;
-    }
+	public String getExtraParam2() {
+		return extraParam2;
+	}
 
-    public void setExtraParam2(String extraParam2) {
-        this.extraParam2 = extraParam2;
-    }
+	public void setExtraParam2(String extraParam2) {
+		this.extraParam2 = extraParam2;
+	}
 
-    public String getExtraParam3() {
-        return extraParam3;
-    }
+	public String getExtraParam3() {
+		return extraParam3;
+	}
 
-    public void setExtraParam3(String extraParam3) {
-        this.extraParam3 = extraParam3;
-    }
+	public void setExtraParam3(String extraParam3) {
+		this.extraParam3 = extraParam3;
+	}
 }

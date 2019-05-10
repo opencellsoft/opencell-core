@@ -247,15 +247,6 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
             return null;
         }
     }
-    
-    public LazyDataModel<AccountOperation> getAccountOperations(AccountingWriting accountingWriting) {
-        if (!accountingWriting.isTransient()) {
-            filters.put("accountingWriting", accountingWriting);
-            return getLazyDataModel();
-        } else {
-            return null;
-        }
-    }
 
     @Override
     protected List<String> getFormFieldsToFetch() {

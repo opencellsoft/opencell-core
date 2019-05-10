@@ -35,10 +35,13 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -117,11 +120,10 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     private AccountingCode accountingCode;
 
     /**
-     * Accounting writing
+     * List of associated accounting writing
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accounting_writing_id")
-    private AccountingWriting accountingWriting;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accountOperations")
+    private List<AccountingWriting> accountingWritings = new ArrayList<>();
 
     /**
      * Deprecated in 5.2. Use accountingCode instead
@@ -469,15 +471,15 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
         this.accountingCode = accountingCode;
     }
 
-    public AccountingWriting getAccountingWriting() {
-        return accountingWriting;
-    }
+    public List<AccountingWriting> getAccountingWritings() {
+		return accountingWritings;
+	}
 
-    public void setAccountingWriting(AccountingWriting accountingWriting) {
-        this.accountingWriting = accountingWriting;
-    }
+	public void setAccountingWritings(List<AccountingWriting> accountingWritings) {
+		this.accountingWritings = accountingWritings;
+	}
 
-    /**
+	/**
      * @return the amountWithoutTax
      */
     public BigDecimal getAmountWithoutTax() {
