@@ -4,6 +4,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.order.Order;
+import org.meveo.model.order.OrderItem;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 
@@ -76,7 +77,9 @@ public class OrderApiService implements ApiService<Order> {
             order.setOrderItems(order.getOrderItems().stream()
                     .map(orderItem -> {
                         if(orderItem.getId() != null){
-                            return orderItemService.findById(orderItem.getId()).get();
+                            OrderItem existingOrderItem = orderItemService.findById(orderItem.getId()).get();
+                            existingOrderItem.setOrder(order);
+                            return existingOrderItem;
                         }
                         orderItem.setOrder(order);
                         try {
@@ -114,8 +117,9 @@ public class OrderApiService implements ApiService<Order> {
 
                 orderToUpdate.setBillingCycle(order.getBillingCycle());
                 orderToUpdate.setPaymentMethod(order.getPaymentMethod());
-                orderToUpdate.setOrderItems(order.getOrderItems());
-
+                orderToUpdate.setOrderItems(order.getOrderItems().stream()
+                        .peek(orderItem -> orderItem.setOrder(orderToUpdate))
+                        .collect(Collectors.toList()));
                 orderService.update(orderToUpdate);
             } catch (Exception e) {
                 throw new BadRequestException(e);
@@ -130,6 +134,7 @@ public class OrderApiService implements ApiService<Order> {
         if(orderOptional.isPresent()){
             Order orderToUpdate = orderOptional.get();
             try {
+                populateOrderFields(order);
                 if(order.getDescription()!=null){
                     orderToUpdate.setDescription(order.getDescription());
                 }
@@ -167,7 +172,9 @@ public class OrderApiService implements ApiService<Order> {
                     orderToUpdate.setPaymentMethod(order.getPaymentMethod());
                 }
                 if(order.getOrderItems() != null){
-                    orderToUpdate.setOrderItems(order.getOrderItems() );
+                    orderToUpdate.setOrderItems(order.getOrderItems().stream()
+                            .peek(orderItem -> orderItem.setOrder(orderToUpdate))
+                            .collect(Collectors.toList()));
                 }
 
                 orderService.update(orderToUpdate);

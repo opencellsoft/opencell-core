@@ -3,24 +3,27 @@ package org.meveo.apiv2.services;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.billing.ProductInstance;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
+import org.meveo.model.catalog.ServiceChargeTemplateTermination;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItem;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.ProductInstanceService;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.*;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderService;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrderItem;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class OrderItemApiService implements ApiService<OrderItem> {
@@ -47,9 +50,21 @@ public class OrderItemApiService implements ApiService<OrderItem> {
     @Inject
     private SellerService sellerService;
 
+    @Inject
+    private OfferTemplateService offerTemplateService;
+
+    @Inject
+    private ServiceTemplateService serviceTemplateService;
+
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
+
+    @Inject
+    private BillingAccountService billingAccountService;
+
     @PostConstruct
     public void initService(){
-        fetchFields = Arrays.asList("productInstances", "orderItemProductOfferings");
+        fetchFields = Arrays.asList("productInstances", "orderItemProductOfferings", "subscription");
     }
 
     @Override
@@ -59,13 +74,22 @@ public class OrderItemApiService implements ApiService<OrderItem> {
 
         return list.stream()
                 .map(this::refreshOrRetrieveOrderItemProductInstanceProduct)
+                .map(this::refreshOrRetrieveOrderItemSubscriptionServiceInstances)
                 .collect(Collectors.toList());
+    }
+
+    private OrderItem refreshOrRetrieveOrderItemSubscriptionServiceInstances(OrderItem orderItem) {
+        if(orderItem != null && orderItem.getSubscription() != null){
+            orderItem.setSubscription(subscriptionService.findById(orderItem.getSubscription().getId(), Collections.singletonList("serviceInstances")));
+        }
+        return orderItem;
     }
 
     private OrderItem refreshOrRetrieveOrderItemProductInstanceProduct(OrderItem orderItem) {
         if(orderItem != null){
             orderItem.setProductInstances(
                     orderItem.getProductInstances().stream()
+                            .filter(productInstance -> productInstance.getProductTemplate() != null)
                             .peek(productInstance -> productInstance.setProductTemplate(productTemplateService.retrieveIfNotManaged(productInstance.getProductTemplate())))
                             .collect(Collectors.toList()));
         }
@@ -110,10 +134,7 @@ public class OrderItemApiService implements ApiService<OrderItem> {
                     .collect(Collectors.toList()));
         }
 
-        if(orderItem.getSubscription() != null) {
-            Subscription subscription = subscriptionService.findById(orderItem.getSubscription().getId());
-            orderItem.setSubscription(subscription);
-        }
+        fetchOrCreateSubscription(orderItem);
 
         ProductOrderItem productOrderItem = new ProductOrderItem();
         productOrderItem.setId(String.valueOf(orderItem.getId()));
@@ -130,6 +151,73 @@ public class OrderItemApiService implements ApiService<OrderItem> {
         productOrderItem.setBillingAccount(Collections.singletonList(billingAccountTMF));
 
         orderItem.setSource(ProductOrderItem.serializeOrderItem(productOrderItem));
+    }
+
+     private Subscription fetchOrCreateSubscription(OrderItem orderItem) throws BusinessException {
+        Subscription subscription = orderItem.getSubscription();
+        if(subscription != null){
+            if(subscription.getId() != null){
+                subscription = subscriptionService.findById(subscription.getId());
+            }else {
+                if(subscription.getSeller() != null && subscription.getSeller().getId() != null ){
+                    subscription.setSeller(sellerService.findById(subscription.getSeller().getId()));
+                }
+                UserAccount userAccount = subscription.getUserAccount();
+                if(userAccount != null && userAccount.getId() != null ){
+                    subscription.setUserAccount(userAccountService.findById(userAccount.getId()));
+                    subscription.getUserAccount().setBillingAccount(billingAccountService.retrieveIfNotManaged(subscription.getUserAccount().getBillingAccount()));
+                }
+                if(subscription.getOffer() != null && subscription.getOffer().getId() != null ){
+                    subscription.setOffer(offerTemplateService.findById(subscription.getOffer().getId(), Collections.singletonList("offerServiceTemplates")));
+                }
+                List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
+
+                subscription.setServiceInstances(null);
+                subscriptionService.create(subscription);
+                subscription.setServiceInstances(serviceInstances);
+
+                serviceInstances = new ArrayList<>(subscription.getServiceInstances());
+
+                if(!serviceInstances.isEmpty()){
+                    Iterator<ServiceInstance> iterator = Collections.unmodifiableList(serviceInstances).iterator();
+                    List<ServiceInstance> managedServiceInstances = new ArrayList<>();
+                    while (iterator.hasNext()) {
+                        ServiceInstance serviceInstance = iterator.next();
+                        if (serviceInstance.getId() != null) {
+                            managedServiceInstances.add(serviceInstanceService.findById(serviceInstance.getId()));
+                        } else {
+                            // this looks ugly I know, I used this to prevent MultipleBagFetchException, either this
+                            // or I need to change all List fields collection type to set
+                            ServiceTemplate serviceTemplateByIdWithServiceRecurringCharges = serviceTemplateService
+                                    .findById(serviceInstance.getServiceTemplate().getId(), Collections.singletonList("serviceRecurringCharges"));
+
+                            List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = serviceTemplateService
+                                    .findById(serviceInstance.getServiceTemplate().getId(), Collections.singletonList("serviceSubscriptionCharges")).getServiceSubscriptionCharges();
+                            List<ServiceChargeTemplateTermination> serviceTerminationCharges = serviceTemplateService
+                                    .findById(serviceInstance.getServiceTemplate().getId(), Collections.singletonList("serviceTerminationCharges")).getServiceTerminationCharges();
+                            List<ServiceChargeTemplateUsage> serviceUsageCharges = serviceTemplateService
+                                    .findById(serviceInstance.getServiceTemplate().getId(), Collections.singletonList("serviceUsageCharges")).getServiceUsageCharges();
+
+                            serviceTemplateByIdWithServiceRecurringCharges.setServiceSubscriptionCharges(serviceSubscriptionCharges);
+                            serviceTemplateByIdWithServiceRecurringCharges.setServiceTerminationCharges(serviceTerminationCharges);
+                            serviceTemplateByIdWithServiceRecurringCharges.setServiceUsageCharges(serviceUsageCharges);
+                            ServiceInstance serviceInstance1 = new ServiceInstance();
+                            serviceInstance1.setServiceTemplate(serviceTemplateByIdWithServiceRecurringCharges);
+                            serviceInstance1.setCode(serviceTemplateByIdWithServiceRecurringCharges.getCode());
+                            serviceInstance1.setSubscription(subscription);
+                            try {
+                                serviceInstanceService.serviceInstanciation(serviceInstance1);
+                                managedServiceInstances.add(serviceInstance1);
+                            } catch (BusinessException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    subscription.setServiceInstances(managedServiceInstances);
+                }
+            }
+        }
+        return subscription;
     }
 
     private ProductInstance createOrFetchProductInstance(ProductInstance productInstance) {
