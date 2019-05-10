@@ -158,7 +158,7 @@ public class OrderApi extends BaseApi {
 
         Order order = new Order();
         if (quoteId != null) {
-            order.setQuote(orderService.getEntityManager().getReference(Quote.class, quoteId));
+            order.setQuote(orderService.getReference(Quote.class, quoteId));
         }
         
         order.setCode(UUID.randomUUID().toString());
@@ -198,6 +198,7 @@ public class OrderApi extends BaseApi {
         populateElectronicBillingFields(productOrder,order);
         if (productOrder.getOrderItem() == null){
             productOrder.setOrderItem(Collections.emptyList());
+            UserAccount userAccount = userAccountService.findUserAccountByCode(billingAccountId);
         }
         for (ProductOrderItem productOrderItem : productOrder.getOrderItem()) {
 

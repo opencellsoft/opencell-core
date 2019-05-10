@@ -206,7 +206,7 @@ public class PaymentApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
         }
 
-        customerAccountService.getEntityManager().refresh(customerAccount);
+        customerAccountService.refreshEntity(customerAccount);
 
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
