@@ -4,7 +4,11 @@ import com.google.common.annotations.VisibleForTesting;
 import org.meveo.apiv2.NotYetImplementedResource;
 import org.meveo.apiv2.ResourceMapper;
 import org.meveo.model.DatePeriod;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.Channel;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
+import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.ProductOffering;
+import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.shared.DateUtils;
 
 import java.util.Date;
