@@ -189,9 +189,7 @@ public class QuoteApi extends BaseApi {
         if (productQuote.getBillingAccount() != null && !productQuote.getBillingAccount().isEmpty()) {
             String billingAccountId = productQuote.getBillingAccount().get(0).getId();
             if (!StringUtils.isEmpty(billingAccountId)) {
-                // quoteLevelUserAccount = userAccountService.findByCode(billingAccountId);
-                quoteLevelUserAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId)
-                    .getSingleResult();
+                quoteLevelUserAccount = userAccountService.findUserAccountByCode(billingAccountId);
                 if (quoteLevelUserAccount == null) {
                     throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                 }
@@ -205,8 +203,7 @@ public class QuoteApi extends BaseApi {
                 String billingAccountId = productQuoteItem.getBillingAccount().get(0).getId();
                 if (!StringUtils.isEmpty(billingAccountId)) {
                     // itemLevelUserAccount = userAccountService.findByCode(billingAccountId);
-                    itemLevelUserAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId)
-                        .getSingleResult();
+                    itemLevelUserAccount = userAccountService.findUserAccountByCode(billingAccountId);
                     if (itemLevelUserAccount == null) {
                         throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                     }

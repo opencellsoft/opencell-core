@@ -689,8 +689,8 @@ public class AccountHierarchyApi extends BaseApi {
         }
 
         qb.addPaginationConfiguration(paginationConfiguration);
-        @SuppressWarnings("unchecked")
-        List<Customer> customers = qb.getQuery(customerService.getEntityManager()).getResultList();
+        
+        List<Customer> customers = customerService.getCustomersByQueryBuilder(qb);
 
         if (customers != null) {
             for (Customer cust : customers) {

@@ -823,4 +823,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
     }
 
+	public void refreshEntity(CustomerAccount customerAccount) {
+		getEntityManager().refresh(customerAccount);
+	}
+
 }
