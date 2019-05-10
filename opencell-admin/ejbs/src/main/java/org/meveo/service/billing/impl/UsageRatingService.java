@@ -377,7 +377,6 @@ public class UsageRatingService implements Serializable {
     private boolean rateEDRonChargeAndCounters(WalletOperation walletOperation, EDR edr, UsageChargeInstance usageChargeInstance, boolean isVirtual) throws BusinessException {
         boolean stopEDRRating = false;
         BigDecimal deducedQuantity = null;
-        boolean triggerNextCharge = false;
 
         if (usageChargeInstance.getCounter() != null) {
             // if the charge is associated to a counter, we decrement it. If decremented by the full quantity, rating is finished.
@@ -388,8 +387,10 @@ public class UsageRatingService implements Serializable {
             }
 
         } else {
+            boolean triggerNextCharge = false;
 
-            UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
+            UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService
+                    .findById(usageChargeInstance.getChargeTemplate().getId());
 
             if (usageChargeTemplate.getTriggerNextCharge() != null) {
                 triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
@@ -423,9 +424,6 @@ public class UsageRatingService implements Serializable {
 
         rateEDRwithMatchingCharge(walletOperation, edr, quantityToCharge, usageChargeInstance, isVirtual);
 
-        if (triggerNextCharge) {
-            stopEDRRating = true;
-        }
         if (!isVirtual) {
             walletOperationService.chargeWalletOperation(walletOperation);
         }
@@ -681,12 +679,14 @@ public class UsageRatingService implements Serializable {
                 }
             }
 
-            if (!edrIsRated) {
+            if (!edrIsRated && !foundPricePlan) {
                 edr.setStatus(EDRStatusEnum.REJECTED);
-                edr.setRejectReason(!foundPricePlan ? EDRRejectReasonEnum.NO_PRICEPLAN.getCode() : EDRRejectReasonEnum.NO_MATCHING_CHARGE.getCode());
+                edr.setRejectReason(EDRRejectReasonEnum.NO_PRICEPLAN.getCode());
                 return null;
+            } else {
+                edr.setStatus(EDRStatusEnum.RATED);
             }
-
+            
         } catch (BusinessException e) {
             String rejectReason = "";
 
