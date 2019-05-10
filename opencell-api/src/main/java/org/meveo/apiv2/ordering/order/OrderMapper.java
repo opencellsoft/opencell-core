@@ -5,15 +5,11 @@ import org.meveo.apiv2.NotYetImplementedResource;
 import org.meveo.apiv2.ResourceMapper;
 import org.meveo.apiv2.ordering.orderItem.ImmutableOrderItem;
 import org.meveo.apiv2.ordering.orderitem.OrderItemMapper;
-import org.meveo.apiv2.ordering.orderitem.OrderItemResource;
 import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.order.OrderItem;
-import org.meveo.model.order.OrderStatusEnum;
 
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CheckPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.WirePaymentMethod;
 import org.meveo.model.shared.DateUtils;

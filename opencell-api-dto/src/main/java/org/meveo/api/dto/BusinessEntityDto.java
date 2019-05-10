@@ -56,7 +56,6 @@ public class BusinessEntityDto extends AuditableEntityDto {
     public BusinessEntityDto(BusinessEntity e) {
         super(e);
         if (e != null) {
-            id = e.getId();
             code = e.getCode();
             description = e.getDescription();
         }

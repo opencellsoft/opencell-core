@@ -33822,7 +33822,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:assertion type="XPath Match" id="bcab0004-6e16-4c11-bf27-3d9813438514" name="XPath Match">
               <con:configuration>
                 <path>//seller</path>
-                <content><![CDATA[<seller code="${#Project#entityPrefix}_${#TestSuite#index}_INHERITED_CHILD_SELLER" description="${#Project#entityPrefix}_${#TestSuite#index}_INHERITED_CHILD_SELLER" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<seller id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_INHERITED_CHILD_SELLER" description="${#Project#entityPrefix}_${#TestSuite#index}_INHERITED_CHILD_SELLER" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <currencyCode>EUR</currencyCode>
   <countryCode>FR</countryCode>
