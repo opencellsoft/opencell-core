@@ -198,6 +198,7 @@ public class OrderApi extends BaseApi {
         populateElectronicBillingFields(productOrder,order);
         if (productOrder.getOrderItem() == null){
             productOrder.setOrderItem(Collections.emptyList());
+            UserAccount userAccount = userAccountService.findUserAccountByCode(billingAccountId);
         }
         for (ProductOrderItem productOrderItem : productOrder.getOrderItem()) {
 
