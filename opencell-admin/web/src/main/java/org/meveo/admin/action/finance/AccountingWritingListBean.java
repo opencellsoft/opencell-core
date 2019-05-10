@@ -19,6 +19,10 @@
 package org.meveo.admin.action.finance;
 
 import org.meveo.model.finance.AccountingWriting;
+import org.meveo.model.payments.AccountOperation;
+import org.primefaces.model.LazyDataModel;
+
+import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
@@ -34,13 +38,18 @@ public class AccountingWritingListBean extends AccountingWritingBean {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private AccountingWriting selectedAccountingWriting;
+	private Long selectedAWId;
 
-	public AccountingWriting getSelectedAccountingWriting() {
-		return this.selectedAccountingWriting;
+	public Long getSelectedAWId() {
+		return selectedAWId;
 	}
 
-	public void setSelectedAccountingWriting(AccountingWriting selectedAccountingWriting) {
-		this.selectedAccountingWriting = selectedAccountingWriting;
-	} 
+	public void setSelectedAWId(Long selectedAWId) {
+		this.selectedAWId = selectedAWId;
+	}
+	
+	public List<AccountOperation> getAccountOperations(){
+		 return getPersistenceService().findById(selectedAWId).getAccountOperations();
+	}
+
 }
