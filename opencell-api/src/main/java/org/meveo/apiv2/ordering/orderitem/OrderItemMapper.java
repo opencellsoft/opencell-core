@@ -83,6 +83,8 @@ public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.ord
                 .serviceInstances(subscription.getServiceInstances().stream()
                         .map(serviceInstance ->
                                 ImmutableServiceInstance.builder()
+                                        .id(serviceInstance.getId())
+                                        .quantity(serviceInstance.getQuantity().longValue())
                                         .serviceTemplate(buildImmutableResource(NotYetImplementedResource.class, serviceInstance.getServiceTemplate()))
                                         .build()
                         ).collect(Collectors.toList()))
@@ -123,7 +125,8 @@ public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.ord
             orderItem.setProductInstances(resource.getProductInstance().stream()
                     .map(productInstanceResource -> {
                         org.meveo.model.billing.ProductInstance productInstance = new org.meveo.model.billing.ProductInstance();
-                        productInstance.setQuantity(new BigDecimal(productInstanceResource.getQuantity()));
+                        BigDecimal quantity = productInstanceResource.getQuantity() != null ? new BigDecimal(productInstanceResource.getQuantity()) : BigDecimal.ONE;
+                        productInstance.setQuantity(quantity);
                         productInstance.setCode(productInstanceResource.getCode());
                         if(productInstanceResource.getSeller() != null){
                             Seller seller = new Seller();
@@ -175,6 +178,7 @@ public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.ord
                     ServiceInstance serviceInstance = new ServiceInstance();
                     ServiceTemplate serviceTemplate = new ServiceTemplate();
                     serviceTemplate.setId(resourceService.getServiceTemplate().getId());
+                    serviceInstance.setQuantity(BigDecimal.valueOf(resourceService.getQuantity()));
                     serviceInstance.setServiceTemplate(serviceTemplate);
                     return serviceInstance;
                 })

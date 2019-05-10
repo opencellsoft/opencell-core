@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0c2599b8-0fc5-42b9-bc53-32116b0c13fb",
+		"_postman_id": "46e718e1-cb75-4a82-97cb-95b0f4148b8c",
 		"name": "Full-Rs-CRUD-Test-Entities",
 		"description": "Full-Rs-CRUD-Test-Entities suite, contains all API tests for regression tests.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -1868,6 +1868,2363 @@
 					"listen": "test",
 					"script": {
 						"id": "14b6fd5f-36f9-419f-b7fc-58b691c0f6ba",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "API-V2",
+			"item": [
+				{
+					"name": "prerequisites",
+					"item": [
+						{
+							"name": "create offer Template Category - 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "467d8d40-d0cc-4350-b6ae-652d350e3bbd",
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "6a160d5b-278e-44a9-849c-0e38345c87af",
+										"exec": [
+											"pm.globals.set(\"random\", Math.floor(Math.random() * 100));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"code\": \"OCAT-{{random}}\",\r\n  \"description\": \"Global offers\",\r\n  \"name\": \"Global offers\",\r\n  \"offerTemplateCategoryCode\": null,\r\n  \"active\": true\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/offerTemplateCategory/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"offerTemplateCategory",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create offer Template Category - 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "138da2f1-a675-460f-8a23-62bf8c04263c",
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"code\": \"OCAT_2-{{random}}\",\r\n  \"description\": \"Global offers\",\r\n  \"name\": \"Global offers\",\r\n  \"offerTemplateCategoryCode\": null,\r\n  \"active\": true\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/offerTemplateCategory/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"offerTemplateCategory",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get id of Offer Template Category - 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b89fcd9f-83e4-47b1-b48c-236542853e7c",
+										"exec": [
+											"pm.globals.set(\"offerTemplateCategoryId\", pm.response.json().offerTemplateCategory.id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/offerTemplateCategory?offerTemplateCategoryCode=OCAT-{{random}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"offerTemplateCategory"
+									],
+									"query": [
+										{
+											"key": "offerTemplateCategoryCode",
+											"value": "OCAT-{{random}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get id of Offer Template Category - 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7f8aa33c-8be1-4a26-bc3a-c6f584396609",
+										"exec": [
+											"pm.globals.set(\"offerTemplateCategoryId2\", pm.response.json().offerTemplateCategory.id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/offerTemplateCategory?offerTemplateCategoryCode=OCAT_2-{{random}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"offerTemplateCategory"
+									],
+									"query": [
+										{
+											"key": "offerTemplateCategoryCode",
+											"value": "OCAT_2-{{random}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create channel",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"code\": \"MAILING\",\n\t\"description\": \"Courrier\"\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/channel/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"channel",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create channel Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "89f5a53f-d3e7-49c1-af79-2a9b285b783c",
+										"exec": [
+											"pm.globals.set(\"channelId\", pm.response.json().channel.id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"code\": \"MAILING\",\n\t\"description\": \"Courrier\"\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/channel?channelCode=MAILING",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"channel"
+									],
+									"query": [
+										{
+											"key": "channelCode",
+											"value": "MAILING"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create calendar",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ba76d8dd-5e2e-48b6-9fca-b096f9619493",
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"code\": \"CAL_MONTHLY_1ST\",\n  \"description\": \"Monthly (1st of the month)\",\n  \"calendarType\": \"YEARLY\",\n  \"days\": [\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"JANUARY\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"FEBRUARY\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"MARCH\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"APRIL\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"MAY\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"JUNE\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"JULY\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"AUGUST\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"SEPTEMBER\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"OCTOBER\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"NOVEMBER\"\n\t  },\n\t  {\n\t    \"day\": \"1\",\n\t    \"month\": \"DECEMBER\"\n\t  }\n  ]\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/calendar/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"calendar",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create Billing Cycle",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "44784291-eeab-41c6-badc-ed443875de99",
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"code\": \"BC_MONTHLY_1ST\",\n  \"description\": \" Monthly 1st of the month\",\n  \"billingTemplateName\": null,\n  \"invoiceDateDelay\": \"0\",\n  \"dueDateDelay\": \"30\",\n  \"invoiceDateProductionDelay\": \"0\",\n  \"transactionDateDelay\": \"0\",\n  \"invoicingThreshold\": 0.01,\n  \"calendar\": \"CAL_MONTHLY_1ST\"\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billingCycle/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billingCycle",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create Currency",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d2f206f1-4116-4b1e-bfd9-141eb06aaa1d",
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n  \"code\": \"EUR\",\n  \"description\": \"Euro\"\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/currency/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"currency",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create language",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "20554d3b-28c1-48c5-8e24-c100ab46d4aa",
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n  \"code\": \"ENG\",\n  \"description\": \"English\"\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/language/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"language",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create country",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "20554d3b-28c1-48c5-8e24-c100ab46d4aa",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n  \"countryCode\": \"FRC\",\n  \"name\": \"France\",\n  \"currencyCode\" : \"EUR\"\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/country",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"country"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create Seller",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e83cfb23-db0c-4f09-b651-aebda36037b9",
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"tests[\"is.success\"] = jsonData.status === \"SUCCESS\";"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\" : \"seller-api-v2\",\r\n\t\"description\" : \"api v2 Seller\",\r\n\t\"currencyCode\" : \"EUR\",\r\n\t\"countryCode\" : \"FRC\",\r\n\t\"languageCode\" : \"ENG\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/seller/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"seller",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get id of Seller",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7372b0d4-d62e-4276-8b68-49bd97079f08",
+										"exec": [
+											"pm.globals.set(\"sellerId\", pm.response.json().seller.id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{opencell.url}}/seller?sellerCode=seller-api-v2",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"seller"
+									],
+									"query": [
+										{
+											"key": "sellerCode",
+											"value": "seller-api-v2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create UserAccount",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"email\":\"apiv2@opencell.com\",\n\t\"customerCode\":\"customerCode\",\n\t\"customerCategoryCode\":\"customerCategoryCode\",\n\t\"sellerCode\":\"seller-api-v2\",\n\t\"currencyCode\":\"EUR\",\n\t\"countryCode\":\"FR\",\n\t\"billingCycleCode\":\"BC_MONTHLY_1ST\",\n\t\"languageCode\":\"ENG\"\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/accountHierarchy",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"accountHierarchy"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get id of userAccount",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7b348787-5175-40c4-84fb-8a0143589bad",
+										"exec": [
+											"pm.globals.set(\"userAccountId\", pm.response.json().userAccount.id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/userAccount?userAccountCode=UA_customerCode",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"userAccount"
+									],
+									"query": [
+										{
+											"key": "userAccountCode",
+											"value": "UA_customerCode"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get id of billingCycle",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7b348787-5175-40c4-84fb-8a0143589bad",
+										"exec": [
+											"pm.globals.set(\"billingCycleId\", pm.response.json().billingCycle.id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{opencell.url}}/billingCycle?billingCycleCode=BC_MONTHLY_1ST",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"billingCycle"
+									],
+									"query": [
+										{
+											"key": "billingCycleCode",
+											"value": "BC_MONTHLY_1ST"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create product",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "051ec062-2fe9-4ba1-86e9-0bf87b51bdb3",
+										"exec": [
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+											"});",
+											"",
+											"pm.test(\"Status code name has string created\", function () {",
+											"    pm.response.to.have.status(\"Created\");",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Location is present\", function () {",
+											"    pm.response.to.have.header(\"Location\");",
+											"});",
+											"pm.globals.set(\"anotherProductId\",jsonData.id);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"PR_CLASSIC_DEFAULT_DUPLICATED_{{random}}\",\n    \"name\": \"Default product\",\n    \"description\": \"Default product\",\n    \"lifeCycleStatus\": \"IN_DESIGN\",\n    \"validFrom\": \"2019-03-12\",\n    \"validTo\": \"2019-03-31\",\n    \"offerTemplateCategories\": [\n        {\n            \"id\": {{offerTemplateCategoryId}}\n        }\n    ],\n    \"channels\": [],\n    \"businessProductModel\": {},\n    \"invoicingCalendar\": {},\n    \"walletTemplates\": [],\n    \"disabled\": false\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/products",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create order",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "051ec062-2fe9-4ba1-86e9-0bf87b51bdb3",
+										"exec": [
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+											"});",
+											"",
+											"pm.test(\"Status code name has string created\", function () {",
+											"    pm.response.to.have.status(\"Created\");",
+											"});",
+											"",
+											"var order = pm.response.json();",
+											"",
+											"pm.test(\"Location is present\", function () {",
+											"    pm.response.to.have.header(\"Location\");",
+											"});",
+											"",
+											"pm.test('order billingCycle', function() {",
+											"  pm.expect(order.billingCycle.id).to.eql(pm.globals.get(\"billingCycleId\"));",
+											"});",
+											"",
+											"pm.globals.set(\"anotherOrderId\",order.id);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "93bc12f4-674f-4c22-96e8-83447b6670d9",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"6db5c24b-b6de-4c10-a6cb-e614366f6{{random}}\",\n    \"description\": \"created-order-api2-test\",\n    \"priority\": 1,\n    \"status\": \"COMPLETED\",\n    \"orderDate\": \"2018-11-01\",\n    \"requestedProcessingStartDate\": \"2019-04-30\",\n    \"requestedCompletionDate\": \"\",\n    \"expectedCompletionDate\": \"\",\n    \"billingCycle\": {\"id\" : {{billingCycleId}} },\n    \"orderItems\": [\n        {\n\t\t\t\"itemId\": \"item-01-{{random}}\",\n\t\t\t\"action\": \"ADD\",\n\t\t\t\"status\": \"COMPLETED\",\n\t\t\t\"userAccount\": {\n\t\t\t    \"id\": {{userAccountId}}\n\t\t\t},\n\t\t    \"productInstance\": [\n\t\t        {\n\t\t            \"seller\": {\n\t\t                \"id\": {{sellerId}}\n\t\t            },\n\t\t            \"product\": {\n\t\t                \"id\": {{anotherProductId}}\n\t\t            },\n\t\t            \"quantity\": 1,\n\t\t            \"productPrice\": 100\n\t\t        }\n\t\t    ]\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/orders",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create orderItem",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "051ec062-2fe9-4ba1-86e9-0bf87b51bdb3",
+										"exec": [
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+											"});",
+											"",
+											"pm.test(\"Status code name has string created\", function () {",
+											"    pm.response.to.have.status(\"Created\");",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Location is present\", function () {",
+											"    pm.response.to.have.header(\"Location\");",
+											"});",
+											"pm.globals.set(\"anotherOrderItemId\",jsonData.id);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"itemId\": \"item-01-{{random}}\",\n    \"action\": \"ADD\",\n    \"status\": \"COMPLETED\",\n    \"userAccount\": {\n        \"id\": {{userAccountId}}\n    },\n    \"order\": {\n        \"id\": {{anotherOrderId}}\n    },\n    \"productInstance\": [\n        {\n            \"seller\": {\n                \"id\": {{sellerId}}\n            },\n            \"product\": {\n                \"id\": {{anotherProductId}}\n            },\n            \"quantity\": 1,\n            \"productPrice\": 100\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/order-items",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"order-items"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "prerequisites for api-v2 tests to run",
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "products",
+					"item": [
+						{
+							"name": "Get products",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7373e967-8d60-46fc-8ceb-48aa2a3894a2",
+										"exec": [
+											"pm.test(\"ETag is present\", function () {",
+											"    pm.response.to.have.header(\"ETag\");",
+											"});",
+											"var etag = pm.response.headers.filter(function(item) { return item.key === 'ETag'; })[0];",
+											"pm.globals.set(\"products-etag\",etag.value);",
+											"",
+											"var products = pm.response.json();",
+											"pm.test('list all products check', function() {",
+											"    pm.expect(products.total).to.be.above(0);",
+											"    pm.expect(products.limit).to.eql(50);",
+											"    pm.expect(products.offset).to.eql(0);",
+											"    pm.expect(products.data.length).to.be.above(0);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "If-None-Match",
+										"value": "-787788090",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/products",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get products - if-none-match header",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b6f14068-29f2-4543-a160-f406e74fcc8f",
+										"exec": [
+											"",
+											"pm.test(\"Status code is 304\", function () {",
+											"    pm.response.to.have.status(304);",
+											"});",
+											"pm.test(\"Status code name has string Not Modified\", function () {",
+											"    pm.response.to.have.status(\"Not Modified\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "If-None-Match",
+										"value": "{{products-etag}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/products",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create product",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "051ec062-2fe9-4ba1-86e9-0bf87b51bdb3",
+										"exec": [
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+											"});",
+											"",
+											"pm.test(\"Status code name has string created\", function () {",
+											"    pm.response.to.have.status(\"Created\");",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Location is present\", function () {",
+											"    pm.response.to.have.header(\"Location\");",
+											"});",
+											"pm.globals.set(\"productId\",jsonData.id);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "50d3a7f0-6c95-4c2e-a502-9e5d57e712de",
+										"exec": [
+											"pm.globals.set(\"randomProductId\", Math.floor(Math.random() * 100));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"PR_CLASSIC_DEFAULT_DUPLICATED_{{random}}-{{randomProductId}}\",\n    \"name\": \"Default product\",\n    \"description\": \"Default product\",\n    \"lifeCycleStatus\": \"IN_DESIGN\",\n    \"validFrom\": \"2019-03-12\",\n    \"validTo\": \"2019-03-31\",\n    \"offerTemplateCategories\": [\n        {\n            \"id\": {{offerTemplateCategoryId}}\n        }\n    ],\n    \"channels\": [],\n    \"businessProductModel\": {},\n    \"invoicingCalendar\": {},\n    \"walletTemplates\": [],\n    \"disabled\": false\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/products",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "retreive product",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "db1ab55d-27e2-4ca7-a184-58ac5905c7e2",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "920e8076-b63a-4a2a-a3ca-f297f62bcda6",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"var product = pm.response.json();",
+											"pm.test('created product fields check', function() {",
+											"    pm.expect(product.id).to.eql(pm.globals.get(\"productId\"));",
+											"    pm.expect(product.code).to.eql(\"PR_CLASSIC_DEFAULT_DUPLICATED_\"+pm.globals.get(\"random\")+\"-\"+pm.globals.get(\"randomProductId\"));",
+											"    pm.expect(product.name).to.eql(\"Default product\");",
+											"    pm.expect(product.description).to.eql(\"Default product\");",
+											"    pm.expect(product.lifeCycleStatus).to.eql(\"IN_DESIGN\");",
+											"    pm.expect(product.validFrom).to.eql(\"2019-03-12\");",
+											"    pm.expect(product.validTo).to.eql(\"2019-03-31\");",
+											"    pm.expect(product.offerTemplateCategories.length).to.eql(1);",
+											"    pm.expect(product.channels.length).to.eql(0);",
+											"    pm.expect(product.productChargeTemplates.length).to.eql(0);",
+											"    pm.expect(product.walletTemplates.length).to.eql(0);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/products/{{productId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"products",
+										"{{productId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "replace product - update entirely",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fd5d51ba-2d30-4fa1-ba18-b1de1f4a8d40",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var product = pm.response.json();",
+											"",
+											"pm.test('update product remove offerTemplateCategories', function() {",
+											"  pm.expect(product.offerTemplateCategories.length).to.eql(0);",
+											"});",
+											"pm.test('update product add channel', function() {",
+											"  pm.expect(product.channels[0].id).to.eql(pm.globals.get(\"channelId\"));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"PR_CLASSIC_DEFAULT_DUPLICATED_{{random}}\",\n    \"name\": \"Default product x\",\n    \"description\": \"Default product\",\n    \"lifeCycleStatus\": \"IN_DESIGN\",\n    \"validFrom\": \"2019-03-14\",\n    \"validTo\": \"2019-03-31\",\n    \"channels\": [\n    \t{\n            \"id\": {{channelId}}\n        }\n    ],\n    \"businessProductModel\": {},\n    \"invoicingCalendar\": {},\n    \"walletTemplates\": [],\n    \"disabled\": false\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/products/{{productId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"products",
+										"{{productId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update product",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "967d1ba0-ee06-4b03-a979-2fa6c7e793b6",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var product = pm.response.json();",
+											"",
+											"pm.test('patch product add 2 offerTemplateCategories', function() {",
+											"  pm.expect(product.offerTemplateCategories.length).to.eql(2);",
+											"  pm.expect(product.offerTemplateCategories[0].id).to.eql(pm.globals.get(\"offerTemplateCategoryId\"));",
+											"  pm.expect(product.offerTemplateCategories[1].id).to.eql(pm.globals.get(\"offerTemplateCategoryId2\"));",
+											"});",
+											"",
+											"pm.test('product still have channel', function() {",
+											"  pm.expect(product.channels[0].id).to.eql(pm.globals.get(\"channelId\"));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Default product X\",\n    \"offerTemplateCategories\": [\n        {\"id\": {{offerTemplateCategoryId}} },\n        {\"id\": {{offerTemplateCategoryId2}} }\n    ]\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/products/{{productId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"products",
+										"{{productId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete product",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "2de1e5bd-fd6d-48d5-9ea1-7f1d53ad365e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"var product = pm.response.json();",
+											"pm.test('the deleted product is returned', function() {",
+											"  pm.expect(product.id).to.eql(pm.globals.get(\"productId\"));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/products/{{productId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"products",
+										"{{productId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "orderItems",
+					"item": [
+						{
+							"name": "Get orderItems",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7373e967-8d60-46fc-8ceb-48aa2a3894a2",
+										"exec": [
+											"pm.test(\"ETag is present\", function () {",
+											"    pm.response.to.have.header(\"ETag\");",
+											"});",
+											"var etag = pm.response.headers.filter(function(item) { return item.key === 'ETag'; })[0];",
+											"pm.globals.set(\"orderItems-etag\",etag.value);",
+											"",
+											"var orderItems = pm.response.json();",
+											"pm.test('list all orderItems check', function() {",
+											"    pm.expect(orderItems.total).to.be.above(0);",
+											"    pm.expect(orderItems.limit).to.eql(50);",
+											"    pm.expect(orderItems.offset).to.eql(0);",
+											"    pm.expect(orderItems.data.length).to.be.above(0);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "If-None-Match",
+										"type": "text",
+										"value": "-787788090",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/order-items",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"order-items"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get orderItems - if-none-match header",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b6f14068-29f2-4543-a160-f406e74fcc8f",
+										"exec": [
+											"",
+											"pm.test(\"Status code is 304\", function () {",
+											"    pm.response.to.have.status(304);",
+											"});",
+											"pm.test(\"Status code name has string Not Modified\", function () {",
+											"    pm.response.to.have.status(\"Not Modified\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "If-None-Match",
+										"value": "{{orderItems-etag}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/order-items",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"order-items"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create orderItem",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "051ec062-2fe9-4ba1-86e9-0bf87b51bdb3",
+										"exec": [
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+											"});",
+											"",
+											"pm.test(\"Status code name has string created\", function () {",
+											"    pm.response.to.have.status(\"Created\");",
+											"});",
+											"",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Location is present\", function () {",
+											"    pm.response.to.have.header(\"Location\");",
+											"});",
+											"pm.globals.set(\"orderItemId\",jsonData.id);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.superadmin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.superadmin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"itemId\": \"item-01-{{random}}\",\n    \"action\": \"ADD\",\n    \"status\": \"COMPLETED\",\n    \"userAccount\": {\n        \"id\": {{userAccountId}}\n    },\n    \"order\": {\n        \"id\": {{anotherOrderId}}\n    },\n    \"productInstance\": [\n        {\n            \"seller\": {\n                \"id\": {{sellerId}}\n            },\n            \"product\": {\n                \"id\": {{anotherProductId}}\n            },\n            \"quantity\": 1,\n            \"productPrice\": 100\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/order-items",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"order-items"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "retreive orderItem",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "db1ab55d-27e2-4ca7-a184-58ac5905c7e2",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "920e8076-b63a-4a2a-a3ca-f297f62bcda6",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"var orderItem = pm.response.json();",
+											"pm.test('created orderItem fields check', function() {",
+											"    pm.expect(orderItem.id).to.eql(pm.globals.get(\"orderItemId\"));",
+											"    pm.expect(orderItem.itemId).to.eql(\"item-01-\"+pm.globals.get(\"random\"));",
+											"    pm.expect(orderItem.action).to.eql(\"ADD\");",
+											"    pm.expect(orderItem.status).to.eql(\"COMPLETED\");",
+											"    pm.expect(orderItem.userAccount.id).to.eql(pm.globals.get(\"userAccountId\"));",
+											"    pm.expect(orderItem.order.id).to.eql(pm.globals.get(\"anotherOrderId\"));",
+											"    pm.expect(orderItem.productInstance[0].seller.id).to.eql(pm.globals.get(\"sellerId\"));",
+											"    pm.expect(orderItem.productInstance[0].product.id).to.eql(pm.globals.get(\"anotherProductId\"));",
+											"    pm.expect(orderItem.productInstance[0].quantity).to.eql(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/order-items/{{orderItemId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"order-items",
+										"{{orderItemId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "replace orderItem - update entirely",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fd5d51ba-2d30-4fa1-ba18-b1de1f4a8d40",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var orderItem = pm.response.json();",
+											"",
+											"pm.test('update orderItem remove offerTemplateCategories', function() {",
+											"  pm.expect(orderItem.itemId).to.eql(\"item_01-\"+pm.globals.get(\"random\"));",
+											"  pm.expect(orderItem.action).to.eql(\"MODIFY\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"itemId\": \"item_01-{{random}}\",\n    \"action\": \"MODIFY\",\n    \"status\": \"COMPLETED\",\n    \"userAccount\": {\n        \"id\": {{userAccountId}}\n    },\n    \"order\": {\n        \"id\": {{anotherOrderId}}\n    },\n    \"productInstance\": [\n        {\n            \"code\": \"46ae6ecd-5d69-4b4c-94c4-83dc7a973b{{random}}\",\n            \"seller\": {\n                \"id\": {{sellerId}}\n            },\n            \"product\": {\n                \"id\": {{anotherProductId}}\n            },\n            \"quantity\": 1,\n            \"productPrice\": 100\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/order-items/{{orderItemId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"order-items",
+										"{{orderItemId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update orderItem",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "967d1ba0-ee06-4b03-a979-2fa6c7e793b6",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var orderItem = pm.response.json();",
+											"",
+											"pm.test('update orderItem remove offerTemplateCategories', function() {",
+											"  pm.expect(orderItem.itemId).to.eql(\"item-01-\"+pm.globals.get(\"random\"));",
+											"  pm.expect(orderItem.action).to.eql(\"ADD\");",
+											"    pm.expect(orderItem.status).to.eql(\"COMPLETED\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"itemId\": \"item-01-{{random}}\",\n    \"action\": \"ADD\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/order-items/{{orderItemId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"order-items",
+										"{{orderItemId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete orderItem",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "2de1e5bd-fd6d-48d5-9ea1-7f1d53ad365e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"var orderItem = pm.response.json();",
+											"pm.test('the deleted orderItem is returned', function() {",
+											"  pm.expect(orderItem.id).to.eql(pm.globals.get(\"orderItemId\"));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/order-items/{{orderItemId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"order-items",
+										"{{orderItemId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "193b5442-e62d-4a46-abdb-3ef5eeeba387",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "9e9a4ae6-0cd0-49b9-bdff-5627100b4649",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "orders",
+					"item": [
+						{
+							"name": "Get orders",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7373e967-8d60-46fc-8ceb-48aa2a3894a2",
+										"exec": [
+											"pm.test(\"ETag is present\", function () {",
+											"    pm.response.to.have.header(\"ETag\");",
+											"});",
+											"var etag = pm.response.headers.filter(function(item) { return item.key === 'ETag'; })[0];",
+											"pm.globals.set(\"orders-etag\",etag.value);",
+											"",
+											"var orders = pm.response.json();",
+											"pm.test('list all orders check', function() {",
+											"    pm.expect(orders.total).to.be.above(0);",
+											"    pm.expect(orders.limit).to.eql(50);",
+											"    pm.expect(orders.offset).to.eql(0);",
+											"    pm.expect(orders.data.length).to.be.above(0);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "If-None-Match",
+										"type": "text",
+										"value": "-787788090",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/orders",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get orders - if-none-match header",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b6f14068-29f2-4543-a160-f406e74fcc8f",
+										"exec": [
+											"",
+											"pm.test(\"Status code is 304\", function () {",
+											"    pm.response.to.have.status(304);",
+											"});",
+											"pm.test(\"Status code name has string Not Modified\", function () {",
+											"    pm.response.to.have.status(\"Not Modified\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "If-None-Match",
+										"value": "{{orders-etag}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/orders",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create order",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "051ec062-2fe9-4ba1-86e9-0bf87b51bdb3",
+										"exec": [
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+											"});",
+											"",
+											"pm.test(\"Status code name has string created\", function () {",
+											"    pm.response.to.have.status(\"Created\");",
+											"});",
+											"",
+											"var order = pm.response.json();",
+											"",
+											"pm.test(\"Location is present\", function () {",
+											"    pm.response.to.have.header(\"Location\");",
+											"});",
+											"",
+											"pm.test('order billingCycle', function() {",
+											"  pm.expect(order.billingCycle.id).to.eql(pm.globals.get(\"billingCycleId\"));",
+											"});",
+											"",
+											"pm.globals.set(\"orderId\",order.id);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "93bc12f4-674f-4c22-96e8-83447b6670d9",
+										"exec": [
+											"pm.globals.set(\"random\", Math.floor(Math.random() * 100)+1);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"6db5c24b-b6de-4c10-a6cb-e614366f6{{random}}\",\n    \"description\": \"created-order-api2-test\",\n    \"priority\": 1,\n    \"status\": \"COMPLETED\",\n    \"orderDate\": \"2018-11-01\",\n    \"requestedProcessingStartDate\": \"2019-04-30\",\n    \"requestedCompletionDate\": \"\",\n    \"expectedCompletionDate\": \"\",\n    \"billingCycle\": {\"id\" : {{billingCycleId}} },\n    \"orderItems\": [\n        {\n\t\t\t\"itemId\": \"item-01-{{random}}\",\n\t\t\t\"action\": \"ADD\",\n\t\t\t\"status\": \"COMPLETED\",\n\t\t\t\"userAccount\": {\n\t\t\t    \"id\": {{userAccountId}}\n\t\t\t},\n\t\t    \"productInstance\": [\n\t\t        {\n\t\t            \"seller\": {\n\t\t                \"id\": {{sellerId}}\n\t\t            },\n\t\t            \"product\": {\n\t\t                \"id\": {{anotherProductId}}\n\t\t            },\n\t\t            \"quantity\": 1,\n\t\t            \"productPrice\": 100\n\t\t        }\n\t\t    ]\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/orders",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "retreive order",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "db1ab55d-27e2-4ca7-a184-58ac5905c7e2",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "920e8076-b63a-4a2a-a3ca-f297f62bcda6",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var order = pm.response.json();",
+											"pm.test('created order fields check', function() {",
+											"    pm.expect(order.id).to.eql(pm.globals.get(\"orderId\"));",
+											"    pm.expect(order.code).to.eql(\"6db5c24b-b6de-4c10-a6cb-e614366f6\"+pm.globals.get(\"random\"));",
+											"    pm.expect(order.description).to.eql(\"created-order-api2-test\");",
+											"    pm.expect(order.priority).to.eql(1);",
+											"    pm.expect(order.status).to.eql(\"COMPLETED\");",
+											"    pm.expect(order.billingCycle.id).to.eql(pm.globals.get(\"billingCycleId\"));",
+											"    pm.expect(order.orderDate).to.eql(\"2018-11-01\");",
+											"    pm.expect(order.requestedProcessingStartDate).to.eql(\"2019-04-30\");",
+											"    pm.expect(order.requestedCompletionDate).to.eql(\"\");",
+											"    pm.expect(order.expectedCompletionDate).to.eql(\"\");",
+											"    pm.expect(order.orderItems.length).to.eql(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/orders/{{orderId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"orders",
+										"{{orderId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "replace order - update entirely",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fd5d51ba-2d30-4fa1-ba18-b1de1f4a8d40",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var order = pm.response.json();",
+											"",
+											"pm.test('update order, modify description', function() {",
+											"  pm.expect(order.description).to.eql(\"created-order-api2-test-modified\");",
+											"});",
+											"",
+											"pm.test('update order, remove billingCycle', function() {",
+											"  pm.expect(order.billingCycle.id).to.eql(undefined);",
+											"});",
+											"pm.test('update order, replace orderItems', function() {",
+											"  pm.expect(order.orderItems.id).to.eql(pm.globals.get(\"anotherOrderItem\"));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"6db5c24b-b6de-4c10-a6cb-e614366f6c11w\",\n    \"description\": \"created-order-api2-test-modified\",\n    \"priority\": 1,\n    \"status\": \"COMPLETED\",\n    \"orderDate\": \"2018-11-02\",\n    \"requestedProcessingStartDate\": \"2019-04-20\",\n    \"requestedCompletionDate\": \"2019-04-20\",\n    \"expectedCompletionDate\": \"\",\n    \"orderItems\": [\n     { \"id\":{{anotherOrderItemId}}}\n    ]\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/orders/{{orderId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"orders",
+										"{{orderId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update order",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "967d1ba0-ee06-4b03-a979-2fa6c7e793b6",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var order = pm.response.json();",
+											"",
+											"pm.test('update order, modify description', function() {",
+											"  pm.expect(order.description).to.eql(\"created-order-api2-test-modified-secondtime\");",
+											"});",
+											"",
+											"pm.test('update order, add billingCycle', function() {",
+											"  pm.expect(order.billingCycle.id).to.eql(pm.globals.get(\"billingCycleId\"));",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"6db5c24b-b6de-4c10-a6cb-e614366f6c11c{{random}}w\",\n    \"description\": \"created-order-api2-test-modified-secondtime\",\n    \"billingCycle\": {\n    \t\"id\" : {{billingCycleId}}\n    },\n    \"orderItems\": [\n     { \"id\":{{anotherOrderItemId}}}\n    ]\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/orders/{{orderId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"orders",
+										"{{orderId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete order",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "2de1e5bd-fd6d-48d5-9ea1-7f1d53ad365e",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"var order = pm.response.json();",
+											"pm.test('the deleted order is returned', function() {",
+											"  pm.expect(order.id).to.eql(pm.globals.get(\"orderId\"));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/ordering/orders/{{orderId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"ordering",
+										"orders",
+										"{{orderId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "193b5442-e62d-4a46-abdb-3ef5eeeba387",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "9e9a4ae6-0cd0-49b9-bdff-5627100b4649",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "openapi.json",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "72365d94-29de-47eb-bc64-798d19af2d80",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/opencell/api/rest/v2/openapi.json",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"opencell",
+								"api",
+								"rest",
+								"v2",
+								"openapi.json"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "basic",
+				"basic": [
+					{
+						"key": "password",
+						"value": "opencell.superadmin",
+						"type": "string"
+					},
+					{
+						"key": "username",
+						"value": "opencell.superadmin",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "6a1c7bde-dddf-4e2a-8bd5-504d694c2440",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "363b47ad-5519-415a-a940-c062e31e7375",
 						"type": "text/javascript",
 						"exec": [
 							""
