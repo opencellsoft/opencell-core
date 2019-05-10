@@ -143,4 +143,10 @@ public class CustomerService extends AccountService<Customer> {
 	public void anonymizeGpdr(Customer entity, String randomCode) {
     	entity.anonymize(randomCode);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Customer> getCustomersByQueryBuilder(QueryBuilder qb) {
+		return qb.getQuery(getEntityManager()).getResultList();
+	}
+	
 }
