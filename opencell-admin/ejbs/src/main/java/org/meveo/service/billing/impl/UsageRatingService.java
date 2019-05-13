@@ -69,7 +69,8 @@ import java.util.Map.Entry;
  * 
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @author Mounir BAHIJE
+ * @lastModifiedVersion 6.
  */
 @Stateless
 public class UsageRatingService implements Serializable {
@@ -372,7 +373,7 @@ public class UsageRatingService implements Serializable {
      * @throws BusinessException Business exception
      */
     private boolean rateEDRonChargeAndCounters(WalletOperation walletOperation, EDR edr, UsageChargeInstance usageChargeInstance, boolean isVirtual) throws BusinessException {
-        boolean stopEDRRating = false;
+        boolean stopEDRRating_fullyRated = false;
         BigDecimal deducedQuantity = null;
 
         if (usageChargeInstance.getCounter() != null) {
@@ -380,35 +381,16 @@ public class UsageRatingService implements Serializable {
             // If decremented partially or none - proceed with another charge
             deducedQuantity = deduceCounter(edr, usageChargeInstance, null, isVirtual);
             if (edr.getQuantity().compareTo(deducedQuantity) == 0) {
-                stopEDRRating = true;
+                stopEDRRating_fullyRated = true;
             }
 
+            if (deducedQuantity != null && deducedQuantity.compareTo(BigDecimal.ZERO) == 0) {
+                // we continue the rating to have a WO that its needed in pricePlan.script
+                log.warn("deduceQuantity is BigDecimal.ZERO, will continue rating");
+                return stopEDRRating_fullyRated;
+            }
         } else {
-            boolean triggerNextCharge = false;
-
-            UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService
-                    .findById(usageChargeInstance.getChargeTemplate().getId());
-
-            if (usageChargeTemplate.getTriggerNextCharge() != null) {
-                triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
-            }
-
-            if (!StringUtils.isBlank(usageChargeTemplate.getTriggerNextChargeEL())) {
-                triggerNextCharge = evaluateBooleanExpression(usageChargeTemplate.getTriggerNextChargeEL(), edr,
-                        walletOperation);
-            }
-
-            if (triggerNextCharge) {
-                stopEDRRating = false;
-            } else {
-                stopEDRRating = true;
-            }
-        }
-
-        if (deducedQuantity != null && deducedQuantity.compareTo(BigDecimal.ZERO) == 0) {
-            // we continue the rating to have a WO that its needed in pricePlan.script
-            log.warn("deduceQuantity is BigDecimal.ZERO, will continue rating");
-            return stopEDRRating;
+            stopEDRRating_fullyRated = true;
         }
 
         BigDecimal quantityToCharge = null;
@@ -428,7 +410,7 @@ public class UsageRatingService implements Serializable {
 
         // handle associated edr creation unless it is a Virtual operation
         if (isVirtual) {
-            return stopEDRRating;
+            return stopEDRRating_fullyRated;
         }
 
         UsageChargeTemplate chargeTemplate = null;
@@ -441,11 +423,12 @@ public class UsageRatingService implements Serializable {
 
         triggerEDR(chargeTemplate, walletOperation, edr);
 
-        return stopEDRRating;
+        return stopEDRRating_fullyRated;
     }
     
     /**
      * Create a new EDR if charge has triggerEDRTemplate.
+     *
      * @param chargeTemplate template charge
      * @param walletOperation the wallet operation
      * @param edr the event record
@@ -609,7 +592,7 @@ public class UsageRatingService implements Serializable {
 
         edr.setLastUpdate(new Date());
 
-        boolean edrIsRated = false;
+        boolean edrIsRated_fullyRated = false;
 
         BigDecimal originalQuantity = edr.getQuantity();
         List<WalletOperation> walletOperations = new ArrayList<>();
@@ -651,20 +634,31 @@ public class UsageRatingService implements Serializable {
                 log.debug("Found matching charge instance: id=" + usageChargeInstance.getId());
 
                 WalletOperation walletOperation = new WalletOperation();
-                edrIsRated = rateEDRonChargeAndCounters(walletOperation, edr, usageChargeInstance, isVirtual);
+                edrIsRated_fullyRated = rateEDRonChargeAndCounters(walletOperation, edr, usageChargeInstance, isVirtual);
                 walletOperations.add(walletOperation);
-                if (edrIsRated) {
-                    edr.setStatus(EDRStatusEnum.RATED);
-                    break;
+                if (edrIsRated_fullyRated) {
+                    boolean triggerNextCharge = false;
+                    UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
+
+                    if (usageChargeTemplate.getTriggerNextCharge() != null) {
+                        triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
+                    }
+                    if (!StringUtils.isBlank(usageChargeTemplate.getTriggerNextChargeEL())) {
+                        triggerNextCharge = evaluateBooleanExpression(usageChargeTemplate.getTriggerNextChargeEL(), edr, walletOperation);
+                    }
+                    if (!triggerNextCharge) {
+                        break;
+                    }
                 }
             }
 
-            if (!edrIsRated && !foundPricePlan) {
-                edr.setStatus(EDRStatusEnum.REJECTED);
-                edr.setRejectReason(EDRRejectReasonEnum.NO_PRICEPLAN.getCode());
-                return null;
-            } else {
+            if (edrIsRated_fullyRated) {
                 edr.setStatus(EDRStatusEnum.RATED);
+
+            } else {
+                edr.setStatus(EDRStatusEnum.REJECTED);
+                edr.setRejectReason(!foundPricePlan ? EDRRejectReasonEnum.NO_PRICEPLAN.getCode() : EDRRejectReasonEnum.NO_MATCHING_CHARGE.getCode());
+                return null;
             }
             
         } catch (BusinessException e) {
