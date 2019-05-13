@@ -141,8 +141,10 @@ public class MediationJobBean {
                 cdrParser.init(file);
                 String line = null;
                 int processed = 0;
+                int i = 0;
                 while ((line = cdrReader.readLine()) != null && !wasStoped) {
-                    wasStoped = !jobExecutionService.isJobRunningOnThis(result.getJobInstance());
+                    i++;
+                    wasStoped = i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance());
                     processed++;
                     try {
                         createEdr(line);
@@ -275,7 +277,7 @@ public class MediationJobBean {
                 log.error("Failed to create a rejection file {}", rejectFile.getAbsolutePath());
             }
         }
-        
+
         if (rejectFileWriter != null) {
             rejectFileWriter.println(line + "\t" + reason.name());
         }

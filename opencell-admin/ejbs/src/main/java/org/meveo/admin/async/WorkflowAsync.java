@@ -54,8 +54,10 @@ public class WorkflowAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
+        int i = 0;
         for (BusinessEntity entity : entities) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             unitWorkflowJobBean.execute(result, entity, workflow);

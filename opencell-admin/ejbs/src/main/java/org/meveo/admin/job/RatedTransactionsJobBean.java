@@ -3,6 +3,7 @@ package org.meveo.admin.job;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.ejb.Stateless;
@@ -31,6 +32,11 @@ import org.slf4j.Logger;
  */
 @Stateless
 public class RatedTransactionsJobBean extends BaseJobBean {
+
+    /**
+     * Number of Wallet operations to process in a single job run
+     */
+    private static int PROCESS_NR_IN_JOB_RUN = 2000000;
 
     @Inject
     private Logger log;
@@ -101,15 +107,15 @@ public class RatedTransactionsJobBean extends BaseJobBean {
     }
 
     private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis) throws Exception {
-        List<Long> walletOperationIds = walletOperationService.listToInvoiceIds(new Date());
+        List<Long> walletOperationIds = walletOperationService.listToInvoiceIds(new Date(), PROCESS_NR_IN_JOB_RUN);
         log.info("WalletOperations to convert into rateTransactions={}", walletOperationIds.size());
         result.setNbItemsToProcess(walletOperationIds.size());
 
         SubListCreator<Long> subListCreator = new SubListCreator<>(walletOperationIds, nbRuns.intValue());
-        List<Future<String>> asyncReturns = new ArrayList<>();
+        List<Future<String>> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
-            asyncReturns.add(ratedTransactionAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
+            futures.add(ratedTransactionAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
             try {
                 Thread.sleep(waitingMillis.longValue());
 
@@ -118,9 +124,25 @@ public class RatedTransactionsJobBean extends BaseJobBean {
             }
         }
 
-        for (Future<String> futureItsNow : asyncReturns) {
-            futureItsNow.get();
+        // Wait for all async methods to finish
+        for (Future<String> future : futures) {
+            try {
+                future.get();
+
+            } catch (InterruptedException e) {
+                // It was cancelled from outside - no interest
+
+            } catch (ExecutionException e) {
+                Throwable cause = e.getCause();
+                result.registerError(cause.getMessage());
+                result.addReport(cause.getMessage());
+                log.error("Failed to execute async method", cause);
+            }
         }
+
+        // Check if there are any more Wallet Operations to process and mark job as completed if there are none
+        walletOperationIds = walletOperationService.listToInvoiceIds(new Date(), PROCESS_NR_IN_JOB_RUN);
+        result.setDone(walletOperationIds.isEmpty());
     }
 
     private void executeWithAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis, RatedTransactionsJobAggregationSetting aggregationSetting)

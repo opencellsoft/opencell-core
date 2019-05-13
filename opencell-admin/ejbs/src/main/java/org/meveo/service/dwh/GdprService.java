@@ -25,8 +25,7 @@ public class GdprService extends BaseService {
 
 	public void anonymize(Customer entity) throws BusinessException {
 		String randomCode = UUID.randomUUID().toString();
-		customerService.deleteGPDR(entity, randomCode);
-		customerService.update(entity);
+		customerService.anonymizeGpdr(entity, randomCode);
 	}
 
 }
