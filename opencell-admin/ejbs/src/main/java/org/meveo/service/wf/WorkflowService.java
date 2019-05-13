@@ -50,14 +50,14 @@ import org.meveo.model.wf.WorkflowHistoryAction;
 import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptCompilerService;
 import org.meveo.service.script.ScriptInterface;
 
 @Stateless
 public class WorkflowService extends BusinessService<Workflow> {
 
     @Inject
-    private ScriptInstanceService scriptInstanceService;
+    private ScriptCompilerService scriptCompilerService;
 
     @Inject
     private WFTransitionService wfTransitionService;
@@ -107,7 +107,7 @@ public class WorkflowService extends BusinessService<Workflow> {
                 }
             }
         }
-        List<Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfacesWCompile();
+        List<Class<ScriptInterface>> mmap = scriptCompilerService.getAllScriptInterfacesWCompile();
 
         if (mmap != null) {
             for (Class<ScriptInterface> si : mmap) {
@@ -303,7 +303,7 @@ public class WorkflowService extends BusinessService<Workflow> {
 
         } catch (ClassNotFoundException ex) {
             try {
-                Class<?> clazz = scriptInstanceService.getScriptInterface(wfTypeClassName);
+                Class<?> clazz = scriptCompilerService.getScriptInterface(wfTypeClassName);
                 return clazz;
 
             } catch (ElementNotFoundException e) {

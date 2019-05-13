@@ -82,8 +82,10 @@ public class MeasurableQuantityAggregationJob extends Job {
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, List<MeasurableQuantity> mq) throws BusinessException {
+        int i = 0;
         for (MeasurableQuantity measurableQuantity : mq) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             aggregateMeasuredValues(result, report, measurableQuantity);
@@ -92,8 +94,10 @@ public class MeasurableQuantityAggregationJob extends Job {
 
     public BigDecimal getMeasuredValueListValueSum(List<MeasuredValue> mvList, Long jobInstanceId) {
         BigDecimal mvTotal = BigDecimal.ZERO;
+        int i = 0;
         for (MeasuredValue mv : mvList) {
-            if (!jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             mvTotal = mvTotal.add(mv.getValue());

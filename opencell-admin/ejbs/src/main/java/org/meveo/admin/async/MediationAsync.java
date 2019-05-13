@@ -4,6 +4,7 @@
 package org.meveo.admin.async;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -15,16 +16,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotFoundException;
-import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.admin.job.MediationJobBean;
-import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.medina.impl.CSVCDRParser;
 import org.meveo.service.script.Script;
@@ -86,7 +82,7 @@ public class MediationAsync {
                 if (scriptCode == null) {
                     mediationJobBean.execute(result, parameter, file);
                 } else {
-                    Map<String, Object> context = new HashedMap();
+                    Map<String, Object> context = new HashMap<>();
                     ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
                     context.put(Script.CONTEXT_CURRENT_USER, lastCurrentUser);
                     context.put(Script.JOB_EXECUTION_RESULT, result);

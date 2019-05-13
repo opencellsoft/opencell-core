@@ -30,11 +30,13 @@ import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptUtils;
 
 /**
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
  */
 @Stateless
 public class EntityCustomActionApi extends BaseApi {
@@ -244,7 +246,7 @@ public class EntityCustomActionApi extends BaseApi {
 
                 // Otherwise code is calculated from script source by combining package and classname
             } else if (!StringUtils.isBlank(dto.getScript().getScript())) {
-                String fullClassname = ScriptInstanceService.getFullClassname(dto.getScript().getScript());
+                String fullClassname = ScriptUtils.getFullClassname(dto.getScript().getScript());
                 if (!StringUtils.isBlank(dto.getScript().getCode()) && !dto.getScript().getCode().equals(fullClassname)) {
                     throw new BusinessApiException("The code and the canonical script class name must be identical");
                 }
