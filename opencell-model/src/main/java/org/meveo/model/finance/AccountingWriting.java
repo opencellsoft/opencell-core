@@ -18,19 +18,30 @@
  */
 package org.meveo.model.finance;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CustomerAccount;
-
-import javax.persistence.*;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Entity to aggregate more than one AO
@@ -84,6 +95,13 @@ public class AccountingWriting extends AuditableEntity {
      */
     @Column(name = "amount")
     private BigDecimal amount;
+    
+    /**
+     * event date
+     */
+    @Column(name = "event_date")
+    @Temporal(TemporalType.DATE)
+    private Date eventDate;
 
     /**
      * event type
@@ -115,6 +133,12 @@ public class AccountingWriting extends AuditableEntity {
      */
     @Column(name = "extra_param_3")
     private String extraParam3;
+    
+    /**
+     * is written or not
+     */
+    @Transient
+    private Boolean isWritten;
 
 	public List<AccountOperation> getAccountOperations() {
 		return accountOperations;
@@ -203,4 +227,21 @@ public class AccountingWriting extends AuditableEntity {
 	public void setExtraParam3(String extraParam3) {
 		this.extraParam3 = extraParam3;
 	}
+
+    public Date getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(Date eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public Boolean getIsWritten() {
+        return isWritten;
+    }
+
+    public void setIsWritten(Boolean isWritten) {
+        this.isWritten = isWritten;
+    }
+	
 }

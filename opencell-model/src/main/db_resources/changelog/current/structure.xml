@@ -2136,6 +2136,7 @@
             <column name="tax_id" type="bigint" />
             <column name="invoice_category_id" type="bigint" />
             <column name="accounting_code_id" type="bigint" />
+            <column name="event_date" type="date" />
             <column name="export_date" type="date" />
             <column name="amount" type="numeric(23, 12)" />
             <column name="event_type" type="varchar(255)" />
