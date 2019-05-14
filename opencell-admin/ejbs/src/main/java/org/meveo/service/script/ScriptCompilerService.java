@@ -201,22 +201,22 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
 
     /**
      * Compile script, a and update script entity status with compilation errors. Successfully compiled script is added to a compiled script cache if active and not in test
-     * compilation mode.
+     * compilation mode. Script.init() method will be called during script instantiation (for cache) if script is marked as reusable.
      * 
      * @param script Script entity to compile
      * @param testCompile Is it a compilation for testing purpose. Won't clear nor overwrite existing compiled script cache.
      */
     public void compileScript(ScriptInstance script, boolean testCompile) {
 
-        List<ScriptInstanceError> scriptErrors = compileScript(script.getCode(), script.getSourceTypeEnum(), script.getScript(), script.isActive(), testCompile);
+        List<ScriptInstanceError> scriptErrors = compileScript(script.getCode(), script.getSourceTypeEnum(), script.getScript(), script.isActive(), script.isReuse(), testCompile);
 
         script.setError(scriptErrors != null && !scriptErrors.isEmpty());
         script.setScriptErrors(scriptErrors);
     }
 
     /**
-     * Compile script. DOES NOT update script entity status. Successfully compiled script will be instantiated and added to a compiled script cache. Scipt.init() method is called
-     * during script instantiation.
+     * Compile script. DOES NOT update script entity status. Successfully compiled script will be instantiated and added to a compiled script cache. Optionally Script.init() method
+     * is called during script instantiation if requested so.
      * 
      * Script is not cached if disabled or in test compilation mode.
      * 
@@ -224,11 +224,13 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
      * @param sourceType Source code language type
      * @param sourceCode Source code
      * @param isActive Is script active. It will compile it anyway. Will clear but not overwrite existing compiled script cache.
+     * @param initialize Should script be initialized when instantiating
      * @param testCompile Is it a compilation for testing purpose. Won't clear nor overwrite existing compiled script cache.
      * 
      * @return A list of compilation errors if not compiled
      */
-    private List<ScriptInstanceError> compileScript(String scriptCode, ScriptSourceTypeEnum sourceType, String sourceCode, boolean isActive, boolean testCompile) {
+    private List<ScriptInstanceError> compileScript(String scriptCode, ScriptSourceTypeEnum sourceType, String sourceCode, boolean isActive, boolean initialize,
+            boolean testCompile) {
 
         log.debug("Compile script {}", scriptCode);
 
@@ -246,7 +248,13 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
                 CacheKeyStr cacheKey = new CacheKeyStr(currentUser.getProviderCode(), EjbUtils.getCurrentClusterNode() + "_" + scriptCode);
 
                 ScriptInterface scriptInstance = compiledScript.newInstance();
-                scriptInstance.init(null);
+                if (initialize) {
+                    try {
+                        scriptInstance.init(null);
+                    } catch (Exception e) {
+                        log.warn("Failed to initialize script for a cached script instance", e);
+                    }
+                }
                 compiledScripts.put(cacheKey, new CompiledScript(compiledScript, scriptInstance));
 
                 log.debug("Compiled script {} added to compiled interface map", scriptCode);

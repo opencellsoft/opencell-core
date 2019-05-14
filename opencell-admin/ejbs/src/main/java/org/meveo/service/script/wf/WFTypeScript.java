@@ -38,8 +38,7 @@ public class WFTypeScript<E extends BusinessEntity> extends WorkflowType<E> impl
 
     @Override
     public void init(Map<String, Object> methodContext) throws BusinessException {
-        throw new UnsupportedOperationException();
-
+ 
     }
 
     @Override
