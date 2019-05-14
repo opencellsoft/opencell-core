@@ -1,5 +1,6 @@
 package org.meveo.service.script.wf;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @WorkflowTypeClass
-public class WFTypeScript<E extends BusinessEntity> extends WorkflowType<E> implements WFTypeScriptInterface {
+public class WFTypeScript<E extends BusinessEntity> extends WorkflowType<E> implements Serializable, WFTypeScriptInterface {
+
+    private static final long serialVersionUID = -9103159611108102999L;
 
     /**
      * A logger
