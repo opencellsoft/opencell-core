@@ -19,6 +19,7 @@ import org.meveo.audit.logging.dto.AuditEvent;
 import org.meveo.audit.logging.dto.MethodParameter;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.CustomerAccountActionsEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
@@ -71,7 +72,7 @@ public class AuditManagerService {
 	 */
 	private void auditPaymentMethod(Class<?> clazz, Method method, Object[] paramValues) throws BusinessException {
 		String CustomerAccountServiceClassName = ReflectionUtils.getCleanClassName(CustomerAccountService.class.getSimpleName());
-		if (CustomerAccountServiceClassName.equals(clazz.getSimpleName()) && ("update".equals(method.getName()) || "create".equals(method.getName())) && paramValues != null
+		if (CustomerAccountServiceClassName.equals(clazz.getSimpleName()) && (CustomerAccountActionsEnum.update.name().equals(method.getName()) || CustomerAccountActionsEnum.create.name().equals(method.getName())) && paramValues != null
 				&& paramValues.length > 0) {
 			Map<String, List<PaymentMethod>> auditedPaymentMethods = ((CustomerAccount) paramValues[0]).getAuditedMethodPayments();
 			if (auditedPaymentMethods == null || auditedPaymentMethods.isEmpty()) {
