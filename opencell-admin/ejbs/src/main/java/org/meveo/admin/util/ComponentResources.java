@@ -3,7 +3,7 @@ package org.meveo.admin.util;
 import java.io.Serializable;
 import java.util.Locale;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
@@ -27,7 +27,7 @@ public class ComponentResources implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Locale locale = Locale.ENGLISH;
-    
+
     @Inject
     @Client
     private Event<Locale> currentLocaleEventProducer;
@@ -55,8 +55,8 @@ public class ComponentResources implements Serializable {
     }
 
     @Produces
-    @ApplicationScoped
-    @Named
+    @RequestScoped
+    @Named("paramBean")
     @MeveoParamBean
     public ParamBean getParamBean() {
         return paramBeanFactory.getInstance();

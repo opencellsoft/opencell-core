@@ -56,7 +56,7 @@ public class TenantRegistry {
      */
     public void addTenant(Provider provider) {
 
-        // Create a timer to be triggered instantly, that way we can force authentication to a new tenant, as timer has no security context and can be overriden
+        // Create a timer to be triggered instantly, that way we can force authentication to a new tenant, as timer has no security context and can be overridden
         TimerConfig timerConfig = new TimerConfig();
         timerConfig.setInfo(provider);
 

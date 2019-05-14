@@ -22,6 +22,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.custom.CustomTableService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
@@ -44,6 +45,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
     private static CustomFieldInstanceService customFieldInstanceService;
 
     private static ScriptInstanceService scriptInstanceService;
+
+    private static CustomTableService customTableService;
 
     public MeveoFunctionMapper() {
 
@@ -212,6 +215,18 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
             addFunction("mv", "getStartOfNextMonth", MeveoFunctionMapper.class.getMethod("getStartOfNextMonth", Date.class));
 
+            addFunction("mv", "getCTValue", MeveoFunctionMapper.class.getMethod("getCTValue", String.class, String.class, String.class, Object.class, String.class, Object.class,
+                String.class, Object.class, String.class, Object.class, String.class, Object.class));
+
+            addFunction("mv", "getCTValues", MeveoFunctionMapper.class.getMethod("getCTValues", String.class, String.class, Object.class, String.class, Object.class, String.class,
+                Object.class, String.class, Object.class, String.class, Object.class));
+
+            addFunction("mv", "getCTValueForDate", MeveoFunctionMapper.class.getMethod("getCTValue", String.class, String.class, Date.class, String.class, Object.class,
+                String.class, Object.class, String.class, Object.class, String.class, Object.class, String.class, Object.class));
+
+            addFunction("mv", "getCTValuesForDate", MeveoFunctionMapper.class.getMethod("getCTValues", String.class, Date.class, String.class, Object.class, String.class,
+                Object.class, String.class, Object.class, String.class, Object.class, String.class, Object.class));
+
             // addFunction("mv", "call", MeveoFunctionMapper.class.getMethod("call", String.class, String.class,String.class, Object[].class));
         } catch (NoSuchMethodException | SecurityException e) {
             Logger log = LoggerFactory.getLogger(this.getClass());
@@ -283,6 +298,26 @@ public class MeveoFunctionMapper extends FunctionMapper {
             }
         }
         return scriptInstanceService;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static CustomTableService getCustomTableService() {
+
+        if (customTableService == null) {
+            try {
+                InitialContext initialContext = new InitialContext();
+                BeanManager beanManager = (BeanManager) initialContext.lookup("java:comp/BeanManager");
+
+                Bean<CustomTableService> bean = (Bean<CustomTableService>) beanManager.resolve(beanManager.getBeans(CustomTableService.class));
+                customTableService = (CustomTableService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
+
+            } catch (NamingException e) {
+                Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+                log.error("Unable to access CustomTableService", e);
+                throw new RuntimeException(e);
+            }
+        }
+        return customTableService;
     }
 
     /**
@@ -1539,4 +1574,172 @@ public class MeveoFunctionMapper extends FunctionMapper {
         return c.getTime();
     }
 
+    /**
+     * Exposes CustomTableService.getValue() function as EL function. See CustomTableService.getValue() function for documentation.
+     * 
+     * Accepts up to 5 field name/field value combinations
+     * 
+     * @param customTableCode Custom table code
+     * @param fieldToReturn Field value to return
+     * @param fieldName1 Field (or condition) to query
+     * @param fieldValue1 Field search value
+     * @param fieldName2 Field (or condition) to query (optional)
+     * @param fieldValue2 Field search value (optional)
+     * @param fieldName3 Field (or condition) to query (optional)
+     * @param fieldValue3 Field search value (optional)
+     * @param fieldName4 Field (or condition) to query (optional)
+     * @param fieldValue4 Field search value (optional)
+     * @param fieldName5 Field (or condition) to query (optional)
+     * @param fieldValue5 Field search value (optional)
+     * @return A field value
+     * @throws BusinessException General exception
+     */
+    public static Object getCTValue(String customTableCode, String fieldToReturn, String fieldName1, Object fieldValue1, String fieldName2, Object fieldValue2, String fieldName3,
+            Object fieldValue3, String fieldName4, Object fieldValue4, String fieldName5, Object fieldValue5) throws BusinessException {
+
+        Map<String, Object> queryValues = new HashMap<>();
+
+        queryValues.put(fieldName1, fieldValue1);
+
+        if (fieldName2 != null) {
+            queryValues.put(fieldName2, fieldValue2);
+        }
+        if (fieldName3 != null) {
+            queryValues.put(fieldName3, fieldValue3);
+        }
+        if (fieldName4 != null) {
+            queryValues.put(fieldName4, fieldValue4);
+        }
+        if (fieldName5 != null) {
+            queryValues.put(fieldName5, fieldValue5);
+        }
+        return getCustomTableService().getValue(customTableCode, fieldToReturn, queryValues);
+    }
+
+    /**
+     * Exposes CustomTableService.getValue() function as EL function. See CustomTableService.getValue() function for documentation.
+     * 
+     * Accepts up to 5 field name/field value combinations
+     * 
+     * @param customTableCode Custom table code
+     * @param fieldToReturn Field value to return
+     * @param date Record validity date, as expressed by 'valid_from' and 'valid_to' fields, to match
+     * @param fieldName1 Field (or condition) to query
+     * @param fieldValue1 Field search value
+     * @param fieldName2 Field (or condition) to query (optional)
+     * @param fieldValue2 Field search value (optional)
+     * @param fieldName3 Field (or condition) to query (optional)
+     * @param fieldValue3 Field search value (optional)
+     * @param fieldName4 Field (or condition) to query (optional)
+     * @param fieldValue4 Field search value (optional)
+     * @param fieldName5 Field (or condition) to query (optional)
+     * @param fieldValue5 Field search value (optional)
+     * @return A field value
+     * @throws BusinessException General exception
+     */
+    public static Object getCTValue(String customTableCode, String fieldToReturn, Date date, String fieldName1, Object fieldValue1, String fieldName2, Object fieldValue2,
+            String fieldName3, Object fieldValue3, String fieldName4, Object fieldValue4, String fieldName5, Object fieldValue5) throws BusinessException {
+
+        Map<String, Object> queryValues = new HashMap<>();
+
+        queryValues.put(fieldName1, fieldValue1);
+
+        if (fieldName2 != null) {
+            queryValues.put(fieldName2, fieldValue2);
+        }
+        if (fieldName3 != null) {
+            queryValues.put(fieldName3, fieldValue3);
+        }
+        if (fieldName4 != null) {
+            queryValues.put(fieldName4, fieldValue4);
+        }
+        if (fieldName5 != null) {
+            queryValues.put(fieldName5, fieldValue5);
+        }
+
+        return getCustomTableService().getValue(customTableCode, fieldToReturn, date, queryValues);
+    }
+
+    /**
+     * Exposes CustomTableService.getValue() function as EL function. See CustomTableService.getValue() function for documentation.
+     * 
+     * Accepts up to 5 field name/field value combinations
+     * 
+     * @param customTableCode Custom table code
+     * @param fieldName1 Field (or condition) to query
+     * @param fieldValue1 Field search value
+     * @param fieldName2 Field (or condition) to query (optional)
+     * @param fieldValue2 Field search value (optional)
+     * @param fieldName3 Field (or condition) to query (optional)
+     * @param fieldValue3 Field search value (optional)
+     * @param fieldName4 Field (or condition) to query (optional)
+     * @param fieldValue4 Field search value (optional)
+     * @param fieldName5 Field (or condition) to query (optional)
+     * @param fieldValue5 Field search value (optional)
+     * @return A map of field values with field name as a key and field value as a value
+     * @throws BusinessException General exception
+     */
+    public static Map<String, Object> getCTValues(String customTableCode, String fieldName1, Object fieldValue1, String fieldName2, Object fieldValue2, String fieldName3,
+            Object fieldValue3, String fieldName4, Object fieldValue4, String fieldName5, Object fieldValue5) throws BusinessException {
+
+        Map<String, Object> queryValues = new HashMap<>();
+
+        queryValues.put(fieldName1, fieldValue1);
+
+        if (fieldName2 != null) {
+            queryValues.put(fieldName2, fieldValue2);
+        }
+        if (fieldName3 != null) {
+            queryValues.put(fieldName3, fieldValue3);
+        }
+        if (fieldName4 != null) {
+            queryValues.put(fieldName4, fieldValue4);
+        }
+        if (fieldName5 != null) {
+            queryValues.put(fieldName5, fieldValue5);
+        }
+        return getCustomTableService().getValues(customTableCode, null, queryValues);
+    }
+
+    /**
+     * Exposes CustomTableService.getValue() function as EL function. See CustomTableService.getValue() function for documentation.
+     * 
+     * Accepts up to 5 field name/field value combinations
+     * 
+     * @param customTableCode Custom table code
+     * @param date Record validity date, as expressed by 'valid_from' and 'valid_to' fields, to match
+     * @param fieldName1 Field (or condition) to query
+     * @param fieldValue1 Field search value
+     * @param fieldName2 Field (or condition) to query (optional)
+     * @param fieldValue2 Field search value (optional)
+     * @param fieldName3 Field (or condition) to query (optional)
+     * @param fieldValue3 Field search value (optional)
+     * @param fieldName4 Field (or condition) to query (optional)
+     * @param fieldValue4 Field search value (optional)
+     * @param fieldName5 Field (or condition) to query (optional)
+     * @param fieldValue5 Field search value (optional)
+     * @return A map of field values with field name as a key and field value as a value
+     * @throws BusinessException General exception
+     */
+    public static Map<String, Object> getCTValues(String customTableCode, Date date, String fieldName1, Object fieldValue1, String fieldName2, Object fieldValue2,
+            String fieldName3, Object fieldValue3, String fieldName4, Object fieldValue4, String fieldName5, Object fieldValue5) throws BusinessException {
+
+        Map<String, Object> queryValues = new HashMap<>();
+
+        queryValues.put(fieldName1, fieldValue1);
+
+        if (fieldName2 != null) {
+            queryValues.put(fieldName2, fieldValue2);
+        }
+        if (fieldName3 != null) {
+            queryValues.put(fieldName3, fieldValue3);
+        }
+        if (fieldName4 != null) {
+            queryValues.put(fieldName4, fieldValue4);
+        }
+        if (fieldName5 != null) {
+            queryValues.put(fieldName5, fieldValue5);
+        }
+        return getCustomTableService().getValues(customTableCode, null, date, queryValues);
+    }
 }

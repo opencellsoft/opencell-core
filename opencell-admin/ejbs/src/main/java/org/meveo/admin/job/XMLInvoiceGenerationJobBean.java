@@ -44,12 +44,9 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
     public void execute(JobExecutionResultImpl result, String parameter, JobInstance jobInstance) {
         log.debug("Running for parameter={}", parameter);
         try {
-        	
-        	InvoicesToProcessEnum invoicesToProcessEnum = InvoicesToProcessEnum.valueOf( (String) this.getParamOrCFValue(jobInstance, "invoicesToProcess"));
-        	if (invoicesToProcessEnum == null) {
-        		invoicesToProcessEnum = InvoicesToProcessEnum.FinalOnly;
-        	}
-        	
+
+            InvoicesToProcessEnum invoicesToProcessEnum = InvoicesToProcessEnum.valueOf((String) this.getParamOrCFValue(jobInstance, "invoicesToProcess", "FinalOnly"));
+
             Long billingRunId = null;
             if (parameter != null && parameter.trim().length() > 0) {
                 try {

@@ -179,7 +179,7 @@ public interface IPersistenceService<E extends IEntity> {
     /**
      * Load and return the list of the entities from database according to sorting and paging information in {@link PaginationConfiguration} object.
      * 
-     * @param config pagination config.
+     * @param config Data filtering, sorting and pagination criteria
      * @return List of entities.
      */
     List<E> list(PaginationConfiguration config); // ? extends E
@@ -194,7 +194,7 @@ public interface IPersistenceService<E extends IEntity> {
     /**
      * Count number of filtered entities in database.
      * 
-     * @param config pagination config.
+     * @param config Data filtering, sorting and pagination criteria
      * @return Number of filtered entities.
      */
     long count(PaginationConfiguration config);
@@ -228,7 +228,7 @@ public interface IPersistenceService<E extends IEntity> {
      * @return A list of refreshed/retrieved entities.
      */
     List<E> refreshOrRetrieve(List<E> entities);
-    
+
     /**
      * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.
      * 
@@ -236,7 +236,6 @@ public interface IPersistenceService<E extends IEntity> {
      * @return A set of refreshed/retrieved entities
      */
     Set<E> refreshOrRetrieve(Set<E> entities);
-    
 
     /**
      * If entity is not managed - retrieve it freshly from DB. If entity is managed - return as is.
@@ -261,15 +260,25 @@ public interface IPersistenceService<E extends IEntity> {
      * @return Set of retrieved entities
      */
     Set<E> retrieveIfNotManaged(Set<E> entities);
-    
-    void commit();
 
+    /**
+     * Flush data to DB. NOTE: unlike the name suggest, no transaction commit is done
+     */
+    public default void commit() {
+        getEntityManager().flush();
+    }
+
+    /**
+     * Return an entity manager for a current provider
+     * 
+     * @return Entity manager
+     */
     EntityManager getEntityManager();
 
     String findReferencedByEntities(Class<E> clazz, Long id);
-    
+
     /**
-     * Removes an entity with a given class and id. 
+     * Removes an entity with a given class and id.
      * 
      * @param parentClass Class of the entity
      * @param parentId id of the entity
