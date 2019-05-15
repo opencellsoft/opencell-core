@@ -43,6 +43,7 @@ public class QueryRsImpl extends BaseRs implements QueryRs {
      *        limit - Pagination - number of records to retrieve<br>
      *        sortBy - Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.<br>
      *        sortOrder - Sorting - sort order.<br>
+     *        groupBy - Grouping - group by clause, allow to use aggregation funciton like sum, avg, count.<br>
      *
      *        all other parameters will be used as query parameters to the HQL
      *

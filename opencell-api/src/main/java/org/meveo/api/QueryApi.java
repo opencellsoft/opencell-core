@@ -64,6 +64,7 @@ public class QueryApi extends BaseApi {
      * @param limit - number of records to retrieve
      * @param sortBy - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder - sort order.
+     * @param groupBy - Grouping - group by clause, allow to use aggregation funciton like sum, avg, count.
      * 
      * @return QueryResponse object
      * @throws MeveoApiException when query does not start with "from" or when query fails
