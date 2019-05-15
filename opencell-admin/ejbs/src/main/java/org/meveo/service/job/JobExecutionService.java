@@ -137,12 +137,12 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 
         try {
             if (continueSameJob) {
-                log.debug("Continue executing job {}", jobInstance);
+                log.info("Continue executing job {}", jobInstance);
                 executeJobWithParameters(jobInstance, null);
 
             } else if (jobInstance.getFollowingJob() != null) {
                 JobInstance nextJob = jobInstanceService.retrieveIfNotManaged(jobInstance.getFollowingJob());
-                log.debug("Executing next job {}", nextJob.getCode());
+                log.info("Executing next job {}", nextJob.getCode());
                 executeJobWithParameters(nextJob, null);
             }
         } catch (Exception e) { // FIXME:BusinessException e) {

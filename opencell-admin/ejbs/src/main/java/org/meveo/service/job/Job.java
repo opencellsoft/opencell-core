@@ -122,7 +122,7 @@ public abstract class Job {
                 log.debug("Job {} of type {} execution finished. Job completed {}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobCompleted);
                 eventJobProcessed.fire(executionResult);
 
-                if (jobCompleted != null) {
+                if (jobCompleted != null && jobExecutionService.isJobRunningOnThis(jobInstance)) {
                     jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
                     MeveoUser lastCurrentUser = currentUser.unProxy();
                     jobExecutionService.executeNextJob(this, jobInstance, !jobCompleted, lastCurrentUser);

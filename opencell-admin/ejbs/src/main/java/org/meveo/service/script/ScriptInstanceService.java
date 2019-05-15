@@ -26,8 +26,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
+import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -36,11 +36,14 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.infinispan.Cache;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.cache.CacheKeyStr;
+import org.meveo.cache.CompiledScript;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
@@ -69,6 +72,12 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
 
     @Inject
     private ScriptCompilerService scriptCompilerService;
+
+    /**
+     * Stores compiled scripts. Key format: &lt;cluster node code&gt;_&lt;scriptInstance code&gt;. Value is a compiled script class and class instance
+     */
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-script-cache")
+    private Cache<CacheKeyStr, CompiledScript> compiledScripts;
 
     /**
      * Get all ScriptInstances with error.
@@ -254,7 +263,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
-        ScriptInterface classInstance = scriptCompilerService.getScriptInstance(scriptCode);
+        ScriptInterface classInstance = getScriptInstance(scriptCode);
         classInstance.execute(context);
 
         log.trace("Script {} executed with parameters {}", scriptCode, context);
@@ -342,7 +351,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
-        ScriptInterface classInstance = scriptCompilerService.getCachedScriptInstance(scriptCode);
+        ScriptInterface classInstance = getCachedScriptInstance(scriptCode);
         classInstance.execute(context);
 
         log.trace("Script (cached) {} executed with parameters {}", scriptCode, context);
@@ -393,7 +402,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
-        ScriptInterface classInstance = scriptCompilerService.getScriptInstance(scriptCode);
+        ScriptInterface classInstance = getScriptInstance(scriptCode);
         classInstance.init(context);
         classInstance.execute(context);
         classInstance.finalize(context);
@@ -489,23 +498,11 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @param testCompile Is it a compilation for testing purpose. Won't clear nor overwrite existing compiled script cache.
      */
     public void compileScript(ScriptInstance script, boolean testCompile) {
-        scriptCompilerService.compileScript(null, testCompile);
+        scriptCompilerService.compileScript(script, testCompile);
     }
 
     /**
-     * Get a compiled script class. Pass-through to ScriptCompilerService.getScriptInstance().
-     * 
-     * @param scriptCode Script code
-     * @return A compiled script class
-     * @throws InvalidScriptException Were not able to instantiate or compile a script
-     * @throws ElementNotFoundException Script not found
-     */
-    public ScriptInterface getScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
-        return scriptCompilerService.getScriptInstance(scriptCode);
-    }
-
-    /**
-     * Find the script class for a given script code. Pass-through to ScriptCompilerService.getScriptInterface().
+     * Find the script class for a given script code
      * 
      * @param scriptCode Script code
      * @return Script interface Class
@@ -513,6 +510,94 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @throws ElementNotFoundException Script not found
      */
     public Class<ScriptInterface> getScriptInterface(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
-        return scriptCompilerService.getScriptInterface(scriptCode);
+        CacheKeyStr cacheKey = new CacheKeyStr(currentUser.getProviderCode(), EjbUtils.getCurrentClusterNode() + "_" + scriptCode);
+
+        CompiledScript compiledScript = compiledScripts.get(cacheKey);
+        if (compiledScript == null) {
+            return scriptCompilerService.getScriptInterfaceWCompile(scriptCode);
+        }
+
+        return compiledScript.getScriptClass();
+    }
+
+    /**
+     * Get a compiled script class
+     * 
+     * @param scriptCode Script code
+     * @return A compiled script class
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
+     */
+    public ScriptInterface getScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+        Class<ScriptInterface> scriptClass = getScriptInterface(scriptCode);
+
+        try {
+            ScriptInterface script = scriptClass.newInstance();
+            return script;
+
+        } catch (InstantiationException | IllegalAccessException e) {
+            log.error("Failed to instantiate script {}", scriptCode, e);
+            throw new InvalidScriptException(scriptCode, getEntityClass().getName());
+        }
+    }
+
+    /**
+     * Get a the same/single/cached instance of compiled script class. A subsequent call to this method will retun the same instance of scipt.
+     * 
+     * @param scriptCode Script code
+     * @return A compiled script class
+     * @throws ElementNotFoundException ElementNotFoundException
+     * @throws InvalidScriptException InvalidScriptException
+     */
+    public ScriptInterface getCachedScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+        CacheKeyStr cacheKey = new CacheKeyStr(currentUser.getProviderCode(), EjbUtils.getCurrentClusterNode() + "_" + scriptCode);
+
+        CompiledScript compiledScript = compiledScripts.get(cacheKey);
+        if (compiledScript == null) {
+            return scriptCompilerService.getScriptInstanceWCompile(scriptCode);
+        }
+        return compiledScript.getScriptInstance();
+    }
+
+    /**
+     * Get a summary of cached information.
+     * 
+     * @return A list of a map containing cache information with cache name as a key and cache as a value
+     */
+    // @Override
+    @SuppressWarnings("rawtypes")
+    public Map<String, Cache> getCaches() {
+        Map<String, Cache> summaryOfCaches = new HashMap<String, Cache>();
+        summaryOfCaches.put(compiledScripts.getName(), compiledScripts);
+
+        return summaryOfCaches;
+    }
+
+    /**
+     * Refresh cache by name. Removes <b>current provider's</b> data from cache and populates it again
+     * 
+     * @param cacheName Name of cache to refresh or null to refresh all caches
+     */
+    // @Override
+    @Asynchronous
+    public void refreshCache(String cacheName) {
+
+        if (cacheName == null || cacheName.equals(compiledScripts.getName()) || cacheName.contains(compiledScripts.getName())) {
+            scriptCompilerService.clearCompiledScripts();
+            scriptCompilerService.compileAll();
+        }
+    }
+
+    /**
+     * Populate cache by name
+     * 
+     * @param cacheName Name of cache to populate or null to populate all caches
+     */
+    // @Override
+    public void populateCache(String cacheName) {
+
+        if (cacheName == null || cacheName.equals(compiledScripts.getName())) {
+            scriptCompilerService.compileAll();
+        }
     }
 }
