@@ -930,5 +930,22 @@
             <column name="store_as_table" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>        
     </changeSet>
+
+	<changeSet id="#4107_20190515" author="EdwardPLegaspi">
+		<createTable tableName="adm_role_secured_entity">
+			<column name="role_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="entity_class" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey columnNames="role_id, code, entity_class"
+			constraintName="adm_role_secured_entity_pkey"
+			tableName="adm_role_secured_entity" />
+	</changeSet>
     
 </databaseChangeLog>
