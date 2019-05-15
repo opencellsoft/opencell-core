@@ -66,7 +66,7 @@ public class QueryApi extends BaseApi {
      * @return QueryResponse object
      * @throws MeveoApiException when query does not start with "from" or when query fails
      */
-    public QueryResponse list(String query, String alias, String fields, Map<String, Object> params, String offset, String limit, String sortBy, String sortOrder)
+    public QueryResponse list(String query, String alias, String fields, Map<String, Object> params, String offset, String limit, String sortBy, String sortOrder, String groupBy)
             throws MeveoApiException {
 
         if (StringUtils.isEmpty(query)) {
@@ -87,6 +87,7 @@ public class QueryApi extends BaseApi {
         validateQueryFragment(alias);
         validateQueryFragment(fields);
         validateQueryFragment(sortBy);
+        validateQueryFragment(groupBy);
 
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             validateQueryFragment(entry.getValue());
@@ -119,7 +120,7 @@ public class QueryApi extends BaseApi {
 
         String json = "";
         try {
-            List<Map<String, Object>> rows = queryService.executeQuery(query, alias, entityFields, params, start, maxRows, sortBy, sortOrder);
+            List<Map<String, Object>> rows = queryService.executeQuery(query, alias, entityFields, params, start, maxRows, sortBy, sortOrder, groupBy);
             json = JsonUtils.toJson(rows, false);
         } catch (Throwable e) {
             throw new MeveoApiException(e);

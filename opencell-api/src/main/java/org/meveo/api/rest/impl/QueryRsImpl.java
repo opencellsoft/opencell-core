@@ -63,18 +63,19 @@ public class QueryRsImpl extends BaseRs implements QueryRs {
             String limit = parameters.getFirst("limit");
             String sortBy = parameters.getFirst("sortBy");
             String sortOrder = parameters.getFirst("sortOrder");
-
+            String groupBy = parameters.getFirst("groupBy");
+            
             Map<String, Object> queryParams = new HashMap<>();
 
             parameters.keySet().forEach((key) -> {
                 if (!"query".equals(key) && !"alias".equals(key) && !"fields".equals(key) && !"offset".equals(key) && !"limit".equals(key) && !"sortBy".equals(key)
-                        && !"sortOrder".equals(key)) {
+                        && !"sortOrder".equals(key) && !"groupBy".equals(key)) {
                     queryParams.put(key, parameters.getFirst(key));
                 }
             });
 
             try {
-                response = queryApi.list(query, alias, fields, queryParams, offset, limit, sortBy, sortOrder);
+                response = queryApi.list(query, alias, fields, queryParams, offset, limit, sortBy, sortOrder, groupBy);
             } catch (MeveoApiException e) {
                 processException(e, response.getActionStatus());
             }
