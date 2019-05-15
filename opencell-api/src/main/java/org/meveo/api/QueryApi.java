@@ -27,6 +27,8 @@ import org.meveo.service.base.QueryService;
 @Stateless
 public class QueryApi extends BaseApi {
 
+    private static Integer RESULT_SET_MAX_SIZE = 1000;
+
     @Inject
     private QueryService queryService;
 
@@ -108,7 +110,7 @@ public class QueryApi extends BaseApi {
 
         if (StringUtils.isNumeric(limit)) {
             maxRows = Integer.parseInt(limit);
-            maxRows = maxRows > 100 ? 100 : maxRows;
+            maxRows = maxRows > RESULT_SET_MAX_SIZE ? RESULT_SET_MAX_SIZE : maxRows;
         }
 
         if (StringUtils.isEmpty(sortBy)) {
