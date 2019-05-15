@@ -49,16 +49,16 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     /**
      * Custom field values in JSON format
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
-    protected CustomFieldValues cfValues;
+	@Type(type = "cfjson")
+	@Column(name = "cf_values", columnDefinition = "text")
+	protected CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
      */
     @Type(type = "cfjson")
     @Column(name = "cf_values_accum", columnDefinition = "text")
-    protected CustomFieldValues cfAccumulatedValues;
+	protected CustomFieldValues cfAccumulatedValues;
 
     @Override
     public String getUuid() {
