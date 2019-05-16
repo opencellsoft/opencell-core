@@ -22,13 +22,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -37,9 +38,13 @@ import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 
+import org.infinispan.Cache;
+import org.infinispan.context.Flag;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.cache.CacheKeyStr;
+import org.meveo.cache.CompiledScript;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
@@ -47,19 +52,23 @@ import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.service.base.BusinessService;
 
 /**
- * Compiles scripts and provides compiled script classes
+ * Compiles scripts and provides compiled script classes.
+ * 
+ * NOTE: Compilation methods are executed synchronously due to WRITE lock. DO NOT CHANGE IT, so there would be only one attempt to compile a new script class
  * 
  * @author Andrius Karpavicius
  * @lastModifiedVersion 7.2.0
  *
  */
 @Singleton
-@Lock(LockType.READ)
+@Lock(LockType.WRITE)
 public class ScriptCompilerService extends BusinessService<ScriptInstance> {
 
-    private Map<CacheKeyStr, Class<ScriptInterface>> allScriptInterfaces = new HashMap<>();
-
-    private Map<CacheKeyStr, ScriptInterface> cachedScriptInstances = new HashMap<>();
+    /**
+     * Stores compiled scripts. Key format: &lt;cluster node code&gt;_&lt;scriptInstance code&gt;. Value is a compiled script class and class instance
+     */
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-script-cache")
+    private Cache<CacheKeyStr, CompiledScript> compiledScripts;
 
     private CharSequenceCompiler<ScriptInterface> compiler;
 
@@ -85,10 +94,12 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
 
         List<ScriptInstance> scriptInstances = findByType(ScriptSourceTypeEnum.JAVA);
         for (ScriptInstance scriptInstance : scriptInstances) {
-            try {
-                scriptInterfaces.add(getScriptInterfaceWCompile(scriptInstance.getCode()));
-            } catch (ElementNotFoundException | InvalidScriptException e) {
-                // Ignore errors here as they were logged in a call before
+            if (!scriptInstance.isError()) {
+                try {
+                    scriptInterfaces.add(getScriptInterfaceWCompile(scriptInstance.getCode()));
+                } catch (ElementNotFoundException | InvalidScriptException e) {
+                    // Ignore errors here as they were logged in a call before
+                }
             }
         }
 
@@ -190,32 +201,36 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
 
     /**
      * Compile script, a and update script entity status with compilation errors. Successfully compiled script is added to a compiled script cache if active and not in test
-     * compilation mode.
+     * compilation mode. Script.init() method will be called during script instantiation (for cache) if script is marked as reusable.
      * 
      * @param script Script entity to compile
      * @param testCompile Is it a compilation for testing purpose. Won't clear nor overwrite existing compiled script cache.
      */
     public void compileScript(ScriptInstance script, boolean testCompile) {
 
-        List<ScriptInstanceError> scriptErrors = compileScript(script.getCode(), script.getSourceTypeEnum(), script.getScript(), script.isActive(), testCompile);
+        List<ScriptInstanceError> scriptErrors = compileScript(script.getCode(), script.getSourceTypeEnum(), script.getScript(), script.isActive(), script.isReuse(), testCompile);
 
         script.setError(scriptErrors != null && !scriptErrors.isEmpty());
         script.setScriptErrors(scriptErrors);
     }
 
     /**
-     * Compile script. DOES NOT update script entity status. Successfully compiled script is added to a compiled script cache if active and not in test compilation mode.
+     * Compile script. DOES NOT update script entity status. Successfully compiled script will be instantiated and added to a compiled script cache. Optionally Script.init() method
+     * is called during script instantiation if requested so.
+     * 
+     * Script is not cached if disabled or in test compilation mode.
      * 
      * @param scriptCode Script entity code
      * @param sourceType Source code language type
      * @param sourceCode Source code
      * @param isActive Is script active. It will compile it anyway. Will clear but not overwrite existing compiled script cache.
+     * @param initialize Should script be initialized when instantiating
      * @param testCompile Is it a compilation for testing purpose. Won't clear nor overwrite existing compiled script cache.
      * 
      * @return A list of compilation errors if not compiled
      */
-    @Lock(LockType.WRITE)
-    private List<ScriptInstanceError> compileScript(String scriptCode, ScriptSourceTypeEnum sourceType, String sourceCode, boolean isActive, boolean testCompile) {
+    private List<ScriptInstanceError> compileScript(String scriptCode, ScriptSourceTypeEnum sourceType, String sourceCode, boolean isActive, boolean initialize,
+            boolean testCompile) {
 
         log.debug("Compile script {}", scriptCode);
 
@@ -230,7 +245,17 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
 
             if (!testCompile && isActive) {
 
-                allScriptInterfaces.put(new CacheKeyStr(currentUser.getProviderCode(), scriptCode), compiledScript);
+                CacheKeyStr cacheKey = new CacheKeyStr(currentUser.getProviderCode(), EjbUtils.getCurrentClusterNode() + "_" + scriptCode);
+
+                ScriptInterface scriptInstance = compiledScript.newInstance();
+                if (initialize) {
+                    try {
+                        scriptInstance.init(null);
+                    } catch (Exception e) {
+                        log.warn("Failed to initialize script for a cached script instance", e);
+                    }
+                }
+                compiledScripts.put(cacheKey, new CompiledScript(compiledScript, scriptInstance));
 
                 log.debug("Compiled script {} added to compiled interface map", scriptCode);
             }
@@ -333,101 +358,69 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
     }
 
     /**
-     * Find the script class for a given script code
+     * Compile the script class for a given script code if it is not compile yet.
      * 
      * @param scriptCode Script code
      * @return Script interface Class
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      */
-    @Lock(LockType.READ)
-    public Class<ScriptInterface> getScriptInterface(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
-        Class<ScriptInterface> result = null;
+    public Class<ScriptInterface> getScriptInterfaceWCompile(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
 
-        result = allScriptInterfaces.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
+        CompiledScript compiledScript = getOrCompileScript(scriptCode);
 
-        if (result == null) {
-            result = getScriptInterfaceWCompile(scriptCode);
-        }
-
-        log.debug("getScriptInterface scriptCode:{} -> {}", scriptCode, result);
-        return result;
+        return compiledScript.getScriptClass();
     }
 
     /**
-     * Compile the script class for a given script code if it is not compile yet. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT, so there would be only
-     * one attempt to compile a new script class
+     * Compile the script class for a given script code if it is not compile yet and return its instance. NOTE: Will return the SAME (cached) script class instance for subsequent
+     * calls. If you need a new instance of a class, use getScriptInterfaceWCompile() and instantiate class yourself.
      * 
      * @param scriptCode Script code
-     * @return Script interface Class
+     * @return Script instance
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      */
-    protected Class<ScriptInterface> getScriptInterfaceWCompile(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
-        Class<ScriptInterface> result = null;
+    public ScriptInterface getScriptInstanceWCompile(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
 
-        result = allScriptInterfaces.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
+        CompiledScript compiledScript = getOrCompileScript(scriptCode);
 
-        if (result == null) {
+        return compiledScript.getScriptInstance();
+    }
+
+    /**
+     * Compile the script class for a given script code if it is not compile yet.
+     * 
+     * @param scriptCode Script code
+     * @return Script instance
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
+     */
+    private CompiledScript getOrCompileScript(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+        CacheKeyStr cacheKey = new CacheKeyStr(currentUser.getProviderCode(), EjbUtils.getCurrentClusterNode() + "_" + scriptCode);
+
+        CompiledScript compiledScript = compiledScripts.get(cacheKey);
+        if (compiledScript == null) {
+
             ScriptInstance script = findByCode(scriptCode);
             if (script == null) {
                 log.debug("ScriptInstance with {} does not exist", scriptCode);
-                throw new ElementNotFoundException(scriptCode, getEntityClass().getName());
-            }
-            compileScript(script, false);
-            if (script.isError()) {
+                throw new ElementNotFoundException(scriptCode, "ScriptInstance");
+            } else if (script.isError()) {
                 log.debug("ScriptInstance {} failed to compile. Errors: {}", scriptCode, script.getScriptErrors());
                 throw new InvalidScriptException(scriptCode, getEntityClass().getName());
             }
-            result = allScriptInterfaces.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
+            compileScript(script, false);
+
+            compiledScript = compiledScripts.get(cacheKey);
         }
 
-        if (result == null) {
+        if (compiledScript == null) {
             log.debug("ScriptInstance with {} does not exist", scriptCode);
-            throw new ElementNotFoundException(scriptCode, getEntityClass().getName());
+            throw new ElementNotFoundException(scriptCode, "ScriptInstance");
         }
 
-        return result;
-    }
-
-    /**
-     * Get a compiled script class
-     * 
-     * @param scriptCode Script code
-     * @return A compiled script class
-     * @throws InvalidScriptException Were not able to instantiate or compile a script
-     * @throws ElementNotFoundException Script not found
-     */
-    @Lock(LockType.READ)
-    public ScriptInterface getScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
-        Class<ScriptInterface> scriptClass = getScriptInterface(scriptCode);
-
-        try {
-            ScriptInterface script = scriptClass.newInstance();
-            return script;
-
-        } catch (InstantiationException | IllegalAccessException e) {
-            log.error("Failed to instantiate script {}", scriptCode, e);
-            throw new InvalidScriptException(scriptCode, getEntityClass().getName());
-        }
-    }
-
-    /**
-     * Get a the same/single/cached instance of compiled script class. A subsequent call to this method will retun the same instance of scipt.
-     * 
-     * @param scriptCode Script code
-     * @return A compiled script class
-     * @throws ElementNotFoundException ElementNotFoundException
-     * @throws InvalidScriptException InvalidScriptException
-     */
-    public ScriptInterface getCachedScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
-        ScriptInterface script = cachedScriptInstances.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
-        if (script == null) {
-            script = getScriptInstance(scriptCode);
-
-            cachedScriptInstances.put(new CacheKeyStr(currentUser.getProviderCode(), scriptCode), script);
-        }
-        return script;
+        return compiledScript;
     }
 
     /**
@@ -436,7 +429,30 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
      * @param scriptCode Script code
      */
     public void clearCompiledScripts(String scriptCode) {
-        cachedScriptInstances.remove(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
-        allScriptInterfaces.remove(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
+        compiledScripts.remove(new CacheKeyStr(currentUser.getProviderCode(), EjbUtils.getCurrentClusterNode() + "_" + scriptCode));
+    }
+
+    /**
+     * Remove all compiled scripts for a current provider
+     */
+    public void clearCompiledScripts() {
+
+        String currentProvider = currentUser.getProviderCode();
+        log.info("Clear CFTS cache for {}/{} ", currentProvider, currentUser);
+        // cftsByAppliesTo.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
+        Iterator<Entry<CacheKeyStr, CompiledScript>> iter = compiledScripts.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).entrySet().iterator();
+        ArrayList<CacheKeyStr> itemsToBeRemoved = new ArrayList<>();
+        while (iter.hasNext()) {
+            Entry<CacheKeyStr, CompiledScript> entry = iter.next();
+            boolean comparison = (entry.getKey().getProvider() == null) ? currentProvider == null : entry.getKey().getProvider().equals(currentProvider);
+            if (comparison) {
+                itemsToBeRemoved.add(entry.getKey());
+            }
+        }
+
+        for (CacheKeyStr elem : itemsToBeRemoved) {
+            log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
+            compiledScripts.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
+        }
     }
 }

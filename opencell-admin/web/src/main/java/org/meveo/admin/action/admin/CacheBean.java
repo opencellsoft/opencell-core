@@ -33,6 +33,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.service.index.ElasticSearchIndexPopulationService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.view.LazyDataModelWSize;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.LazyDataModel;
@@ -78,6 +79,9 @@ public class CacheBean implements Serializable {
 
     @Inject
     private ElasticSearchIndexPopulationService esPopulationService;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     /** Logger. */
     @Inject
@@ -142,6 +146,7 @@ public class CacheBean implements Serializable {
             caches.putAll(jobCacheContainerProvider.getCaches());
             caches.putAll(tenantCacheContainerProvider.getCaches());
             caches.putAll(esPopulationService.getCaches());
+            caches.putAll(scriptInstanceService.getCaches());
 
             selectedCache = caches.get(cacheName);
         }
@@ -163,6 +168,7 @@ public class CacheBean implements Serializable {
         caches.putAll(jobCacheContainerProvider.getCaches());
         caches.putAll(tenantCacheContainerProvider.getCaches());
         caches.putAll(esPopulationService.getCaches());
+        caches.putAll(scriptInstanceService.getCaches());
         caches = new TreeMap<String, Cache>(caches);
 
         for (Entry<String, Cache> cache : caches.entrySet()) {
@@ -189,6 +195,7 @@ public class CacheBean implements Serializable {
         customFieldsCacheContainerProvider.refreshCache(cacheName);
         jobCacheContainerProvider.refreshCache(cacheName);
         esPopulationService.refreshCache(cacheName);
+        scriptInstanceService.refreshCache(cacheName);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 
@@ -199,6 +206,7 @@ public class CacheBean implements Serializable {
         customFieldsCacheContainerProvider.refreshCache(null);
         jobCacheContainerProvider.refreshCache(null);
         esPopulationService.refreshCache(null);
+        scriptInstanceService.refreshCache(null);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 

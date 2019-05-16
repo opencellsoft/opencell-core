@@ -178,8 +178,8 @@ public class NotificationHistory extends AuditableEntity {
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
-        boolean inReq = this.inboundRequest != null && other.getInboundRequest() != null && this.inboundRequest.getCode().equals(other.getInboundRequest().getCode());
-        boolean notif = this.notification != null && other.getNotification() != null && this.notification.getCode().equals(other.getNotification().getCode());
+        boolean inReq = this.inboundRequest != null && other.getInboundRequest() != null && this.inboundRequest.getId().equals(other.getInboundRequest().getId());
+        boolean notif = this.notification != null && other.getNotification() != null && this.notification.getId().equals(other.getNotification().getId());
         return inReq && notif;
     }
 

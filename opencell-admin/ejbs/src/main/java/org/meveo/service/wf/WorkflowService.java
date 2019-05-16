@@ -51,10 +51,14 @@ import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.ScriptCompilerService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 
 @Stateless
 public class WorkflowService extends BusinessService<Workflow> {
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     @Inject
     private ScriptCompilerService scriptCompilerService;
@@ -303,7 +307,7 @@ public class WorkflowService extends BusinessService<Workflow> {
 
         } catch (ClassNotFoundException ex) {
             try {
-                Class<?> clazz = scriptCompilerService.getScriptInterface(wfTypeClassName);
+                Class<?> clazz = scriptInstanceService.getScriptInterface(wfTypeClassName);
                 return clazz;
 
             } catch (ElementNotFoundException e) {
