@@ -10669,7 +10669,6 @@
             <column name="description" value="Invoice for quote" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="invoice_sequence_id" valueNumeric="-4" />
-            <column name="occ_template_id" value="-25" />
             <column name="matching_auto" valueNumeric="0" />
             <column name="uuid" value="InvoiceType-QUOTE" />
         </insert>
