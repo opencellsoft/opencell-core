@@ -73,10 +73,7 @@ public class InvoiceTypeApi extends BaseApi {
     private void handleParameters(InvoiceTypeDto postData) throws MeveoApiException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-        }
-        if (StringUtils.isBlank(postData.getOccTemplateCode())) {
-            missingParameters.add("occTemplateCode");
-        }
+        }        
         handleMissingParametersAndValidate(postData);
     }
 
@@ -95,9 +92,12 @@ public class InvoiceTypeApi extends BaseApi {
         if (invoiceTypeService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(InvoiceType.class, postData.getCode());
         }
-        OCCTemplate occTemplate = occTemplateService.findByCode(postData.getOccTemplateCode());
-        if (occTemplate == null) {
-            throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getOccTemplateCode());
+        OCCTemplate occTemplate = null;
+        if(!StringUtils.isBlank(postData.getOccTemplateCode())) {
+	        occTemplate = occTemplateService.findByCode(postData.getOccTemplateCode());
+	        if (occTemplate == null) {
+	            throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getOccTemplateCode());
+	        }
         }
 
         OCCTemplate occTemplateNegative = null;
@@ -256,10 +256,12 @@ public class InvoiceTypeApi extends BaseApi {
             }
             invoiceType.setPrefixEL(invoiceTypeDto.getSequenceDto().getPrefixEL());
         }
-        
-        OCCTemplate occTemplate = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateCode());
-        if (occTemplate == null) {
-            throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateCode());
+        OCCTemplate occTemplate = null;
+        if (!StringUtils.isBlank(invoiceTypeDto.getOccTemplateCode())) {
+	        occTemplate = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateCode());
+	        if (occTemplate == null) {
+	            throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateCode());
+	        }
         }
 
         OCCTemplate occTemplateNegative = null;
