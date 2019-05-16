@@ -1,5 +1,6 @@
 package org.meveo.api;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +15,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.PermissionDto;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.RolesDto;
+import org.meveo.api.dto.SecuredEntityDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -21,12 +23,20 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.keycloak.client.KeycloakAdminClientService;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.admin.impl.RoleService;
+import org.meveo.service.security.SecuredBusinessEntityService;
 import org.primefaces.model.SortOrder;
 
+/**
+ * API class in managing {@link Role}.
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 6.0
+ */
 @Stateless
 public class RoleApi extends BaseApi {
 
@@ -38,6 +48,9 @@ public class RoleApi extends BaseApi {
 
     @Inject
     private KeycloakAdminClientService keycloakAdminClientService;
+    
+    @Inject
+    private SecuredBusinessEntityService securedBusinessEntityService;
 
     /**
      * 
@@ -105,12 +118,36 @@ public class RoleApi extends BaseApi {
                 role.getRoles().add(createOrUpdate(roleDto));
             }
         }
+        
+        List<SecuredEntity> securedEntities = extractSecuredEntities(postData.getSecuredEntities());
+        role.setSecuredEntities(securedEntities);
 
         roleService.create(role);
 
         return role;
     }
 
+    /**
+     * Extract a list of secured entities from the posted content.
+     */
+    private List<SecuredEntity> extractSecuredEntities(List<SecuredEntityDto> postDataSecuredEntities) throws EntityDoesNotExistsException {
+        List<SecuredEntity> securedEntities = new ArrayList<>();
+        if (postDataSecuredEntities != null) {
+            SecuredEntity securedEntity = null;
+            for (SecuredEntityDto securedEntityDto : postDataSecuredEntities) {
+                securedEntity = new SecuredEntity();
+                securedEntity.setCode(securedEntityDto.getCode());
+                securedEntity.setEntityClass(securedEntityDto.getEntityClass());
+                BusinessEntity businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode());
+                if (businessEntity == null) {
+                    throw new EntityDoesNotExistsException(securedEntity.getEntityClass(), securedEntity.getCode());
+                }
+                securedEntities.add(securedEntity);
+            }
+        }
+        return securedEntities;
+    }
+    
     /**
      * Update role.
      * 
@@ -176,11 +213,23 @@ public class RoleApi extends BaseApi {
                 role.getRoles().add(createOrUpdate(roleDto));
             }
         }
+		if (postData.getSecuredEntities() != null) {
+			if (postData.getSecuredEntities().isEmpty()) {
+				role.setSecuredEntities(new ArrayList<>());
+
+			} else {
+				role.setSecuredEntities(extractSecuredEntities(postData.getSecuredEntities()));
+			}
+		}
 
         return roleService.update(role);
     }
-
+    
     public RoleDto find(String name) throws MeveoApiException {
+    	return find(name, false);
+    }
+
+    public RoleDto find(String name, boolean includeSecuredEntities) throws MeveoApiException {
 
         if (StringUtils.isBlank(name)) {
             missingParameters.add("roleName");
@@ -197,7 +246,7 @@ public class RoleApi extends BaseApi {
         if (role == null) {
             throw new EntityDoesNotExistsException(Role.class, name, "name");
         }
-        roleDto = new RoleDto(role, true, true);
+        roleDto = new RoleDto(role, true, true, includeSecuredEntities);
 
         return roleDto;
     }
