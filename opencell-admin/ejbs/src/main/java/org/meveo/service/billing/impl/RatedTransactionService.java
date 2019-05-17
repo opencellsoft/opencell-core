@@ -18,6 +18,8 @@
  */
 package org.meveo.service.billing.impl;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -627,11 +629,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         && discountPlanItem.getInvoiceCategory().getId().equals(scAggregate.getInvoiceSubCategory().getInvoiceCategory().getId()))) {
             BigDecimal discountValue = discountPlanItem.getDiscountValue();
 
-            if (discountPlanItem.getDiscountValueEL() != null) {
-                discountValue = evaluateDiscountPercentExpression(discountPlanItem.getDiscountValueEL(), scAggregate.getUserAccount(), scAggregate.getWallet(),
-                    invoice, amount);
-                log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(),
-                        discountValue, amount);
+            final String dpValueEL = discountPlanItem.getDiscountValueEL();
+            if (isNotBlank(dpValueEL)) {
+            	final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate.getUserAccount(), scAggregate.getWallet(), invoice, amount);
+                log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), discountValue, amount);
+                if (discountValue != null) {
+    				discountValue = evalDiscountValue;
+    			}
             }
 
             BigDecimal discountAmount = null;
@@ -1266,16 +1270,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param walletOperationId the wallet operation id
      * @return the rated transaction
      */
-    public RatedTransaction findByWalletOperationId(Long walletOperationId) {
-        try {
-            QueryBuilder qb = new QueryBuilder(getEntityClass(), "rt");
-            qb.addCriterion("rt.walletOperationId", "=", walletOperationId, false);
-            return (RatedTransaction) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            log.warn("No Rated transaction foud for this walletOperationId {} ", walletOperationId);
-            return null;
-        }
-    }
+	public RatedTransaction findByWalletOperationId(Long walletOperationId) {
+		try {
+			return (RatedTransaction) getEntityManager().createNamedQuery("RatedTransaction.findByWalletOperationId")
+					.setParameter("walletOperationId", walletOperationId).getSingleResult();
+
+		} catch (NoResultException e) {
+			log.warn("No ratedTransaction found with the given walletOperation.id. {}", e.getMessage());
+			return null;
+		}
+	}
 
     /**
      * Call RatedTransaction.setStatusToCanceledByRsCodes Named query to cancel just opened RatedTransaction of all passed RatedTransaction ids.

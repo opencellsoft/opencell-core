@@ -7,6 +7,8 @@ import org.meveo.service.script.module.ModuleScript;
 
 public class AccountScript extends ModuleScript implements AccountScriptInterface {
 
+    private static final long serialVersionUID = -6776318569772809598L;
+
     /**
      * seller constant.
      */

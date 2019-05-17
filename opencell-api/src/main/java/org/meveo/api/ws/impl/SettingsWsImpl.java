@@ -114,6 +114,7 @@ import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
+ * SOAP endpoints for settings.
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -1320,10 +1321,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetRoleResponse findRole(String name) {
+    public GetRoleResponse findRole(String name, boolean includeSecuredEntities) {
         GetRoleResponse result = new GetRoleResponse();
         try {
-            result.setRoleDto(roleApi.find(name));
+            result.setRoleDto(roleApi.find(name, includeSecuredEntities));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

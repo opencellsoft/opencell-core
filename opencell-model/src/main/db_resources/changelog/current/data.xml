@@ -287,13 +287,13 @@
 				            <body>Hello,
 				                Your login has been created:
 				                user name :  #{event.userName}
-				                access url : http://integration.i.opencellsoft.com/opencell/frontend/DEMO/cc/index.html
+				                access url : http://opencell_url/frontend/DEMO/cc/index.html
 								</body>
 				        </emailNotif>
 				        <notification code="SelfcareRegistration">
 				            <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
 				            <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
-				            <elFilter>#{event.pathInfo.startsWith("/I66_HIGHWAY/registration")}</elFilter>
+				            <elFilter>#{event.pathInfo.startsWith("/DEMO/registration")}</elFilter>
 				            <scriptInstanceCode>org.meveo.service.script.selfcare.RegisterHierarchy</scriptInstanceCode>
 				            <scriptParams>
 				                <entry>

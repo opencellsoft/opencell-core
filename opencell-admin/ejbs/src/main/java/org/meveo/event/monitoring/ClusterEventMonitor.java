@@ -32,7 +32,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptCompilerService;
 import org.slf4j.Logger;
 
 /**
@@ -54,7 +54,7 @@ public class ClusterEventMonitor implements MessageListener {
     private JobInstanceService jobInstanceService;
 
     @Inject
-    private ScriptInstanceService scriptInstanceService;
+    private ScriptCompilerService scriptCompilerService;
 
     @Inject
     private CurrentUserProvider currentUserProvider;
@@ -97,7 +97,7 @@ public class ClusterEventMonitor implements MessageListener {
         currentUserProvider.forceAuthentication(eventDto.getUserName(), eventDto.getProviderCode());
 
         if (eventDto.getClazz().equals(ScriptInstance.class.getSimpleName())) {
-            scriptInstanceService.clearCompiledScripts(eventDto.getCode());
+            scriptCompilerService.clearCompiledScripts(eventDto.getCode());
 
         } else if (eventDto.getClazz().equals(JobInstance.class.getSimpleName())) {
             jobInstanceService.scheduleUnscheduleJob(eventDto.getId());

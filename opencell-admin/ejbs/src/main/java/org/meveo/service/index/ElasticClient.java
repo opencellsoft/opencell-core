@@ -407,7 +407,7 @@ public class ElasticClient {
         }
 
         if (queuedChanges.isNoChange()) {
-            log.trace("Nothing to flush to ES");
+//          log.trace("Nothing to flush to ES");
             return;
         }
         RestHighLevelClient client = esConnection.getClient();
