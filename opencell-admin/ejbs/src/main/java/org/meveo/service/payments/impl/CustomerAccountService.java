@@ -167,7 +167,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             }
             queryBuilder.endOrClause();
         }
-        log.debug("query={}", queryBuilder.getSqlString());
         Query query = queryBuilder.getQuery(getEntityManager());
         balance = (BigDecimal) query.getSingleResult();
         return balance;
@@ -240,7 +239,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws BusinessException the business exception
      */
     public BigDecimal customerAccountBalanceDue(CustomerAccount customerAccount, Date to) throws BusinessException {
-        log.info("customerAccountBalanceDue  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
     }
 
@@ -254,7 +252,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws BusinessException business exception.
      */
     public BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
-        log.info("start customerAccountBalanceDue with id:" + customerAccountId + ",code:" + customerAccountCode + ",toDate:" + to);
         return customerAccountBalanceDue(findCustomerAccount(customerAccountId, customerAccountCode), to);
     }
 
@@ -267,7 +264,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws BusinessException the business exception
      */
     public BigDecimal customerAccountBalanceDueWithoutLitigation(CustomerAccount customerAccount, Date to) throws BusinessException {
-        log.info("customerAccountBalanceDueWithoutLitigation  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
     }
 
@@ -281,7 +277,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws BusinessException the business exception
      */
     public BigDecimal customerAccountBalanceDueWithoutLitigation(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
-        log.info("customerAccountBalanceDueWithoutLitigation with id" + customerAccountId + ",code:" + customerAccountCode + ",toDate:" + to);
         return customerAccountBalanceDueWithoutLitigation(findCustomerAccount(customerAccountId, customerAccountCode), to);
     }
 
@@ -294,7 +289,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws BusinessException the business exception
      */
     public BigDecimal customerAccountBalance(CustomerAccount customerAccount, Date to) throws BusinessException {
-        log.info("customerAccountBalanceDue  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
     }
 
@@ -307,7 +301,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws BusinessException the business exception
      */
     public BigDecimal customerAccountBalanceExigible(CustomerAccount customerAccount, Date to) throws BusinessException {
-        log.info("customerAccountBalanceExigible  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
 
     }
@@ -322,7 +315,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws BusinessException the business exception
      */
     public BigDecimal customerAccountBalanceExigibleWithoutLitigation(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
-        log.info("customerAccountBalanceExigibleWithoutLitigation with id:{},code:{},toDate:{}", customerAccountId, customerAccountCode, to);
         return customerAccountBalanceExigibleWithoutLitigation(findCustomerAccount(customerAccountId, customerAccountCode), to);
     }
 
@@ -335,7 +327,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws BusinessException the business exception
      */
     public BigDecimal customerAccountBalanceExigibleWithoutLitigation(CustomerAccount customerAccount, Date to) throws BusinessException {
-        log.info("customerAccountBalanceExigibleWithoutLitigation  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
     }
 
@@ -349,7 +340,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @throws BusinessException business exception.
      */
     public BigDecimal customerAccountBalanceExigible(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
-        log.info("customerAccountBalanceExligible with id:" + customerAccountId + ",code:" + customerAccountCode + ",toDate:" + to);
         return customerAccountBalanceExigible(findCustomerAccount(customerAccountId, customerAccountCode), to);
     }
 
