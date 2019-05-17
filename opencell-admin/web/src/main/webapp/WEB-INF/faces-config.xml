@@ -2062,8 +2062,22 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<to-view-id>/pages/finance/reportExtractHistories/reportExtractHistories.xhtml
 		</to-view-id>
 		<redirect include-view-params="true" />
-	</navigation-case> 
-	
+	</navigation-case>
+
+	<navigation-case>
+		<from-outcome>accountingWritings</from-outcome>
+		<to-view-id>/pages/finance/accountingWriting/accountingWritings.xhtml
+		</to-view-id>
+		<redirect include-view-params="true" />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>accountingWritingDetail</from-outcome>
+		<to-view-id>/pages/finance/accountingWriting/accountingWritingDetail.xhtml
+		</to-view-id>
+		<redirect include-view-params="true" />
+	</navigation-case>
+
+
 	<navigation-case>
 		<from-outcome>indexing</from-outcome>
 		<to-view-id>/pages/index/index.xhtml

@@ -2119,4 +2119,57 @@
     <changeSet id="#3970 - Change of RT description database field from varchar to text" author="mounir.boukayoua">
         <modifyDataType tableName="billing_rated_transaction" columnName="description" newDataType="${type.longText}"/>
     </changeSet>
+
+    <changeSet id="#4160_20190105 - Accounting Writing" author="MounirBOUKAYOUA">
+        <createTable tableName="ar_accounting_writing">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_accounting_writing_seq" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="origin_writing_id" type="bigint" />
+            <column name="tax_id" type="bigint" />
+            <column name="invoice_category_id" type="bigint" />
+            <column name="accounting_code_id" type="bigint" />
+            <column name="event_date" type="date" />
+            <column name="export_date" type="date" />
+            <column name="amount" type="numeric(23, 12)" />
+            <column name="event_type" type="varchar(255)" />
+            <column name="extra_param_1" type="varchar(255)" />
+            <column name="extra_param_2" type="varchar(255)" />
+            <column name="extra_param_3" type="varchar(255)" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="origin_writing_id" baseTableName="ar_accounting_writing"
+                                 constraintName="fk_accounting_writing_origin_writing" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_accounting_writing" />
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="ar_accounting_writing"
+                                 constraintName="fk_accounting_writing_tax" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
+        <addForeignKeyConstraint baseColumnNames="invoice_category_id" baseTableName="ar_accounting_writing"
+                                 constraintName="fk_accounting_writing_invoice_category" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_cat" />
+        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="ar_accounting_writing"
+                                 constraintName="fk_accounting_writing_accounting_code" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+        <createSequence sequenceName="ar_accounting_writing_seq"/>
+        
+        <createTable tableName="ar_accounting_writing_acc_operations">
+            <column name="accounting_writing_id" type="bigint" />
+            <column name="account_operation_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="accounting_writing_id, account_operation_id" constraintName="ar_accounting_writing_acc_operations_pkey" tableName="ar_accounting_writing_acc_operations" />
+    </changeSet>
+    <changeSet id="##4160_20190105 - Accounting Writing - MYSQL sequence" author="MounirBOUKAYOUA" dbms="mysql">
+        <createTable tableName="ar_accounting_writing_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_accounting_writing_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}ar_accounting_writing_seq values(1)</sql>
+    </changeSet>
 </databaseChangeLog>
