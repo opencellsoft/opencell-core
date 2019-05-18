@@ -253,7 +253,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         }
         this.itemNumber++;
         this.ratedtransactions.add(ratedTransaction);
-        ratedTransaction.setInvoiceAgregateF(this);
     }
 
     /**

@@ -139,8 +139,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /** constants. */
     private final BigDecimal HUNDRED = new BigDecimal("100");
 
-    /** description map. */
+    /**
+     * Description translation map.
+     */
     private Map<String, String> descriptionMap = new HashMap<>();
+
+    /**
+     * Tax change mapping
+     */
+    private Map<String, Tax> taxChangeMap = new HashMap<>();
 
     /**
      * @param userAccount user account
@@ -344,19 +351,80 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             log.trace("ratedTransactions.totalAmountWithoutTax={}",
                 ratedTransactions != null ? ratedTransactions.stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum() : "0");
         }
+
+        BillingRun billingRun = invoice.getBillingRun();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
 
             InvoiceSubCategory invoiceSubCategory = ratedTransaction.getInvoiceSubCategory();
 
+            // TODO Should tax % be part of key as rt.tax is optional and only rt.taxPercent can be specified?
             scaKey = (ratedTransaction.getUserAccount() != null ? ratedTransaction.getUserAccount().getId() : "") + "_"
                     + (ratedTransaction.getWallet() != null ? ratedTransaction.getWallet().getId() : "") + "_" + invoiceSubCategory.getId() + "_"
-                    + (ratedTransaction.getTax() != null ? ratedTransaction.getTax().getId() : "");
+                    + (calculateTaxOnSubCategoryLevel && ratedTransaction.getTax() != null ? ratedTransaction.getTax().getId() : "");
+
+            // If Tax was recalculated, Update RT with new tax and recalculate the key
+            if (calculateTaxOnSubCategoryLevel && taxChangeMap.containsKey(scaKey)) {
+                Tax tax = taxChangeMap.get(scaKey);
+
+                // TODO AKK RT is being updated
+                ratedTransaction.setTax(tax);
+                ratedTransaction.setTaxPercent(tax.getPercent());
+                ratedTransaction.computeDerivedAmounts(isEnterprise, rtRounding, rtRoundingMode);
+                scaKey = (ratedTransaction.getUserAccount() != null ? ratedTransaction.getUserAccount().getId() : "") + "_"
+                        + (ratedTransaction.getWallet() != null ? ratedTransaction.getWallet().getId() : "") + "_" + invoiceSubCategory.getId() + "_" + tax.getId();
+            }
 
             SubCategoryInvoiceAgregate scAggregate = subCategoryAggregates.get(scaKey);
             if (scAggregate == null) {
+                Tax tax = ratedTransaction.getTax();
+                BigDecimal taxPercent = ratedTransaction.getTaxPercent();
 
-                scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, billingAccount, ratedTransaction.getUserAccount(), ratedTransaction.getWallet(),
-                    ratedTransaction.getTax(), ratedTransaction.getTaxPercent(), invoice, invoiceSubCategory.getAccountingCode());
+                // If tax calculation is done on subcategory level, evaluate tax again in case it was changed
+                if (calculateTaxOnSubCategoryLevel) {
+
+                    Tax recalculatedTax = null;
+
+                    // If there is a taxScript in invoiceSubCategory and script is applicable, use it to compute external taxes
+                    if (calculateExternalTax && (invoiceSubCategory.getTaxScript() != null)) {
+                        if (taxScriptService.isApplicable(invoiceSubCategory.getTaxScript().getCode(), ratedTransaction.getUserAccount(), invoice, invoiceSubCategory)) {
+                            List<Tax> taxes = taxScriptService.computeTaxes(invoiceSubCategory.getTaxScript().getCode(), ratedTransaction.getUserAccount(), invoice,
+                                invoiceSubCategory);
+                            if (!taxes.isEmpty()) {
+                                recalculatedTax = taxes.get(0);
+                            }
+                        }
+                    }
+
+                    if (recalculatedTax == null) {
+                        recalculatedTax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, billingAccount, invoice.getInvoiceDate(), false);
+                    }
+
+                    // If tax has changed, need to update RTs with new tax value and store a mapping between old key and a new tax value
+                    if (taxPercent == null || (taxPercent.compareTo(recalculatedTax.getPercent()) != 0)) {
+                        log.debug("Will update rated transactions in subcategory {} with new tax from {} to {}", ratedTransaction.getInvoiceSubCategory().getCode(), taxPercent,
+                            recalculatedTax.getPercent());
+
+                        taxChangeMap.put(scaKey, recalculatedTax);
+                        
+                        tax = recalculatedTax;
+                        taxPercent = recalculatedTax.getPercent();
+
+                        // TODO AKK RT is being updated
+                        ratedTransaction.setTax(tax);
+                        ratedTransaction.setTaxPercent(taxPercent);
+                        ratedTransaction.computeDerivedAmounts(isEnterprise, rtRounding, rtRoundingMode);
+
+                        scaKey = (ratedTransaction.getUserAccount() != null ? ratedTransaction.getUserAccount().getId() : "") + "_"
+                                + (ratedTransaction.getWallet() != null ? ratedTransaction.getWallet().getId() : "") + "_" + invoiceSubCategory.getId() + "_" + tax.getId();
+                    }
+
+                } else if (isExonerated) {
+                    tax = taxZero;
+                    taxPercent = BigDecimal.ZERO;
+                }
+
+                scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, billingAccount, ratedTransaction.getUserAccount(), ratedTransaction.getWallet(), tax, taxPercent,
+                    invoice, invoiceSubCategory.getAccountingCode());
                 scAggregate.updateAudit(currentUser);
 
                 String translationSCKey = "SC_" + invoiceSubCategory.getId() + "_" + languageCode;
@@ -380,8 +448,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 scAggregate.addAmountWithTax(ratedTransaction.getAmountWithTax());
             }
             scAggregate.addRatedTransaction(ratedTransaction);
+
+            // TODO AKK update
+            ratedTransaction.setBillingRun(billingRun);
             ratedTransaction.setInvoice(invoice);
             ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+            ratedTransaction.setInvoiceAgregateF(scAggregate);
         }
 
         // Determine which discount plan items apply to this invoice
@@ -407,47 +479,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates.values()) {
 
             InvoiceSubCategory invoiceSubCategory = scAggregate.getInvoiceSubCategory();
-
-            // If tax calculation is done on subcategory level, evaluate tax again in case it was changed
-            if (calculateTaxOnSubCategoryLevel) {
-                Tax tax = null;
-
-                // use Tax selected at rating
-                // TODO: breaks the tax calculation at line 436.
-//                if ((scAggregate.getTaxPercent() != null) ) {
-//            		tax= scAggregate.getTax();
-//                }
-
-                // If there is a taxScript in invoiceSubCategory and script is applicable, use it to compute external taxes
-                if (calculateExternalTax && (invoiceSubCategory.getTaxScript() != null)) {
-                    if (taxScriptService.isApplicable(invoiceSubCategory.getTaxScript().getCode(), scAggregate.getUserAccount(), invoice, invoiceSubCategory)) {
-                        List<Tax> taxes = taxScriptService.computeTaxes(invoiceSubCategory.getTaxScript().getCode(), scAggregate.getUserAccount(), invoice, invoiceSubCategory);
-                        if (!taxes.isEmpty()) {
-                            tax = taxes.get(0);
-                        }
-                    }
-                }
-
-                if (tax == null) {
-                    tax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, billingAccount, invoice.getInvoiceDate(), false);
-                }
-
-                // If tax has changed, need to update RTs with new tax value
-                if ((scAggregate.getTaxPercent() == null) || (scAggregate.getTaxPercent().compareTo(tax.getPercent()) != 0)) {
-                    log.debug("Will update {} rated transactions in subcategory {} with new tax from {} to {}", scAggregate.getItemNumber(),
-                        scAggregate.getInvoiceSubCategory().getCode(), scAggregate.getTaxPercent(), tax.getPercent());
-                    for (RatedTransaction ratedTransaction : scAggregate.getRatedtransactions()) {
-                        ratedTransaction.setTax(tax);
-                        ratedTransaction.setTaxPercent(tax.getPercent());
-                        ratedTransaction.computeDerivedAmounts(isEnterprise, rtRounding, rtRoundingMode);
-                    }
-                }
-                scAggregate.setTax(tax);
-                scAggregate.setTaxPercent(tax.getPercent());
-            } else if (isExonerated) {
-                scAggregate.setTax(taxZero);
-                scAggregate.setTaxPercent(BigDecimal.ZERO);
-            }
 
             amounts = NumberUtils.computeDerivedAmounts(scAggregate.getAmountWithoutTax(), scAggregate.getAmountWithTax(), scAggregate.getTaxPercent(), isEnterprise,
                 invoiceRounding, invoiceRoundingMode.getRoundingMode());
