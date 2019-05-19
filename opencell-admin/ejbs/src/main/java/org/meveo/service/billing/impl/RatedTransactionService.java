@@ -309,7 +309,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             .setParameter("billingAccount", billingAccount).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
             .getResultList();
 
-        appendInvoiceAgregates(billingAccount, invoice, ratedTransactions, false, false);
+        appendInvoiceAgregates(billingAccount, invoice, ratedTransactions, false, true);
     }
 
     /**
@@ -319,10 +319,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param invoice Invoice to append invoice aggregates to
      * @param ratedTransactions A list of rated transactions
      * @param isInvoiceAdjustment Is this invoice adjustment
-     * @param isVirtual Is this a virtual invoice - invoice is not persisted, rated transactions are not persisted either
+     * @param updateRts Shall Rated transactions be updated with invoice information and their status changed to Billed. USE TRUE only when a number of RTs is small, as it will
+     *        result in a single update SQL per RT. Use FALSE to optimize calls to DB and update RTs outside the method in some batch operation.
      * @throws BusinessException BusinessException
      */
-    public void appendInvoiceAgregates(BillingAccount billingAccount, Invoice invoice, List<RatedTransaction> ratedTransactions, boolean isInvoiceAdjustment, boolean isVirtual)
+    public void appendInvoiceAgregates(BillingAccount billingAccount, Invoice invoice, List<RatedTransaction> ratedTransactions, boolean isInvoiceAdjustment, boolean updateRts)
             throws BusinessException {
 
         boolean isEnterprise = appProvider.isEntreprise();
@@ -362,14 +363,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     + (ratedTransaction.getWallet() != null ? ratedTransaction.getWallet().getId() : "") + "_" + invoiceSubCategory.getId() + "_"
                     + (calculateTaxOnSubCategoryLevel && ratedTransaction.getTax() != null ? ratedTransaction.getTax().getId() : "");
 
+            // AKK check that tax was not overridden in WO and tax recalculation should be ignored
+
             // If Tax was recalculated, Update RT with new tax and recalculate the key
             if (calculateTaxOnSubCategoryLevel && taxChangeMap.containsKey(scaKey)) {
                 Tax tax = taxChangeMap.get(scaKey);
 
-                // TODO AKK RT is being updated
-                ratedTransaction.setTax(tax);
-                ratedTransaction.setTaxPercent(tax.getPercent());
-                ratedTransaction.computeDerivedAmounts(isEnterprise, rtRounding, rtRoundingMode);
+                if (updateRts) {
+                    ratedTransaction.setTax(tax);
+                    ratedTransaction.setTaxPercent(tax.getPercent());
+                    ratedTransaction.computeDerivedAmounts(isEnterprise, rtRounding, rtRoundingMode);
+                }
                 scaKey = (ratedTransaction.getUserAccount() != null ? ratedTransaction.getUserAccount().getId() : "") + "_"
                         + (ratedTransaction.getWallet() != null ? ratedTransaction.getWallet().getId() : "") + "_" + invoiceSubCategory.getId() + "_" + tax.getId();
             }
@@ -378,8 +382,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if (scAggregate == null) {
                 Tax tax = ratedTransaction.getTax();
                 BigDecimal taxPercent = ratedTransaction.getTaxPercent();
+                boolean taxWasRecalculated = false;
 
-                // If tax calculation is done on subcategory level, evaluate tax again in case it was changed
+                // If tax calculation is done on subCategory level, evaluate tax again in case it was changed
                 if (calculateTaxOnSubCategoryLevel) {
 
                     Tax recalculatedTax = null;
@@ -405,15 +410,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                             recalculatedTax.getPercent());
 
                         taxChangeMap.put(scaKey, recalculatedTax);
-                        
+                        taxWasRecalculated = true;
+
                         tax = recalculatedTax;
                         taxPercent = recalculatedTax.getPercent();
 
-                        // TODO AKK RT is being updated
-                        ratedTransaction.setTax(tax);
-                        ratedTransaction.setTaxPercent(taxPercent);
-                        ratedTransaction.computeDerivedAmounts(isEnterprise, rtRounding, rtRoundingMode);
-
+                        if (updateRts) {
+                            ratedTransaction.setTax(tax);
+                            ratedTransaction.setTaxPercent(taxPercent);
+                            ratedTransaction.computeDerivedAmounts(isEnterprise, rtRounding, rtRoundingMode);
+                        }
                         scaKey = (ratedTransaction.getUserAccount() != null ? ratedTransaction.getUserAccount().getId() : "") + "_"
                                 + (ratedTransaction.getWallet() != null ? ratedTransaction.getWallet().getId() : "") + "_" + invoiceSubCategory.getId() + "_" + tax.getId();
                     }
@@ -426,6 +432,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, billingAccount, ratedTransaction.getUserAccount(), ratedTransaction.getWallet(), tax, taxPercent,
                     invoice, invoiceSubCategory.getAccountingCode());
                 scAggregate.updateAudit(currentUser);
+                scAggregate.setTaxRecalculated(taxWasRecalculated);
 
                 String translationSCKey = "SC_" + invoiceSubCategory.getId() + "_" + languageCode;
                 String descTranslated = descriptionMap.get(translationSCKey);
@@ -449,11 +456,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
             scAggregate.addRatedTransaction(ratedTransaction);
 
-            // TODO AKK update
-            ratedTransaction.setBillingRun(billingRun);
-            ratedTransaction.setInvoice(invoice);
-            ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
-            ratedTransaction.setInvoiceAgregateF(scAggregate);
+            if (updateRts) {
+                ratedTransaction.setBillingRun(billingRun);
+                ratedTransaction.setInvoice(invoice);
+                ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+                ratedTransaction.setInvoiceAgregateF(scAggregate);
+            }
         }
 
         // Determine which discount plan items apply to this invoice
