@@ -1103,7 +1103,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public List<Seller> listSellers() {
 
         if (entity != null && entity.getOffer() != null) {
-            offerTemplateService.retrieveIfNotManaged(entity.getOffer());
+        	entity = subscriptionService.retrieveIfNotManaged(entity);
             if (entity.getOffer().getSellers().size() > 0) {
                 return entity.getOffer().getSellers();
             } else {
