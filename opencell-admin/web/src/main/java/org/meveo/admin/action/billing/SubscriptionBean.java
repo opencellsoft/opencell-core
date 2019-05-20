@@ -277,7 +277,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             if (!allowServiceMultiInstantiation) {
                 for (ServiceInstance serviceInstance : serviceInstances) {
-                    if (serviceTemplate.getCode().equals(serviceInstance.getCode())) {
+                    if (serviceTemplate.getCode().equals(serviceInstance.getCode()) && !hasTerminatedStatus(serviceInstance.getStatus())) {
                         alreadyInstanciated = true;
                         break;
                     }
@@ -290,6 +290,16 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             }
         }
         log.debug("servicetemplates initialized with {} templates ", serviceTemplates.getSize());
+    }
+
+    /**
+     * Check either the service's status is TERMINATED, CLOSED, CANCELED
+     *
+     * @param status service's status
+     * @return true if service's status is TERMINATED, CLOSED, CANCELED
+     */
+    private boolean hasTerminatedStatus(InstanceStatusEnum status) {
+        return InstanceStatusEnum.TERMINATED.equals(status) || InstanceStatusEnum.CLOSED.equals(status) || InstanceStatusEnum.CANCELED.equals(status);
     }
 
     public BillingCycle getBillingCycle() {
@@ -819,8 +829,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public List<Access> getAccess() {
-        if (entity.getId() == null)
+        if (entity.getId() == null) {
             return null;
+        }
         return accessService.listBySubscription(entity);
     }
 
@@ -1135,8 +1146,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public BigDecimal getBalanceDue() throws BusinessException {
         if (entity.getId() == null) {
             return new BigDecimal(0);
-        } else
+        } else {
             return subscriptionService.subscriptionBalanceDue(entity, new Date());
+        }
     }
 
     /**
