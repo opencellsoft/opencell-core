@@ -227,6 +227,15 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getCTValuesForDate", MeveoFunctionMapper.class.getMethod("getCTValues", String.class, Date.class, String.class, Object.class, String.class,
                 Object.class, String.class, Object.class, String.class, Object.class, String.class, Object.class));
 
+			for (Method method : Math.class.getMethods()) {
+				int modifiers = method.getModifiers();
+				Class<?> retType = method.getReturnType();
+				
+				if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers) && !(retType == Void.TYPE)) {
+					String name = method.getName();
+					addFunction("math", name, Math.class.getMethod(name, method.getParameterTypes()));
+				}
+			}
             // addFunction("mv", "call", MeveoFunctionMapper.class.getMethod("call", String.class, String.class,String.class, Object[].class));
         } catch (NoSuchMethodException | SecurityException e) {
             Logger log = LoggerFactory.getLogger(this.getClass());
