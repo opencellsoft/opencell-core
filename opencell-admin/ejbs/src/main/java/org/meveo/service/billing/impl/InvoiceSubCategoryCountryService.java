@@ -322,9 +322,9 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
     }
 
     /**
-     * Determine applicable tax for a given seller/buyer and invoice subcategory combination
+     * Determine applicable tax for a given seller/buyer and invoice subCategory combination
      * 
-     * @param invoiceSubCategory Invoice subcategory
+     * @param invoiceSubCategory Invoice subCategory
      * @param seller Seller
      * @param billingAccount Billing account
      * @param date Date to determine tax validity

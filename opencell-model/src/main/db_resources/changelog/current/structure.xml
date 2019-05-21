@@ -239,4 +239,24 @@
         <addDefaultValue tableName="meveo_job_instance" columnName="exclude_inv_without_amount" defaultValueNumeric="0" />
         <sql>update ${db.schema.adapted}meveo_job_instance set exclude_inv_without_amount = 0 where exclude_inv_without_amount is null</sql>
     </changeSet>
+    
+        
+    <changeSet id="#4282_20190520" author="AndriusKarpavicius">
+       <addColumn tableName="billing_rated_transaction">
+           <column name="service_instance_id" type="bigInt"/>
+       </addColumn>
+    </changeSet>
+
+    <changeSet id="#4282_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_rated_transaction set service_instance_id = wo.service_instance_id from ${db.schema.adapted}billing_wallet_operation wo where
+               wo.rated_transaction_id=billing_rated_transaction.id and billing_rated_transaction.id not in (select rated_transaction_id from ${db.schema.adapted}billing_wallet_operation where rated_transaction_id is not null group by rated_transaction_id having count(*)>1 )
+        </sql>
+    </changeSet>
+
+    <changeSet id="#4282_20190520-M" author="AndriusKarpavicius" dbms="mysql">
+        <sql>
+            update ${db.schema.adapted}billing_rated_transaction rt join ${db.schema.adapted}billing_wallet_operation wo on wo.rated_transaction_id=rt.id set rt.service_instance_id = wo.service_instance_id where wo.service_instance_id is not null
+        </sql>
+    </changeSet>
+    
 </databaseChangeLog> 
