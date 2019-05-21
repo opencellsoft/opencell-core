@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 
@@ -14,7 +13,6 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.service.base.PersistenceService;
-import org.slf4j.Logger;
 
 /**
  * SecuredBusinessEntity Service base class.
@@ -50,7 +48,7 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
     public boolean isEntityAllowed(BusinessEntity entity, User user, boolean isParentEntity) {
 
         // Doing this check first allows verification without going to DB.
-        if (entityFoundInSecuredEntities(entity, user.getSecuredEntities())) {
+        if (entityFoundInSecuredEntities(entity, user.getAllSecuredEntities())) {
             // Match was found authorization successful
             return true;
         }
