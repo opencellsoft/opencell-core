@@ -2183,6 +2183,7 @@ public class SubscriptionApi extends BaseApi {
         }
 
         subscriptionService.create(subscription);
+        userAccount.getSubscriptions().add(subscription);
 
         if (postData.getProducts() != null) {
             for (ProductDto productDto : postData.getProducts().getProducts()) {
