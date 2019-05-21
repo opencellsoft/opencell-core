@@ -948,4 +948,29 @@
 			tableName="adm_role_secured_entity" />
 	</changeSet>
     
+    <changeSet id="#4054_20191405 - Encryption" author="MohamedElYoussoufi">
+    	<sql>
+			alter table ${db.schema.adapted}crm_provider alter column bic type character varying(100);
+			alter table ${db.schema.adapted}crm_provider alter column iban type character varying(100);
+			
+			alter table ${db.schema.adapted}ar_payment_token alter column bic type character varying(100);
+			alter table ${db.schema.adapted}ar_payment_token alter column iban type character varying(100);
+			
+			alter table ${db.schema.adapted}ar_payment_gateway alter column bic type character varying(100);
+			alter table ${db.schema.adapted}ar_payment_gateway alter column iban type character varying(100);
+			
+			alter table ${db.schema.adapted}crm_seller alter column phone type character varying(100);
+			alter table ${db.schema.adapted}crm_seller alter column mobile type character varying(100);
+			
+			alter table ${db.schema.adapted}account_entity alter column phone type character varying(100);
+			alter table ${db.schema.adapted}account_entity alter column mobile type character varying(100);
+			
+			alter table ${db.schema.adapted}adm_user alter column firstname type character varying(100);
+			alter table ${db.schema.adapted}adm_user alter column lastname type character varying(100);
+			
+			alter table ${db.schema.adapted}account_entity alter column firstname type character varying(100);
+			alter table ${db.schema.adapted}account_entity alter column lastname type character varying(100);
+    	</sql>
+    </changeSet>
+    
 </databaseChangeLog>
