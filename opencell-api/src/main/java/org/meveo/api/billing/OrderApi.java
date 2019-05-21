@@ -57,6 +57,7 @@ import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.CountryService;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -131,6 +132,9 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private BillingCycleService billingCycleService;
+    
+    @Inject
+    private SellerService sellerService;
 
     /**
      * Register an order from TMForumApi.
@@ -663,7 +667,7 @@ public class OrderApi extends BaseApi {
     }
 
     private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem,
-            Subscription subscription, String orderNumber) throws BusinessException {
+            Subscription subscription, String orderNumber) throws BusinessException ,InvalidParameterException{
 
         log.debug("Instantiating product from product template {} for order {} line {}", productTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
@@ -678,10 +682,19 @@ public class OrderApi extends BaseApi {
         String criteria2 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_2.getCharacteristicName(), String.class, null);
         String criteria3 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_3.getCharacteristicName(), String.class, null);
 
+        String sellerCode = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_SELLER.getCharacteristicName(), String.class, null);
         Seller seller = null;
         if (subscription != null) {
             seller = subscription.getSeller();
-        } else {
+        } else {        	
+             if (sellerCode != null) {
+                 seller = sellerService.findByCode(sellerCode);
+                 if (seller == null) {                     
+                     throw new InvalidParameterException("seller", sellerCode);
+                 }
+             }
+        }
+        if(seller == null){
             seller = orderItem.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         }
 
