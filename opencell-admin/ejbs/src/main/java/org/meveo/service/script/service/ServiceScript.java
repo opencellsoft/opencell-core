@@ -10,6 +10,8 @@ import org.meveo.service.script.module.ModuleScript;
  **/
 public class ServiceScript extends ModuleScript implements ServiceScriptInterface {
 
+    private static final long serialVersionUID = 8671655503725431499L;
+
     public static String CONTEXT_ACTIVATION_DATE = "CONTEXT_ACTIVATION_DATE";
     public static String CONTEXT_SUSPENSION_DATE = "CONTEXT_SUSPENSION_DATE";
     public static String CONTEXT_TERMINATION_DATE = "CONTEXT_TERMINATION_DATE";
@@ -41,13 +43,13 @@ public class ServiceScript extends ModuleScript implements ServiceScriptInterfac
 
     }
 
-	@Override
-	public void beforeCreateServiceFromBSM(Map<String, Object> methodContext) throws BusinessException {
-		
-	}
+    @Override
+    public void beforeCreateServiceFromBSM(Map<String, Object> methodContext) throws BusinessException {
 
-	@Override
-	public void afterCreateServiceFromBSM(Map<String, Object> methodContext) throws BusinessException {
-		
-	}
+    }
+
+    @Override
+    public void afterCreateServiceFromBSM(Map<String, Object> methodContext) throws BusinessException {
+
+    }
 }

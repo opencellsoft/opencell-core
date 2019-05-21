@@ -13,6 +13,8 @@ import org.meveo.service.script.Script;
  */
 public class PaymentScript extends Script implements PaymentScriptInterface {
 
+    private static final long serialVersionUID = 2133629637888034337L;
+
     /** The Constant CONTEXT_ALIAS. */
     public static final String CONTEXT_ALIAS = "CONTEXT_ALIAS";
 

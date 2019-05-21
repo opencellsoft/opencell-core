@@ -154,7 +154,7 @@
 																	</h:outputText>
 																</p:column>
 																<p:column headerText="#{messages['subscription.offer']}">
-																	<h:outputText value="#{rated.offerCode}" />
+																	<h:outputText value="#{not empty rated.offerTemplate ? rated.offerTemplate.code : ''}" />
 																</p:column>
 																<p:column headerText="#{messages['walletOperation.chargeInstance']}">
 																	<ui:repeat value="#{ratedTransactionBean.getWalletOperationCodes(rated.getId())}" var="wo" varStatus="loop">

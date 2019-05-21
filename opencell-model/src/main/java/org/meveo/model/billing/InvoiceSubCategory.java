@@ -95,7 +95,7 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tax_script_instance_id")
     private ScriptInstance taxScript;
 

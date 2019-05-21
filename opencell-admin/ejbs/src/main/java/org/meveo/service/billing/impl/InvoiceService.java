@@ -60,7 +60,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.poi.util.IOUtils;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
@@ -126,7 +128,6 @@ import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInterface;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -547,11 +548,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param excludeInvoicesWithoutAmount exclude invoices without amount.
      * @return list of invoice's which doesn't have the account operation, and have an amount
      */
-    public List<Long> queryInvoiceIdsWithNoAccountOperation(BillingRun br, boolean excludeInvoicesWithoutAmount) {
+    public List<Long> queryInvoiceIdsWithNoAccountOperation(BillingRun br, boolean excludeInvoicesWithoutAmount, Boolean invoiceAccountable) {
         try {
             QueryBuilder qb = queryInvoiceIdsWithNoAccountOperation(br);
             if (excludeInvoicesWithoutAmount) {
                 qb.addSql("i.amount != 0 ");
+            }
+            if (invoiceAccountable != null) {
+                qb.addSql("i.invoiceType.invoiceAccountable = ".concat(invoiceAccountable.toString()));	
             }
             return qb.getIdQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
@@ -943,7 +947,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             IBillableEntity entity, String scriptInstanceCode) throws BusinessException {
         try {
             log.debug("execute priceplan script " + scriptInstanceCode);
-            ScriptInterface script = scriptInstanceService.getCachedScriptInstance(scriptInstanceCode);
             HashMap<String, Object> context = new HashMap<String, Object>();
             context.put(Script.CONTEXT_ENTITY, entity);
             context.put(Script.CONTEXT_CURRENT_USER, currentUser);
@@ -951,7 +954,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             context.put("br", billingRun);
             context.put("invoiceType", invoiceType);
             context.put("ratedTransactions", ratedTransactions);
-            script.execute(context);
+            scriptInstanceService.executeCached(scriptInstanceCode, context);
             return (Map<InvoiceType, List<RatedTransaction>>) context.get(Script.RESULT_VALUE);
         } catch (Exception e) {
             log.error("Error when run script {}", scriptInstanceCode, e);
@@ -2482,8 +2485,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 return false;
             }
             if (electronicBilling && mailingTypeEnum.equals(mailingType)) {
-                emailSender.send(seller.getContactInformation().getEmail(), to, to, cc, null, emailTemplate.getSubject(), emailTemplate.getTextContent(),
-                    emailTemplate.getHtmlContent(), files, null);
+                Map<Object, Object> params = new HashedMap();
+                params.put("invoice", invoice);
+                String subject = ValueExpressionWrapper.evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                String content = ValueExpressionWrapper.evaluateExpression(emailTemplate.getTextContent(), params, String.class);
+                String contentHtml = ValueExpressionWrapper.evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                emailSender.send(seller.getContactInformation().getEmail(), to, to, cc, null, subject, content, contentHtml, files, null);
                 invoice.setAlreadySent(true);
                 update(invoice);
 
