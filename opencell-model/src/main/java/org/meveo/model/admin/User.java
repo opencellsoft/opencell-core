@@ -325,7 +325,56 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
         } catch (ClassNotFoundException e) {
             // do nothing
         }
+        
+		// secured entities from role
+		if (getRoles() != null && !getRoles().isEmpty()) {
+			for (Role r : getRoles()) {
+				try {
+					for (SecuredEntity securedEntity : r.getSecuredEntities()) {
+						Class<?> securedBusinessEntityClass = Class.forName(securedEntity.getEntityClass());
+						if (securedEntitiesMap.get(securedBusinessEntityClass) == null) {
+							securedEntitySet = new HashSet<>();
+							securedEntitiesMap.put(securedBusinessEntityClass, securedEntitySet);
+						}
+						securedEntitiesMap.get(securedBusinessEntityClass).add(securedEntity);
+					}
+				} catch (ClassNotFoundException e) {
+					// do nothing
+				}
+			}
+		}
+        
     }
+    
+    /**
+     * Returns all the secured entities associated with this user's roles.
+     * @return list of secured entities
+     */
+	public List<SecuredEntity> getRoleSecuredEntities() {
+		List<SecuredEntity> result = new ArrayList<>();
+
+		if (getRoles() != null && !getRoles().isEmpty()) {
+			for (Role r : getRoles()) {
+				if (r.getSecuredEntities() != null && !r.getSecuredEntities().isEmpty()) {
+					result.addAll(r.getSecuredEntities());
+				}
+			}
+		}
+
+		return result;
+	}
+	
+	/**
+	 * Returns all the secured entities of this user and all its roles.
+	 * @return list of secured entities
+	 */
+	public List<SecuredEntity> getAllSecuredEntities() {
+		List<SecuredEntity> result = new ArrayList<>();
+		result.addAll(getSecuredEntities());
+		result.addAll(getRoleSecuredEntities());
+		
+		return result;
+	}
 
     public UserHierarchyLevel getUserLevel() {
         return userLevel;
