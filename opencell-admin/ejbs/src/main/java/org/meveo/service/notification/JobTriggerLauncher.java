@@ -19,6 +19,8 @@ import org.slf4j.Logger;
  * Lauch a jobInstance and create a notificationHistory
  * 
  * @author anasseh
+ * @author Edward P. Legaspi
+ * @lastMofiedVersion 7.0
  * @since 19.06.2015
  * 
  */
@@ -39,7 +41,7 @@ public class JobTriggerLauncher {
 
     @Inject
     private CurrentUserProvider currentUserProvider;
-
+    
     /**
      * Launch job as fired notification result
      * 
@@ -49,6 +51,18 @@ public class JobTriggerLauncher {
      *        expirations), current user might be lost, thus there is a need to reestablish.
      */
     @Asynchronous
+    public void launchAsync(JobTrigger jobTrigger, Object entityOrEvent, MeveoUser lastCurrentUser) {
+    	launch(jobTrigger, entityOrEvent, lastCurrentUser);
+    }
+
+    /**
+     * Launch job as fired notification result
+     * 
+     * @param jobTrigger Job type notification that was fired
+     * @param entityOrEvent Entity or event that triggered notification
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     */
     public void launch(JobTrigger jobTrigger, Object entityOrEvent, MeveoUser lastCurrentUser) {
         
 

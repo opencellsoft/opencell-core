@@ -27,6 +27,8 @@ import org.meveo.service.base.QueryService;
 @Stateless
 public class QueryApi extends BaseApi {
 
+    private static Integer RESULT_SET_MAX_SIZE = 1000;
+
     @Inject
     private QueryService queryService;
 
@@ -62,11 +64,12 @@ public class QueryApi extends BaseApi {
      * @param limit - number of records to retrieve
      * @param sortBy - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder - sort order.
+     * @param groupBy - Grouping - group by clause, allow to use aggregation funciton like sum, avg, count.
      * 
      * @return QueryResponse object
      * @throws MeveoApiException when query does not start with "from" or when query fails
      */
-    public QueryResponse list(String query, String alias, String fields, Map<String, Object> params, String offset, String limit, String sortBy, String sortOrder)
+    public QueryResponse list(String query, String alias, String fields, Map<String, Object> params, String offset, String limit, String sortBy, String sortOrder, String groupBy)
             throws MeveoApiException {
 
         if (StringUtils.isEmpty(query)) {
@@ -87,6 +90,7 @@ public class QueryApi extends BaseApi {
         validateQueryFragment(alias);
         validateQueryFragment(fields);
         validateQueryFragment(sortBy);
+        validateQueryFragment(groupBy);
 
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             validateQueryFragment(entry.getValue());
@@ -107,7 +111,7 @@ public class QueryApi extends BaseApi {
 
         if (StringUtils.isNumeric(limit)) {
             maxRows = Integer.parseInt(limit);
-            maxRows = maxRows > 100 ? 100 : maxRows;
+            maxRows = maxRows > RESULT_SET_MAX_SIZE ? RESULT_SET_MAX_SIZE : maxRows;
         }
 
         if (StringUtils.isEmpty(sortBy)) {
@@ -119,7 +123,7 @@ public class QueryApi extends BaseApi {
 
         String json = "";
         try {
-            List<Map<String, Object>> rows = queryService.executeQuery(query, alias, entityFields, params, start, maxRows, sortBy, sortOrder);
+            List<Map<String, Object>> rows = queryService.executeQuery(query, alias, entityFields, params, start, maxRows, sortBy, sortOrder, groupBy);
             json = JsonUtils.toJson(rows, false);
         } catch (Throwable e) {
             throw new MeveoApiException(e);

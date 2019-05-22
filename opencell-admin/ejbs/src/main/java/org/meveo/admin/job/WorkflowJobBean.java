@@ -53,41 +53,38 @@ public class WorkflowJobBean extends BaseJobBean {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running with parameter={}", jobInstance.getParametres());
 
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+
         try {
-            Long nbRuns = new Long(1);
-            Long waitingMillis = new Long(0);
+
             String filterCode = null;
             String workflowCode = null;
             try {
-                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "wfJob_nbRuns");
-                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "wfJob_waitingMillis$");
-                if (nbRuns == -1) {
-                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
-                }
-                filterCode   = fetchCFEntityReferenceCode(jobInstance, "wfJob_filter");
+                filterCode = fetchCFEntityReferenceCode(jobInstance, "wfJob_filter");
                 workflowCode = fetchCFEntityReferenceCode(jobInstance, "wfJob_workflow");
-                
             } catch (Exception e) {
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
                 log.error("error:", e);
-                nbRuns = new Long(1);
-                waitingMillis = new Long(0);
             }
-            
+
             Workflow workflow = workflowService.findByCode(workflowCode);
             if (workflow == null) {
-               throw new BusinessException(String.format("No Workflow found with code = [%s]", workflowCode));  
+                throw new BusinessException(String.format("No Workflow found with code = [%s]", workflowCode));
             }
-            
+
             Filter filter = filterService.findByCode(filterCode);
             if (filter == null) {
-                filter = this.filterByWfType(workflow.getWfType()); 
+                filter = this.filterByWfType(workflow.getWfType());
             }
 
             log.debug("filter:{}", filter == null ? null : filter.getCode());
@@ -131,7 +128,7 @@ public class WorkflowJobBean extends BaseJobBean {
             result.registerError(e.getMessage());
         }
     }
-    
+
     /**
      * Fetch CF entity reference code by CF code.
      *
@@ -147,7 +144,7 @@ public class WorkflowJobBean extends BaseJobBean {
             }
         } catch (Exception e) {
             log.error("Error on fetchCFEntityReferenceCode : ", e);
-        } 
+        }
         return null;
     }
 
@@ -191,7 +188,7 @@ public class WorkflowJobBean extends BaseJobBean {
     /**
      * Checks if is not WorkFlow super class.
      *
-     * @param The class type 
+     * @param The class type
      * @return true, if is not WF super class
      */
     private boolean isNotWFSuperClass(Type type) {
@@ -199,7 +196,7 @@ public class WorkflowJobBean extends BaseJobBean {
             return true;
         }
         Type rawType = ((ParameterizedType) type).getRawType();
-        return rawType != WorkflowType.class  && rawType != WFTypeScript.class;
+        return rawType != WorkflowType.class && rawType != WFTypeScript.class;
     }
 
 }

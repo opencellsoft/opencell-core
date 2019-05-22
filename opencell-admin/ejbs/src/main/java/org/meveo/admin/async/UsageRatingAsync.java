@@ -19,7 +19,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
-import org.slf4j.Logger;
 
 /**
  * @author anasseh
@@ -36,29 +35,35 @@ public class UsageRatingAsync {
     private JobExecutionService jobExecutionService;
 
     @Inject
-    private Logger log;
-
-    @Inject
     private CurrentUserProvider currentUserProvider;
 
     /**
-     * Rate usage charges for a list of EDRs. One EDR at a time in a separate transaction.
+	 * Rate usage charges for a list of EDRs. One EDR at a time in a separate
+	 * transaction.
      * 
-     * @param ids A list of EDR ids
-     * @param result Job execution result
-     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
-     *        expirations), current user might be lost, thus there is a need to reestablish.
+	 * @param ids
+	 *            A list of EDR ids
+	 * @param result
+	 *            Job execution result
+	 * @param lastCurrentUser
+	 *            Current user. In case of multitenancy, when user authentication is
+	 *            forced as result of a fired trigger (scheduled jobs, other timed
+	 *            event expirations), current user might be lost, thus there is a
+	 *            need to reestablish.
      * @return Future String
-     * @throws BusinessException BusinessException
+	 * @throws BusinessException
+	 *             BusinessException
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, MeveoUser lastCurrentUser) throws BusinessException {
+	public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, MeveoUser lastCurrentUser)
+			throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-
+        int i = 0;
         for (Long id : ids) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_FAST == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                 break;
             }
             try {

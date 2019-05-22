@@ -410,6 +410,8 @@ public class EntityToDtoConverter {
             setFormattedMapValue(dto, cft, (Map) value);
         } else if (value instanceof EntityReferenceWrapper) {
             dto.setEntityReferenceValue(new EntityReferenceDto((EntityReferenceWrapper) value));
+        } else if (value instanceof Boolean) {
+            dto.setBooleanValue((Boolean) value);
         }
 
         return dto;

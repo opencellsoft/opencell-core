@@ -71,7 +71,7 @@ public class CheckPaymentScheduleCallbackJob extends Job {
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setValueRequired(false);
-        customFieldNbRuns.setDefaultValue("1");
+        customFieldNbRuns.setDefaultValue("-1");
         result.put("nbRuns", customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();

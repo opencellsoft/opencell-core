@@ -43,7 +43,7 @@
 	                  <hftl:column label="#{messages['BusinessEntity.description']}" field="currentStatus.description" entity="${wfInstance}" />
 	                  
 	                  <p:column headerText="#{messages['commons.actions']}">
-                             <p:commandButton icon="ui-icon-document" action="#{workflowInstanceHistoryBean.selectGenericWF(wfInstance.genericWorkflow)}"
+                             <p:commandButton icon="ui-icon-document" action="#{workflowInstanceHistoryBean.selectWFInstance(wfInstance)}"
                                  update=":#{component.namingContainer.parent.namingContainer.clientId}:wfHistoryDetails"
                      			 process="@this" />
 	                  </p:column>
@@ -52,9 +52,9 @@
 	  </h:panelGroup>
 
 	  <h:panelGroup id="wfHistoryDetails">
-	  		<c:if test="#{workflowInstanceHistoryBean.selectedGenericWF != null}">
-	  			<p:fieldset legend="#{messages['workflowHistory.tabLabel']} for #{workflowInstanceHistoryBean.selectedGenericWF.code}">
-		             <p:dataTable var="histo" backingBean="#{workflowInstanceHistoryBean}" value="#{workflowInstanceHistoryBean.getWorkflowHistories(entity)}" paginator="true" rows="10" 
+	  		<c:if test="#{workflowInstanceHistoryBean.selectedWFInstance != null}">
+	  			<p:fieldset legend="#{messages['workflowHistory.tabLabel']} for #{workflowInstanceHistoryBean.selectedWFInstance.genericWorkflow.code}">
+		             <p:dataTable var="histo" backingBean="#{workflowInstanceHistoryBean}" value="#{workflowInstanceHistoryBean.getWorkflowHistories()}" paginator="true" rows="10"
 		                 sortField="#{'actionDate'}" sortBy="#{histo.actionDate}" sortOrder="DESCENDING" paginatorAlwaysVisible="false"
 		                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20"
 		                 lazy="false" styleClass="custom-grid" reflow="true">
