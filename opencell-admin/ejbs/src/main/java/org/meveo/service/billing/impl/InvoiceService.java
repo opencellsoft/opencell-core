@@ -2251,6 +2251,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         QueryBuilder qb = new QueryBuilder(SubCategoryInvoiceAgregate.class, "c");
         qb.addCriterionEntity("invoice", invoice);
         qb.addBooleanCriterion("discountAggregate", false);
+
         try {
             List<SubCategoryInvoiceAgregate> resultList = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager()).getResultList();
             return resultList;
