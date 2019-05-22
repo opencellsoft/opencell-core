@@ -53,15 +53,15 @@ import org.meveo.service.base.PersistenceService;
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
 
     /**
-     * Check if job is still running (or is stopped) every 50 records being processed (per thread). Value to be used in jobs that run slower. 
+     * Check if job is still running (or is stopped) every 50 records being processed (per thread). Value to be used in jobs that run slower.
      */
     public static int CHECK_IS_JOB_RUNNING_EVERY_NR = 50;
-    
+
     /**
-     * Check if job is still running (or is stopped) every 100 records being processed (per thread). Value to be used in jobs that run faster. 
+     * Check if job is still running (or is stopped) every 100 records being processed (per thread). Value to be used in jobs that run faster.
      */
     public static int CHECK_IS_JOB_RUNNING_EVERY_NR_FAST = 100;
-    
+
     /**
      * job instance service.
      */
@@ -125,30 +125,24 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * 
      * @param job Job implementation
      * @param jobInstance Job instance
-     * @param continueSameJob Continue executing same job
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void executeNextJob(Job job, JobInstance jobInstance, boolean continueSameJob, MeveoUser lastCurrentUser) {
+    public void executeNextJob(Job job, JobInstance jobInstance, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         try {
-            if (continueSameJob) {
-                log.info("Continue executing job {}", jobInstance);
-                executeJobWithParameters(jobInstance, null);
-
-            } else if (jobInstance.getFollowingJob() != null) {
+            if (jobInstance.getFollowingJob() != null) {
                 JobInstance nextJob = jobInstanceService.retrieveIfNotManaged(jobInstance.getFollowingJob());
-                log.info("Executing next job {}", nextJob.getCode());
+                log.info("Executing next job {} for {}", nextJob.getCode(), jobInstance.getCode());
                 executeJobWithParameters(nextJob, null);
             }
-        } catch (Exception e) { // FIXME:BusinessException e) {
-            log.error("Failed to execute next job or continue same job", e);
+        } catch (BusinessException e) {
+            log.error("Failed to execute next job", e);
         }
-        log.info("JobExecutionService executeNextJob End");
     }
 
     /**

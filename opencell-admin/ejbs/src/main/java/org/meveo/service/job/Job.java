@@ -124,8 +124,14 @@ public abstract class Job {
 
                 if (jobCompleted != null && jobExecutionService.isJobRunningOnThis(jobInstance)) {
                     jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
-                    MeveoUser lastCurrentUser = currentUser.unProxy();
-                    jobExecutionService.executeNextJob(this, jobInstance, !jobCompleted, lastCurrentUser);
+
+                    if (!jobCompleted) {
+                        execute(jobInstance, null);
+                        
+                    } else if (jobInstance.getFollowingJob() != null){
+                        MeveoUser lastCurrentUser = currentUser.unProxy();
+                        jobExecutionService.executeNextJob(this, jobInstance, lastCurrentUser);
+                    }
                 }
 
             } catch (Exception e) {

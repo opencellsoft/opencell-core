@@ -248,19 +248,19 @@
        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_service_instance" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />       
     </changeSet>
-
+<!-- Takes many hours on 30M RT
     <changeSet id="#4282_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
         <sql>update ${db.schema.adapted}billing_rated_transaction set service_instance_id = wo.service_instance_id from ${db.schema.adapted}billing_wallet_operation wo where
-               wo.rated_transaction_id=billing_rated_transaction.id and billing_rated_transaction.id not in (select rated_transaction_id from ${db.schema.adapted}billing_wallet_operation where rated_transaction_id is not null group by rated_transaction_id having count(*)>1 )
+               wo.rated_transaction_id=billing_rated_transaction.id
         </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction set service_instance_id =null where billing_rated_transaction.id in (select rated_transaction_id from ${db.schema.adapted}billing_wallet_operation where rated_transaction_id is not null group by rated_transaction_id having count(*)>1 ) </sql>
     </changeSet>
 
     <changeSet id="#4282_20190520-M" author="AndriusKarpavicius" dbms="mysql">
-        <sql>
-            update ${db.schema.adapted}billing_rated_transaction rt join ${db.schema.adapted}billing_wallet_operation wo on wo.rated_transaction_id=rt.id set rt.service_instance_id = wo.service_instance_id where wo.service_instance_id is not null
+        <sql>update ${db.schema.adapted}billing_rated_transaction rt join ${db.schema.adapted}billing_wallet_operation wo on wo.rated_transaction_id=rt.id set rt.service_instance_id = wo.service_instance_id where wo.service_instance_id is not null
         </sql>
     </changeSet>
-
+ -->
     <changeSet id="#4290_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
         <sql>update ${db.schema.adapted}billing_service_instance set minimum_amount_el = st.minimum_amount_el, minimum_label_el = st.minimum_label_el from ${db.schema.adapted}cat_service_template st where
                service_template_id = st.id and billing_service_instance.minimum_amount_el is not null
