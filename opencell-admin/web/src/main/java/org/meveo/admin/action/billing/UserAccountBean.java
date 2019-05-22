@@ -602,11 +602,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
             messages.info(new BundleKey("messages", "productInstance.saved.ok"));
         }
     }
-    public List<UserAccount> listAllUserAccountWithBillingAccountAndDiscountPlan() {
-        List<UserAccount> userAccounts = super.listAll();
-        userAccounts.forEach(userAccount -> userAccount.getBillingAccount().getDiscountPlanInstances().size());
-        return userAccounts;
-    }
 
     public List<Seller> listSellers() {
         if(productInstance!= null && productInstance.getProductTemplate() != null) {

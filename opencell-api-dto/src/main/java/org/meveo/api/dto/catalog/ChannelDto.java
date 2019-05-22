@@ -32,6 +32,7 @@ public class ChannelDto extends EnableBusinessDto {
      */
     public ChannelDto(Channel channel) {
         super(channel);
+        id = channel.getId();
     }
 
     @Override

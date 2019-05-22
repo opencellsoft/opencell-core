@@ -10,6 +10,8 @@ import org.meveo.service.script.Script;
  **/
 public class ModuleScript extends Script implements ModuleScriptInterface {
 
+    private static final long serialVersionUID = -445948060788051352L;
+
     @Override
     public void preInstallModule(Map<String, Object> methodContext) throws BusinessException {
     }
