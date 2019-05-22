@@ -94,7 +94,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 log.info(job.getClass().getName() + resultToPersist.toString());
                 isPersistResult = true;
             } else {
-                log.info(job.getClass().getName() + ": nothing to do");
+                log.info("{}/{}: No items were found to process", job.getClass().getName(), jobInstance.getCode());
                 isPersistResult = "true".equals(paramBeanFactory.getInstance().getProperty("meveo.job.persistResult", "true"));
             }
             if (isPersistResult) {
