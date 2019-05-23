@@ -20,6 +20,7 @@ package org.meveo.model.communication;
 
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -41,6 +42,7 @@ import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
+@Cacheable
 @ExportIdentifier({ "code" })
 @Table(name = "com_message_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @DiscriminatorColumn(name = "media")
