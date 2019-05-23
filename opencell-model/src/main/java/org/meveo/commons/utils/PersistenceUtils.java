@@ -5,6 +5,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 import org.meveo.model.IEntity;
 
+import java.lang.reflect.Modifier;
 
 /**
  * @author Abdellatif BARI
@@ -26,6 +27,18 @@ public class PersistenceUtils {
         }
         return entity;
     }
+
+    public static <T> void initializeAllProperties(T entity) {
+        ReflectionUtils.getAllFields(entity.getClass()).stream().filter(field -> !Modifier.isStatic(field.getModifiers())).forEach(field -> {
+            field.setAccessible(true);
+            try {
+                Hibernate.initialize(field.get(entity));
+            } catch (ReflectiveOperationException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 
     @SuppressWarnings("unchecked")
     public static Class<IEntity> getClassForHibernateObject(IEntity object) {
