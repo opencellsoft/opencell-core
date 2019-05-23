@@ -41,13 +41,14 @@ import org.meveo.model.scripts.ScriptInstance;
  * @author Edward P. Legaspi
  * @author Bahije Mounir
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @Cacheable
 @ExportIdentifier({ "code" })
 @Table(name = "billing_invoice_type", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@CustomFieldEntity(cftCodePrefix = "INVOICE_TYPE")
+@CustomFieldEntity(cftCodePrefix = "InvoiceType")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_type_seq"), })
 public class InvoiceType extends BusinessCFEntity {
@@ -84,6 +85,14 @@ public class InvoiceType extends BusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "matching_auto")
     private boolean matchingAuto = false;
+    
+
+    /** 
+     * Used to decide if AccountOperations will be created or not , during AO_Job execution
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "invoice_accountable")
+    private boolean invoiceAccountable = true;
 
     @Column(name = "billing_template_name")
     @Size(max = 50)
@@ -111,7 +120,7 @@ public class InvoiceType extends BusinessCFEntity {
     @Size(max = 2000)
     private String billingTemplateNameEL;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tax_script_instance_id")
     private ScriptInstance taxScript;
 
@@ -123,7 +132,7 @@ public class InvoiceType extends BusinessCFEntity {
     @Size(max = 2000)
     private String occTemplateNegativeCodeEl;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email_template_id")
     private EmailTemplate emailTemplate;
 
@@ -324,4 +333,11 @@ public class InvoiceType extends BusinessCFEntity {
         this.mailingType = mailingType;
     }
 
+    public boolean isInvoiceAccountable() {
+		return invoiceAccountable;
+	}
+
+	public void setInvoiceAccountable(boolean invoiceAccountable) {
+		this.invoiceAccountable = invoiceAccountable;
+	}
 }

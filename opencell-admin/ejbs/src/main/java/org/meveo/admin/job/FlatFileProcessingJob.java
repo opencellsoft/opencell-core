@@ -29,6 +29,8 @@ import org.meveo.service.job.Job;
  * @author anasseh
  *
  * @lastModifiedVersion willBeSetLater
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class FlatFileProcessingJob extends Job {
@@ -39,7 +41,7 @@ public class FlatFileProcessingJob extends Job {
 
     private static final String FLAT_FILE_PROCESSING_JOB_REJECT_DIR = "FlatFileProcessingJob_rejectDir";
 
-    private static final String JOB_FLAT_FILE_PROCESSING_JOB = "JOB_FlatFileProcessingJob";
+    private static final String JOB_FLAT_FILE_PROCESSING_JOB = "JobInstance_FlatFileProcessingJob";
 
     private static final String FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR = "FlatFileProcessingJob_outputDir";
 
@@ -142,7 +144,7 @@ public class FlatFileProcessingJob extends Job {
                 f.mkdirs();
                 log.debug("inputDir {} creation ok", inputDir);
             }
-            File[] files = FileUtils.getFilesForParsing(inputDir, fileExtensions,fileNameFilter);
+            File[] files = FileUtils.listFilesByNameFilter(inputDir, fileExtensions,fileNameFilter);
             if (files == null || files.length == 0) {
                 String msg = String.format("there is no file in %s with extension %s", inputDir, fileExtensions);
                 log.debug(msg);
@@ -181,7 +183,7 @@ public class FlatFileProcessingJob extends Job {
         inputDirectoryCF.setValueRequired(true);
         inputDirectoryCF.setMaxValue(256L);
         result.put(FLAT_FILE_PROCESSING_JOB_INPUT_DIR, inputDirectoryCF);
-        
+
          CustomFieldTemplate archiveDirectoryCF = new CustomFieldTemplate();
          archiveDirectoryCF.setCode(FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR);
          archiveDirectoryCF.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);

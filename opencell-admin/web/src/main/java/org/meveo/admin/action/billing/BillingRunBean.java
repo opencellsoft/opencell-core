@@ -223,7 +223,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
     public String cancelInvoicing() {
         try {
             entity = billingRunService.refreshOrRetrieve(entity);
-            entity.setStatus(BillingRunStatusEnum.CANCELLED);
+            entity.setStatus(BillingRunStatusEnum.CANCELED);
             entity = billingRunService.update(entity);
             return "billingRuns";
         } catch (Exception e) {
@@ -236,7 +236,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
     public String cancelConfirmedInvoicing() {
         try {
             entity = billingRunService.refreshOrRetrieve(entity);
-            entity.setStatus(BillingRunStatusEnum.CANCELLED);
+            entity.setStatus(BillingRunStatusEnum.CANCELED);
             billingRunService.cleanBillingRun(entity);
             entity = billingRunService.update(entity);
             return "billingRuns";
@@ -250,7 +250,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
 
     public String rerateConfirmedInvoicing() {
         try {
-            billingRunService.retateBillingRunTransactions(entity);
+            billingRunService.rerateBillingRunTransactions(entity);
             return cancelConfirmedInvoicing();
 
         } catch (Exception e) {
@@ -262,7 +262,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
 
     public String rerateInvoicing() {
         try {
-            billingRunService.retateBillingRunTransactions(entity);
+            billingRunService.rerateBillingRunTransactions(entity);
             return cancelInvoicing();
 
         } catch (Exception e) {

@@ -1,15 +1,5 @@
 package org.meveo.api.billing;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
@@ -81,10 +71,20 @@ import org.tmf.dsmapi.catalog.resource.order.ProductOrderItem;
 import org.tmf.dsmapi.catalog.resource.order.ProductRelationship;
 import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 /**
  * @author Andrius Karpavičius
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0.2
+ * @author Mounir Bahije
+ * @lastModifiedVersion 7.0
  *
  */
 @Stateless
@@ -578,6 +578,8 @@ public class OrderApi extends BaseApi {
         if (subscriptionService.findByCode(subscriptionCode) != null) {
             throw new BusinessException("Subscription with code " + subscriptionCode + " already exists");
         }
+        String subscriptionSeller = (String) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_SELLER.getCharacteristicName(), String.class,
+                null);
 
         SubscriptionDto subscriptionDto = new SubscriptionDto();
 
@@ -590,6 +592,7 @@ public class OrderApi extends BaseApi {
             (Date) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
         subscriptionDto.setRenewalRule(extractSubscriptionRenewalDto(subscriptionProduct));
         subscriptionDto.setCustomFields(extractCustomFields(subscriptionProduct, Subscription.class));
+        subscriptionDto.setSeller(subscriptionSeller);
 
         // instantiate and activate services
         extractServices(subscriptionDto, services);
@@ -640,6 +643,9 @@ public class OrderApi extends BaseApi {
             (Date) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
         subscriptionDto.setRenewalRule(extractSubscriptionRenewalDto(productOrderItem.getProduct()));
         subscriptionDto.setCustomFields(extractCustomFields(productOrderItem.getProduct(), Subscription.class));
+        if (subscription.getSeller() != null) {
+                subscriptionDto.setSeller(subscription.getSeller().getCode());
+        }
 
         // Services are expressed as child products
         // instantiate, activate and terminate services

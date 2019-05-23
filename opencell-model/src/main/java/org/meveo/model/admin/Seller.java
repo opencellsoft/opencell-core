@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -65,13 +66,15 @@ import org.meveo.model.shared.ContactInformation;
  * @author akadid abdelmounaim
  * @author Khalid HORRI
  * @author Amine BEN AICHA
- * @lastModifiedVersion 5.3
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 
 @Entity
 @WorkflowedEntity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "SELLER", inheritCFValuesFrom = "seller", inheritFromProvider = true)
+@Cacheable
+@CustomFieldEntity(cftCodePrefix = "Seller", inheritCFValuesFrom = "seller", inheritFromProvider = true)
 @ExportIdentifier({ "code" })
 @Table(name = "crm_seller", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -157,7 +160,7 @@ public class Seller extends BusinessCFEntity implements IWFEntity {
     /**
      * Business account model that created this Seller
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bam_id")
     private BusinessAccountModel businessAccountModel;
 
@@ -173,7 +176,7 @@ public class Seller extends BusinessCFEntity implements IWFEntity {
     /**
      * General Ledger association
      */
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "general_ledger_id")
     private GeneralLedger generalLedger;
 

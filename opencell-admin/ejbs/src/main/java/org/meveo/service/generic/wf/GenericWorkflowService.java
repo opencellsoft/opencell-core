@@ -39,6 +39,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.generic.wf.GWFTransition;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
@@ -78,14 +79,21 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
     public List<GenericWorkflow> findByBusinessEntity(BusinessEntity entity) {
         return list().stream().filter(g -> {
-            String qualifiedName = g.getTargetEntityClass();
-            Class<?> clazz = null;
+
+            String targetQualifiedName = g.getTargetEntityClass();
+            Class<?> targetClazz = null;
             try {
-                clazz = Class.forName(qualifiedName);
+                targetClazz = Class.forName(targetQualifiedName);
             } catch (ClassNotFoundException e) {
                 return false;
             }
-            return clazz.isInstance(entity);
+
+            if (entity instanceof CustomEntityInstance) {
+                CustomEntityInstance cei = (CustomEntityInstance) entity;
+                return targetClazz.isInstance(entity) && cei.getCetCode().equals(g.getTargetCetCode());
+            }
+
+            return targetClazz.isInstance(entity);
         }).collect(Collectors.toList());
     }
 
@@ -105,7 +113,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
      */
     public WorkflowInstance executeWorkflow(BusinessEntity businessEntity, GenericWorkflow genericWorkflow) throws BusinessException {
 
-        WorkflowInstance workflowInstance = workflowInstanceService.findByCodeAndGenericWorkflow(businessEntity.getCode(), genericWorkflow);
+        WorkflowInstance workflowInstance = workflowInstanceService.findByEntityIdAndGenericWorkflow(businessEntity.getId(), genericWorkflow);
 
         if (workflowInstance == null) {
             throw new BusinessException("No workflow instance for business entity " + businessEntity.getCode());

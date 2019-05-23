@@ -16,6 +16,8 @@ import org.meveo.api.dto.CustomFieldsDto;
  * The Class ServiceToUpdateDto.
  *
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @XmlRootElement(name = "ServiceToUpdate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -51,6 +53,15 @@ public class ServiceToUpdateDto implements Serializable {
 
     /** End agreement date. */
     private Date endAgreementDate;
+
+    /** The termination date. */
+    private Date terminationDate;
+
+    /** The termination reason. */
+    private String terminationReason;
+
+    /** The renewal service. */
+    private SubscriptionRenewalDto serviceRenewal;
 
     /** Custom fields. */
     private CustomFieldsDto customFields;
@@ -198,7 +209,61 @@ public class ServiceToUpdateDto implements Serializable {
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
     }
-    
+
+    /**
+     * Gets the renewal service
+     *
+     * @return the renewal service
+     */
+    public SubscriptionRenewalDto getServiceRenewal() {
+        return serviceRenewal;
+    }
+
+    /**
+     * Sets the renewal service.
+     *
+     * @param serviceRenewal the new renewal service
+     */
+    public void setServiceRenewal(SubscriptionRenewalDto serviceRenewal) {
+        this.serviceRenewal = serviceRenewal;
+    }
+
+    /**
+     * Gets the termination date.
+     *
+     * @return the termination date
+     */
+    public Date getTerminationDate() {
+        return terminationDate;
+    }
+
+    /**
+     * Sets the termination date.
+     *
+     * @param terminationDate the new termination date
+     */
+    public void setTerminationDate(Date terminationDate) {
+        this.terminationDate = terminationDate;
+    }
+
+    /**
+     * Gets the termination reason.
+     *
+     * @return the termination reason
+     */
+    public String getTerminationReason() {
+        return terminationReason;
+    }
+
+    /**
+     * Sets the termination reason.
+     *
+     * @param terminationReason the new termination reason
+     */
+    public void setTerminationReason(String terminationReason) {
+        this.terminationReason = terminationReason;
+    }
+
     @Override
     public String toString() {
         return "ServiceToSuspendDto [code=" + code + ", actionDate=" + actionDate + "]";

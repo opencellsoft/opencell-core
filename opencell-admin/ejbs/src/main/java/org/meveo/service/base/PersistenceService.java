@@ -355,7 +355,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public void remove(E entity) throws BusinessException {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-        entity = findById((Long) entity.getId());
+        entity = retrieveIfNotManaged(entity);
         if (entity != null) {
             getEntityManager().remove(entity);
             if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
@@ -536,6 +536,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
         if (active != null && IEnable.class.isAssignableFrom(entityClass)) {
             queryBuilder.addBooleanCriterion("disabled", !active);
+        }
+        if (BusinessEntity.class.isAssignableFrom(entityClass)) {
+            queryBuilder.addOrderCriterionAsIs("code", true);
+        } else {
+            queryBuilder.addOrderCriterionAsIs("id", true);
         }
         Query query = queryBuilder.getQuery(getEntityManager());
         return query.getResultList();
@@ -761,6 +766,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=fiel.value. Applies to date and number type fields.</li>
      * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value&lt;=value</li>
      * <li>list. Value is in field's list value. Applies to date and number type fields.</li>
+     * <li>listInList. Value, which is a list, should be in field value (list)
      * <li>inList/not-inList. Field value is [not] in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value
      * of one item</li>
      * <li>minmaxRange. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields.</li>
@@ -807,7 +813,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * </ul>
      * 
      * 
-     * @param config PaginationConfiguration data holding object
+     * @param config Data filtering, sorting and pagination criteria
      * @return query to filter entities according pagination configuration data.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -868,9 +874,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + fieldName, (Date) filterValue);
                         }
 
-                        // Value which is a list should be in field value
+                        // Value, which is a list, should be in field value (list)
                     } else if ("listInList".equals(condition)) {
                         this.addListInListCreterion(queryBuilder, filterValue, fieldName);
+
                         // Value is in field value (list)
                     } else if ("list".equals(condition)) {
                         String paramName = queryBuilder.convertFieldToParam(fieldName);
@@ -1141,13 +1148,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
         }
-    }
-
-    /**
-     * Flush data to DB. NOTE: unlike the name suggest, no transaction commit is done
-     */
-    public void commit() {
-        getEntityManager().flush();
     }
 
     /**

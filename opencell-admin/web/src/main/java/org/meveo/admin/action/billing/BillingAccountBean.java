@@ -18,15 +18,18 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
@@ -35,6 +38,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.CounterInstance;
@@ -52,6 +56,7 @@ import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.omnifaces.util.Faces;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -118,18 +123,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
         selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
 
-        if (entity.getAddress() == null) {
-            entity.setAddress(new Address());
-        }
-        if (entity.getName() == null) {
-            entity.setName(new Name());
-        }
-        if (entity.getContactInformation() == null) {
-            entity.setContactInformation(new ContactInformation());
-        }
-		if (entity.getDiscountPlanInstances() == null) {
-			entity.setDiscountPlanInstances(new ArrayList<>());
-		}
+        this.initNestedFields(entity);
+		
 		if (discountPlanDM == null) {
 			List<DiscountPlan> sourceDS = null;
 			sourceDS = discountPlanService.list();
@@ -143,7 +138,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String instantiateDiscountPlan() throws BusinessException {
 		if (entity.getDiscountPlan() != null) {
 			DiscountPlan dp = entity.getDiscountPlan();
-			entity = billingAccountService.instantiateDiscountPlan(entity, dp, null);
+			entity = billingAccountService.instantiateDiscountPlan(entity, dp);
 			entity.setDiscountPlan(null);
 		}
 		
@@ -152,7 +147,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	
 	@ActionMethod
 	public String deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
-		billingAccountService.terminateDiscountPlan(entity, dpi);
+        billingAccountService.terminateDiscountPlan(entity, dpi);
 		return getEditViewName();
 //		messages.warn(new BundleKey("messages", "message.discount.terminate.warning"));
 	}
@@ -179,6 +174,28 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
         }
         return null;
+    }
+    
+    @Override
+    public BillingAccount getEntity() {
+        BillingAccount ba = super.getEntity();
+       this.initNestedFields(ba);
+        return ba;
+    }
+
+    private void initNestedFields(BillingAccount ba) {
+        if (ba.getAddress() == null) {
+            ba.setAddress(new Address());
+        }
+        if (ba.getName() == null) {
+            ba.setName(new Name());
+        }
+        if (ba.getContactInformation() == null) {
+            ba.setContactInformation(new ContactInformation());
+        }
+        if (ba.getDiscountPlanInstances() == null) {
+            ba.setDiscountPlanInstances(new ArrayList<>());
+        }
     }
 
     @Override
@@ -267,6 +284,54 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         return null;
     }
 
+    /**
+     * Generates and returns a proforma invoice
+     * @return
+     */
+    public String generateProformaInvoice() {
+        log.info("generateProformaInvoice billingAccountId:" + entity.getId());
+        try {
+            entity = billingAccountService.refreshOrRetrieve(entity);
+
+            GenerateInvoiceRequestDto generateInvoiceRequestDto = new GenerateInvoiceRequestDto();
+            generateInvoiceRequestDto.setGeneratePDF(true);
+            generateInvoiceRequestDto.setInvoicingDate(new Date());
+            generateInvoiceRequestDto.setLastTransactionDate(new Date());
+            List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, null, true);
+            for (Invoice invoice : invoices) {
+                invoiceService.produceFilesAndAO(false, true, false, invoice, true);
+                String fileName = invoiceService.getFullPdfFilePath(invoice, false);
+                Faces.sendFile(new File(fileName), true);
+            }
+
+            StringBuilder invoiceNumbers = new StringBuilder();
+            for (Invoice invoice : invoices) {
+                invoiceNumbers.append(invoice.getInvoiceNumber());
+                invoiceNumbers.append(" ");
+            }
+
+            messages.info(new BundleKey("messages", "generateInvoice.successful"), invoiceNumbers.toString());
+            if (isCommitted()) {
+                return null;
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to generateInvoice ", e);
+            messages.error(e.getMessage());
+        }
+        return getEditViewName();
+    }
+
+    /**
+     * indicates if response has already been committed
+     * @return
+     */
+    private boolean isCommitted() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+        return response.isCommitted();
+    }
+    
     /**
      * Item selector getter. Item selector keeps a state of multiselect checkboxes.
      * 

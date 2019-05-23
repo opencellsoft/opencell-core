@@ -26,6 +26,7 @@ import org.meveo.service.catalog.impl.CalendarService;
 /**
  * Service class for WalletReservation entity
  * 
+ * @author Edward P. Legaspi
  * @author Wassim Drira
  * @lastModifiedVersion 5.0.1
  */
@@ -167,7 +168,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
         for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {
             servicesSum = servicesSum.add(realtimeChargingService.getActivationServicePrice(seller, userAccount.getBillingAccount(), st.getServiceTemplate(), subscriptionDate,
-                offerTemplate.getCode(), quantity, param1, param2, param3, isWithTax));
+                offerTemplate, quantity, param1, param2, param3, isWithTax));
         }
 
         return servicesSum;

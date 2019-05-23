@@ -139,6 +139,7 @@
                 </p:tab>
 
                 <hftl:customFields backingBean="#{offerTemplateBean}" messagesId="offerForm:messages" />
+                <hftl:displayGenericWFsHistory backingBean="#{offerTemplateBean}" />
 
                 <p:tab title="#{messages['menu.serviceTemplates']}" id="tab1">
 
@@ -197,6 +198,13 @@
 
                 <p:tab title="#{messages['menu.productTemplates']}">
                     <ui:include src="productTemplateTab.xhtml">
+                        <ui:param name="backingBean" value="#{offerTemplateBean}" />
+                        <ui:param name="formId" value=":offerForm" />
+                    </ui:include>
+                </p:tab>
+
+                <p:tab title="#{messages['menu.discountPlans']}">
+                    <ui:include src="allowedDiscountPlansTab.xhtml">
                         <ui:param name="backingBean" value="#{offerTemplateBean}" />
                         <ui:param name="formId" value=":offerForm" />
                     </ui:include>

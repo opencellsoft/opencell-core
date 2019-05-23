@@ -71,9 +71,14 @@ import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.payment.RumSequenceApi;
 import org.meveo.api.ws.AccountWs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -81,7 +86,8 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * 
  * @author anasseh
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -125,7 +131,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerApi.create(postData);
+            Customer customer = customerApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(customer.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -229,7 +238,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.create(postData);
+            CustomerAccount customerAccount = customerAccountApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(customerAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -333,7 +345,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingAccountApi.create(postData);
+            BillingAccount billingAccount = billingAccountApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(billingAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -385,7 +400,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.create(postData);
+            UserAccount userAccount = userAccountApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(userAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -774,7 +792,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.createOrUpdate(postData);
+            UserAccount userAccount = userAccountApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(userAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -787,7 +808,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingAccountApi.createOrUpdate(postData);
+            BillingAccount billingAccount = billingAccountApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(billingAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -813,7 +837,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.createOrUpdate(postData);
+            CustomerAccount customerAccount = customerAccountApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(customerAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -826,7 +853,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerApi.createOrUpdate(postData);
+            Customer customer = customerApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(customer.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

@@ -26,8 +26,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 /**
  * The Class CustomFieldDto.
  * 
+ * @author Edward P. Legaspi
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2.1
+ * @lastModifiedVersion 7.0
 */
 
 @XmlRootElement(name = "CustomField")
@@ -78,8 +79,12 @@ public class CustomFieldDto {
     protected Long longValue;
 
     /** The double value. */
-    @XmlElement()
+    @XmlElement
     protected Double doubleValue;
+    
+    /** The boolean value. */
+    @XmlElement
+    protected Boolean booleanValue;
 
     /** The list value. */
     @XmlElementWrapper(name = "listValue")
@@ -268,6 +273,24 @@ public class CustomFieldDto {
     }
 
     /**
+     * Gets the boolean value.
+     * 
+     * @return the boolean value
+     */
+	public Boolean getBooleanValue() {
+		return booleanValue;
+	}
+
+	/**
+	 * Sets the boolean value.
+	 * 
+	 * @param booleanValue the boolean value
+	 */
+	public void setBooleanValue(Boolean booleanValue) {
+		this.booleanValue = booleanValue;
+	}
+
+    /**
      * Gets the value date.
      *
      * @return the value date
@@ -429,6 +452,8 @@ public class CustomFieldDto {
                 return dateValue == null;
             case DOUBLE:
                 return doubleValue == null;
+            case BOOLEAN:
+            	return booleanValue == null;
             case LONG:
                 return longValue == null;
             case LIST:
@@ -469,6 +494,8 @@ public class CustomFieldDto {
         if (dateValue != null) {
             return false;
         } else if (doubleValue != null) {
+            return false;
+        } else if (booleanValue != null) {
             return false;
         } else if (longValue != null) {
             return false;
@@ -566,6 +593,7 @@ public class CustomFieldDto {
         sb.append(", dateValue=").append(dateValue);
         sb.append(", longValue=").append(longValue);
         sb.append(", doubleValue=").append(doubleValue);
+        sb.append(", booleanValue=").append(booleanValue);
         sb.append(", listValue=").append(listValue);
         sb.append(", mapValue=").append(mapValue);
         sb.append(", entityReferenceValue=").append(entityReferenceValue);

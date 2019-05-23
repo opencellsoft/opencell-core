@@ -12,10 +12,14 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.notification.EmailNotificationApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.EmailNotificationRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.notification.EmailNotification;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class EmailNotificationRsImpl extends BaseRs implements EmailNotificationRs {
@@ -28,7 +32,10 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.create(postData);
+            EmailNotification emailNotification = emailNotificationApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(emailNotification.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -80,7 +87,10 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.createOrUpdate(postData);
+            EmailNotification emailNotification = emailNotificationApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(emailNotification.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

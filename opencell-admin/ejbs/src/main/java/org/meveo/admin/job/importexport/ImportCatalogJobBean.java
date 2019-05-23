@@ -100,7 +100,7 @@ public class ImportCatalogJobBean {
             }
 
             report = "";
-            file = FileUtils.getFileForParsing(inputDir, fileExtensions);
+            file = FileUtils.getFirstFile(inputDir, fileExtensions);
             if (file != null) {
                 fileName = file.getName();
                 report = "parse " + fileName + ";";
@@ -128,8 +128,8 @@ public class ImportCatalogJobBean {
                         }
                     }
                     result.setNbItemsToProcess(rowsObj.length - 1);
-                    for (int rowIndex = 1; rowIndex < rowsObj.length; rowIndex++) {
-                        if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+                    for (int rowIndex = 1; rowIndex < rowsObj.length; rowIndex++) {         
+                        if (rowIndex % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                             break;
                         }
                         Row row = (Row) rowsObj[rowIndex];
@@ -158,7 +158,7 @@ public class ImportCatalogJobBean {
                 }
                 report += result.getErrorsAString();
 
-                if (FileUtils.getFileForParsing(inputDir, fileExtensions) != null) {
+                if (FileUtils.getFirstFile(inputDir, fileExtensions) != null) {
                     result.setDone(false);
                 }
 

@@ -1,6 +1,8 @@
 package org.meveo.admin.job;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -21,7 +23,9 @@ import org.meveo.service.job.Job;
 
 
 /**
- * The Class BillingRunJob create a BillingRun for the given BillingCycles, lastTransactionDate,invoiceDate.
+ * The Class BillingRunJob create a BillingRun for the given BillingCycle, lastTransactionDate,invoiceDate.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class BillingRunJob extends Job {
@@ -48,7 +52,7 @@ public class BillingRunJob extends Job {
 
         CustomFieldTemplate lastTransactionDate = new CustomFieldTemplate();
         lastTransactionDate.setCode("BillingRunJob_lastTransactionDate");
-        lastTransactionDate.setAppliesTo("JOB_BillingRunJob");
+        lastTransactionDate.setAppliesTo("JobInstance_BillingRunJob");
         lastTransactionDate.setActive(true);
         lastTransactionDate.setDescription(resourceMessages.getString("jobExecution.lastTransationDate"));
         lastTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
@@ -57,7 +61,7 @@ public class BillingRunJob extends Job {
 
         CustomFieldTemplate invoiceDate = new CustomFieldTemplate();
         invoiceDate.setCode("BillingRunJob_invoiceDate");
-        invoiceDate.setAppliesTo("JOB_BillingRunJob");
+        invoiceDate.setAppliesTo("JobInstance_BillingRunJob");
         invoiceDate.setActive(true);
         invoiceDate.setDescription(resourceMessages.getString("jobExecution.InvoiceDate"));
         invoiceDate.setFieldType(CustomFieldTypeEnum.DATE);
@@ -66,7 +70,7 @@ public class BillingRunJob extends Job {
 
         CustomFieldTemplate billingCycle = new CustomFieldTemplate();
         billingCycle.setCode("BillingRunJob_billingCycle");
-        billingCycle.setAppliesTo("JOB_BillingRunJob");
+        billingCycle.setAppliesTo("JobInstance_BillingRunJob");
         billingCycle.setActive(true);
         billingCycle.setDescription(resourceMessages.getString("jobExecution.billingCycles"));
         billingCycle.setFieldType(CustomFieldTypeEnum.ENTITY);
@@ -77,7 +81,7 @@ public class BillingRunJob extends Job {
 
         CustomFieldTemplate billingCycleType = new CustomFieldTemplate();
         billingCycleType.setCode("BillingRunJob_billingRun_Process");
-        billingCycleType.setAppliesTo("JOB_BillingRunJob");
+        billingCycleType.setAppliesTo("JobInstance_BillingRunJob");
         billingCycleType.setActive(true);
         billingCycleType.setDescription(resourceMessages.getString("jobExecution.billingRunProcess"));
         billingCycleType.setFieldType(CustomFieldTypeEnum.LIST);

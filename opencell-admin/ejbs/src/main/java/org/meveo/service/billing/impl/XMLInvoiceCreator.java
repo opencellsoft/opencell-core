@@ -18,35 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import static org.meveo.commons.utils.NumberUtils.roundToString;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -119,6 +90,34 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.meveo.commons.utils.NumberUtils.roundToString;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
@@ -127,7 +126,8 @@ import org.xml.sax.SAXException;
  * @author Said Ramli
  * @author Abdellatif BARI
  * @author Mounir Bahije
- * @lastModifiedVersion 5.2.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  **/
 @Stateless
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
@@ -146,6 +146,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
     @Inject
     private BillingAccountService billingAccountService;
+
+    @Inject
+    private TradingLanguageService tradingLanguageService;
 
     @Inject
     private CounterPeriodService counterPeriodService;
@@ -291,10 +294,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      */
     public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
 
+    	invoice = this.retrieveIfNotManaged(invoice);
+    	
         Long id = invoice.getId();
         String alias = invoice.getAlias();
         String invoiceNumber = invoice.getInvoiceNumber();
         BillingAccount billingAccount = invoice.getBillingAccount();
+        billingAccount = billingAccountService.retrieveIfNotManaged(billingAccount);
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
         Customer customer = customerAccount.getCustomer();
         String code = customerAccount.getCode();
@@ -302,7 +308,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         InvoiceType invoiceType = invoice.getInvoiceType();
         String invoiceTypeCode = invoiceType.getCode();
         boolean isInvoiceAdjustment = invoiceTypeCode.equals(invoiceTypeService.getAdjustementCode());
-        String billingAccountLanguage = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
+        TradingLanguage tradingLanguageBA = billingAccount.getTradingLanguage();
+        String billingAccountLanguage = tradingLanguageBA.getLanguage().getLanguageCode();
         List<InvoiceAgregate> invoiceAgregates = invoice.getInvoiceAgregates();
         List<RatedTransaction> ratedTransactions = null;
         List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = null;
@@ -1567,50 +1574,55 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             String code = "", description = "";
                             Date periodStartDate = null;
                             Date periodEndDate = null;
-                            WalletOperation walletOperation = ratedTransaction.getWalletOperation();
                             code = ratedTransaction.getCode();
                             description = ratedTransaction.getDescription();
-    
-                            if (ratedTransaction.getWalletOperationId() != null) {
-                                walletOperation = getEntityManager().find(WalletOperation.class, ratedTransaction.getWalletOperationId());
-                            }
-                            if (walletOperation != null) {
-                                if (StringUtils.isBlank(code)) {
-                                    code = walletOperation.getCode();
-                                }
-                                if (StringUtils.isBlank(description)) {
-                                    description = walletOperation.getDescription();
-                                }
-                                ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-                                if (appProvider.getInvoiceConfiguration().getDisplayChargesPeriods()) {
-    
-                                    if (!isVirtual) {
-                                        chargeInstance = (ChargeInstance) chargeInstanceService.findById(chargeInstance.getId(), false);
-                                    }
-    
-                                    ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
-                                    // get periodStartDate and periodEndDate for recurrents
-                                    periodStartDate = walletOperation.getStartDate();
-                                    periodEndDate = walletOperation.getEndDate();
-                                    // get periodStartDate and periodEndDate for usages
-                                    // instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
-                                    Date operationDate = walletOperation.getOperationDate();
-                                    if (chargeTemplate instanceof UsageChargeTemplate && operationDate != null && usageChargeTemplateService.findById(chargeTemplate.getId()) != null) {
-                                        CounterPeriod counterPeriod = null;
-                                        CounterInstance counter = walletOperation.getCounter();
-                                        if (!isVirtual) {
-                                            counterPeriod = counterPeriodService.getCounterPeriod(counter, operationDate);
-                                        } else {
-                                            counterPeriod = counter.getCounterPeriod(operationDate);
-                                        }
-                                        if (counterPeriod != null) {
-                                            periodStartDate = counterPeriod.getPeriodStartDate();
-                                            periodEndDate = counterPeriod.getPeriodEndDate();
-                                        }
-                                    }
-                                    line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
-                                    line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
-                                }
+                            Set<WalletOperation> walletOperations = ratedTransaction.getWalletOperations();
+
+                            if (walletOperations != null && !walletOperations.isEmpty()) {
+
+								for (WalletOperation walletOperation : walletOperations) {
+									Element woLine = doc.createElement("walletOperation");
+	                            	woLine.setAttribute("code", walletOperation.getCode());
+	                            	line.appendChild(woLine);
+	                            	
+									ChargeInstance chargeInstance = walletOperation.getChargeInstance();
+									if (appProvider.getInvoiceConfiguration().getDisplayChargesPeriods()) {
+
+										if (!isVirtual) {
+											chargeInstance = (ChargeInstance) chargeInstanceService
+													.findById(chargeInstance.getId(), false);
+										}
+
+										ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+										// get periodStartDate and periodEndDate for recurrents
+										periodStartDate = walletOperation.getStartDate();
+										periodEndDate = walletOperation.getEndDate();
+										// get periodStartDate and periodEndDate for usages
+										// instanceof is not used in this control because chargeTemplate can never be
+										// instance of usageChargeTemplate according to model structure
+										Date operationDate = walletOperation.getOperationDate();
+										if (chargeTemplate instanceof UsageChargeTemplate && operationDate != null
+												&& usageChargeTemplateService
+														.findById(chargeTemplate.getId()) != null) {
+											CounterPeriod counterPeriod = null;
+											CounterInstance counter = walletOperation.getCounter();
+											if (!isVirtual) {
+												counterPeriod = counterPeriodService.getCounterPeriod(counter,
+														operationDate);
+											} else {
+												counterPeriod = counter.getCounterPeriod(operationDate);
+											}
+											if (counterPeriod != null) {
+												periodStartDate = counterPeriod.getPeriodStartDate();
+												periodEndDate = counterPeriod.getPeriodEndDate();
+											}
+										}
+										woLine.setAttribute("periodEndDate",
+												DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
+										woLine.setAttribute("periodStartDate",
+												DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
+									}
+								}                            
                             }
     
                             line.setAttribute("code", code != null ? code : "");
@@ -1734,27 +1746,34 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                 line.appendChild(edrInfo);
                             }
     
-                            if (!isVirtual) {
-                                if (walletOperation != null) {
-                                    // Retrieve Service Instance
-                                    ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-                                    ServiceInstance serviceInstance = null;
-                                    if (chargeInstance instanceof RecurringChargeInstance) {
-                                        serviceInstance = ((RecurringChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-                                    } else if (chargeInstance instanceof UsageChargeInstance) {
-                                        serviceInstance = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-                                    } else if (chargeInstance instanceof OneShotChargeInstance) {
-                                        serviceInstance = ((OneShotChargeInstance) walletOperation.getChargeInstance()).getSubscriptionServiceInstance();
-                                        if (serviceInstance == null) {
-                                            ((OneShotChargeInstance) walletOperation.getChargeInstance()).getTerminationServiceInstance();
-                                        }
-                                    }
-    
-                                    if (serviceInstance != null) {
-                                        addService(serviceInstance, doc, ratedTransaction.getOfferCode(), line);
-                                    }
-                                }
-                            }
+							if (!isVirtual && walletOperations != null && !walletOperations.isEmpty()) {
+								for (WalletOperation walletOperation : walletOperations) {
+									// Retrieve Service Instance
+									ChargeInstance chargeInstance = walletOperation.getChargeInstance();
+									ServiceInstance serviceInstance = null;
+									if (chargeInstance instanceof RecurringChargeInstance) {
+										serviceInstance = ((RecurringChargeInstance) walletOperation
+												.getChargeInstance()).getServiceInstance();
+									
+									} else if (chargeInstance instanceof UsageChargeInstance) {
+										serviceInstance = ((UsageChargeInstance) walletOperation.getChargeInstance())
+												.getServiceInstance();
+									
+									} else if (chargeInstance instanceof OneShotChargeInstance) {
+										serviceInstance = ((OneShotChargeInstance) walletOperation.getChargeInstance())
+												.getSubscriptionServiceInstance();
+										if (serviceInstance == null) {
+											((OneShotChargeInstance) walletOperation.getChargeInstance())
+													.getTerminationServiceInstance();
+										}
+									}
+
+									if (serviceInstance != null) {
+										String offerCode = ratedTransaction.getOfferTemplate() != null ? ratedTransaction.getOfferTemplate().getCode() : null;
+										addService(serviceInstance, doc, offerCode, line);
+									}
+								}
+							}
                             subCategory.appendChild(line);
                         }
                         addCustomFields(invoiceSubCat, doc, subCategory);
@@ -2061,9 +2080,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
             Element discount = doc.createElement("discount");
             discount.setAttribute("discountPlanCode", subCategoryInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getCode());
+            discount.setAttribute("discountPlanDescription", subCategoryInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getDescription());
             discount.setAttribute("discountPlanItemCode", subCategoryInvoiceAgregate.getDiscountPlanItem().getCode());
             discount.setAttribute("invoiceSubCategoryCode", subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode());
             discount.setAttribute("discountAmountWithoutTax", roundToString(subCategoryInvoiceAgregate.getAmountWithoutTax(), invoiceRounding, invoiceRoundingMode) + "");
+            discount.setAttribute("discountAmountWithTax", roundToString(subCategoryInvoiceAgregate.getAmountWithTax(), invoiceRounding, invoiceRoundingMode) + "");
             discount.setAttribute("discountPercent", roundToString(subCategoryInvoiceAgregate.getDiscountPercent(), invoiceRounding, invoiceRoundingMode) + "");
 
             discounts.appendChild(discount);

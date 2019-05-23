@@ -42,11 +42,10 @@
 			column1Label="#{messages['businessEntity.code']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" 
-			updateField=":FormId:sellerSelectId :FormId:sellerSelectId_text">
-		</hftl:entityPopup>	
-													
-				
-		<hftl:formPanel label="#{messages['paymentGateway.title']}" backingBean="#{paymentGatewayBean}"  formId="formPaymentGateway" showEnableDisableButton="true" >
+			updateField=":formPaymentGateway:tabView:sellerSelectId :formPaymentGateway:tabView:sellerSelectId_text">
+		</hftl:entityPopup>
+
+		<hftl:formPanel label="#{messages['paymentGateway.title']}" backingBean="#{paymentGatewayBean}" formId="formPaymentGateway" showEnableDisableButton="true" >
 			<p:tabView id="tabView" activeIndex="#{paymentGatewayBean.activeTab}">
 				<p:tab  title="#{messages['commons.tab.information']}" >
 					<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
@@ -65,10 +64,10 @@
 						<hftl:formField label="#{messages['paymentGateway.cardType']}" field="cardType" rendered="#{paymentGatewayBean.entity.paymentMethodType==PaymentMethodEnum.CARD}"  />
 					</h:panelGroup>
 					<hftl:formField label="#{messages['paymentGateway.application_el']}" field="applicationEL" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />
-							<hftl:formField id="sellerSelectId"
-				label="#{messages['paymentGateway.seller']}"
-				field="seller" valueLabelField="code" required="true"
-				popup="true" popupId="sellerPopup" showResetButton="true" />	
+					<hftl:formField id="sellerSelectId"
+								label="#{messages['paymentGateway.seller']}"
+								field="seller" valueLabelField="code" required="true"
+								popup="true" popupId="sellerPopup" showResetButton="true" />
 					<!-- TODO: waiting paymentRun feature 
 					    <p:fieldset legend="#{messages['paymentGateway.retry']}">
 						<hftl:formField label="#{messages['paymentGateway.nbTries']}" field="nbTries" />

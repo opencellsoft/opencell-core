@@ -1,6 +1,5 @@
 package org.meveo.api.filter;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -16,8 +15,6 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.filter.FilterService;
-import org.meveo.service.index.ElasticClient;
-import org.meveo.service.index.ElasticSearchClassInfo;
 
 /**
  * @author Edward P. Legaspi
@@ -29,11 +26,8 @@ public class FilteredListApi extends BaseApi {
     @Inject
     private FilterService filterService;
 
-    @Inject
-    private ElasticClient elasticClient;
-    
     public Filter getFilterFromDto(FilterDto filter) throws MeveoApiException {
-    	return getFilterFromDto(filter, null);
+        return getFilterFromDto(filter, null);
     }
 
     public Filter getFilterFromDto(FilterDto filter, Map<String, String> parameters) throws MeveoApiException {
@@ -53,32 +47,32 @@ public class FilteredListApi extends BaseApi {
                 }
             }
         }
-        
-        //if there are parameters we recreate a transient filter by replacing the parameter
-        //values in the xml
-		if (parameters != null && result != null) {
-			String filterXmlInput = replaceCFParameters(result.getInputXml(), parameters);
-			result = filterService.parse(filterXmlInput);
-		}
+
+        // if there are parameters we recreate a transient filter by replacing the parameter
+        // values in the xml
+        if (parameters != null && result != null) {
+            String filterXmlInput = replaceCFParameters(result.getInputXml(), parameters);
+            result = filterService.parse(filterXmlInput);
+        }
 
         return result;
     }
-    
-	private String replaceCFParameters(String xmlInput, Map<String, String> parameters) {
-		String result = xmlInput;
 
-		for (Map.Entry<String, String> entry : parameters.entrySet()) {
-			result = result.replaceAll("cf(.*):" + entry.getKey(), entry.getValue());
-		}
+    private String replaceCFParameters(String xmlInput, Map<String, String> parameters) {
+        String result = xmlInput;
 
-		log.debug("replaced filter xml :" + result);
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            result = result.replaceAll("cf(.*):" + entry.getKey(), entry.getValue());
+        }
 
-		return result;
-	}
-	
-	public String listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows) throws MeveoApiException, BusinessException {
-		return listByFilter(filter, firstRow, numberOfRows, null);
-	}
+        log.debug("replaced filter xml :" + result);
+
+        return result;
+    }
+
+    public String listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows) throws MeveoApiException, BusinessException {
+        return listByFilter(filter, firstRow, numberOfRows, null);
+    }
 
     public String listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows, Map<String, String> parameters) throws MeveoApiException, BusinessException {
 
@@ -86,33 +80,6 @@ public class FilteredListApi extends BaseApi {
         Filter filterEntity = getFilterFromDto(filter, parameters);
         result = filterService.filteredList(filterEntity, firstRow, numberOfRows);
         return result;
-    }
-
-    public String search(String[] classnamesOrCetCodes, String query, Integer from, Integer size) throws MissingParameterException, BusinessException {
-
-        if (classnamesOrCetCodes == null || classnamesOrCetCodes.length == 0) {
-            missingParameters.add("classnamesOrCetCodes");
-        }
-
-        handleMissingParameters();
-
-        List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
-
-        return elasticClient.search(query, null, from, size, null, null, null, classInfo);
-    }
-
-    public String search(String[] classnamesOrCetCodes, Map<String, String> queryValues, Integer from, Integer size) throws MissingParameterException,
-            BusinessException {
-
-        if (classnamesOrCetCodes == null || classnamesOrCetCodes.length == 0) {
-            missingParameters.add("classnamesOrCetCodes");
-        }
-
-        handleMissingParameters();
-
-        List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
-
-        return elasticClient.search(queryValues, from, size, null, null, null, classInfo);
     }
 
     @Deprecated

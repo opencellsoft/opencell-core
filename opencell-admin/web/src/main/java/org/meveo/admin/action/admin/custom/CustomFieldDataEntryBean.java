@@ -25,7 +25,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
@@ -58,9 +58,9 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.EntityCustomActionService;
-import org.meveo.service.script.CustomScriptService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptUtils;
 import org.meveo.util.EntityCustomizationUtils;
 import org.meveo.util.view.LazyDataModelWSize;
 import org.primefaces.event.FileUploadEvent;
@@ -83,7 +83,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
  * @author akadid abdelmounaim
  * @author Said Ramli
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
  */
 @Named
 @ViewScoped
@@ -134,6 +135,11 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @Inject
     protected Messages messages;
+
+    /**
+     * Selected item in dataTable.
+     */
+    private Map<String, Object> selectedItem;
 
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -912,7 +918,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             action = entityActionScriptService.retrieveIfNotManaged(action);
 
-            Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
+            Map<String, Object> context = ScriptUtils.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_ACTION, action.getCode());
             Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
 
@@ -956,7 +962,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         try {
 
-            Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
+            Map<String, Object> context = ScriptUtils.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_PARENT_ENTITY, parentEntity);
             context.put(Script.CONTEXT_ACTION, action.getCode());
 
@@ -1660,12 +1666,23 @@ public class CustomFieldDataEntryBean implements Serializable {
         Object ronkey = key;
         if (ronkey != null) {
             String[] ron = ((String) ronkey).split(CustomFieldValue.RON_VALUE_SEPARATOR);
-            if (ron[0] == null && ron[1] == null) {
+
+            if(ron.length > 0 && !((String) ronkey).isEmpty()) {
+
+                for(String valueOfRON : ron) {
+                    if(!valueOfRON.isEmpty() && !NumberUtils.isParsable(valueOfRON)) {
+                        messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
+                        FacesContext.getCurrentInstance().validationFailed();
+                        return null;
+                    }
+                }
+
+                if (ron[0] == null && ron.length > 1 && ron[1] == null) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
                 FacesContext.getCurrentInstance().validationFailed();
                 return null;
 
-            } else if (ron[0] != null && ron[1] != null) {
+                } else if (ron[0] != null  && !ron[0].isEmpty() && ron.length > 1 && ron[1] != null) {
                 try {
                     if (Double.valueOf(ron[0]).compareTo(Double.valueOf(ron[1])) >= 0) {
                         messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
@@ -1678,6 +1695,19 @@ public class CustomFieldDataEntryBean implements Serializable {
                     FacesContext.getCurrentInstance().validationFailed();
                     return null;
                 }
+                } else if (ron[0] != null && ron.length == 1) {
+                    try {
+                        Double.parseDouble(ron[0]);
+                    } catch (NumberFormatException e) {
+                        messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
+                        FacesContext.getCurrentInstance().validationFailed();
+                        return null;
+            }
+                }
+        } else {
+                messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return null;
             }
         } else {
             messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyNotSpecified"));
@@ -1721,13 +1751,24 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @return the custom field value or null in the error case
      */
     private Object getMapValue(CustomFieldTemplate cft, Map<String, Object> csvLine) {
-        Object value = (String) csvLine.get(CustomFieldValue.MAP_VALUE);
-        if (value == null) {
-            messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
-            FacesContext.getCurrentInstance().validationFailed();
-            return null;
+        switch (cft.getFieldType()){
+            case DOUBLE:
+                return Double.parseDouble((String) csvLine.get(CustomFieldValue.MAP_VALUE));
+            case LONG:
+                return Long.parseLong((String) csvLine.get(CustomFieldValue.MAP_VALUE));
+            case STRING:
+            case DATE:
+            case TEXT_AREA:
+            case ENTITY:
+            case CHILD_ENTITY:
+            case LIST:
+            case MULTI_VALUE:
+                return csvLine.get(CustomFieldValue.MAP_VALUE);
+            default:
+                messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return null;
         }
-        return value;
     }
 
     /**
@@ -2078,5 +2119,37 @@ public class CustomFieldDataEntryBean implements Serializable {
             cfv.setDatasetForGUI(dataset);
         }
         return (LazyDataModel) cfv.getDatasetForGUI();
+    }
+
+
+    /**
+     * Gets the selectedItem
+     *
+     * @return the selectedItem
+     */
+    public Map<String, Object> getSelectedItem() {
+        return selectedItem;
+    }
+
+    /**
+     * Sets the selectedItem.
+     *
+     * @param selectedItem the new selectedItem
+     */
+    public void setSelectedItem(Map<String, Object> selectedItem) {
+        this.selectedItem = selectedItem;
+    }
+
+    /**
+     * Remove value from a map of values.
+     *
+     * @param cfv Map value holder
+     * @param storageType storage ype.
+     * @param mapValues map of values
+     */
+    public void removeValue(CustomFieldValue cfv, CustomFieldStorageTypeEnum storageType, Map<String, Object> mapValues) {
+        List valueList = storageType == CustomFieldStorageTypeEnum.MATRIX ? cfv.getMatrixValuesForGUI() : cfv.getMapValuesForGUI();
+        valueList.remove(mapValues);
+        cfv.setDatasetForGUI(null);
     }
 }

@@ -17,8 +17,12 @@ import org.meveo.model.payments.CreditCategory;
 import org.meveo.service.payments.impl.CreditCategoryService;
 
 /**
+ * The CRUD Api for CreditCategory Entity.
+ *
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
  * @since 22 Aug 2017
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class CreditCategoryApi extends BaseApi {
@@ -45,18 +49,15 @@ public class CreditCategoryApi extends BaseApi {
 		return dto;
 	}
 
-	public void create(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
-		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
-		}
-
+	public CreditCategory create(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
 		CreditCategory creditCategory = dtoToEntity(postData, null);
 		creditCategoryService.create(creditCategory);
 
 		handleMissingParameters();
+		return creditCategory;
 	}
 
-	public void update(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
+	public CreditCategory update(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 		}
@@ -67,17 +68,20 @@ public class CreditCategoryApi extends BaseApi {
 		}
 
 		creditCategory = dtoToEntity(postData, creditCategory);
-		creditCategoryService.update(creditCategory);
+		creditCategory = creditCategoryService.update(creditCategory);
 
 		handleMissingParameters();
+		return creditCategory;
 	}
 
-	public void createOrUpdate(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
-		if (creditCategoryService.findByCode(postData.getCode()) == null) {
-			create(postData);
+	public CreditCategory createOrUpdate(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
+		CreditCategory creditCategory = creditCategoryService.findByCode(postData.getCode());
+		if (creditCategory == null) {
+			creditCategory = create(postData);
 		} else {
-			update(postData);
+			creditCategory = update(postData);
 		}
+		return creditCategory;
 	}
 
 	public CreditCategoryDto find(String creditCategoryCode) throws MeveoApiException {

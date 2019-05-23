@@ -89,6 +89,7 @@ import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.commons.utils.XStreamCDATAConverter;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -105,8 +106,9 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.index.ElasticSearchIndexPopulationService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.PersistenceUtils;
 import org.primefaces.model.LazyDataModel;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -134,8 +136,8 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * @author Andrius Karpavicius
- * @lastModifiedVersion 5.0
- *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Lock(LockType.READ)
 @Singleton
@@ -181,6 +183,9 @@ public class EntityExportImportService implements Serializable {
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
 
+    @Inject
+    private ElasticSearchIndexPopulationService esPopulationService;
+
     private Map<Class<? extends IEntity>, String[]> exportIdMapping;
 
     private Map<String, Object[]> attributesToOmit;
@@ -203,6 +208,9 @@ public class EntityExportImportService implements Serializable {
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     @PostConstruct
     private void init() {
@@ -752,7 +760,7 @@ public class EntityExportImportService implements Serializable {
                 String name = null;
                 if (convertedFile != null) {
                     name = convertedFile.getName();
-            }
+                }
 
                 return importEntities(convertedFile, name, preserveId, ignoreNotFoundFK, forceToProvider);
             }
@@ -1674,11 +1682,11 @@ public class EntityExportImportService implements Serializable {
             }
         }
         if (classToCheck != null) {
-        for (Field field : classToCheck.getDeclaredFields()) {
-            if (!field.isAnnotationPresent(Transient.class) && IEntity.class.isAssignableFrom(field.getDeclaringClass()) && field.getType().isAssignableFrom(classToMatch)) {
-                return true;
+            for (Field field : classToCheck.getDeclaredFields()) {
+                if (!field.isAnnotationPresent(Transient.class) && IEntity.class.isAssignableFrom(field.getDeclaringClass()) && field.getType().isAssignableFrom(classToMatch)) {
+                    return true;
+                }
             }
-        }
         }
         return false;
     }
@@ -2150,6 +2158,8 @@ public class EntityExportImportService implements Serializable {
         notificationCacheContainerProvider.refreshCache(null);
         customFieldsCacheContainerProvider.refreshCache(null);
         jobCacheContainerProvider.refreshCache(null);
+        esPopulationService.refreshCache(null);
+        scriptInstanceService.refreshCache(null);
     }
 
     /**

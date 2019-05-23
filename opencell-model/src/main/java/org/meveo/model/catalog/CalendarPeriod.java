@@ -18,16 +18,22 @@
  */
 package org.meveo.model.catalog;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
-
+/**
+ * The CalendarPeriod class.
+ *
+ * @author Andrius Karpavicius
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @DiscriminatorValue("PERIOD")
 public class CalendarPeriod extends Calendar {
@@ -113,8 +119,15 @@ public class CalendarPeriod extends Calendar {
 
         int i = 1;
         while (date.compareTo(calendar.getTime()) >= 0) {
-            Date oldDate = calendar.getTime();
-            calendar.add(periodUnit, periodLength);
+
+            calendar.setTime(getInitDate());
+
+            GregorianCalendar calendarOld = new GregorianCalendar();
+            calendarOld.setTime(getInitDate());
+            calendarOld.add(periodUnit, (i-1) * periodLength);
+            Date oldDate = calendarOld.getTime();
+
+            calendar.add(periodUnit, i * periodLength);
             if (date.compareTo(oldDate) >= 0 && date.compareTo(calendar.getTime()) < 0) {
                 truncateDateTime(calendar);
                 return calendar.getTime();

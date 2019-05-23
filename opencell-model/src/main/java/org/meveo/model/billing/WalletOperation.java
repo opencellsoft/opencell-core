@@ -62,6 +62,8 @@ import org.meveo.model.rating.EDR;
  * Consumption operation
  * 
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @Table(name = "billing_wallet_operation")
@@ -71,7 +73,12 @@ import org.meveo.model.rating.EDR;
 @DiscriminatorColumn(name = "operation_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
 @NamedQueries({
-        @NamedQuery(name = "WalletOperation.listToInvoice", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
+		@NamedQuery(name = "WalletOperation.listRatedTransactionByWalletOperationId", query = "SELECT o.ratedTransaction FROM WalletOperation o where o.id=:walletOperationId"),
+		@NamedQuery(name = "WalletOperation.getRatedTransactionsBilled", query = "SELECT o.id FROM WalletOperation o "
+                + " WHERE o.ratedTransaction.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED" + " AND o.id IN :walletIdList"),
+		@NamedQuery(name = "WalletOperation.listByRatedTransactionId", query = "SELECT o FROM WalletOperation o WHERE o.ratedTransaction.id=:ratedTransactionId"),
+		
+		@NamedQuery(name = "WalletOperation.listToInvoice", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
                 + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
         @NamedQuery(name = "WalletOperation.listToInvoiceByUA", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
                 + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.wallet.userAccount=:userAccount"),
@@ -94,6 +101,10 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "update WalletOperation w set w.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE"
                 + " where (w.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN OR w.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED)"
                 + " and w.id IN :notBilledWalletIdList"),
+        @NamedQuery(name = "WalletOperation.getRatedTransactionIds", query = "SELECT ratedTransaction.id FROM WalletOperation WHERE id IN :notBilledWalletIdList"),
+        @NamedQuery(name = "WalletOperation.setStatusToOpen", query = "UPDATE WalletOperation o1 SET o1.ratedTransaction=NULL, o1.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
+                + " WHERE o1.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED"
+                + " AND o1.ratedTransaction.id IN (SELECT o2.ratedTransaction.id FROM WalletOperation o2 WHERE o2.id IN :notBilledWalletIdList)"),
         @NamedQuery(name = "WalletOperation.listByChargeInstance", query = "SELECT o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "),
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
                 + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),
@@ -102,7 +113,8 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
                 + " AND o.wallet.userAccount=:userAccount"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
-                + " AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount") })
+                + " AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
+        @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select status, count(*) from WalletOperation group by status")})
 public class WalletOperation extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -122,7 +134,7 @@ public class WalletOperation extends BusinessEntity {
     private Date operationDate;
 
     /**
-     * Invoicing date if invoice date should be in a future and does not match teh billing cycle invoicing dates
+     * Invoicing date if invoice date should be in a future and does not match the billing cycle invoicing dates
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "invoicing_date")
@@ -367,6 +379,14 @@ public class WalletOperation extends BusinessEntity {
     @JoinColumn(name = "subscription_id")
     protected Subscription subscription;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rated_transaction_id")
+    protected RatedTransaction ratedTransaction;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_instance_id")
+    private ServiceInstance serviceInstance;
+
     /**
      * Billing account
      */
@@ -382,7 +402,8 @@ public class WalletOperation extends BusinessEntity {
     /**
      * Offer template
      */
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
     public WalletInstance getWallet() {
@@ -421,9 +442,25 @@ public class WalletOperation extends BusinessEntity {
         return chargeInstance;
     }
 
-    public void setChargeInstance(ChargeInstance chargeInstance) {
-        this.chargeInstance = chargeInstance;
-    }
+	public void setChargeInstance(ChargeInstance chargeInstance) {
+		if (chargeInstance instanceof RecurringChargeInstance) {
+			setServiceInstance(((RecurringChargeInstance) chargeInstance).getServiceInstance());
+
+		} else if (chargeInstance instanceof OneShotChargeInstance) {
+			OneShotChargeInstance os = ((OneShotChargeInstance) chargeInstance);
+			if (os.getSubscriptionServiceInstance() != null) {
+				setServiceInstance(os.getSubscriptionServiceInstance());
+
+			} else {
+				setServiceInstance(os.getTerminationServiceInstance());
+			}
+
+		} else if (chargeInstance instanceof UsageChargeInstance) {
+			setServiceInstance(((UsageChargeInstance) chargeInstance).getServiceInstance());
+		}
+
+		this.chargeInstance = chargeInstance;
+	}
 
     public Currency getCurrency() {
         return currency;
@@ -826,4 +863,20 @@ public class WalletOperation extends BusinessEntity {
         amountWithTax = amounts[1];
         amountTax = amounts[2];
     }
+
+	public RatedTransaction getRatedTransaction() {
+		return ratedTransaction;
+	}
+
+	public void setRatedTransaction(RatedTransaction ratedTransaction) {
+		this.ratedTransaction = ratedTransaction;
+	}
+
+	public ServiceInstance getServiceInstance() {
+		return serviceInstance;
+	}
+
+	public void setServiceInstance(ServiceInstance serviceInstance) {
+		this.serviceInstance = serviceInstance;
+	}
 }

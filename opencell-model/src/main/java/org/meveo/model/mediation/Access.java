@@ -49,10 +49,12 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
  * Access point linked to Subscription
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "ACC", inheritCFValuesFrom = "subscription")
+@CustomFieldEntity(cftCodePrefix = "Access", inheritCFValuesFrom = "subscription")
 @ExportIdentifier({ "accessUserId", "subscription.code" })
 @Table(name = "medina_access", uniqueConstraints = { @UniqueConstraint(columnNames = { "acces_user_id", "subscription_id" }) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

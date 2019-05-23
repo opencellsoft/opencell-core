@@ -37,14 +37,17 @@ import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
  * @author Youssef IZEM
- * @lastModifiedVersion 5.4
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
@@ -57,7 +60,10 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.create(postData);
+            Subscription subscription = subscriptionApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(subscription.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -209,7 +215,10 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.createOrUpdate(postData);
+            Subscription subscription = subscriptionApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(subscription.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

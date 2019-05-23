@@ -12,7 +12,9 @@ import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
@@ -23,6 +25,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGatewayRumSequence;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -35,7 +38,8 @@ import org.slf4j.Logger;
  * @author Andrius Karpavicius
  * @author Edward Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Singleton
 @Lock(LockType.WRITE)
@@ -59,6 +63,9 @@ public class ServiceSingleton {
 
     @Inject
     private SellerService sellerService;
+    
+    @Inject
+    private CustomGenericEntityCodeService customGenericEntityCodeService;
 
     @Inject
     private Logger log;
@@ -277,5 +284,19 @@ public class ServiceSingleton {
 
 		return rumSequence;
 	}
+
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public CustomGenericEntityCode getGenericCodeEntity(String entityClass) throws BusinessException {
+        CustomGenericEntityCode customGenericEntityCode = null;
+        if (!StringUtils.isBlank(entityClass)) {
+            customGenericEntityCode = customGenericEntityCodeService.findByClass(entityClass);
+            if (customGenericEntityCode != null) {
+                customGenericEntityCode.setSequenceCurrentValue(customGenericEntityCode.getSequenceCurrentValue() != null ? customGenericEntityCode.getSequenceCurrentValue() + 1 : 0);
+            }
+        }
+        return customGenericEntityCode;
+    }
 
 }

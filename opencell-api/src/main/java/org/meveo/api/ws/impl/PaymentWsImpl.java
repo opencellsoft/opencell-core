@@ -26,6 +26,7 @@ import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
@@ -47,6 +48,8 @@ import org.meveo.api.payment.PaymentGatewayRumSequenceApi;
 import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.payment.PaymentScheduleApi;
 import org.meveo.api.ws.PaymentWs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 
 /**
@@ -54,7 +57,8 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
  * 
  * @author Edward Legaspi
  * @author Youssef IZEM
- * @lastModifiedVersion 5.3
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @SuppressWarnings("deprecation")
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
@@ -329,7 +333,10 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            creditCategoryApi.create(postData);
+            CreditCategory creditCategory = creditCategoryApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(creditCategory.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -355,7 +362,10 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            creditCategoryApi.createOrUpdate(postData);
+            CreditCategory creditCategory = creditCategoryApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(creditCategory.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -733,6 +743,16 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         return result;
     }
 
+    @Override
+    public PaymentScheduleInstanceResponseDto findPaymentScheduleInstance(Long id) {
+    	PaymentScheduleInstanceResponseDto response = new PaymentScheduleInstanceResponseDto();    	
+    	try {
+    		response = paymentScheduleApi.findPaymentScheduleInstance(id);
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+    	return response;
+    }
 
     @Override
     public ActionStatus terminatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) {

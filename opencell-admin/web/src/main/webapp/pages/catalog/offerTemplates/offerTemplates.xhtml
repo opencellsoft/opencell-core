@@ -60,6 +60,10 @@
                 field="offerProductTemplates" isList="true"
                 valueLabelField="productTemplate.code"
                 valueIdField="productTemplate.id" entityView="productTemplateDetail" backView="offerTemplates" />
+            <hftl:column label="#{messages['menu.discountPlans']}"
+                         field="allowedDiscountPlans" isList="true"
+                         valueLabelField="code"
+                         valueIdField="id" entityView="discountPlanDetail" backView="offerTemplates" />
             <hftl:column label="#{messages['businessOffer.title']}"
                 field="businessOfferModel.code" />
             <hftl:column label="#{messages['enableEntity.active']}"

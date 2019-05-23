@@ -1,12 +1,24 @@
 package org.meveo.model.billing;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.CustomDateSerializer;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-
-import javax.persistence.*;
-
-import org.hibernate.annotations.Type;
+import java.util.Objects;
 
 /**
  * Embeddable set of renewal fields. Use in ServiceTemplate and Subscription.
@@ -14,9 +26,11 @@ import org.hibernate.annotations.Type;
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
  * @author Mounir BAHIJE
- * @lastModifiedVersion 5.3
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Embeddable
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SubscriptionRenewal implements Serializable {
 
     private static final long serialVersionUID = 7391688555444183997L;
@@ -69,11 +83,16 @@ public class SubscriptionRenewal implements Serializable {
         }
     }
 
+    /**
+	 * The default subscription renewal term type. A subscription can be
+	 * automatically renewed on a period basis or on a fixed date.
+	 */
     public enum InitialTermTypeEnum {
         /**
          * Uses RenewalPeriodUnitEnum.
          */
         RECURRING,
+        
         /**
          * Uses date picker.
          */
@@ -97,6 +116,7 @@ public class SubscriptionRenewal implements Serializable {
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "auto_renew_date")
+    @JsonSerialize(using = CustomDateSerializer.class)
     private Date autoRenewDate;
     
     /**
@@ -117,6 +137,7 @@ public class SubscriptionRenewal implements Serializable {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auto_termin_reason_id")
+    @JsonUnwrapped()
     private SubscriptionTerminationReason terminationReason;
 
     /**
@@ -152,6 +173,9 @@ public class SubscriptionRenewal implements Serializable {
     @Column(name = "renew_for")
     private Integer renewFor;
 
+    /**
+     * The instance of InitialTermTypeEnum for this subscription.
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "initial_term_type")
     private InitialTermTypeEnum initialTermType = InitialTermTypeEnum.RECURRING;
@@ -266,5 +290,27 @@ public class SubscriptionRenewal implements Serializable {
      */
     public void setAutoRenewDate(Date autoRenewDate) {
         this.autoRenewDate = autoRenewDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SubscriptionRenewal that = (SubscriptionRenewal) o;
+        return autoRenew == that.autoRenew &&
+                extendAgreementPeriodToSubscribedTillDate == that.extendAgreementPeriodToSubscribedTillDate &&
+                Objects.equals(autoRenewDate, that.autoRenewDate) &&
+                endOfTermAction == that.endOfTermAction &&
+                initialyActiveForUnit == that.initialyActiveForUnit &&
+                Objects.equals(initialyActiveFor, that.initialyActiveFor) &&
+                renewForUnit == that.renewForUnit &&
+                Objects.equals(renewFor, that.renewFor) &&
+                initialTermType == that.initialTermType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(autoRenew, autoRenewDate, endOfTermAction, initialyActiveForUnit, initialyActiveFor, extendAgreementPeriodToSubscribedTillDate,
+                renewForUnit, renewFor, initialTermType);
     }
 }

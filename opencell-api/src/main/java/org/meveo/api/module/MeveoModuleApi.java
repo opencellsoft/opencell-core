@@ -71,6 +71,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptUtils;
 import org.meveo.service.script.module.ModuleScriptInterface;
 import org.meveo.service.script.module.ModuleScriptService;
 import org.primefaces.model.SortOrder;
@@ -79,9 +80,10 @@ import org.primefaces.model.SortOrder;
  * @author Tyshan Shi(tyshan@manaty.net)
  * @author Edward P. Legaspi(edward.legaspi@manaty.net)
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- * 
- **/
+ * @author Abdellatif BARI
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
+ */
 @Stateless
 public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
@@ -134,9 +136,6 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     @Override
     public MeveoModule create(MeveoModuleDto moduleDto) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(moduleDto.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(moduleDto.getDescription())) {
             missingParameters.add("description");
         }
@@ -167,7 +166,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
                 // Otherwise code is calculated from script source by combining package and classname
             } else if (!StringUtils.isBlank(moduleDto.getScript().getScript())) {
-                String fullClassname = ScriptInstanceService.getFullClassname(moduleDto.getScript().getScript());
+                String fullClassname = ScriptUtils.getFullClassname(moduleDto.getScript().getScript());
                 if (!StringUtils.isBlank(moduleDto.getScript().getCode()) && !moduleDto.getScript().getCode().equals(fullClassname)) {
                     throw new BusinessApiException("The code and the canonical script class name must be identical");
                 }
@@ -230,7 +229,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
                 // Otherwise code is calculated from script source by combining package and classname
             } else if (!StringUtils.isBlank(moduleDto.getScript().getScript())) {
-                String fullClassname = ScriptInstanceService.getFullClassname(moduleDto.getScript().getScript());
+                String fullClassname = ScriptUtils.getFullClassname(moduleDto.getScript().getScript());
                 if (!StringUtils.isBlank(moduleDto.getScript().getCode()) && !moduleDto.getScript().getCode().equals(fullClassname)) {
                     throw new BusinessApiException("The code and the canonical script class name must be identical");
                 }
@@ -317,6 +316,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                         modulePropertyFlagLoader.setLoadOfferProductTemplate(pagingAndFiltering.hasFieldOption("loadOfferProductTemplate"));
                         modulePropertyFlagLoader.setLoadServiceChargeTemplate(pagingAndFiltering.hasFieldOption("loadServiceChargeTemplate"));
                         modulePropertyFlagLoader.setLoadProductChargeTemplate(pagingAndFiltering.hasFieldOption("loadProductChargeTemplate"));
+                        modulePropertyFlagLoader.setLoadAllowedDiscountPlan(pagingAndFiltering.hasFieldOption("loadAllowedDiscountPlan"));
                     }
                     
                     moduleDto = moduleToDto(meveoModule, modulePropertyFlagLoader);
@@ -866,7 +866,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         if (bom.getOfferTemplate() != null) {
             dto.setOfferTemplate(offerTemplateApi.fromOfferTemplate(bom.getOfferTemplate(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE, modulePropertyFlagLoader.isLoadOfferServiceTemplate(),
                 modulePropertyFlagLoader.isLoadOfferProductTemplate(), modulePropertyFlagLoader.isLoadServiceChargeTemplate(),
-                modulePropertyFlagLoader.isLoadProductChargeTemplate()));
+                modulePropertyFlagLoader.isLoadProductChargeTemplate(), modulePropertyFlagLoader.isLoadAllowedDiscountPlan()));
         }
     }
 

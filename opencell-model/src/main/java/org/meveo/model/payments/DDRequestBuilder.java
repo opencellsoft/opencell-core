@@ -27,11 +27,13 @@ import org.meveo.model.scripts.ScriptInstance;
  *
  * @author anasseh
  * @since Opencell 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 
 @Entity
 @ModuleItem
-@CustomFieldEntity(cftCodePrefix = "DDREQ_BUILDER")
+@CustomFieldEntity(cftCodePrefix = "DDRequestBuilder")
 @Table(name = "ar_ddrequest_builder")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_ddrequest_builder_seq"), })

@@ -26,7 +26,6 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
 import org.meveo.service.base.PersistenceService;
@@ -54,7 +53,7 @@ public class WorkflowInstanceHistoryBean extends BaseBean<WorkflowInstanceHistor
     @Inject
     private WorkflowInstanceService workflowInstanceService;
 
-    private GenericWorkflow selectedGenericWF = null;
+    private WorkflowInstance selectedWFInstance = null;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -90,33 +89,41 @@ public class WorkflowInstanceHistoryBean extends BaseBean<WorkflowInstanceHistor
      */
 
     public List<WorkflowInstance> getWorkflowInstances(BusinessEntity entity, Class<?> clazz) {
-        return workflowInstanceService.findByCodeAndClazz(entity.getCode(), clazz);
+        return workflowInstanceService.findByEntityIdAndClazz(entity.getId(), clazz);
     }
 
     /**
      * This method is called from some businessEntityDetail's page.
      * 
-     * @param entity Entity object
      * @return List of Workflow instance history
      */
 
-    public List<WorkflowInstanceHistory> getWorkflowHistories(BusinessEntity entity) {
-        return workflowInstanceHistoryService.findByEntityInstanceCode(entity.getCode());
+    public List<WorkflowInstanceHistory> getWorkflowHistories() {
+        if (selectedWFInstance != null) {
+            return workflowInstanceHistoryService.findByWorkflowInstance(selectedWFInstance);
+        }
+
+        return null;
     }
 
-    public List<WorkflowInstanceHistory> getWorkflowHistories(GenericWorkflow genericWorkflow) {
-        return workflowInstanceHistoryService.findByGenericWorkflow(genericWorkflow);
+    /**
+     * @param selectedWFInstance the selectedWFInstance to set
+     */
+    public void selectWFInstance(WorkflowInstance selectedWFInstance) {
+        this.selectedWFInstance = selectedWFInstance;
     }
 
-    public GenericWorkflow getSelectedGenericWF() {
-        return selectedGenericWF;
+    /**
+     * @return the selectedWFInstance
+     */
+    public WorkflowInstance getSelectedWFInstance() {
+        return selectedWFInstance;
     }
 
-    public void setSelectedGenericWF(GenericWorkflow selectedGenericWF) {
-        this.selectedGenericWF = selectedGenericWF;
-    }
-
-    public void selectGenericWF(GenericWorkflow genericWF) {
-        this.selectedGenericWF = genericWF;
+    /**
+     * @param selectedWFInstance the selectedWFInstance to set
+     */
+    public void setSelectedWFInstance(WorkflowInstance selectedWFInstance) {
+        this.selectedWFInstance = selectedWFInstance;
     }
 }

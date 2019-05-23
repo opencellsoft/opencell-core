@@ -127,4 +127,21 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	public void setDiscountPlanItems(List<DiscountPlanItemDto> discountPlanItems) {
 		this.discountPlanItems = discountPlanItems;
 	}
+
+	public static DiscountPlan copyFromDto(DiscountPlanDto source, DiscountPlan target) {
+		if (source.getStartDate() != null) {
+			target.setStartDate(source.getStartDate());
+		}
+		if (source.getEndDate() != null) {
+			target.setEndDate(source.getEndDate());
+		}
+		if (source.getDurationUnit() != null) {
+			target.setDurationUnit(source.getDurationUnit());
+		}
+		if (source.getDefaultDuration() != null) {
+			target.setDefaultDuration(source.getDefaultDuration());
+		}
+
+		return target;
+	}
 }

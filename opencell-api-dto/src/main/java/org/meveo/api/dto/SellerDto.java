@@ -122,6 +122,8 @@ public class SellerDto extends BusinessEntityDto {
             }
         }
 
+        id = seller.getId();
+
         if (seller.getTradingCountry() != null) {
             countryCode = seller.getTradingCountry().getCountryCode();
         }

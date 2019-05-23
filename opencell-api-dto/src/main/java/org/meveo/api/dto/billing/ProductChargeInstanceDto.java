@@ -12,8 +12,14 @@ import org.meveo.model.billing.ProductChargeInstance;
  */
 public class ProductChargeInstanceDto extends ChargeInstanceDto {
 
+    private static final long serialVersionUID = 2675370510322125454L;
+
     /** The quantity. */
     protected BigDecimal quantity = BigDecimal.ONE;
+
+    public ProductChargeInstanceDto() {
+        super();
+    }
 
     /**
      * Instantiates a new product charge instance dto.

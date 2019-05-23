@@ -46,6 +46,7 @@
 				<p:tab title="#{messages['generic.wf.title']}">
 					<hftl:formPanel formId="genericWFFormId" backingBean="#{genericWorkflowBean}"
 						showEnableDisableButton="true">
+
 						<hftl:formField label="#{messages['businessEntity.code']}"
 							field="code" allowEdit="false" required="true"
 							validateUnique="true" />
@@ -57,7 +58,8 @@
 							label="#{messages['generic.wf.targetEntityClass']}"
 							field="targetEntityClass" allowEdit="false" required="true"
 							size="60" autocompleteBean="#{genericWorkflowBean}"
-							autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
+							autocompleteMethod="autocompleteClassNames" isAutocomplete="true" 
+							listenerUpdate="targetCetCodeField" />
 
 						<hftl:formField label="#{messages['workflow.enableHistory']}"
 							field="enableHistory" />
@@ -65,9 +67,20 @@
 						<hftl:formField label="#{messages['enableEntity.disabled']}"
 							doNotShowOnNew="true" allowEdit="false" field="disabled"
 							isMessage="true" newLine="true" />
-
-						<hftl:formField label="#{messages['generic.wf.initStatus']}" field="initStatus" required="true" isMessage="true"
+                        
+                        <h:panelGroup id="targetCetCodeField">
+	                        <hftl:formField label="#{messages['generic.wf.targetCetCode']}" field="targetCetCode" required="true" size="90" maxlength="255"
+                               isAutocomplete="true"
+                               autocompleteBean="#{genericWorkflowBean}"
+                               autocompleteMethod="autocompleteCET"
+                               newLine="true" componentWidth="100"
+                               allowEdit="false"
+                               rendered="#{genericWorkflowBean.entity.targetEntityClass == 'org.meveo.model.customEntities.CustomEntityInstance'}" />
+                        </h:panelGroup>
+                        
+                        <hftl:formField label="#{messages['generic.wf.initStatus']}" field="initStatus" isMessage="true" newLine="true"
                              listValues="#{genericWorkflowBean.transitionStatuses}"
+                             required="true"
                              rendered="${!empty(genericWorkflowBean.transitionStatuses)}" />
 
 						<h:panelGroup>
@@ -172,6 +185,7 @@
                                 <p:panel styleClass="clearLeft">
                                     <hftl:formField label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" required="false" isMessage="true"
                                         edit="#{genericWorkflowBean.edit}" listValues="#{genericWorkflowBean.transitionStatuses}" />
+
                                     <hftl:formField label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" required="true" isMessage="true"
                                         edit="#{genericWorkflowBean.edit}" listValues="#{genericWorkflowBean.transitionStatuses}" />
 

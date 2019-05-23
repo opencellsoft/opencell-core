@@ -320,16 +320,17 @@
 		<p:menuitem id="charts" value="#{messages['menu.charts']}"
 			outcome="charts" />
 	</p:submenu>
-
-	<p:submenu id="customEntites"
+        
+    <p:submenu id="customEntites"
 		label="#{messages['menu.customEntities']}"
 		rendered="#{!empty(customEntityTemplateBean.listAll()) and currentUser.hasRole('administrationVisualization')}">
 		<c:set var="cetIndex" value="0" />
 		<c:forEach items="#{customEntityTemplateBean.listAll()}" var="cet">
 			<c:if
 				test="#{currentUser.hasRole(cet.readPermission) || currentUser.hasRole('ReadAllCE')}">
-				<p:menuitem id="cet_#{cetIndex}" outcome="customEntities" value="#{cet.name}">
-					<f:param name="cet" value="#{cet.code}"></f:param>
+				<p:menuitem id="cet_#{cetIndex}" outcome="#{cet.storeAsTable?'customTables':'customEntities'}" value="#{cet.name}">
+					<f:param name="cet" value="#{cet.code}" disable="#{cet.storeAsTable}"/>
+                    <f:param name="objectId" value="#{cet.id}" disable="#{!cet.storeAsTable}"/>
 				</p:menuitem>
 				<c:set var="cetIndex" value="#{cetIndex + 1}" />
 			</c:if>

@@ -13,7 +13,9 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
 
 /**
  * Custom entity instance
@@ -21,6 +23,7 @@ import org.meveo.model.ObservableEntity;
  * @author Andrius Karpavicius
  */
 @Entity
+@WorkflowedEntity
 @ObservableEntity
 @Cacheable
 @CustomFieldEntity(cftCodePrefix = "CE", cftCodeFields = "cetCode")
@@ -28,7 +31,7 @@ import org.meveo.model.ObservableEntity;
 @Table(name = "cust_cei", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cet_code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cust_cei_seq"), })
-public class CustomEntityInstance extends EnableBusinessCFEntity {
+public class CustomEntityInstance extends EnableBusinessCFEntity implements IWFEntity {
 
     private static final long serialVersionUID = 8281478284763353310L;
 

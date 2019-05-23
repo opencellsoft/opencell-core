@@ -13,11 +13,15 @@ import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.SellerRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class SellerRsImpl extends BaseRs implements SellerRs {
@@ -30,7 +34,10 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            sellerApi.create(postData);
+            Seller seller = sellerApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(seller.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -107,7 +114,10 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
     public ActionStatus createOrUpdate(SellerDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            sellerApi.createOrUpdate(postData);
+            Seller seller = sellerApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(seller.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

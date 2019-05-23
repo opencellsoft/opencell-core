@@ -26,7 +26,9 @@ import org.meveo.api.rest.IBaseRs;
 
 /**
  * @author Andrius Karpavicius
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Path("/entityCustomization")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -306,7 +308,7 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * Returns a list of filtered CustomFieldTemplate of an entity. The list of entity is evaluted againsts the entity with the given code.
      * 
-     * @param appliesTo - the type of entity to which the CFT applies. eg OFFER, SERVICE.
+     * @param appliesTo - the type of entity to which the CFT applies. eg OfferTemplate, ServiceTemplate.
      * @param entityCode - code of the entity
      * @return instance of EntityCustomizationResponseDto
      */

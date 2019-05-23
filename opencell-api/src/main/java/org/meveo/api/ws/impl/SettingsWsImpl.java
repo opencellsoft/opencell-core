@@ -107,11 +107,17 @@ import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
 import org.meveo.api.hierarchy.UserHierarchyLevelApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SettingsWs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
+ * SOAP endpoints for settings.
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @WebService(serviceName = "SettingsWs", endpointInterface = "org.meveo.api.ws.SettingsWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -568,7 +574,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            sellerApi.create(postData);
+            Seller seller = sellerApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(seller.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1161,7 +1170,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     public ActionStatus createOrUpdateSeller(SellerDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            sellerApi.createOrUpdate(postData);
+            Seller seller = sellerApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(seller.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1309,10 +1321,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetRoleResponse findRole(String name) {
+    public GetRoleResponse findRole(String name, boolean includeSecuredEntities) {
         GetRoleResponse result = new GetRoleResponse();
         try {
-            result.setRoleDto(roleApi.find(name));
+            result.setRoleDto(roleApi.find(name, includeSecuredEntities));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -1703,7 +1715,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerContactApi.create(providerContactDto);
+            ProviderContact providerContact = providerContactApi.create(providerContactDto);
+            if (StringUtils.isBlank(providerContactDto.getCode())) {
+                result.setEntityCode(providerContact.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1767,7 +1782,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerContactApi.createOrUpdate(providerContactDto);
+            ProviderContact providerContact = providerContactApi.createOrUpdate(providerContactDto);
+            if (StringUtils.isBlank(providerContactDto.getCode())) {
+                result.setEntityCode(providerContact.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

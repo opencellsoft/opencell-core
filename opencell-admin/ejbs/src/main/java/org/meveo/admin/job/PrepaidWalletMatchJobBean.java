@@ -45,8 +45,10 @@ public class PrepaidWalletMatchJobBean {
 
             log.debug("wallets to match {}", wallets.size());
             result.setNbItemsToProcess(wallets.size());
+            int i = 0;
             for (WalletInstance wallet : wallets) {
-                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+                i++;
+                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
                 log.debug("match wallet={}", wallet.getId());
