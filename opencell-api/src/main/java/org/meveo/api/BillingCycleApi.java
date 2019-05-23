@@ -38,7 +38,7 @@ public class BillingCycleApi extends BaseApi {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
-    
+
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
@@ -76,6 +76,14 @@ public class BillingCycleApi extends BaseApi {
             }
         }
 
+        ScriptInstance scriptInstance = null;
+        if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+            }
+        }
+
         BillingCycle billingCycle = new BillingCycle();
         billingCycle.setCode(postData.getCode());
         billingCycle.setDescription(postData.getDescription());
@@ -90,6 +98,7 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingCycle.setInvoiceType(invoiceType);
+        billingCycle.setScriptInstance(scriptInstance);
         billingCycle.setInvoiceTypeEl(postData.getInvoiceTypeEl());
         billingCycle.setInvoiceTypeElSpark(postData.getInvoiceTypeElSpark());
         billingCycle.setReferenceDate(postData.getReferenceDate());
@@ -99,12 +108,6 @@ public class BillingCycleApi extends BaseApi {
         } else {
             billingCycle.setType(postData.getType());
         }
-		if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
-			ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
-			if (scriptInstance != null) {
-				billingCycle.setScriptInstance(scriptInstance);
-			}
-		}
         
         // populate customFields
         try {
@@ -148,6 +151,14 @@ public class BillingCycleApi extends BaseApi {
                 throw new EntityDoesNotExistsException(InvoiceType.class, postData.getInvoiceTypeCode());
             }
             billingCycle.setInvoiceType(invoiceType);
+        }
+
+        if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+            }
+            billingCycle.setScriptInstance(scriptInstance);
         }
 
         billingCycle.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
@@ -194,16 +205,6 @@ public class BillingCycleApi extends BaseApi {
         if (postData.getType() != null) {
             billingCycle.setType(postData.getType());
         }
-		if (postData.getScriptInstanceCode() != null) {
-			if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
-				ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
-				if (scriptInstance != null) {
-					billingCycle.setScriptInstance(scriptInstance);
-				}
-			}
-		} else {
-			billingCycle.setScriptInstance(null);
-		}
 
         // populate customFields
         try {
