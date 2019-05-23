@@ -948,7 +948,7 @@
 			tableName="adm_role_secured_entity" />
 	</changeSet>
     
-    <changeSet id="#4054_20191405 - Encryption" author="MohamedElYoussoufi">
+    <changeSet id="#4054_20191405 - Encryption" author="MohamedElYoussoufi" dbms="postgresql">
     	<sql>
 			alter table ${db.schema.adapted}crm_provider alter column bic type character varying(100);
 			alter table ${db.schema.adapted}crm_provider alter column iban type character varying(100);
@@ -975,6 +975,29 @@
     
     <changeSet author="mohamed.el.youssoufi" id="#4301_22052019 - empty tax amount">
     	<sql>update ${db.schema.adapted}billing_invoice set amount_tax = (amount_with_tax - amount_without_tax) where amount_tax = 0 and amount_with_tax != amount_without_tax and amount_tax != (amount_with_tax - amount_without_tax);</sql>
+    </changeSet>
+    
+    <changeSet id="#4054_23052019 - Encryption" author="mohamed.el.youssoufi" dbms="mysql">
+    		<sql> alter table ${db.schema.adapted}crm_provider modify bic varchar(100);
+			alter table ${db.schema.adapted}crm_provider modify iban varchar(100);
+			
+			alter table ${db.schema.adapted}ar_payment_token modify bic varchar(100);
+			alter table ${db.schema.adapted}ar_payment_token modify iban varchar(100);
+			
+			alter table ${db.schema.adapted}ar_payment_gateway modify bic varchar(100);
+			alter table ${db.schema.adapted}ar_payment_gateway modify iban varchar(100);
+			
+			alter table ${db.schema.adapted}crm_seller modify phone varchar(100);
+			alter table ${db.schema.adapted}crm_seller modify mobile varchar(100);
+			
+			alter table ${db.schema.adapted}account_entity modify phone varchar(100);
+			alter table ${db.schema.adapted}account_entity modify mobile varchar(100);
+			
+			alter table ${db.schema.adapted}adm_user modify firstname varchar(100);
+			alter table ${db.schema.adapted}adm_user modify lastname varchar(100);
+			
+			alter table ${db.schema.adapted}account_entity modify firstname varchar(100);
+			alter table ${db.schema.adapted}account_entity modify lastname varchar(100); </sql>
     </changeSet>
     
 </databaseChangeLog>
