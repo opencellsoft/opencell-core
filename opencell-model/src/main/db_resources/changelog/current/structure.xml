@@ -995,4 +995,8 @@
     
     </changeSet>
     
+    <changeSet author="mohamed.el.youssoufi" id="#4301_23052019 - empty tax amount">
+    	<sql>update ${db.schema.adapted}billing_invoice set amount_tax = (amount_with_tax - amount_without_tax), pdf_filename = null, xml_filename = null where amount_tax = 0 and amount_with_tax != amount_without_tax and amount_tax != (amount_with_tax - amount_without_tax);</sql>
+    </changeSet>
+    
 </databaseChangeLog> 
