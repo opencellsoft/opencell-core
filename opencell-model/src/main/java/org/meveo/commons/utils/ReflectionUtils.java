@@ -18,21 +18,34 @@
  */
 package org.meveo.commons.utils;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.model.BusinessEntity;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.*;
 
 /**
  * Utils class for java reflection api.
@@ -111,7 +124,7 @@ public class ReflectionUtils {
             logger.error("Failed to get a list of classes", e);
         }
 
-        return new ArrayList<>();
+        return new ArrayList<Class>();
     }
 
     /**
@@ -129,10 +142,6 @@ public class ReflectionUtils {
         }
 
         return fields;
-    }
-
-    public static List<Field> getAllFields(Class<?> type){
-        return getAllFields(new ArrayList<>(), type);
     }
 
     /**
@@ -602,6 +611,4 @@ public class ReflectionUtils {
     public static Method getMethodFromInterface(Method method, Class<? extends Annotation> annotationClass) {
         return getMethodFromInterface(method.getDeclaringClass(), annotationClass, method.getName(), method.getParameterTypes());
     }
-
-
 }

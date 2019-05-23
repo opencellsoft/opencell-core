@@ -39,13 +39,13 @@ public class ExportTest {
                 transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
                 transformer.transform(new StreamSource(this.getClass().getResourceAsStream("/export/data_" + version + ".xml")), new StreamResult(writer));
 
-                String converted = format(writer.toString());
-                String expected = format(IOUtils.toString(this.getClass().getResourceAsStream("/export/data_" + version + "_expected.xml")));
+                String converted = writer.toString().replaceAll(" />", "/>").replaceAll("\\r", "");
+                String expected = IOUtils.toString(this.getClass().getResourceAsStream("/export/data_" + version + "_expected.xml")).replaceAll(" />", "/>").replaceAll("\\r", "");
 
                 if (!converted.equals(expected)) {
                     System.out.println("Failed to compare");
-                    System.out.println(expected);
-                    System.out.println(converted);
+                    System.out.println(expected.replaceAll("\\n", "").replaceAll("\\r", ""));
+                    System.out.println(converted.replaceAll("\\n", "").replaceAll("\\r", ""));
                 }
                 Assert.assertEquals(changesetFile, expected, converted);
 
@@ -55,9 +55,4 @@ public class ExportTest {
             }
         }
     }
-
-    private String format(String value) {
-        return value.replaceAll(" />", "/>").replaceAll("(\\s{2,}|\\t|\\n)", "");
-    }
-
 }
