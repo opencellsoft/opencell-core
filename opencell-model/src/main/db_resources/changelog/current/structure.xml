@@ -246,8 +246,24 @@
            <column name="service_instance_id" type="bigInt"/>
        </addColumn>
        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_service_instance" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />       
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />            
+       <sql>CREATE INDEX rt_subscription_index ON ${db.schema.adapted}billing_rated_transaction  (subscription_id, invoice_id, usage_date)</sql>  
+       <sql>CREATE INDEX rt_ba_invoice_index ON ${db.schema.adapted}billing_rated_transaction  (billing_account__id, invoice_id, usage_date)</sql>   
+       <sql>CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
+       <sql>CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
     </changeSet>
+        
+    <changeSet id="#4282_20190520-vacuum" author="AndriusKarpavicius" dbms="postgresql">    
+       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_scale_factor = 0.0);  
+       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_threshold = 5000);  
+       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_analyze_scale_factor = 0.0);  
+       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_analyze_threshold = 5000);
+       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_vacuum_scale_factor = 0.0);  
+       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_vacuum_threshold = 5000);  
+       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_analyze_scale_factor = 0.0);  
+       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_analyze_threshold = 5000);     
+    </changeSet>
+        
 <!-- Takes many hours on 30M RT
     <changeSet id="#4282_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
         <sql>update ${db.schema.adapted}billing_rated_transaction set service_instance_id = wo.service_instance_id from ${db.schema.adapted}billing_wallet_operation wo where
@@ -261,6 +277,8 @@
         </sql>
     </changeSet>
  -->
+ 
+ 
     <changeSet id="#4290_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
         <sql>update ${db.schema.adapted}billing_service_instance set minimum_amount_el = st.minimum_amount_el, minimum_label_el = st.minimum_label_el from ${db.schema.adapted}cat_service_template st where
                service_template_id = st.id and billing_service_instance.minimum_amount_el is not null
