@@ -254,14 +254,14 @@
     </changeSet>
         
     <changeSet id="#4282_20190520-vacuum" author="AndriusKarpavicius" dbms="postgresql">    
-       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_scale_factor = 0.0);  
-       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_threshold = 5000);  
-       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_analyze_scale_factor = 0.0);  
-       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_analyze_threshold = 5000);
-       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_vacuum_scale_factor = 0.0);  
-       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_vacuum_threshold = 5000);  
-       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_analyze_scale_factor = 0.0);  
-       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_analyze_threshold = 5000);     
+       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_scale_factor = 0.0);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_threshold = 5000);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_analyze_scale_factor = 0.0);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_analyze_threshold = 5000);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_vacuum_scale_factor = 0.0);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_vacuum_threshold = 5000);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_analyze_scale_factor = 0.0);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_analyze_threshold = 5000);</sql>
     </changeSet>
         
 <!-- Takes many hours on 30M RT
