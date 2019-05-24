@@ -58,6 +58,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.PaymentMethodService;
 
 /**
  * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -93,6 +94,9 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     @Inject
     private AccountOperationService accountOperationService;
+
+    @Inject
+    private PaymentMethodService paymentMethodService;
 
     /**
      * Customer Id passed as a parameter. Used when creating new Customer Account from customer account window, so default customer account will be set on newly created customer
@@ -429,7 +433,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             } else {
                 entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(selectedPaymentMethod), selectedPaymentMethod);
             }
-
+            entity.addPaymentMethodToAudit(new Object() {
+            }.getClass().getEnclosingMethod().getName(), selectedPaymentMethod);
             selectedPaymentMethod = null;
 
             messages.info(new BundleKey("messages", "paymentMethod.saved.ok"));
@@ -468,13 +473,15 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         }
 
         paymentMethodToPrefer.setPreferred(true);
-
+        entity.addPaymentMethodToAudit(new Object() {
+        }.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
         for (PaymentMethod paymentMethod : entity.getPaymentMethods()) {
             if (!paymentMethod.equals(paymentMethodToPrefer)) {
                 paymentMethod.setPreferred(false);
             }
         }
-
+        entity.addPaymentMethodToAudit(new Object() {
+        }.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
         if (showMessage) {
             messages.info(new BundleKey("messages", "paymentMethod.setPreferred.ok"));
         }
@@ -484,9 +491,11 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
             return;
         }
-
         entity.getPaymentMethods().remove(paymentMethod);
+        entity.addPaymentMethodToAudit(new Object() {
+        }.getClass().getEnclosingMethod().getName(), paymentMethod);
         messages.info(new BundleKey("messages", "paymentMethod.removed.ok"));
+
     }
 
     @ActionMethod
@@ -497,6 +506,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         paymentMethod.setDisabled(true);
         paymentMethod.setPreferred(false);
         entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);
+        entity.addPaymentMethodToAudit(new Object() {
+        }.getClass().getEnclosingMethod().getName(), paymentMethod);
         messages.info(new BundleKey("messages", "disabled.successful"));
 
     }
@@ -509,6 +520,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         paymentMethod.setDisabled(false);
         entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);
         entity.ensureOnePreferredPaymentMethod();
+        entity.addPaymentMethodToAudit(new Object() {
+        }.getClass().getEnclosingMethod().getName(), paymentMethod);
         messages.info(new BundleKey("messages", "enabled.successful"));
 
     }
@@ -530,5 +543,4 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             }
         }
     }
-
 }

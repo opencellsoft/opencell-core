@@ -6,6 +6,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -16,6 +17,11 @@ import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.audit.logging.dto.AnnotationAuditEvent;
 import org.meveo.audit.logging.dto.AuditEvent;
 import org.meveo.audit.logging.dto.MethodParameter;
+import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.CustomerAccountActionsEnum;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * @author Edward P. Legaspi
@@ -42,6 +48,14 @@ public class AuditManagerService {
 		} else {
 			return (Class) o;
 		}
+	}
+
+	public void audit(Class<? extends Object> clazz, String method, Object[] paramValues) throws BusinessException {
+		AuditEvent event = new AuditEvent();
+		event.setEntity(clazz.getName());
+		event.setAction(method);
+		event = metadataHandler.addSignature(event);
+		auditEventProcessor.process(event);
 	}
 
 	public void audit(Class<? extends Object> clazz, Method method, Object[] paramValues) throws BusinessException {
