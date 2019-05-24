@@ -60,34 +60,6 @@ public class AuditManagerService {
 
 	public void audit(Class<? extends Object> clazz, Method method, Object[] paramValues) throws BusinessException {
 		audit(new AnnotationAuditEvent(clazz, method, paramValues));
-		auditPaymentMethod(clazz, method, paramValues);
-	}
-
-	/**
-	 * Add the payment method to the audit
-	 * @param clazz a Class
-	 * @param method a method where the action on payment method is executed.
-	 * @param paramValues An array of payment methods
-	 * @throws BusinessException
-	 */
-	private void auditPaymentMethod(Class<?> clazz, Method method, Object[] paramValues) throws BusinessException {
-		String CustomerAccountServiceClassName = ReflectionUtils.getCleanClassName(CustomerAccountService.class.getSimpleName());
-		if (CustomerAccountServiceClassName.equals(clazz.getSimpleName()) && (CustomerAccountActionsEnum.update.name().equals(method.getName()) || CustomerAccountActionsEnum.create.name().equals(method.getName())) && paramValues != null
-				&& paramValues.length > 0) {
-			Map<String, List<PaymentMethod>> auditedPaymentMethods = ((CustomerAccount) paramValues[0]).getAuditedMethodPayments();
-			if (auditedPaymentMethods == null || auditedPaymentMethods.isEmpty()) {
-				return;
-			}
-			for (String action : auditedPaymentMethods.keySet()) {
-				AuditEvent event = new AuditEvent();
-				event.setEntity(PaymentMethod.class.getName());
-				event.setAction(action);
-				event.addField(PaymentMethod.class.getName(), auditedPaymentMethods.get(action));
-				event = metadataHandler.addSignature(event);
-				auditEventProcessor.process(event);
-			}
-
-		}
 	}
 
 	public void audit(AnnotationAuditEvent event) throws BusinessException {
