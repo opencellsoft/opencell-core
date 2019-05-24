@@ -2,26 +2,18 @@ package org.meveo.audit.logging.custom;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.audit.logging.annotations.CustomMeveoAudit;
-import org.meveo.audit.logging.annotations.IgnoreAudit;
-import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.audit.logging.core.AuditEventProcessor;
 import org.meveo.audit.logging.core.MetadataHandler;
-import org.meveo.audit.logging.dto.AnnotationAuditEvent;
 import org.meveo.audit.logging.dto.AuditEvent;
-import org.meveo.audit.logging.dto.MethodParameter;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.CustomerAccountActionsEnum;
+import org.meveo.model.payments.EntityActionsEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.TypeVariable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +43,7 @@ public class PaymentMethodAuditManagerService implements CustomAuditManagerServi
      */
     public void audit(Class<? extends Object> clazz, Method method, Object[] paramValues) throws BusinessException {
         String customerAccountServiceClassName = ReflectionUtils.getCleanClassName(CustomerAccountService.class.getSimpleName());
-        if (customerAccountServiceClassName.equals(clazz.getSimpleName()) && (CustomerAccountActionsEnum.update.name().equals(method.getName()) || CustomerAccountActionsEnum.create
+        if (customerAccountServiceClassName.equals(clazz.getSimpleName()) && (EntityActionsEnum.update.name().equals(method.getName()) || EntityActionsEnum.create
                 .name().equals(method.getName())) && paramValues != null && paramValues.length > 0) {
             Map<String, List<PaymentMethod>> auditedPaymentMethods = ((CustomerAccount) paramValues[0]).getAuditedMethodPayments();
             if (auditedPaymentMethods == null || auditedPaymentMethods.isEmpty()) {
