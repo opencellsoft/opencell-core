@@ -19,12 +19,12 @@
 package org.meveo.model.payments;
 
 /**
- * Customer Account actions enumeration.
+ * Entity actions enumeration.
  *
  * @author Khalid HORRI
  * @lastModifiedVersion 6.0
  */
-public enum CustomerAccountActionsEnum {
+public enum EntityActionsEnum {
 
     update, create;
 
