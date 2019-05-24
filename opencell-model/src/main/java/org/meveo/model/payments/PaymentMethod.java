@@ -1,18 +1,6 @@
 package org.meveo.model.payments;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -112,6 +100,12 @@ public abstract class PaymentMethod extends EnableEntity {
      */
     @Column(name = "token_id")
     private String tokenId;
+
+    /**
+     * Add to deal with payment method auditing
+     */
+    @Transient
+    private String action;
 
     public PaymentMethod() {
     }
@@ -215,5 +209,13 @@ public abstract class PaymentMethod extends EnableEntity {
 
     public boolean isExpired() {
         return false;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 }
