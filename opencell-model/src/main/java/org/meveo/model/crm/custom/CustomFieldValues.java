@@ -67,6 +67,12 @@ public class CustomFieldValues implements Serializable {
     private Set<String> dirtyCfPeriods = new HashSet<>();
 
     /**
+     * indicates if customFieldValues will be encrypted
+     */
+    @Transient
+	private boolean encrypted;
+
+    /**
      * Constructor
      */
     public CustomFieldValues() {
@@ -934,4 +940,15 @@ public class CustomFieldValues implements Serializable {
     public String toString() {
         return asJson();
     }
+
+	public void setEncrypted(boolean encrypted) {
+		this.encrypted = encrypted;
+	}
+
+	public boolean isEncrypted() {
+		return encrypted;
+	}
+	
+	
+	
 }
