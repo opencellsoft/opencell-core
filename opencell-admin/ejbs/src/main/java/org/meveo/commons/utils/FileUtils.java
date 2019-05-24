@@ -296,20 +296,29 @@ public final class FileUtils {
         return null;
     }
 
-    public static File[] getFilesForParsing(String sourceDirectory, final List<String> extensions) {
-        return getFilesForParsing(sourceDirectory, extensions, "*");
+    /**
+     * List files matching extension and prefix in a given directory
+     * 
+     * @param sourceDirectory Directory to inspect
+     * @param extensions List of extensions to filter by
+     * @return Array of matched files
+     */
+    public static File[] listFiles(String sourceDirectory, final List<String> extensions) {
+        return listFiles(sourceDirectory, extensions, "*");
     }
 
     /**
-     * @param sourceDirectory source directory
-     * @param extensions list of extensions
-     * @param prefix Filename prefix
-     * @return array of File instance
+     * List files matching extension and prefix in a given directory
+     * 
+     * @param sourceDirectory Directory to inspect
+     * @param extensions List of extensions to filter by
+     * @param prefix Filename prefix to filter by
+     * @return Array of matched files
      */
-    public static File[] getFilesForParsing(String sourceDirectory, final List<String> extensions, final String prefix) {
+    public static File[] listFiles(String sourceDirectory, final List<String> extensions, final String prefix) {
         File sourceDir = new File(sourceDirectory);
         if (!sourceDir.exists() || !sourceDir.isDirectory()) {
-            logger.info(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
+            logger.error(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
             return null;
         }
         File[] files = sourceDir.listFiles(new FilenameFilter() {
@@ -335,9 +344,16 @@ public final class FileUtils {
         return files;
     }
 
-    public static List<File> getFilesToProcess(File dir, String prefix, String ext) {
+    /**
+     * 
+     * @param dir Directory to inspect
+     * @param extension File extension to match
+     * @param prefix File prefix to match
+     * @return Array of matched files
+     */
+    public static List<File> listFiles(File dir, String extension, String prefix) {
         List<File> files = new ArrayList<File>();
-        ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);
+        ImportFileFiltre filtre = new ImportFileFiltre(prefix, extension);
         File[] listFile = dir.listFiles(filtre);
 
         if (listFile == null) {

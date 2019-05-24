@@ -1,5 +1,6 @@
 package org.meveo.api.rest.filter.impl;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,12 +19,13 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.filter.FilteredListApi;
 import org.meveo.api.index.FullTextSearchApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.filter.FilteredListRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.slf4j.Logger;
+import org.meveo.commons.utils.StringUtils;
 
 /**
  * Provides APIs for conducting Full Text Search.
@@ -59,18 +61,18 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
         } catch (Exception e) {
             log.error("Failed to execute API", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
-                    : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL,
+                e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
         }
 
         return responseBuilder.build();
     }
 
-    public Response search(String[] classnamesOrCetCodes, String query, Integer from, Integer size) {
+    public Response search(String[] classnamesOrCetCodes, String query, Integer from, Integer size, String sortField, SortOrder sortOrder) {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size);
+            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size, sortField, sortOrder);
             FilteredListResponseDto result = new FilteredListResponseDto();
             result.setSearchResults(searchResults);
             responseBuilder = Response.status(Response.Status.OK).entity(result);
@@ -81,8 +83,8 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
         } catch (Exception e) {
             log.error("Failed to execute API", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
-                    : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL,
+                e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
         }
 
         Response response = responseBuilder.build();
@@ -90,7 +92,7 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
         return response;
     }
 
-    public Response searchByField(String[] classnamesOrCetCodes, Integer from, Integer size, UriInfo info) {
+    public Response searchByField(String[] classnamesOrCetCodes, Integer from, Integer size, String sortField, SortOrder sortOrder, UriInfo info) {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
@@ -104,7 +106,7 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
                 }
             }
 
-            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, queryValues, from, size);
+            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, queryValues, from, size, sortField, sortOrder);
             FilteredListResponseDto result = new FilteredListResponseDto();
             result.setSearchResults(searchResults);
             responseBuilder = Response.status(Response.Status.OK).entity(result);
@@ -115,8 +117,8 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
         } catch (Exception e) {
             log.error("Failed to execute API", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
-                    : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL,
+                e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
         }
 
         Response response = responseBuilder.build();
@@ -138,8 +140,8 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
         } catch (Exception e) {
             log.error("Failed to execute API", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
-                    : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL,
+                e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
         }
 
         Response response = responseBuilder.build();
@@ -148,26 +150,27 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
     }
 
     @Override
+    @Deprecated
     public Response fullSearch(String query, String category, Integer from, Integer size, String sortField, SortOrder sortOrder) {
-        Response.ResponseBuilder responseBuilder = null;
 
         try {
-            String searchResults = fullTextSearchApi.fullSearch(query, category, from, size, sortField, sortOrder);
-            FilteredListResponseDto result = new FilteredListResponseDto();
-            result.setSearchResults(searchResults);
-            responseBuilder = Response.status(Response.Status.OK).entity(result);
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
-                    : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-        }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+            boolean noCategory = StringUtils.isBlank(category);
+            boolean noQuery = StringUtils.isBlank(query);
+
+            if (noCategory && noQuery) {
+                throw new MissingParameterException(Arrays.asList("category", "query"));
+            }
+
+            return search(category != null ? new String[] { category } : null, query, from, size, sortField, sortOrder);
+
+        } catch (MeveoApiException e) {
+            Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+
+            Response response = responseBuilder.build();
+            log.debug("RESPONSE={}", response.getEntity());
+            return response;
+        }
     }
 }

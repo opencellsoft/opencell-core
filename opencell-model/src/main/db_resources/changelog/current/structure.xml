@@ -634,7 +634,7 @@
         <sql><![CDATA[ALTER TABLE ${db.schema.adapted}cat_discount_plan_item DROP CONSTRAINT cat_discount_plan_item_discount_percent_check;]]></sql>
   </changeSet>
     
-    <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">        
+    <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
         <renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
     	<dropColumn tableName="cat_discount_plan_item">
     		<column name="discount_amount"></column>
@@ -934,6 +934,59 @@
                                  baseColumnNames="subscription_id" baseTableName="billing_counter" referencedColumnNames="id"/>
         <addForeignKeyConstraint constraintName="fk_billing_counter_service_instance_id" referencedTableName="billing_service_instance"
                                  baseColumnNames="service_instance_id" baseTableName="billing_counter" referencedColumnNames="id"/>
+    </changeSet>
+    
+
+    <changeSet id="#3607_20190123" author="andrius.karpavicius">
+        <addColumn tableName="cust_cet">
+            <column name="store_as_table" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>        
+    </changeSet>
+
+	<changeSet id="#4107_20190515" author="EdwardPLegaspi">
+		<createTable tableName="adm_role_secured_entity">
+			<column name="role_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="entity_class" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey columnNames="role_id, code, entity_class"
+			constraintName="adm_role_secured_entity_pkey"
+			tableName="adm_role_secured_entity" />
+	</changeSet>
+    
+    <changeSet id="#4054_20191405 - Encryption" author="MohamedElYoussoufi">
+    	<sql>
+			alter table ${db.schema.adapted}crm_provider alter column bic type character varying(100);
+			alter table ${db.schema.adapted}crm_provider alter column iban type character varying(100);
+			
+			alter table ${db.schema.adapted}ar_payment_token alter column bic type character varying(100);
+			alter table ${db.schema.adapted}ar_payment_token alter column iban type character varying(100);
+			
+			alter table ${db.schema.adapted}ar_payment_gateway alter column bic type character varying(100);
+			alter table ${db.schema.adapted}ar_payment_gateway alter column iban type character varying(100);
+			
+			alter table ${db.schema.adapted}crm_seller alter column phone type character varying(100);
+			alter table ${db.schema.adapted}crm_seller alter column mobile type character varying(100);
+			
+			alter table ${db.schema.adapted}account_entity alter column phone type character varying(100);
+			alter table ${db.schema.adapted}account_entity alter column mobile type character varying(100);
+			
+			alter table ${db.schema.adapted}adm_user alter column firstname type character varying(100);
+			alter table ${db.schema.adapted}adm_user alter column lastname type character varying(100);
+			
+			alter table ${db.schema.adapted}account_entity alter column firstname type character varying(100);
+			alter table ${db.schema.adapted}account_entity alter column lastname type character varying(100);
+    	</sql>
+    </changeSet>
+    
+    <changeSet author="mohamed.el.youssoufi" id="#4301_22052019 - empty tax amount">
+    	<sql>update ${db.schema.adapted}billing_invoice set amount_tax = (amount_with_tax - amount_without_tax) where amount_tax = 0 and amount_with_tax != amount_without_tax and amount_tax != (amount_with_tax - amount_without_tax);</sql>
     </changeSet>
     
 </databaseChangeLog>

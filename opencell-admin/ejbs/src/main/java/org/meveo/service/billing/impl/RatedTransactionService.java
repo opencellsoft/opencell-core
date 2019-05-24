@@ -604,16 +604,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 invoice.addAmountTax(taxAggregate.getAmountTax());
             }
         } else {
-            invoice.setAmountTax(BigDecimal.ZERO);
-
+        	
             for (CategoryInvoiceAgregate cAggregate : categoryAggregates.values()) {
                 invoice.addAmountWithoutTax(cAggregate.getAmountWithoutTax());
                 invoice.addAmountWithTax(cAggregate.getAmountWithTax());
+                invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : cAggregate.getAmountTax());
             }
 
             for (SubCategoryInvoiceAgregate discountAggregate : discountAggregates) {
                 invoice.addAmountWithoutTax(discountAggregate.getAmountWithoutTax());
                 invoice.addAmountWithTax(discountAggregate.getAmountWithTax());
+                invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : discountAggregate.getAmountTax());
             }
         }
 
@@ -935,6 +936,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public List<RatedTransaction> listByInvoice(Invoice invoice) {
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "r");
         qb.addCriterionEntity("invoice", invoice);
+        qb.addOrderCriterion("id", true);
 
         try {
             return (List<RatedTransaction>) qb.getQuery(getEntityManager()).getResultList();

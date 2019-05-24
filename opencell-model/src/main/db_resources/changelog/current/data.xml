@@ -2639,16 +2639,62 @@ public class DeleteCustomersScript extends Script {
 	}
 }');]]>
 		</sql>	
-		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-18, 0, 0, now(), now(), 'DeleteCustomersScript_JOB', NULL, 'MEDIATION', 'FlatFileProcessingJob',
-			 NULL, 'opencell.admin', 'opencell.admin', NULL, NULL, 'DeleteCustomersScript_JOB', NULL, 1, 
-			 '{"FlatFileProcessingJob_mappingConf":[{"string":"\n    <beanio xmlns=\"http://www.beanio.org/2012/03\" \n      xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n      xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\n      <stream name=\"RECORD\" format=\"csv\" strict=\"true\">\n        <parser>\n          <property name=\"delimiter\" value=\";\" />\n        </parser>     \n        <record name=\"customer\"  minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">  \n           <field name=\"customerCode\" minOccurs=\"0\" position=\"0\" />\n           <field name=\"noCheck\" minOccurs=\"0\" position=\"1\"/>\n        </record> \n      </stream>\n    </beanio>\n"}],
-			 "FlatFileProcessingJob_recordVariableName":[{"string":"RECORD"}],
-			 "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}],
-			 "FlatFileProcessingJob_fileNameExtension":[{"string":"csv"}],
-			 "FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.DeleteCustomersScript"}],
-			 "FlatFileProcessingJob_inputDir":[{"string":"/batch/customer/delete"}]}', 
-			 NULL);]]>
-         </sql>	
+
+          <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-18" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="updated" valueDate="now()" />
+            <column name="code" value="DeleteCustomersScript_JOB" />
+            <column name="description" value="DeleteCustomersScript_JOB" />
+            <column name="job_category" value="MEDIATION" />
+            <column name="job_template" value="FlatFileProcessingJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="timerentity_id" value="null" />
+            <column name="following_job_id" value="null" />
+            <column name="uuid" value="DeleteCustomersScript_JOB" />
+            <column name="run_on_nodes" value="null" />
+            <column name="single_node" value="1" />
+            
+            <column name="cf_values">
+	            <![CDATA[{"FlatFileProcessingJob_mappingConf":[{"string":"<beanio xmlns=\"http://www.beanio.org/2012/03\" \r\n      xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n      xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n      <stream name=\"RECORD\" format=\"csv\" strict=\"true\">\r\n        <parser>\r\n          <property name=\"delimiter\" value=\";\" />\r\n        </parser>     \r\n        <record name=\"customer\"  minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">  \r\n           <field name=\"customerCode\" minOccurs=\"0\" position=\"0\" />\r\n           <field name=\"noCheck\" minOccurs=\"0\" position=\"1\"/>\r\n        </record> \r\n      </stream>\r\n    </beanio>"}]
+						,"FlatFileProcessingJob_recordVariableName":[{"string":"RECORD"}]
+						,"FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]
+						,"FlatFileProcessingJob_fileNameExtension":[{"string":"csv"}]
+						,"FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.DeleteCustomersScript"}]
+						,"FlatFileProcessingJob_inputDir":[{"string":"/batch/customer/delete"}]}]]>
+            </column>
+            <column name="cf_values_accum">
+	             <![CDATA[{"FlatFileProcessingJob_mappingConf":[{"string":"<beanio xmlns=\"http://www.beanio.org/2012/03\" \r\n      xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n      xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n      <stream name=\"RECORD\" format=\"csv\" strict=\"true\">\r\n        <parser>\r\n          <property name=\"delimiter\" value=\";\" />\r\n        </parser>     \r\n        <record name=\"customer\"  minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">  \r\n           <field name=\"customerCode\" minOccurs=\"0\" position=\"0\" />\r\n           <field name=\"noCheck\" minOccurs=\"0\" position=\"1\"/>\r\n        </record> \r\n      </stream>\r\n    </beanio>"}]
+						,"FlatFileProcessingJob_recordVariableName":[{"string":"RECORD"}]
+						,"FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]
+						,"FlatFileProcessingJob_fileNameExtension":[{"string":"csv"}]
+						,"FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.DeleteCustomersScript"}]
+						,"FlatFileProcessingJob_inputDir":[{"string":"/batch/customer/delete"}]}]]>
+            </column>
+            <column name="exclude_inv_without_amount" value="null" />
+            <column name="verbose_report" value="1" />
+            
+          </insert>
 	</changeSet>
+    
+    
+    <changeSet id="#3607_20190123" author="andrius.karpavicius">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-19" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
+            <column name="created" valueDate="2015-03-19 00:04:19.913" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="CustomTableImportJob" />
+            <column name="code" value="Custom_table_data_import_Job" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-1" />
+            <column name="uuid" value="Custom_table_data_import_Job" />
+        </insert>
+    </changeSet>
     
 </databaseChangeLog>

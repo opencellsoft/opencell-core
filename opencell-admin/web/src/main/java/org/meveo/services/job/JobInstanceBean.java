@@ -13,6 +13,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
@@ -41,7 +42,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     @Inject
     private JobExecutionService jobExecutionService;
-    
+
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
 
@@ -88,6 +89,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         return jobInstanceService.getJobNames(entity.getJobCategoryEnum());
     }
 
+    @ActionMethod
     public String execute() {
         try {
             jobExecutionService.manualExecute(entity);
@@ -99,7 +101,8 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
         return getEditViewName();
     }
-    
+
+    @ActionMethod
     public String stop() {
         try {
             jobExecutionService.stopJob(entity);
@@ -112,6 +115,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         return getEditViewName();
     }
 
+    @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         super.saveOrUpdate(killConversation);
         return getEditViewName();
@@ -182,10 +186,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
      * @return True if it can be executed locally
      */
     public boolean isAllowedToExecute(JobInstance jobInstance) {
-		if (jobInstance == null || jobInstance.getId() == null) {
-			return false;
-		}
-    	
+        if (jobInstance == null || jobInstance.getId() == null) {
+            return false;
+        }
+
         JobRunningStatusEnum isRunning = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
         if (isRunning == JobRunningStatusEnum.NOT_RUNNING) {
             return true;
@@ -208,21 +212,23 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         createMissingCustomFieldTemplates();
         customFieldDataEntryBean.refreshFieldsAndActions(entity);
     }
-    
+
     protected List<String> getFormFieldsToFetch() {
         return Arrays.asList("executionResults");
     }
-    
+
     @Override
-    public void enable() {    	
-    	super.enable();
-    	initEntity();
+    @ActionMethod
+    public void enable() {
+        super.enable();
+        initEntity();
     }
-    
+
     @Override
+    @ActionMethod
     public void disable() {
-    	super.disable();
-    	initEntity();
+        super.disable();
+        initEntity();
     }
-    
+
 }

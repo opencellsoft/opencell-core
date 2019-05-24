@@ -309,9 +309,6 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 occTemplate = invoice.getInvoiceType().getOccTemplateNegative();
             }
 
-            if (occTemplate == null) {
-                throw new ImportInvoiceException("Cant find negative OccTemplate");
-            }
         } else {
             String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateCodeEl(), invoice, invoice.getBillingRun());
             if (!StringUtils.isBlank(occTemplateCode)) {
@@ -322,9 +319,10 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 occTemplate = invoice.getInvoiceType().getOccTemplate();
             }
 
-            if (occTemplate == null) {
-                throw new ImportInvoiceException("Cant find OccTemplate");
-            }
+        }
+        
+        if(occTemplate == null) {
+        	return;
         }
 
         RecordedInvoice recordedInvoice = createRecordedInvoice(remainingAmountWithoutTaxForRecordedIncoice, remainingAmountWithTaxForRecordedIncoice,
