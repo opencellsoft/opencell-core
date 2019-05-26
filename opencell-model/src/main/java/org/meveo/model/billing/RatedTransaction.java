@@ -84,10 +84,10 @@ import org.meveo.model.rating.EDR;
                 + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " order by r.usageDate desc "),
 
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedByOrder", query = "SELECT count(r) FROM RatedTransaction r where "
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedOpenByOrder", query = "SELECT count(r) FROM RatedTransaction r where "
                 + "r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND r.orderNumber=:orderNumber "
                 + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedOpenByBA", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
                 + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
 
         @NamedQuery(name = "RatedTransaction.sumInvoiceableByServiceWithMinAmountBySubscription", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.serviceInstance.id FROM RatedTransaction r "

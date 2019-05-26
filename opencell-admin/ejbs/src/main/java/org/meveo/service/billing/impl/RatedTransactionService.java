@@ -737,7 +737,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
-        TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByBA", Long.class);
+        TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedOpenByBA", Long.class);
         count = q.setParameter("billingAccount", billingAccount).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
             .getSingleResult();
         log.debug("isBillingAccountBillable code={},lastTransactionDate={}) : {}", billingAccount.getCode(), lastTransactionDate, count);
@@ -754,7 +754,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public Boolean isOrderBillable(String orderNumber, Date firstTransactionDate, Date lastTransactionDate) {
         long count = 0;
-        TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByOrder", Long.class);
+        TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedOpenByOrder", Long.class);
         count = q.setParameter("orderNumber", orderNumber).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
             .getSingleResult();
         log.debug("isOrderBillable ,orderNumber={}) : {}", orderNumber, count);
