@@ -737,7 +737,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
-        TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoinced", Long.class);
+        TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByBA", Long.class);
         count = q.setParameter("billingAccount", billingAccount).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
             .getSingleResult();
         log.debug("isBillingAccountBillable code={},lastTransactionDate={}) : {}", billingAccount.getCode(), lastTransactionDate, count);
@@ -745,18 +745,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
+     * Check if Order has any not yet billed Rated transactions
      * @param billingAccount billing account
      * @param orderNumber order number.
      * @param firstTransactionDate firstTransactionDate.
      * @param lastTransactionDate lastTransactionDate.
      * @return true/false
      */
-    public Boolean isBillingAccountBillable(BillingAccount billingAccount, String orderNumber, Date firstTransactionDate, Date lastTransactionDate) {
+    public Boolean isOrderBillable(String orderNumber, Date firstTransactionDate, Date lastTransactionDate) {
         long count = 0;
-        TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countListToInvoiceByOrderNumber", Long.class);
+        TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByOrder", Long.class);
         count = q.setParameter("orderNumber", orderNumber).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
             .getSingleResult();
-        log.debug("isBillingAccountBillable code={},orderNumber={}) : {}", billingAccount.getCode(), orderNumber, count);
+        log.debug("isOrderBillable ,orderNumber={}) : {}", orderNumber, count);
         return count > 0 ? true : false;
     }
 
@@ -799,7 +800,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public List<RatedTransaction> getRatedTransactionsForXmlInvoice(Invoice invoice) {
 
-        QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c", Arrays.asList("priceplan"));
+        QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c");
         qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.BILLED);
         qb.addCriterionEntity("c.invoice", invoice);
 
@@ -823,7 +824,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public List<RatedTransaction> getRatedTransactions(WalletInstance wallet, Invoice invoice, InvoiceSubCategory invoiceSubCategory) {
 
-        QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c", Arrays.asList("priceplan"));
+        QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c");
         qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.BILLED);
         qb.addCriterionEntity("c.wallet", wallet);
         qb.addCriterionEntity("c.invoice", invoice);

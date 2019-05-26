@@ -253,6 +253,18 @@
        <sql>CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
     </changeSet>
         
+    <changeSet id="#4282_20190524" author="AndriusKarpavicius">   
+        <sql>DROP INDEX rt_ba_invoice_index</sql>
+        <sql>DROP INDEX rt_subscription_index</sql>
+        <sql>DROP INDEX transaction_billing_index</sql>
+        <sql>DROP INDEX rated_transaction_number</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON billing_rated_transaction (billing_account__id, usage_date, service_instance_id) where status='OPEN' and service_instance_id is not null</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON billing_rated_transaction (billing_account__id, usage_date, subscription_id) where status='OPEN'</sql>
+        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON billing_rated_transaction (subscription_id, usage_date, service_instance_id) where status='OPEN' and subscription_id is not null</sql>
+        <sql>CREATE INDEX rt_invoice_index ON billing_rated_transaction (invoice_id, invoice_sub_category_id, wallet_id) where status='BILLED'</sql>
+        <sql>CREATE INDEX rt_order_index ON billing_rated_transaction (order_number, status, usage_date) where order_number is not null</sql>     
+    </changeSet>
+        
     <changeSet id="#4282_20190520-vacuum" author="AndriusKarpavicius" dbms="postgresql">    
        <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_scale_factor = 0.0);</sql>
        <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_threshold = 5000);</sql>
