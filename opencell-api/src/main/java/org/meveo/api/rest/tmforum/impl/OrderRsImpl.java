@@ -17,6 +17,7 @@ import org.meveo.api.dto.billing.ApplicableDueDateDelayDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.OrderRs;
+import org.meveo.model.order.Order;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 
 @RequestScoped
@@ -166,6 +167,23 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
 		return buildResponse(responseBuilder);
 	}
+
+    @Override
+    public Response validateProductOrder(ProductOrder productOrder, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+            orderApi.validateProductOrder(productOrder);
+            responseBuilder = Response.ok().entity(productOrder);
+
+        } catch (Exception e) {
+            processException(e, result);
+            if (responseBuilder != null) {
+                responseBuilder.entity(result);
+            }
+        }
+        return buildResponse(responseBuilder);
+    }
 
     /**
      * @param result action result
