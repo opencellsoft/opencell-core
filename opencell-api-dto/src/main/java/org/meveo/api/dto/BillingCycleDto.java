@@ -89,7 +89,7 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     /** The reference date. */
     private ReferenceDateEnum referenceDate;
-    
+
     /**
      * Code of the script instance.
      */

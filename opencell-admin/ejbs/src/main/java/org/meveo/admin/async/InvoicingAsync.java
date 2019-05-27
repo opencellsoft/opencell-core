@@ -83,7 +83,6 @@ public class InvoicingAsync {
                 billableEntities.add(billableEntity);
             }
         }
-        log.info("WorkSet billable entities {}", billableEntities.size());
         return new AsyncResult<List<IBillableEntity>>(billableEntities);
     }
 

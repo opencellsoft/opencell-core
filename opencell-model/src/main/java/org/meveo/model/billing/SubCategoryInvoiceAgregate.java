@@ -133,6 +133,12 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     private BigDecimal oldAmountWithTax;
 
     /**
+     * Tax was recalculated for this invoice subCategory aggregate
+     */
+    @Transient
+    private boolean taxRecalculated;
+
+    /**
      * Instantiates a new sub category invoice aggregate.
      */
     public SubCategoryInvoiceAgregate() {
@@ -253,7 +259,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         }
         this.itemNumber++;
         this.ratedtransactions.add(ratedTransaction);
-        ratedTransaction.setInvoiceAgregateF(this);
     }
 
     /**
@@ -557,8 +562,22 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
         this.discountPlanItem = discountPlanItem;
     }
-    
+
     public BigDecimal getIsEnterpriseAmount(boolean isEnterprise) {
-		return isEnterprise ? getAmountWithoutTax() : getAmountWithTax();
-	}
+        return isEnterprise ? getAmountWithoutTax() : getAmountWithTax();
+    }
+
+    /**
+     * @return Tax was recalculated for this invoice subCategory aggregate
+     */
+    public boolean isTaxRecalculated() {
+        return taxRecalculated;
+    }
+
+    /**
+     * @param taxRecalculated Tax was recalculated for this invoice subCategory aggregate
+     */
+    public void setTaxRecalculated(boolean taxRecalculated) {
+        this.taxRecalculated = taxRecalculated;
+    }
 }

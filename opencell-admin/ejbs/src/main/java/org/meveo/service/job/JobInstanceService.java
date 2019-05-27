@@ -20,6 +20,7 @@ package org.meveo.service.job;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
@@ -341,5 +343,35 @@ public class JobInstanceService extends BusinessService<JobInstance> {
         expression.start(timerEntity.getStart());
         expression.year(timerEntity.getYear());
         return expression;
+    }
+
+    /**
+     * Synchronize definition of custom field templates specified in Job class to those found in DB. Register in DB if was missing.
+     * 
+     * @param jobInstance Job instance to synchronize custom fields for
+     */
+    public void createMissingCustomFieldTemplates(JobInstance jobInstance) {
+
+        if (jobInstance.getJobTemplate() == null) {
+            return;
+        }
+
+        // Get job definition and custom field templates defined in a job
+        Job job = getJobByName(jobInstance.getJobTemplate());
+        Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
+
+        // Create missing custom field templates if needed
+        Collection<CustomFieldTemplate> jobTemplatesFromJob = null;
+        if (jobCustomFields == null) {
+            jobTemplatesFromJob = new ArrayList<CustomFieldTemplate>();
+        } else {
+            jobTemplatesFromJob = jobCustomFields.values();
+        }
+
+        try {
+            customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) jobInstance, jobTemplatesFromJob);
+        } catch (BusinessException e) {
+            log.error("Failed to create missing custom field templates", e);
+        }
     }
 }
