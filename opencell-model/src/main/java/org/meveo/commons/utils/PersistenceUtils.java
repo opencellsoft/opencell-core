@@ -5,6 +5,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 import org.meveo.model.IEntity;
 
+import java.lang.reflect.Modifier;
 
 /**
  * @author Abdellatif BARI

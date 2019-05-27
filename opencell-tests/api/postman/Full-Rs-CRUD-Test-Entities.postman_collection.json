@@ -2001,10 +2001,6 @@
 							"request": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplateCategory?offerTemplateCategoryCode=OCAT-{{random}}",
 									"host": [
@@ -4154,6 +4150,145 @@
 					"_postman_isSubFolder": true
 				},
 				{
+					"name": "generic",
+					"item": [
+						{
+							"name": "Get entity instance by name and id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a83ef9c6-db60-4e06-8157-e4aae8131144",
+										"exec": [
+											"pm.environment.set(\"entityName\", \"customer\");",
+											"pm.environment.set(\"entityId\", \"13\");",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var entity = pm.response.json();",
+											"pm.test('retrieve full entity by name and id', function() {",
+											"     pm.expect(entity).to.to.have.property(\"value\");",
+											"    var value = entity.value;",
+											"   pm.expect(value).to.to.have.property(\"cfAccumulatedValues\");",
+											"   pm.expect(value).to.to.have.property(\"businessAccountModel\");",
+											"   pm.expect(value).to.to.have.property(\"seller\");",
+											"   pm.expect(value).to.to.have.property(\"code\");",
+											"   pm.expect(value).to.to.have.property(\"jobTitle\");",
+											"   pm.expect(value).to.to.have.property(\"providerContact\");",
+											"   pm.expect(value).to.to.have.property(\"description\");",
+											"   pm.expect(value).to.to.have.property(\"externalRef2\");",
+											"   pm.expect(value).to.to.have.property(\"externalRef1\");",
+											"   pm.expect(value).to.to.have.property(\"appendGeneratedCode\");",
+											"   pm.expect(value).to.to.have.property(\"uuid\");",
+											"   pm.expect(value).to.to.have.property(\"id\");",
+											"   pm.expect(value).to.to.have.property(\"previousCode\");",
+											"   pm.expect(value).to.to.have.property(\"address\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"fields\":[]\n}\n"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/generic/{{entityName}}/{{entityId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"generic",
+										"{{entityName}}",
+										"{{entityId}}"
+									],
+									"query": [
+										{
+											"key": "entityName",
+											"value": "",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Retrieve all entity by it's name and id"
+							},
+							"response": []
+						},
+						{
+							"name": "Get some fields from entity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a1b879b6-0119-4380-9a9e-55dcc21096ec",
+										"exec": [
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var entity = pm.response.json();",
+											"pm.test('retrieve full entity by name and id', function() {",
+											"     pm.expect(entity).to.to.have.property(\"value\");",
+											"    var value = entity.value;",
+											"   pm.expect(value).to.to.have.property(\"seller\");",
+											"   pm.expect(value).to.to.have.property(\"code\");",
+											"   pm.expect(value).to.to.have.property(\"description\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"fields\":[\"description\", \"code\", \"seller\"]\n}\n"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/generic/{{entityName}}/{{entityId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"generic",
+										"{{entityName}}",
+										"{{entityId}}"
+									]
+								},
+								"description": "Retirieve requested fields values by entiityName, id and the body."
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
 					"name": "openapi.json",
 					"event": [
 						{
@@ -4172,10 +4307,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://localhost:8080/opencell/api/rest/v2/openapi.json",
 							"protocol": "http",
