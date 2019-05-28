@@ -42,11 +42,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.meveo.model.AccountEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.*;
 
 /**
  * User account
@@ -60,7 +56,7 @@ import org.meveo.model.ICustomFieldEntity;
 @DiscriminatorValue(value = "ACCT_UA")
 @Table(name = "billing_user_account")
 @NamedQueries({ @NamedQuery(name = "UserAccount.findByCode", query = "select u from  UserAccount u where u.code = :code and lower(u.accountType) = 'acct_ua'") })
-public class UserAccount extends AccountEntity {
+public class UserAccount extends AccountEntity implements ICounterEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) UserAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
