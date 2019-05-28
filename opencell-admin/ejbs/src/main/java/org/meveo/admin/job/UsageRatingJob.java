@@ -51,7 +51,7 @@ public class UsageRatingJob extends Job {
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         nbRuns.setValueRequired(false);
-        nbRuns.setDefaultValue("1");
+        nbRuns.setDefaultValue("-1");
         result.put("nbRuns", nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();

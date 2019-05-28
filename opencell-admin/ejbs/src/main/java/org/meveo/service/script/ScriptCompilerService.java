@@ -249,6 +249,7 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
 
                 ScriptInterface scriptInstance = compiledScript.newInstance();
                 if (initialize) {
+                    log.debug("Will initialize script {}", scriptCode);
                     try {
                         scriptInstance.init(null);
                     } catch (Exception e) {
