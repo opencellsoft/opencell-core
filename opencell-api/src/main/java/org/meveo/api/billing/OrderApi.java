@@ -76,6 +76,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -195,16 +196,10 @@ public class OrderApi extends BaseApi {
         }
 
         populateElectronicBillingFields(productOrder,order);
-
+        if (productOrder.getOrderItem() == null){
+            productOrder.setOrderItem(Collections.emptyList());
+        }
         for (ProductOrderItem productOrderItem : productOrder.getOrderItem()) {
-
-            // Validate billing account
-            List<org.tmf.dsmapi.catalog.resource.order.BillingAccount> billingAccount = productOrderItem.getBillingAccount();
-
-            String billingAccountId = billingAccount.get(0).getId();
-
-            UserAccount userAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId)
-                .getSingleResult();
 
             org.meveo.model.order.OrderItem orderItem = new org.meveo.model.order.OrderItem();
             List<OrderItemProductOffering> productOfferings = new ArrayList<>();
@@ -239,6 +234,14 @@ public class OrderApi extends BaseApi {
             if (mainProductOffering instanceof OfferTemplate) {
                 validateOrSupplementSubscriptionRenewalFields(productOrderItem.getProduct(), (OfferTemplate) mainProductOffering);
             }
+            // Validate billing account
+            List<org.tmf.dsmapi.catalog.resource.order.BillingAccount> billingAccount = productOrderItem.getBillingAccount();
+            if (billingAccount != null && !billingAccount.isEmpty()) {
+                String billingAccountId = billingAccount.get(0).getId();
+                UserAccount userAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId)
+                        .getSingleResult();
+                orderItem.setUserAccount(userAccount);
+            }
 
             orderItem.setItemId(productOrderItem.getId());
             try {
@@ -247,7 +250,6 @@ public class OrderApi extends BaseApi {
                 throw new InvalidEnumValueException(OrderItemActionEnum.class.getSimpleName(), productOrderItem.getAction());
             }
             orderItem.setOrder(order);
-            orderItem.setUserAccount(userAccount);
             orderItem.setSource(ProductOrderItem.serializeOrderItem(productOrderItem));
             orderItem.setOrderItemProductOfferings(productOfferings);
 

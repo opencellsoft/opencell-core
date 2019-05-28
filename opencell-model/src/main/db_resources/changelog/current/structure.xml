@@ -240,20 +240,20 @@
         <sql>update ${db.schema.adapted}meveo_job_instance set exclude_inv_without_amount = 0 where exclude_inv_without_amount is null</sql>
     </changeSet>
     
-        
+
     <changeSet id="#4282_20190520" author="AndriusKarpavicius">
        <addColumn tableName="billing_rated_transaction">
            <column name="service_instance_id" type="bigInt"/>
        </addColumn>
        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_service_instance" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />            
-       <sql>CREATE INDEX rt_subscription_index ON ${db.schema.adapted}billing_rated_transaction  (subscription_id, invoice_id, usage_date)</sql>  
-       <sql>CREATE INDEX rt_ba_invoice_index ON ${db.schema.adapted}billing_rated_transaction  (billing_account__id, invoice_id, usage_date)</sql>   
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+       <sql>CREATE INDEX rt_subscription_index ON ${db.schema.adapted}billing_rated_transaction  (subscription_id, invoice_id, usage_date)</sql>
+       <sql>CREATE INDEX rt_ba_invoice_index ON ${db.schema.adapted}billing_rated_transaction  (billing_account__id, invoice_id, usage_date)</sql>
        <sql>CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
        <sql>CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
     </changeSet>
-        
-    <changeSet id="#4282_20190524" author="AndriusKarpavicius">   
+
+    <changeSet id="#4282_20190524" author="AndriusKarpavicius">
         <sql>DROP INDEX rt_ba_invoice_index</sql>
         <sql>DROP INDEX rt_subscription_index</sql>
         <sql>DROP INDEX transaction_billing_index</sql>
@@ -262,10 +262,10 @@
         <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON billing_rated_transaction (billing_account__id, usage_date, subscription_id) where status='OPEN'</sql>
         <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON billing_rated_transaction (subscription_id, usage_date, service_instance_id) where status='OPEN' and subscription_id is not null</sql>
         <sql>CREATE INDEX rt_invoice_index ON billing_rated_transaction (invoice_id, invoice_sub_category_id, wallet_id) where status='BILLED'</sql>
-        <sql>CREATE INDEX rt_order_index ON billing_rated_transaction (order_number, status, usage_date) where order_number is not null</sql>     
+        <sql>CREATE INDEX rt_order_index ON billing_rated_transaction (order_number, status, usage_date) where order_number is not null</sql>
     </changeSet>
-        
-    <changeSet id="#4282_20190520-vacuum" author="AndriusKarpavicius" dbms="postgresql">    
+
+    <changeSet id="#4282_20190520-vacuum" author="AndriusKarpavicius" dbms="postgresql">
        <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_scale_factor = 0.0);</sql>
        <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_threshold = 5000);</sql>
        <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_analyze_scale_factor = 0.0);</sql>
@@ -275,7 +275,7 @@
        <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_analyze_scale_factor = 0.0);</sql>
        <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_analyze_threshold = 5000);</sql>
     </changeSet>
-        
+
 <!-- Takes many hours on 30M RT
     <changeSet id="#4282_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
         <sql>update ${db.schema.adapted}billing_rated_transaction set service_instance_id = wo.service_instance_id from ${db.schema.adapted}billing_wallet_operation wo where
@@ -289,26 +289,26 @@
         </sql>
     </changeSet>
  -->
- 
- 
+
+
     <changeSet id="#4290_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
         <sql>update ${db.schema.adapted}billing_service_instance set minimum_amount_el = st.minimum_amount_el, minimum_label_el = st.minimum_label_el from ${db.schema.adapted}cat_service_template st where
                service_template_id = st.id and billing_service_instance.minimum_amount_el is not null
         </sql>
         <sql>update ${db.schema.adapted}billing_service_instance set minimum_amount_el_sp = st.minimum_amount_el_sp, minimum_label_el_sp = st.minimum_label_el_sp from ${db.schema.adapted}cat_service_template st where
                service_template_id = st.id and billing_service_instance.minimum_amount_el_sp is not null
-        </sql>        
+        </sql>
     </changeSet>
 
     <changeSet id="#4290_20190520-M" author="AndriusKarpavicius" dbms="mysql">
-        <sql>update ${db.schema.adapted}billing_service_instance si join ${db.schema.adapted}cat_service_template st on si.service_template_id = st.id 
+        <sql>update ${db.schema.adapted}billing_service_instance si join ${db.schema.adapted}cat_service_template st on si.service_template_id = st.id
                 set si.minimum_amount_el = st.minimum_amount_el, siminimum_label_el = st.minimum_label_el where si.minimum_amount_el is not null
         </sql>
-        <sql>update ${db.schema.adapted}billing_service_instance si join ${db.schema.adapted}cat_service_template st on si.service_template_id = st.id 
+        <sql>update ${db.schema.adapted}billing_service_instance si join ${db.schema.adapted}cat_service_template st on si.service_template_id = st.id
                 set si.minimum_amount_el_sp = st.minimum_amount_el_sp, siminimum_label_el_sp = st.minimum_label_el_sp where si.minimum_amount_el_sp is not null
-        </sql>        
-    </changeSet>        
-    
+        </sql>
+    </changeSet>
+
     <changeSet id="#4278_20190520_partitions" author="mohamed.el.youssoufi" dbms="postgresql">
     
     	<createProcedure><![CDATA[
@@ -598,7 +598,7 @@
 							  on update no action on delete no action,
                           constraint fk_rt_service_instance foreign key (service_instance_id)
                               references '||schema_name||'.billing_service_instance (id) match simple
-                              on update no action on delete no action                                     
+                              on update no action on delete no action
 				) partition by range (usage_date)';
 			
 			execute 'ALTER TABLE ' ||schema_name|| '.billing_rated_transaction OWNER to ' || schema_owner || ';';
@@ -1006,9 +1006,13 @@
         </createProcedure>
     
     </changeSet>
-    
+
     <changeSet author="mohamed.el.youssoufi" id="#4301_23052019 - empty tax amount">
     	<sql>update ${db.schema.adapted}billing_invoice set amount_tax = (amount_with_tax - amount_without_tax), pdf_filename = null, xml_filename = null where amount_tax = 0 and amount_with_tax != amount_without_tax and amount_tax != (amount_with_tax - amount_without_tax);</sql>
     </changeSet>
-    
-</databaseChangeLog> 
+
+    <changeSet author="abdelkader.bouazza" id="#4026-Order-validation-enhancement">
+        <dropNotNullConstraint tableName="ord_order_item" columnName="user_account_id" columnDataType="bigint" />
+    </changeSet>
+
+</databaseChangeLog>
