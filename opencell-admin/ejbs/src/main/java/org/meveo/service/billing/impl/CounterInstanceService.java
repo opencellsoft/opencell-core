@@ -18,6 +18,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
