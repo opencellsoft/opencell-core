@@ -59,9 +59,10 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.IBillableEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.IBillableEntity;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
@@ -75,7 +76,8 @@ import org.meveo.model.shared.DateUtils;
  * @author Said Ramli
  * @author Abdellatif BARI
  * @author Mounir BAHIJE
- * @lastModifiedVersion 5.3
+ * @author khalid HORRI
+ * @lastModifiedVersion 6.3
  */
 @Entity
 @ObservableEntity

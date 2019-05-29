@@ -43,7 +43,8 @@ import org.meveo.model.shared.DateUtils;
  *
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
+ * @author khalid HORRI
+ * @lastModifiedVersion 6.3
  */
 @Entity
 @ObservableEntity

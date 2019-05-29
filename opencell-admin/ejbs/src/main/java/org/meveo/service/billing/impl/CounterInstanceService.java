@@ -56,7 +56,11 @@ import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTemplateLevel;
+import org.meveo.model.catalog.CounterTemplateLevelAnnotation;
+import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
@@ -67,7 +71,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
  * @author Said Ramli
  * @author Abdellatif BARI
  * @author Khalid HORRI
- * @lastModifiedVersion 6.1
+ * @lastModifiedVersion 6.3
  */
 @Stateless
 public class CounterInstanceService extends PersistenceService<CounterInstance> {
