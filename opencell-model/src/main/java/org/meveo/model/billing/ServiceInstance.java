@@ -29,10 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.ObservableEntity;
+import org.meveo.model.*;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -58,7 +55,7 @@ import org.meveo.model.shared.DateUtils;
 @NamedQueries({
         @NamedQuery(name = "ServiceInstance.getExpired", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
         @NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)") })
-public class ServiceInstance extends BusinessCFEntity {
+public class ServiceInstance extends BusinessCFEntity implements ICounterEntity {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -510,10 +507,11 @@ public class ServiceInstance extends BusinessCFEntity {
      * @return the description and status
      */
     public String getDescriptionAndStatus() {
-        if (!StringUtils.isBlank(description))
+        if (!StringUtils.isBlank(description)) {
             return description + ", " + status;
-        else
+        } else {
             return status.name();
+        }
     }
 
     /**

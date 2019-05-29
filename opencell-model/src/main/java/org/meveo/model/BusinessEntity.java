@@ -215,12 +215,4 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
         return description;
     }
 
-    /**
-     * Gets counters
-     *
-     * @return a map of counters
-     */
-    public Map<String, CounterInstance> getCounters() {
-        return Collections.emptyMap();
-    }
 }
