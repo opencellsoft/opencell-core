@@ -53,7 +53,8 @@ import org.slf4j.LoggerFactory;
  * @author Ignas Lelys
  * @author khalid HORRI
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author khalid HORRI
+ * @lastModifiedVersion 7.1
  */
 public class ReflectionUtils {
 
@@ -582,6 +583,23 @@ public class ReflectionUtils {
         return matchedFields;
     }
 
+    /**
+     * Find methods annotated with annotationClass
+     * @param clazz the class where to search methods
+     * @param annotationClass the annotation class
+     * @return a list of methods
+     */
+    public static List<Method> findAnnotatedMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+        Method[] methods = clazz.getMethods();
+        List<Method> annotatedMethods = new ArrayList<Method>(methods.length);
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(annotationClass)) {
+                annotatedMethods.add(method);
+            }
+        }
+        return annotatedMethods;
+    }
+
 
     private static Method getMethodFromInterface(Class<?> cls, Class<? extends Annotation> annotationClass, String methodName, Class... parameterTypes) {
         while (cls != null) {
@@ -613,16 +631,5 @@ public class ReflectionUtils {
      */
     public static Method getMethodFromInterface(Method method, Class<? extends Annotation> annotationClass) {
         return getMethodFromInterface(method.getDeclaringClass(), annotationClass, method.getName(), method.getParameterTypes());
-    }
-
-    public static List<Method> findAnnotatedMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
-        Method[] methods = clazz.getMethods();
-        List<Method> annotatedMethods = new ArrayList<Method>(methods.length);
-        for (Method method : methods) {
-            if (method.isAnnotationPresent(annotationClass)) {
-                annotatedMethods.add(method);
-            }
-        }
-        return annotatedMethods;
     }
 }

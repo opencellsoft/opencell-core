@@ -36,7 +36,8 @@ import java.util.Map;
  * @author Andrius Karpavicius
  * @author Khalid HORRI
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.1
  */
 @ReferenceIdentifierCode("code")
 @ReferenceIdentifierDescription("description")
@@ -215,4 +216,5 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     public String getReferenceDescription() {
         return description;
     }
+    
 }

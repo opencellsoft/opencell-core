@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -89,6 +90,7 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSequence;
@@ -102,6 +104,8 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
@@ -148,7 +152,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author Said Ramli
  * @author Khalid HORRI
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 7.1
  */
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
@@ -591,8 +595,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (entity instanceof Subscription) {
                 List<RatedTransaction> ratedTransactions = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class)
-                    .setParameter("subscription", entity).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
-                    .getResultList();
+                        .setParameter("subscription", entity).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
+                        .getResultList();
 
                 if (ratedTransactions != null && !ratedTransactions.isEmpty()) {
                     mapBillingAccountRT.put(((Subscription) entity).getUserAccount().getBillingAccount(), ratedTransactions);
@@ -600,8 +604,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             } else if (entity instanceof BillingAccount) {
                 List<RatedTransaction> ratedTransactions = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class)
-                    .setParameter("billingAccount", entity).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
-                    .getResultList();
+                        .setParameter("billingAccount", entity).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
+                        .getResultList();
 
                 if (ratedTransactions != null && !ratedTransactions.isEmpty()) {
                     mapBillingAccountRT.put((BillingAccount) entity, ratedTransactions);
@@ -609,8 +613,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             } else if (entity instanceof Order) {
                 List<RatedTransaction> ratedTransactions = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
-                    .setParameter("orderNumber", ((Order) entity).getOrderNumber()).setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+                        .setParameter("orderNumber", ((Order) entity).getOrderNumber()).setParameter("firstTransactionDate", firstTransactionDate)
+                        .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
 
                 for (RatedTransaction rt : ratedTransactions) {
                     if (mapBillingAccountRT.get(rt.getBillingAccount()) == null) {
@@ -793,7 +797,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             invoiceType = invoiceTypeService.getDefaultCommertial();
                         }
                     }
-                    mapInvTypeRT.put(invoiceType, ratedTransactions);
+                    // get prepaid ratedTransaction
+                    List<RatedTransaction> prepaidRatedTx = ratedTransactionService.filterPrepaidRatedTransactions(ratedTransactions);
+                    if (prepaidRatedTx != null && !prepaidRatedTx.isEmpty()) {
+                        InvoiceType prePaidInvoiceType = invoiceTypeService.getDefaultPrepaid();
+                        if (prePaidInvoiceType == null) {
+                            throw new BusinessException("Prepaid invoice type is null");
+                        }
+                        mapInvTypeRT.put(prePaidInvoiceType, prepaidRatedTx);
+                        List<Long> prePaidRatedTxIds = prepaidRatedTx.stream().map(RatedTransaction::getId).collect(Collectors.toList());
+                        ratedTransactions = ratedTransactions.stream().filter(rt -> !prePaidRatedTxIds.contains(rt.getId())).collect(Collectors.toList());
+                    }
+                    if (ratedTransactions != null && !ratedTransactions.isEmpty()) {
+                        mapInvTypeRT.put(invoiceType, ratedTransactions);
+                    }
+
                 }
 
                 // For each BA/Seller/Invoice type combination create an invoice
@@ -805,7 +823,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     invoice.setSeller(ratedTransactionGroup.getSeller());
                     invoice.setInvoiceType(invoiceType);
                     invoice.setBillingAccount(billingAccount);
-
+                    invoice.getRatedTransactions().addAll(ratedTransactionSelection);
                     if (billingRun != null) {
                         invoice.setBillingRun(em.getReference(BillingRun.class, billingRun.getId()));
                     }
@@ -961,12 +979,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoiceList;
     }
 
+
+
+    /**
+     * Check if the WO is from a prepaid wallet
+     *
+     * @param walletOperation WO
+     * @return True if the wallet's type is prepaid, false else
+     */
+    private boolean isPrepaidWalletOperation(WalletOperation walletOperation) {
+        return walletOperation.getWallet() != null && walletOperation.getWallet().getWalletTemplate() != null && BillingWalletTypeEnum.PREPAID
+                .equals(walletOperation.getWallet().getWalletTemplate().getWalletType());
+    }
+
     /**
      * Check if the electronic billing is enabled.
-     * 
+     *
      * @param invoice the invoice.
      * @return True if electronic billing is enabled for any Billable entity, false else.
      */
+
     private boolean isElectronicBillingEnabled(Invoice invoice) {
         boolean isElectronicBillingEnabled = false;
 
@@ -1772,6 +1804,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public String getInvoiceXml(Invoice invoice) throws BusinessException {
 
+        if (isPrepaidReport(invoice)) {
+            throw new BusinessException("Invoice XML is disabled for prepaid invoice: " + invoice.getInvoiceNumber());
+        }
         String xmlFileName = getFullXmlFilePath(invoice, false);
         File xmlFile = new File(xmlFileName);
         if (!xmlFile.exists()) {
@@ -1865,7 +1900,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public Invoice generateXmlAndPdfInvoice(Invoice invoice, boolean regenerate) throws BusinessException {
-
+        if (isPrepaidReport(invoice)) {
+            return invoice;
+        }
         if (regenerate || invoice.getXmlFilename() == null || !isInvoiceXmlExist(invoice)) {
             produceInvoiceXmlNoUpdate(invoice);
         }
@@ -1952,7 +1989,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entity, firstTransactionDate, lastTransactionDate);
         List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(),
-            isDraft, true);
+                isDraft, true);
 
         // TODO : delete this commit since generating PDF/XML and producing AOs are now outside this service !
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
@@ -1975,9 +2012,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public void produceFilesAndAO(boolean produceXml, boolean producePdf, boolean generateAO, Invoice invoice, boolean isDraft)
             throws BusinessException, InvoiceExistException, ImportInvoiceException {
+        if (isPrepaidReport(invoice)) {
+            return;
+        }
         if (produceXml) {
             produceInvoiceXmlNoUpdate(invoice);
         }
+
         if (producePdf) {
             produceInvoicePdfNoUpdate(invoice);
         }
@@ -2025,6 +2066,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         List<Invoice> invoices = this.generateInvoice(billingAccount, generateInvoiceRequestDto, ratedTxFilter, isDraft);
         for (Invoice invoice : invoices) {
+            if (isPrepaidReport(invoice)) {
+                continue;
+            }
             this.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
         }
 
@@ -2426,7 +2470,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Send the invoice by email
-     * 
+     *
      * @param invoice the invoice
      * @param mailingTypeEnum : Mailing type
      * @param overrideEmail : override Email
@@ -2533,7 +2577,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Return a list of invoices that not already sent and can be sent : dontsend:false.
-     * 
+     *
      * @return a list of invoices
      * @throws BusinessException
      */
@@ -2553,7 +2597,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Check if an invoice is draft.
-     * 
+     *
      * @param invoice the invoice
      * @return true if is draft else return false.
      * @throws BusinessException
@@ -2567,7 +2611,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Evaluate the override Email EL
-     * 
+     *
      * @param overrideEmailEl override Email
      * @param userMap the userMap
      * @param invoice the invoice
@@ -2582,5 +2626,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
         return result;
+    }
+
+    /**
+     * Check whether the invoice is a prepaid report
+     *
+     * @param invoice The invoice
+     * @return true if the invoice is prepaid report
+     */
+    public Boolean isPrepaidReport(Invoice invoice) {
+        return ratedTransactionService.isPrepaidRatedTransactions(invoice.getRatedTransactions());
     }
 }

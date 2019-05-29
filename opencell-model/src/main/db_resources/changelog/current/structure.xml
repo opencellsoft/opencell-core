@@ -1026,4 +1026,5 @@
         <addForeignKeyConstraint constraintName="fk_billing_counter_service_instance_id" referencedTableName="billing_service_instance"
                                  baseColumnNames="service_instance_id" baseTableName="billing_counter" referencedColumnNames="id"/>
     </changeSet>
+
 </databaseChangeLog>
