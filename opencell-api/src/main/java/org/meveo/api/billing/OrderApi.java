@@ -325,7 +325,7 @@ public class OrderApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-
+        
         orderService.create(order);
 
         // Commit before initiating workflow/order processing
@@ -914,6 +914,9 @@ public class OrderApi extends BaseApi {
         if (order == null) {
             throw new EntityDoesNotExistsException(ProductOrder.class, orderId);
         }
+        
+        // populate Electronic Billing Fields
+        populateElectronicBillingFields(productOrder, order);
 
         // populate customFields
         try {
@@ -987,6 +990,12 @@ public class OrderApi extends BaseApi {
                 productOrderItems.add(orderItemToDto(orderItem));
             }
         }
+        
+    	productOrder.setMailingType(order.getMailingType() != null ? order.getMailingType().getLabel() : null);
+    	productOrder.setEmailTemplate(order.getEmailTemplate() != null ? order.getEmailTemplate().getCode() : null);
+    	productOrder.setCcedEmails(order.getCcedEmails());
+    	productOrder.setEmail(order.getEmail());
+    	productOrder.setElectronicBilling(order.getElectronicBilling());
 
         productOrder.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 

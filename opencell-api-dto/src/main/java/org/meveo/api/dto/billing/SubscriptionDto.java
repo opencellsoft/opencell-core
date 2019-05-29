@@ -220,6 +220,12 @@ public class SubscriptionDto extends BusinessEntityDto {
         	setSeller(e.getSeller().getCode());
         }
 		setRatingGroup(e.getRatingGroup());
+		setMailingType(e.getMailingType() != null ? e.getMailingType().getLabel() : null);
+        setEmailTemplate(e.getEmailTemplate() != null ? e.getEmailTemplate().getCode() : null);
+        setCcedEmails(e.getCcedEmails());
+        setEmail(e.getEmail());
+		setElectronicBilling(e.getElectronicBilling());
+		
     }
 
     /**
