@@ -61,6 +61,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTemplateLevel;
+import org.meveo.model.catalog.CounterTemplateLevelAnnotation;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.BusinessService;
@@ -214,7 +215,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    private CounterInstance instantiateCounter(BusinessService service, BusinessEntity entity, Class clazz, CounterTemplate counterTemplate, boolean isVirtual)
+    private CounterInstance instantiateCounter(BusinessService service, ICounterEntity entity, Class clazz, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         CounterInstance result = new CounterInstance();
         if (!entity.getCounters().containsKey(counterTemplate.getCode())) {
