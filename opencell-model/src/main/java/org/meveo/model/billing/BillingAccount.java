@@ -18,6 +18,8 @@
  */
 package org.meveo.model.billing;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -572,12 +574,9 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Override
     public void anonymize(String code) {
         super.anonymize(code);
-        getContactInformationNullSafe().anonymize(code);
-        if (getUsersAccounts() != null) {
-            for (UserAccount ua : getUsersAccounts()) {
-                ua.anonymize(code);
-            }
-        }
+        if (isNotEmpty(this.usersAccounts)) {
+			this.usersAccounts.forEach(ua -> ua.anonymize(code));
+		}
     }
 
     public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
