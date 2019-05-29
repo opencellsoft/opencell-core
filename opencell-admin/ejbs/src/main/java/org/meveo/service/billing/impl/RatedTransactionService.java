@@ -405,7 +405,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     }
 
                     // If tax has changed, need to update RTs with new tax value and store a mapping between old key and a new tax value
-                    if (taxPercent == null || (taxPercent.compareTo(recalculatedTax.getPercent()) != 0)) {
+                    if (taxPercent == null || tax == null || (taxPercent.compareTo(recalculatedTax.getPercent()) != 0)) {
                         log.debug("Will update rated transactions in subcategory {} with new tax from {} to {}", ratedTransaction.getInvoiceSubCategory().getCode(), taxPercent,
                             recalculatedTax.getPercent());
 
@@ -746,6 +746,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Check if Order has any not yet billed Rated transactions
+     * 
      * @param billingAccount billing account
      * @param orderNumber order number.
      * @param firstTransactionDate firstTransactionDate.

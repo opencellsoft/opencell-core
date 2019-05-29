@@ -209,7 +209,7 @@ public class CustomTableImportJob extends Job {
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
-        nbRuns.setDefaultValue("1");
+        nbRuns.setDefaultValue("-1");
         nbRuns.setValueRequired(false);
         result.put("nbRuns", nbRuns);
 
