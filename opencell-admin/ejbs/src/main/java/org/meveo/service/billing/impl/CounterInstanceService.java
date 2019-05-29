@@ -47,6 +47,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CounterValueChangeInfo;
+import org.meveo.model.ICounterEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
@@ -208,7 +209,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    private CounterInstance instantiateCounter(BusinessService service, BusinessEntity entity, Class clazz, CounterTemplate counterTemplate, boolean isVirtual)
+    private CounterInstance instantiateCounter(BusinessService service, ICounterEntity entity, Class clazz, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         CounterInstance result = new CounterInstance();
         if (!entity.getCounters().containsKey(counterTemplate.getCode())) {
@@ -222,7 +223,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             entity.getCounters().put(counterTemplate.getCode(), result);
 
             if (!isVirtual) {
-                service.update(entity);
+                service.update((BusinessEntity)entity);
             }
         } else {
             result = entity.getCounters().get(counterTemplate.getCode());
