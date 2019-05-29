@@ -100,7 +100,7 @@ import java.util.HashMap;
         @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
-public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable {
+public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable,ICounterEntity {
 
     private static final long serialVersionUID = 1L;
 

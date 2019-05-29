@@ -43,6 +43,8 @@ import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.CounterValueChangeInfo;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
@@ -92,87 +94,136 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @Inject
     private Event<CounterPeriodEvent> counterPeriodEvent;
 
-    public CounterInstance counterInstanciation(UserAccount userAccount, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
+    public CounterInstance counterInstanciation(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
         CounterInstance result = null;
 
-        if (userAccount == null) {
-            throw new BusinessException("userAccount is null");
+        if (serviceInstance == null) {
+            throw new BusinessException("entity is null");
         }
 
         if (counterTemplate == null) {
             throw new BusinessException("counterTemplate is null");
         }
 
-        // we instanciate the counter only if there is no existing instance for
-        // the same template
-        if (counterTemplate.getCounterLevel() == CounterTemplateLevel.BA) {
-            result = instantiateBACounter(userAccount, counterTemplate, isVirtual);
-        } else {
-            result = instantiateUACounter(userAccount, counterTemplate, isVirtual);
+        List<Method> methods = ReflectionUtils.findAnnotatedMethods(getClass(), CounterTemplateLevelAnnotation.class);
+        for (Method m : methods) {
+            CounterTemplateLevelAnnotation annotation = m.getAnnotation(CounterTemplateLevelAnnotation.class);
+            if (annotation.value().equals(counterTemplate.getCounterLevel())) {
+                try {
+                    result = (CounterInstance) m.invoke(this, serviceInstance, counterTemplate, isVirtual);
+                } catch (IllegalAccessException e) {
+                    throw new BusinessException(e);
+                } catch (InvocationTargetException e) {
+                    throw new BusinessException(e);
+                }
+            }
         }
 
         return result;
     }
 
-    private CounterInstance instantiateUACounter(UserAccount userAccount, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
-        CounterInstance result = new CounterInstance();
-        if (!userAccount.getCounters().containsKey(counterTemplate.getCode())) {
-            result.setCounterTemplate(counterTemplate);
-            result.setUserAccount(userAccount);
-
-            if (!isVirtual) {
-                create(result);
-            }
-            userAccount.getCounters().put(counterTemplate.getCode(), result);
-
-            if (!isVirtual) {
-                userAccountService.update(userAccount);
-            }
-        } else {
-            result = userAccount.getCounters().get(counterTemplate.getCode());
+    /**
+     * @param serviceInstance a service instance
+     * @param counterTemplate a counter template
+     * @param isVirtual       is virtual
+     * @return a counter instance
+     * @throws BusinessException
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    @CounterTemplateLevelAnnotation(CounterTemplateLevel.UA)
+    public CounterInstance instantiateUACounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
+            throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (serviceInstance.getSubscription() == null) {
+            return null;
         }
-        return result;
+        UserAccount userAccount = serviceInstance.getSubscription().getUserAccount();
+        return instantiateCounter(userAccountService, userAccount, UserAccount.class, counterTemplate, isVirtual);
     }
 
-    private CounterInstance instantiateBACounter(UserAccount userAccount, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
-        CounterInstance result = new CounterInstance();
-        BillingAccount billingAccount = userAccount.getBillingAccount();
-        if (!billingAccount.getCounters().containsKey(counterTemplate.getCode())) {
-            result.setCounterTemplate(counterTemplate);
-            result.setBillingAccount(billingAccount);
-
-            if (!isVirtual) {
-                create(result);
-            }
-
-            billingAccount.getCounters().put(counterTemplate.getCode(), result);
-
-            if (!isVirtual) {
-                billingAccountService.update(billingAccount);
-            }
-        } else {
-            result = userAccount.getBillingAccount().getCounters().get(counterTemplate.getCode());
+    /**
+     * @param serviceInstance a service instance
+     * @param counterTemplate a counter template
+     * @param isVirtual       is vertual
+     * @return a counter instance
+     * @throws BusinessException
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    @CounterTemplateLevelAnnotation(CounterTemplateLevel.BA)
+    public CounterInstance instantiateBACounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
+            throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (serviceInstance.getSubscription() == null || serviceInstance.getSubscription().getUserAccount() == null) {
+            return null;
         }
-        return result;
+        BillingAccount billingAccount = serviceInstance.getSubscription().getUserAccount().getBillingAccount();
+        return instantiateCounter(billingAccountService, billingAccount, BillingAccount.class, counterTemplate, isVirtual);
     }
 
-    private CounterInstance instantiateSubscriptionCounter(Subscription subscription, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
-        CounterInstance result = new CounterInstance();
-        if (!subscription.getCounters().containsKey(counterTemplate.getCode())) {
-            result.setCounterTemplate(counterTemplate);
-            result.setSubscription(subscription);
+    /**
+     * @param serviceInstance a service instance
+     * @param counterTemplate a counter template
+     * @param isVirtual       is vertual
+     * @return a counter instance
+     * @throws BusinessException
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    @CounterTemplateLevelAnnotation(CounterTemplateLevel.SU)
+    public CounterInstance instantiateSubscriptionCounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
+            throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        return instantiateCounter(subscriptionService, serviceInstance.getSubscription(), Subscription.class, counterTemplate, isVirtual);
+    }
 
+    /**
+     * @param serviceInstance a service instance
+     * @param counterTemplate a counter template
+     * @param isVirtual       is vertual
+     * @return a counter instance
+     * @throws BusinessException
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    @CounterTemplateLevelAnnotation(CounterTemplateLevel.SI)
+    public CounterInstance instantiateServiceCounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
+            throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        return instantiateCounter(serviceInstanceService, serviceInstance, ServiceInstance.class, counterTemplate, isVirtual);
+    }
+
+    /**
+     * @param service         the business service
+     * @param entity          the business entity
+     * @param clazz           the class of the business entity
+     * @param counterTemplate the counter template
+     * @param isVirtual       is virtual
+     * @return a counter instance
+     * @throws BusinessException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */
+    private CounterInstance instantiateCounter(BusinessService service, ICounterEntity entity, Class clazz, CounterTemplate counterTemplate, boolean isVirtual)
+            throws BusinessException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        CounterInstance result = new CounterInstance();
+        if (!entity.getCounters().containsKey(counterTemplate.getCode())) {
+            result.setCounterTemplate(counterTemplate);
+            String methodName = ReflectionUtils.SET_PREFIX + clazz.getSimpleName();
+            result.getClass().getMethod(methodName, clazz).invoke(result, entity);
             if (!isVirtual) {
                 create(result);
             }
 
-            subscription.getCounters().put(counterTemplate.getCode(), result);
+            entity.getCounters().put(counterTemplate.getCode(), result);
 
             if (!isVirtual) {
-                subscriptionService.update(subscription);
+                service.update((BusinessEntity)entity);
             }
         } else {
-            result = subscription.getCounters().get(counterTemplate.getCode());
+            result = entity.getCounters().get(counterTemplate.getCode());
         }
         return result;
     }
