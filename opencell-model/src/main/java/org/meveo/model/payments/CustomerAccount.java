@@ -23,6 +23,8 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,12 +35,14 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
@@ -209,6 +213,9 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "excluded_from_payment")
     private boolean excludedFromPayment;
+
+    @Transient
+    private Map<String, List<PaymentMethod>> auditedMethodPayments;
 
     public CustomerAccount() {
         accountType = ACCOUNT_TYPE;
@@ -388,6 +395,8 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
             paymentMethods = new ArrayList<>();
         }
         paymentMethods.add(paymentMethod);
+        addPaymentMethodToAudit(new Object() {
+        }.getClass().getEnclosingMethod().getName(), paymentMethod);
     }
 
     public boolean isExcludedFromPayment() {
@@ -590,5 +599,36 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
         if(isNotEmpty(this.billingAccounts) ) {
 			this.billingAccounts.forEach(ba -> ba.anonymize(code));
 		}
+    }
+
+    public Map<String, List<PaymentMethod>> getAuditedMethodPayments() {
+        if (auditedMethodPayments == null) {
+            auditedMethodPayments = new HashMap<>();
+        }
+        return auditedMethodPayments;
+    }
+
+    public void setAuditedMethodPayments(Map<String, List<PaymentMethod>> auditedMethodPayments) {
+        this.auditedMethodPayments = auditedMethodPayments;
+    }
+
+    /**
+     * Add payment method action to auditing
+     *
+     * @param action        the action related to payment method
+     * @param paymentMethod the payment method
+     */
+    public void addPaymentMethodToAudit(String action, PaymentMethod paymentMethod) {
+        if (getAuditedMethodPayments().containsKey(action)) {
+            if (!getAuditedMethodPayments().get(action).contains(paymentMethod)) {
+                getAuditedMethodPayments().get(action).add(paymentMethod);
+            } else {
+                getAuditedMethodPayments().get(action).set(getAuditedMethodPayments().get(action).indexOf(paymentMethod), paymentMethod);
+            }
+        } else {
+            List<PaymentMethod> PaymentMethods = new ArrayList<>();
+            PaymentMethods.add(paymentMethod);
+            getAuditedMethodPayments().put(action, PaymentMethods);
+        }
     }
 }
