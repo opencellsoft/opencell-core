@@ -2176,7 +2176,10 @@ public class SubscriptionApi extends BaseApi {
         subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
         subscription.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         subscription.setRatingGroup(postData.getRatingGroup());
-
+        
+        // populate Electronic Billing Fields
+        populateElectronicBillingFields(postData, subscription);
+        
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, true);
