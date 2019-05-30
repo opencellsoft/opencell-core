@@ -143,8 +143,11 @@ public class InvoiceTypeApi extends BaseApi {
                 throw new EntityDoesNotExistsException(EmailTemplate.class, postData.getEmailTemplateCode());
             }
         }
+        
 		InvoiceType invoiceType = new InvoiceType();
 		invoiceType.setCode(postData.getCode());
+		invoiceType.setMailingType(mailingType);
+		invoiceType.setEmailTemplate(emailTemplate);
 
 		if (postData.getSequenceDto() != null) {
 			if (StringUtils.isBlank(postData.getSequenceDto().getInvoiceSequenceCode())) {

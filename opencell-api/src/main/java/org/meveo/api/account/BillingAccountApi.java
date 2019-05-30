@@ -188,8 +188,6 @@ public class BillingAccountApi extends AccountEntityApi {
             }
         }
 
-
-
         BillingAccount billingAccount = new BillingAccount();
         
         if (!StringUtils.isBlank(postData.getPhone())) {
