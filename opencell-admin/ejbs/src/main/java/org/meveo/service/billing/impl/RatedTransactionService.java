@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -95,7 +96,8 @@ import org.meveo.service.script.billing.TaxScriptService;
  * @author Said Ramli
  * @author Abdelmounaim Akadid
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.1
  */
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
@@ -135,6 +137,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private SellerService sellerService;
+
+    @Inject
+    private WalletService walletService;
 
     /** constants. */
     private final BigDecimal HUNDRED = new BigDecimal("100");
@@ -354,6 +359,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         BillingRun billingRun = invoice.getBillingRun();
+        Boolean isPrepaid = isPrepaidRatedTransactions(ratedTransactions);
         for (RatedTransaction ratedTransaction : ratedTransactions) {
 
             InvoiceSubCategory invoiceSubCategory = ratedTransaction.getInvoiceSubCategory();
@@ -547,8 +553,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 }
 
                 // Add tax aggregate or update its amounts
+                BigDecimal amountCumulativeForTaxAbsoluteValue = (isPrepaid) ? amountCumulativeForTax.abs() : amountCumulativeForTax;
 
-                if (calculateTaxOnSubCategoryLevel && !BigDecimal.ZERO.equals(amountCumulativeForTax)) {
+                if (calculateTaxOnSubCategoryLevel && !BigDecimal.ZERO.equals(amountCumulativeForTaxAbsoluteValue)) {
 
                     TaxInvoiceAgregate taxAggregate = taxAggregates.get(scAggregate.getTax().getCode());
                     if (taxAggregate == null) {
@@ -640,6 +647,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
                 : billingAccount.getInvoicingThreshold();
+        // If the invoice is prepaid, skip the threshold test.
+        if (isPrepaidRatedTransactions(invoice.getRatedTransactions())) {
+            return;
+        }
         if ((invoicingThreshold != null) && (invoicingThreshold.compareTo(isEnterprise ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax()) > 0)) {
             throw new BusinessException("Invoice amount below the threshold");
         }
@@ -985,7 +996,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         createRatedTransaction(walletOperation, false);
     }
-
     /**
      * Convert Wallet operations to Rated transactions for a given billable entity up to a given date
      * 
@@ -1037,8 +1047,44 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
+     * Extract Prepaid ratedTransactions
+     * @param ratedTransactions All generated ratedTransaction
+     * @return Prepaid ratedTransactions
+     */
+    public List<RatedTransaction> filterPrepaidRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        if (ratedTransactions == null || ratedTransactions.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Long> walletsIds = walletService.getWalletsIdsForCache();
+        return ratedTransactions.stream().filter(ratedTransaction -> {
+
+            if (ratedTransaction.getWallet() == null) {
+                return false;
+            }
+
+            if (walletsIds == null || walletsIds.isEmpty()) {
+                return false;
+            }
+
+            return walletsIds.contains(ratedTransaction.getWallet().getId());
+
+        }).collect(Collectors.toList());
+    }
+
+    /**
+     * Check if ratedTransactions belongs to Prepaid WO
+     *
+     * @param ratedTransactions a list of ratedTransactions
+     * @return True if any ratedTransaction belongs to Prepaid WO
+     */
+    public boolean isPrepaidRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        List<RatedTransaction> ratedTx = filterPrepaidRatedTransactions(ratedTransactions);
+        return ratedTx != null && !ratedTx.isEmpty();
+    }
+
+    /**
      * Create a {@link RatedTransaction} from a group of wallet operations.
-     * 
+     *
      * @param aggregatedWo aggregated wallet operations
      * @param aggregatedSettings aggregation settings of wallet operations
      * @param invoicingDate the invoicing date
@@ -1052,7 +1098,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * 
+     *
      * @param aggregatedWo aggregated wallet operations
      * @param aggregationSettings aggregation settings of wallet operations
      * @param isVirtual is virtual
@@ -1787,7 +1833,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Determine if any extra Rated transactions must be created to reach minimal invoiceable amount per Billing account
-     * 
+     *
      * @param billingAccount Billing account
      * @param invoiceableAmounts Invoiceable amounts calculated per Billing account
      * @return True in extra Rated transactions should be created
@@ -1939,28 +1985,45 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return Amounts with and without tax, tax amount
      */
     private Amounts computeTotalInvoiceableAmountForSubscription(Subscription subscription, Date firstTransactionDate, Date lastTransactionDate) {
-        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumTotalInvoiceableBySubscription").setParameter("subscription", subscription)
-            .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+        List<Long> prePaidWalletsIds = walletService.getWalletsIdsForCache();
+        String query = "RatedTransaction.sumTotalInvoiceableBySubscription";
+        if (prePaidWalletsIds != null && !prePaidWalletsIds.isEmpty()) {
+            query = "RatedTransaction.sumTotalInvoiceableBySubscriptionExcludPrepaidWO";
+        }
+        Query q = getEntityManager().createNamedQuery(query).setParameter("subscription", subscription)
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+        if (prePaidWalletsIds != null && !prePaidWalletsIds.isEmpty()) {
+            q = q.setParameter("walletsIds", prePaidWalletsIds);
+        }
         return (Amounts) q.getSingleResult();
+
     }
 
     /**
      * Summed rated transaction amounts for a given billing account
-     * 
+     *
      * @param billingAccount Billing account
      * @param firstTransactionDate First transaction date.
      * @param lastTransactionDate Last transaction date
      * @return Amounts with and without tax, tax amount
      */
     private Amounts computeTotalInvoiceableAmountForBillingAccount(BillingAccount billingAccount, Date firstTransactionDate, Date lastTransactionDate) {
-        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumTotalInvoiceableByBA").setParameter("billingAccount", billingAccount)
-            .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+        List<Long> prePaidWalletsIds = walletService.getWalletsIdsForCache();
+        String query = "RatedTransaction.sumTotalInvoiceableByBA";
+        if (prePaidWalletsIds != null && !prePaidWalletsIds.isEmpty()) {
+            query = "RatedTransaction.sumTotalInvoiceableByBAExcludePrepaidWO";
+        }
+        Query q = getEntityManager().createNamedQuery(query).setParameter("billingAccount", billingAccount)
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+        if (prePaidWalletsIds != null && !prePaidWalletsIds.isEmpty()) {
+            q = q.setParameter("walletsIds", prePaidWalletsIds);
+        }
         return (Amounts) q.getSingleResult();
     }
 
     /**
      * Summed rated transaction amounts applied on services, that have minimum invoiceable amount rule, grouped by invoice subCategory for a given billable entity.
-     * 
+     *
      * @param billableEntity Billable entity
      * @param firstTransactionDate First transaction date.
      * @param lastTransactionDate Last transaction date
@@ -2132,8 +2195,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return computed order's invoice amount.
      */
     public Amounts computeOrderInvoiceAmount(Order order, Date firstTransactionDate, Date lastTransactionDate) {
-        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumTotalInvoiceableByOrderNumber").setParameter("orderNumber", order.getOrderNumber())
-            .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+        List<Long> prePaidWalletsIds = walletService.getWalletsIdsForCache();
+        String query = "RatedTransaction.sumTotalInvoiceableByOrderNumber";
+        if (prePaidWalletsIds != null && !prePaidWalletsIds.isEmpty()) {
+            query = "RatedTransaction.sumTotalInvoiceableByOrderNumberExcludePrpaidWO";
+        }
+        Query q = getEntityManager().createNamedQuery(query).setParameter("orderNumber", order.getOrderNumber())
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+        if (prePaidWalletsIds != null && !prePaidWalletsIds.isEmpty()) {
+            q = q.setParameter("walletsIds", prePaidWalletsIds);
+        }
         return (Amounts) q.getSingleResult();
     }
 

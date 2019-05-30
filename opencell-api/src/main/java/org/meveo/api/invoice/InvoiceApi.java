@@ -85,7 +85,7 @@ import org.primefaces.model.SortOrder;
  * @author Said Ramli
  * @author Abdelmounaim Akadid
  * @author Khalid HORRI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 7.1
  */
 @Stateless
 public class InvoiceApi extends BaseApi {
@@ -604,6 +604,10 @@ public class InvoiceApi extends BaseApi {
         List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
         if (invoices != null) {
             for (Invoice invoice : invoices) {
+                if (isDraft && invoiceService.isPrepaidReport(invoice)) {
+                    invoiceService.cancelInvoice(invoice);
+                    continue;
+                }
                 this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
                 invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
 
@@ -690,6 +694,9 @@ public class InvoiceApi extends BaseApi {
         Invoice invoice = find(invoiceId, invoiceNumber, invoiceTypeCode);
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
+        }
+        if (invoiceService.isPrepaidReport(invoice)) {
+            throw new BusinessException("Invoice PDF is disabled for prepaid invoice: " + invoice.getInvoiceNumber());
         }
         if (!invoiceService.isInvoicePdfExist(invoice)) {
             if (generatePdfIfNoExist) {
@@ -922,6 +929,11 @@ public class InvoiceApi extends BaseApi {
      * @param invoiceDto Invoice DTO to set the PDF value to
      */
     private void setInvoicePdf(Invoice invoice, boolean includePdf, InvoiceDto invoiceDto) {
+
+        if (invoiceService.isPrepaidReport(invoice)) {
+            invoiceDto.setPdfFilename(null);
+            return;
+        }
         boolean pdfFileExists = invoiceService.isInvoicePdfExist(invoice);
         // Generate PDF file if requested, but not available yet
         if (includePdf && !pdfFileExists) {
@@ -1052,6 +1064,9 @@ public class InvoiceApi extends BaseApi {
         }
         handleMissingParameters();
         Invoice invoice = invoiceService.findById(invoiceDto.getInvoiceId());
+        if (invoiceService.isPrepaidReport(invoice)) {
+            return false;
+        }
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceDto.getInvoiceId());
         }
