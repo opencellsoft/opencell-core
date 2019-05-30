@@ -21,6 +21,7 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
@@ -78,7 +79,7 @@ public class RealtimeChargingService {
      * @return the application price
      * @throws BusinessException the business exception
      */    
-    public BigDecimal getApplicationPrice(Seller seller, BillingAccount ba, OneShotChargeTemplate chargeTemplate, Date subscriptionDate, String offerCode, BigDecimal quantity, String param1,
+    public BigDecimal getApplicationPrice(Seller seller, BillingAccount ba, OneShotChargeTemplate chargeTemplate, Date subscriptionDate, OfferTemplate offerTemplate, BigDecimal quantity, String param1,
             String param2, String param3, boolean priceWithoutTax) throws BusinessException {
 
         TradingCurrency currency = ba.getCustomerAccount().getTradingCurrency();
@@ -95,7 +96,7 @@ public class RealtimeChargingService {
             seller = ba.getCustomerAccount().getCustomer().getSeller();
         }
 
-        return getApplicationPrice(seller, ba, currency, tradingCountry, chargeTemplate, subscriptionDate, offerCode, quantity, param1, param2, param3, priceWithoutTax, false);
+        return getApplicationPrice(seller, ba, currency, tradingCountry, chargeTemplate, subscriptionDate, offerTemplate, quantity, param1, param2, param3, priceWithoutTax, false);
     }
 
     /**
@@ -118,7 +119,7 @@ public class RealtimeChargingService {
      * @throws BusinessException the business exception
      */
     public BigDecimal getApplicationPrice(Seller seller, BillingAccount ba, TradingCurrency currency, TradingCountry buyersCountry,
-            OneShotChargeTemplate chargeTemplate, Date subscriptionDate, String offerCode, BigDecimal inputQuantity, String param1, String param2, String param3,
+            OneShotChargeTemplate chargeTemplate, Date subscriptionDate, OfferTemplate offerTemplate, BigDecimal inputQuantity, String param1, String param2, String param3,
             boolean priceWithoutTax, boolean ignoreNoTax) throws BusinessException {
 
         InvoiceSubCategory invoiceSubCategory = chargeTemplate.getInvoiceSubCategory();
@@ -148,7 +149,8 @@ public class RealtimeChargingService {
         op.setCurrency(currency.getCurrency());
         op.setStartDate(null);
         op.setEndDate(null);
-        op.setOfferCode(offerCode);
+        op.setOfferCode(offerTemplate != null ? offerTemplate.getCode() : null);
+        op.setOfferTemplate(offerTemplate);
         op.setStatus(WalletOperationStatusEnum.OPEN);
         op.setSeller(seller);
 
@@ -205,14 +207,14 @@ public class RealtimeChargingService {
     /*
      * Warning : this method does not handle calendars at service level
      */
-    public BigDecimal getActivationServicePrice(Seller seller, BillingAccount ba, ServiceTemplate serviceTemplate, Date subscriptionDate, String offerCode, BigDecimal quantity, String param1,
+    public BigDecimal getActivationServicePrice(Seller seller, BillingAccount ba, ServiceTemplate serviceTemplate, Date subscriptionDate, OfferTemplate offerTemplate, BigDecimal quantity, String param1,
             String param2, String param3, boolean priceWithoutTax) throws BusinessException {
 
         BigDecimal result = BigDecimal.ZERO;
 
         if (serviceTemplate.getServiceSubscriptionCharges() != null) {
             for (ServiceChargeTemplate<OneShotChargeTemplate> charge : serviceTemplate.getServiceSubscriptionCharges()) {
-                result = result.add(getApplicationPrice(seller, ba, charge.getChargeTemplate(), subscriptionDate, offerCode, quantity, param1, param2, param3, priceWithoutTax));
+                result = result.add(getApplicationPrice(seller, ba, charge.getChargeTemplate(), subscriptionDate, offerTemplate, quantity, param1, param2, param3, priceWithoutTax));
             }
         }
 

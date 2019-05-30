@@ -86,11 +86,11 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
         User user = userService.findByUsername(currentUser.getUserName());
 
-        boolean hasRestrictions = user != null && user.getSecuredEntities() != null && !user.getSecuredEntities().isEmpty();
+        boolean hasRestrictions = user != null && user.getAllSecuredEntities() != null && !user.getAllSecuredEntities().isEmpty();
 
-        if (!hasRestrictions) {
-            return context.proceed();
-        }
+		if (!hasRestrictions) {
+			return context.proceed();
+		}
 
         Class<?> objectClass = context.getMethod().getDeclaringClass();
         String objectName = objectClass.getSimpleName();

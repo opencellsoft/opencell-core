@@ -297,8 +297,9 @@
                                     </p:fieldset>
                                 </h:panelGroup>
                                <h:form>
-                                <p:dataTable id="wallet#{wallet.key}datatable" var="e" paginator="true" resizableColumns="true"
-                                    value="#{userAccountBean.getWalletOperations(wallet.key)}" rows="10" rowKey="#{e.id}" widget="walletOperationsTable"
+
+                                <p:dataTable id="wallet#{wallet.key}datatable" var="e" paginator="true" lazy="true" resizableColumns="true"
+                                    value="#{userAccountBean.getWalletOperations(wallet.key)}" rows="10" rowKey="#{e.id}" widget="walletOperationsTable" widgetVar="walletOperationsTable"
                                     styleClass="verticalSpaceSmall custom-grid">
                                     <p:column>
                                         <f:facet name="header">
@@ -314,11 +315,11 @@
                                         <c:set var="converter2" value="#{getConverter.forType(e[endDate], 'date')}"></c:set>
                                         <h:outputText value="#{e.endDate}" converter="#{converter2}" />
                                     </p:column>
-                                    <p:column filterBy="#{e.chargeInstance.code}" footerText="contains" filterMatchMode="contains">
+                                    <p:column filterBy="#{e.code}" footerText="contains" filterMatchMode="contains">
                                         <f:facet name="header">
                                             <h:outputText value="#{messages['chargeInstance.code']}" />
                                         </f:facet>
-                                        <h:outputText value="#{e.chargeInstance.code}" />
+                                        <h:outputText value="#{e.code}" />
                                     </p:column>
                                     <p:column headerText="#{messages['walletOperation.quantity']}">
                                         <h:outputText value="#{e.quantity}" converter="bigDecimal4DigitsConverter" />
@@ -329,8 +330,15 @@
                                     <p:column headerText="#{messages['walletOperation.amountWithTax']}">
                                         <h:outputText value="#{e.amountWithTax}" converter="bigDecimal12DigitsConverter"/>
                                     </p:column>
-                                    <p:column filterBy="#{e.status}" headerText="#{messages['walletOperation.status']}" footerText="exact" filterMatchMode="exact"
-                                        filterOptions="#{userAccountBean.walletOperationStatusList}">
+                                    <p:column filterBy="#{e.status}" headerText="#{messages['walletOperation.status']}" footerText="exact" filterMatchMode="exact">
+                                        <f:facet name="filter">
+							                <p:selectOneMenu onchange="PF('walletOperationsTable').filter()">
+							                    <f:converter converterId="enumConverter" />
+							                    <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.billing.WalletOperationStatusEnum" />
+							                    <f:selectItem />
+							                    <f:selectItems value="#{userAccountBean.walletOperationStatusList}"/>
+							                </p:selectOneMenu>
+							            </f:facet>
                                         <h:outputText value="#{messages[e.status.label]}" />
                                     </p:column>
                                 </p:dataTable>

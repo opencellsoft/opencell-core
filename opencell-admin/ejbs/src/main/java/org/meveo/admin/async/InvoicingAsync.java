@@ -20,7 +20,6 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -43,10 +42,6 @@ public class InvoicingAsync {
     /** The invoice service. */
     @Inject
     private InvoiceService invoiceService;
-
-    /** The billing run extension service. */
-    @Inject
-    private BillingRunExtensionService billingRunExtensionService;
 
     /** The log. */
     @Inject
@@ -77,8 +72,10 @@ public class InvoicingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         List<IBillableEntity> billableEntities = new ArrayList<IBillableEntity>();
+        int i = 0;
         for (IBillableEntity entity : entities) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            i++;
+            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             IBillableEntity billableEntity = ratedTransactionService.updateEntityTotalAmounts(entity, billingRun);
@@ -86,7 +83,6 @@ public class InvoicingAsync {
                 billableEntities.add(billableEntity);
             }
         }
-        log.info("WorkSet billable entities {}", billableEntities.size());
         return new AsyncResult<List<IBillableEntity>>(billableEntities);
     }
 
@@ -106,8 +102,10 @@ public class InvoicingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
+        int i = 0;
         for (IBillableEntity entity : entities) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            i++;
+            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
@@ -138,8 +136,10 @@ public class InvoicingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
+        int i = 0;
         for (Long invoiceId : invoiceIds) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            i++;
+            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
@@ -171,8 +171,10 @@ public class InvoicingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
+        int i = 0;
         for (Long invoiceId : invoiceIds) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             try {
@@ -204,8 +206,10 @@ public class InvoicingAsync {
 
         boolean allOk = true;
 
+        int i = 0;
         for (Long invoiceId : invoiceIds) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             try {

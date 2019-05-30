@@ -19,19 +19,23 @@ import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
 
 /**
  * @author phung
  * @author Edward P. Legaspi
- * @lastMofiedVersion 7.0
- *
+ * @author Youssef IZEM
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class EmailNotifier {
 
     @Inject
     NotificationHistoryService notificationHistoryService;
+    
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private Logger log;
@@ -71,17 +75,26 @@ public class EmailNotifier {
 
         try {
 
-            HashMap<Object, Object> userMap = new HashMap<Object, Object>();
+            HashMap<Object, Object> userMap = (HashMap<Object, Object>) customFieldInstanceService.getCFValue(notification, EmailNotification.EMAIL_TEMPLATE_PARAMS);
+            if (userMap == null) {
+                userMap = new HashMap<Object, Object>();
+            }
             userMap.put("event", entityOrEvent);
             userMap.put("context", context);
             log.debug("event[{}], context[{}]", entityOrEvent, context);
-            String subject = (String) ValueExpressionWrapper.evaluateExpression(notification.getSubject(), userMap, String.class);
-            String htmlBody = null, body = null;
-            if (!StringUtils.isBlank(notification.getHtmlBody())) {
-                htmlBody = (String) ValueExpressionWrapper.evaluateExpression(notification.getHtmlBody(), userMap, String.class);
-            } else {
-                body = (String) ValueExpressionWrapper.evaluateExpression(notification.getBody(), userMap, String.class);
+
+            String body = null;
+            String subject = null;
+            String htmlBody = null;
+            if (notification != null && notification.getEmailTemplate() != null) {
+                subject = (String) ValueExpressionWrapper.evaluateExpression(notification.getEmailTemplate().getSubject(), userMap, String.class);
+                if (!StringUtils.isBlank(notification.getEmailTemplate().getHtmlContent())) {
+                    htmlBody = (String) ValueExpressionWrapper.evaluateExpression(notification.getEmailTemplate().getHtmlContent(), userMap, String.class);
+                } else {
+                    body = (String) ValueExpressionWrapper.evaluateExpression(notification.getEmailTemplate().getTextContent(), userMap, String.class);
+                }
             }
+
             List<String> to = new ArrayList<String>();
 
             if (!StringUtils.isBlank(notification.getEmailToEl())) {

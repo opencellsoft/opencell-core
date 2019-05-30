@@ -4,7 +4,6 @@ import static org.meveo.commons.utils.NumberUtils.round;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -581,10 +580,7 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         } else if (bareWalletOperation.getOfferTemplate() != null) {
             productOffering = bareWalletOperation.getOfferTemplate();
-
-        } else if (bareWalletOperation.getOfferCode() != null) {
-            productOffering = productOfferingService.findByCode(bareWalletOperation.getOfferCode(), Arrays.asList("globalRatingScriptInstance"));
-        }
+        } 
 
         if (productOffering != null && productOffering.getGlobalRatingScriptInstance() != null) {
             log.debug("start to execute script instance for productOffering {}", productOffering);
@@ -797,11 +793,11 @@ public class RatingService extends BusinessService<WalletOperation> {
             if (ppOfferTemplate != null) {
                 boolean offerCodeSameInPricePlan = true;
 
-                if (bareOperation.getOfferTemplate() != null) {
+                if(bareOperation.getOfferTemplate() != null){
                     offerCodeSameInPricePlan = bareOperation.getOfferTemplate().getId().equals(ppOfferTemplate.getId());
-                } else {
-                    offerCodeSameInPricePlan = ppOfferTemplate.getCode().equals(bareOperation.getOfferCode());
-                }
+                } else if (bareOperation.getOfferCode() != null) {
+                	offerCodeSameInPricePlan = ppOfferTemplate.getCode().equals(bareOperation.getOfferCode());
+                } 
 
                 if (!offerCodeSameInPricePlan) {
                     log.debug("The operation offerCode {} is not compatible with price plan offerCode: {}",

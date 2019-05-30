@@ -10,7 +10,7 @@ import org.meveo.model.IEntity;
 import org.meveo.service.base.local.IPersistenceService;
 
 
-public abstract class UpdateMapTypeFieldBean<T extends IEntity> extends BaseBean<T> {
+public abstract class UpdateMapTypeFieldBean<T extends IEntity> extends CustomFieldBean<T> {
 
     /**
      *

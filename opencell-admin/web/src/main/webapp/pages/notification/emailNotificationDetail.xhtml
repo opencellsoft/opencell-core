@@ -35,28 +35,37 @@
 
         <hftl:formPanel id="emailNotificationForm" formId="emailNotificationFormId" label="#{messages['menu.emailNotification']}" backingBean="#{emailNotificationBean}" columns="2"
             showEnableDisableButton="true">
-            <hftl:formField label="#{messages['entity.code']}" field="code" required="true" />
-
-            <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" required="true" size="60" maxlength="255"
-                autocompleteBean="#{emailNotificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" listenerUpdate="eventTypeFilter"/>
-            <hftl:formField id="eventTypeFilter" label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" required="true" listValues="#{emailNotificationBean.getNotificationEventTypeFilters()}"/>
-            <hftl:formField label="#{messages['entity.notification.elFilter']}" field="elFilter" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
-            <hftl:formField id="scriptInstanceSelectId" label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance" valueLabelField="code"
-                required="false" popup="true" popupId="scriptInstancePopup" newLine="true"/>
-            <hftl:formField label="#{messages['entity.notification.params']}" field="params" componentWidth="100" />
-            <hftl:formField label="#{messages['entity.emailNotification.emailFrom']}" field="emailFrom" textArea="true" rows="1" maxlength="1000" required="true" componentWidth="50" />
-            <hftl:formField label="#{messages['entity.emailNotification.emailToEl']}" field="emailToEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
-            <hftl:formField label="#{messages['entity.emailNotification.emails']}" field="emails" showButtonAddNew="true" componentWidth="50" />
-            <hftl:formField label="#{messages['entity.emailNotification.subject']}" field="subject" required="true" size="100" />
-            <hftl:formField label="#{messages['entity.emailNotification.body']}" field="body" textArea="true" maxlength="20000" componentWidth="100" />
-            <hftl:formField label="#{messages['entity.emailNotification.htmlBody']}" field="htmlBody" textArea="true" maxlength="20000" componentWidth="100" />
-            <hftl:formField id="counterTemplateSelectedId" label="#{messages['counterTemplate.title']}" field="counterTemplate" valueLabelField="code" popup="true"
-                popupId="searchCounterTemplatePopup" showResetButton="true" required="false" />
-
-            <hftl:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true" field="disabled" isMessage="true" />
-            <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!emailNotificationBean.entity.transient}">
-            	<h:outputText value="#{emailNotificationBean.getPartOfModules()}" />
-            </hftl:decorateFormField>
+            
+            <p:tabView id="tabView">
+			   <p:tab title="Information">
+            
+		            <hftl:formField label="#{messages['entity.code']}" field="code" required="true" />
+		
+		            <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" required="true" size="60" maxlength="255"
+		                autocompleteBean="#{emailNotificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" listenerUpdate="eventTypeFilter"/>
+		            <hftl:formField id="eventTypeFilter" label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" required="true" listValues="#{emailNotificationBean.getNotificationEventTypeFilters()}"/>
+		            <hftl:formField label="#{messages['entity.notification.elFilter']}" field="elFilter" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+		            <hftl:formField id="scriptInstanceSelectId" label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance" valueLabelField="code"
+		                required="false" popup="true" popupId="scriptInstancePopup" newLine="true"/>
+		            <hftl:formField label="#{messages['entity.notification.params']}" field="params" componentWidth="100" />
+		            <hftl:formField label="#{messages['entity.emailNotification.emailFrom']}" field="emailFrom" textArea="true" rows="1" maxlength="1000" required="true" componentWidth="50" />
+		            <hftl:formField label="#{messages['entity.emailNotification.emailToEl']}" field="emailToEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+		            <hftl:formField label="#{messages['entity.emailNotification.emails']}" field="emails" showButtonAddNew="true" componentWidth="50" />
+		            <hftl:formField label="#{messages['entity.emailNotification.subject']}" field="emailTemplate" childField="subject" required="true" size="100" />
+		            <hftl:formField label="#{messages['entity.emailNotification.body']}" field="emailTemplate" childField="textContent" textArea="true" maxlength="20000" componentWidth="100" />
+		            <hftl:formField label="#{messages['entity.emailNotification.htmlBody']}" field="emailTemplate" childField="htmlContent" textArea="true" maxlength="20000" componentWidth="100" />
+		            <hftl:formField id="counterTemplateSelectedId" label="#{messages['counterTemplate.title']}" field="counterTemplate" valueLabelField="code" popup="true"
+		                popupId="searchCounterTemplatePopup" showResetButton="true" required="false" />
+		
+		            <hftl:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true" field="disabled" isMessage="true" />
+		            <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!emailNotificationBean.entity.transient}">
+		            	<h:outputText value="#{emailNotificationBean.getPartOfModules()}" />
+		            </hftl:decorateFormField>
+            
+           	 </p:tab>
+	            	<hftl:customFields backingBean="#{emailNotificationBean}" messagesId=":emailNotificationFormId:messages" />
+	      </p:tabView>
+	         
         </hftl:formPanel>
 
 <!--         <p:panel rendered="#{not empty emailNotificationBean.entity.id}"> -->

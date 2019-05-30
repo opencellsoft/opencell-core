@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -41,6 +42,7 @@ import org.meveo.model.shared.DateUtils;
  * @author Andrius Karpavicius
  */
 @Entity
+@Cacheable
 @Table(name = "billing_counter")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_counter_instance_seq"), })
@@ -67,6 +69,20 @@ public class CounterInstance extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id")
     private BillingAccount billingAccount;
+
+    /**
+     * Subscription that counter is tracked on
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
+
+    /**
+     * Service instance that counter is tracked on
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_instance_id")
+    private ServiceInstance serviceInstance;
 
     /**
      * Counter periods
@@ -122,4 +138,35 @@ public class CounterInstance extends BusinessEntity {
         return null;
     }
 
+    /**
+     * Gets the subscription
+     * @return a subscription
+     */
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    /**
+     * Sets subscription
+     * @param subscription a subscription
+     */
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
+
+    /**
+     * Gets a service instance
+     * @return a service instance
+     */
+    public ServiceInstance getServiceInstance() {
+        return serviceInstance;
+    }
+
+    /**
+     * Sets a service instance
+     * @param serviceInstance a service instance
+     */
+    public void setServiceInstance(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 }

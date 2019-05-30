@@ -61,7 +61,6 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.order.Order;
 import org.meveo.model.shared.DateUtils;
@@ -178,9 +177,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private Invoice invoiceCopy = null;
     private Date rtStartDate;
     private Date rtEndDate;
-
-    private Integer invoiceRounding = appProvider != null ? (appProvider.getInvoiceRounding()) : 2;
-    private RoundingModeEnum invoiceRoundingMode = appProvider != null ? appProvider.getInvoiceRoundingMode() : RoundingModeEnum.DOWN;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -360,9 +356,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         subCategoryInvoiceAggregates = new ArrayList<SubCategoryInvoiceAgregate>(aggregateHandler.getSubCatInvAgregateMap().values());
         categoryInvoiceAggregates = new ArrayList<CategoryInvoiceAgregate>(aggregateHandler.getCatInvAgregateMap().values());
 
-        entity.setAmountWithoutTax(round(aggregateHandler.getInvoiceAmountWithoutTax(), invoiceRounding, invoiceRoundingMode));
-        entity.setAmountTax(round(aggregateHandler.getInvoiceAmountTax(), invoiceRounding, invoiceRoundingMode));
-        entity.setAmountWithTax(round(aggregateHandler.getInvoiceAmountWithTax(), invoiceRounding, invoiceRoundingMode));
+        entity.setAmountWithoutTax(round(aggregateHandler.getInvoiceAmountWithoutTax(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode()));
+        entity.setAmountTax(round(aggregateHandler.getInvoiceAmountTax(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode()));
+        entity.setAmountWithTax(round(aggregateHandler.getInvoiceAmountWithTax(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode()));
 
         BigDecimal netToPay = entity.getAmountWithTax();
         if (appProvider != null && !appProvider.isEntreprise() && isIncludeBalance()) {
@@ -370,7 +366,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");
             }
-            netToPay = entity.getAmountWithTax().add(round(balance, invoiceRounding, invoiceRoundingMode));
+            netToPay = entity.getAmountWithTax().add(round(balance, appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode()));
         }
         entity.setNetToPay(netToPay);
     }

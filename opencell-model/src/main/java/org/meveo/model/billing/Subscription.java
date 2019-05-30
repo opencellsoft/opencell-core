@@ -58,6 +58,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -74,6 +75,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Subscription
@@ -97,7 +100,7 @@ import java.util.List;
         @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
-public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable {
+public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable,ICounterEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -312,8 +315,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
     private List<DunningDocument> dunningDocuments;
 
-
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email_template_id")
     private EmailTemplate emailTemplate;
 
@@ -334,6 +336,12 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @Column(name = "electronic_billing")
     private boolean electronicBilling;
 
+    /**
+     * Counter instances
+     */
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
+    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
 
     /**
      * Extra Rated transactions to reach minimum invoice amount per subscription
@@ -718,7 +726,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * update AutoRenewDate when AutoRenew change
-     * 
+     *
      * @param subscriptionOld
      */
     public void updateAutoRenewDate(Subscription subscriptionOld) {
@@ -827,8 +835,10 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     public void setAccountOperations(List<AccountOperation> accountOperations) {
         this.accountOperations = accountOperations;
     }
+
     /**
      * Gets Email Template.
+     *
      * @return Email Template.
      */
     public EmailTemplate getEmailTemplate() {
@@ -837,6 +847,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets Email template.
+     *
      * @param emailTemplate the Email template.
      */
     public void setEmailTemplate(EmailTemplate emailTemplate) {
@@ -845,6 +856,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Gets Mailing Type.
+     *
      * @return Mailing Type.
      */
     public MailingTypeEnum getMailingType() {
@@ -853,6 +865,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets Mailing Type.
+     *
      * @param mailingType mailing type
      */
     public void setMailingType(MailingTypeEnum mailingType) {
@@ -861,6 +874,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Gets cc Emails.
+     *
      * @return cc Emails
      */
     public String getCcedEmails() {
@@ -869,6 +883,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets cc Emails.
+     *
      * @param ccedEmails Cc Emails
      */
     public void setCcedEmails(String ccedEmails) {
@@ -877,6 +892,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Gets Email address.
+     *
      * @return The Email address
      */
     public String getEmail() {
@@ -885,6 +901,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets Email.
+     *
      * @param email the Email address
      */
     public void setEmail(String email) {
@@ -893,6 +910,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Check id electronic billing is enabled.
+     *
      * @return True if enabled, false else
      */
     public boolean getElectronicBilling() {
@@ -901,6 +919,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets the electronic billing.
+     *
      * @param electronicBilling True or False
      */
     public void setElectronicBilling(boolean electronicBilling) {
@@ -918,7 +937,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     @Override
     public void addDiscountPlanInstances(DiscountPlanInstance discountPlanInstance) {
-        if(this.getDiscountPlanInstances() == null){
+        if (this.getDiscountPlanInstances() == null) {
             this.setDiscountPlanInstances(new ArrayList<>());
         }
         this.getDiscountPlanInstances().add(discountPlanInstance);
@@ -952,5 +971,20 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     public void setInitialSubscriptionRenewal(String initialSubscriptionRenewal) {
         this.initialSubscriptionRenewal = initialSubscriptionRenewal;
+    }
+    /**
+     * Gets counters
+     * @return a map of counters
+     */
+    public Map<String, CounterInstance> getCounters() {
+        return counters;
+    }
+
+    /**
+     * Sets counters
+     * @param counters a map of counters
+     */
+    public void setCounters(Map<String, CounterInstance> counters) {
+        this.counters = counters;
     }
 }

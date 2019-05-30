@@ -44,6 +44,14 @@ public class AuditManagerService {
 		}
 	}
 
+	public void audit(Class<? extends Object> clazz, String method, Object[] paramValues) throws BusinessException {
+		AuditEvent event = new AuditEvent();
+		event.setEntity(clazz.getName());
+		event.setAction(method);
+		event = metadataHandler.addSignature(event);
+		auditEventProcessor.process(event);
+	}
+
 	public void audit(Class<? extends Object> clazz, Method method, Object[] paramValues) throws BusinessException {
 		audit(new AnnotationAuditEvent(clazz, method, paramValues));
 	}

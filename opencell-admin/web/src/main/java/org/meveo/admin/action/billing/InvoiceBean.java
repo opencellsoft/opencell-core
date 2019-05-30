@@ -80,7 +80,7 @@ import org.primefaces.model.SortOrder;
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
- * 
+ *
  * @author anasseh
  * @author Edward P. Legaspi
  * @author Khalid HORRI
@@ -230,10 +230,12 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return return true if BillingAccounts list is null or empty
      */
     private boolean isNullOrEmpty(Object billingAccounts) {
-        if (billingAccounts == null)
+        if (billingAccounts == null) {
             return true;
-        if (billingAccounts instanceof List && ((List) billingAccounts).isEmpty())
+        }
+        if (billingAccounts instanceof List && ((List) billingAccounts).isEmpty()) {
             return true;
+        }
         return false;
     }
 
@@ -255,7 +257,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public ArrayList<InvoiceCategoryDTO> initInvoiceCategories() {
-        entity = invoiceService.refreshOrRetrieve(entity);
         LinkedHashMap<String, InvoiceCategoryDTO> headerCategories = new LinkedHashMap<String, InvoiceCategoryDTO>();
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
         for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
@@ -823,6 +824,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGeneratePdfBtnActive() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
+        }
         String value = ParamBean.getInstance().getProperty("billing.activateGenaratePdfBtn", "true");
         if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
             return Boolean.valueOf(value);
@@ -836,9 +840,24 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGenerateXmlBtnActive() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
+        }
         String value = ParamBean.getInstance().getProperty("billing.activateGenarateXmlBtn", "true");
         if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
             return Boolean.valueOf(value);
+        }
+        return true;
+    }
+
+    /**
+     * Activate/deactivate Send by Email button
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getSendByEmailBtnActive() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
         }
         return true;
     }
@@ -876,5 +895,29 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         ratedTransactionsDM.put(invoiceSubCategoryDTO.getCode(), lazyDataModelWSize);
 
         return lazyDataModelWSize;
+    }
+
+    /**
+     * Activate/deactivate New aggregated invoice adjustment
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getShowBtnNewIAAggregateds() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Activate/deactivate New detailed invoice adjustment
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getShowBtnNewIADetailed() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
+        }
+        return true;
     }
 }
