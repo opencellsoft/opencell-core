@@ -608,11 +608,12 @@ public class InvoiceApi extends BaseApi {
         List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
         if (invoices != null) {
             for (Invoice invoice : invoices) {
-                invoice = invoiceService.retrieveIfNotManaged(invoice);
-                if (isDraft && invoiceService.isPrepaidReport(invoice)) {
+                if (isDraft && invoiceService.isPrepaidReport(invoice.getId())) {
                     invoiceService.cancelInvoice(invoice);
                     continue;
                 }
+                invoice = invoiceService.retrieveIfNotManaged(invoice);
+
                 // TODO AKK need to extract custom fields and use them inside the generateInvoice()
                 // this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
 
@@ -700,7 +701,7 @@ public class InvoiceApi extends BaseApi {
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
         }
-        if (invoiceService.isPrepaidReport(invoice)) {
+        if (invoiceService.isPrepaidReport(invoice.getId())) {
             throw new BusinessException("Invoice PDF is disabled for prepaid invoice: " + invoice.getInvoiceNumber());
         }
         if (!invoiceService.isInvoicePdfExist(invoice)) {
@@ -934,7 +935,7 @@ public class InvoiceApi extends BaseApi {
      */
     private void setInvoicePdf(Invoice invoice, boolean includePdf, InvoiceDto invoiceDto) {
 
-        if (invoiceService.isPrepaidReport(invoice)) {
+        if (invoiceService.isPrepaidReport(invoice.getId())) {
             invoiceDto.setPdfFilename(null);
             return;
         }
@@ -1069,7 +1070,7 @@ public class InvoiceApi extends BaseApi {
         }
         handleMissingParameters();
         Invoice invoice = invoiceService.findById(invoiceDto.getInvoiceId());
-        if (invoiceService.isPrepaidReport(invoice)) {
+        if (invoiceService.isPrepaidReport(invoice.getId())) {
             return false;
         }
         if (invoice == null) {

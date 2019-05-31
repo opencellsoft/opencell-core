@@ -1078,7 +1078,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             produceInvoiceXmlNoUpdate(invoice);
         }
 
-        BillingAccount billingAccount = invoice.getBillingAccount();
+        BillingAccount billingAccount = billingAccountService.refreshOrRetrieve(invoice.getBillingAccount());
 
         BillingCycle billingCycle = null;
         if (billingAccount != null && billingAccount.getBillingCycle() != null) {
@@ -1743,7 +1743,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public String getInvoiceXml(Invoice invoice) throws BusinessException {
 
-        if (isPrepaidReport(invoice)) {
+        if (isPrepaidReport(invoice.getId())) {
             throw new BusinessException("Invoice XML is disabled for prepaid invoice: " + invoice.getInvoiceNumber());
         }
         String xmlFileName = getFullXmlFilePath(invoice, false);
@@ -1839,7 +1839,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public Invoice generateXmlAndPdfInvoice(Invoice invoice, boolean regenerate) throws BusinessException {
-        if (isPrepaidReport(invoice)) {
+        if (isPrepaidReport(invoice.getId())) {
             return invoice;
         }
         if (regenerate || invoice.getXmlFilename() == null || !isInvoiceXmlExist(invoice)) {
@@ -1919,7 +1919,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 log.error("Failed to generate XML/PDF files or recorded invoice AO for invoice {}/{}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber(), e);
             }
         }
-        return refreshOrRetrieve(invoices);
+        return invoices;
     }
 
     /**
@@ -1969,7 +1969,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entity, firstTransactionDate, lastTransactionDate);
 
         List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(),
-            isDraft);
+                isDraft);
 
         return invoices;
 
@@ -1981,7 +1981,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param produceXml To produce xml invoice file
      * @param producePdf To produce pdf invoice file
      * @param generateAO To generate Account operations
-     * @param invoice Invoice to operate on
+     * @param invoiceId Invoice to operate on
      * @param isDraft Is it a draft invoice
      * @throws BusinessException General business exception
      * @throws InvoiceExistException Invoice already exist exception
@@ -1989,7 +1989,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public void produceFilesAndAO(boolean produceXml, boolean producePdf, boolean generateAO, Long invoiceId, boolean isDraft)
             throws BusinessException, InvoiceExistException, ImportInvoiceException {
-        if (isPrepaidReport(invoice)) {
+        if (isPrepaidReport(invoiceId)) {
             return;
         }
         if (produceXml) {
@@ -2577,15 +2577,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Check whether the invoice is a prepaid report
      *
-     * @param invoice The invoice
+     * @param invoiceId The invoiceId
      * @return true if the invoice is prepaid report
      */
-    public Boolean isPrepaidReport(Invoice invoice) {
-        try {
-            return ratedTransactionService.isPrepaidRatedTransactions(getRatedTransactions(invoice));
-        }catch (Exception ex){
-            return false;
-        }
+    public Boolean isPrepaidReport(Long invoiceId) {
+        Invoice invoice = findById(invoiceId);
+        return ratedTransactionService.isPrepaidRatedTransactions(invoice.getRatedTransactions());
     }
 
     List<RatedTransaction> getRatedTransactions(Invoice invoice){
