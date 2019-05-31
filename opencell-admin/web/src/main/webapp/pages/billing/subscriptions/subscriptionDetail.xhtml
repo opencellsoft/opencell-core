@@ -531,7 +531,7 @@
                                             <h:outputText id="balanceEx_text" rendered="#{true or !subscriptionBean.edit}" value="#{subscriptionBean.getBalanceExigibleWithoutLitigation()}"
                                                 style="font-weight:bold;" converter="bigDecimalConverter" />
                                         </hftl:decorateFormField>
-                                 	
+
 										<hftl:formField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
                             				popupId="billingCyclePopup" />
                             				
@@ -873,6 +873,13 @@
 													</p:panel>
 												</h:form>
 											</p:tab>
+					<p:tab id="counterPeriodTab"
+						   title="#{messages['counterPeriod.title']}"
+						   rendered="#{not empty subscriptionBean.entity.id}">
+						<p:outputPanel id="counterPeriodTabPanel">
+							<ui:include src="counterPeriodTab.xhtml" />
+						</p:outputPanel>
+					</p:tab>
 				</p:tabView>
 			</h:panelGroup>
         </h:panelGroup>

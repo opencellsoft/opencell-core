@@ -1027,4 +1027,4 @@
                                  baseColumnNames="service_instance_id" baseTableName="billing_counter" referencedColumnNames="id"/>
     </changeSet>
 
-</databaseChangeLog> 
+</databaseChangeLog>
