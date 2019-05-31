@@ -923,6 +923,18 @@
     		<column name="verbose_report" valueNumeric="1"></column>
     	</update>
     </changeSet>
+    <changeSet id="#4192_20190506 - add counter for subscription and service" author="KhalidHorri">
+        <addColumn tableName="billing_counter">
+            <column name="subscription_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_counter">
+            <column name="service_instance_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_billing_counter_subscription_id" referencedTableName="billing_subscription"
+                                 baseColumnNames="subscription_id" baseTableName="billing_counter" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_billing_counter_service_instance_id" referencedTableName="billing_service_instance"
+                                 baseColumnNames="service_instance_id" baseTableName="billing_counter" referencedColumnNames="id"/>
+    </changeSet>
     
 
     <changeSet id="#3607_20190123" author="andrius.karpavicius">

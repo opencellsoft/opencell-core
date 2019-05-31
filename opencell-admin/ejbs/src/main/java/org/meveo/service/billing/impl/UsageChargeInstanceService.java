@@ -38,6 +38,10 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 
+/**
+ * @author khalid HORRI
+ * @lastModifiedVersion 6.1
+ */
 @Stateless
 public class UsageChargeInstanceService extends BusinessService<UsageChargeInstance> {
 
@@ -80,10 +84,9 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
         if (!isVirtual) {
             create(usageChargeInstance);
         }
-        
+
         if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
-            CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance.getSubscription().getUserAccount(),
-                serviceUsageChargeTemplate.getCounterTemplate(), isVirtual);
+            CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceUsageChargeTemplate.getCounterTemplate(), isVirtual);
             usageChargeInstance.setCounter(counterInstance);
 
             if (!isVirtual) {
@@ -136,12 +139,12 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 
     /**
      * Get a list of active usage charge instances for a given subscription
-     * 
+     *
      * @param subscriptionId Subscription identifier
      * @return An ordered list by priority (ascended) of usage charge instances
      */
     public List<UsageChargeInstance> getActiveUsageChargeInstancesBySubscriptionId(Long subscriptionId) {
         return getEntityManager().createNamedQuery("UsageChargeInstance.getActiveUsageChargesBySubscriptionId", UsageChargeInstance.class)
-            .setParameter("subscriptionId", subscriptionId).getResultList();
+                .setParameter("subscriptionId", subscriptionId).getResultList();
     }
 }

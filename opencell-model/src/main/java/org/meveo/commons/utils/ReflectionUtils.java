@@ -51,11 +51,14 @@ import org.slf4j.LoggerFactory;
  * Utils class for java reflection api.
  * 
  * @author Ignas Lelys
- * 
+ * @author khalid HORRI
+ * @lastModifiedVersion 6.1
  */
 public class ReflectionUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
+
+    public static final String SET_PREFIX = "set";
 
     /**
      * Mapping between an entity class and entity classes containing a field that that class.
@@ -574,5 +577,16 @@ public class ReflectionUtils {
         }
         classReferences.put(fieldClass, matchedFields);
         return matchedFields;
+    }
+
+    public static List<Method> findAnnotatedMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+        Method[] methods = clazz.getMethods();
+        List<Method> annotatedMethods = new ArrayList<Method>(methods.length);
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(annotationClass)) {
+                annotatedMethods.add(method);
+            }
+        }
+        return annotatedMethods;
     }
 }

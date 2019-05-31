@@ -154,7 +154,15 @@
 							<hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" backingBean="#{paymentScheduleInstanceBean}" objectIdParamName="objectId"
 							 renderDeleteLink="false" renderEditLink="true" backTab="psInstances" backView="serviceInstanceDetail" backEntityId="#{serviceInstanceBean.entity.id}"/>
 			        </hftl:dataList>
-                </p:tab>                    
+                </p:tab>
+
+				<p:tab id="counterPeriodTab"
+					   title="#{messages['counterPeriod.title']}"
+					   rendered="#{not empty subscriptionBean.entity.id}">
+					<p:outputPanel id="counterPeriodTabPanel">
+						<ui:include src="counterPeriodTab.xhtml" />
+					</p:outputPanel>
+				</p:tab>
 
                 <hftl:customFields backingBean="#{serviceInstanceBean}" messagesId=":formId:messages" />
             </p:tabView>
