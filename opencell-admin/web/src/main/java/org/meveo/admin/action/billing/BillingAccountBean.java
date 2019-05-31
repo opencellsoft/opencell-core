@@ -309,7 +309,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             generateInvoiceRequestDto.setLastTransactionDate(new Date());
             List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, null, true);
             for (Invoice invoice : invoices) {
-                invoiceService.produceFilesAndAO(false, true, false, invoice, true);
+                invoiceService.produceFilesAndAO(false, true, false, invoice.getId(), true);
                 String fileName = invoiceService.getFullPdfFilePath(invoice, false);
                 Faces.sendFile(new File(fileName), true);
             }

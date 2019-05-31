@@ -824,7 +824,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGeneratePdfBtnActive() {
-        if (invoiceService.isPrepaidReport(entity)) {
+        if (invoiceService.isPrepaidReport(entity.getId())) {
             return false;
         }
         String value = ParamBean.getInstance().getProperty("billing.activateGenaratePdfBtn", "true");
@@ -840,7 +840,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGenerateXmlBtnActive() {
-        if (invoiceService.isPrepaidReport(entity)) {
+        if (invoiceService.isPrepaidReport(entity.getId())) {
             return false;
         }
         String value = ParamBean.getInstance().getProperty("billing.activateGenarateXmlBtn", "true");
@@ -856,7 +856,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return true if the invoice is not a prepaid report
      */
     public boolean getSendByEmailBtnActive() {
-        if (invoiceService.isPrepaidReport(entity)) {
+        if (invoiceService.isPrepaidReport(entity.getId())) {
             return false;
         }
         return true;
@@ -903,7 +903,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return true if the invoice is not a prepaid report
      */
     public boolean getShowBtnNewIAAggregateds() {
-        if (invoiceService.isPrepaidReport(entity)) {
+        if (invoiceService.isPrepaidReport(entity.getId())) {
             return false;
         }
         return true;
@@ -915,7 +915,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return true if the invoice is not a prepaid report
      */
     public boolean getShowBtnNewIADetailed() {
-        if (invoiceService.isPrepaidReport(entity)) {
+        if (invoiceService.isPrepaidReport(entity.getId())) {
             return false;
         }
         return true;
