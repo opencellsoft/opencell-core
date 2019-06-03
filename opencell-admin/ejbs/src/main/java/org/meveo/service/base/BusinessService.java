@@ -64,6 +64,26 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
     }
 
     /**
+     * Find entities by codes - strict match.
+     *
+     * @param codes list of Codes to match
+     * @return A list of entities matching code
+     */
+    public List<P> findByCodes(List<String> codes) {
+        if (codes == null && codes.isEmpty()) {
+            return null;
+        }
+        codes.forEach(s -> s.toUpperCase());
+        TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where upper(be.code) IN :codes", entityClass)
+                .setParameter("codes", codes);
+        try {
+            return query.getResultList();
+        } catch (NoResultException e) {
+            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), codes);
+            return null;
+        }
+    }
+    /**
      * Find entity by code - strict match.
      * 
      * @param code Code to match
