@@ -943,7 +943,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             produceInvoiceXmlNoUpdate(invoice);
         }
 
-        BillingAccount billingAccount = invoice.getBillingAccount();
+        BillingAccount billingAccount = billingAccountService.refreshOrRetrieve(invoice.getBillingAccount());
 
         BillingCycle billingCycle = null;
         if (billingAccount != null && billingAccount.getBillingCycle() != null) {
@@ -1764,14 +1764,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         List<Invoice> invoices = invoiceService.createInvoice(entity, generateInvoiceRequestDto, ratedTxFilter, isDraft);
 
-        //List<Invoice> invoicesWNumber = new ArrayList<Invoice>();
-
+        List<Invoice> invoicesWNumber = new ArrayList<Invoice>();
         for (Invoice invoice : invoices) {
             if (customFieldValues != null) {
                 invoice.setCfValues(customFieldValues);
             }
             try {
-                serviceSingleton.assignInvoiceNumber(invoice);
+                invoicesWNumber.add(serviceSingleton.assignInvoiceNumber(invoice));
             } catch (Exception e) {
                 log.error("Failed to assign invoice number for invoice {}/{}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber(), e);
                 continue;
