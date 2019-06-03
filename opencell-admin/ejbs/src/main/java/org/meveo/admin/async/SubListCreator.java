@@ -5,109 +5,124 @@ package org.meveo.admin.async;
 
 import java.util.List;
 
-import org.meveo.model.IEntity;
-
 /**
+ * List iterator specified either by a number of iterations or by a number items in each iteration
+ * 
  * @author anasseh
- *
+ * @author Andrius Karpavicius
  */
-
 public class SubListCreator<E> {
 
-	/** number of threads. */
-	private int nbThreads = 1;
+    /**
+     * Number of iterations
+     */
+    private int nbIterations = 1;
 
-	/** list to split. */
-	private List<E> theBigList;
+    /**
+     * List to iterate over
+     */
+    private List<E> theBigList;
 
-	/** has next value to proceed . */
-	private boolean hasNext = true;
+    /**
+     * Has more iterations?
+     */
+    private boolean hasNext = true;
 
-	/** from index . */
-	private int from;
+    /** From index . */
+    private int from;
 
-	/** to index . */
-	private int to;
+    /** To index . */
+    private int to;
 
-	/** block to run . */
+    /** Block to run . */
 
-	private int blocToRun;
+    private int blocToRun;
 
-	/** modulo. */
-	private int modulo;
+    /** Modulo. */
+    private int modulo;
 
-	/** size of list. */
-	private int listSize;
+    /** Size of list. */
+    private int listSize;
 
-	/**
-	 * @param theList
-	 *            list to split
-	 * @param nbRuns
-	 *            number of run
-	 * @throws Exception
-	 *             exception
-	 */
-	public SubListCreator(List<E> theList, int nbRuns) throws Exception {
-		if (nbRuns < 1) {
-			throw new Exception("nbRuns should not be < 1 ");
-		}
+    /**
+     * Create list iterator. Specifies a number of items per iteration.
+     * 
+     * @param itemsPerSplit Items per split
+     * @param listToSplit List to split. Null safe.
+     */
+    public SubListCreator(int itemsPerSplit, List<E> listToSplit) {
 
-		if (theList == null) {
-			throw new Exception("The list should not be null");
-		}
-		
-		this.theBigList = theList;
-		this.nbThreads = nbRuns;
+        this(listToSplit, listToSplit != null ? (listToSplit.size() / itemsPerSplit) + 1 : 0);
+    }
 
-		listSize = theBigList.size();
-		if (nbThreads > listSize && listSize > 0) {
-			nbThreads = listSize;
-		}
-		
-		blocToRun = listSize / nbThreads;
-		modulo = listSize % nbThreads;
-		from = 0;
-		to = blocToRun;
-		if (from == listSize) {
-			this.hasNext = false;
-		}
-	}
+    /**
+     * Create list iterator. Specifies a number of total iterations.
+     * 
+     * @param listToSplit List to split. Null safe.
+     * @param nbSplits Number of splits. Defaults to 1 for Zero or a negative value.
+     */
+    public SubListCreator(List<E> listToSplit, int nbSplits) {
+        if (nbSplits < 1) {
+            nbSplits = 1;
+        }
 
-	/**
-	 * @return list of next work set
-	 */
-	public List<E> getNextWorkSet() {
-		List<E> toRuns = theBigList.subList(from, to);
-		from = to;
-		to = from + blocToRun;
-		if (listSize - modulo == to) {
-			to += modulo;
-		}
-		if (from == listSize) {
-			hasNext = false;
-		}
-		return toRuns;
-	}
+        if (listToSplit == null) {
+            hasNext = false;
+            return;
+        }
 
-	/**
-	 * @return the hasNext
-	 */
-	public boolean isHasNext() {
-		return hasNext;
-	}
+        this.theBigList = listToSplit;
+        this.nbIterations = nbSplits;
 
-	/**
-	 * @return the blocToRun
-	 */
-	public int getBlocToRun() {
-		return blocToRun;
-	}
+        listSize = theBigList.size();
+        if (nbIterations > listSize && listSize > 0) {
+            nbIterations = listSize;
+        }
 
-	/**
-	 * @return the listSize
-	 */
-	public int getListSize() {
-		return listSize;
-	}
+        blocToRun = listSize / nbIterations;
+        modulo = listSize % nbIterations;
+        from = 0;
+        to = blocToRun;
+        if (from == listSize) {
+            this.hasNext = false;
+        }
+    }
+
+    /**
+     * @return list of next work set
+     */
+    public List<E> getNextWorkSet() {
+        List<E> toRuns = theBigList.subList(from, to);
+        from = to;
+        to = from + blocToRun;
+        if (listSize - modulo == to) {
+            to += modulo;
+        }
+        if (from == listSize) {
+            hasNext = false;
+        }
+        return toRuns;
+    }
+
+    /**
+     * @return the hasNext
+     */
+    public boolean isHasNext() {
+        return hasNext;
+    }
+
+    /**
+     * @return the blocToRun
+     */
+    public int getBlocToRun() {
+        return blocToRun;
+    }
+
+    /**
+     * @return the listSize
+     */
+    public int getListSize() {
+        return listSize;
+    }
 
 }

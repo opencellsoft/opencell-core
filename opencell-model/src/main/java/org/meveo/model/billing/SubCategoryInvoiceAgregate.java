@@ -132,11 +132,11 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @Transient
     private BigDecimal oldAmountWithTax;
 
-    /**
-     * Tax was recalculated for this invoice subCategory aggregate
-     */
     @Transient
-    private boolean taxRecalculated;
+    private List<Long> ratedTransactionIdsNoTaxChange;
+
+    @Transient
+    private List<Long> ratedTransactionIdsTaxRecalculated;
 
     /**
      * Instantiates a new sub category invoice aggregate.
@@ -153,24 +153,27 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      * @param userAccount User account
      * @param wallet Wallet instance
      * @param tax Tax applied
-     * @param taxPercent Tax percent applied
      * @param invoice Invoice
      * @param accountingCode Accounting code
      */
     public SubCategoryInvoiceAgregate(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, WalletInstance wallet, Tax tax,
-            BigDecimal taxPercent, Invoice invoice, AccountingCode accountingCode) {
+            Invoice invoice, AccountingCode accountingCode) {
         super();
         this.invoiceSubCategory = invoiceSubCategory;
         this.billingAccount = billingAccount;
         this.userAccount = userAccount;
         this.wallet = wallet;
         this.tax = tax;
-        this.taxPercent = taxPercent;
+        if (tax != null) {
+            this.taxPercent = tax.getPercent();
+        }
         this.invoice = invoice;
         if (invoice != null) {
             this.billingRun = invoice.getBillingRun();
         }
         this.accountingCode = accountingCode;
+        ratedTransactionIdsNoTaxChange = new ArrayList<>();
+        ratedTransactionIdsTaxRecalculated = new ArrayList<>();
     }
 
     /**
@@ -567,17 +570,19 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         return isEnterprise ? getAmountWithoutTax() : getAmountWithTax();
     }
 
-    /**
-     * @return Tax was recalculated for this invoice subCategory aggregate
-     */
-    public boolean isTaxRecalculated() {
-        return taxRecalculated;
+    public List<Long> getRatedTransactionIdsNoTaxChange() {
+        return ratedTransactionIdsNoTaxChange;
     }
 
-    /**
-     * @param taxRecalculated Tax was recalculated for this invoice subCategory aggregate
-     */
-    public void setTaxRecalculated(boolean taxRecalculated) {
-        this.taxRecalculated = taxRecalculated;
+    public void setRatedTransactionIdsNoTaxChange(List<Long> ratedTransactionIdsNoTaxChange) {
+        this.ratedTransactionIdsNoTaxChange = ratedTransactionIdsNoTaxChange;
+    }
+
+    public List<Long> getRatedTransactionIdsTaxRecalculated() {
+        return ratedTransactionIdsTaxRecalculated;
+    }
+
+    public void setRatedTransactionIdsTaxRecalculated(List<Long> ratedTransactionIdsTaxRecalculated) {
+        this.ratedTransactionIdsTaxRecalculated = ratedTransactionIdsTaxRecalculated;
     }
 }

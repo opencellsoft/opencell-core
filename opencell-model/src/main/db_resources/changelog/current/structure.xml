@@ -308,7 +308,33 @@
                 set si.minimum_amount_el_sp = st.minimum_amount_el_sp, siminimum_label_el_sp = st.minimum_label_el_sp where si.minimum_amount_el_sp is not null
         </sql>
     </changeSet>
-
+    
+    <changeSet id="#4326_20190530-P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_wallet_operation set tax_id = t.id from ${db.schema.adapted}billing_tax t where
+               tax_percent = t.tax_percentage and tax_id is null and tax_percent is not null
+        </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction set tax_id = t.id from ${db.schema.adapted}billing_tax t where
+               tax_percent = t.tax_percentage and tax_id is null and tax_percent is not null
+        </sql>        
+    </changeSet>
+    
+    <changeSet id="#4326_20190530-M" author="AndriusKarpavicius" dbms="mysql">
+       <sql>update ${db.schema.adapted}billing_wallet_operation wo join ${db.schema.adapted}billing_tax t on wo.tax_percent = t.tax_percentage set wo.tax_id = t.id  where
+               wo.tax_id is null and wo.tax_percent is not null
+        </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction rt join ${db.schema.adapted}billing_tax t on rt.tax_percent = t.tax_percentage set rt.tax_id = t.id  where
+               rt.tax_id is null and rt.tax_percent is not null
+        </sql> 
+    </changeSet>
+    
+    <changeSet id="#4326_20190530" author="AndriusKarpavicius">
+        <addNotNullConstraint tableName="billing_tax" columnName="tax_percentage"/>
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="tax_id"/>
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="tax_percent"/>
+        <addNotNullConstraint tableName="billing_rated_transaction" columnName="tax_id"/>
+        <addNotNullConstraint tableName="billing_rated_transaction" columnName="tax_percent"/>    
+    </changeSet>
+    
     <changeSet id="#4278_20190520_partitions" author="mohamed.el.youssoufi" dbms="postgresql">
     
     	<createProcedure><![CDATA[

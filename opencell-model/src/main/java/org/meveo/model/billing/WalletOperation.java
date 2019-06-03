@@ -165,14 +165,16 @@ public class WalletOperation extends BusinessEntity {
     /**
      * Tax applied
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tax_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "tax_id", nullable = false)
+    @NotNull
     private Tax tax;
 
     /**
      * Tax percent applied
      */
-    @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
+    @NotNull
     private BigDecimal taxPercent;
 
     /**

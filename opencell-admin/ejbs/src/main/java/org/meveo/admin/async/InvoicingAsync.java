@@ -92,13 +92,15 @@ public class InvoicingAsync {
      * @param entities the entity objects
      * @param billingRun the billing run
      * @param jobInstanceId the job instance id
+     * @param instantiateMinRts Should rated transactions to reach minimum invoicing amount be checked and instantiated
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return the future
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsync(List<? extends IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser) {
+    public Future<String> createAgregatesAndInvoiceAsync(List<? extends IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, boolean instantiateMinRts,
+            MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -109,7 +111,7 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, entity.getMinRatedTransactions(), false, false);
+                invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, instantiateMinRts, false, false);
             } catch (Exception e) {
                 log.error("Error for entity {}/{}", entity.getClass().getSimpleName(), entity.getId(), e);
             }

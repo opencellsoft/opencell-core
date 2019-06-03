@@ -74,7 +74,6 @@ import org.omnifaces.cdi.Param;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -226,6 +225,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @param billingAccounts a billing accounts list
      * @return return true if BillingAccounts list is null or empty
      */
+    @SuppressWarnings("rawtypes")
     private boolean isNullOrEmpty(Object billingAccounts) {
         if (billingAccounts == null) {
             return true;
@@ -495,12 +495,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public boolean isPdfInvoiceAlreadyGenerated(Long invoiceId) {
 
-        Invoice invoice = invoiceService.findById(invoiceId);
-        if (!pdfGenerated.containsKey(invoice.getId())) {
-            pdfGenerated.put(invoice.getId(), invoiceService.isInvoicePdfExist(invoice));
+        if (!pdfGenerated.containsKey(invoiceId)) {
+            Invoice invoice = invoiceService.findById(invoiceId);
+            pdfGenerated.put(invoiceId, invoiceService.isInvoicePdfExist(invoice));
         }
-
-        return pdfGenerated.get(invoice.getId());
+        return pdfGenerated.get(invoiceId);
     }
 
     public void excludeBillingAccounts(BillingRun billingrun) {
@@ -717,7 +716,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             super.saveOrUpdate(false);
         }
         if (isDetailed()) {
-            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
+            invoiceService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
             entity = invoiceService.update(entity);
 
         } else {

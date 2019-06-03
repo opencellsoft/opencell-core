@@ -47,7 +47,16 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.*;
+import org.meveo.model.AccountEntity;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IBillableEntity;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IDiscountable;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
@@ -319,6 +328,12 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Column(name = "cced_emails", length = 2000)
     @Size(max = 2000)
     private String ccedEmails;
+
+    /**
+     * A flag to indicate that account is exonerated from taxes
+     */
+    @Transient
+    private Boolean exoneratedFromtaxes;
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -595,8 +610,8 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     public void anonymize(String code) {
         super.anonymize(code);
         if (isNotEmpty(this.usersAccounts)) {
-			this.usersAccounts.forEach(ua -> ua.anonymize(code));
-		}
+            this.usersAccounts.forEach(ua -> ua.anonymize(code));
+        }
     }
 
     public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
@@ -712,5 +727,19 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      */
     public void setCcedEmails(String ccedEmails) {
         this.ccedEmails = ccedEmails;
+    }
+
+    /**
+     * @return A flag to indicate that account is exonerated from taxes
+     */
+    public Boolean isExoneratedFromtaxes() {
+        return exoneratedFromtaxes;
+    }
+
+    /**
+     * @param exoneratedFromtaxes A flag to indicate that account is exonerated from taxes
+     */
+    public void setExoneratedFromtaxes(Boolean exoneratedFromtaxes) {
+        this.exoneratedFromtaxes = exoneratedFromtaxes;
     }
 }
