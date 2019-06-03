@@ -1026,5 +1026,15 @@
         <addForeignKeyConstraint constraintName="fk_billing_counter_service_instance_id" referencedTableName="billing_service_instance"
                                  baseColumnNames="service_instance_id" baseTableName="billing_counter" referencedColumnNames="id"/>
     </changeSet>
-
+    
+    <changeSet id="#4303_300520191" author="mohamed.el.youssoufi" dbms="postgresql">
+		<sql>ALTER TABLE ${db.schema.adapted}ar_account_operation RENAME COLUMN occ_code TO code;</sql>
+		<sql>ALTER TABLE ${db.schema.adapted}ar_account_operation RENAME COLUMN occ_description TO description;</sql>
+    </changeSet>
+    
+    <changeSet id="#4303_300520192" author="mohamed.el.youssoufi" dbms="mysql">
+	    <sql>ALTER TABLE ${db.schema.adapted}ar_account_operation CHANGE occ_code code varchar(255);</sql>
+	    <sql>ALTER TABLE ${db.schema.adapted}ar_account_operation CHANGE occ_description description varchar(255);</sql>
+	</changeSet>
+	
 </databaseChangeLog>

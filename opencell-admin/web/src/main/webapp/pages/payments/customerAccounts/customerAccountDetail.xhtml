@@ -289,7 +289,7 @@
                             ajaxUpdateIds=":parentTab:results_panel">
                             <hftl:searchField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />
                             <hftl:searchField label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus" />
-                            <hftl:searchField label="#{messages['accountOperation.occCode']}" field="occCode" />
+                            <hftl:searchField label="#{messages['accountOperation.occCode']}" field="code" />
 							
 						    <hftl:searchField id="cAaccountingCodeId" label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" valueLabelField="code"  popup="true"
 							popupId="accountingCodePopup" showResetButton="true" />
@@ -329,14 +329,14 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{messages['accountOperation.occCode']}" />
                                 </f:facet>
-                                <h:outputText value="#{entity.occCode}" />
+                                <h:outputText value="#{entity.code}" />
                             </p:column>
 
                             <p:column width="20%">
                                 <f:facet name="header">
                                     <h:outputText value="#{messages['accountOperation.occDescription']}" />
                                 </f:facet>
-                                <h:outputText value="#{entity.occDescription}" />
+                                <h:outputText value="#{entity.description}" />
                             </p:column>
 
                             <p:column width="10%">

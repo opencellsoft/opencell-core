@@ -19,6 +19,8 @@ import org.meveo.model.payments.OperationCategoryEnum;
  * Represents matched account operations.
  *
  * @author Andrius Karpavicius
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @XmlRootElement(name = "MatchedOperation")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -89,8 +91,8 @@ public class MatchedOperationDto extends BaseEntityDto {
         AccountOperation ao = matchingAmount.getAccountOperation();
 
         accountOperationId = ao.getId();
-        occCode = ao.getOccCode();
-        occDescription = ao.getOccDescription();
+        occCode = ao.getCode();
+        occDescription = ao.getDescription();
         transactionDate = ao.getTransactionDate();
         transactionCategory = ao.getTransactionCategory();
         dueDate = ao.getDueDate();
