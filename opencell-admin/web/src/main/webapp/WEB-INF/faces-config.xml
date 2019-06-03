@@ -428,7 +428,13 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<to-view-id>/pages/admin/customEntities/customizedEntityDetail.xhtml
 		</to-view-id>
 		<redirect include-view-params="true" />
-	</navigation-case>
+	</navigation-case>    
+    <navigation-case>
+        <from-outcome>customTables</from-outcome>
+        <to-view-id>/pages/admin/customEntities/customTables.xhtml
+        </to-view-id>
+        <redirect include-view-params="true" />
+    </navigation-case>
 	<navigation-case>
 		<from-outcome>customEntities</from-outcome>
 		<to-view-id>/pages/admin/customEntities/customEntities.xhtml

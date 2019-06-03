@@ -18,6 +18,8 @@
  */
 package org.meveo.model.billing;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,12 +47,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.AccountEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.IBillableEntity;
-import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 
@@ -67,7 +64,7 @@ import org.meveo.model.payments.CustomerAccount;
 @DiscriminatorValue(value = "ACCT_BA")
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listIdsByBillingRunId", query = "SELECT b.id FROM BillingAccount b where b.billingRun.id=:billingRunId"),
         @NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId") })
-public class BillingAccount extends AccountEntity implements IBillableEntity {
+public class BillingAccount extends AccountEntity implements IBillableEntity, ICounterEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) BillingAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
@@ -572,12 +569,9 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Override
     public void anonymize(String code) {
         super.anonymize(code);
-        getContactInformationNullSafe().anonymize(code);
-        if (getUsersAccounts() != null) {
-            for (UserAccount ua : getUsersAccounts()) {
-                ua.anonymize(code);
-            }
-        }
+        if (isNotEmpty(this.usersAccounts)) {
+			this.usersAccounts.forEach(ua -> ua.anonymize(code));
+		}
     }
 
     public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {

@@ -69,6 +69,20 @@ public class CounterInstance extends BusinessEntity {
     private BillingAccount billingAccount;
 
     /**
+     * Subscription that counter is tracked on
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
+
+    /**
+     * Service instance that counter is tracked on
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_instance_id")
+    private ServiceInstance serviceInstance;
+
+    /**
      * Counter periods
      */
     @OneToMany(mappedBy = "counterInstance", fetch = FetchType.LAZY)
@@ -122,4 +136,35 @@ public class CounterInstance extends BusinessEntity {
         return null;
     }
 
+    /**
+     * Gets the subscription
+     * @return a subscription
+     */
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    /**
+     * Sets subscription
+     * @param subscription a subscription
+     */
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
+
+    /**
+     * Gets a service instance
+     * @return a service instance
+     */
+    public ServiceInstance getServiceInstance() {
+        return serviceInstance;
+    }
+
+    /**
+     * Sets a service instance
+     * @param serviceInstance a service instance
+     */
+    public void setServiceInstance(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 }

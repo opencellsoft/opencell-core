@@ -31,9 +31,11 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.omnifaces.cdi.Param;
 
@@ -50,12 +52,18 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     @Inject
     private ServiceInstanceService serviceInstanceService;
 
+    @Inject
+    private CounterInstanceService counterInstanceService;
+
+
     /**
      * Offer Id passed as a parameter. Used when creating new Service from Offer window, so default offer will be set on newly created service.
      */
     @Inject
     @Param
     private Long offerInstanceId;
+
+    private CounterInstance selectedCounterInstance;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -76,6 +84,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
         if (offerInstanceId != null) {
             // entity.setOfferInstance(offerInstanceService.findById(offerInstanceId.get());
         }
+        selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
 
         return entity;
     }
@@ -219,5 +228,20 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
      */
     public void  autoUpdateEndOfEngagementDate() {
         entity.autoUpdateEndOfEngagementDate();
+    }
+
+    public CounterInstance getSelectedCounterInstance() {
+        if (entity == null) {
+            initEntity();
+        }
+        return selectedCounterInstance;
+    }
+
+    public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+        if (selectedCounterInstance != null) {
+            this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
+        } else {
+            this.selectedCounterInstance = null;
+        }
     }
 }

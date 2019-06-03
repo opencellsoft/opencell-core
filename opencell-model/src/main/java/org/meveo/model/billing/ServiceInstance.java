@@ -19,43 +19,17 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.PostLoad;
-import javax.persistence.PostPersist;
-import javax.persistence.PostUpdate;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.ObservableEntity;
+import org.meveo.model.*;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -69,7 +43,8 @@ import org.meveo.model.shared.DateUtils;
  *
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
+ * @author khalid HORRI
+ * @lastModifiedVersion 6.3
  */
 @Entity
 @ObservableEntity
@@ -81,7 +56,7 @@ import org.meveo.model.shared.DateUtils;
 @NamedQueries({
         @NamedQuery(name = "ServiceInstance.getExpired", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
         @NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)") })
-public class ServiceInstance extends BusinessCFEntity {
+public class ServiceInstance extends BusinessCFEntity implements ICounterEntity {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -252,6 +227,14 @@ public class ServiceInstance extends BusinessCFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "renewal_notified_date")
     private Date renewalNotifiedDate;
+
+    /**
+     * Counter instances
+     */
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
+    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+
 
     /**
      * PK of OrderItem.id.
@@ -525,10 +508,11 @@ public class ServiceInstance extends BusinessCFEntity {
      * @return the description and status
      */
     public String getDescriptionAndStatus() {
-        if (!StringUtils.isBlank(description))
+        if (!StringUtils.isBlank(description)) {
             return description + ", " + status;
-        else
+        } else {
             return status.name();
+        }
     }
 
     /**
@@ -1001,4 +985,19 @@ public class ServiceInstance extends BusinessCFEntity {
         this.paymentDayInMonthPS = paymentDayInMonthPS;
     }
 
+    /**
+     * Gets counters
+     * @return a map of counters
+     */
+    public Map<String, CounterInstance> getCounters() {
+        return counters;
+    }
+
+    /**
+     * Sets counters
+     * @param counters a map of counters
+     */
+    public void setCounters(Map<String, CounterInstance> counters) {
+        this.counters = counters;
+    }
 }

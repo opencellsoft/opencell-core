@@ -25,6 +25,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,10 +37,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -54,9 +59,10 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.IBillableEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.IBillableEntity;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
@@ -70,7 +76,8 @@ import org.meveo.model.shared.DateUtils;
  * @author Said Ramli
  * @author Abdellatif BARI
  * @author Mounir BAHIJE
- * @lastModifiedVersion 5.3
+ * @author khalid HORRI
+ * @lastModifiedVersion 6.3
  */
 @Entity
 @ObservableEntity
@@ -84,7 +91,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
-public class Subscription extends BusinessCFEntity implements IBillableEntity {
+public class Subscription extends BusinessCFEntity implements IBillableEntity, ICounterEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -274,6 +281,13 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     private String ratingGroup;
 
     /**
+     * Counter instances
+     */
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
+    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+
+    /**
      * Extra Rated transactions to reach minimum invoice amount per subscription
      */
     @Transient
@@ -296,6 +310,21 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
      */
     @Transient
     private BigDecimal totalInvoicingAmountTax;
+
+    /**
+     * This method is called implicitly by hibernate, used to enable
+     * encryption for custom fields of this entity
+     */
+    @PrePersist
+    @PreUpdate
+    public void preUpdate() {
+        if (cfValues != null) {
+            cfValues.setEncrypted(true);
+        }
+        if (cfAccumulatedValues != null) {
+            cfAccumulatedValues.setEncrypted(true);
+        }
+    }
 
     public Date getEndAgreementDate() {
         return endAgreementDate;
@@ -738,4 +767,19 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 		this.ratingGroup = ratingGroup;
 	}
 
+    /**
+     * Gets counters
+     * @return a map of counters
+     */
+    public Map<String, CounterInstance> getCounters() {
+        return counters;
+    }
+
+    /**
+     * Sets counters
+     * @param counters a map of counters
+     */
+    public void setCounters(Map<String, CounterInstance> counters) {
+        this.counters = counters;
+    }
 }

@@ -45,12 +45,9 @@ public class PDFInvoiceGenerationJobBean extends BaseJobBean {
         log.debug("Running with parameter={}", jobInstance.getParametres());
 
         try {
-        	
-        	InvoicesToProcessEnum invoicesToProcessEnum = InvoicesToProcessEnum.valueOf( (String) this.getParamOrCFValue(jobInstance, "invoicesToProcess"));
-        	if (invoicesToProcessEnum == null) {
-        		invoicesToProcessEnum = InvoicesToProcessEnum.FinalOnly;
-        	}
-        	
+
+            InvoicesToProcessEnum invoicesToProcessEnum = InvoicesToProcessEnum.valueOf((String) this.getParamOrCFValue(jobInstance, "invoicesToProcess", "FinalOnly"));
+
             String parameter = jobInstance.getParametres();
             
             Long billingRunId = null;

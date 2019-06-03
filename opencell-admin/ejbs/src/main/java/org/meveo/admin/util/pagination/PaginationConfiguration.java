@@ -33,7 +33,7 @@ public class PaginationConfiguration implements Serializable {
     private static final long serialVersionUID = -2750287256630146681L;
 
     private Integer firstRow;
-    
+
     private Integer numberOfRows;
 
     /**
@@ -43,7 +43,7 @@ public class PaginationConfiguration implements Serializable {
 
     /** Search filters (key = field name, value = search pattern or value). */
     private Map<String, Object> filters;
-    
+
     private Map<String, String> sortOrdering;
 
     /**
@@ -52,8 +52,7 @@ public class PaginationConfiguration implements Serializable {
     private List<String> fetchFields;
 
     private String sortField;
-    
-    
+
     private SortOrder ordering;
 
     /**
@@ -80,6 +79,8 @@ public class PaginationConfiguration implements Serializable {
     }
 
     /**
+     * Constructor
+     * 
      * @param firstRow Number of the first row to retrieve
      * @param numberOfRows Number of rows to retrieve
      * @param filters Search criteria
@@ -102,10 +103,25 @@ public class PaginationConfiguration implements Serializable {
     }
 
     /**
+     * Constructor
+     * 
      * @param filters Search criteria
      */
     public PaginationConfiguration(Map<String, Object> filters) {
         this.filters = filters;
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param filters Search criteria
+     * @param sortField Field to sort by
+     * @param sortOrder Sort order
+     */
+    public PaginationConfiguration(Map<String, Object> filters, String sortField, SortOrder sortOrder) {
+        this.filters = filters;
+        this.sortField = sortField;
+        this.ordering = sortOrder;
     }
 
     public Integer getFirstRow() {

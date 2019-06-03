@@ -294,29 +294,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         // Synchronize payment methods
-        if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
-            if (customerAccount.getPaymentMethods() == null) {
-                customerAccount.setPaymentMethods(new ArrayList<PaymentMethod>());
-            }
-
-            List<PaymentMethod> paymentMethodsFromDto = new ArrayList<PaymentMethod>();
-
-            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-                PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount, currentUser);
-
-                int index = customerAccount.getPaymentMethods().indexOf(paymentMethodFromDto);
-                if (index < 0) {
-                    customerAccount.addPaymentMethod(paymentMethodFromDto);
-                    paymentMethodsFromDto.add(paymentMethodFromDto);
-                } else {
-                    PaymentMethod paymentMethod = customerAccount.getPaymentMethods().get(index);
-                    paymentMethod.updateWith(paymentMethodFromDto);
-                    paymentMethodsFromDto.add(paymentMethod);
-                }
-
-            }
-            customerAccount.getPaymentMethods().retainAll(paymentMethodsFromDto);
-        }
+        updatePaymentMethods(customerAccount, postData);
 
         // Create a default payment method if non was specified
         if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
@@ -366,6 +344,36 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         return customerAccount;
+    }
+
+    private void updatePaymentMethods(CustomerAccount customerAccount, CustomerAccountDto postData) {
+        if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
+            if (customerAccount.getPaymentMethods() == null) {
+                customerAccount.setPaymentMethods(new ArrayList<PaymentMethod>());
+            }
+
+            List<PaymentMethod> paymentMethodsFromDto = new ArrayList<PaymentMethod>();
+
+            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
+                PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount, currentUser);
+
+                int index = customerAccount.getPaymentMethods().indexOf(paymentMethodFromDto);
+                if (index < 0) {
+                    customerAccount.addPaymentMethod(paymentMethodFromDto);
+                    paymentMethodsFromDto.add(paymentMethodFromDto);
+                } else {
+                    PaymentMethod paymentMethod = customerAccount.getPaymentMethods().get(index);
+                    paymentMethod.updateWith(paymentMethodFromDto);
+                    paymentMethodsFromDto.add(paymentMethod);
+                    customerAccount.addPaymentMethodToAudit(new Object() {}
+                            .getClass()
+                            .getEnclosingMethod()
+                            .getName(),paymentMethod);
+                }
+
+            }
+            customerAccount.getPaymentMethods().retainAll(paymentMethodsFromDto);
+        }
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))

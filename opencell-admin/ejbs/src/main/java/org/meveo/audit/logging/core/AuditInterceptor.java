@@ -1,16 +1,24 @@
 package org.meveo.audit.logging.core;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.audit.logging.annotations.CustomMeveoAudit;
 import org.meveo.audit.logging.annotations.MeveoAudit;
+import org.meveo.audit.logging.custom.CustomAuditManagerService;
 
 /**
  * @author Edward P. Legaspi
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.2
  **/
 @MeveoAudit
 @Interceptor
@@ -20,6 +28,13 @@ public class AuditInterceptor implements Serializable {
 
 	@Inject
 	private AuditManagerService auditManagerService;
+
+	/**
+	 * A CustomAuditManagerService instance
+	 */
+	@Inject
+	@CustomMeveoAudit
+	Instance<CustomAuditManagerService> customAuditManagerServiceInstance;
 
 	/**
 	 * Before method invocation.
@@ -38,6 +53,14 @@ public class AuditInterceptor implements Serializable {
 		if (AuditContext.getInstance().getAuditConfiguration().isEnabled() && AuditContext.getInstance()
 				.getAuditConfiguration().isMethodLoggable(clazz.getName(), joinPoint.getMethod().getName())) {
 			auditManagerService.audit(clazz, joinPoint.getMethod(), joinPoint.getParameters());
+			customAuditManagerServiceInstance.forEach(customManagerService -> {
+				try {
+					customManagerService.audit(clazz, joinPoint.getMethod(), joinPoint.getParameters());
+				} catch (BusinessException e) {
+					throw new RuntimeException(e);
+				}
+
+			});
 		}
 
 		return joinPoint.proceed();

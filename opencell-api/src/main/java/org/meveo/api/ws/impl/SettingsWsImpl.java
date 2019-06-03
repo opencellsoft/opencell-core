@@ -110,8 +110,9 @@ import org.meveo.api.ws.SettingsWs;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
+ * SOAP endpoints for settings.
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 6.0
  */
 @WebService(serviceName = "SettingsWs", endpointInterface = "org.meveo.api.ws.SettingsWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -1309,10 +1310,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetRoleResponse findRole(String name) {
+    public GetRoleResponse findRole(String name, boolean includeSecuredEntities) {
         GetRoleResponse result = new GetRoleResponse();
         try {
-            result.setRoleDto(roleApi.find(name));
+            result.setRoleDto(roleApi.find(name, includeSecuredEntities));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

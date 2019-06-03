@@ -734,6 +734,13 @@
 													</p:panel>
 												</h:form>
 											</p:tab>
+					<p:tab id="counterPeriodTab"
+						   title="#{messages['counterPeriod.title']}"
+						   rendered="#{not empty subscriptionBean.entity.id}">
+						<p:outputPanel id="counterPeriodTabPanel">
+							<ui:include src="counterPeriodTab.xhtml" />
+						</p:outputPanel>
+					</p:tab>
 				</p:tabView>
 			</h:panelGroup>
         </h:panelGroup>

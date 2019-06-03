@@ -1,6 +1,8 @@
 package org.meveo.model.crm;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
@@ -114,5 +116,22 @@ public class EntityReferenceWrapper implements Serializable, IReferenceEntity {
     @Override
     public String getReferenceDescription() {
         return null;
+    }
+
+    /**
+     * Convert fields to a map of values
+     * 
+     * @return A map of field values
+     */
+    public Map<String, String> toMap() {
+
+        Map<String, String> map = new HashMap<>();
+        map.put("code", code);
+        map.put("classname", classname);
+        if (classnameCode != null) {
+            map.put("classnameCode", classnameCode);
+        }
+
+        return map;
     }
 }
