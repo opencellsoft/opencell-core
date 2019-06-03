@@ -3,6 +3,9 @@ package org.meveo.service.base;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -23,6 +26,8 @@ import org.meveo.jpa.MeveoJpa;
  */
 @Stateless
 public class QueryService {
+
+    private static final Logger log = LoggerFactory.getLogger(QueryService.class);
 
     @Inject
     @MeveoJpa
@@ -79,15 +84,20 @@ public class QueryService {
      * @param limit - number of records to retrieve
      * @param sortBy - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder - sort order whether asc or desc.
+     * @param groupBy - field to group by
      * @return A map of values retrieved
      */
     @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> executeQuery(String query, String alias, String fields, Map<String, Object> params, int offset, int limit, String sortBy, String sortOrder) {
+    public List<Map<String, Object>> executeQuery(String query, String alias, String fields, Map<String, Object> params, int offset, int limit, String sortBy, String sortOrder, String groupBy) {
 
         Session session = getEntityManager().unwrap(Session.class);
         StringBuilder queryString = new StringBuilder("select distinct ");
         queryString.append(fields).append(" ");
         queryString.append(query);
+
+        if (groupBy != null) {
+            queryString.append(" group by ").append(groupBy);
+        }
 
         if (sortBy != null) {
             queryString.append(" order by ").append(sortBy);
@@ -96,7 +106,8 @@ public class QueryService {
         if (sortBy != null && sortOrder != null) {
             queryString.append(" ").append(sortOrder);
         }
-
+        
+        log.debug("Executing QUERY={}",queryString);
         Query hqlQuery = session.createQuery(queryString.toString());
 
         if (offset > 0) {

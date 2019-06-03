@@ -222,10 +222,10 @@ public class ImportAccountsJobBean {
         }
 
         for (org.meveo.model.jaxb.account.BillingAccount billingAccountDto : billingAccounts.getBillingAccount()) {
-            if (!jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
-            i++;
 
             if (billingCheckError(billingAccountDto)) {
                 nbBillingAccountsError++;

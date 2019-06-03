@@ -72,8 +72,7 @@ public class OrderItem extends BaseEntity {
      * Associated user account
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_account_id", nullable = false)
-    @NotNull
+    @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
     /**

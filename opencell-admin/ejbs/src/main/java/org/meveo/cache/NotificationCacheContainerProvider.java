@@ -24,6 +24,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.security.CurrentUser;
@@ -117,6 +118,11 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         // Solve lazy loading issues when firing notification
         if (notif.getScriptInstance() != null) {
             notif.getScriptInstance().getCode();
+        }
+        if (notif instanceof EmailNotification) {
+            if (((EmailNotification) notif).getEmailTemplate() != null) {
+                ((EmailNotification) notif).getEmailTemplate().getCode();
+            }
         }
 
         try {
@@ -294,6 +300,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
     /**
      * Get the entity
+     * 
      * @param entityOrEvent entity or event
      * @return entity
      */

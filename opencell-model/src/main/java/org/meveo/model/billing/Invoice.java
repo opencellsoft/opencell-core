@@ -59,7 +59,6 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -772,7 +771,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         this.linkedInvoices = linkedInvoices;
     }
 
-    public void addInvoiceAggregate(InvoiceAgregate obj) {
+	public void addInvoiceAggregate(InvoiceAgregate obj) {
         invoiceAgregates.add(obj);
     }
 
@@ -988,4 +987,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     public void setDontSend(boolean dontSend) {
         this.dontSend = dontSend;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s[%s, invoiceNumber=%s, invoiceType=%s]", this.getClass().getSimpleName(), super.toString(), invoiceNumber, invoiceType);
+    }
+
 }

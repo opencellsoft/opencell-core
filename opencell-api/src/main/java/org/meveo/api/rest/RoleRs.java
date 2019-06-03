@@ -19,10 +19,14 @@ import org.meveo.api.dto.response.GetRoleResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
+/**
+ * REST API for managing {@link Role}.
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 6.0
+ */
 @Path("/role")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-
 public interface RoleRs extends IBaseRs {
 
     /**
@@ -56,10 +60,11 @@ public interface RoleRs extends IBaseRs {
      * Search role.
      * 
      * @param roleName Role name
+     * @param includeSecuredEntities if true returns the secured entities
      * @return found role
      */
     @GET
-    @Path("/") GetRoleResponse find(@QueryParam("roleName") String roleName);
+    @Path("/") GetRoleResponse find(@QueryParam("roleName") String roleName, @QueryParam("includeSecuredEntities") boolean includeSecuredEntities);
 
     /**
      * Create or update role.

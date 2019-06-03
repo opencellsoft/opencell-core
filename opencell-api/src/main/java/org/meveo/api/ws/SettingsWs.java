@@ -79,8 +79,9 @@ import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
+ * SOAP endpoints for settings.
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 6.0
  */
 @WebService
 public interface SettingsWs extends IBaseWs {
@@ -510,8 +511,13 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     ActionStatus removeRole(@WebParam(name = "role") String name);
 
+    /**
+     * Finds a role
+     * @param name name of role
+     * @param includeSecuredEntities if true include the secured entities
+     */
     @WebMethod
-    GetRoleResponse findRole(@WebParam(name = "roleName") String name);
+    GetRoleResponse findRole(@WebParam(name = "roleName") String name, @WebParam(name = "includeSecuredEntities") boolean includeSecuredEntities);
 
     @WebMethod
     ActionStatus createOrUpdateRole(@WebParam(name = "role") RoleDto postData);

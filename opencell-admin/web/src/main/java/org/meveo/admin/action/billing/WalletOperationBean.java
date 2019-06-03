@@ -29,6 +29,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.admin.Currency;
@@ -106,10 +107,22 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 	}
 	
 	
-	
 	@Override
 	public LazyDataModel<WalletOperation> getLazyDataModel() {
-		getFilters();
+		return this.getLazyDataModel(this.filters, this.listFiltered);
+	}
+	
+	@Override
+	public LazyDataModel<WalletOperation> getLazyDataModel(Map<String, Object> inputFilters, boolean forceReload) {
+		this.filters = inputFilters;
+		this.getFilters();
+		return this.filterDataModelByBillingRun(forceReload);
+	}
+	
+	@Override
+	public Map<String, Object> getFilters() {
+		
+        super.getFilters();
 		
 		if (filters.containsKey("chargeInstance")) {
 			filters.put("chargeInstance.chargeTemplate", filters.get("chargeInstance")); 
@@ -135,11 +148,17 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 			filters.put("priceplan.offerTemplate", filters.get("offerTemplate"));
 			filters.remove("offerTemplate");
 		}
+		
+		return super.getFilters();
+	}
+	
+	private LazyDataModel<WalletOperation> filterDataModelByBillingRun(boolean forceReload) {
 		if (filters.containsKey("billingRun")) {
 			List<Long> walletOperationIds = new ArrayList<Long>();
 			BillingRun br = (BillingRun) filters.get("billingRun");
 			List<RatedTransaction> listRated = ratedTransactionService.getRatedTransactionsByBillingRun(br);
-			if (!listRated.isEmpty()) {
+
+			if (CollectionUtils.isNotEmpty(listRated)) {
 				for (RatedTransaction rated : listRated) {
 					walletOperationIds.addAll(
 							rated.getWalletOperations().stream().map(o -> o.getId()).collect(Collectors.toList()));
@@ -150,10 +169,9 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 			}
 			filters.remove("billingRun");
 		}
-	
-		return super.getLazyDataModel();
+		return super.getLazyDataModel(filters, forceReload);
 	}
-	
+
 	public void updatedToRerate(WalletOperation walletOperation) {
 		try {
 			List<Long> walletIdList = new ArrayList<Long>();

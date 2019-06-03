@@ -41,6 +41,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteItem;
@@ -943,7 +944,7 @@ public class QuoteApi extends BaseApi {
             productQuote.setInvoices(new ArrayList<GenerateInvoiceResultDto>());
             for (Invoice invoice : quote.getInvoices()) {
 
-                GenerateInvoiceResultDto invoiceDto = invoiceApi.createGenerateInvoiceResultDto(invoice, false, false);
+                GenerateInvoiceResultDto invoiceDto = invoiceApi.createGenerateInvoiceResultDto(invoice, false, false, false);
                 productQuote.getInvoices().add(invoiceDto);
             }
         }
@@ -1017,6 +1018,14 @@ public class QuoteApi extends BaseApi {
         productOrder.setRequestedStartDate(quote.getFulfillmentStartDate());
         productOrder.setDescription(quote.getDescription());
         productOrder.setOrderItem(new ArrayList<ProductOrderItem>());
+        if(quote.getOrder() != null) {
+        	Order order = quote.getOrder();
+        	productOrder.setMailingType(order.getMailingType() != null ? order.getMailingType().getLabel() : null);
+        	productOrder.setEmailTemplate(order.getEmailTemplate() != null ? order.getEmailTemplate().getCode() : null);
+        	productOrder.setCcedEmails(order.getCcedEmails());
+        	productOrder.setEmail(order.getEmail());
+        	productOrder.setElectronicBilling(order.getElectronicBilling());
+        }
 
         for (QuoteItem quoteItem : quote.getQuoteItems()) {
             ProductQuoteItem productQuoteItem = ProductQuoteItem.deserializeQuoteItem(quoteItem.getSource());

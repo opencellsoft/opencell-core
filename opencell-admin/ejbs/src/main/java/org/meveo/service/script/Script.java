@@ -1,5 +1,6 @@
 package org.meveo.service.script;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
@@ -14,7 +15,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Andrius Karpavicius
  */
-public abstract class Script implements ScriptInterface {
+public abstract class Script implements Serializable, ScriptInterface {
+
+    private static final long serialVersionUID = 790175592043841856L;
 
     /**
      * GUI redirection after entity custom action execution

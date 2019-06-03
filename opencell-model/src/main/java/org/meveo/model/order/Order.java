@@ -226,7 +226,7 @@ public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntit
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email_template_id")
     private EmailTemplate emailTemplate;
 

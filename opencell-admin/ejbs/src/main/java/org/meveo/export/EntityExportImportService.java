@@ -107,6 +107,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.index.ElasticSearchIndexPopulationService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.primefaces.model.LazyDataModel;
 import org.reflections.Reflections;
@@ -207,6 +208,9 @@ public class EntityExportImportService implements Serializable {
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     @PostConstruct
     private void init() {
@@ -2155,6 +2159,7 @@ public class EntityExportImportService implements Serializable {
         customFieldsCacheContainerProvider.refreshCache(null);
         jobCacheContainerProvider.refreshCache(null);
         esPopulationService.refreshCache(null);
+        scriptInstanceService.refreshCache(null);
     }
 
     /**

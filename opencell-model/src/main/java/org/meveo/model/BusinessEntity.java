@@ -25,13 +25,19 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.model.billing.CounterInstance;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Represents a business entity that can be uniquely identified by a code
  * 
  * @author Andrius Karpavicius
+ * @author Khalid HORRI
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.1
  */
 @ReferenceIdentifierCode("code")
 @ReferenceIdentifierDescription("description")
@@ -210,4 +216,5 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     public String getReferenceDescription() {
         return description;
     }
+    
 }
