@@ -34,6 +34,7 @@ import java.util.Map;
  * Represents a business entity that can be uniquely identified by a code
  * 
  * @author Andrius Karpavicius
+ * @author Khalid HORRI
  * @author Abdellatif BARI
  * @author Khalid HORRI
  * @lastModifiedVersion 7.1

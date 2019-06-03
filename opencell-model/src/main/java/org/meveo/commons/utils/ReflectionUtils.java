@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
  * Utils class for java reflection api.
  * 
  * @author Ignas Lelys
+ * @author khalid HORRI
  * @author Abdellatif BARI
  * @author khalid HORRI
  * @lastModifiedVersion 7.1
@@ -582,6 +583,12 @@ public class ReflectionUtils {
         return matchedFields;
     }
 
+    /**
+     * Find methods annotated with annotationClass
+     * @param clazz the class where to search methods
+     * @param annotationClass the annotation class
+     * @return a list of methods
+     */
     public static List<Method> findAnnotatedMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
         Method[] methods = clazz.getMethods();
         List<Method> annotatedMethods = new ArrayList<Method>(methods.length);

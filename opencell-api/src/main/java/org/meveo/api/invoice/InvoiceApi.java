@@ -420,6 +420,8 @@ public class InvoiceApi extends BaseApi {
         invoice.setInvoiceDate(invoiceDTO.getInvoiceDate());
         invoice.setDueDate(invoiceDTO.getDueDate());
         invoice.setDraft(invoiceDTO.isDraft());
+        invoice.setAlreadySent(invoiceDTO.isCheckAlreadySent());
+        invoice.setDontSend(invoiceDTO.isSentByEmail());
         PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {
             invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());

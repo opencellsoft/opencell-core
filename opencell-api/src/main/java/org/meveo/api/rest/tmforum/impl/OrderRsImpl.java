@@ -79,9 +79,6 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
             responseBuilder = Response.ok().entity(orders);
 
-            // } catch (MeveoApiException e) {
-            // responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            // responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             processExceptionAndSetBuilder(result, responseBuilder, e);
         }
