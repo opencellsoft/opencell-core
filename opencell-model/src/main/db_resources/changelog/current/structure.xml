@@ -328,11 +328,11 @@
     </changeSet>
     
     <changeSet id="#4326_20190530" author="AndriusKarpavicius">
-        <addNotNullConstraint tableName="billing_tax" columnName="tax_percentage"/>
-        <addNotNullConstraint tableName="billing_wallet_operation" columnName="tax_id"/>
-        <addNotNullConstraint tableName="billing_wallet_operation" columnName="tax_percent"/>
-        <addNotNullConstraint tableName="billing_rated_transaction" columnName="tax_id"/>
-        <addNotNullConstraint tableName="billing_rated_transaction" columnName="tax_percent"/>    
+        <addNotNullConstraint tableName="billing_tax" columnName="tax_percentage" columnDataType="numeric(23, 12)"/>
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="tax_id" columnDataType="bigInt"/>
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="tax_percent" columnDataType="numeric(23, 12)"/>
+        <addNotNullConstraint tableName="billing_rated_transaction" columnName="tax_id" columnDataType="bigInt"/>
+        <addNotNullConstraint tableName="billing_rated_transaction" columnName="tax_percent" columnDataType="numeric(23, 12)"/>    
     </changeSet>
     
     <changeSet id="#4278_20190520_partitions" author="mohamed.el.youssoufi" dbms="postgresql">
