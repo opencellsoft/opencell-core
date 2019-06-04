@@ -960,6 +960,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
      * @return true if the invoice is draft, false else.
      */
     public Boolean isDraft() {
+        if (draft == null) {
+            return false;
+        }
         return draft;
     }
 
