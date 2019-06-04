@@ -20,6 +20,8 @@
         <o:importFunctions type="org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean" var="cfde" />
  		<p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$EndOfTermActionEnum" var="EndOfTermActionEnum" />
         <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" var="RenewalPeriodUnitEnum" />
+		<p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$InitialTermTypeEnum" var="InitialTermTypeEnum" />
+		<p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$RenewalTermTypeEnum" var="RenewalTermTypeEnum" />
         
         <hftl:entityPopup id="searchRecurringChargeTemplatePopup"
 			header="#{messages['serviceTemplate.recurringCharges']}"
@@ -155,20 +157,32 @@
 
                             <p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
 			                    <h:panelGroup id="serviceRenewal">
+									<hftl:formField label="#{messages['subscription.initialTermType']}" field="serviceRenewal" childField="initialTermType" listenerUpdate="serviceRenewal" />
+									<hftl:formField label="#{messages['subscription.initialyActiveFor']}" field="serviceRenewal" childField="calendarInitialyActiveFor"
+													componentWidth="15" listenerUpdate="serviceRenewal" actionListenerBean="#{serviceTemplateBean.entity.serviceRenewal}"
+													rendered="#{serviceTemplateBean.entity.serviceRenewal.initialTermType eq InitialTermTypeEnum.CALENDAR}"
+													valueLabelField="code" popup="false" listBean="#{calendarBean}" actionListenerMethod="setDefaultInitialyActiveForUnit"/>
 		                            <hftl:formField label="#{messages['subscription.initialyActiveFor']}" field="serviceRenewal" childField="initialyActiveFor" size="2" minValue="1"
                                     	componentWidth="15" listenerUpdate="serviceRenewal" actionListenerBean="#{serviceTemplateBean.entity.serviceRenewal}"
+										rendered="#{serviceTemplateBean.entity.serviceRenewal.initialTermType eq InitialTermTypeEnum.RECURRING}"
                                     	actionListenerMethod="setDefaultInitialyActiveForUnit" />
 	                                <hftl:formField label="#{messages['subscription.initialyActiveForUnit']}" field="serviceRenewal" childField="initialyActiveForUnit"
 	                                    required="#{serviceTemplateBean.entity.serviceRenewal.initialyActiveFor!=null}"
+													rendered="#{serviceTemplateBean.entity.serviceRenewal.initialTermType eq InitialTermTypeEnum.RECURRING}"
 	                                    disabled="#{serviceTemplateBean.entity.serviceRenewal.initialyActiveFor==null}" listenerUpdate="serviceRenewal" />
-	                                <h:panelGroup rendered="#{serviceTemplateBean.entity.serviceRenewal.initialyActiveFor!=null}">
+	                                <h:panelGroup rendered="#{serviceTemplateBean.entity.serviceRenewal.initialyActiveFor!=null or serviceTemplateBean.entity.serviceRenewal.calendarInitialyActiveFor!=null}">
 			                            <hftl:formField label="#{messages['subscription.autoRenew']}" field="serviceRenewal" childField="autoRenew" required="true"
 			                                listenerUpdate="serviceRenewal" newLine="true" />
+										<hftl:formField label="#{messages['subscription.renewalTermType']}" field="serviceRenewal" childField="renewalTermType" listenerUpdate="serviceRenewal" rendered="#{serviceTemplateBean.entity.serviceRenewal.autoRenew}"/>
+										<hftl:formField id="calendarRenewForId" label="#{messages['subscription.renewFor']}" field="serviceRenewal" childField="calendarRenewFor"
+														componentWidth="15" listenerUpdate="serviceRenewal" actionListenerBean="#{serviceTemplateBean.entity.serviceRenewal}"
+														rendered="#{serviceTemplateBean.entity.serviceRenewal.autoRenew and serviceTemplateBean.entity.serviceRenewal.renewalTermType eq RenewalTermTypeEnum.CALENDAR}"
+														valueLabelField="code" popup="false" listBean="#{calendarBean}"/>
 			                            <hftl:formField label="#{messages['subscription.renewFor']}" field="serviceRenewal" childField="renewFor" size="2" required="true"
-			                                rendered="#{serviceTemplateBean.entity.serviceRenewal.autoRenew}" listenerUpdate="serviceRenewal"
+			                                rendered="#{serviceTemplateBean.entity.serviceRenewal.autoRenew  and serviceTemplateBean.entity.serviceRenewal.renewalTermType eq RenewalTermTypeEnum.RECURRING}" listenerUpdate="serviceRenewal"
 			                                actionListenerBean="#{serviceTemplateBean.entity.serviceRenewal}" actionListenerMethod="setDefaultRenewForUnit" />
 			                            <hftl:formField label="#{messages['subscription.renewForUnit']}" field="serviceRenewal" childField="renewForUnit" required="true"
-			                                rendered="#{serviceTemplateBean.entity.serviceRenewal.autoRenew}" listenerUpdate="serviceRenewal" />
+			                                rendered="#{serviceTemplateBean.entity.serviceRenewal.autoRenew and serviceTemplateBean.entity.serviceRenewal.renewalTermType eq RenewalTermTypeEnum.RECURRING}" listenerUpdate="serviceRenewal" />
 			                            <hftl:formField label="#{messages['subscription.renewNotifyBefore']}" field="serviceRenewal" childField="daysNotifyRenewal" size="2" minValue="1"
 			                                rendered="#{serviceTemplateBean.entity.serviceRenewal.autoRenew}" />
 			                            <hftl:formField label="#{messages['subscription.extendAgreementPeriod']}" field="serviceRenewal" childField="extendAgreementPeriodToSubscribedTillDate"
