@@ -654,6 +654,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
+        // TODO AKK need to add a check if its a prepaid transaction group.
+
         // Split RTs billing account groups to billing account/seller groups
         log.debug("Split RTs billing account groups to billing account/seller groups");
         for (Map.Entry<BillingAccount, List<RatedTransaction>> entryBaTr : mapBillingAccountRT.entrySet()) {
@@ -752,23 +754,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
 
             BillingCycle billingCycle = billingRun != null ? billingRun.getBillingCycle() : entityToInvoice.getBillingCycle();
-            if (billingCycle == null) {
-                throw new BusinessException("Cant find the billing cycle");
-            }
-
-            // Store RTs, to reach minimum amount per invoice, to DB
-            if (minAmountTransactions != null) {
-                for (RatedTransaction minRatedTransaction : minAmountTransactions) {
-                    // This is needed, as even if ratedTransactionService.create() is called and then sql is called to retrieve RTs, these minAmountTransactions will contain
-                    // unmanaged
-                    // BA and invoiceSubcategory entities
-                    minRatedTransaction.setBillingAccount(billingAccountService.retrieveIfNotManaged(minRatedTransaction.getBillingAccount()));
-                    minRatedTransaction.setInvoiceSubCategory(invoiceSubcategoryService.retrieveIfNotManaged(minRatedTransaction.getInvoiceSubCategory()));
-
-                    ratedTransactionService.create(minRatedTransaction);
-                }
-                // Flush RTs to DB as next interaction with RT table will be via sqls only.
-                commit();
+            if (billingCycle == null && !(entityToInvoice instanceof Order)) {
+                billingCycle = ba.getBillingCycle();
             }
 
             // Payment method is calculated on Order or Customer Account level and will be the same for all rated transactions
@@ -789,10 +776,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, ba);
             }
 
-            // Map Rated transactions by invoice type.
-            ScriptInstance invoiceTypeMappingScript = billingCycle.getScriptInstance();
+            // Store RTs, to reach minimum amount per invoice, to DB
+            if (minAmountTransactions != null) {
+                for (RatedTransaction minRatedTransaction : minAmountTransactions) {
+                    // This is needed, as even if ratedTransactionService.create() is called and then sql is called to retrieve RTs, these minAmountTransactions will contain
+                    // unmanaged
+                    // BA and invoiceSubcategory entities
+                    minRatedTransaction.setBillingAccount(billingAccountService.retrieveIfNotManaged(minRatedTransaction.getBillingAccount()));
+                    minRatedTransaction.setInvoiceSubCategory(invoiceSubcategoryService.retrieveIfNotManaged(minRatedTransaction.getInvoiceSubCategory()));
 
-            if (invoiceTypeMappingScript != null) {
+                    ratedTransactionService.create(minRatedTransaction);
+                }
+                // Flush RTs to DB as next interaction with RT table will be via sqls only.
+                commit();
+            }
+
+            // For order that does not have a billing cycle specified or billing cycle has script to split RTs by invoice type, use a loop over RT entities
+            if (billingCycle == null || billingCycle.getScriptInstance() != null) {
                 return createAggregatesAndInvoiceByLoop(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate, isDraft,
                     assignNumber, billingCycle, paymentMethod, invoiceType, balanceDue, totalInvoiceBalance);
             } else {
@@ -1336,8 +1336,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param billingCycle Billing cycle applicable to billable entity or to billing run
      * @param paymentMethod Payment method. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will be
      *        determined for each billing account occurrence.
-     * @param invoiceType Invoice type. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will be
-     *        determined for each billing account occurrence.
+     * @param defaultInvoiceType Invoice type. A default invoice type for postpaid rated transactions. In case of prepaid RTs, a prepaid invoice type is used. Provided in case of
+     *        Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will be determined for each billing account occurrence.
      * @param balanceDue Balance due. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will be
      *        determined for each billing account occurrence.
      * @param totalInvoiceBalance Total invoice balance. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and
@@ -1348,7 +1348,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @SuppressWarnings("unchecked")
     private List<Invoice> createAggregatesAndInvoiceByLoop(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
             Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, boolean assignNumber, BillingCycle billingCycle, PaymentMethod paymentMethod,
-            InvoiceType invoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance) throws BusinessException {
+            InvoiceType defaultInvoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance) throws BusinessException {
 
         List<Invoice> invoiceList = new ArrayList<>();
         EntityManager em = getEntityManager();
@@ -1377,7 +1377,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 // Due balance are calculated on CA level and will be the same for all rated transactions
                 balanceDue = customerAccountService.customerAccountBalanceDue(billingAccount.getCustomerAccount(), new Date());
                 totalInvoiceBalance = customerAccountService.customerAccountFutureBalanceExigibleWithoutLitigation(billingAccount.getCustomerAccount());
+                billingCycle = entityToInvoice.getBillingCycle() != null ? entityToInvoice.getBillingCycle() : billingAccount.getBillingCycle();
+                // TODO AKK need to add a check if its a prepaid transaction group.
+                defaultInvoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, billingAccount);
             }
+
+            InvoiceType invoiceType = defaultInvoiceType;
 
             List<RatedTransaction> ratedTransactions = ratedTransactionGroup.getRatedTransactions();
 
