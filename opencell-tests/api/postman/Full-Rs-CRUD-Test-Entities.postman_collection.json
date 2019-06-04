@@ -4284,6 +4284,70 @@
 								"description": "Retirieve requested fields values by entiityName, id and the body."
 							},
 							"response": []
+						},
+						{
+							"name": "Update an entity by it's className, id and fields to update.",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3b527185-dd4a-4942-a6b6-af2b010ca084",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.superadmin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.superadmin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\"code\":\"flirtikit\" \n}\n"
+								},
+								"url": {
+									"raw": "http://localhost:8080/opencell/api/rest/v2/generic/{{entityName}}/{{entityId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"opencell",
+										"api",
+										"rest",
+										"v2",
+										"generic",
+										"{{entityName}}",
+										"{{entityId}}"
+									]
+								}
+							},
+							"response": []
 						}
 					],
 					"_postman_isSubFolder": true

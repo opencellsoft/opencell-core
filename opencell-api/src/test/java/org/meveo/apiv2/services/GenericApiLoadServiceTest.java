@@ -7,6 +7,7 @@ import org.meveo.api.dto.generic.GenericRequestDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Country;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerCategory;
@@ -41,10 +42,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GenericApiServiceTest {
+public class GenericApiLoadServiceTest {
+    
     @Spy
     @InjectMocks
-    private GenericApiService sut;
+    private GenericApiLoadService sut;
     
     @Mock
     private GenericRequestDto genericRequestDto;
@@ -57,11 +59,12 @@ public class GenericApiServiceTest {
     @Before
     public void setUp() throws Exception {
         when(entityManagerWrapper.getEntityManager()).thenReturn(entityManager);
+        configureFindMock();
     }
     
     @Test
     public void given_an_empty_model_name_when_load_model_then_should_throw_wrong_model_name_exception() {
-        assertExpectingModelException("", "The requested entity does not exist");
+        assertExpectingModelException("", "The entityName should not be null or empty");
     }
     
     @Test
@@ -79,7 +82,7 @@ public class GenericApiServiceTest {
     
     @Test
     public void given_null_model_name_when_load_model_then_should_throw_wrong_model_name_exception() {
-        assertExpectingModelException(null, "The requested entity does not exist");
+        assertExpectingModelException(null, "The entityName should not be null or empty");
     }
     
     @Test
@@ -164,7 +167,7 @@ public class GenericApiServiceTest {
         //When
         String expected = sut.toJson(param);
         //Then"
-        assertThat(expected).isEqualTo("\"flirtikit\"");
+        assertThat(expected).isEqualTo("flirtikit");
     }
     
     @Test
@@ -323,5 +326,9 @@ public class GenericApiServiceTest {
         sut.findByClassNameAndId(modelName, 54L, this.genericRequestDto);
         verify(sut).find(captor.capture(), eq(54l));
         return captor;
+    }
+    
+    private void configureFindMock() {
+        when(entityManager.find(((Class<Object>) any(Class.class)), anyLong())).thenReturn(mock(BaseEntity.class));
     }
 }

@@ -1,17 +1,31 @@
 package org.meveo.apiv2;
 
-import javax.inject.Inject;
-
 import org.meveo.api.dto.generic.GenericRequestDto;
 import org.meveo.api.dto.response.generic.GenericResponseDto;
+import org.meveo.apiv2.services.GenericApiLoadService;
+import org.meveo.apiv2.services.GenericApiUpdateService;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 
 public class GenericResourceImpl implements GenericResource {
-
+    
     @Inject
-    private org.meveo.apiv2.services.GenericApiService genericApiService;
-
+    private GenericApiLoadService loadService;
+    
+    @Inject
+    private GenericApiUpdateService updateService;
+    
     @Override
-    public GenericResponseDto get(String entityName, Long id, GenericRequestDto requestDto) {
-        return genericApiService.findByClassNameAndId(entityName, id, requestDto);
+    public Response get(String entityName, Long id, GenericRequestDto requestDto) {
+        GenericResponseDto retrievedResource = loadService.findByClassNameAndId(entityName, id, requestDto);
+        return Response.ok().entity(retrievedResource).links(buildLink(entityName, String.valueOf(id))).build();
     }
+    
+    @Override
+    public Response update(String entityName, Long id, String dto) {
+        updateService.update(entityName, id, dto);
+        return Response.ok().links(buildLink(entityName, String.valueOf(id))).build();
+    }
+    
 }
