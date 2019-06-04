@@ -21,7 +21,8 @@ import org.meveo.model.payments.OperationCategoryEnum;
  *
  * @author Edward P. Legaspi
  * @author anasseh
- * @lastModifiedVersion 5.3
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @XmlRootElement(name = "AccountOperation")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -185,8 +186,8 @@ public class AccountOperationDto extends AuditableEntityDto {
         setMatchingAmount(accountOp.getMatchingAmount());
         setUnMatchingAmount(accountOp.getUnMatchingAmount());
         setMatchingStatus(accountOp.getMatchingStatus());
-        setOccCode(accountOp.getOccCode());
-        setOccDescription(accountOp.getOccDescription());
+        setOccCode(accountOp.getCode());
+        setOccDescription(accountOp.getDescription());
         setBankLot(accountOp.getBankLot());
         setBankReference(accountOp.getBankReference());
         setDepositDate(accountOp.getDepositDate());

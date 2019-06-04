@@ -49,8 +49,8 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
  *
  * @author Edward P. Legaspi
  * @author anasseh
- * 
- * @lastModifiedVersion 5.0
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class AccountOperationApi extends BaseApi {
@@ -156,8 +156,8 @@ public class AccountOperationApi extends BaseApi {
 
         accountOperation.setMatchingStatus(postData.getMatchingStatus());
 
-        accountOperation.setOccCode(postData.getOccCode());
-        accountOperation.setOccDescription(postData.getOccDescription());
+        accountOperation.setCode(postData.getOccCode());
+        accountOperation.setDescription(postData.getOccDescription());
         if (!StringUtils.isBlank(postData.getPaymentMethod())) {
             accountOperation.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
         }

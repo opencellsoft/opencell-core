@@ -51,8 +51,8 @@ import org.meveo.util.ApplicationProvider;
  * The Class PaymentScheduleInstanceItemService.
  *
  * @author anasseh
- * @since 5.2
- * @lastModifiedVersion 5.3
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class PaymentScheduleInstanceItemService extends PersistenceService<PaymentScheduleInstanceItem> {
@@ -310,8 +310,8 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         recordedInvoicePS.setUnMatchingAmount(recordedInvoicePS.getAmount());
         recordedInvoicePS.setMatchingAmount(BigDecimal.ZERO);
         recordedInvoicePS.setAccountingCode(occTemplate.getAccountingCode());
-        recordedInvoicePS.setOccCode(occTemplate.getCode());
-        recordedInvoicePS.setOccDescription(occTemplate.getDescription());
+        recordedInvoicePS.setCode(occTemplate.getCode());
+        recordedInvoicePS.setDescription(occTemplate.getDescription());
         recordedInvoicePS.setTransactionCategory(occTemplate.getOccCategory());
         recordedInvoicePS.setCustomerAccount(customerAccount);
         recordedInvoicePS.setReference(invoice == null ? "psItemID:" + paymentScheduleInstanceItem.getId() : invoice.getInvoiceNumber());
