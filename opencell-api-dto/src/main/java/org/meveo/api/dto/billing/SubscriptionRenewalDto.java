@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.meveo.api.dto.CalendarDto;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
@@ -31,7 +32,7 @@ public class SubscriptionRenewalDto implements Serializable {
     /** The initial period for which the subscription will be active - unit. */
     private RenewalPeriodUnitEnum initialyActiveForUnit;
 
-    private Calendar calendarInitialyActiveFor;
+    private CalendarDto calendarInitialyActiveFor;
 
     /** Should subscription be renewed automatically. */
     private boolean autoRenew;
@@ -48,7 +49,7 @@ public class SubscriptionRenewalDto implements Serializable {
     /** The period to renew subscription for - value. */
     private Integer renewFor;
 
-    private Calendar calendarRenewFor;
+    private CalendarDto calendarRenewFor;
 
     /** The period to renew subscription for - units. */
     private RenewalPeriodUnitEnum renewForUnit;
@@ -80,10 +81,10 @@ public class SubscriptionRenewalDto implements Serializable {
         initialTermType = renewalInfo.getInitialTermType();
         initialyActiveFor = renewalInfo.getInitialyActiveFor();
         initialyActiveForUnit = renewalInfo.getInitialyActiveForUnit();
-        calendarInitialyActiveFor = renewalInfo.getCalendarInitialyActiveFor();
+        calendarInitialyActiveFor = new CalendarDto(renewalInfo.getCalendarInitialyActiveFor());
         renewFor = renewalInfo.getRenewFor();
         renewForUnit = renewalInfo.getRenewForUnit();
-        calendarRenewFor = renewalInfo.getCalendarRenewFor();
+        calendarRenewFor = new CalendarDto(renewalInfo.getCalendarRenewFor());
         if (renewalInfo.getTerminationReason() != null) {
             terminationReasonCode = renewalInfo.getTerminationReason().getCode();
         }
@@ -251,11 +252,11 @@ public class SubscriptionRenewalDto implements Serializable {
         this.extendAgreementPeriodToSubscribedTillDate = extendAgreementPeriodToSubscribedTillDate;
     }
 
-    public Calendar getCalendarInitialyActiveFor() {
+    public CalendarDto getCalendarInitialyActiveFor() {
         return calendarInitialyActiveFor;
     }
 
-    public void setCalendarInitialyActiveFor(Calendar calendarInitialyActiveFor) {
+    public void setCalendarInitialyActiveFor(CalendarDto calendarInitialyActiveFor) {
         this.calendarInitialyActiveFor = calendarInitialyActiveFor;
     }
 
@@ -275,11 +276,11 @@ public class SubscriptionRenewalDto implements Serializable {
         this.renewalTermType = renewalTermType;
     }
 
-    public Calendar getCalendarRenewFor() {
+    public CalendarDto getCalendarRenewFor() {
         return calendarRenewFor;
     }
 
-    public void setCalendarRenewFor(Calendar calendarRenewFor) {
+    public void setCalendarRenewFor(CalendarDto calendarRenewFor) {
         this.calendarRenewFor = calendarRenewFor;
     }
 }
