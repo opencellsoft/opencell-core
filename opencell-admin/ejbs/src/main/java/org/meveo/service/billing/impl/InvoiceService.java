@@ -1104,8 +1104,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Should tax calculation on subcategory level be done externally
         boolean calculateExternalTax = "YES".equalsIgnoreCase((String) appProvider.getCfValue("OPENCELL_ENABLE_TAX_CALCULATION"));
 
+        log.debug("AKK will retrieve RTs summary for BA {}/{}/{}", entityToInvoice.getId(), firstTransactionDate, lastTransactionDate);
+        
+        
         List<Object[]> rts = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter);
 
+        log.debug("AKK RTs retrieved");
         // Instantiated invoices. Key ba.id_seller.id_invoiceType.id
         Map<String, Invoice> invoices = new HashMap<>();
         // Instantiated subcategories. Key ba.id_seller.id_invoiceType.id_ua.id_walletInstance.id_invoiceSubCategory.id_tax.id
@@ -1113,16 +1117,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Billing accounts exoneration from taxes. Key ba.id
         Map<Long, Boolean> exonerations = new HashMap<>();
 
+        log.debug("AKK before exoneration");
         Boolean isExonerated = null;
         if (!(entityToInvoice instanceof Order) && billingAccount != null) {
             isExonerated = billingAccount.isExoneratedFromtaxes();
             if (isExonerated == null) {
+                log.debug("AKK exonerate started to calculate");;
                 isExonerated = billingAccountService.isExonerated(billingAccount);
                 billingAccount.setExoneratedFromtaxes(isExonerated);
             }
             exonerations.put(billingAccount.getId(), isExonerated);
         }
 
+        log.debug("AKK after exoneration");
+        
         // InvoiceType.taxScript will calculate all tax aggregates at once. If present, don't calculate on each subcategory level.
         boolean calculateTaxOnSubCategoryLevel = false;
 
@@ -1167,6 +1175,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (invoice == null) {
 
+                log.debug("AKK will create invoice");
                 // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
                 if (entityToInvoice instanceof Order) {
                     if (paymentMethod == null) {
@@ -1182,6 +1191,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     invoiceType, balanceDue, totalInvoiceBalance);
 
                 invoices.put(invoiceKey, invoice);
+                log.debug("AKK end create invoice");
             }
 
             UserAccount userAccount = summary[1] == null ? null : em.getReference(UserAccount.class, (Long) summary[1]);
@@ -1197,6 +1207,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (calculateTaxOnSubCategoryLevel) {
                 Object[] changedToTax = taxChangeMap.get(scaKey);
                 if (changedToTax == null) {
+                    log.debug("AKK will calculate tax change");
                     taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
                     Object[] applicableTax = getApplicableTax(tax, isExonerated, invoice, invoiceSubCategory, userAccount, taxZero, calculateExternalTax);
                     changedToTax = applicableTax;
@@ -1205,6 +1216,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         log.debug("Will update rated transactions in subcategory {} with new tax from {} to {}", invoiceSubCategory.getCode(), tax.getPercent(),
                             ((Tax) changedToTax[0]).getPercent());
                     }
+                    log.debug("AKK end calculate tax change");
                 }
                 if ((boolean) changedToTax[1]) {
                     tax = (Tax) changedToTax[0];
@@ -1215,6 +1227,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             SubCategoryInvoiceAgregate scAggregate = subCategoryAggregates.get(scaKey);
             if (scAggregate == null) {
+                log.debug("AKK will create sub cat aggregate");
                 scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, invoice.getBillingAccount(), userAccount, walletInstance,
                     calculateTaxOnSubCategoryLevel ? tax : null, invoice, invoiceSubCategory.getAccountingCode());
 
@@ -1235,6 +1248,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.addInvoiceAggregate(scAggregate);
 
                 subCategoryAggregates.put(scaKey, scAggregate);
+                log.debug("AKK end create sub cat aggregate");
             }
 
             scAggregate.addAmountWithoutTax((BigDecimal) summary[6]);
@@ -1288,6 +1302,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setOrders(orders);
             }
 
+            log.debug("AKK will save invoice");
             this.create(invoice);
 
             // Update rated transactions with invoice information and recalculated tax/amounts if changed
