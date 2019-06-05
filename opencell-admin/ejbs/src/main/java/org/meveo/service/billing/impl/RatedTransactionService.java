@@ -794,8 +794,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public IBillableEntity updateEntityTotalAmounts(IBillableEntity entity, BillingRun billingRun) throws BusinessException {
-        log.debug("updateEntityTotalAmounts  entity:" + entity.getId());
 
+        log.debug("Calculating total amounts and creating min RTs for {}/{}", entity.getClass().getSimpleName(), entity.getId());
+        
         BillingAccount billingAccount = null;
         if (entity instanceof BillingAccount) {
             entity = billingAccountService.findById((Long) entity.getId());
@@ -828,20 +829,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 invoicingThreshold = billingRun.getBillingCycle().getInvoicingThreshold();
             }
 
-            if (invoicingThreshold != null) {
-                if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
-                    log.debug("updateEntityTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}", entity.getCode(),
-                        invoiceAmount, invoicingThreshold);
-                    return null;
-                } else {
-                    log.debug("updateEntityTotalAmounts  invoicingThreshold(out continue invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}", entity.getCode(),
-                        invoiceAmount, invoicingThreshold);
-                }
-            } else {
-                log.debug("updateBillingAccountTotalAmounts no invoicingThreshold to apply");
+            if (invoicingThreshold != null && invoicingThreshold.compareTo(invoiceAmount) > 0) {
+                log.debug("updateEntityTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}", entity.getCode(), invoiceAmount,
+                    invoicingThreshold);
+                return null;
             }
 
-            log.debug("{}/{} will be updated with BR amount {}", entity.getClass().getSimpleName(), entity.getId(), invoiceAmount);
+            log.debug("{}/{} will be updated with BR amount {}. Invoice threshold applied {}", entity.getClass().getSimpleName(), entity.getId(), invoiceAmount,
+                invoicingThreshold);
         }
 
         entity.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));

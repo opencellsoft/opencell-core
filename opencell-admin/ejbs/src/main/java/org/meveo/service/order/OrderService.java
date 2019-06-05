@@ -15,6 +15,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
@@ -74,7 +76,7 @@ public class OrderService extends BusinessService<Order> {
         entity.setRoutedToUserGroup(userHierarchyLevel);
         return this.update(entity);
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Order> findByExternalId(String externalId) throws BusinessException {
         Query query = getEntityManager().createQuery("from " + Order.class.getName() + " where externalId = :code ");
@@ -129,7 +131,7 @@ public class OrderService extends BusinessService<Order> {
 
         return super.update(order);
     }
-    
+
     public void validate(Order order) throws BusinessException {
         boolean validateOnExecuteDisabled = ParamBean.getInstance().getProperty("order.validateOnExecute", "false").equalsIgnoreCase("false");
         if (validateOnExecuteDisabled && (order.getOrderItems() == null || order.getOrderItems().isEmpty())) {
@@ -139,22 +141,55 @@ public class OrderService extends BusinessService<Order> {
 
     /**
      * Return all orders with now - orderDate date &gt; n years.
+     * 
      * @param nYear age of the subscription
      * @return Filtered list of orders
      */
     @SuppressWarnings("unchecked")
-	public List<Order> listInactiveOrders(int nYear) {
-    	QueryBuilder qb = new QueryBuilder(Order.class, "e");
-    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
-    	
-    	qb.addCriterionDateRangeToTruncatedToDay("orderDate", higherBound);
-    	
-    	return (List<Order>) qb.getQuery(getEntityManager()).getResultList();
+    public List<Order> listInactiveOrders(int nYear) {
+        QueryBuilder qb = new QueryBuilder(Order.class, "e");
+        Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+
+        qb.addCriterionDateRangeToTruncatedToDay("orderDate", higherBound);
+
+        return (List<Order>) qb.getQuery(getEntityManager()).getResultList();
     }
 
-	public void bulkDelete(List<Order> inactiveOrders) throws BusinessException {
-		for (Order e : inactiveOrders) {
-			remove(e);
-		}
-	}
+    public void bulkDelete(List<Order> inactiveOrders) throws BusinessException {
+        for (Order e : inactiveOrders) {
+            remove(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Order> findOrders(BillingCycle billingCycle, Date startdate, Date endDate) {
+        try {
+            QueryBuilder qb = new QueryBuilder(Order.class, "o", null);
+            qb.addCriterionEntity("o.billingCycle", billingCycle);
+
+            if (startdate != null) {
+                qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
+            }
+
+            if (endDate != null) {
+                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false);
+            }
+
+            return (List<Order>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (Exception ex) {
+            log.error("failed to find billing accounts", ex);
+        }
+
+        return null;
+    }
+
+    /**
+     * List orders that are associated with a given billing run
+     * 
+     * @param billingRun Billing run
+     * @return A list of Orders
+     */
+    public List<Order> findOrders(BillingRun billingRun) {
+        return getEntityManager().createNamedQuery("Order.listByBillingRun", Order.class).setParameter("billingRun", billingRun).getResultList();
+    }
 }

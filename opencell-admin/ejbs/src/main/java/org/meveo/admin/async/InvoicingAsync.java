@@ -104,10 +104,10 @@ public class InvoicingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        int i = 0;
+//        int i = 0;
         for (IBillableEntity entity : entities) {
-            i++;
-            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+//            i++;
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) { // && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0
                 break;
             }
             try {

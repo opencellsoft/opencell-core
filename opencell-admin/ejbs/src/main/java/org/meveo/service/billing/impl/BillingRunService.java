@@ -67,6 +67,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.order.OrderService;
 
 /**
  * The Class BillingRunService.
@@ -115,6 +116,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private InvoiceAgregateService invoiceAgregateService;
+
+    @Inject
+    private SubscriptionService subscriptionService;
+
+    @Inject
+    private OrderService orderService;
 
     /**
      * Generate pre invoicing reports.
@@ -650,11 +657,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param billingRun the billing run
      * @return the entity objects
      */
-    public List<? extends IBillableEntity> getEntities(BillingRun billingRun) {
+    private List<? extends IBillableEntity> getEntities(BillingRun billingRun) {
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
-
-        log.debug("Retrieving billable entities billingRun {}", billingRun.getId());
 
         if (billingCycle != null) {
 
@@ -666,11 +671,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
 
             if (billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {
-                return billingAccountService.findSubscriptions(billingCycle, startDate, endDate);
+                return subscriptionService.findSubscriptions(billingCycle, startDate, endDate);
             }
 
             if (billingCycle.getType() == BillingEntityTypeEnum.ORDER) {
-                return billingAccountService.findOrders(billingCycle, startDate, endDate);
+                return orderService.findOrders(billingCycle, startDate, endDate);
             }
 
             return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
@@ -686,6 +691,28 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
             return result;
         }
+    }
+
+    /**
+     * Gets entities that are associated with a billing run
+     *
+     * @param billingRun the billing run
+     * @return the entity objects
+     */
+    private List<? extends IBillableEntity> getEntitiesByBillingRun(BillingRun billingRun) {
+
+        BillingCycle billingCycle = billingRun.getBillingCycle();
+
+        if (billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {
+            return subscriptionService.findSubscriptions(billingRun);
+        }
+
+        if (billingCycle.getType() == BillingEntityTypeEnum.ORDER) {
+            return orderService.findOrders(billingRun);
+        }
+
+        return billingAccountService.findBillingAccounts(billingRun);
+
     }
 
     /**
@@ -915,8 +942,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result) throws Exception {
         log.debug("Processing billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
 
-        List<? extends IBillableEntity> entities = getEntities(billingRun);
-
         List<IBillableEntity> billableEntities = new ArrayList<>();
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
@@ -925,9 +950,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             type = billingCycle.getType();
         }
 
-        boolean minRtsInstantiated = false;
+        boolean includesFirstRun = false;
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
-            log.info("Will create min RTs and update BA amount totals for Billing run {} of  {} entities of type {}", billingRun.getId(), (entities != null ? entities.size() : 0),
+
+            List<? extends IBillableEntity> entities = getEntities(billingRun);
+
+            log.info("Will create min RTs and update BA amount totals for Billing run {} for {} entities of type {}", billingRun.getId(), (entities != null ? entities.size() : 0),
                 type);
             if ((entities != null) && (entities.size() > 0)) {
                 SubListCreator subListCreator = new SubListCreator(entities, (int) nbRuns);
@@ -948,9 +976,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     billableEntities.addAll(futureItsNow.get());
                 }
             }
-            minRtsInstantiated = true;
+            includesFirstRun = true;
 
-            log.info("Will update BR amount totals for Billing run {} of  {} entities of type {}", billingRun.getId(), (entities != null ? entities.size() : 0), type);
+            log.info("Will update BR amount totals for Billing run {} for {} out of {} entities of type {}", billingRun.getId(),
+                (billableEntities != null ? billableEntities.size() : 0), (entities != null ? entities.size() : 0), type);
             billingRunExtensionService.updateBRAmounts(billingRun.getId(), billableEntities);
             Integer entitiesSize = entities != null ? entities.size() : null;
             billingRunExtensionService.updateBillingRun(billingRun.getId(), entitiesSize, billableEntities.size(), BillingRunStatusEnum.PREINVOICED, new Date());
@@ -961,8 +990,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                         || appProvider.isAutomaticInvoicing()));
 
         if (proceedToPostInvoicing) {
-            log.info("Will create invoices for Billing run {} of type {}", billingRun.getId(), type);
-            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities, !minRtsInstantiated);
+            if (!includesFirstRun) {
+                billableEntities = (List<IBillableEntity>) getEntitiesByBillingRun(billingRun);
+            }
+
+            log.info("Will create invoices for Billing run {} for {} entities of type {}", billingRun.getId(), (billableEntities != null ? billableEntities.size() : 0), type);
+            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities, !includesFirstRun);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
             if (billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
                 billingRun = billingRunExtensionService.findById(billingRun.getId());

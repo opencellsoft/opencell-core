@@ -721,9 +721,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
-        if (instantiateMinRts) {
-            ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, false);
-        }
+        // First retrieve it here as not to loose it if billable entity is not managed and has to be retrieved
         List<RatedTransaction> minAmountTransactions = entityToInvoice.getMinRatedTransactions();
 
         try {
@@ -752,6 +750,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceDate = billingRun.getInvoiceDate();
             }
             lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
+
+            if (instantiateMinRts) {
+                ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, false);
+                minAmountTransactions = entityToInvoice.getMinRatedTransactions();
+            }
 
             BillingCycle billingCycle = billingRun != null ? billingRun.getBillingCycle() : entityToInvoice.getBillingCycle();
             if (billingCycle == null && !(entityToInvoice instanceof Order)) {

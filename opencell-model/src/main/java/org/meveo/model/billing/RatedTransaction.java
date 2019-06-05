@@ -86,13 +86,13 @@ import org.meveo.model.rating.EDR;
 
         @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumberFlat", query = "SELECT r.seller.id, r.userAccount.id, r.wallet.id, r.invoiceSubCategory.id, r.tax.id, r.id, r.amountWithoutTax, r.amountWithTax, r.billingAccount.id "
                 + " FROM RatedTransaction r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND r.orderNumber=:orderNumber "
-                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate" + " ORDER BY billingAccount.id, seller.id "),
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate ORDER BY billingAccount.id, seller.id "),
         @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscriptionFlat", query = "SELECT r.seller.id, r.userAccount.id, r.wallet.id, r.invoiceSubCategory.id, r.tax.id, r.id, r.amountWithoutTax, r.amountWithTax, r.orderNumber "
                 + " FROM RatedTransaction r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND r.subscription=:subscription "
-                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate" + " ORDER BY seller.id"),
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate ORDER BY seller.id"),
         @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccountFlat", query = "SELECT r.seller.id, r.userAccount.id, r.wallet.id, r.invoiceSubCategory.id, r.tax.id, r.id, r.amountWithoutTax, r.amountWithTax, r.orderNumber "
                 + " FROM RatedTransaction r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND r.billingAccount=:billingAccount "
-                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate" + " ORDER BY seller.id"),
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
 
         @NamedQuery(name = "RatedTransaction.summarizeToInvoiceByOrderNumber", query = "SELECT r.billingAccount.id, r.seller.id, r.userAccount.id, r.wallet.id, r.invoiceSubCategory.id, r.tax.id, sum(r.amountWithoutTax), sum(r.amountWithTax), count(*) "
                 + " FROM RatedTransaction r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND r.orderNumber=:orderNumber "
