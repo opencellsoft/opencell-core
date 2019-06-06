@@ -1768,17 +1768,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             } else if (entity instanceof BillingAccount) {
 
                 log.error("AKK will retrieve RTs summary for BA {}/{}/{}", entity.getId(), firstTransactionDate, lastTransactionDate);
+
                 long start = System.currentTimeMillis();
-                List<Object[]> rts = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccount", entity)
-                    .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-                long end = System.currentTimeMillis();
-
-                log.error("AKK RT summary retrieval took {}", end - start);
-
-                start = System.currentTimeMillis();
                 List<RatedTransaction> rtsIbj = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount").setParameter("billingAccount", entity)
                     .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-                end = System.currentTimeMillis();
+                long end = System.currentTimeMillis();
                 log.error("AKK RT object retrieval took {}", end - start);
 
                 start = System.currentTimeMillis();
@@ -1787,6 +1781,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 end = System.currentTimeMillis();
 
                 log.error("AKK RT tuple retrieval took {}", end - start);
+
+                start = System.currentTimeMillis();
+                List<Object[]> rts = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccount", entity)
+                    .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+                end = System.currentTimeMillis();
+
+                log.error("AKK RT summary retrieval took {}", end - start);
 
                 return rts;
             }
