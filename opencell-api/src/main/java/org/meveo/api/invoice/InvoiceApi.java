@@ -155,7 +155,9 @@ public class InvoiceApi extends BaseApi {
         BigDecimal invoiceAmountWithTax = BigDecimal.ZERO;
 
         Invoice invoice = this.initInvoice(invoiceDTO, billingAccount, invoiceType, seller);
-
+        if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
+            invoice = serviceSingleton.assignInvoiceNumber(invoice);
+        }
         for (CategoryInvoiceAgregateDto catInvAgrDto : invoiceDTO.getCategoryInvoiceAgregates()) {
 
             UserAccount userAccount = null;
@@ -322,9 +324,7 @@ public class InvoiceApi extends BaseApi {
         }
         invoice.setNetToPay(netToPay);
 
-        if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
-            invoice = serviceSingleton.assignInvoiceNumber(invoice);
-        }
+
         if (invoice.isDraft()) {
             this.setDraftSetting(invoiceDTO, seller, invoice);
         }
@@ -388,7 +388,6 @@ public class InvoiceApi extends BaseApi {
             invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
         invoice.setInvoiceType(invoiceType);
-        invoiceService.create(invoice);
         if (invoiceDTO.getListInvoiceIdToLink() != null) {
             for (Long invoiceId : invoiceDTO.getListInvoiceIdToLink()) {
                 Invoice invoiceTmp = invoiceService.findById(invoiceId);
