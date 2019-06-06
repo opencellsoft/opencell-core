@@ -42,18 +42,19 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
+import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Invoice;
@@ -71,6 +72,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  * @lastModifiedVersion 7.0
  */
 @Entity
+@WorkflowedEntity
 @ObservableEntity
 @Table(name = "ar_account_operation")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -95,7 +97,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
                 "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),          
         @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao.customerAccount=:customerAccount")
 })
-public class AccountOperation extends AuditableEntity implements ICustomFieldEntity, ISearchable {
+public class AccountOperation extends BusinessEntity implements ICustomFieldEntity, ISearchable, IWFEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -200,20 +202,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     private List<MatchingAmount> matchingAmounts = new ArrayList<>();
 
     /**
-     * OCC code
-     */
-    @Column(name = "occ_code", length = 255)
-    @Size(max = 255)
-    private String occCode;
-
-    /**
-     * OCC description
-     */
-    @Column(name = "occ_description", length = 255)
-    @Size(max = 255)
-    private String occDescription;
-
-    /**
      * Associated order number. Multiple orders separated by '|'.
      */
     @Column(name = "order_num")
@@ -280,18 +268,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
      */
     @OneToMany(mappedBy = "recordedInvoice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invoice> invoices;
-
-    /**
-     * Code
-     */
-    @Transient
-    private String code;
-
-    /**
-     * Description
-     */
-    @Transient
-    private String description;
 
     /**
      * Additional payment information - // IBAN for direct debit
@@ -465,22 +441,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
         this.matchingStatus = matchingStatus;
     }
 
-    public String getOccCode() {
-        return occCode;
-    }
-
-    public void setOccCode(String occCode) {
-        this.occCode = occCode;
-    }
-
-    public String getOccDescription() {
-        return occDescription;
-    }
-
-    public void setOccDescription(String occDescription) {
-        this.occDescription = occDescription;
-    }
-
     public PaymentVentilation getPaymentVentilation() {
         return paymentVentilation;
     }
@@ -491,7 +451,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
 
     @Override
     public int hashCode() {
-        return 961 + ("AccountOperation" + occCode).hashCode();
+        return 961 + ("AccountOperation" + code).hashCode();
     }
 
     @Override
@@ -509,10 +469,10 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
-        if (occCode == null) {
-            if (other.occCode != null)
+        if (code == null) {
+            if (other.code != null)
                 return false;
-        } else if (!occCode.equals(other.occCode))
+        } else if (!code.equals(other.code))
             return false;
         return true;
     }
@@ -668,22 +628,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
      */
     public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
         this.paymentMethod = paymentMethod;
-    }
-
-    public String getCode() {
-        return occCode;
-    }
-
-    public void setCode(String code) {
-        this.occCode = code;
-    }
-
-    public String getDescription() {
-        return occDescription;
-    }
-
-    public void setDescription(String description) {
-        this.occDescription = description;
     }
 
     public List<Invoice> getInvoices() {
