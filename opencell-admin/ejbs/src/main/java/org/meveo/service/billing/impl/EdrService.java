@@ -65,9 +65,10 @@ public class EdrService extends PersistenceService<EDR> {
      * 
      * @param rateUntilDate date until we still rate
      * @param ratingGroup group of ratedTransaction. {@link RatedTransactionGroup}
+     * @param nbToRetrieve Number of items to retrieve for processing
      * @return list of EDR'sId we can rate until a given date.
      */
-    public List<Long> getEDRidsToRate(Date rateUntilDate, String ratingGroup) {
+    public List<Long> getEDRidsToRate(Date rateUntilDate, String ratingGroup, int nbToRetrieve) {
         QueryBuilder qb = new QueryBuilder(EDR.class, "c");
         qb.addCriterion("c.status", "=", EDRStatusEnum.OPEN, true);
         if (rateUntilDate != null) {
@@ -79,7 +80,7 @@ public class EdrService extends PersistenceService<EDR> {
         qb.addOrderMultiCriterion("c.subscription", true, "c.id", true);
 
         try {
-            return qb.getIdQuery(getEntityManager()).getResultList();
+            return qb.getIdQuery(getEntityManager()).setMaxResults(nbToRetrieve).getResultList();
         } catch (NoResultException e) {
             return null;
         }

@@ -44,11 +44,13 @@ import org.meveo.model.order.Order;
  * Quote to subscribe to services or [purchase] products
  * 
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @WorkflowedEntity
 @ExportIdentifier({ "code" })
-@CustomFieldEntity(cftCodePrefix = "QUOTE")
+@CustomFieldEntity(cftCodePrefix = "Quote")
 @Table(name = "ord_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_quote_seq"), })

@@ -26,7 +26,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableBusinessEntity;
+import org.hibernate.annotations.Type;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.billing.CounterInstance;
@@ -38,6 +39,8 @@ import org.meveo.validation.constraint.ClassName;
  * Base notification information
  * 
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ModuleItem
@@ -51,7 +54,7 @@ import org.meveo.validation.constraint.ClassName;
                 @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
         @NamedQuery(name = "Notification.getActiveNotificationsByEventAndClasses", query = "SELECT n from Notification n where n.disabled=false and n.eventTypeFilter=:eventTypeFilter and n.classNameFilter in :classNameFilter order by priority ASC", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
-public class Notification extends EnableBusinessEntity {
+public class Notification extends EnableBusinessCFEntity {
 
     private static final long serialVersionUID = 2634877161620665288L;
 
@@ -112,6 +115,13 @@ public class Notification extends EnableBusinessEntity {
      */
     @Column(name = "priority", columnDefinition = "int DEFAULT 1")
     private int priority = 1;
+
+    /**
+     * Run in async mode?
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "run_async")
+    private Boolean runAsync = false;
 
     public String getClassNameFilter() {
         return classNameFilter;
@@ -194,5 +204,32 @@ public class Notification extends EnableBusinessEntity {
 
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    /**
+     * Gets boolean value of whether this notification will be run in async mode.
+     * 
+     * @return true / false
+     */
+    public Boolean isRunAsync() {
+        return runAsync;
+    }
+
+    /**
+     * Gets boolean value of whether this notification will be run in async mode.
+     * 
+     * @return true / false
+     */
+    public Boolean getRunAsync() {
+        return runAsync;
+    }
+
+    /**
+     * Sets boolean value of whether this notification will be run in async mode.
+     * 
+     * @return true / false
+     */
+    public void setRunAsync(Boolean runAsync) {
+        this.runAsync = runAsync;
     }
 }

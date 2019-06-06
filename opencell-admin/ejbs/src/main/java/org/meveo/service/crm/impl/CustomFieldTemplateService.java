@@ -183,17 +183,11 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public CustomFieldTemplate findByCodeAndAppliesTo(String code, String appliesTo) {
 
         if (useCFTCache) {
-
-            CustomFieldTemplate cft = customFieldsCache.getCustomFieldTemplate(code, appliesTo);
-
-            // Populate cache if record is not found in cache
-            if (cft == null) {
-                cft = findByCodeAndAppliesToNoCache(code, appliesTo);
-                if (cft != null) {
-                    customFieldsCache.addUpdateCustomFieldTemplate(cft);
-                }
+            Map<String, CustomFieldTemplate> cfts = findByAppliesTo(appliesTo);
+            if (cfts != null) {
+                return cfts.get(code);
             }
-            return cft;
+            return null;
 
         } else {
             return findByCodeAndAppliesToNoCache(code, appliesTo);

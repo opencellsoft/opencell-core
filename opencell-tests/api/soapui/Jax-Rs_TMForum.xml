@@ -46179,7 +46179,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>
          <customField code="${#Project#baseEntityPrefix}_SUB_CF_STRING" description="String value">
             <fieldType>STRING</fieldType>
-            <appliesTo>SUB</appliesTo>
+            <appliesTo>Subscription</appliesTo>
             <storageType>SINGLE</storageType>
             <valueRequired>false</valueRequired>
             <versionable>false</versionable>
@@ -46217,7 +46217,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>
          <customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" description="Long map value">
             <fieldType>STRING</fieldType>
-            <appliesTo>SUB</appliesTo>
+            <appliesTo>Subscription</appliesTo>
             <storageType>MAP</storageType>
             <mapKeyType>STRING</mapKeyType>
             <valueRequired>false</valueRequired>
@@ -46256,7 +46256,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>
          <customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" description="String value">
             <fieldType>STRING</fieldType>
-            <appliesTo>SERVICE_INSTANCE</appliesTo>
+            <appliesTo>ServiceInstance</appliesTo>
             <storageType>SINGLE</storageType>
             <valueRequired>false</valueRequired>
             <versionable>false</versionable>
@@ -46294,7 +46294,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>
          <customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value">
             <fieldType>STRING</fieldType>
-            <appliesTo>SERVICE_INSTANCE</appliesTo>
+            <appliesTo>ServiceInstance</appliesTo>
             <storageType>MATRIX</storageType>
             <valueRequired>false</valueRequired>
             <versionable>false</versionable>
@@ -46336,7 +46336,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>
          <customField code="${#Project#baseEntityPrefix}_PROD_CF_STRING" description="String value">
             <fieldType>STRING</fieldType>
-            <appliesTo>PRODUCT_INSTANCE</appliesTo>
+            <appliesTo>ProductInstance</appliesTo>
             <storageType>SINGLE</storageType>
             <valueRequired>true</valueRequired>
             <versionable>false</versionable>
@@ -46414,7 +46414,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_SERVICE_CF_PRICE" description="Service price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>20</defaultValue>\r
@@ -46451,7 +46451,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_PROD_CF_PRICE" description="Product price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>PRODUCT_INSTANCE</appliesTo>\r
+            <appliesTo>ProductInstance</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>1000</defaultValue>\r
@@ -46488,7 +46488,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_SUB_CF_PRICE" description="Subscription price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SUB</appliesTo>\r
+            <appliesTo>Subscription</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>5</defaultValue>\r
@@ -59731,7 +59731,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>
          <customField code="${#Project#baseEntityPrefix}_PROD_CF_STRING" description="String value">
             <fieldType>STRING</fieldType>
-            <appliesTo>PRODUCT_INSTANCE</appliesTo>
+            <appliesTo>ProductInstance</appliesTo>
             <storageType>SINGLE</storageType>
             <valueRequired>false</valueRequired>
             <versionable>false</versionable>
@@ -59769,7 +59769,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_SERVICE_CF_PRICE" description="Service price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <appliesTo>ServiceInstance</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <defaultValue>20</defaultValue>\r
@@ -59806,7 +59806,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_PROD_CF_PRICE" description="Product price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>PRODUCT_INSTANCE</appliesTo>\r
+            <appliesTo>ProductInstance</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <defaultValue>1000</defaultValue>\r
@@ -59843,7 +59843,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_SUB_CF_PRICE" description="Subscription price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SUB</appliesTo>\r
+            <appliesTo>Subscription</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <defaultValue>5</defaultValue>\r

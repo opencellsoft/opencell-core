@@ -17,11 +17,9 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -44,10 +42,6 @@ public class InvoicingAsync {
     /** The invoice service. */
     @Inject
     private InvoiceService invoiceService;
-
-    /** The billing run extension service. */
-    @Inject
-    private BillingRunExtensionService billingRunExtensionService;
 
     /** The log. */
     @Inject
@@ -78,8 +72,10 @@ public class InvoicingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         List<IBillableEntity> billableEntities = new ArrayList<IBillableEntity>();
+        int i = 0;
         for (IBillableEntity entity : entities) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            i++;
+            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             IBillableEntity billableEntity = ratedTransactionService.updateEntityTotalAmounts(entity, billingRun);
@@ -87,7 +83,6 @@ public class InvoicingAsync {
                 billableEntities.add(billableEntity);
             }
         }
-        log.info("WorkSet billable entities {}", billableEntities.size());
         return new AsyncResult<List<IBillableEntity>>(billableEntities);
     }
 
@@ -107,8 +102,10 @@ public class InvoicingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
+        int i = 0;
         for (IBillableEntity entity : entities) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            i++;
+            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
@@ -126,7 +123,6 @@ public class InvoicingAsync {
      * @param billingRun the billing run to process
      * @param invoiceIds the invoice ids
      * @param invoicesToNumberInfo the invoices to number info
-     * @param isForced is forced action
      * @param jobInstanceId the job instance id
      * @param result the Job execution result
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
@@ -136,21 +132,18 @@ public class InvoicingAsync {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(BillingRun billingRun, List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo,
-            boolean isForced, Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+            Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
+        int i = 0;
         for (Long invoiceId : invoiceIds) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            i++;
+            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
                 invoiceService.assignInvoiceNumberAndIncrementBAInvoiceDate(invoiceId, invoicesToNumberInfo);
-
-                if (!isForced) {
-                    billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
-                    invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
-                }
 
             } catch (Exception e) {
                 log.error("Failed to increment invoice date for invoice {}", invoiceId, e);
@@ -178,8 +171,10 @@ public class InvoicingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
+        int i = 0;
         for (Long invoiceId : invoiceIds) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             try {
@@ -211,8 +206,10 @@ public class InvoicingAsync {
 
         boolean allOk = true;
 
+        int i = 0;
         for (Long invoiceId : invoiceIds) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             try {

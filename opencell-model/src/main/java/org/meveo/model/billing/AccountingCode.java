@@ -19,9 +19,10 @@ import org.meveo.model.*;
  * 
  * @author Edward P. Legaspi
  * @since 5.0
- * @lastModifiedVersion 5.0
- **/
-@CustomFieldEntity(cftCodePrefix = "ACCT_CODE")
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
+@CustomFieldEntity(cftCodePrefix = "AccountingCode")
 @ExportIdentifier({ "code" })
 @Entity
 @Table(name = "billing_accounting_code")

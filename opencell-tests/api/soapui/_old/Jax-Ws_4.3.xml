@@ -56424,8 +56424,8 @@ for( item in holder.getNodeValues( "//message" )) {
       <ws:createCustomFieldTemplate>
          <customField code="INVOICE_SEQUENCE" description="invoice sequence">
             <fieldType>LONG</fieldType> 
-            <accountLevel>SELLER</accountLevel> 
-            <appliesTo>SELLER</appliesTo> 
+            <accountLevel>Seller</accountLevel>
+            <appliesTo>Seller</appliesTo>
             <storageType>SINGLE</storageType> 
             <versionable>false</versionable> 
          </customField>
@@ -56470,8 +56470,8 @@ for( item in holder.getNodeValues( "//message" )) {
       <ws:createCustomFieldTemplate>
          <customField code="INVOICE_ADJUSTMENT_SEQUENCE" description="invoice adjustement sequence">
             <fieldType>LONG</fieldType> 
-            <accountLevel>SELLER</accountLevel> 
-            <appliesTo>SELLER</appliesTo> 
+            <accountLevel>Seller</accountLevel>
+            <appliesTo>Seller</appliesTo>
             <storageType>SINGLE</storageType> 
             <versionable>false</versionable> 
          </customField>
@@ -56516,8 +56516,8 @@ for( item in holder.getNodeValues( "//message" )) {
       <ws:createCustomFieldTemplate>
          <customField code="INVOICE_SEQUENCE" description="invoice sequence">
             <fieldType>LONG</fieldType> 
-            <accountLevel>SELLER</accountLevel> 
-            <appliesTo>SELLER</appliesTo> 
+            <accountLevel>Seller</accountLevel>
+            <appliesTo>Seller</appliesTo>
             <storageType>SINGLE</storageType> 
             <versionable>true</versionable>
             <calendar>MONTHLY</calendar>
@@ -56563,8 +56563,8 @@ for( item in holder.getNodeValues( "//message" )) {
       <ws:createCustomFieldTemplate>
          <customField code="INVOICE_ADJUSTMENT_SEQUENCE" description="invoice adjustement sequence">
             <fieldType>LONG</fieldType> 
-            <accountLevel>SELLER</accountLevel> 
-            <appliesTo>SELLER</appliesTo> 
+            <accountLevel>Seller</accountLevel>
+            <appliesTo>Seller</appliesTo>
             <storageType>SINGLE</storageType> 
              <versionable>true</versionable>
             <calendar>MONTHLY</calendar> 
@@ -56611,7 +56611,7 @@ for( item in holder.getNodeValues( "//message" )) {
          <!--Optional:-->
          <customFieldTemplateCode>INVOICE_SEQUENCE</customFieldTemplateCode>
          <!--Optional:-->
-         <appliesTo>SELLER</appliesTo>
+         <appliesTo>Seller</appliesTo>
       </ws:findCustomFieldTemplate>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -56654,7 +56654,7 @@ for( item in holder.getNodeValues( "//message" )) {
          <!--Optional:-->
          <customFieldTemplateCode>INVOICE_ADJUSTMENT_SEQUENCE</customFieldTemplateCode>
          <!--Optional:-->
-         <appliesTo>SELLER</appliesTo>
+         <appliesTo>Seller</appliesTo>
       </ws:findCustomFieldTemplate>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -56700,8 +56700,8 @@ for( item in holder.getNodeValues( "//message" )) {
       <ws:updateCustomFieldTemplate>
          <customField code="INVOICE_SEQUENCE" description="invoice sequence">
             <fieldType>LONG</fieldType> 
-            <accountLevel>SELLER</accountLevel> 
-            <appliesTo>SELLER</appliesTo> 
+            <accountLevel>Seller</accountLevel>
+            <appliesTo>Seller</appliesTo>
             <storageType>SINGLE</storageType> 
             <versionable>false</versionable> 
          </customField>
@@ -56746,8 +56746,8 @@ for( item in holder.getNodeValues( "//message" )) {
       <ws:updateCustomFieldTemplate>
          <customField code="INVOICE_ADJUSTMENT_SEQUENCE" description="invoice adjustement sequence">
             <fieldType>LONG</fieldType> 
-            <accountLevel>SELLER</accountLevel> 
-            <appliesTo>SELLER</appliesTo> 
+            <accountLevel>Seller</accountLevel>
+            <appliesTo>Seller</appliesTo>
             <storageType>SINGLE</storageType> 
             <versionable>false</versionable> 
          </customField>
@@ -56792,8 +56792,8 @@ for( item in holder.getNodeValues( "//message" )) {
       <ws:updateCustomFieldTemplate>
          <customField code="INVOICE_SEQUENCE" description="invoice sequence_updated">
             <fieldType>LONG</fieldType> 
-            <accountLevel>SELLER</accountLevel> 
-            <appliesTo>SELLER</appliesTo> 
+            <accountLevel>Seller</accountLevel>
+            <appliesTo>Seller</appliesTo>
             <storageType>SINGLE</storageType> 
             <versionable>true</versionable>
             <calendar>MONTHLY</calendar>
@@ -56840,8 +56840,8 @@ for( item in holder.getNodeValues( "//message" )) {
       <ws:updateCustomFieldTemplate>
          <customField code="INVOICE_ADJUSTMENT_SEQUENCE" description="invoice adjustement sequence updated">
             <fieldType>LONG</fieldType> 
-            <accountLevel>SELLER</accountLevel> 
-            <appliesTo>SELLER</appliesTo> 
+            <accountLevel>Seller</accountLevel>
+            <appliesTo>Seller</appliesTo>
             <storageType>SINGLE</storageType> 
              <versionable>true</versionable>
             <calendar>MONTHLY</calendar> 
@@ -56889,7 +56889,7 @@ for( item in holder.getNodeValues( "//message" )) {
          <!--Optional:-->
          <customFieldTemplateCode>INVOICE_SEQUENCE</customFieldTemplateCode>
          <!--Optional:-->
-         <appliesTo>SELLER</appliesTo>
+         <appliesTo>Seller</appliesTo>
       </ws:findCustomFieldTemplate>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -56932,7 +56932,7 @@ for( item in holder.getNodeValues( "//message" )) {
          <!--Optional:-->
          <customFieldTemplateCode>INVOICE_ADJUSTMENT_SEQUENCE</customFieldTemplateCode>
          <!--Optional:-->
-         <appliesTo>SELLER</appliesTo>
+         <appliesTo>Seller</appliesTo>
       </ws:findCustomFieldTemplate>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -60126,7 +60126,7 @@ for( item in holder.getNodeValues( "//invoiceId" )) {
       <ws:createOrUpdateField> 
          <customField code="${#TestSuite#ticket}_PROVIDER_SINGLE_NV" description="${#TestSuite#ticket}_PROVIDER_SINGLE_NV"> 
             <fieldType>STRING</fieldType>
-            <appliesTo>PROVIDER</appliesTo>
+            <appliesTo>Provider</appliesTo>
             <storageType>SINGLE</storageType>
          </customField>
       </ws:createOrUpdateField>
@@ -60244,8 +60244,8 @@ for( item in holder.getNodeValues( "//invoiceId" )) {
       <ws:createCustomFieldTemplate>
          <customField code="INVOICE_ADJUSTMENT_SEQUENCE" description="invoice adjustement sequence">
             <fieldType>LONG</fieldType> 
-            <accountLevel>SELLER</accountLevel> 
-            <appliesTo>PROVIDER</appliesTo> 
+            <accountLevel>Seller</accountLevel>
+            <appliesTo>Provider</appliesTo>
             <storageType>SINGLE</storageType> 
              <versionable>true</versionable>
             <calendar>MONTHLY</calendar> 
@@ -65909,7 +65909,7 @@ for( item in holder.getNodeValues( "//invoiceId" )) {
          <!--Optional:-->
          <customField code="CF_${#TestSuite#ticket}" description="CF_${#TestSuite#ticket}">
             <fieldType>DOUBLE</fieldType>
-            <accountLevel>UA</accountLevel> 
+            <accountLevel>UserAccount</accountLevel>
             <storageType>SINGLE</storageType> 
          </customField>
       </ws:createCustomFieldTemplate>
@@ -67060,7 +67060,7 @@ for( item in holder.getNodeValues( "//invoiceId" )) {
          <!--Optional:-->
          <customField code="CF_${#TestSuite#ticket}" description="CF_${#TestSuite#ticket}">
             <fieldType>DOUBLE</fieldType>
-            <accountLevel>UA</accountLevel> 
+            <accountLevel>UserAccount</accountLevel>
             <storageType>SINGLE</storageType> 
          </customField>
       </ws:createCustomFieldTemplate>
@@ -67107,7 +67107,7 @@ for( item in holder.getNodeValues( "//invoiceId" )) {
          <!--Optional:-->
          <customField code="CF_${#TestSuite#ticket}" description="CF_${#TestSuite#ticket}_updated">
             <fieldType>DOUBLE</fieldType>
-            <accountLevel>UA</accountLevel> 
+            <accountLevel>UserAccount</accountLevel>
             <storageType>SINGLE</storageType> 
          </customField>
       </ws:updateCustomFieldTemplate>
@@ -67154,7 +67154,7 @@ for( item in holder.getNodeValues( "//invoiceId" )) {
          <!--Optional:-->
          <customFieldTemplateCode>CF_${#TestSuite#ticket}</customFieldTemplateCode>
          <!--Optional:-->
-         <appliesTo>UA</appliesTo>
+         <appliesTo>UserAccount</appliesTo>
       </ws:findCustomFieldTemplate>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -67199,7 +67199,7 @@ for( item in holder.getNodeValues( "//invoiceId" )) {
          <!--Optional:-->
          <customFieldTemplateCode>CF_${#TestSuite#ticket}</customFieldTemplateCode>
          <!--Optional:-->
-         <appliesTo>UA</appliesTo>
+         <appliesTo>UserAccount</appliesTo>
       </ws:removeCustomFieldTemplate>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -69130,7 +69130,7 @@ Number items processed with warning:  #{event.nbItemsProcessedWithWarning}</body
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_STR" description="CF string"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>PRICEPLAN</appliesTo>
+  <appliesTo>PricePlanMatrix</appliesTo>
   <storageType>SINGLE</storageType>
   <valueRequired>true</valueRequired>
 </customField>
@@ -69172,7 +69172,7 @@ Number items processed with warning:  #{event.nbItemsProcessedWithWarning}</body
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_DOUBLE" description="cf double"> 
   <fieldType>DOUBLE</fieldType>
-  <appliesTo>PRICEPLAN</appliesTo>
+  <appliesTo>PricePlanMatrix</appliesTo>
   <storageType>SINGLE</storageType>
   <valueRequired>true</valueRequired>
 </customField>
@@ -69214,7 +69214,7 @@ Number items processed with warning:  #{event.nbItemsProcessedWithWarning}</body
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_list_STR" description="CF string list"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>PRICEPLAN</appliesTo>
+  <appliesTo>PricePlanMatrix</appliesTo>
   <storageType>LIST</storageType>
   <valueRequired>true</valueRequired>
 </customField>
@@ -69256,7 +69256,7 @@ Number items processed with warning:  #{event.nbItemsProcessedWithWarning}</body
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_Map_STR" description="cf string map"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>PRICEPLAN</appliesTo>
+  <appliesTo>PricePlanMatrix</appliesTo>
   <storageType>MAP</storageType>
   <valueRequired>true</valueRequired>
 </customField>
@@ -69464,7 +69464,7 @@ Number items processed with warning:  #{event.nbItemsProcessedWithWarning}</body
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="${#TestSuite#ticket}_OfferMatrix" description="cf string matrix"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>OFFER</appliesTo>
+  <appliesTo>OfferTemplate</appliesTo>
   <storageType>MATRIX</storageType>
   <matrixColumns>
     <matrixColumn code="Matrix1" keyType="STRING" label="matrix key" position="1"/>
@@ -70297,7 +70297,7 @@ Number items processed with warning:  #{event.nbItemsProcessedWithWarning}</body
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_STR" description="CF string"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>SERVICE</appliesTo>
+  <appliesTo>ServiceTemplate</appliesTo>
   <storageType>SINGLE</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -70339,7 +70339,7 @@ Number items processed with warning:  #{event.nbItemsProcessedWithWarning}</body
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_DOUBLE" description="cf double"> 
   <fieldType>DOUBLE</fieldType>
-  <appliesTo>SERVICE</appliesTo>
+  <appliesTo>ServiceTemplate</appliesTo>
   <storageType>SINGLE</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -70380,7 +70380,7 @@ Number items processed with warning:  #{event.nbItemsProcessedWithWarning}</body
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_list_STR" description="CF string list"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>SERVICE</appliesTo>
+  <appliesTo>ServiceTemplate</appliesTo>
   <storageType>LIST</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -70421,7 +70421,7 @@ Number items processed with warning:  #{event.nbItemsProcessedWithWarning}</body
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_Map_STR" description="cf string map"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>SERVICE</appliesTo>
+  <appliesTo>ServiceTemplate</appliesTo>
   <storageType>MAP</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -72186,7 +72186,7 @@ xmlns:ws="http://ws.api.meveo.org/">\r <soapenv:Header/>\r
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_STR" description="CF string"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>SERVICE</appliesTo>
+  <appliesTo>ServiceTemplate</appliesTo>
   <storageType>SINGLE</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -72228,7 +72228,7 @@ xmlns:ws="http://ws.api.meveo.org/">\r <soapenv:Header/>\r
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_DOUBLE" description="cf double"> 
   <fieldType>DOUBLE</fieldType>
-  <appliesTo>SERVICE</appliesTo>
+  <appliesTo>ServiceTemplate</appliesTo>
   <storageType>SINGLE</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -72269,7 +72269,7 @@ xmlns:ws="http://ws.api.meveo.org/">\r <soapenv:Header/>\r
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_list_STR" description="CF string list"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>SERVICE</appliesTo>
+  <appliesTo>ServiceTemplate</appliesTo>
   <storageType>LIST</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -72310,7 +72310,7 @@ xmlns:ws="http://ws.api.meveo.org/">\r <soapenv:Header/>\r
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_Map_STR" description="cf string map"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>SERVICE</appliesTo>
+  <appliesTo>ServiceTemplate</appliesTo>
   <storageType>MAP</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -72351,7 +72351,7 @@ xmlns:ws="http://ws.api.meveo.org/">\r <soapenv:Header/>\r
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_STR" description="CF string"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>PRICEPLAN</appliesTo>
+  <appliesTo>PricePlanMatrix</appliesTo>
   <storageType>SINGLE</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -72393,7 +72393,7 @@ xmlns:ws="http://ws.api.meveo.org/">\r <soapenv:Header/>\r
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_DOUBLE" description="cf double"> 
   <fieldType>DOUBLE</fieldType>
-  <appliesTo>PRICEPLAN</appliesTo>
+  <appliesTo>PricePlanMatrix</appliesTo>
   <storageType>SINGLE</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -72434,7 +72434,7 @@ xmlns:ws="http://ws.api.meveo.org/">\r <soapenv:Header/>\r
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_STR" description="CF string"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>OFFER</appliesTo>
+  <appliesTo>OfferTemplate</appliesTo>
   <storageType>SINGLE</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -72476,7 +72476,7 @@ xmlns:ws="http://ws.api.meveo.org/">\r <soapenv:Header/>\r
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_DOUBLE" description="cf double"> 
   <fieldType>DOUBLE</fieldType>
-  <appliesTo>OFFER</appliesTo>
+  <appliesTo>OfferTemplate</appliesTo>
   <storageType>SINGLE</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -72517,7 +72517,7 @@ xmlns:ws="http://ws.api.meveo.org/">\r <soapenv:Header/>\r
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_list_STR" description="CF string list"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>OFFER</appliesTo>
+  <appliesTo>OfferTemplate</appliesTo>
   <storageType>LIST</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -72558,7 +72558,7 @@ xmlns:ws="http://ws.api.meveo.org/">\r <soapenv:Header/>\r
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_STR" description="CF string"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>SUB</appliesTo>
+  <appliesTo>Subscription</appliesTo>
   <storageType>SINGLE</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>
@@ -72600,7 +72600,7 @@ xmlns:ws="http://ws.api.meveo.org/">\r <soapenv:Header/>\r
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="CF_DOUBLE" description="cf double"> 
   <fieldType>DOUBLE</fieldType>
-  <appliesTo>SUB</appliesTo>
+  <appliesTo>Subscription</appliesTo>
   <storageType>SINGLE</storageType> 
 </customField>
  </ws:createOrUpdateCustomFieldTemplate>

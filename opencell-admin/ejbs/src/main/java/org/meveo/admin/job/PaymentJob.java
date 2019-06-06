@@ -22,12 +22,13 @@ import org.meveo.service.job.Job;
  * 
  * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class PaymentJob extends Job {
 
-    private static final String APPLIES_TO_NAME = "JOB_PaymentJob";
+    private static final String APPLIES_TO_NAME = "JobInstance_PaymentJob";
     
     /** The payment job bean. */
     @Inject
@@ -55,7 +56,7 @@ public class PaymentJob extends Job {
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         nbRuns.setValueRequired(false);
-        nbRuns.setDefaultValue("1");
+        nbRuns.setDefaultValue("-1");
         result.put("nbRuns", nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();

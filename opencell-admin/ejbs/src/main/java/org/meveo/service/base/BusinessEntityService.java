@@ -19,11 +19,8 @@
 package org.meveo.service.base;
 
 import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.generic.wf.WorkflowInstance;
 
 @Stateless
@@ -34,25 +31,6 @@ public class BusinessEntityService extends BusinessService<BusinessEntity> {
     }
 
     public BusinessEntity findByWorkflowInstance(WorkflowInstance workflowInstance) {
-
-        String code = workflowInstance.getEntityInstanceCode();
-        String stringQuery = "select be from " + entityClass.getSimpleName() + " be where upper(code)=:code";
-
-        if (workflowInstance.getTargetEntityClass().equals(CustomEntityInstance.class.getName())) {
-            stringQuery += " and cet_code=:cet_code";
-        }
-
-        Query query = getEntityManager().createQuery(stringQuery, entityClass).setParameter("code", code.toUpperCase()).setMaxResults(1);
-
-        if (workflowInstance.getTargetEntityClass().equals(CustomEntityInstance.class.getName())) {
-            query.setParameter("cet_code", workflowInstance.getTargetCetCode());
-        }
-
-        try {
-            return (BusinessEntity) query.getSingleResult();
-        } catch (NoResultException e) {
-            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
-            return null;
-        }
+        return findById(workflowInstance.getEntityInstanceId(), true);
     }
 }

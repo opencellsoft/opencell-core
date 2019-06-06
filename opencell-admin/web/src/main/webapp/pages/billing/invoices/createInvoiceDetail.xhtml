@@ -29,14 +29,14 @@
 		<c:if test="#{creationInvoiceBean.edit}">
 			<hftl:entityPopup id="billingAccountPopup"
 				header="#{messages['billingAccount']}"
-				updateField=":invoicePopup :formId:tabView:billingAccountSelectedId :formId:tabView:billingAccountSelectedId_text"
+				updateField=":invoicePopup :formId:tabView:billingAccountSelectedId :formId:tabView:billingAccountSelectedId_text :formId:tabView:sellerSelectedId :formId:tabView:sellerSelectedId_text"
 				selection="#{creationInvoiceBean.entity.billingAccount}"
 				backingBean="#{billingAccountBean}"
 				searchField1Label="#{messages['billingAccount.code']}"
 				searchField1="code"
 				column1Label="#{messages['billingAccount.code']}" column1="code"
 				column2Label="#{messages['BusinessEntity.description']}"
-				column2="description">
+				column2="description" selectionListenerBean="#{creationInvoiceBean}" selectionListenerMethod="onBillingAccountSet">
 			</hftl:entityPopup>
 			<hftl:entityPopup id="sellerPopup"
 				header="#{messages['seller']}"
@@ -81,7 +81,7 @@
 								<hftl:formField id="sellerSelectedId"
 									label="#{messages['seller']}" field="seller"
 									valueLabelField="code" popup="true"
-									popupId="sellerPopup" required="false" 
+									popupId="sellerPopup" required="true"
 									showPopupOnlyOnNew="true" listenerUpdate=":formId:tabView:ImportRTs :formId:tabView:panelAddLinkedInvoice" />
 									
 								<hftl:formField id="billingAccountSelectedId"
@@ -114,9 +114,9 @@
 											<hftl:column label="#{messages['invoice.invoiceDate']}"
 												field="invoiceDate"  isDate="true"/>
 											<hftl:column label="#{messages['invoice.amountWithoutTax']}"
-												field="amountWithoutTax" converterParam="4digits" rendered="#{appProvider.entreprise}" />
+												field="amountWithoutTax" rendered="#{appProvider.entreprise}" />
 											<hftl:column label="#{messages['invoice.amountWithTax']}"
-												field="amountWithTax" converterParam="4digits" rendered="#{!appProvider.entreprise}" />
+												field="amountWithTax" rendered="#{!appProvider.entreprise}" />
 											<p:column width="20px;">
 												<p:commandButton icon="ui-icon-trash"
 													action="#{creationInvoiceBean.deleteLinkedInvoice}"
@@ -260,7 +260,6 @@
 											<p:column>
 												<p:inputText value="#{rated.unitAmountWithoutTax}" label="#{messages['ratedTransaction.unitAmountWithoutTax']}" size="10">
 													<p:keyFilter mask="num" />
-													<f:converter converterId="bigDecimal4DigitsConverter" />
 													<p:ajax event="change"
 														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
 														update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
@@ -270,7 +269,6 @@
 												<p:inputText value="#{rated.quantity}" size="4"
 													label="#{messages['ratedTransaction.quantity']}">
 													<p:keyFilter mask="num" />
-													<f:converter converterId="bigDecimal4DigitsConverter" />
 													<p:ajax event="change"
 														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
 														update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
@@ -379,7 +377,6 @@
 
 												<p:inputText value="#{subCat.amountWithoutTax}">
 													<p:keyFilter mask="num" />
-													<f:converter converterId="bigDecimal4DigitsConverter" />
 													<p:ajax event="change"
 														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(subCat)}"
 														update="subCategories :formId:tabView:invoiceSummary"></p:ajax>
@@ -554,22 +551,16 @@
 									</f:facet>
 									<p:row>
 										<p:column>
-											<h:outputText
-												value="#{creationInvoiceBean.entity.amountWithoutTax}"
-												converter="#{getConverter.forType(creationInvoiceBean.entity.amountWithoutTax,'4digits')}" />
+											<h:outputText value="#{creationInvoiceBean.entity.amountWithoutTax}" />
 										</p:column>
 										<p:column>
-											<h:outputText value="#{creationInvoiceBean.entity.amountTax}"
-												converter="#{getConverter.forType(creationInvoiceBean.entity.amountTax,'4digits')}" />
+											<h:outputText value="#{creationInvoiceBean.entity.amountTax}" />
 										</p:column>
 										<p:column>
-											<h:outputText
-												value="#{creationInvoiceBean.entity.amountWithTax}"
-												converter="#{getConverter.forType(creationInvoiceBean.entity.amountWithTax,'4digits')}" />
+											<h:outputText value="#{creationInvoiceBean.entity.amountWithTax}" />
 										</p:column>
 										<p:column>
-											<h:outputText value="#{creationInvoiceBean.entity.netToPay}"
-												converter="#{getConverter.forType(creationInvoiceBean.entity.netToPay,'4digits')}" />
+											<h:outputText value="#{creationInvoiceBean.entity.netToPay}" />
 										</p:column>
 									</p:row>
 								</p:panelGrid>

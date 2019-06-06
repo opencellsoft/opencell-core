@@ -59,7 +59,6 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -72,19 +71,32 @@ import org.meveo.model.shared.DateUtils;
  * 
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
 @Table(name = "billing_invoice", uniqueConstraints = @UniqueConstraint(columnNames = { "invoice_number", "invoice_type_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
-@CustomFieldEntity(cftCodePrefix = "INVOICE")
+@CustomFieldEntity(cftCodePrefix = "Invoice")
 @NamedQueries({
         @NamedQuery(name = "Invoice.validatedByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
+        @NamedQuery(name = "Invoice.draftByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
+        @NamedQuery(name = "Invoice.allByBRNoXml", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
+        
         @NamedQuery(name = "Invoice.validatedNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL and inv.invoiceNumber IS NOT NULL"),
+        @NamedQuery(name = "Invoice.draftNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL  and inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL"),
+        @NamedQuery(name = "Invoice.allNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL"),
+        
         @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL"),
+        @NamedQuery(name = "Invoice.draftNoPdf", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL"),
+        @NamedQuery(name = "Invoice.allNoPdf", query = "select inv.id from Invoice inv where inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL"),
+        
         @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
+        @NamedQuery(name = "Invoice.draftNoPdfByBR", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
+        @NamedQuery(name = "Invoice.allNoPdfByBR", query = "select inv.id from Invoice inv where inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
+        
         @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.seller.id, inv.invoiceDate"),
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
         @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
@@ -759,7 +771,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         this.linkedInvoices = linkedInvoices;
     }
 
-    public void addInvoiceAggregate(InvoiceAgregate obj) {
+	public void addInvoiceAggregate(InvoiceAgregate obj) {
         invoiceAgregates.add(obj);
     }
 
@@ -975,4 +987,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     public void setDontSend(boolean dontSend) {
         this.dontSend = dontSend;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s[%s, invoiceNumber=%s, invoiceType=%s]", this.getClass().getSimpleName(), super.toString(), invoiceNumber, invoiceType);
+    }
+
 }

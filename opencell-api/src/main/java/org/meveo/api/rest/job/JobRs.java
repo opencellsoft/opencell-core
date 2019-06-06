@@ -52,7 +52,7 @@ public interface JobRs extends IBaseRs {
      * @return request processing status
      */
     @POST
-    @Path("/stop")
+    @Path("/stop/{jobInstanceCode}")
     ActionStatus stop(@PathParam("jobInstanceCode") String jobInstanceCode);
     
     /**

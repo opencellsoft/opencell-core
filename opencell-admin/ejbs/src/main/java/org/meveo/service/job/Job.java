@@ -45,7 +45,7 @@ import java.util.Map;
  */
 public abstract class Job {
 
-    public static String CFT_PREFIX = "JOB";
+    public static String CFT_PREFIX = "JobInstance";
 
     @Resource
     protected TimerService timerService;
@@ -108,9 +108,8 @@ public abstract class Job {
 
         JobRunningStatusEnum isRunning = jobCacheContainerProvider.markJobAsRunning(jobInstance.getId(), jobInstance.isLimitToSingleNode());
         if (isRunning == JobRunningStatusEnum.NOT_RUNNING || (isRunning == JobRunningStatusEnum.RUNNING_OTHER && !jobInstance.isLimitToSingleNode())) {
-            log.debug("Starting Job {} of type {} with currentUser {}. Processors available {}, paralel procesors requested {}", jobInstance.getCode(),
-                jobInstance.getJobTemplate(), currentUser.toStringShort(), Runtime.getRuntime().availableProcessors(),
-                customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false));
+            log.info("Starting Job {} of type {} with currentUser {}. Processors available {}, paralel procesors requested {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
+                currentUser.toStringShort(), Runtime.getRuntime().availableProcessors(), customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false));
 
             try {
                 execute(executionResult, jobInstance);
@@ -119,12 +118,19 @@ public abstract class Job {
                 log.trace("Job {} of type {} executed. Persisting job execution results", jobInstance.getCode(), jobInstance.getJobTemplate());
 
                 Boolean jobCompleted = jobExecutionService.persistResult(this, executionResult, jobInstance);
-                log.debug("Job {} of type {} execution finished. Job completed {}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobCompleted);
+                log.info("Job {} of type {} execution finished. Job completed {}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobCompleted);
                 eventJobProcessed.fire(executionResult);
 
-                if (jobCompleted != null && jobCompleted) {
-                    MeveoUser lastCurrentUser = currentUser.unProxy();
-                    jobExecutionService.executeNextJob(this, jobInstance, !jobCompleted, lastCurrentUser);
+                if (jobCompleted != null && jobExecutionService.isJobRunningOnThis(jobInstance)) {
+                    jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
+
+                    if (!jobCompleted) {
+                        execute(jobInstance, null);
+
+                    } else if (jobInstance.getFollowingJob() != null) {
+                        MeveoUser lastCurrentUser = currentUser.unProxy();
+                        jobExecutionService.executeNextJob(this, jobInstance, lastCurrentUser);
+                    }
                 }
 
             } catch (Exception e) {
@@ -135,7 +141,7 @@ public abstract class Job {
             }
 
         } else {
-            log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}", jobInstance.getCode(), jobInstance.getJobTemplate(), isRunning);
+            log.info("Job {} of type {} execution will be skipped. Reason: isRunning={}", jobInstance.getCode(), jobInstance.getJobTemplate(), isRunning);
 
             // Mark job a finished. Applies in cases where execution result was already saved to db - like when executing job from API
             if (!executionResult.isTransient()) {
@@ -240,7 +246,23 @@ public abstract class Job {
 
         return null;
     }
-    
+
+    /**
+     * Gets the parameter CF value if found, otherwise return CF value from job definition
+     *
+     * @param jobInstance the job instance
+     * @param cfCode Custom field code
+     * @param defaultValue Default value if no value found
+     * @return Parameter or custom field value
+     */
+    protected Object getParamOrCFValue(JobInstance jobInstance, String cfCode, Object defaultValue) {
+        Object value = getParamOrCFValue(jobInstance, cfCode);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
+    }
+
     /**
      * Gets the parameter CF value if found , otherwise return CF value from customFieldInstanceService
      *

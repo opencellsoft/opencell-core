@@ -16,6 +16,7 @@ import java.util.Map;
 /**
  * A Job to send invoices by Email
  * @author HORRI Khalid
+ * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
 @Stateless
@@ -49,7 +50,7 @@ public class SendInvoiceJob extends Job {
 
         CustomFieldTemplate sendDraft = new CustomFieldTemplate();
         sendDraft.setCode("sendDraft");
-        sendDraft.setAppliesTo("JOB_SendInvoiceJob");
+        sendDraft.setAppliesTo("JobInstance_SendInvoiceJob");
         sendDraft.setActive(true);
         sendDraft.setDescription(resourceMessages.getString("jobExecution.sendDraft"));
         sendDraft.setFieldType(CustomFieldTypeEnum.BOOLEAN);
@@ -58,7 +59,7 @@ public class SendInvoiceJob extends Job {
 
         CustomFieldTemplate overrideEmailEl = new CustomFieldTemplate();
         overrideEmailEl.setCode("overrideEmailEl");
-        overrideEmailEl.setAppliesTo("JOB_SendInvoiceJob");
+        overrideEmailEl.setAppliesTo("JobInstance_SendInvoiceJob");
         overrideEmailEl.setActive(true);
         overrideEmailEl.setDescription(resourceMessages.getString("jobExecution.overrideEmailEl"));
         overrideEmailEl.setFieldType(CustomFieldTypeEnum.STRING);

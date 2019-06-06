@@ -37,6 +37,7 @@ import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -147,6 +148,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
     @Inject
     private BillingAccountService billingAccountService;
+
+    @Inject
+    private TradingLanguageService tradingLanguageService;
 
     @Inject
     private CounterPeriodService counterPeriodService;
@@ -292,10 +296,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      */
     public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
 
+    	invoice = this.retrieveIfNotManaged(invoice);
+    	
         Long id = invoice.getId();
         String alias = invoice.getAlias();
         String invoiceNumber = invoice.getInvoiceNumber();
         BillingAccount billingAccount = invoice.getBillingAccount();
+        billingAccount = billingAccountService.retrieveIfNotManaged(billingAccount);
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
         Customer customer = customerAccount.getCustomer();
         String code = customerAccount.getCode();
@@ -303,7 +310,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         InvoiceType invoiceType = invoice.getInvoiceType();
         String invoiceTypeCode = invoiceType.getCode();
         boolean isInvoiceAdjustment = invoiceTypeCode.equals(invoiceTypeService.getAdjustementCode());
-        String billingAccountLanguage = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
+        TradingLanguage tradingLanguageBA = billingAccount.getTradingLanguage();
+        String billingAccountLanguage = tradingLanguageBA.getLanguage().getLanguageCode();
         List<InvoiceAgregate> invoiceAgregates = invoice.getInvoiceAgregates();
         List<RatedTransaction> ratedTransactions = null;
         List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = null;
@@ -1556,9 +1564,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                     && ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
                                 continue;
                             }
-                            if (!isVirtual) {
-                                getEntityManager().refresh(ratedTransaction);
-                            }
                             BigDecimal transactionAmount = entreprise ? ratedTransaction.getAmountWithTax() : ratedTransaction.getAmountWithoutTax();
                             if (transactionAmount == null) {
                                 transactionAmount = BigDecimal.ZERO;
@@ -1763,7 +1768,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 									}
 
 									if (serviceInstance != null) {
-										addService(serviceInstance, doc, ratedTransaction.getOfferCode(), line);
+										String offerCode = ratedTransaction.getOfferTemplate() != null ? ratedTransaction.getOfferTemplate().getCode() : null;
+										addService(serviceInstance, doc, offerCode, line);
 									}
 								}
 							}

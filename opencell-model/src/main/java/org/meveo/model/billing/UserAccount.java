@@ -46,24 +46,27 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.WorkflowedEntity;
+
 
 /**
  * User account
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @WorkflowedEntity
-@CustomFieldEntity(cftCodePrefix = "UA", inheritCFValuesFrom = "billingAccount")
+@CustomFieldEntity(cftCodePrefix = "UserAccount", inheritCFValuesFrom = "billingAccount")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_UA")
 @Table(name = "billing_user_account")
 @NamedQueries({ @NamedQuery(name = "UserAccount.findByCode", query = "select u from  UserAccount u where u.code = :code and lower(u.accountType) = 'acct_ua'") })
-public class UserAccount extends AccountEntity implements IWFEntity {
+public class UserAccount extends AccountEntity implements IWFEntity, ICounterEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) UserAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 

@@ -264,8 +264,8 @@ public class InvoiceAggregateHandler {
 
         Auditable auditable = new Auditable(currentUser);
         boolean isEnterprise = appProvider.isEntreprise();
-        int invoiceRounding = appProvider.getInvoiceRounding();
-        RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
+        int rounding = appProvider.getRounding();
+        RoundingModeEnum invoiceRoundingMode = appProvider.getRoundingMode();
 
         BigDecimal amountTax = BigDecimal.ZERO;
         BigDecimal amountWithTax = BigDecimal.ZERO;
@@ -288,7 +288,7 @@ public class InvoiceAggregateHandler {
             
         } else {
 			BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amount, amount, currentTax.getPercent(),
-					isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
+					isEnterprise, rounding, invoiceRoundingMode.getRoundingMode());
 			amountWithoutTax = amounts[0];
 			amountWithTax = amounts[1];
 			amountTax = amounts[2];

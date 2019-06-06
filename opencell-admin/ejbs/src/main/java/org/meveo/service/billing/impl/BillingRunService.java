@@ -48,6 +48,7 @@ import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSequence;
@@ -56,6 +57,8 @@ import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RejectedBillingAccount;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -499,14 +502,78 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
         getEntityManager().flush();
 
-        Query queryInvoices = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
-        queryInvoices.setParameter("billingRun", billingRun);
-        queryInvoices.executeUpdate();
+		// deleting SubCategoryInvoiceAgregate
+		this.cleanSubCategoryInvoiceAgregateByBR(billingRun);
+
+		// deleting CategoryInvoiceAgregate
+		this.cleanCategoryInvoiceAgregateByBR(billingRun);
+
+		// deleting TaxInvoiceAgregate
+		this.cleanTaxInvoiceAgregateByBR(billingRun);
+
+		// deleting Invoice
+		this.cleanInvoiceByBR(billingRun);
 
         Query queryBA = getEntityManager().createQuery("update " + BillingAccount.class.getName() + " set billingRun=null where billingRun=:billingRun");
         queryBA.setParameter("billingRun", billingRun);
         queryBA.executeUpdate();
     }
+
+	private void cleanInvoiceByBR(BillingRun billingRun) {
+		Query queryInvoice = getEntityManager()
+				.createQuery(new StringBuilder("update RatedTransaction rt set rt.invoice = null ").append(
+						" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoice.billingRun=:billingRun ) ")
+						.toString());
+		queryInvoice.setParameter("billingRun", billingRun);
+		queryInvoice.executeUpdate();
+
+		Query queryForDeletion = getEntityManager()
+				.createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
+		queryForDeletion.setParameter("billingRun", billingRun);
+		queryForDeletion.executeUpdate();
+	}
+
+	private void cleanTaxInvoiceAgregateByBR(BillingRun billingRun) {
+		Query queryTaxInv = getEntityManager()
+				.createQuery(new StringBuilder("update RatedTransaction rt set rt.invoiceAgregateT = null ").append(
+						" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoiceAgregateT.billingRun=:billingRun ) ")
+						.toString());
+		queryTaxInv.setParameter("billingRun", billingRun);
+		queryTaxInv.executeUpdate();
+
+		Query queryForDeletion = getEntityManager()
+				.createQuery("delete from " + TaxInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+		queryForDeletion.setParameter("billingRun", billingRun);
+		queryForDeletion.executeUpdate();
+	}
+
+	private void cleanCategoryInvoiceAgregateByBR(BillingRun billingRun) {
+		Query queryCatInv = getEntityManager()
+				.createQuery(new StringBuilder("update RatedTransaction rt set rt.invoiceAgregateR = null ").append(
+						" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoiceAgregateR.billingRun=:billingRun ) ")
+						.toString());
+		queryCatInv.setParameter("billingRun", billingRun);
+		queryCatInv.executeUpdate();
+
+		Query queryForDeletion = getEntityManager().createQuery(
+				"delete from " + CategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+		queryForDeletion.setParameter("billingRun", billingRun);
+		queryForDeletion.executeUpdate();
+	}
+
+	private void cleanSubCategoryInvoiceAgregateByBR(BillingRun billingRun) {
+		Query querySubCat = getEntityManager()
+				.createQuery(new StringBuilder("update RatedTransaction rt set rt.invoiceAgregateF = null ").append(
+						" where rt.id in (select rtIn.id from RatedTransaction rtIn where rtIn.invoiceAgregateF.billingRun=:billingRun ) ")
+						.toString());
+		querySubCat.setParameter("billingRun", billingRun);
+		querySubCat.executeUpdate();
+
+		Query queryForDeletion = getEntityManager().createQuery(
+				"delete from " + SubCategoryInvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+		queryForDeletion.setParameter("billingRun", billingRun);
+		queryForDeletion.executeUpdate();
+	}
 
     /**
      * Checks if is active billing runs exist.
@@ -535,16 +602,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     public void rerateBillingRunTransactions(BillingRun billingRun) throws BusinessException {
         for (RatedTransaction ratedTransaction : billingRun.getRatedTransactions()) {
-        	List<WalletOperation> walletOperations = getEntityManager()
-    				.createNamedQuery("WalletOperation.listByRatedTransactionId", WalletOperation.class)
-    				.setParameter("ratedTransactionId", ratedTransaction.getId()).getResultList();
-        	
-			if (!walletOperations.isEmpty()) {
-				for (WalletOperation walletOperation : walletOperations) {
-					walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE);
-					walletOperationService.update(walletOperation);
-				}
-			}
+            List<WalletOperation> walletOperations = getEntityManager().createNamedQuery("WalletOperation.listByRatedTransactionId", WalletOperation.class)
+                .setParameter("ratedTransactionId", ratedTransaction.getId()).getResultList();
+
+            if (!walletOperations.isEmpty()) {
+                for (WalletOperation walletOperation : walletOperations) {
+                    walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE);
+                    walletOperationService.update(walletOperation);
+                }
+            }
         }
     }
 
@@ -643,7 +709,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param jobInstanceId the job instance id
      * @throws BusinessException the business exception
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws BusinessException {
 
@@ -689,7 +755,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param entities list of entities
      * @throws BusinessException business exception.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, List<? extends IBillableEntity> entities)
             throws BusinessException {
@@ -729,13 +795,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param waitingMillis The waiting millis
      * @param jobInstanceId The job instance id
      * @param result the Job execution result
-     * @param isForced is forced action
      * @throws BusinessException the business exception
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void assignInvoiceNumberAndIncrementBAInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result,
-            boolean isForced) throws BusinessException {
+    public void assignInvoiceNumberAndIncrementBAInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result)
+            throws BusinessException {
         List<InvoicesToNumberInfo> invoiceSummary = invoiceService.getInvoicesToNumberSummary(billingRun.getId());
         // Reserve invoice number for each invoice type/seller/invoice date combination
         for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
@@ -766,8 +831,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                asyncReturns.add(invoicingAsync.assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(billingRun, subListCreator.getNextWorkSet(), invoicesToNumberInfo, isForced,
-                    jobInstanceId, result, lastCurrentUser));
+                asyncReturns.add(invoicingAsync.assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(billingRun, subListCreator.getNextWorkSet(), invoicesToNumberInfo, jobInstanceId,
+                    result, lastCurrentUser));
                 try {
                     Thread.sleep(waitingMillis);
                 } catch (InterruptedException e) {
@@ -856,7 +921,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param result the Job execution result
      * @throws Exception the exception
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result) throws Exception {
         log.debug("Processing billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
@@ -902,15 +967,26 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
 
         boolean proceedToPostInvoicing = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())
-                && ((billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC) || appProvider.isAutomaticInvoicing()));
+                && ((billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) || appProvider.isAutomaticInvoicing()));
 
         if (proceedToPostInvoicing) {
             createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
+            if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC){
+                billingRun = billingRunExtensionService.findById(billingRun.getId());
+            }
         }
 
+        if (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) && billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC ) {
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTVALIDATED, null);
+            billingRun = billingRunExtensionService.findById(billingRun.getId());
+        }
+
+
         if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
-            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId, result, false);
+            invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
+            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
         }
     }
 
@@ -931,7 +1007,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         case POSTINVOICED:
         case POSTVALIDATED:
-            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, 1, 0, null, null, true);
+            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, 1, 0, null, null);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
             break;
 

@@ -221,7 +221,6 @@ public class FtpAdapterJobBean {
         } catch (Exception e) {
             log.error("", e);
         } finally {
-            result.setDone(true);
             result.setNbItemsToProcess(cpAll);
             result.setNbItemsProcessedWithError(cpKo);
             result.setNbItemsProcessedWithWarning(cpWarn);

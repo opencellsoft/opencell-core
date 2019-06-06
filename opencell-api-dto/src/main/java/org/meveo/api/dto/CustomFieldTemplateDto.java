@@ -47,9 +47,9 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
     protected String accountLevel;
 
     /**
-     * PROVIDER - Provider, SELLER - Seller, CUST - customer, CA - Customer account, BA - Billing Account, UA - User account, SUB - subscription, ACC - access, CHARGE - charge
-     * template, SERVICE - service template or service instance, OFFER_CATEGORY - Offer template category, OFFER - Offer template, JOB_XX - Job instance, CE_ - Custom entity
-     * instance.
+     * PROVIDER - Provider, Seller - Seller, Customer - customer, CustomerAccount - Customer account, BillingAccount - Billing Account, UserAccount - User account, Subscription - subscription, Access - access,
+     * ChargeTemplate - charge template, ServiceInstance - service instance, ServiceTemplate - service template, OfferTemplateCategory - Offer template category, OfferTemplate - Offer template,
+     * JOB_XX - Job instance, CE_ - Custom entity instance.
      */
     @XmlElement(required = false)
     protected String appliesTo;

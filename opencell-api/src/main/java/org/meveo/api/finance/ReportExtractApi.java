@@ -144,6 +144,7 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         }
 
         reportExtract.setCategory(dto.getCategory());
+        reportExtract.setOutputDir(dto.getOutputDir());
         reportExtract.setCode(dto.getCode());
         reportExtract.setDescription(dto.getDescription());
         reportExtract.setEndDate(dto.getEndDate());

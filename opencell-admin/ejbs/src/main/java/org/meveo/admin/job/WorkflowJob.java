@@ -17,6 +17,8 @@ import org.meveo.model.jobs.JobInstance;
  * The Class WorkflowJob execute the given workflow on each entity entity return by the given filter.
  * 
  * @see GenericWorkflowJob
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 //@Stateless
 @Deprecated
@@ -43,7 +45,7 @@ public class WorkflowJob /* extends Job */ {
 
 //        CustomFieldTemplate filterCF = new CustomFieldTemplate();
 //        filterCF.setCode("wfJob_filter");
-//        filterCF.setAppliesTo("JOB_WorkflowJob");
+//        filterCF.setAppliesTo("JobInstance_WorkflowJob");
 //        filterCF.setActive(true);
 //        filterCF.setDescription("Filter");
 //        filterCF.setFieldType(CustomFieldTypeEnum.ENTITY);
@@ -53,7 +55,7 @@ public class WorkflowJob /* extends Job */ {
 //
 //        CustomFieldTemplate worklowCF = new CustomFieldTemplate();
 //        worklowCF.setCode("wfJob_workflow");
-//        worklowCF.setAppliesTo("JOB_WorkflowJob");
+//        worklowCF.setAppliesTo("JobInstance_WorkflowJob");
 //        worklowCF.setActive(true);
 //        worklowCF.setDescription("Workflow");
 //        worklowCF.setFieldType(CustomFieldTypeEnum.ENTITY);
@@ -63,7 +65,7 @@ public class WorkflowJob /* extends Job */ {
 //
 //        CustomFieldTemplate nbRuns = new CustomFieldTemplate();
 //        nbRuns.setCode("wfJob_nbRuns");
-//        nbRuns.setAppliesTo("JOB_WorkflowJob");
+//        nbRuns.setAppliesTo("JobInstance_WorkflowJob");
 //        nbRuns.setActive(true);
 //        nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
 //        nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -73,7 +75,7 @@ public class WorkflowJob /* extends Job */ {
 //
 //        CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
 //        waitingMillis.setCode("wfJob_waitingMillis");
-//        waitingMillis.setAppliesTo("JOB_WorkflowJob");
+//        waitingMillis.setAppliesTo("JobInstance_WorkflowJob");
 //        waitingMillis.setActive(true);
 //        waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
 //        waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);

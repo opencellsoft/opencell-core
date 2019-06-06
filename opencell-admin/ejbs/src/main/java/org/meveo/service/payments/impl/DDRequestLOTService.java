@@ -39,9 +39,7 @@ import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-
 import org.meveo.model.admin.Seller;
-
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
@@ -71,14 +69,13 @@ import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CalendarBankingService;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DDRequestLOTService.
  * 
  * @author anasseh
- * 
  * @author Said Ramli
- * @lastModifiedVersion 5.3
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
@@ -172,8 +169,8 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		automatedPayment.setUnMatchingAmount(amount);
 		automatedPayment.setMatchingAmount(BigDecimal.ZERO);
 		automatedPayment.setAccountingCode(occTemplate.getAccountingCode());
-		automatedPayment.setOccCode(occTemplate.getCode());
-		automatedPayment.setOccDescription(occTemplate.getDescription());
+		automatedPayment.setCode(occTemplate.getCode());
+		automatedPayment.setDescription(occTemplate.getDescription());
 		automatedPayment.setTransactionCategory(occTemplate.getOccCategory());
 		automatedPayment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
 		automatedPayment.setCustomerAccount(customerAccount);

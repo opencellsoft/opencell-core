@@ -14,6 +14,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
@@ -23,6 +24,10 @@ import org.meveo.model.payments.PaymentVentilation;
 import org.meveo.model.payments.VentilationActionStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
+/**
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
+ */
 @Stateless
 public class PaymentVentilationService extends PersistenceService<PaymentVentilation> {
 
@@ -37,8 +42,11 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
 
     @Inject
     private MatchingCodeService matchingCodeService;
-    
-    
+
+    @Inject
+    private CustomerAccountService customerAccountService;
+
+
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void ventilatePayment(PaymentVentilation entity) throws Exception {
@@ -80,15 +88,16 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
         OtherTransactionGeneral originalOTG = (OtherTransactionGeneral) paymentVentilation.getOriginalOT();
 
         Payment payment = new Payment();
-        payment.setCustomerAccount(paymentVentilation.getCustomerAccount());
+        CustomerAccount customerAccount = customerAccountService.retrieveIfNotManaged(paymentVentilation.getCustomerAccount());
+        payment.setCustomerAccount(customerAccount);
         payment.setDescription(originalOTG.getDescription());
         payment.setPaymentMethod(originalOTG.getPaymentMethod());
         payment.setAmount(ventilationAmout);
         payment.setUnMatchingAmount(ventilationAmout);
         payment.setMatchingAmount(BigDecimal.ZERO);
         payment.setAccountingCode(occTemplate.getAccountingCode());
-        payment.setOccCode(occTemplate.getCode());
-        payment.setOccDescription(occTemplate.getDescription());
+        payment.setCode(occTemplate.getCode());
+        payment.setDescription(occTemplate.getDescription());
         payment.setTransactionCategory(occTemplate.getOccCategory());
         payment.setReference(originalOTG.getReference());
         payment.setTransactionDate(originalOTG.getTransactionDate());

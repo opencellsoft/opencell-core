@@ -37,8 +37,8 @@ import org.meveo.service.job.Job;
  * Import data to custom tables
  * 
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
- * 
  */
 @Stateless
 public class CustomTableImportJob extends Job {
@@ -62,22 +62,14 @@ public class CustomTableImportJob extends Job {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+
         try {
-            Long nbRuns = new Long(1);
-            Long waitingMillis = new Long(0);
-            try {
-                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
-                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
-                if (nbRuns == -1) {
-                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
-                }
-            } catch (Exception e) {
-                nbRuns = new Long(1);
-                waitingMillis = new Long(0);
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e);
-            }
 
             ParamBean parambean = paramBeanFactory.getInstance();
             String customTableDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "customTables" + File.separator;
@@ -213,17 +205,17 @@ public class CustomTableImportJob extends Job {
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("nbRuns");
-        nbRuns.setAppliesTo("JOB_CustomTableImportJob");
+        nbRuns.setAppliesTo("JobInstance_CustomTableImportJob");
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
-        nbRuns.setDefaultValue("1");
+        nbRuns.setDefaultValue("-1");
         nbRuns.setValueRequired(false);
         result.put("nbRuns", nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
         waitingMillis.setCode("waitingMillis");
-        waitingMillis.setAppliesTo("JOB_CustomTableImportJob");
+        waitingMillis.setAppliesTo("JobInstance_CustomTableImportJob");
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);

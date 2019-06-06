@@ -41,9 +41,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
@@ -56,7 +54,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
@@ -73,7 +70,6 @@ import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.omnifaces.util.Faces;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
 
 /**
  * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
@@ -135,7 +131,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     private Map<Long, Amounts> openBalance = new HashMap<>();
 
     // Retrieved wallet operations to improve GUI performance for Ajax request
-    private Map<String, List<WalletOperation>> walletOperations = new HashMap<String, List<WalletOperation>>();
+    private Map<String, LazyDataModel<WalletOperation>> walletOperations = new HashMap<String, LazyDataModel<WalletOperation>>();
 
     private EntityListDataModelPF<ProductInstance> productInstances = null;
 
@@ -320,15 +316,19 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         return result;
     }
 
-    public List<WalletOperation> getWalletOperations(String walletCode) {
+    
+    public LazyDataModel<WalletOperation> getWalletOperations(String walletCode) {   	
 
-        if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
-            log.debug("getWalletOperations {}", walletCode);
-            walletOperations.put(walletCode, walletOperationService.findByUserAccountAndWalletCode(walletCode, entity, false));
-        }
-
-        return walletOperations.get(walletCode);
-    }
+   	 HashMap<String, Object> filters = new HashMap<String, Object>();
+   	 filters.put("wallet.code", walletCode);
+   	 filters.put("wallet.userAccount", entity);
+   	 
+		if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
+			log.debug("getWalletOperations {}", walletCode);
+			walletOperations.put(walletCode,walletOperationBean.getLazyDataModel(filters, true));
+		}		 
+		return walletOperations.get(walletCode);
+   }
 
     @Produces
     @Named("getRatedTransactionsInvoiced")
@@ -496,11 +496,11 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public List<SelectItem> getWalletOperationStatusList() {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("messages", Faces.getLocale());
 
-        List<SelectItem> filterLockedOptions = new ArrayList<SelectItem>(Arrays.asList(new SelectItem("OPEN", resourceBundle.getString("walletOperationStatus.open")),
-            new SelectItem("TREATED", resourceBundle.getString("walletOperationStatus.treated")),
-            new SelectItem("CANCELED", resourceBundle.getString("walletOperationStatus.canceled")),
-            new SelectItem("RESERVED", resourceBundle.getString("walletOperationStatus.reserved")),
-            new SelectItem("TO_RERATE", resourceBundle.getString("walletOperationStatus.to_rerate"))));
+        List<SelectItem> filterLockedOptions = new ArrayList<SelectItem>(Arrays.asList(new SelectItem(WalletOperationStatusEnum.OPEN, resourceBundle.getString("walletOperationStatus.open")),
+            new SelectItem(WalletOperationStatusEnum.TREATED, resourceBundle.getString("walletOperationStatus.treated")),
+            new SelectItem(WalletOperationStatusEnum.CANCELED, resourceBundle.getString("walletOperationStatus.canceled")),
+            new SelectItem(WalletOperationStatusEnum.RESERVED, resourceBundle.getString("walletOperationStatus.reserved")),
+            new SelectItem(WalletOperationStatusEnum.TO_RERATE, resourceBundle.getString("walletOperationStatus.to_rerate"))));
 
         return filterLockedOptions;
     }
@@ -601,11 +601,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
             messages.info(new BundleKey("messages", "productInstance.saved.ok"));
         }
-    }
-    public List<UserAccount> listAllUserAccountWithBillingAccountAndDiscountPlan() {
-        List<UserAccount> userAccounts = super.listAll();
-        userAccounts.forEach(userAccount -> userAccount.getBillingAccount().getDiscountPlanInstances().size());
-        return userAccounts;
     }
 
     public List<Seller> listSellers() {

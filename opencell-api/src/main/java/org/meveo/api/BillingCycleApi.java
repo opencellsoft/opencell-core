@@ -16,9 +16,11 @@ import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -36,6 +38,9 @@ public class BillingCycleApi extends BaseApi {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     public void create(BillingCycleDto postData) throws MeveoApiException, BusinessException {
 
@@ -71,6 +76,14 @@ public class BillingCycleApi extends BaseApi {
             }
         }
 
+        ScriptInstance scriptInstance = null;
+        if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+            }
+        }
+
         BillingCycle billingCycle = new BillingCycle();
         billingCycle.setCode(postData.getCode());
         billingCycle.setDescription(postData.getDescription());
@@ -85,6 +98,7 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingCycle.setInvoiceType(invoiceType);
+        billingCycle.setScriptInstance(scriptInstance);
         billingCycle.setInvoiceTypeEl(postData.getInvoiceTypeEl());
         billingCycle.setInvoiceTypeElSpark(postData.getInvoiceTypeElSpark());
         billingCycle.setReferenceDate(postData.getReferenceDate());
@@ -137,6 +151,14 @@ public class BillingCycleApi extends BaseApi {
                 throw new EntityDoesNotExistsException(InvoiceType.class, postData.getInvoiceTypeCode());
             }
             billingCycle.setInvoiceType(invoiceType);
+        }
+
+        if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+            }
+            billingCycle.setScriptInstance(scriptInstance);
         }
 
         billingCycle.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
