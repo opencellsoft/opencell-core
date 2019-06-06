@@ -1312,22 +1312,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
             String massUpdateWithTaxChangeSql = isEnterprise ? "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2B"
                     : "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2C";
 
-//            for (SubCategoryInvoiceAgregate scAggregate : subcategoryAggregates) {
-//
-//                SubListCreator<Long> listIterator = new SubListCreator<Long>(1000, scAggregate.getRatedTransactionIdsNoTaxChange());
-//                while (listIterator.isHasNext()) {
-//                    em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
-//                        .setParameter("invoiceAgregateF", scAggregate).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
-//                }
-//                listIterator = new SubListCreator<Long>(1000, scAggregate.getRatedTransactionIdsTaxRecalculated());
-//                while (listIterator.isHasNext()) {
-//                    em.createNamedQuery(massUpdateWithTaxChangeSql).setParameter("billingRun", billingRun).setParameter("invoice", invoice)
-//                        .setParameter("invoiceAgregateF", scAggregate).setParameter("tax", scAggregate.getTax()).setParameter("taxPercent", scAggregate.getTax().getPercent())
-//                        .setParameter("taxPercentDecimal",
-//                            BigDecimal.ONE.add(scAggregate.getTax().getPercent().divide(NumberUtils.HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP)))
-//                        .setParameter("round", rtRounding).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
-//                }
-//            }
+            for (SubCategoryInvoiceAgregate scAggregate : subcategoryAggregates) {
+
+                SubListCreator<Long> listIterator = new SubListCreator<Long>(1000, scAggregate.getRatedTransactionIdsNoTaxChange());
+                while (listIterator.isHasNext()) {
+                    em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
+                        .setParameter("invoiceAgregateF", scAggregate).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
+                }
+                listIterator = new SubListCreator<Long>(1000, scAggregate.getRatedTransactionIdsTaxRecalculated());
+                while (listIterator.isHasNext()) {
+                    em.createNamedQuery(massUpdateWithTaxChangeSql).setParameter("billingRun", billingRun).setParameter("invoice", invoice)
+                        .setParameter("invoiceAgregateF", scAggregate).setParameter("tax", scAggregate.getTax()).setParameter("taxPercent", scAggregate.getTax().getPercent())
+                        .setParameter("taxPercentDecimal",
+                            BigDecimal.ONE.add(scAggregate.getTax().getPercent().divide(NumberUtils.HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP)))
+                        .setParameter("round", rtRounding).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
+                }
+            }
 
             log.error("AKKKKKKKKKKKKKKKK invoice took with RT save  {}", System.currentTimeMillis() - start);
             
