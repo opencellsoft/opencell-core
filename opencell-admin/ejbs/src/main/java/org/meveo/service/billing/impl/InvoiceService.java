@@ -2003,7 +2003,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public void produceFilesAndAO(boolean produceXml, boolean producePdf, boolean generateAO, Long invoiceId, boolean isDraft)
             throws BusinessException, InvoiceExistException, ImportInvoiceException {
-        if (isPrepaidReport(invoiceId)) {
+        if (invoiceService.isPrepaidReport(invoiceId)) {
             return;
         }
 
