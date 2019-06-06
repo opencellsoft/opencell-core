@@ -39,6 +39,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
@@ -1765,32 +1766,27 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
 
             } else if (entity instanceof BillingAccount) {
+
                 log.error("AKK will retrieve RTs summary for BA {}/{}/{}", entity.getId(), firstTransactionDate, lastTransactionDate);
                 long start = System.currentTimeMillis();
                 List<Object[]> rts = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccount", entity)
                     .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
                 long end = System.currentTimeMillis();
-                log.error("AKK RT summary retrieval took {}", end - start);
-                start = System.currentTimeMillis();
 
-                for (Object[] objects : rts) {
-                    long i = ((Long) objects[0]).longValue() + ((Long) objects[0]).longValue();
-                }
-                end = System.currentTimeMillis();
-                log.error("AKK RT summary loop took {}", end - start);
+                log.error("AKK RT summary retrieval took {}", end - start);
 
                 start = System.currentTimeMillis();
                 List<RatedTransaction> rtsIbj = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount").setParameter("billingAccount", entity)
                     .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-                 end = System.currentTimeMillis();
-                log.error("AKK RT object retrieval took {}", end - start);
-                start = System.currentTimeMillis();
-
-                for (RatedTransaction objects : rtsIbj) {
-                    String code =  objects.getCode() + objects.getCode();
-                }
                 end = System.currentTimeMillis();
-                log.error("AKK RT object loop took {}", end - start);
+                log.error("AKK RT object retrieval took {}", end - start);
+
+                start = System.currentTimeMillis();
+                List<Tuple> tuples = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat", Tuple.class).setParameter("billingAccount", entity)
+                    .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+                end = System.currentTimeMillis();
+
+                log.error("AKK RT tuple retrieval took {}", end - start);
 
                 return rts;
             }

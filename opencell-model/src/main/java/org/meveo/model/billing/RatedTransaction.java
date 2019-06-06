@@ -92,7 +92,7 @@ import org.meveo.model.rating.EDR;
                 + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate ORDER BY seller.id"),
         @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccountFlat", query = "SELECT r.seller.id, r.userAccount.id, r.wallet.id, r.invoiceSubCategory.id, r.tax.id, r.id, r.amountWithoutTax, r.amountWithTax, r.orderNumber "
                 + " FROM RatedTransaction r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND r.billingAccount=:billingAccount "
-                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.usageDate desc "),
 
         @NamedQuery(name = "RatedTransaction.summarizeToInvoiceByOrderNumber", query = "SELECT r.billingAccount.id, r.seller.id, r.userAccount.id, r.wallet.id, r.invoiceSubCategory.id, r.tax.id, sum(r.amountWithoutTax), sum(r.amountWithTax), count(*) "
                 + " FROM RatedTransaction r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND r.orderNumber=:orderNumber "
