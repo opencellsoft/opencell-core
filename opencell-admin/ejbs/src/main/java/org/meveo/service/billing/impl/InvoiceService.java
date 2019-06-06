@@ -1104,12 +1104,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Should tax calculation on subcategory level be done externally
         boolean calculateExternalTax = "YES".equalsIgnoreCase((String) appProvider.getCfValue("OPENCELL_ENABLE_TAX_CALCULATION"));
 
-        log.debug("AKK will retrieve RTs summary for BA {}/{}/{}", entityToInvoice.getId(), firstTransactionDate, lastTransactionDate);
-
         List<Object[]> rts = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter);
 
         long start = System.currentTimeMillis();
-        log.debug("AKK RTs retrieved");
+
         // Instantiated invoices. Key ba.id_seller.id_invoiceType.id
         Map<String, Invoice> invoices = new HashMap<>();
         // Instantiated subcategories. Key ba.id_seller.id_invoiceType.id_ua.id_walletInstance.id_invoiceSubCategory.id_tax.id
@@ -1123,7 +1121,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             isExonerated = billingAccount.isExoneratedFromtaxes();
             if (isExonerated == null) {
                 log.debug("AKK exonerate started to calculate");
-                
+
                 isExonerated = billingAccountService.isExonerated(billingAccount);
                 billingAccount.setExoneratedFromtaxes(isExonerated);
             }
@@ -1303,16 +1301,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setOrders(orders);
             }
 
-            log.error("AKK will save invoice");
+            log.debug("AKK will save invoice");
             this.create(invoice);
 
             // Update rated transactions with invoice information and recalculated tax/amounts if changed
             long end = System.currentTimeMillis();
-            log.error("AKKKKKKKKKKKKKKKK invoice took {}", end - start);
+            log.error("AKKKKKKKKKKKKKKKK invoice {}  took {}", entityToInvoice.getId(), end - start);
             String massUpdateWithTaxChangeSql = isEnterprise ? "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2B"
                     : "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2C";
 
             for (SubCategoryInvoiceAgregate scAggregate : subcategoryAggregates) {
+
+                long startU = System.currentTimeMillis();
 
                 SubListCreator<Long> listIterator = new SubListCreator<Long>(1000, scAggregate.getRatedTransactionIdsNoTaxChange());
                 while (listIterator.isHasNext()) {
@@ -1327,10 +1327,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             BigDecimal.ONE.add(scAggregate.getTax().getPercent().divide(NumberUtils.HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP)))
                         .setParameter("round", rtRounding).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
                 }
+                long endU = System.currentTimeMillis();
+                log.error("AKK update {} took {}", entityToInvoice.getId(), endU - startU);
             }
 
-            log.error("AKKKKKKKKKKKKKKKK invoice took with RT save  {}", System.currentTimeMillis() - start);
-            
+            log.error("AKKKKKKKKKKKKKKKK invoice took {} with RT save  {}", entityToInvoice.getId(), System.currentTimeMillis() - start);
+
             invoice.assignTemporaryInvoiceNumber();
 
             if (assignNumber) {

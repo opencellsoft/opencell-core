@@ -20,6 +20,9 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -39,9 +42,9 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
@@ -1770,22 +1773,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 log.error("AKK will retrieve RTs summary for BA {}/{}/{}", entity.getId(), firstTransactionDate, lastTransactionDate);
 
                 long start = System.currentTimeMillis();
-                List<RatedTransaction> rtsIbj = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount").setParameter("billingAccount", entity)
-                    .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-                long end = System.currentTimeMillis();
-                log.error("AKK RT object retrieval took {}", end - start);
-
-                start = System.currentTimeMillis();
-                List<Tuple> tuples = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat", Tuple.class).setParameter("billingAccount", entity)
-                    .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-                end = System.currentTimeMillis();
-
-                log.error("AKK RT tuple retrieval took {}", end - start);
-
-                start = System.currentTimeMillis();
                 List<Object[]> rts = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccount", entity)
                     .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-                end = System.currentTimeMillis();
+                long end = System.currentTimeMillis();
 
                 log.error("AKK RT summary retrieval took {}", end - start);
 
@@ -1793,5 +1783,141 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
         }
         return new ArrayList<Object[]>();
+    }
+
+    @SuppressWarnings("unchecked")
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public List<Object[]> getRTsToInvoiceByBAAndUpdate(IBillableEntity entity, Long baId, Date firstTransactionDate, Date lastTransactionDate, List<Long> ids, int nrRead,
+            int nrUpdate, boolean jpaQuery) {
+
+        log.error("AKK will retrieve RTs summary for BA {}/{}/{}", entity.getId(), firstTransactionDate, lastTransactionDate);
+
+        List<Object[]> rts = null;
+        EntityManager em = getEntityManager();
+        for (int i = 0; i < nrRead; i++) {
+            long start = System.currentTimeMillis();
+
+            if (jpaQuery) {
+
+                rts = em.createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat")
+                    .setParameter("billingAccount", baId != null ? em.getReference(BillingAccount.class, baId) : entity).setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+
+            } else {
+
+                final List<Object[]> rtData = new ArrayList<>();
+
+                Session hibernateSession = em.unwrap(Session.class);
+
+                hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+                    @Override
+                    public void execute(Connection connection) throws SQLException {
+
+                        try (ResultSet rs = connection.createStatement().executeQuery(
+                            "select seller_id, user_account_id, wallet_id, invoice_sub_category_id, tax_id, id, amount_without_tax, amount_with_tax, order_number from billing_rated_transaction where status='OPEN' and billing_account__id="
+                                    + (baId != null ? baId : entity.getId())
+                                    + " and to_date('01-01-0', 'DD-MM-YYYY')<usage_date and usage_date<to_date('06-06-2019', 'DD-MM-YYYY')")) {
+
+                            while (rs.next()) {
+
+                                rtData.add(new Object[] { rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getLong(4), rs.getLong(5), rs.getLong(6), rs.getBigDecimal(7),
+                                        rs.getBigDecimal(8), rs.getString(9) });
+
+                            }
+
+                        } catch (SQLException e) {
+                            log.error("Failed to retrieve RT summary for BA", e);
+                            throw e;
+                        }
+                    }
+                });
+                rts = rtData;
+            }
+
+            long end = System.currentTimeMillis();
+
+            log.error("AKK RT summary retrieval took {}", end - start);
+        }
+
+        for (int i = 0; i < nrUpdate; i++) {
+            long start = System.currentTimeMillis();
+
+            em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", em.getReference(BillingRun.class, 28L))
+                .setParameter("invoice", em.getReference(Invoice.class, 8663L)).setParameter("invoiceAgregateF", em.getReference(SubCategoryInvoiceAgregate.class, 18553L))
+                .setParameter("ids", ids).executeUpdate();
+
+            long end = System.currentTimeMillis();
+            log.error("AKK update took {}", end - start);
+        }
+        return rts;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Object[]> getRTsToInvoiceByBAAndUpdateSameTrans(IBillableEntity entity, Long baId, Date firstTransactionDate, Date lastTransactionDate, List<Long> ids, int nrRead,
+            int nrUpdate, boolean jpaQuery) {
+
+        log.error("AKK will retrieve RTs summary for BA {}/{}/{}", entity.getId(), firstTransactionDate, lastTransactionDate);
+
+        List<Object[]> rts = null;
+        EntityManager em = getEntityManager();
+        for (int i = 0; i < nrRead; i++) {
+            long start = System.currentTimeMillis();
+
+            if (jpaQuery) {
+
+                rts = em.createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat")
+                    .setParameter("billingAccount", baId != null ? em.getReference(BillingAccount.class, baId) : entity).setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+
+            } else {
+
+                final List<Object[]> rtData = new ArrayList<>();
+
+                Session hibernateSession = em.unwrap(Session.class);
+
+                hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+                    @Override
+                    public void execute(Connection connection) throws SQLException {
+
+                        try (ResultSet rs = connection.createStatement().executeQuery(
+                            "select seller_id, user_account_id, wallet_id, invoice_sub_category_id, tax_id, id, amount_without_tax, amount_with_tax, order_number from billing_rated_transaction where status='OPEN' and billing_account__id="
+                                    + (baId != null ? baId : entity.getId())
+                                    + " and to_date('01-01-0', 'DD-MM-YYYY')<usage_date and usage_date<to_date('06-06-2019', 'DD-MM-YYYY')")) {
+
+                            while (rs.next()) {
+
+                                rtData.add(new Object[] { rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getLong(4), rs.getLong(5), rs.getLong(6), rs.getBigDecimal(7),
+                                        rs.getBigDecimal(8), rs.getString(9) });
+
+                            }
+
+                        } catch (SQLException e) {
+                            log.error("Failed to retrieve RT summary for BA", e);
+                            throw e;
+                        }
+                    }
+                });
+                rts = rtData;
+            }
+
+            long end = System.currentTimeMillis();
+
+            log.error("AKK RT summary retrieval took {}", end - start);
+        }
+
+        for (int i = 0; i < nrUpdate; i++) {
+            long start = System.currentTimeMillis();
+
+            em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", em.getReference(BillingRun.class, 28L))
+                .setParameter("invoice", em.getReference(Invoice.class, 8663L)).setParameter("invoiceAgregateF", em.getReference(SubCategoryInvoiceAgregate.class, 18553L))
+                .setParameter("ids", ids).executeUpdate();
+
+            long end = System.currentTimeMillis();
+            log.error("AKK update took {}", end - start);
+        }
+        return rts;
     }
 }
