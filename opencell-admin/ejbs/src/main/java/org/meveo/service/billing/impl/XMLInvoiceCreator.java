@@ -167,6 +167,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
+    @Inject
+    private ServiceSingleton serviceSingleton;
+
     /** transformer factory. */
     private TransformerFactory transfac = TransformerFactory.newInstance();
 
@@ -293,6 +296,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      */
     public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
 
+        if (invoice.getId() != null) {
+            invoice = invoiceService.refreshOrRetrieve(invoice);
+        }
         Long id = invoice.getId();
         String alias = invoice.getAlias();
         String invoiceNumber = invoice.getInvoiceNumber();
@@ -335,7 +341,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode(); 
 
         if (!isInvoiceAdjustment && billingRun != null && BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus()) && invoiceNumber == null) {
-            invoiceService.assignInvoiceNumber(invoice);
+            invoice = serviceSingleton.assignInvoiceNumber(invoice);
         }
 
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
