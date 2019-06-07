@@ -26,6 +26,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -95,6 +96,8 @@ public class AccountOperationApi extends BaseApi {
             missingParameters.add("Type");
             handleMissingParameters();
         }
+
+        Object aoSubclassObject = ReflectionUtils.getSubclassObjectByDiscriminatorValue(AccountOperation.class, postData.getType());
         AccountOperation accountOperation = null;
         CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount());
         OperationCategoryEnum transactionCategory = postData.getTransactionCategory();
@@ -102,16 +105,16 @@ public class AccountOperationApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
         }
 
-        String OccType = OtherCreditAndCharge.class.getAnnotation(DiscriminatorValue.class).value();
-        String RejectedPaymentType = RejectedPayment.class.getAnnotation(DiscriminatorValue.class).value();
-        String WriteOffType = WriteOff.class.getAnnotation(DiscriminatorValue.class).value();
+        if (aoSubclassObject == null) {
+            throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment, W=writeOff.");
+        }
 
-        if (OccType.equals(postData.getType()) && postData.getOtherCreditAndCharge() != null) {
+        if (aoSubclassObject instanceof OtherCreditAndCharge && postData.getOtherCreditAndCharge() != null) {
             // otherCreditAndCharge
             OtherCreditAndCharge otherCreditAndCharge = new OtherCreditAndCharge();
             otherCreditAndCharge.setOperationDate(postData.getOtherCreditAndCharge().getOperationDate());
             accountOperation = otherCreditAndCharge;
-        } else if (RejectedPaymentType.equals(postData.getType()) && postData.getRejectedPayment() != null) {
+        } else if (aoSubclassObject instanceof RejectedPayment && postData.getRejectedPayment() != null) {
             // rejectedPayment
             RejectedPayment rejectedPayment = new RejectedPayment();
 
@@ -124,14 +127,10 @@ public class AccountOperationApi extends BaseApi {
             rejectedPayment.setRejectedCode(postData.getRejectedPayment().getRejectedCode());
 
             accountOperation = rejectedPayment;
-        } else if (WriteOffType.equals(postData.getType())) {
+        } else if (aoSubclassObject instanceof WriteOff) {
             WriteOff writeOff = new WriteOff();
             transactionCategory = OperationCategoryEnum.CREDIT;
             accountOperation = writeOff;
-        }
-
-        if (accountOperation == null) {
-            throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment, W=writeOff.");
         }
 
         accountOperation.setDueDate(postData.getDueDate());
