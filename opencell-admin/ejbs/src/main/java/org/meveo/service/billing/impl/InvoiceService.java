@@ -123,6 +123,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
@@ -1918,7 +1919,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException General business exception
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public List<Invoice> generateInvoice(IBillableEntity entity, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft)
+    public List<Invoice> generateInvoice(IBillableEntity entity, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft, CustomFieldValues customFieldValues)
             throws BusinessException {
 
         boolean produceXml = (generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
@@ -1930,6 +1931,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         List<Invoice> invoicesWNumber = new ArrayList<Invoice>();
         for (Invoice invoice : invoices) {
+            if (customFieldValues != null) {
+                invoice.setCfValues(customFieldValues);
+            }
             try {
                 invoicesWNumber.add(serviceSingleton.assignInvoiceNumber(invoice));
             } catch (Exception e) {
