@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.DiscriminatorValue;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
@@ -101,12 +102,16 @@ public class AccountOperationApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
         }
 
-        if ("OCC".equals(postData.getType()) && postData.getOtherCreditAndCharge() != null) {
+        String OccType = OtherCreditAndCharge.class.getAnnotation(DiscriminatorValue.class).value();
+        String RejectedPaymentType = RejectedPayment.class.getAnnotation(DiscriminatorValue.class).value();
+        String WriteOffType = WriteOff.class.getAnnotation(DiscriminatorValue.class).value();
+
+        if (OccType.equals(postData.getType()) && postData.getOtherCreditAndCharge() != null) {
             // otherCreditAndCharge
             OtherCreditAndCharge otherCreditAndCharge = new OtherCreditAndCharge();
             otherCreditAndCharge.setOperationDate(postData.getOtherCreditAndCharge().getOperationDate());
             accountOperation = otherCreditAndCharge;
-        } else if ("R".equals(postData.getType()) && postData.getRejectedPayment() != null) {
+        } else if (RejectedPaymentType.equals(postData.getType()) && postData.getRejectedPayment() != null) {
             // rejectedPayment
             RejectedPayment rejectedPayment = new RejectedPayment();
 
@@ -119,14 +124,14 @@ public class AccountOperationApi extends BaseApi {
             rejectedPayment.setRejectedCode(postData.getRejectedPayment().getRejectedCode());
 
             accountOperation = rejectedPayment;
-        } else if ("W".equals(postData.getType())) {
+        } else if (WriteOffType.equals(postData.getType())) {
             WriteOff writeOff = new WriteOff();
             transactionCategory = OperationCategoryEnum.CREDIT;
             accountOperation = writeOff;
         }
 
         if (accountOperation == null) {
-            throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment.");
+            throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment, W=writeOff.");
         }
 
         accountOperation.setDueDate(postData.getDueDate());
