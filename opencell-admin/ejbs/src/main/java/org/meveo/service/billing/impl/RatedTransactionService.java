@@ -1676,21 +1676,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         rt.getAmountWithTax(), entity instanceof Order ? rt.getBillingAccount().getId() : rt.getOrderNumber() })
                 .collect(Collectors.toList());
 
-        } else {
+        } else if (entity instanceof Order) {
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumberFlat").setParameter("orderNumber", ((Order) entity).getOrderNumber())
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
 
-            if (entity instanceof Order) {
-                return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumberFlat").setParameter("orderNumber", ((Order) entity).getOrderNumber())
-                    .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+        } else if (entity instanceof Subscription) {
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscriptionFlat").setParameter("subscription", entity)
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
 
-            } else if (entity instanceof Subscription) {
-                return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscriptionFlat").setParameter("subscription", entity)
-                    .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-
-            } else if (entity instanceof BillingAccount) {
-                return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccount", entity)
-                    .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-            }
+        } else if (entity instanceof BillingAccount) {
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccount", entity)
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
         }
+        
         return new ArrayList<Object[]>();
     }
 }
