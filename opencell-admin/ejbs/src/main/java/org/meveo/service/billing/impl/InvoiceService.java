@@ -172,6 +172,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /** The Constant INVOICE_SEQUENCE. */
     public final static String INVOICE_SEQUENCE = "INVOICE_SEQUENCE";
 
+    private static int RT_SUMMARY_SELLER_ID = 0;
+    private static int RT_SUMMARY_UA_ID = 1;
+    private static int RT_SUMMARY_WALLET_ID = 2;
+    private static int RT_SUMMARY_INVOICE_CAT_ID = 3;
+    private static int RT_SUMMARY_TAX_ID = 4;
+    private static int RT_SUMMARY_ID = 5;
+    private static int RT_SUMMARY_AMOUNT_WITHOUT_TAX = 6;
+    private static int RT_SUMMARY_AMOUNT_WITH_TAX = 7;
+    private static int RT_SUMMARY_BA_ID_ORDER_NUM = 8;
+
     /** The p DF parameters construction. */
     @EJB
     private PDFParametersConstruction pDFParametersConstruction;
@@ -253,6 +263,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private TaxService taxService;
 
+    @Inject
+    private UserAccountService userAccountService;
+
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
 
@@ -272,12 +285,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Description translation map.
      */
     private Map<String, String> descriptionMap = new HashMap<>();
-
-    /**
-     * Tax change mapping. Key is ba.id_seller.id_invoiceType.id_ua.id_walletInstance.id_invoiceSubCategory.id_tax.id and value is an array of [Tax to apply, True/false if tax has
-     * changed]
-     */
-    private Map<String, Object[]> taxChangeMap = new HashMap<>();
 
     /**
      * Gets the invoice.
@@ -654,7 +661,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
-        // TODO AKK need to add a check if its a prepaid transaction group.
+        // TODO Khalid need to add a check if its a prepaid transaction group.
 
         // Split RTs billing account groups to billing account/seller groups
         log.debug("Split RTs billing account groups to billing account/seller groups");
@@ -824,250 +831,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * 
      * @param entityToInvoice Entity to invoice
      * @param billingRun Billing run
-     * @param invoiceDate Invoice date
-     * @param firstTransactionDate Transaction usage date filter - start date
-     * @param lastTransactionDate Transaction usage date filter - end date
-     * @param isDraft Is it a draft invoice
-     * @param assignNumber Should a final invoice number be assigned
-     * @param billingCycle Billing cycle applicable to billable entity or to billing run
-     * @param billingAccount Payment method. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will
-     *        be determined for each rated transaction.
-     * @param paymentMethod Payment method. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will be
-     *        determined for each billing account occurrence.
-     * @param defaultInvoiceType Invoice type. A default invoice type for postpaid rated transactions. In case of prepaid RTs, a prepaid invoice type is used. Provided in case of
-     *        Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will be determined for each billing account occurrence.
-     * @param balanceDue Balance due. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will be
-     *        determined for each billing account occurrence.
-     * @param totalInvoiceBalance Total invoice balance. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and
-     *        therefore will be determined for each billing account occurrence.
-     * @return A list of invoices
-     * @throws BusinessException General business exception
-     */
-    @SuppressWarnings("unchecked")
-    private List<Invoice> createAggregatesAndInvoiceByDB(IBillableEntity entityToInvoice, BillingRun billingRun, Date invoiceDate, Date firstTransactionDate,
-            Date lastTransactionDate, boolean isDraft, boolean assignNumber, BillingCycle billingCycle, BillingAccount billingAccount, PaymentMethod paymentMethod,
-            InvoiceType defaultInvoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance) throws BusinessException {
-
-        List<Invoice> invoiceList = new ArrayList<>();
-        EntityManager em = getEntityManager();
-
-        boolean isEnterprise = appProvider.isEntreprise();
-        int rtRounding = appProvider.getRounding();
-        int invoiceRounding = appProvider.getInvoiceRounding();
-        RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
-        Tax taxZero = null;
-
-        // Should tax calculation on subcategory level be done externally
-        boolean calculateExternalTax = "YES".equalsIgnoreCase((String) appProvider.getCfValue("OPENCELL_ENABLE_TAX_CALCULATION"));
-
-        long lastId = ratedTransactionService.getLastRatedTransactionId();
-
-        List<Object[]> summaryItems = ratedTransactionService.listSummaryOfRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate);
-
-        // Instantiated invoices. Key ba.id_seller.id_invoiceType.id
-        Map<String, Invoice> invoices = new HashMap<>();
-        // Summary information to update RTs with invoice and subcategory aggregate info.
-        // Key ba.id_seller.id_invoiceType.id Value array of: subcategoryAggregate, previous tax
-        Map<String, List<Object[]>> rtUpdateInfos = new HashMap<>();
-        // Instantiated subcategories. Key ba.id_seller.id_invoiceType.id_ua.id_walletInstance.id_invoiceSubCategory.id_tax.id
-        Map<String, SubCategoryInvoiceAgregate> subCategoryAggregates = new HashMap<>();
-        // Billing accounts exoneration from taxes. Key ba.id
-        Map<Long, Boolean> exonerations = new HashMap<>();
-
-        Boolean isExonerated = null;
-        if (billingAccount != null) {
-            isExonerated = billingAccount.isExoneratedFromtaxes();
-            if (isExonerated == null) {
-                isExonerated = billingAccountService.isExonerated(billingAccount);
-                billingAccount.setExoneratedFromtaxes(isExonerated);
-            }
-            exonerations.put(billingAccount.getId(), isExonerated);
-        }
-
-        for (Object[] summary : summaryItems) {
-            Long sellerId = (Long) summary[1];
-            Long baId = (Long) summary[0];
-            // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
-            if (entityToInvoice instanceof Order) {
-                // Retrieve BA and determine invoice type only if it has not changed from the last iteration
-                if (billingAccount == null || !billingAccount.getId().equals(baId)) {
-                    billingAccount = em.find(BillingAccount.class, (Long) summary[0]);
-                    if (!exonerations.containsKey(billingAccount.getId())) {
-                        isExonerated = billingAccount.isExoneratedFromtaxes();
-                        if (isExonerated == null) {
-                            isExonerated = billingAccountService.isExonerated(billingAccount);
-                            billingAccount.setExoneratedFromtaxes(isExonerated);
-                        }
-                        exonerations.put(billingAccount.getId(), isExonerated);
-                    } else {
-                        isExonerated = exonerations.get(billingAccount.getId());
-                    }
-                    defaultInvoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, billingAccount);
-                }
-            }
-
-            InvoiceType invoiceType = defaultInvoiceType;
-            // Override invoice type for prepaid transactions
-            // TODO AKK deterimine if RT is of prepaid type - maybe from walletId??
-//            if (isRtPrepaid) {
-//                invoiceType = determineInvoiceType(true, false, null, null, null);
-//            }            
-
-            String invoiceKey = baId + "_" + sellerId + "_" + invoiceType.getId();
-            Invoice invoice = invoices.get(invoiceKey);
-
-            if (invoice == null) {
-
-                // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
-                if (entityToInvoice instanceof Order) {
-                    if (paymentMethod == null) {
-                        paymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
-                    }
-                    // Due balance are calculated on CA level and will be the same for all rated transactions
-                    balanceDue = customerAccountService.customerAccountBalanceDue(billingAccount.getCustomerAccount(), new Date());
-                    totalInvoiceBalance = customerAccountService.customerAccountFutureBalanceExigibleWithoutLitigation(billingAccount.getCustomerAccount());
-
-                }
-
-                invoice = instantiateInvoice(entityToInvoice, billingAccount, em.find(Seller.class, sellerId), billingRun, invoiceDate, isDraft, billingCycle, paymentMethod,
-                    invoiceType, balanceDue, totalInvoiceBalance);
-
-                invoices.put(invoiceKey, invoice);
-                rtUpdateInfos.put(invoiceKey, new ArrayList<Object[]>());
-            }
-
-            UserAccount userAccount = summary[2] == null ? null : em.getReference(UserAccount.class, (Long) summary[2]);
-            WalletInstance walletInstance = summary[3] == null ? null : em.getReference(WalletInstance.class, (Long) summary[3]);
-            InvoiceSubCategory invoiceSubCategory = em.find(InvoiceSubCategory.class, (Long) summary[4]);
-            Tax tax = em.find(Tax.class, (Long) summary[5]);
-
-            // InvoiceType.taxScript will calculate all tax aggregates at once. If present, don't calculate on each subcategory level
-            boolean calculateTaxOnSubCategoryLevel = invoiceType.getTaxScript() == null;
-
-            String scaKeyWithoutTax = invoiceKey + "_" + (userAccount != null ? userAccount.getId() : "") + "_" + (walletInstance != null ? walletInstance.getId() : "") + "_"
-                    + invoiceSubCategory.getId() + "_";
-            String scaKey = scaKeyWithoutTax + (calculateTaxOnSubCategoryLevel ? tax.getId() : "");
-
-            Object[] rtUpdateInfo = new Object[] { null, tax };
-
-            // Check if tax has to be recalculated
-            if (calculateTaxOnSubCategoryLevel) {
-                Object[] changedToTax = taxChangeMap.get(scaKey);
-                if (changedToTax == null) {
-                    taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
-                    Object[] applicableTax = getApplicableTax(tax, isExonerated, invoice, invoiceSubCategory, userAccount, taxZero, calculateExternalTax);
-                    changedToTax = applicableTax;
-                    taxChangeMap.put(scaKey, changedToTax);
-                    if ((boolean) changedToTax[1]) {
-                        log.debug("Will update rated transactions in subcategory {} with new tax from {} to {}", invoiceSubCategory.getCode(), tax.getPercent(),
-                            ((Tax) changedToTax[0]).getPercent());
-                    }
-                }
-                if ((boolean) changedToTax[1]) {
-                    tax = (Tax) changedToTax[0];
-                    scaKey = scaKeyWithoutTax + "_" + tax.getId();
-                }
-            }
-
-            SubCategoryInvoiceAgregate scAggregate = subCategoryAggregates.get(scaKey);
-            if (scAggregate == null) {
-                scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, invoice.getBillingAccount(), userAccount, walletInstance,
-                    calculateTaxOnSubCategoryLevel ? tax : null, invoice, invoiceSubCategory.getAccountingCode());
-
-                scAggregate.updateAudit(currentUser);
-
-                String languageCode = invoice.getBillingAccount().getTradingLanguage().getLanguageCode();
-                String translationSCKey = "SC_" + invoiceSubCategory.getId() + "_" + languageCode;
-                String descTranslated = descriptionMap.get(translationSCKey);
-                if (descTranslated == null) {
-                    descTranslated = invoiceSubCategory.getDescriptionOrCode();
-                    if ((invoiceSubCategory.getDescriptionI18n() != null) && (invoiceSubCategory.getDescriptionI18n().get(languageCode) != null)) {
-                        descTranslated = invoiceSubCategory.getDescriptionI18n().get(languageCode);
-                    }
-                    descriptionMap.put(translationSCKey, descTranslated);
-                }
-                scAggregate.setDescription(descTranslated);
-
-                invoice.addInvoiceAggregate(scAggregate);
-
-                subCategoryAggregates.put(scaKey, scAggregate);
-            }
-
-            scAggregate.addAmountWithoutTax((BigDecimal) summary[6]);
-            scAggregate.addAmountWithTax((BigDecimal) summary[7]);
-            scAggregate.addItemNumber(((Long) summary[8]).intValue());
-
-            rtUpdateInfo[0] = scAggregate;
-            rtUpdateInfos.get(invoiceKey).add(rtUpdateInfo);
-        }
-
-        // Append the rest of invoice aggregates, link to orders and persist invoice information
-        for (Invoice invoice : invoices.values()) {
-            List<SubCategoryInvoiceAgregate> subcategoryAggregates = new ArrayList<SubCategoryInvoiceAgregate>();
-            for (InvoiceAgregate scAggregate : invoice.getInvoiceAgregates()) {
-
-                BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(scAggregate.getAmountWithoutTax(), scAggregate.getAmountWithTax(),
-                    ((SubCategoryInvoiceAgregate) scAggregate).getTaxPercent(), isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
-                scAggregate.setAmountWithoutTax(amounts[0]);
-                scAggregate.setAmountWithTax(amounts[1]);
-                scAggregate.setAmountTax(amounts[2]);
-
-                subcategoryAggregates.add((SubCategoryInvoiceAgregate) scAggregate);
-            }
-
-            addDiscountCategoryAndTaxAggregates(invoice, subcategoryAggregates);
-
-            Set<String> orderNums = new HashSet<>();
-
-            // Link orders to invoice
-            if (entityToInvoice instanceof Order) {
-                orderNums.add(((Order) entityToInvoice).getOrderNumber());
-
-            } else if (entityToInvoice instanceof Subscription) {
-                orderNums.addAll(em.createNamedQuery("RatedTransaction.listOrdersBySubscription").setParameter("subscription", entityToInvoice)
-                    .setParameter("seller", invoice.getSeller()).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
-                    .setParameter("lastId", lastId).getResultList());
-
-            } else if (entityToInvoice instanceof BillingAccount) {
-                orderNums.addAll(em.createNamedQuery("RatedTransaction.listOrdersByBillingAccount").setParameter("billingAccount", entityToInvoice)
-                    .setParameter("seller", invoice.getSeller()).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
-                    .setParameter("lastId", lastId).getResultList());
-            }
-
-            if (orderNums != null && !orderNums.isEmpty()) {
-                List<Order> orders = new ArrayList<Order>();
-                for (String orderNum : orderNums) {
-                    orders.add(orderService.findByCodeOrExternalId(orderNum));
-                }
-                invoice.setOrders(orders);
-            }
-
-            this.create(invoice);
-
-            // Update RTs with invoice information and tax if it was recalculated
-            for (Object[] rtUpdateInfo : rtUpdateInfos.get(invoice.getBillingAccount().getId() + "_" + invoice.getSeller().getId() + "_" + invoice.getInvoiceType().getId())) {
-                ratedTransactionService.updateInvoicesRTsBySummary(entityToInvoice, firstTransactionDate, lastTransactionDate, invoice,
-                    (SubCategoryInvoiceAgregate) rtUpdateInfo[0], lastId, (Tax) rtUpdateInfo[1]);
-            }
-
-            invoice.assignTemporaryInvoiceNumber();
-
-            if (assignNumber) {
-                assignInvoiceNumber(invoice);
-            }
-
-            postCreate(invoice);
-
-            invoiceList.add(invoice);
-        }
-        return invoiceList;
-    }
-
-    /**
-     * Create invoices and aggregates for a given entity to invoice and date interval.
-     * 
-     * @param entityToInvoice Entity to invoice
-     * @param billingRun Billing run
      * @param ratedTransactionFilter Filter returning a list of rated transactions
      * @param invoiceDate Invoice date
      * @param firstTransactionDate Transaction usage date filter - start date
@@ -1092,7 +855,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, boolean assignNumber, BillingCycle billingCycle, BillingAccount billingAccount,
             PaymentMethod paymentMethod, InvoiceType defaultInvoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance) throws BusinessException {
 
-        List<Invoice> invoiceList = new ArrayList<>();
         EntityManager em = getEntityManager();
 
         boolean isEnterprise = appProvider.isEntreprise();
@@ -1104,9 +866,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Should tax calculation on subcategory level be done externally
         boolean calculateExternalTax = "YES".equalsIgnoreCase((String) appProvider.getCfValue("OPENCELL_ENABLE_TAX_CALCULATION"));
 
+        long start = System.currentTimeMillis();
+
         List<Object[]> rts = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter);
 
-        long start = System.currentTimeMillis();
+        long end = System.currentTimeMillis();
+
+        log.error("AKK RT retrieval for {}/{}/{} took {}", entityToInvoice.getId(), firstTransactionDate, lastTransactionDate, end - start);
+
+        start = System.currentTimeMillis();
 
         // Instantiated invoices. Key ba.id_seller.id_invoiceType.id
         Map<String, Invoice> invoices = new HashMap<>();
@@ -1115,35 +883,31 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Billing accounts exoneration from taxes. Key ba.id
         Map<Long, Boolean> exonerations = new HashMap<>();
 
-        log.debug("AKK before exoneration");
         Boolean isExonerated = null;
         if (!(entityToInvoice instanceof Order) && billingAccount != null) {
             isExonerated = billingAccount.isExoneratedFromtaxes();
             if (isExonerated == null) {
-                log.debug("AKK exonerate started to calculate");
-
                 isExonerated = billingAccountService.isExonerated(billingAccount);
                 billingAccount.setExoneratedFromtaxes(isExonerated);
             }
             exonerations.put(billingAccount.getId(), isExonerated);
         }
 
-        log.debug("AKK after exoneration");
-
         // InvoiceType.taxScript will calculate all tax aggregates at once. If present, don't calculate on each subcategory level.
         boolean calculateTaxOnSubCategoryLevel = false;
 
+        // Tax change mapping. Key is ba.id_seller.id_invoiceType.id_ua.id_walletInstance.id_invoiceSubCategory.id_tax.id and value is an array of [Tax to apply, True/false if tax
+        // has changed]
+        Map<String, Object[]> taxChangeMap = new HashMap<>();
         boolean isRtTaxChanged = false;
 
         for (Object[] summary : rts) {
-
-            Long sellerId = (Long) summary[0];
             isRtTaxChanged = false;
 
             // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
             if (entityToInvoice instanceof Order) {
                 // Retrieve BA and determine invoice type only if it has not changed from the last iteration
-                Long baId = (Long) summary[8];
+                Long baId = (Long) summary[RT_SUMMARY_BA_ID_ORDER_NUM];
                 if (billingAccount == null || !billingAccount.getId().equals(baId)) {
                     billingAccount = em.find(BillingAccount.class, baId);
                     if (!exonerations.containsKey(billingAccount.getId())) {
@@ -1156,25 +920,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     } else {
                         isExonerated = exonerations.get(billingAccount.getId());
                     }
+                    // TODO Khalid. If you add a RT.prepaid then set defaultInvoiceType to determineInvoiceType(RT.prepaid, null, null, null, null);
                     defaultInvoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, billingAccount);
                 }
             }
 
             InvoiceType invoiceType = defaultInvoiceType;
-            // Override invoice type for prepaid transactions
-            // TODO AKK deterimine if RT is of prepaid type
-//            if (isRtPrepaid) {
-//                invoiceType = determineInvoiceType(true, false, null, null, null);
-//            }            
+            // TODO Khalid. If you add a RT.prepaid then set invoiceType to determineInvoiceType(true, null, null, null, null);
+
             // InvoiceType.taxScript will calculate all tax aggregates at once. If present, don't calculate on each subcategory level.
             calculateTaxOnSubCategoryLevel = invoiceType.getTaxScript() == null;
 
-            String invoiceKey = billingAccount.getId() + "_" + sellerId + "_" + invoiceType.getId();
+            String invoiceKey = billingAccount.getId() + "_" + (Long) summary[RT_SUMMARY_SELLER_ID] + "_" + invoiceType.getId();
             Invoice invoice = invoices.get(invoiceKey);
 
             if (invoice == null) {
-
-                log.debug("AKK will create invoice");
                 // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
                 if (entityToInvoice instanceof Order) {
                     if (paymentMethod == null) {
@@ -1186,48 +946,49 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 }
 
-                invoice = instantiateInvoice(entityToInvoice, billingAccount, em.find(Seller.class, sellerId), billingRun, invoiceDate, isDraft, billingCycle, paymentMethod,
-                    invoiceType, balanceDue, totalInvoiceBalance);
+                invoice = instantiateInvoice(entityToInvoice, billingAccount, em.find(Seller.class, (Long) summary[RT_SUMMARY_SELLER_ID]), billingRun, invoiceDate, isDraft,
+                    billingCycle, paymentMethod, invoiceType, balanceDue.add(totalInvoiceBalance));
 
                 invoices.put(invoiceKey, invoice);
-                log.debug("AKK end create invoice");
             }
 
-            UserAccount userAccount = summary[1] == null ? null : em.getReference(UserAccount.class, (Long) summary[1]);
-            WalletInstance walletInstance = summary[2] == null ? null : em.getReference(WalletInstance.class, (Long) summary[2]);
-            InvoiceSubCategory invoiceSubCategory = em.find(InvoiceSubCategory.class, (Long) summary[3]);
-            Tax tax = em.find(Tax.class, (Long) summary[4]);
+            InvoiceSubCategory invoiceSubCategory = null;
+            Tax tax = null;
 
-            String scaKeyWithoutTax = invoiceKey + "_" + (userAccount != null ? userAccount.getId() : "") + "_" + (walletInstance != null ? walletInstance.getId() : "") + "_"
-                    + invoiceSubCategory.getId() + "_";
-            String scaKey = scaKeyWithoutTax + (calculateTaxOnSubCategoryLevel ? tax.getId() : "");
+            String scaKeyWithoutTax = invoiceKey + "_" + summary[RT_SUMMARY_UA_ID] + "_" + summary[RT_SUMMARY_WALLET_ID] + "_" + summary[RT_SUMMARY_INVOICE_CAT_ID] + "_";
+            String scaKey = scaKeyWithoutTax + (calculateTaxOnSubCategoryLevel ? summary[RT_SUMMARY_TAX_ID] : "");
 
             // Check if tax has to be recalculated
-            if (calculateTaxOnSubCategoryLevel) {
+            if (calculateTaxOnSubCategoryLevel) { // SAID add a check that RT was not overridden - need to modify ratedTransactionService.listRTsToInvoice to return rt.taxOverriden
                 Object[] changedToTax = taxChangeMap.get(scaKey);
                 if (changedToTax == null) {
-                    log.debug("AKK will calculate tax change");
+
                     taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
-                    Object[] applicableTax = getApplicableTax(tax, isExonerated, invoice, invoiceSubCategory, userAccount, taxZero, calculateExternalTax);
+                    invoiceSubCategory = em.find(InvoiceSubCategory.class, (Long) summary[RT_SUMMARY_INVOICE_CAT_ID]);
+                    tax = em.find(Tax.class, (Long) summary[RT_SUMMARY_TAX_ID]);
+                    Object[] applicableTax = getApplicableTax(tax, isExonerated, invoice, invoiceSubCategory, (Long) summary[RT_SUMMARY_UA_ID], taxZero, calculateExternalTax);
                     changedToTax = applicableTax;
                     taxChangeMap.put(scaKey, changedToTax);
                     if ((boolean) changedToTax[1]) {
                         log.debug("Will update rated transactions in subcategory {} with new tax from {} to {}", invoiceSubCategory.getCode(), tax.getPercent(),
                             ((Tax) changedToTax[0]).getPercent());
                     }
-                    log.debug("AKK end calculate tax change");
                 }
                 if ((boolean) changedToTax[1]) {
                     tax = (Tax) changedToTax[0];
                     isRtTaxChanged = true;
                     scaKey = scaKeyWithoutTax + "_" + tax.getId();
                 }
+            } else {
+                tax = em.find(Tax.class, (Long) summary[RT_SUMMARY_TAX_ID]);
             }
 
             SubCategoryInvoiceAgregate scAggregate = subCategoryAggregates.get(scaKey);
             if (scAggregate == null) {
-                log.debug("AKK will create sub cat aggregate");
-                scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, invoice.getBillingAccount(), userAccount, walletInstance,
+                invoiceSubCategory = invoiceSubCategory != null ? invoiceSubCategory : em.find(InvoiceSubCategory.class, (Long) summary[RT_SUMMARY_INVOICE_CAT_ID]);
+                scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, invoice.getBillingAccount(),
+                    summary[RT_SUMMARY_UA_ID] == null ? null : em.getReference(UserAccount.class, (Long) summary[RT_SUMMARY_UA_ID]),
+                    summary[RT_SUMMARY_WALLET_ID] == null ? null : em.getReference(WalletInstance.class, (Long) summary[RT_SUMMARY_WALLET_ID]),
                     calculateTaxOnSubCategoryLevel ? tax : null, invoice, invoiceSubCategory.getAccountingCode());
 
                 scAggregate.updateAudit(currentUser);
@@ -1247,28 +1008,68 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.addInvoiceAggregate(scAggregate);
 
                 subCategoryAggregates.put(scaKey, scAggregate);
-                log.debug("AKK end create sub cat aggregate");
             }
 
-            scAggregate.addAmountWithoutTax((BigDecimal) summary[6]);
-            scAggregate.addAmountWithTax((BigDecimal) summary[7]);
+            scAggregate.addAmountWithoutTax((BigDecimal) summary[RT_SUMMARY_AMOUNT_WITHOUT_TAX]);
+            scAggregate.addAmountWithTax((BigDecimal) summary[RT_SUMMARY_AMOUNT_WITH_TAX]);
             scAggregate.addItemNumber(1);
             if (isRtTaxChanged) {
-                scAggregate.getRatedTransactionIdsTaxRecalculated().add((Long) summary[5]);
+                scAggregate.getRatedTransactionIdsTaxRecalculated().add((Long) summary[RT_SUMMARY_ID]);
             } else {
-                scAggregate.getRatedTransactionIdsNoTaxChange().add((Long) summary[5]);
+                scAggregate.getRatedTransactionIdsNoTaxChange().add((Long) summary[RT_SUMMARY_ID]);
             }
 
-            if (!(entityToInvoice instanceof Order) && summary[8] != null) {
-                invoice.getOrderNumbers().add((String) summary[8]);
+            if (!(entityToInvoice instanceof Order) && summary[RT_SUMMARY_BA_ID_ORDER_NUM] != null) {
+                invoice.getOrderNumbers().add((String) summary[RT_SUMMARY_BA_ID_ORDER_NUM]);
             }
 
         }
 
         rts = null;
+        List<Invoice> allInvoices = new ArrayList<Invoice>(invoices.values());
+
+//        // Prepaid transactions (identified by a prepaid wallet) shall go to a separate invoice.
+        // TODO Khalid. if you add RT.prepaid then do not need this code
+//        List<Invoice> prepaidInvoices = new ArrayList<>();
+//        for (Invoice invoice : invoices.values()) {
+//
+//            Invoice prepaidInvoice = null;
+//            InvoiceType prepaidInvoiceType = null;
+//            List<Integer> idsToRemove = null;
+//            
+//            for (int i = 0; i < invoice.getInvoiceAgregates().size(); i++) {
+//                InvoiceAgregate scAggregate = invoice.getInvoiceAgregates().get(i);
+//                if (true) {// (scAggregate is prepaid) // TODO Khalid fix a check that walletInstance is of prepaid type. Another option is to add a flag to RT noting its of
+//                           // prepaid type. In that case call determineInvoiceType(rt.isPrepaid()....)
+//                    if (prepaidInvoice == null) {
+//                        if (prepaidInvoiceType == null) {
+//                            prepaidInvoiceType = determineInvoiceType(true, false, null, null, null);
+//                        }
+//                        prepaidInvoice = instantiateInvoice(entityToInvoice, invoice.getBillingAccount(), invoice.getSeller(), billingRun, invoiceDate, isDraft, billingCycle,
+//                            invoice.getPaymentMethod(), prepaidInvoiceType, invoice.getDueBalance());
+//                        prepaidInvoices.add(prepaidInvoice);
+//                        idsToRemove = new ArrayList<Integer>();
+//                    }
+//                    scAggregate.setInvoice(prepaidInvoice);
+//                    idsToRemove.add(i);
+//                }
+//            }
+//
+//            if (idsToRemove != null) {
+//                for (int i = idsToRemove.size() - 1; i == 0; i--) {
+//                    invoice.getInvoiceAgregates().remove(idsToRemove.get(i).intValue());
+//                }
+//            }
+//        }
+//        
+//        if (prepaidInvoices != null) {
+//            allInvoices.addAll(prepaidInvoices);
+//        }
+
+        List<Invoice> invoiceList = new ArrayList<>();
 
         // Append the rest of invoice aggregates, link to orders and persist invoice information
-        for (Invoice invoice : invoices.values()) {
+        for (Invoice invoice : allInvoices) {
             List<SubCategoryInvoiceAgregate> subcategoryAggregates = new ArrayList<SubCategoryInvoiceAgregate>();
             for (InvoiceAgregate scAggregate : invoice.getInvoiceAgregates()) {
 
@@ -1279,6 +1080,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 scAggregate.setAmountTax(amounts[2]);
 
                 subcategoryAggregates.add((SubCategoryInvoiceAgregate) scAggregate);
+            }
+            // Case when all subcategory aggregates were of prepaid type
+            if (subcategoryAggregates.isEmpty()) {
+                continue;
             }
 
             addDiscountCategoryAndTaxAggregates(invoice, subcategoryAggregates);
@@ -1305,8 +1110,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             this.create(invoice);
 
             // Update rated transactions with invoice information and recalculated tax/amounts if changed
-            long end = System.currentTimeMillis();
-            log.error("AKKKKKKKKKKKKKKKK invoice {}  took {}", entityToInvoice.getId(), end - start);
+            end = System.currentTimeMillis();
             String massUpdateWithTaxChangeSql = isEnterprise ? "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2B"
                     : "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2C";
 
@@ -1331,7 +1135,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 log.error("AKK update {} took {}", entityToInvoice.getId(), endU - startU);
             }
 
-            log.error("AKKKKKKKKKKKKKKKK invoice took {} with RT save  {}", entityToInvoice.getId(), System.currentTimeMillis() - start);
+            log.error("AKKKKKKKKKKKKKKKK invoice {} took {} with RT save  {}", entityToInvoice.getId(), end - start, System.currentTimeMillis() - start);
 
             invoice.assignTemporaryInvoiceNumber();
 
@@ -1430,7 +1234,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 List<RatedTransaction> ratedTransactionSelection = entry.getValue();
 
                 Invoice invoice = instantiateInvoice(entityToInvoice, billingAccount, ratedTransactionGroup.getSeller(), billingRun, invoiceDate, isDraft, billingCycle,
-                    paymentMethod, entry.getKey(), balanceDue, totalInvoiceBalance);
+                    paymentMethod, entry.getKey(), balanceDue.add(totalInvoiceBalance));
 
                 Order order = null;
                 if (entityToInvoice instanceof Order) {
@@ -3266,6 +3070,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // InvoiceType.taxScript will calculate all tax aggregates at once.
         boolean calculateTaxOnSubCategoryLevel = invoice.getInvoiceType().getTaxScript() == null;
 
+        // Tax change mapping. Key is ba.id_seller.id_invoiceType.id_ua.id_walletInstance.id_invoiceSubCategory.id_tax.id and value is an array of [Tax to apply, True/false if tax
+        // has changed]
+        Map<String, Object[]> taxChangeMap = new HashMap<>();
+
         // Should tax calculation on subcategory level be done externally
         boolean calculateExternalTax = "YES".equalsIgnoreCase((String) appProvider.getCfValue("OPENCELL_ENABLE_TAX_CALCULATION"));
 
@@ -3273,6 +3081,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         String scaKey = null;
         String scaKeyWithoutTax = null;
+
         if (log.isTraceEnabled()) {
             log.trace("ratedTransactions.totalAmountWithoutTax={}",
                 ratedTransactions != null ? ratedTransactions.stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum() : "0");
@@ -3288,16 +3097,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     + (ratedTransaction.getWallet() != null ? ratedTransaction.getWallet().getId() : "") + "_" + invoiceSubCategory.getId() + "_";
 
             Tax tax = ratedTransaction.getTax();
-            // AKK check that tax was not overridden in WO and tax recalculation should be ignored
-
             scaKey = scaKeyWithoutTax + (calculateTaxOnSubCategoryLevel ? tax.getId() : "");
 
             // Check if tax has to be recalculated
-            if (calculateTaxOnSubCategoryLevel) {
+            if (calculateTaxOnSubCategoryLevel) { // SAID add a check that RT was not overridden - need to modify ratedTransactionService.listRTsToInvoice to return rt.taxOverriden
                 Object[] changedToTax = taxChangeMap.get(scaKey);
                 if (changedToTax == null) {
                     taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
-                    Object[] applicableTax = getApplicableTax(tax, isExonerated, invoice, invoiceSubCategory, ratedTransaction.getUserAccount(), taxZero, calculateExternalTax);
+                    Object[] applicableTax = getApplicableTax(tax, isExonerated, invoice, invoiceSubCategory,
+                        ratedTransaction.getUserAccount() != null ? ratedTransaction.getUserAccount().getId() : null, taxZero, calculateExternalTax);
                     changedToTax = applicableTax;
                     taxChangeMap.put(scaKey, changedToTax);
                     if ((boolean) changedToTax[1]) {
@@ -3714,7 +3522,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private Invoice instantiateInvoice(IBillableEntity entity, BillingAccount billingAccount, Seller seller, BillingRun billingRun, Date invoiceDate, boolean isDraft,
-            BillingCycle billingCycle, PaymentMethod paymentMethod, InvoiceType invoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance) throws BusinessException {
+            BillingCycle billingCycle, PaymentMethod paymentMethod, InvoiceType invoiceType, BigDecimal dueBalance) throws BusinessException {
 
         Invoice invoice = new Invoice();
 
@@ -3765,8 +3573,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setDueDate(dueDate);
 
         // Set due balance
-        invoice.setDueBalance(balanceDue.add(totalInvoiceBalance));
-        invoice.setDueBalance(invoice.getDueBalance().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()));
+        invoice.setDueBalance(dueBalance.setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()));
 
         return invoice;
     }
@@ -3778,23 +3585,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param isExonerated Is Billing account exonerated from taxes
      * @param invoice Invoice in reference
      * @param invoiceSubCategory Invoice subcategory to determine tax
-     * @param userAccount User account to calculate tax by external program
+     * @param userAccountId User account identifier to calculate tax by external program
      * @param taxZero Zero tax to apply if Billing account is exonerated
      * @param calculateExternalTax Should tax be calculated by an external program if invoiceSubCategory has such script set
      * @return An array containing applicable tax and True/false if tax % has changed from a previous tax
      * @throws BusinessException Were not able to determine a tax
      */
-    private Object[] getApplicableTax(Tax tax, boolean isExonerated, Invoice invoice, InvoiceSubCategory invoiceSubCategory, UserAccount userAccount, Tax taxZero,
+    private Object[] getApplicableTax(Tax tax, boolean isExonerated, Invoice invoice, InvoiceSubCategory invoiceSubCategory, Long userAccountId, Tax taxZero,
             boolean calculateExternalTax) throws BusinessException {
 
         if (isExonerated) {
             return new Object[] { taxZero, BigDecimal.ZERO, false };
+
         } else {
 
             Tax recalculatedTax = null;
 
             // If there is a taxScript in invoiceSubCategory and script is applicable, use it to compute external taxes
             if (calculateExternalTax && (invoiceSubCategory.getTaxScript() != null)) {
+                UserAccount userAccount = userAccountId != null ? userAccountService.findById(userAccountId) : null;
                 if (taxScriptService.isApplicable(invoiceSubCategory.getTaxScript().getCode(), userAccount, invoice, invoiceSubCategory)) {
                     List<Tax> taxes = taxScriptService.computeTaxes(invoiceSubCategory.getTaxScript().getCode(), userAccount, invoice, invoiceSubCategory);
                     if (!taxes.isEmpty()) {

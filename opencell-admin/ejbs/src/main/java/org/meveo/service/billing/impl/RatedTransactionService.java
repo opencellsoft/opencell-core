@@ -20,9 +20,6 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -44,7 +41,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
@@ -66,7 +62,6 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionMinAmountTypeEnum;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
@@ -1659,87 +1654,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Obtain the last ID value of the Rated Transaction
-     * 
-     * @return Last ID value
-     */
-    public Long getLastRatedTransactionId() {
-
-        try {
-            return (long) getEntityManager().createNamedQuery("RatedTransaction.getLastId").getSingleResult();
-        } catch (NoResultException e) {
-            return 0L;
-        }
-    }
-
-    /**
-     * Get a summary of invoiceable RTs for a given billable entity and date range.
-     * 
-     * @param entity Billable entity (subscription, billing account or order)
-     * @param firstTransactionDate Usage date range - start date
-     * @param lastTransactionDate Usage date range - end date
-     * @return A list of RT summary information: billingAccount.id, seller.id, userAccount.id, wallet.id, invoiceSubCategory.id, tax.id, sum(amountWithoutTax), sum(amountWithTax),
-     *         count
-     */
-    @SuppressWarnings("unchecked")
-    public List<Object[]> listSummaryOfRTsToInvoice(IBillableEntity entity, Date firstTransactionDate, Date lastTransactionDate) {
-
-        if (entity instanceof Order) {
-            return getEntityManager().createNamedQuery("RatedTransaction.summarizeToInvoiceByOrderNumber").setParameter("orderNumber", ((Order) entity).getOrderNumber())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-        } else if (entity instanceof Subscription) {
-            return getEntityManager().createNamedQuery("RatedTransaction.summarizeToInvoiceByBillingAccount").setParameter("subscription", entity)
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-
-        } else if (entity instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery("RatedTransaction.summarizeToInvoiceByBillingAccount").setParameter("billingAccount", entity)
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-        }
-        return new ArrayList<Object[]>();
-    }
-
-    /**
-     * Update Rated transactions with invoice information in batch
-     * 
-     * @param entity Entity billed
-     * @param firstTransactionDate Usage date range - start date
-     * @param lastTransactionDate Usage date range - end date
-     * @param invoice Invoice to associate with rated transaction
-     * @param subCategoryAggregate Invoice subcategory aggregate to associate with rated transaction
-     * @param lastId Last rated transaction id. A simple check to not update newly added records
-     * @param previousTax Previous tax
-     */
-    public void updateInvoicesRTsBySummary(IBillableEntity entity, Date firstTransactionDate, Date lastTransactionDate, Invoice invoice,
-            SubCategoryInvoiceAgregate subCategoryAggregate, Long lastId, Tax previousTax) {
-
-        if (entity instanceof Order) {
-            getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoByOrderSummary").setParameter("billingRun", invoice.getBillingRun())
-                .setParameter("invoice", invoice).setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("orderNumber", ((Order) entity).getOrderNumber())
-                .setParameter("billingAccount", invoice.getBillingAccount()).setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).setParameter("seller", invoice.getSeller())
-                .setParameter("userAccount", subCategoryAggregate.getUserAccount()).setParameter("wallet", subCategoryAggregate.getWallet())
-                .setParameter("invoiceSubCategory", subCategoryAggregate.getInvoiceSubCategory()).setParameter("tax", previousTax).setParameter("lastId", lastId).executeUpdate();
-
-        } else if (entity instanceof Subscription) {
-            getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoBySubscriptionSummary").setParameter("billingRun", invoice.getBillingRun())
-                .setParameter("invoice", invoice).setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("subscription", entity)
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("seller", invoice.getSeller())
-                .setParameter("userAccount", subCategoryAggregate.getUserAccount()).setParameter("wallet", subCategoryAggregate.getWallet())
-                .setParameter("invoiceSubCategory", subCategoryAggregate.getInvoiceSubCategory()).setParameter("tax", previousTax).setParameter("lastId", lastId).executeUpdate();
-
-        } else if (entity instanceof BillingAccount) {
-            getEntityManager().createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfoByBASummary").setParameter("billingRun", invoice.getBillingRun())
-                .setParameter("invoice", invoice).setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("billingAccount", invoice.getBillingAccount())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("seller", invoice.getSeller())
-                .setParameter("userAccount", subCategoryAggregate.getUserAccount()).setParameter("wallet", subCategoryAggregate.getWallet())
-                .setParameter("invoiceSubCategory", subCategoryAggregate.getInvoiceSubCategory()).setParameter("tax", previousTax).setParameter("lastId", lastId).executeUpdate();
-        }
-    }
-
-    /**
      * Get a list of invoiceable Rated transactions for a given billable entity and date range or from a filter
      * 
-     * @param entity Billable entity (subscription, billing account or order)
+     * @param entity Entity to invoice (subscription, billing account or order)
      * @param firstTransactionDate Usage date range - start date
      * @param lastTransactionDate Usage date range - end date
      * @param ratedTransactionFilter Filter returning a list of rated transactions
@@ -1764,160 +1681,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if (entity instanceof Order) {
                 return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumberFlat").setParameter("orderNumber", ((Order) entity).getOrderNumber())
                     .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+
             } else if (entity instanceof Subscription) {
                 return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscriptionFlat").setParameter("subscription", entity)
                     .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
 
             } else if (entity instanceof BillingAccount) {
-
-                log.error("AKK will retrieve RTs summary for BA {}/{}/{}", entity.getId(), firstTransactionDate, lastTransactionDate);
-
-                long start = System.currentTimeMillis();
-                List<Object[]> rts = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccount", entity)
+                return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccount", entity)
                     .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-                long end = System.currentTimeMillis();
-
-                log.error("AKK RT summary retrieval took {}", end - start);
-
-                return rts;
             }
         }
         return new ArrayList<Object[]>();
-    }
-
-    @SuppressWarnings("unchecked")
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public List<Object[]> getRTsToInvoiceByBAAndUpdate(IBillableEntity entity, Long baId, Date firstTransactionDate, Date lastTransactionDate, List<Long> ids, int nrRead,
-            int nrUpdate, boolean jpaQuery) {
-
-        log.error("AKK will retrieve RTs summary for BA {}/{}/{}", entity.getId(), firstTransactionDate, lastTransactionDate);
-
-        List<Object[]> rts = null;
-        EntityManager em = getEntityManager();
-        for (int i = 0; i < nrRead; i++) {
-            long start = System.currentTimeMillis();
-
-            if (jpaQuery) {
-
-                rts = em.createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat")
-                    .setParameter("billingAccount", baId != null ? em.getReference(BillingAccount.class, baId) : entity).setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-
-            } else {
-
-                final List<Object[]> rtData = new ArrayList<>();
-
-                Session hibernateSession = em.unwrap(Session.class);
-
-                hibernateSession.doWork(new org.hibernate.jdbc.Work() {
-
-                    @Override
-                    public void execute(Connection connection) throws SQLException {
-
-                        try (ResultSet rs = connection.createStatement().executeQuery(
-                            "select seller_id, user_account_id, wallet_id, invoice_sub_category_id, tax_id, id, amount_without_tax, amount_with_tax, order_number from billing_rated_transaction where status='OPEN' and billing_account__id="
-                                    + (baId != null ? baId : entity.getId())
-                                    + " and to_date('01-01-0', 'DD-MM-YYYY')<usage_date and usage_date<to_date('06-06-2019', 'DD-MM-YYYY')")) {
-
-                            while (rs.next()) {
-
-                                rtData.add(new Object[] { rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getLong(4), rs.getLong(5), rs.getLong(6), rs.getBigDecimal(7),
-                                        rs.getBigDecimal(8), rs.getString(9) });
-
-                            }
-
-                        } catch (SQLException e) {
-                            log.error("Failed to retrieve RT summary for BA", e);
-                            throw e;
-                        }
-                    }
-                });
-                rts = rtData;
-            }
-
-            long end = System.currentTimeMillis();
-
-            log.error("AKK RT summary retrieval took {}", end - start);
-        }
-
-        for (int i = 0; i < nrUpdate; i++) {
-            long start = System.currentTimeMillis();
-
-            em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", em.getReference(BillingRun.class, 28L))
-                .setParameter("invoice", em.getReference(Invoice.class, 8663L)).setParameter("invoiceAgregateF", em.getReference(SubCategoryInvoiceAgregate.class, 18553L))
-                .setParameter("ids", ids).executeUpdate();
-
-            long end = System.currentTimeMillis();
-            log.error("AKK update took {}", end - start);
-        }
-        return rts;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Object[]> getRTsToInvoiceByBAAndUpdateSameTrans(IBillableEntity entity, Long baId, Date firstTransactionDate, Date lastTransactionDate, List<Long> ids, int nrRead,
-            int nrUpdate, boolean jpaQuery) {
-
-        log.error("AKK will retrieve RTs summary for BA {}/{}/{}", entity.getId(), firstTransactionDate, lastTransactionDate);
-
-        List<Object[]> rts = null;
-        EntityManager em = getEntityManager();
-        for (int i = 0; i < nrRead; i++) {
-            long start = System.currentTimeMillis();
-
-            if (jpaQuery) {
-
-                rts = em.createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat")
-                    .setParameter("billingAccount", baId != null ? em.getReference(BillingAccount.class, baId) : entity).setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-
-            } else {
-
-                final List<Object[]> rtData = new ArrayList<>();
-
-                Session hibernateSession = em.unwrap(Session.class);
-
-                hibernateSession.doWork(new org.hibernate.jdbc.Work() {
-
-                    @Override
-                    public void execute(Connection connection) throws SQLException {
-
-                        try (ResultSet rs = connection.createStatement().executeQuery(
-                            "select seller_id, user_account_id, wallet_id, invoice_sub_category_id, tax_id, id, amount_without_tax, amount_with_tax, order_number from billing_rated_transaction where status='OPEN' and billing_account__id="
-                                    + (baId != null ? baId : entity.getId())
-                                    + " and to_date('01-01-0', 'DD-MM-YYYY')<usage_date and usage_date<to_date('06-06-2019', 'DD-MM-YYYY')")) {
-
-                            while (rs.next()) {
-
-                                rtData.add(new Object[] { rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getLong(4), rs.getLong(5), rs.getLong(6), rs.getBigDecimal(7),
-                                        rs.getBigDecimal(8), rs.getString(9) });
-
-                            }
-
-                        } catch (SQLException e) {
-                            log.error("Failed to retrieve RT summary for BA", e);
-                            throw e;
-                        }
-                    }
-                });
-                rts = rtData;
-            }
-
-            long end = System.currentTimeMillis();
-
-            log.error("AKK RT summary retrieval took {}", end - start);
-        }
-
-        for (int i = 0; i < nrUpdate; i++) {
-            long start = System.currentTimeMillis();
-
-            em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", em.getReference(BillingRun.class, 28L))
-                .setParameter("invoice", em.getReference(Invoice.class, 8663L)).setParameter("invoiceAgregateF", em.getReference(SubCategoryInvoiceAgregate.class, 18553L))
-                .setParameter("ids", ids).executeUpdate();
-
-            long end = System.currentTimeMillis();
-            log.error("AKK update took {}", end - start);
-        }
-        return rts;
     }
 }
