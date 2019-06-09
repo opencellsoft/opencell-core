@@ -754,8 +754,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 lastTransactionDate = billingRun.getLastTransactionDate();
                 invoiceDate = billingRun.getInvoiceDate();
             }
-            lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
-
+            
+            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("reset.lastTransactionDate", "false"))) {
+                lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
+            }
+            
             if (instantiateMinRts) {
                 ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, false);
                 minAmountTransactions = entityToInvoice.getMinRatedTransactions();
