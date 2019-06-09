@@ -3023,6 +3023,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         RoundingModeEnum rtRoundingMode = appProvider.getRoundingMode();
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
         Tax taxZero = isExonerated ? taxService.getZeroTax() : null;
+        invoice.setOrderNumbers(invoice.getOrderNumbers() == null ? new HashSet<String>() : invoice.getOrderNumbers());
 
         // InvoiceType.taxScript will calculate all tax aggregates at once.
         boolean calculateTaxOnSubCategoryLevel = invoice.getInvoiceType().getTaxScript() == null;
@@ -3334,7 +3335,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         // Update net to pay amount
-        invoice.setNetToPay(invoice.getAmountWithTax().add(invoice.getDueBalance()));
+        invoice.setNetToPay(invoice.getAmountWithTax().add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
     }
 
     private SubCategoryInvoiceAgregate getDiscountAggregates(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise, int invoiceRounding,
