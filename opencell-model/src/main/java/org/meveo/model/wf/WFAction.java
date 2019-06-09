@@ -27,6 +27,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -51,7 +52,7 @@ public class WFAction extends BaseEntity {
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
-    private String uuid = UUID.randomUUID().toString();
+    private String uuid;
 
     @Column(name = "action_el", length = 2000)
     @Size(max = 2000)
@@ -69,7 +70,18 @@ public class WFAction extends BaseEntity {
     @JoinColumn(name = "wf_transition_id")
     private WFTransition wfTransition;
 
+    /**
+     * setting uuid if null
+     */
+    @PrePersist
+    public void setUUIDIfNull() {
+    	if (uuid == null) {
+    		uuid = UUID.randomUUID().toString();
+    	}
+    }
+    
     public String getUuid() {
+    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
 
