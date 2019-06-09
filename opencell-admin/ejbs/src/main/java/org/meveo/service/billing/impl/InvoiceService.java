@@ -793,13 +793,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             // For order that does not have a billing cycle specified or billing cycle has script to split RTs by invoice type, use a loop over RT entities
-//            if (billingCycle == null || billingCycle.getScriptInstance() != null) {
-            return createAggregatesAndInvoiceByRTLoop(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate, isDraft,
-                assignNumber, billingCycle, ba, paymentMethod, invoiceType, balanceDue, totalInvoiceBalance);
-//            } else {
-//                return createAggregatesAndInvoiceByRTSummaryLoop(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate,
-//                    isDraft, assignNumber, billingCycle, ba, paymentMethod, invoiceType, balanceDue, totalInvoiceBalance);
-//            }
+            if (billingCycle == null || billingCycle.getScriptInstance() != null) {
+                return createAggregatesAndInvoiceByRTLoop(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate, isDraft,
+                    assignNumber, billingCycle, ba, paymentMethod, invoiceType, balanceDue, totalInvoiceBalance);
+            } else {
+                return createAggregatesAndInvoiceByRTSummaryLoop(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate,
+                    isDraft, assignNumber, billingCycle, ba, paymentMethod, invoiceType, balanceDue, totalInvoiceBalance);
+            }
 
         } catch (Exception e) {
             log.error("Error for entity {}", entityToInvoice.getCode(), e);
