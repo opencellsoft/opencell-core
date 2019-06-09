@@ -606,7 +606,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param billingAccount Payment method. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will
      *        be determined for each rated transaction.
      * @param billingRun billing run
-     * @param billingCycle Billing cycle applicable to billable entity or to billing run
+     * @param defaultBillingCycle Billing cycle applicable to billable entity or to billing run
      * @param defaultInvoiceType Invoice type. A default invoice type for postpaid rated transactions. In case of prepaid RTs, a prepaid invoice type is used. Provided in case of
      *        Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will be determined for each billing account occurrence.
      * @param ratedTransactionFilter rated transaction filter
@@ -616,8 +616,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return list of rated transaction groups for entity.
      */
     @SuppressWarnings("unchecked")
-    public List<RatedTransactionGroup> getRatedTransactionGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun, BillingCycle billingCycle,
-            InvoiceType defaultInvoiceType, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) throws BusinessException {
+    public List<RatedTransactionGroup> getRatedTransactionGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun,
+            BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft)
+            throws BusinessException {
 
         List<RatedTransaction> ratedTransactions = null;
 
@@ -647,6 +648,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Instantiated invoices. Key ba.id_seller.id_invoiceType.id
         Map<String, RatedTransactionGroup> rtGroups = new HashMap<>();
 
+        BillingCycle billingCycle = defaultBillingCycle;
+        InvoiceType invoiceType = defaultInvoiceType;
+
         for (RatedTransaction rt : ratedTransactions) {
 
             // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
@@ -654,14 +658,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 // Retrieve BA and determine invoice type only if it has not changed from the last iteration
                 if (billingAccount == null || !billingAccount.getId().equals(rt.getBillingAccount().getId())) {
                     billingAccount = rt.getBillingAccount();
-                    // TODO Khalid. If you add a RT.prepaid then set defaultInvoiceType to determineInvoiceType(RT.prepaid, null, null, null, null);
-                    defaultInvoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, billingAccount);
+                    if (defaultBillingCycle == null) {
+                        billingCycle = billingAccount.getBillingCycle();
+                    }
+                    if (defaultInvoiceType == null) {
+                        // TODO Khalid. If you add a RT.prepaid then set defaultInvoiceType to determineInvoiceType(RT.prepaid, null, null, null, null);
+                        invoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, billingAccount);
+                    }
                 }
             }
 
             // TODO Khalid need to add a check if its a prepaid invoice type
-
-            InvoiceType invoiceType = defaultInvoiceType;
 
             String invoiceKey = billingAccount.getId() + "_" + rt.getSeller().getId() + "_" + invoiceType.getId();
             RatedTransactionGroup rtGroup = rtGroups.get(invoiceKey);
@@ -828,7 +835,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param lastTransactionDate Transaction usage date filter - end date
      * @param isDraft Is it a draft invoice
      * @param assignNumber Should a final invoice number be assigned
-     * @param billingCycle Billing cycle applicable to billable entity or to billing run
+     * @param defaultBillingCycle Billing cycle applicable to billable entity or to billing run. For Order, if not set on order level, will have to be determined from order's
+     *        billing account.
      * @param billingAccount Payment method. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will
      *        be determined for each rated transaction.
      * @param defaultPaymentMethod Payment method. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore
@@ -843,7 +851,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException General business exception
      */
     private List<Invoice> createAggregatesAndInvoiceByRTSummaryLoop(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
-            Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, boolean assignNumber, BillingCycle billingCycle, BillingAccount billingAccount,
+            Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, boolean assignNumber, BillingCycle defaultBillingCycle, BillingAccount billingAccount,
             PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance) throws BusinessException {
 
         EntityManager em = getEntityManager();
@@ -888,6 +896,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Map<String, Object[]> taxChangeMap = new HashMap<>();
         boolean isRtTaxChanged = false;
 
+        BillingCycle billingCycle = defaultBillingCycle;
+        InvoiceType invoiceType = defaultInvoiceType;
+
         for (Object[] summary : rts) {
             isRtTaxChanged = false;
 
@@ -897,6 +908,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 Long baId = (Long) summary[RT_SUMMARY_BA_ID_ORDER_NUM];
                 if (billingAccount == null || !billingAccount.getId().equals(baId)) {
                     billingAccount = em.find(BillingAccount.class, baId);
+                    if (defaultBillingCycle == null) {
+                        billingCycle = billingAccount.getBillingCycle();
+                    }
                     if (!exonerations.containsKey(billingAccount.getId())) {
                         isExonerated = billingAccount.isExoneratedFromtaxes();
                         if (isExonerated == null) {
@@ -907,12 +921,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     } else {
                         isExonerated = exonerations.get(billingAccount.getId());
                     }
-                    // TODO Khalid. If you add a RT.prepaid then set defaultInvoiceType to determineInvoiceType(RT.prepaid, null, null, null, null);
-                    defaultInvoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, billingAccount);
+                    if (defaultInvoiceType == null) {
+                        // TODO Khalid. If you add a RT.prepaid then set defaultInvoiceType to determineInvoiceType(RT.prepaid, null, null, null, null);
+                        invoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, billingAccount);
+                    }
                 }
             }
 
-            InvoiceType invoiceType = defaultInvoiceType;
             // TODO Khalid. If you add a RT.prepaid then set invoiceType to determineInvoiceType(true, null, null, null, null);
 
             // InvoiceType.taxScript will calculate all tax aggregates at once. If present, don't calculate on each subcategory level.
@@ -1146,7 +1161,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param lastTransactionDate Transaction usage date filter - end date
      * @param isDraft Is it a draft invoice
      * @param assignNumber Should a final invoice number be assigned
-     * @param billingCycle Billing cycle applicable to billable entity or to billing run
+     * @param defaultBillingCycle Billing cycle applicable to billable entity or to billing run. For Order, if not provided at order level, will have to be determined from Order's
+     *        billing account.
      * @param billingAccount Payment method. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will
      *        be determined for each rated transaction.
      * @param defaultPaymentMethod Payment method. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore
@@ -1162,7 +1178,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @SuppressWarnings("unchecked")
     private List<Invoice> createAggregatesAndInvoiceByRTLoop(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
-            Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, boolean assignNumber, BillingCycle billingCycle, BillingAccount billingAccount,
+            Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, boolean assignNumber, BillingCycle defaultBillingCycle, BillingAccount billingAccount,
             PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance) throws BusinessException {
 
         List<Invoice> invoiceList = new ArrayList<>();
@@ -1173,7 +1189,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         RoundingModeEnum rtRoundingMode = appProvider.getRoundingMode();
 
         // Retrieve Rated transactions and split them into BA/seller combinations
-        List<RatedTransactionGroup> ratedTransactionGroups = getRatedTransactionGroups(entityToInvoice, billingAccount, billingRun, billingCycle, defaultInvoiceType,
+        List<RatedTransactionGroup> ratedTransactionGroups = getRatedTransactionGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType,
             ratedTransactionFilter, firstTransactionDate, lastTransactionDate, isDraft);
 
         if (ratedTransactionGroups.isEmpty()) {

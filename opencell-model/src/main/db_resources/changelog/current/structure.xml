@@ -367,7 +367,7 @@
         
                     EXECUTE query;
         
-                    partition_date := partition_date + interval '1 day';
+                    --partition_date := partition_date + interval '1 day';
         
                     RAISE NOTICE 'partition created : %', table_name || '_' || to_char(partition_date,'YYYY_MM_DD');
     
