@@ -36,6 +36,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -175,7 +176,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
-    private String uuid = UUID.randomUUID().toString();
+    private String uuid;
 
     public Date getProcessDate() {
         return processDate;
@@ -442,8 +443,19 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
         this.cfValues = cfValues;
     }
 
+    /**
+     * setting uuid if null
+     */
+    @PrePersist
+    public void setUUIDIfNull() {
+    	if (uuid == null) {
+    		uuid = UUID.randomUUID().toString();
+    	}
+    }
+    
     @Override
     public String getUuid() {
+    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
 
