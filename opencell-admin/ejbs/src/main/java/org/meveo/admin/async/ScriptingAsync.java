@@ -4,11 +4,14 @@
 package org.meveo.admin.async;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
+import javax.annotation.Resource;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.ConvertUtils;
@@ -18,10 +21,12 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
 
 /**
  * @author anasseh
@@ -43,6 +48,15 @@ public class ScriptingAsync {
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
+    
+	@Resource(lookup = "java:jboss/ee/concurrency/executor/default")
+	ManagedExecutorService executor;
+	
+	@Inject
+	private JobExecutionService jobExecutionService;
+	
+	@Inject
+	private Logger log;
 
     /**
      * Run a script
@@ -58,9 +72,27 @@ public class ScriptingAsync {
     public Future<String> launchAndForget(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
+        
+		Callable<String> task = () -> runScript(result, scriptCode, context);
+		Future<String> futureResult = executor.submit(task);
+		while (!futureResult.isDone()) {
+				try {
+					Thread.sleep(2000);
+					if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+						futureResult.cancel(true);
+					}
+				} catch (InterruptedException e) {
+					log.error("Failed to complete script execution : ", e);
+				}
+		}
 
-        ScriptInterface script = null;
+        return futureResult;
+    }
+
+	public String runScript(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) {
+		ScriptInterface script = null;
         try {
+        	
             script = scriptInstanceService.getScriptInstance(scriptCode);
             context.put(Script.CONTEXT_CURRENT_USER, currentUser);
             context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
@@ -82,11 +114,13 @@ public class ScriptingAsync {
             if (context.containsKey(Script.JOB_RESULT_REPORT)) {
                 result.setReport(context.get(Script.JOB_RESULT_REPORT) + "");
             }
+
         } catch (Exception e) {
             result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
         }
-        return new AsyncResult<String>("OK");
-    }
+		
+        return "OK";
+	}
 
     long convert(Object s) {
         long result = (long) ((StringUtils.isBlank(s)) ? 0l : ConvertUtils.convert(s + "", Long.class));
