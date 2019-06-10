@@ -1069,12 +1069,12 @@
 									<h:outputText
 										value="#{messages['walletOperation.amountWithoutTax']}" />
 								</f:facet>
-								<h:outputText value="#{shotApplication.amountWithoutTax}" />
+								<h:outputText value="#{shotApplication.amountWithoutTax}" converter="bigDecimal12DigitsConverter" />
 							</p:column>
 							<p:column rendered="#{!appProvider.entreprise}" sortBy="#{shotApplication.amountWithTax}">
 								<f:facet name="header">
 									<h:outputText
-										value="#{messages['walletOperation.amountWithTax']}" />
+										value="#{messages['walletOperation.amountWithTax']}" converter="bigDecimal12DigitsConverter" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.amountWithTax}" />
 							</p:column>
