@@ -56,8 +56,8 @@ import org.meveo.service.billing.impl.InvoiceAgregateService;
  * 
  * @author Edward P. Legaspi
  * @author anasseh
- * @author Mounir Bahije
- * @lastModifiedVersion 5.2.1
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> {
@@ -400,8 +400,8 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         }
 
         recordedInvoice.setAccountingCode(occTemplate.getAccountingCode());
-        recordedInvoice.setOccCode(occTemplate.getCode());
-        recordedInvoice.setOccDescription(occTemplate.getDescription());
+        recordedInvoice.setCode(occTemplate.getCode());
+        recordedInvoice.setDescription(occTemplate.getDescription());
         recordedInvoice.setTransactionCategory(occTemplate.getOccCategory());
         recordedInvoice.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
 
