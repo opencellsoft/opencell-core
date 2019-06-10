@@ -132,7 +132,7 @@
 				                   value="#{messages['commons.edit']}" showEffect="slide"
 				                   hideEffect="slide"/> -->
 				        <p:link id="aoEditlink" outcome="#{accountingWritingListBean.displayOperation(entity)}"
-				                  icon="ui-icon-document" value="Detail">
+				                  icon="ui-icon-document" value="#{messages['accountingWriting.ao.detail']}">
 				            <f:param name="objectId" value="#{entity.id}"/>
 				            <f:param name="edit" value="false"/>
 				            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
