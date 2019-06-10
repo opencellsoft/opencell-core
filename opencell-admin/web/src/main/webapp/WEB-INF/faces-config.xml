@@ -1049,8 +1049,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 				<value>#{accountOperationBean.backTab}</value>
 			</view-param>
 		</redirect>
-	</navigation-case>
-	
+	</navigation-case>	
 
 	<navigation-case>
 		<from-outcome>crmAccounts</from-outcome>
@@ -2067,12 +2066,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 	<navigation-case>
 		<from-outcome>accountingWritings</from-outcome>
 		<to-view-id>/pages/finance/accountingWriting/accountingWritings.xhtml
-		</to-view-id>
-		<redirect include-view-params="true" />
-	</navigation-case>
-	<navigation-case>
-		<from-outcome>accountingWritingDetail</from-outcome>
-		<to-view-id>/pages/finance/accountingWriting/accountingWritingDetail.xhtml
 		</to-view-id>
 		<redirect include-view-params="true" />
 	</navigation-case>
