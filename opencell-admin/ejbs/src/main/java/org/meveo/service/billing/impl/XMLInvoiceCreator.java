@@ -1402,11 +1402,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      */
     private boolean isValidCategoryInvoiceAgregate(final UserAccount userAccount, final CategoryInvoiceAgregate categoryInvoiceAgregate)
             throws BusinessException {
-        boolean isValidCategoryInvoiceAgregate = false;
-        if (categoryInvoiceAgregate != null && categoryInvoiceAgregate.getUserAccount() !=null && categoryInvoiceAgregate.getUserAccount().getId() == userAccount.getId()) {
-            isValidCategoryInvoiceAgregate = true;
-        }
-        return isValidCategoryInvoiceAgregate;
+        Long uaId = userAccount.getId();
+        return categoryInvoiceAgregate != null && categoryInvoiceAgregate.getUserAccount() !=null && uaId != null && uaId.equals(categoryInvoiceAgregate.getUserAccount().getId());
     }
     
     /**
