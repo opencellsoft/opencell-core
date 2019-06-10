@@ -281,6 +281,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             if (endDate != null) {
                 qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
             }
+            
+            qb.addOrderCriterionAsIs("id", true);
 
             return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {

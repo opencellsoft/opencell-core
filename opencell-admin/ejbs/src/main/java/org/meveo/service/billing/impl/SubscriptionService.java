@@ -752,6 +752,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
             if (endDate != null) {
                 qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false);
             }
+            qb.addOrderCriterionAsIs("id", true);
 
             return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {

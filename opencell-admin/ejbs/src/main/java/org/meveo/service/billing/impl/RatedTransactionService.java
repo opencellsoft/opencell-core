@@ -1805,17 +1805,28 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         long startU = System.currentTimeMillis();
 
-        SubListCreator<Long> listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, rtUpdateSummary.getRatedTransactionIdsNoTaxChange());
-        while (listIterator.isHasNext()) {
-            em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
-                .setParameter("invoiceAgregateF", scAggregate).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
+        List<Long> rtIds = rtUpdateSummary.getRatedTransactionIdsNoTaxChange();
+        if (rtIds != null && !rtIds.isEmpty()) {
+
+            rtIds.sort(null);
+            SubListCreator<Long> listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, rtIds);
+            while (listIterator.isHasNext()) {
+                em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
+                    .setParameter("invoiceAgregateF", scAggregate).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
+            }
         }
-        listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, rtUpdateSummary.getRatedTransactionIdsTaxRecalculated());
-        while (listIterator.isHasNext()) {
-            em.createNamedQuery(massUpdateWithTaxChangeSql).setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", scAggregate)
-                .setParameter("tax", tax).setParameter("taxPercent", rtUpdateSummary.getTaxPercent())
-                .setParameter("taxPercentDecimal", BigDecimal.ONE.add(tax.getPercent().divide(NumberUtils.HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP)))
-                .setParameter("round", rtRounding).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
+
+        rtIds = rtUpdateSummary.getRatedTransactionIdsTaxRecalculated();
+        if (rtIds != null && !rtIds.isEmpty()) {
+
+            rtIds.sort(null);
+            SubListCreator<Long> listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, rtIds);
+            while (listIterator.isHasNext()) {
+                em.createNamedQuery(massUpdateWithTaxChangeSql).setParameter("billingRun", billingRun).setParameter("invoice", invoice)
+                    .setParameter("invoiceAgregateF", scAggregate).setParameter("tax", tax).setParameter("taxPercent", rtUpdateSummary.getTaxPercent())
+                    .setParameter("taxPercentDecimal", BigDecimal.ONE.add(tax.getPercent().divide(NumberUtils.HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP)))
+                    .setParameter("round", rtRounding).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
+            }
         }
         long endU = System.currentTimeMillis();
         log.error("AKK update {} took {}", endU - startU);
