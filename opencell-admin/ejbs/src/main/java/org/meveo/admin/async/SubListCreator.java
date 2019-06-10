@@ -62,6 +62,7 @@ public class SubListCreator<E> {
      * @param nbSplits Number of splits. Defaults to 1 for Zero or a negative value.
      */
     public SubListCreator(List<E> listToSplit, int nbSplits) {
+
         if (nbSplits < 1) {
             nbSplits = 1;
         }

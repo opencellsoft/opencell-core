@@ -41,6 +41,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
@@ -62,6 +63,7 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionMinAmountTypeEnum;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
@@ -79,6 +81,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.filter.FilterService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.order.OrderService;
 
 /**
@@ -92,6 +95,11 @@ import org.meveo.service.order.OrderService;
  */
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
+
+    /**
+     * In mass RT update with invoice information, batch size
+     */
+    private static int SPLIT_RT_UPDATE_BY_NR = 1000;
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
@@ -1762,5 +1770,54 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         } catch (NoResultException e) {
         }
         return false;
+    }
+
+    /**
+     * Update rated transactions with invoice information
+     * 
+     * @param rtsUpdateSummary Information for rated transaction update with invoice information
+     */
+    public void updateRTsWithInvoiceInfo(List<RTUpdateSummary> rtsUpdateSummary) {
+
+        for (RTUpdateSummary rtUpdateSummary : rtsUpdateSummary) {
+            updateRTsWithInvoiceInfo(rtUpdateSummary);
+        }
+    }
+
+    /**
+     * Update rated transactions with invoice information
+     * 
+     * @param rtUpdateSummary Information for rated transaction update with invoice information
+     */
+    public void updateRTsWithInvoiceInfo(RTUpdateSummary rtUpdateSummary) {
+
+        String massUpdateWithTaxChangeSql = appProvider.isEntreprise() ? "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2B"
+                : "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2C";
+
+        int rtRounding = appProvider.getRounding();
+
+        EntityManager em = getEntityManager();
+
+        BillingRun billingRun = em.getReference(BillingRun.class, rtUpdateSummary.getBillingRunId());
+        Invoice invoice = em.getReference(Invoice.class, rtUpdateSummary.getInvoiceId());
+        SubCategoryInvoiceAgregate scAggregate = em.getReference(SubCategoryInvoiceAgregate.class, rtUpdateSummary.getInvoiceSubcategoryAggregateId());
+        Tax tax = em.getReference(Tax.class, rtUpdateSummary.getTaxId());
+
+        long startU = System.currentTimeMillis();
+
+        SubListCreator<Long> listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, rtUpdateSummary.getRatedTransactionIdsNoTaxChange());
+        while (listIterator.isHasNext()) {
+            em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
+                .setParameter("invoiceAgregateF", scAggregate).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
+        }
+        listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, rtUpdateSummary.getRatedTransactionIdsTaxRecalculated());
+        while (listIterator.isHasNext()) {
+            em.createNamedQuery(massUpdateWithTaxChangeSql).setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", scAggregate)
+                .setParameter("tax", tax).setParameter("taxPercent", rtUpdateSummary.getTaxPercent())
+                .setParameter("taxPercentDecimal", BigDecimal.ONE.add(tax.getPercent().divide(NumberUtils.HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP)))
+                .setParameter("round", rtRounding).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
+        }
+        long endU = System.currentTimeMillis();
+        log.error("AKK update {} took {}", endU - startU);
     }
 }

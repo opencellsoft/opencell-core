@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -69,7 +68,6 @@ import org.apache.poi.util.IOUtils;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
-import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
@@ -180,8 +178,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private static int RT_SUMMARY_AMOUNT_WITHOUT_TAX = 6;
     private static int RT_SUMMARY_AMOUNT_WITH_TAX = 7;
     private static int RT_SUMMARY_BA_ID_ORDER_NUM = 8;
-
-    private static int SPLIT_RT_UPDATE_BY_NR = 1000;
 
     /** The p DF parameters construction. */
     @EJB
@@ -699,7 +695,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Creates invoices and their aggregates
+     * Creates invoices and their aggregates - IN new transaction
      *
      * @param entityToInvoice entity to be billed
      * @param billingRun billing run
@@ -713,9 +709,35 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public List<Invoice> createAgregatesAndInvoice(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
+    public List<Invoice> createAgregatesAndInvoiceInNewTransaction(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
             Date firstTransactionDate, Date lastTransactionDate, boolean instantiateMinRts, boolean isDraft, boolean assignNumber) throws BusinessException {
+
+        return createAgregatesAndInvoice(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate, instantiateMinRts, isDraft,
+            assignNumber, null);
+    }
+
+    /**
+     * Creates invoices and their aggregates
+     *
+     * @param entityToInvoice entity to be billed
+     * @param billingRun billing run
+     * @param ratedTransactionFilter rated transaction filter
+     * @param invoiceDate date of invoice
+     * @param firstTransactionDate date of first transaction
+     * @param lastTransactionDate date of last transaction
+     * @param instantiateMinRts Should rated transactions to reach minimum invoicing amount be checked and instantiated
+     * @param isDraft Is this a draft invoice
+     * @param assignNumber Should a number be assigned to the invoice
+     * @param rtUpdateSummaries If passed, rated transactions will not be updated one invoice at a time, but rather this list will be supplemented with Rated transaction summary
+     *        for created invoices
+     * @return A list of created invoices
+     * @throws BusinessException business exception
+     */
+    public List<Invoice> createAgregatesAndInvoice(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
+            Date firstTransactionDate, Date lastTransactionDate, boolean instantiateMinRts, boolean isDraft, boolean assignNumber, List<RTUpdateSummary> rtUpdateSummaries)
+            throws BusinessException {
 
         log.debug("Will create invoice and aggregates for {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
 
@@ -810,7 +832,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     assignNumber, billingCycle, ba, paymentMethod, invoiceType, balanceDue, totalInvoiceBalance);
             } else {
                 return createAggregatesAndInvoiceByRTSummaryLoop(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate,
-                    isDraft, assignNumber, billingCycle, ba, paymentMethod, invoiceType, balanceDue, totalInvoiceBalance);
+                    isDraft, assignNumber, billingCycle, ba, paymentMethod, invoiceType, balanceDue, totalInvoiceBalance, rtUpdateSummaries);
             }
 
         } catch (Exception e) {
@@ -852,12 +874,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
      *        determined for each billing account occurrence.
      * @param totalInvoiceBalance Total invoice balance. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and
      *        therefore will be determined for each billing account occurrence.
+     * @param rtUpdateSummaries If passed, rated transactions will not be updated one invoice at a time, but rather this list will be supplemented with Rated transaction summary
+     *        for created invoices
      * @return A list of invoices
      * @throws BusinessException General business exception
      */
     private List<Invoice> createAggregatesAndInvoiceByRTSummaryLoop(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
             Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, boolean assignNumber, BillingCycle defaultBillingCycle, BillingAccount billingAccount,
-            PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance) throws BusinessException {
+            PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance, List<RTUpdateSummary> rtUpdateSummaries)
+            throws BusinessException {
 
         EntityManager em = getEntityManager();
 
@@ -1077,6 +1102,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         List<Invoice> invoiceList = new ArrayList<>();
 
+        // Shall RTs be updated with invoice information right away
+        boolean updateRt = rtUpdateSummaries == null;
+
+        if (updateRt) {
+            rtUpdateSummaries = new ArrayList<>();
+        }
+
         // Append the rest of invoice aggregates, link to orders and persist invoice information
         for (Invoice invoice : allInvoices) {
             List<SubCategoryInvoiceAgregate> subcategoryAggregates = new ArrayList<SubCategoryInvoiceAgregate>();
@@ -1115,32 +1147,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             // Update rated transactions with invoice information and recalculated tax/amounts if changed
             long end = System.currentTimeMillis();
-            String massUpdateWithTaxChangeSql = isEnterprise ? "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2B"
-                    : "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2C";
-
             for (SubCategoryInvoiceAgregate scAggregate : subcategoryAggregates) {
-
-                long startU = System.currentTimeMillis();
-
-                SubListCreator<Long> listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, scAggregate.getRatedTransactionIdsNoTaxChange());
-                while (listIterator.isHasNext()) {
-                    em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
-                        .setParameter("invoiceAgregateF", scAggregate).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
-                }
-                listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, scAggregate.getRatedTransactionIdsTaxRecalculated());
-                while (listIterator.isHasNext()) {
-                    em.createNamedQuery(massUpdateWithTaxChangeSql).setParameter("billingRun", billingRun).setParameter("invoice", invoice)
-                        .setParameter("invoiceAgregateF", scAggregate).setParameter("tax", scAggregate.getTax()).setParameter("taxPercent", scAggregate.getTax().getPercent())
-                        .setParameter("taxPercentDecimal",
-                            BigDecimal.ONE.add(scAggregate.getTax().getPercent().divide(NumberUtils.HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP)))
-                        .setParameter("round", rtRounding).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
-                }
-                long endU = System.currentTimeMillis();
-                log.error("AKK update {} took {}", entityToInvoice.getId(), endU - startU);
+                rtUpdateSummaries.add(new RTUpdateSummary(billingRun.getId(), invoice.getId(), scAggregate.getId(), scAggregate.getTax().getId(), scAggregate.getTax().getPercent(),
+                    scAggregate.getRatedTransactionIdsNoTaxChange(), scAggregate.getRatedTransactionIdsTaxRecalculated()));
             }
 
-            log.error("AKKKKKKKKKKKKKKKK invoice took read/create/total {}/{}/{} {} {}/{}/{}", endR - startR, end - endR, System.currentTimeMillis() - startR,
-                entityToInvoice.getId(), firstTransactionDate, lastTransactionDate);
+            log.error("AKKKKKKKKKKKKKKKK invoice took read/create/total {}/{}/{} {}/{}/{}", endR - startR, end - endR, System.currentTimeMillis() - startR, entityToInvoice.getId(),
+                firstTransactionDate, lastTransactionDate);
 
             invoice.assignTemporaryInvoiceNumber();
 
@@ -1152,6 +1165,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             invoiceList.add(invoice);
         }
+
+        // Update RTs
+        if (updateRt) {
+            ratedTransactionService.updateRTsWithInvoiceInfo(rtUpdateSummaries);
+        }
+
         return invoiceList;
     }
 
@@ -2308,7 +2327,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Create missing rated transactions up to a last transaction date
         ratedTransactionService.createRatedTransaction(entity, lastTransactionDate);
 
-        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, true, isDraft, true);
+        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, true, isDraft, true, null);
 
         // TODO : delete this commit since generating PDF/XML and producing AOs are now outside this service !
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks

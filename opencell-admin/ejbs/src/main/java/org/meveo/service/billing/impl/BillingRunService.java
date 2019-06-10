@@ -994,9 +994,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 billableEntities = (List<IBillableEntity>) getEntitiesByBillingRun(billingRun);
             }
 
-            log.info("Will create invoices for Billing run {} for {} entities of type {}", billingRun.getId(), (billableEntities != null ? billableEntities.size() : 0), type);
-
             boolean instantiateMinRts = !includesFirstRun && ratedTransactionService.isMinRTsUsed();
+
+            log.info("Will create invoices for Billing run {} for {} entities of type {}. Min RTs will {} be created", billingRun.getId(),
+                (billableEntities != null ? billableEntities.size() : 0), type, instantiateMinRts ? "" : "NOT");
 
             createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities, instantiateMinRts);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
