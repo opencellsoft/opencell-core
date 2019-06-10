@@ -1139,8 +1139,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 log.error("AKK update {} took {}", entityToInvoice.getId(), endU - startU);
             }
 
-            log.error("AKKKKKKKKKKKKKKKK invoice took read/create/total {}/{}/{} {} {}/{}/{}", entityToInvoice.getId(), firstTransactionDate, lastTransactionDate, endR - startR,
-                end - endR, System.currentTimeMillis() - startR);
+            log.error("AKKKKKKKKKKKKKKKK invoice took read/create/total {}/{}/{} {} {}/{}/{}", endR - startR, end - endR, System.currentTimeMillis() - startR,
+                entityToInvoice.getId(), firstTransactionDate, lastTransactionDate);
 
             invoice.assignTemporaryInvoiceNumber();
 
