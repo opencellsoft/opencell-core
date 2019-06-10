@@ -1688,7 +1688,79 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccount", entity)
                 .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
         }
-        
+
         return new ArrayList<Object[]>();
+    }
+
+    /**
+     * Determine if minimum RT transactions functionality is used at service level
+     * 
+     * @return True if exists any serviceInstance with minimumAmountEl value
+     */
+    public boolean isServiceMinRTsUsed() {
+
+        try {
+            getEntityManager().createNamedQuery("ServiceInstance.getMimimumRTUsed").setMaxResults(1).getSingleResult();
+            return true;
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Determine if minimum RT transactions functionality is used at subscription level
+     * 
+     * @return True if exists any subscription with minimumAmountEl value
+     */
+    public boolean isSubscriptionMinRTsUsed() {
+
+        try {
+            getEntityManager().createNamedQuery("Subscription.getMimimumRTUsed").setMaxResults(1).getSingleResult();
+            return true;
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Determine if minimum RT transactions functionality is used at billing account level
+     * 
+     * @return True if exists any billing account with minimumAmountEl value
+     */
+    public boolean isBAMinRTsUsed() {
+
+        try {
+            getEntityManager().createNamedQuery("BillingAccount.getMimimumRTUsed").setMaxResults(1).getSingleResult();
+            return true;
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Determine if minimum RT transactions functionality is used at all
+     * 
+     * @return True if exists either serviceInstance, subscription or billing account with minimumAmountEl value
+     */
+    public boolean isMinRTsUsed() {
+
+        EntityManager em = getEntityManager();
+
+        try {
+            em.createNamedQuery("BillingAccount.getMimimumRTUsed").setMaxResults(1).getSingleResult();
+            return true;
+        } catch (NoResultException e) {
+        }
+        try {
+            em.createNamedQuery("Subscription.getMimimumRTUsed").setMaxResults(1).getSingleResult();
+            return true;
+        } catch (NoResultException e) {
+        }
+        try {
+            getEntityManager().createNamedQuery("ServiceInstance.getMimimumRTUsed").setMaxResults(1).getSingleResult();
+            return true;
+        } catch (NoResultException e) {
+        }
+        return false;
     }
 }

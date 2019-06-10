@@ -181,6 +181,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private static int RT_SUMMARY_AMOUNT_WITH_TAX = 7;
     private static int RT_SUMMARY_BA_ID_ORDER_NUM = 8;
 
+    private static int SPLIT_RT_UPDATE_BY_NR = 1000;
+
     /** The p DF parameters construction. */
     @EJB
     private PDFParametersConstruction pDFParametersConstruction;
@@ -754,11 +756,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 lastTransactionDate = billingRun.getLastTransactionDate();
                 invoiceDate = billingRun.getInvoiceDate();
             }
-            
+
             if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("reset.lastTransactionDate", "false"))) {
                 lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
             }
-            
+
             if (instantiateMinRts) {
                 ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, false);
                 minAmountTransactions = entityToInvoice.getMinRatedTransactions();
@@ -788,7 +790,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             // Store RTs, to reach minimum amount per invoice, to DB
-            if (minAmountTransactions != null) {
+            if (minAmountTransactions != null && !minAmountTransactions.isEmpty()) {
                 for (RatedTransaction minRatedTransaction : minAmountTransactions) {
                     // This is needed, as even if ratedTransactionService.create() is called and then sql is called to retrieve RTs, these minAmountTransactions will contain
                     // unmanaged
@@ -1120,12 +1122,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 long startU = System.currentTimeMillis();
 
-                SubListCreator<Long> listIterator = new SubListCreator<Long>(1000, scAggregate.getRatedTransactionIdsNoTaxChange());
+                SubListCreator<Long> listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, scAggregate.getRatedTransactionIdsNoTaxChange());
                 while (listIterator.isHasNext()) {
                     em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
                         .setParameter("invoiceAgregateF", scAggregate).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
                 }
-                listIterator = new SubListCreator<Long>(1000, scAggregate.getRatedTransactionIdsTaxRecalculated());
+                listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, scAggregate.getRatedTransactionIdsTaxRecalculated());
                 while (listIterator.isHasNext()) {
                     em.createNamedQuery(massUpdateWithTaxChangeSql).setParameter("billingRun", billingRun).setParameter("invoice", invoice)
                         .setParameter("invoiceAgregateF", scAggregate).setParameter("tax", scAggregate.getTax()).setParameter("taxPercent", scAggregate.getTax().getPercent())
@@ -1137,8 +1139,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 log.error("AKK update {} took {}", entityToInvoice.getId(), endU - startU);
             }
 
-            log.error("AKKKKKKKKKKKKKKKK invoice {}/()/() took {} with RT retrieval {} save  {}", entityToInvoice.getId(), firstTransactionDate, lastTransactionDate, end - endR,
-                endR - startR, System.currentTimeMillis() - endR);
+            log.error("AKKKKKKKKKKKKKKKK invoice took read/create/total {}/{}/{} {} {}/{}/{}", entityToInvoice.getId(), firstTransactionDate, lastTransactionDate, endR - startR,
+                end - endR, System.currentTimeMillis() - startR);
 
             invoice.assignTemporaryInvoiceNumber();
 
