@@ -1798,7 +1798,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         EntityManager em = getEntityManager();
 
-        BillingRun billingRun = em.getReference(BillingRun.class, rtUpdateSummary.getBillingRunId());
+        BillingRun billingRun = rtUpdateSummary.getBillingRunId() != null ? em.getReference(BillingRun.class, rtUpdateSummary.getBillingRunId()) : null;
         Invoice invoice = em.getReference(Invoice.class, rtUpdateSummary.getInvoiceId());
         SubCategoryInvoiceAgregate scAggregate = em.getReference(SubCategoryInvoiceAgregate.class, rtUpdateSummary.getInvoiceSubcategoryAggregateId());
         Tax tax = em.getReference(Tax.class, rtUpdateSummary.getTaxId());

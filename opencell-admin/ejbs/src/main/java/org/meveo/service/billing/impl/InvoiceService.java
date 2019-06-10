@@ -1148,8 +1148,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             // Update rated transactions with invoice information and recalculated tax/amounts if changed
             long end = System.currentTimeMillis();
             for (SubCategoryInvoiceAgregate scAggregate : subcategoryAggregates) {
-                rtUpdateSummaries.add(new RTUpdateSummary(billingRun.getId(), invoice.getId(), scAggregate.getId(), scAggregate.getTax().getId(), scAggregate.getTax().getPercent(),
-                    scAggregate.getRatedTransactionIdsNoTaxChange(), scAggregate.getRatedTransactionIdsTaxRecalculated()));
+                rtUpdateSummaries.add(new RTUpdateSummary(billingRun != null ? billingRun.getId() : null, invoice.getId(), scAggregate.getId(), scAggregate.getTax().getId(),
+                    scAggregate.getTax().getPercent(), scAggregate.getRatedTransactionIdsNoTaxChange(), scAggregate.getRatedTransactionIdsTaxRecalculated()));
             }
 
             log.error("AKKKKKKKKKKKKKKKK invoice took read/create/total {}/{}/{} {}/{}/{}", endR - startR, end - endR, System.currentTimeMillis() - startR, entityToInvoice.getId(),
