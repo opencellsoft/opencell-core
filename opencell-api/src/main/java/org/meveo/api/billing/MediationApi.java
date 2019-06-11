@@ -1,5 +1,7 @@
 package org.meveo.api.billing;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -20,12 +22,16 @@ import org.meveo.admin.parse.csv.CDR;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.billing.CdrListDto;
+import org.meveo.api.dto.billing.ChargeCDRDto;
+import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
+import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
@@ -108,45 +114,39 @@ public class MediationApi extends BaseApi {
         }
     }
 
+
     /**
      * Same as registerCdrList, but at the same process rate the EDR created
-     * 
-     * @param ip where request came from
-     * @param cdr String of CDR
+     *
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException business exception.
      */
-    public void chargeCdr(String cdr, String ip) throws MeveoApiException, BusinessException {
-        if (!StringUtils.isBlank(cdr)) {
+    public ChargeCDRResponseDto chargeCdr(ChargeCDRDto chargeCDRDto) throws MeveoApiException, BusinessException {
+        if (!StringUtils.isBlank(chargeCDRDto.getCdr())) {
             try {
-                cdrParsingService.initByApi(currentUser.getUserName(), ip);
+                cdrParsingService.initByApi(currentUser.getUserName(), chargeCDRDto.getIp());
             } catch (BusinessException e1) {
                 log.error("failed to init by api");
                 throw new MeveoApiException(e1.getMessage());
             }
-            List<EDR> edrs;
+
             try {
-                edrs = cdrParsingService.getEDRList(cdr, CDRParsingService.CDR_ORIGIN_API);
+                List<EDR> edrs = cdrParsingService.getEDRList(chargeCDRDto.getCdr(), CDRParsingService.CDR_ORIGIN_API);
+                List<WalletOperation> walletOperations = new ArrayList<>();
                 for (EDR edr : edrs) {
                     log.debug("edr={}", edr);
                     edr.setSubscription(subscriptionService.findById(edr.getSubscription().getId(), Arrays.asList("offer")));
-                    edrService.create(edr);
-                    try {
-                        usageRatingService.rateUsageWithinTransaction(edr, false);
-                        if (edr.getStatus() == EDRStatusEnum.REJECTED) {
-                            log.error("edr rejected={}", edr.getRejectReason());
-                            throw new MeveoApiException(edr.getRejectReason());
-                        }
-                    } catch (BusinessException e) {
-                        if (e instanceof InsufficientBalanceException) {
-                            log.error("edr rejected={}", edr.getRejectReason());
-                            throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
-                        } else {
-                            log.error("Exception rating edr={}", e);
-                            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
-                        }
+                    if (!chargeCDRDto.isVirtual()) {
+                        edrService.create(edr);
+                    }
+                    List<WalletOperation> wo = rateUsage(edr, chargeCDRDto);
+                    if (wo != null) {
+                        walletOperations.addAll(wo);
                     }
                 }
+
+                return createChargeCDRResultDto(walletOperations, chargeCDRDto.isReturnWalletOperations());
+
             } catch (CDRParsingException e) {
                 log.error("Error parsing cdr={}", e.getRejectionCause());
                 throw new MeveoApiException(e.getRejectionCause().toString());
@@ -154,7 +154,32 @@ public class MediationApi extends BaseApi {
         } else {
             missingParameters.add("cdr");
             handleMissingParameters();
+            return null;
         }
+    }
+
+    private ChargeCDRResponseDto createChargeCDRResultDto(List<WalletOperation> walletOperations, boolean returnWalletOperations) {
+
+        ChargeCDRResponseDto result = new ChargeCDRResponseDto();
+        BigDecimal amountWithTax = BigDecimal.ZERO;
+        BigDecimal amountWithoutTax = BigDecimal.ZERO;
+        BigDecimal amountTax = BigDecimal.ZERO;
+        for (WalletOperation walletOperation : walletOperations) {
+            if (returnWalletOperations) {
+                WalletOperationDto walletOperationDto = new WalletOperationDto(walletOperation);
+                result.getWalletOperations().add(walletOperationDto);
+            }
+            amountWithTax = amountWithTax.add(walletOperation.getAmountWithTax());
+            amountWithoutTax = amountWithoutTax.add(walletOperation.getAmountWithoutTax());
+            amountTax = amountTax.add(walletOperation.getAmountTax());
+        }
+        if (returnWalletOperations) {
+            result.setWalletOperationCount(result.getWalletOperations().size());
+        }
+        result.setAmountTax(amountTax);
+        result.setAmountWithoutTax(amountWithoutTax);
+        result.setAmountWithTax(amountWithTax);
+        return result;
     }
 
     @Timeout
@@ -253,21 +278,7 @@ public class MediationApi extends BaseApi {
                     reservationService.cancelPrepaidReservation(reservation);
                     EDR edr = reservation.getOriginEdr();
                     edr.setQuantity(reservationDto.getConsumedQuantity());
-                    try {
-                        usageRatingService.rateUsageWithinTransaction(edr, false);
-                        if (edr.getStatus() == EDRStatusEnum.REJECTED) {
-                            log.error("edr rejected={}", edr.getRejectReason());
-                            throw new MeveoApiException(edr.getRejectReason());
-                        }
-                    } catch (BusinessException e) {
-                        if (e instanceof InsufficientBalanceException) {
-                            log.error("edr rejected={}", edr.getRejectReason());
-                            throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
-                        } else {
-                            log.error("Exception rating edr={}", e);
-                            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
-                        }
-                    }
+                    rateUsage(edr, new ChargeCDRDto());
                 } else {
                     throw new BusinessException("CONSUMPTION_OVER_QUANTITY_RESERVED");
                 }
@@ -287,6 +298,26 @@ public class MediationApi extends BaseApi {
         } else {
             missingParameters.add("reservation");
             handleMissingParameters();
+        }
+    }
+
+    private List<WalletOperation> rateUsage(EDR edr, ChargeCDRDto chargeCDRDto) throws MeveoApiException {
+        try {
+            List<WalletOperation> walletOperations = usageRatingService
+                    .rateUsageWithinTransaction(edr, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), 0);
+            if (edr.getStatus() == EDRStatusEnum.REJECTED) {
+                log.error("edr rejected={}", edr.getRejectReason());
+                throw new MeveoApiException(edr.getRejectReason());
+            }
+            return walletOperations;
+        } catch (BusinessException e) {
+            if (e instanceof InsufficientBalanceException) {
+                log.error("edr rejected={}", edr.getRejectReason());
+                throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
+            } else {
+                log.error("Exception rating edr={}", e);
+                throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
+            }
         }
     }
 
