@@ -156,8 +156,8 @@ public class AccountOperationApi extends BaseApi {
 
         accountOperation.setMatchingStatus(postData.getMatchingStatus());
 
-        accountOperation.setCode(postData.getOccCode());
-        accountOperation.setDescription(postData.getOccDescription());
+        accountOperation.setCode(postData.getCode());
+        accountOperation.setDescription(postData.getDescription());
         if (!StringUtils.isBlank(postData.getPaymentMethod())) {
             accountOperation.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
         }
