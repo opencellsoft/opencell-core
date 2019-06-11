@@ -20,6 +20,9 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -41,6 +44,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -1729,8 +1733,39 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
 
         } else if (entityToInvoice instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccountId", entityToInvoice.getId())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+//            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccountId", entityToInvoice.getId())
+//                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+
+            final List<Object[]> rtData = new ArrayList<>();
+
+            Session hibernateSession = getEntityManager().unwrap(Session.class);
+
+            hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+                @Override
+                public void execute(Connection connection) throws SQLException {
+
+                    try (ResultSet rs = connection.createStatement().executeQuery(
+                        "select seller_id, user_account_id, wallet_id, invoice_sub_category_id, tax_id, id, amount_without_tax, amount_with_tax, order_number from billing_rated_transaction where status='OPEN' and billing_account__id="
+                                + entityToInvoice.getId() + " and to_date('" + DateUtils.formatDateWithPattern(firstTransactionDate, "yyyy-MM-dd")
+                                + "', 'YYYY-MM-MM')<usage_date and usage_date<to_date('" + DateUtils.formatDateWithPattern(firstTransactionDate, "yyyy-MM-dd")
+                                + "', 'YYYY-MM-DD')")) {
+
+                        while (rs.next()) {
+
+                            rtData.add(new Object[] { rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getLong(4), rs.getLong(5), rs.getLong(6), rs.getBigDecimal(7),
+                                    rs.getBigDecimal(8), rs.getString(9) });
+
+                        }
+
+                    } catch (SQLException e) {
+                        log.error("Failed to retrieve RT summary for BA", e);
+                        throw e;
+                    }
+                }
+            });
+
+            return rtData;
         }
 
         return new ArrayList<Object[]>();
@@ -1847,8 +1882,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             rtIds.sort(null);
             SubListCreator<Long> listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, rtIds);
             while (listIterator.isHasNext()) {
-                em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
-                    .setParameter("invoiceAgregateF", scAggregate).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
+//                em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
+//                    .setParameter("invoiceAgregateF", scAggregate).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
+
+                em.createNativeQuery("update billing_rated_transaction set billing_run_id=:billingRunId, invoice_id=:invoiceId, aggregate_id_f=:fAggregateId where id in :ids")
+                    .setParameter("billingRunId", rtUpdateSummary.getBillingRunId()).setParameter("invoiceId", rtUpdateSummary.getInvoiceId())
+                    .setParameter("fAggregateId", rtUpdateSummary.getInvoiceSubcategoryAggregateId()).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
             }
         }
 
