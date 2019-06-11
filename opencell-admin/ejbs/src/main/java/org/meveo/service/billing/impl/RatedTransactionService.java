@@ -21,8 +21,10 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -102,7 +104,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * In mass RT update with invoice information, batch size
      */
-    private static int SPLIT_RT_UPDATE_BY_NR = 1000;
+    private static int SPLIT_RT_UPDATE_BY_NR = 500;
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
@@ -1753,8 +1755,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                         while (rs.next()) {
 
-                            rtData.add(new Object[] { rs.getLong(1), rs.getObject(2, Long.class), rs.getObject(3, Long.class), rs.getLong(4), rs.getLong(5), rs.getLong(6), rs.getBigDecimal(7),
-                                    rs.getBigDecimal(8), rs.getString(9) });
+                            rtData.add(new Object[] { rs.getLong(1), rs.getObject(2, Long.class), rs.getObject(3, Long.class), rs.getLong(4), rs.getLong(5), rs.getLong(6),
+                                    rs.getBigDecimal(7), rs.getBigDecimal(8), rs.getString(9) });
 
                         }
 
@@ -1860,7 +1862,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * 
      * @param rtUpdateSummary Information for rated transaction update with invoice information
      */
-    public void updateRTsWithInvoiceInfo(RTUpdateSummary rtUpdateSummary) {
+    public void updateRTsWithInvoiceInfo(final RTUpdateSummary rtUpdateSummary) {
 
         String massUpdateWithTaxChangeSql = appProvider.isEntreprise() ? "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2B"
                 : "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2C";
@@ -1881,14 +1883,47 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             rtIds.sort(null);
             SubListCreator<Long> listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, rtIds);
-            while (listIterator.isHasNext()) {
+
+            Session hibernateSession = getEntityManager().unwrap(Session.class);
+
+            hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+                @Override
+                public void execute(Connection connection) throws SQLException {
+
+                    try (PreparedStatement preparedStatement = connection
+                        .prepareStatement("update billing_rated_transaction set billing_run_id=?, invoice_id=?, aggregate_id_f=? where id = ANY(?)")) {
+
+                        while (listIterator.isHasNext()) {
+
+                            if (rtUpdateSummary.getBillingRunId() == null) {
+                                preparedStatement.setNull(1, Types.NULL);
+                            } else {
+                                preparedStatement.setLong(1, rtUpdateSummary.getBillingRunId());
+                            }
+                            preparedStatement.setLong(2, rtUpdateSummary.getInvoiceId());
+                            preparedStatement.setLong(3, rtUpdateSummary.getInvoiceSubcategoryAggregateId());
+                            preparedStatement.setArray(4, connection.createArrayOf("bigint", listIterator.getNextWorkSet().toArray(new Long[] {})));
+                            preparedStatement.addBatch();
+
+                            preparedStatement.executeBatch();
+                        }
+
+                    } catch (SQLException e) {
+                        log.error("Failed to update RT with invoice data", e);
+                        throw e;
+                    }
+                }
+            });
+
+//            while (listIterator.isHasNext()) {
 //                em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
 //                    .setParameter("invoiceAgregateF", scAggregate).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
-
-                em.createNativeQuery("update billing_rated_transaction set billing_run_id=:billingRunId, invoice_id=:invoiceId, aggregate_id_f=:fAggregateId where id in :ids")
-                    .setParameter("billingRunId", rtUpdateSummary.getBillingRunId()).setParameter("invoiceId", rtUpdateSummary.getInvoiceId())
-                    .setParameter("fAggregateId", rtUpdateSummary.getInvoiceSubcategoryAggregateId()).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
-            }
+//
+//                em.createNativeQuery("update billing_rated_transaction set billing_run_id=:billingRunId, invoice_id=:invoiceId, aggregate_id_f=:fAggregateId where id in :ids")
+//                    .setParameter("billingRunId", rtUpdateSummary.getBillingRunId()).setParameter("invoiceId", rtUpdateSummary.getInvoiceId())
+//                    .setParameter("fAggregateId", rtUpdateSummary.getInvoiceSubcategoryAggregateId()).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
+//            }
         }
 
         rtIds = rtUpdateSummary.getRatedTransactionIdsTaxRecalculated();

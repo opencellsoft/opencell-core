@@ -878,6 +878,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         List<Object[]> rts = ratedTransactionService.listRTSummaryToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter);
 
+        if (rts == null || rts.isEmpty()) {
+            log.info("AKK No transactions found for {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
+            return new ArrayList<>();
+        }
         long endR = System.currentTimeMillis();
 
         // Instantiated invoices. Key ba.id_seller.id_invoiceType.id
