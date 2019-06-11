@@ -75,24 +75,22 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and invoice is not null order by usageDate desc "),
 
         @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumber", query = "SELECT r FROM RatedTransaction r where "
-                + " r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND r.orderNumber=:orderNumber "
-                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.usageDate desc "),
-        @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscription", query = "SELECT r FROM RatedTransaction r where r.subscription=:subscription"
-                + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
-                + " order by r.usageDate desc "),
-        @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccount", query = "SELECT r FROM RatedTransaction r where r.billingAccount=:billingAccount "
-                + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
-                + " order by r.usageDate desc "),
+                + " r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN  AND r.orderNumber=:orderNumber "
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.billingAccount.id "),
+        @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscription", query = "SELECT r FROM RatedTransaction r where r.subscription.id=:subscriptionId"
+                + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
+        @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccount", query = "SELECT r FROM RatedTransaction r where r.billingAccount.id=:billingAccountId "
+                + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
 
         @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumberFlat", query = "SELECT r.seller.id, r.userAccount.id, r.wallet.id, r.invoiceSubCategory.id, r.tax.id, r.id, r.amountWithoutTax, r.amountWithTax, r.billingAccount.id "
                 + " FROM RatedTransaction r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND r.orderNumber=:orderNumber "
-                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate ORDER BY billingAccount.id, seller.id "),
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate ORDER BY billingAccount.id "),
         @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscriptionFlat", query = "SELECT r.seller.id, r.userAccount.id, r.wallet.id, r.invoiceSubCategory.id, r.tax.id, r.id, r.amountWithoutTax, r.amountWithTax, r.orderNumber "
-                + " FROM RatedTransaction r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND r.subscription=:subscription "
-                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate ORDER BY seller.id"),
+                + " FROM RatedTransaction r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND r.subscription.id=:subscriptionId "
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate"),
         @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccountFlat", query = "SELECT r.seller.id, r.userAccount.id, r.wallet.id, r.invoiceSubCategory.id, r.tax.id, r.id, r.amountWithoutTax, r.amountWithTax, r.orderNumber "
-                + " FROM RatedTransaction r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND r.billingAccount=:billingAccount "
-                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.usageDate desc "),
+                + " FROM RatedTransaction r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND r.billingAccount.id=:billingAccountId "
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
 
         @NamedQuery(name = "RatedTransaction.listOrdersBySubscription", query = "SELECT distinct r.orderNumber FROM RatedTransaction r where r.subscription=:subscription"
                 + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "

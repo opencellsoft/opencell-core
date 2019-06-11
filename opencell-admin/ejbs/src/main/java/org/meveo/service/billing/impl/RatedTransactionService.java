@@ -81,7 +81,6 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.filter.FilterService;
-import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.order.OrderService;
 
 /**
@@ -1664,7 +1663,43 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Get a list of invoiceable Rated transactions for a given billable entity and date range or from a filter
      * 
-     * @param entity Entity to invoice (subscription, billing account or order)
+     * @param entityToInvoice Entity to invoice (subscription, billing account or order)
+     * @param firstTransactionDate Usage date range - start date
+     * @param lastTransactionDate Usage date range - end date
+     * @param ratedTransactionFilter Filter returning a list of rated transactions
+     * @return A list of RT entities
+     * @throws BusinessException General exception
+     */
+    @SuppressWarnings("unchecked")
+    public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTransactionFilter)
+            throws BusinessException {
+
+        if (ratedTransactionFilter != null) {
+            return (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
+
+        } else if (entityToInvoice instanceof Subscription) {
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class)
+                .setParameter("subscriptionId", entityToInvoice.getId()).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+
+        } else if (entityToInvoice instanceof BillingAccount) {
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class)
+                .setParameter("billingAccountId", entityToInvoice.getId()).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+
+        } else if (entityToInvoice instanceof Order) {
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
+                .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber()).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+        }
+
+        return new ArrayList<>();
+    }
+
+    /**
+     * Get a list of invoiceable Rated transactions for a given billable entity and date range or from a filter
+     * 
+     * @param entityToInvoice Entity to invoice (subscription, billing account or order)
      * @param firstTransactionDate Usage date range - start date
      * @param lastTransactionDate Usage date range - end date
      * @param ratedTransactionFilter Filter returning a list of rated transactions
@@ -1673,7 +1708,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @throws BusinessException General exception
      */
     @SuppressWarnings("unchecked")
-    public List<Object[]> listRTsToInvoice(IBillableEntity entity, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTransactionFilter) throws BusinessException {
+    public List<Object[]> listRTSummaryToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTransactionFilter)
+            throws BusinessException {
 
         if (ratedTransactionFilter != null) {
             List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
@@ -1681,19 +1717,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return ratedTransactions.stream()
                 .map(rt -> new Object[] { rt.getSeller().getId(), rt.getUserAccount() != null ? rt.getUserAccount().getId() : null,
                         rt.getWallet() != null ? rt.getWallet().getId() : null, rt.getInvoiceSubCategory().getId(), rt.getTax().getId(), rt.getAmountWithoutTax(),
-                        rt.getAmountWithTax(), entity instanceof Order ? rt.getBillingAccount().getId() : rt.getOrderNumber() })
+                        rt.getAmountWithTax(), entityToInvoice instanceof Order ? rt.getBillingAccount().getId() : rt.getOrderNumber() })
                 .collect(Collectors.toList());
 
-        } else if (entity instanceof Order) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumberFlat").setParameter("orderNumber", ((Order) entity).getOrderNumber())
+        } else if (entityToInvoice instanceof Order) {
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumberFlat").setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
                 .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
 
-        } else if (entity instanceof Subscription) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscriptionFlat").setParameter("subscription", entity)
+        } else if (entityToInvoice instanceof Subscription) {
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscriptionFlat").setParameter("subscriptionId", entityToInvoice.getId())
                 .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
 
-        } else if (entity instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccount", entity)
+        } else if (entityToInvoice instanceof BillingAccount) {
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccountId", entityToInvoice.getId())
                 .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
         }
 

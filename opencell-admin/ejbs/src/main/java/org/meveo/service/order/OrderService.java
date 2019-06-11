@@ -165,7 +165,7 @@ public class OrderService extends BusinessService<Order> {
     public List<Order> findOrders(BillingCycle billingCycle, Date startdate, Date endDate) {
         try {
             QueryBuilder qb = new QueryBuilder(Order.class, "o", null);
-            qb.addCriterionEntity("o.billingCycle", billingCycle);
+            qb.addCriterionEntity("o.billingCycle.id", billingCycle.getId());
 
             if (startdate != null) {
                 qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
@@ -190,6 +190,6 @@ public class OrderService extends BusinessService<Order> {
      * @return A list of Orders
      */
     public List<Order> findOrders(BillingRun billingRun) {
-        return getEntityManager().createNamedQuery("Order.listByBillingRun", Order.class).setParameter("billingRun", billingRun).getResultList();
+        return getEntityManager().createNamedQuery("Order.listByBillingRun", Order.class).setParameter("billingRunId", billingRun.getId()).getResultList();
     }
 }

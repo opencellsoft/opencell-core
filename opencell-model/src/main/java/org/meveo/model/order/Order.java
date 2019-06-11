@@ -66,7 +66,7 @@ import org.meveo.model.shared.Address;
 @Table(name = "ord_order", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_order_seq"), })
-@NamedQueries({ @NamedQuery(name = "Order.listByBillingRun", query = "select o from Order o where o.billingRun=:billingRun order by o.id") })
+@NamedQueries({ @NamedQuery(name = "Order.listByBillingRun", query = "select o from Order o where o.billingRun.id=:billingRunId order by o.id") })
 public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntity {
 
     private static final long serialVersionUID = -9060067698650286828L;

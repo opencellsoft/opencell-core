@@ -613,32 +613,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param isDraft Is it a draft invoice
      * @return list of rated transaction groups for entity.
      */
-    @SuppressWarnings("unchecked")
     public List<RatedTransactionGroup> getRatedTransactionGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun,
             BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft)
             throws BusinessException {
 
-        List<RatedTransaction> ratedTransactions = null;
-
-        // Get entity RTs grouped by billing account
-        if (ratedTransactionFilter != null) {
-            ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
-
-        } else if (entityToInvoice instanceof Subscription) {
-            ratedTransactions = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class)
-                .setParameter("subscription", entityToInvoice).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
-                .getResultList();
-
-        } else if (entityToInvoice instanceof BillingAccount) {
-            ratedTransactions = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class)
-                .setParameter("billingAccount", entityToInvoice).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
-                .getResultList();
-
-        } else if (entityToInvoice instanceof Order) {
-            ratedTransactions = getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
-                .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber()).setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-        }
+        List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter);
 
         // Split RTs billing account groups to billing account/seller groups
         log.debug("Split RTs billing account groups to billing account/seller/invoice type groups");
@@ -757,13 +736,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
             BillingAccount ba = null;
 
             if (entityToInvoice instanceof Subscription) {
-                entityToInvoice = subscriptionService.refreshOrRetrieve((Subscription) entityToInvoice);
+                entityToInvoice = subscriptionService.retrieveIfNotManaged((Subscription) entityToInvoice);
                 ba = ((Subscription) entityToInvoice).getUserAccount().getBillingAccount();
             } else if (entityToInvoice instanceof BillingAccount) {
-                entityToInvoice = billingAccountService.refreshOrRetrieve((BillingAccount) entityToInvoice);
+                entityToInvoice = billingAccountService.retrieveIfNotManaged((BillingAccount) entityToInvoice);
                 ba = (BillingAccount) entityToInvoice;
             } else if (entityToInvoice instanceof Order) {
-                entityToInvoice = orderService.refreshOrRetrieve((Order) entityToInvoice);
+                entityToInvoice = orderService.retrieveIfNotManaged((Order) entityToInvoice);
             }
 
             if (billingRun != null) {
@@ -897,7 +876,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         long startR = System.currentTimeMillis();
 
-        List<Object[]> rts = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter);
+        List<Object[]> rts = ratedTransactionService.listRTSummaryToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter);
 
         long endR = System.currentTimeMillis();
 

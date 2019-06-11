@@ -272,7 +272,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate) {
         try {
             QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b", null);
-            qb.addCriterionEntity("b.billingCycle", billingCycle);
+            qb.addCriterionEntity("b.billingCycle.id", billingCycle.getId());
 
             if (startdate != null) {
                 qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
@@ -281,7 +281,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             if (endDate != null) {
                 qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
             }
-            
+
             qb.addOrderCriterionAsIs("id", true);
 
             return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
@@ -299,7 +299,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @return A list of Billing accounts
      */
     public List<BillingAccount> findBillingAccounts(BillingRun billingRun) {
-        return getEntityManager().createNamedQuery("BillingAccount.listByBillingRun", BillingAccount.class).setParameter("billingRun", billingRun).getResultList();
+        return getEntityManager().createNamedQuery("BillingAccount.listByBillingRun", BillingAccount.class).setParameter("billingRunId", billingRun.getId()).getResultList();
     }
 
     /**
@@ -313,7 +313,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public List<Long> findBillingAccountIds(BillingCycle billingCycle, Date startdate, Date endDate) {
         try {
             QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b", null);
-            qb.addCriterionEntity("b.billingCycle", billingCycle);
+            qb.addCriterionEntity("b.billingCycle.id", billingCycle.getId());
 
             if (startdate != null) {
                 qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);

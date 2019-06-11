@@ -77,7 +77,7 @@ import org.meveo.model.payments.CustomerAccount;
 @Table(name = "billing_billing_account")
 @DiscriminatorValue(value = "ACCT_BA")
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listIdsByBillingRunId", query = "SELECT b.id FROM BillingAccount b where b.billingRun.id=:billingRunId order by b.id"),
-        @NamedQuery(name = "BillingAccount.listByBillingRun", query = "select b from BillingAccount b where b.billingRun=:billingRun order by b.id"),
+        @NamedQuery(name = "BillingAccount.listByBillingRun", query = "select b from BillingAccount b where b.billingRun.id=:billingRunId order by b.id"),
         @NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId"),
         @NamedQuery(name = "BillingAccount.getMimimumRTUsed", query = "select ba.minimumAmountEl from BillingAccount ba where ba.minimumAmountEl is not null") })
 public class BillingAccount extends AccountEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
@@ -224,12 +224,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
-
-    /**
-     * A list of rated transactions
-     */
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
-    private List<RatedTransaction> ratedTransactions;
 
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
@@ -502,14 +496,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     public void setBrAmountWithTax(BigDecimal brAmountWithTax) {
         this.brAmountWithTax = brAmountWithTax;
-    }
-
-    public List<RatedTransaction> getRatedTransactions() {
-        return ratedTransactions;
-    }
-
-    public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
-        this.ratedTransactions = ratedTransactions;
     }
 
     public Map<String, CounterInstance> getCounters() {

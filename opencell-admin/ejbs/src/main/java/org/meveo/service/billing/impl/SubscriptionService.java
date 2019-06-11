@@ -743,7 +743,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public List<Subscription> findSubscriptions(BillingCycle billingCycle, Date startdate, Date endDate) {
         try {
             QueryBuilder qb = new QueryBuilder(Subscription.class, "s", null);
-            qb.addCriterionEntity("s.billingCycle", billingCycle);
+            qb.addCriterionEntity("s.billingCycle.id", billingCycle.getId());
 
             if (startdate != null) {
                 qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
@@ -769,6 +769,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
      * @return A list of Subscriptions
      */
     public List<Subscription> findSubscriptions(BillingRun billingRun) {
-        return getEntityManager().createNamedQuery("Subscription.listByBillingRun", Subscription.class).setParameter("billingRun", billingRun).getResultList();
+        return getEntityManager().createNamedQuery("Subscription.listByBillingRun", Subscription.class).setParameter("billingRunId", billingRun.getId()).getResultList();
     }
 }
