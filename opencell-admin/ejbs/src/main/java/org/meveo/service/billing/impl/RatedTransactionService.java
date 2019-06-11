@@ -1735,9 +1735,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
 
         } else if (entityToInvoice instanceof BillingAccount) {
-//            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccountId", entityToInvoice.getId())
-//                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
 
+            // AKK This is a version of retrieving data with JPA query
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccountId", entityToInvoice.getId())
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+
+            /* AKK This is a version of retrieving data with plain db connection
+             * 
             final List<Object[]> rtData = new ArrayList<>();
 
             Session hibernateSession = getEntityManager().unwrap(Session.class);
@@ -1768,6 +1772,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             });
 
             return rtData;
+            */
         }
 
         return new ArrayList<Object[]>();
@@ -1884,6 +1889,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             rtIds.sort(null);
             SubListCreator<Long> listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, rtIds);
 
+            /* AKK This is a version of update with plain DB connection
             Session hibernateSession = getEntityManager().unwrap(Session.class);
 
             hibernateSession.doWork(new org.hibernate.jdbc.Work() {
@@ -1915,15 +1921,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     }
                 }
             });
+            
+            */
 
-//            while (listIterator.isHasNext()) {
-//                em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
-//                    .setParameter("invoiceAgregateF", scAggregate).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
-//
-//                em.createNativeQuery("update billing_rated_transaction set billing_run_id=:billingRunId, invoice_id=:invoiceId, aggregate_id_f=:fAggregateId where id in :ids")
-//                    .setParameter("billingRunId", rtUpdateSummary.getBillingRunId()).setParameter("invoiceId", rtUpdateSummary.getInvoiceId())
-//                    .setParameter("fAggregateId", rtUpdateSummary.getInvoiceSubcategoryAggregateId()).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
-//            }
+            // AKK This is a version of update with JPA
+            while (listIterator.isHasNext()) {
+                em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
+                    .setParameter("invoiceAgregateF", scAggregate).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
+            }
+            
+            
+            /* AKK This is a version of update with a native query using JPA
+                 
+            while (listIterator.isHasNext()) {            
+                em.createNativeQuery("update billing_rated_transaction set billing_run_id=:billingRunId, invoice_id=:invoiceId, aggregate_id_f=:fAggregateId where id in :ids")
+                    .setParameter("billingRunId", rtUpdateSummary.getBillingRunId()).setParameter("invoiceId", rtUpdateSummary.getInvoiceId())
+                    .setParameter("fAggregateId", rtUpdateSummary.getInvoiceSubcategoryAggregateId()).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
+            }
+            
+            */
+            
         }
 
         rtIds = rtUpdateSummary.getRatedTransactionIdsTaxRecalculated();

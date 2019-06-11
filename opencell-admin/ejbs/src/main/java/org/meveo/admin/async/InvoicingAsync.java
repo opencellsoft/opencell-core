@@ -112,6 +112,21 @@ public class InvoicingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
+        // This is a version of doing invoicing with one entity at a time
+        for (IBillableEntity entityToInvoice : entities) {
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                break;
+            }
+            try {
+                invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null, null, instantiateMinRts, false, false);
+            } catch (Exception e1) {
+                log.error("Error for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
+            }
+        }
+        
+        
+        // This is a version of doing invoicing with 50 entities at a time
+        /*
         int invoiceCreationBatchSize = ParamBean.getInstance().getPropertyAsInteger("invoicing.invoiceCreationBatchSize", 50);
 
         SubListCreator<? extends IBillableEntity> listIterator = new SubListCreator<>(invoiceCreationBatchSize, entities);
@@ -136,6 +151,7 @@ public class InvoicingAsync {
                 }
             }
         }
+        */
 
         return new AsyncResult<String>("OK");
     }
