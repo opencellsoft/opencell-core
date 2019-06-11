@@ -1147,6 +1147,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Update RTs
         if (updateRt) {
+            commit(); // flush, so update can be done by sql
             ratedTransactionService.updateRTsWithInvoiceInfo(rtUpdateSummaries);
         }
 

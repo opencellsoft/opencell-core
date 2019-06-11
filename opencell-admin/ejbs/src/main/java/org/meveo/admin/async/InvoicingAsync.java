@@ -140,11 +140,10 @@ public class InvoicingAsync {
 
         return new AsyncResult<String>("OK");
     }
-    
+
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsyncId(List<Long> ids, BillingRun billingRun, Long jobInstanceId, boolean instantiateMinRts,
-            MeveoUser lastCurrentUser) {
+    public Future<String> createAgregatesAndInvoiceAsyncId(List<Long> ids, BillingRun billingRun, Long jobInstanceId, boolean instantiateMinRts, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -200,6 +199,10 @@ public class InvoicingAsync {
             invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, instantiateMinRts, false, false, rtsUpdateSummary);
         }
 
+        long start = System.currentTimeMillis();
+        invoiceService.commit();
+        log.error("AKK invoice commit took {}", System.currentTimeMillis() - start);
+        
         for (RTUpdateSummary rtUpdateSummary : rtsUpdateSummary) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
@@ -207,16 +210,15 @@ public class InvoicingAsync {
             ratedTransactionService.updateRTsWithInvoiceInfo(rtUpdateSummary);
         }
     }
-    
+
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void createAgregatesAndInvoiceInBatchId(List<Long> ids, BillingRun billingRun, Long jobInstanceId, boolean instantiateMinRts)
-            throws BusinessException {
+    public void createAgregatesAndInvoiceInBatchId(List<Long> ids, BillingRun billingRun, Long jobInstanceId, boolean instantiateMinRts) throws BusinessException {
 
         List<RTUpdateSummary> rtsUpdateSummary = new ArrayList<>();
 //        int i = 0;
         for (Long id : ids) {
-            
+
             IBillableEntity entity = ratedTransactionService.getEntityManager().getReference(BillingAccount.class, id);
 //            i++;
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) { // && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0
