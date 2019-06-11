@@ -1748,7 +1748,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     try (ResultSet rs = connection.createStatement().executeQuery(
                         "select seller_id, user_account_id, wallet_id, invoice_sub_category_id, tax_id, id, amount_without_tax, amount_with_tax, order_number from billing_rated_transaction where status='OPEN' and billing_account__id="
                                 + entityToInvoice.getId() + " and to_date('" + DateUtils.formatDateWithPattern(firstTransactionDate, "yyyy-MM-dd")
-                                + "', 'YYYY-MM-MM')<usage_date and usage_date<to_date('" + DateUtils.formatDateWithPattern(firstTransactionDate, "yyyy-MM-dd")
+                                + "', 'YYYY-MM-MM')<usage_date and usage_date<to_date('" + DateUtils.formatDateWithPattern(lastTransactionDate, "yyyy-MM-dd")
                                 + "', 'YYYY-MM-DD')")) {
 
                         while (rs.next()) {
