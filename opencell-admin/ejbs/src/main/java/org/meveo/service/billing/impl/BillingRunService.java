@@ -802,31 +802,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
 
-    private void createAgregatesAndInvoiceId(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, List<Long> ids, boolean instantiateMinRts)
-            throws BusinessException {
-        SubListCreator<Long> subListCreator = new SubListCreator(ids, (int) nbRuns);
-
-        List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
-        MeveoUser lastCurrentUser = currentUser.unProxy();
-        while (subListCreator.isHasNext()) {
-            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsyncId(subListCreator.getNextWorkSet(), billingRun, jobInstanceId, instantiateMinRts, lastCurrentUser));
-            try {
-                Thread.sleep(waitingMillis);
-            } catch (InterruptedException e) {
-                log.error("Failed to create agregates and invoice waiting for thread", e);
-                throw new BusinessException(e);
-            }
-        }
-        for (Future<String> futureItsNow : asyncReturns) {
-            try {
-                futureItsNow.get();
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("Failed to create agregates and invoice getting future", e);
-                throw new BusinessException(e);
-            }
-        }
-    }
-
     /**
      * Assign invoice number and increment BA invoice dates.
      *
