@@ -19,6 +19,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
@@ -139,6 +140,41 @@ public class InvoicingAsync {
 
         return new AsyncResult<String>("OK");
     }
+    
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Future<String> createAgregatesAndInvoiceAsyncId(List<Long> ids, BillingRun billingRun, Long jobInstanceId, boolean instantiateMinRts,
+            MeveoUser lastCurrentUser) {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+        int invoiceCreationBatchSize = ParamBean.getInstance().getPropertyAsInteger("invoicing.invoiceCreationBatchSize", 300);
+
+        SubListCreator<Long> listIterator = new SubListCreator<>(invoiceCreationBatchSize, ids);
+        while (listIterator.isHasNext()) {
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                break;
+            }
+            List<Long> entitiesInBatch = listIterator.getNextWorkSet();
+
+            try {
+                invoicingNewTransaction.createAgregatesAndInvoiceInBatchId(entitiesInBatch, billingRun, jobInstanceId, instantiateMinRts);
+            } catch (Exception e) {
+
+                log.error("Failed to create invoices in batch. Will switch to invoicing to one by one", e);
+
+//                for (IBillableEntity entityToInvoice : entitiesInBatch) {
+//                    try {
+//                        invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null, null, instantiateMinRts, false, false);
+//                    } catch (Exception e1) {
+//                        log.error("Error for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
+//                    }
+//                }
+            }
+        }
+
+        return new AsyncResult<String>("OK");
+    }
 
     /**
      * Create invoices for a given list of entities. Invoices are created in a batch and in a single transaction
@@ -157,6 +193,31 @@ public class InvoicingAsync {
         List<RTUpdateSummary> rtsUpdateSummary = new ArrayList<>();
 //        int i = 0;
         for (IBillableEntity entity : entities) {
+//            i++;
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) { // && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0
+                break;
+            }
+            invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, instantiateMinRts, false, false, rtsUpdateSummary);
+        }
+
+        for (RTUpdateSummary rtUpdateSummary : rtsUpdateSummary) {
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                break;
+            }
+            ratedTransactionService.updateRTsWithInvoiceInfo(rtUpdateSummary);
+        }
+    }
+    
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createAgregatesAndInvoiceInBatchId(List<Long> ids, BillingRun billingRun, Long jobInstanceId, boolean instantiateMinRts)
+            throws BusinessException {
+
+        List<RTUpdateSummary> rtsUpdateSummary = new ArrayList<>();
+//        int i = 0;
+        for (Long id : ids) {
+            
+            IBillableEntity entity = ratedTransactionService.getEntityManager().getReference(BillingAccount.class, id);
 //            i++;
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) { // && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0
                 break;
