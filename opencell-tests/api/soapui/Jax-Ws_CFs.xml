@@ -38151,9 +38151,9 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             
             <matchingStatus>C</matchingStatus>
             
-            <occCode>1234</occCode>
+            <code>1234</code>
             
-            <occDescription>1234</occDescription>
+            <description>1234</description>
             
             <customerAccount>${#Project#entityPrefix}_${#TestSuite#index}_CA</customerAccount>
              
