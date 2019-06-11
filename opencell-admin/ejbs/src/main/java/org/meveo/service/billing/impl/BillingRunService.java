@@ -1015,20 +1015,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         if (proceedToPostInvoicing) {
 
-            List<Long> ids = billingAccountService.findBillingAccountIdsByBillingRun(billingRun.getId());
-//            if (!includesFirstRun) {
-//                billableEntities = (List<IBillableEntity>) getEntitiesByBillingRun(billingRun);
-//            }
+            if (!includesFirstRun) {
+                billableEntities = (List<IBillableEntity>) getEntitiesByBillingRun(billingRun);
+            }
 
             boolean instantiateMinRts = !includesFirstRun && ratedTransactionService.isMinRTsUsed();
 
-            log.info("Will create invoices for Billing run {} for {} entities of type {}. Min RTs will {} be created", billingRun.getId(), (ids != null ? ids.size() : 0), type,
-                instantiateMinRts ? "" : "NOT");
+            log.info("Will create invoices for Billing run {} for {} entities of type {}. Min RTs will {} be created", billingRun.getId(),
+                (billableEntities != null ? billableEntities.size() : 0), type, instantiateMinRts ? "" : "NOT");
 
-//            log.info("Will create invoices for Billing run {} for {} entities of type {}. Min RTs will {} be created", billingRun.getId(),
-//                (billableEntities != null ? billableEntities.size() : 0), type, instantiateMinRts ? "" : "NOT");
-
-            createAgregatesAndInvoiceId(billingRun, nbRuns, waitingMillis, jobInstanceId, ids, instantiateMinRts);
+            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities, instantiateMinRts);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
             if (billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
                 billingRun = billingRunExtensionService.findById(billingRun.getId());

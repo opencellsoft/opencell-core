@@ -1829,6 +1829,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
         }
         long endU = System.currentTimeMillis();
-        log.error("AKK update {} took {}", endU - startU);
+        log.error("AKK update took {}", endU - startU);
     }
 }

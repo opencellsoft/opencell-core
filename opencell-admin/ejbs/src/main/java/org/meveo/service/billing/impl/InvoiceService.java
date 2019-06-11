@@ -757,13 +757,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
             BillingAccount ba = null;
 
             if (entityToInvoice instanceof Subscription) {
-                entityToInvoice = subscriptionService.retrieveIfNotManaged((Subscription) entityToInvoice);
+                entityToInvoice = subscriptionService.refreshOrRetrieve((Subscription) entityToInvoice);
                 ba = ((Subscription) entityToInvoice).getUserAccount().getBillingAccount();
             } else if (entityToInvoice instanceof BillingAccount) {
-                entityToInvoice = billingAccountService.retrieveIfNotManaged((BillingAccount) entityToInvoice);
+                entityToInvoice = billingAccountService.refreshOrRetrieve((BillingAccount) entityToInvoice);
                 ba = (BillingAccount) entityToInvoice;
             } else if (entityToInvoice instanceof Order) {
-                entityToInvoice = orderService.retrieveIfNotManaged((Order) entityToInvoice);
+                entityToInvoice = orderService.refreshOrRetrieve((Order) entityToInvoice);
             }
 
             if (billingRun != null) {
