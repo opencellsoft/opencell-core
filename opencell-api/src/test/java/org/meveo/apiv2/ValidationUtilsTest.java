@@ -1,10 +1,14 @@
 package org.meveo.apiv2;
 
 import org.junit.Test;
+import org.meveo.api.dto.response.generic.SimpleGenericValue;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Customer;
+
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -78,6 +82,41 @@ public class ValidationUtilsTest {
             assertThat(ex).isInstanceOf(EntityDoesNotExistsException.class);
             assertThat(ex.getMessage()).isEqualTo("Customer with code=13 does not exists.");
         }
+    }
+    
+    @Test
+    public void given_null_list_of_records_when_require_record_non_null_then_throw_entity_does_not_exist_exception_and_expect_default_message() {
+        try {
+            ValidationUtils.checkRecords(null, "Customer");
+        } catch (Exception ex) {
+            assertThat(ex).isInstanceOf(EntityDoesNotExistsException.class);
+            assertThat(ex.getMessage()).isEqualTo("Unable to find records fo type Customer");
+        }
+    }
+    
+    @Test
+    public void should_perform_the_defined_operation_when_condition_succeed() {
+        //Given
+        SimpleGenericValue<String> value = new SimpleGenericValue<>();
+        Predicate<String> condition = s -> s.startsWith("flirtikit");
+        Consumer<String> operation = s -> value.setValue(s);
+        //When
+        ValidationUtils.performOperationOnCondition("flirtikit is life", condition, operation);
+        //Then
+        assertThat(value.getValue()).isNotEmpty();
+        assertThat(value.getValue()).isEqualTo("flirtikit is life");
+    }
+    
+    @Test
+    public void should_not_perform_the_defined_operation_when_condition_succeed() {
+        //Given
+        SimpleGenericValue<String> value = new SimpleGenericValue<>();
+        Predicate<String> condition = s -> s.startsWith("flirtikit");
+        Consumer<String> operation = s -> value.setValue(s);
+        //When
+        ValidationUtils.performOperationOnCondition("Bidlidez is life", condition, operation);
+        //Then
+        assertThat(value.getValue()).isNull();
     }
     
     @Test

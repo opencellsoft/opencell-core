@@ -1,6 +1,8 @@
 package org.meveo.apiv2;
 
+import org.meveo.api.dto.GenericPagingAndFiltering;
 import org.meveo.api.dto.generic.GenericRequestDto;
+import org.meveo.api.dto.response.generic.GenericPaginatedResponseDto;
 import org.meveo.api.dto.response.generic.GenericResponseDto;
 import org.meveo.apiv2.services.GenericApiLoadService;
 import org.meveo.apiv2.services.GenericApiUpdateService;
@@ -15,6 +17,12 @@ public class GenericResourceImpl implements GenericResource {
     
     @Inject
     private GenericApiUpdateService updateService;
+    
+    @Override
+    public Response getAll(String entityName, GenericPagingAndFiltering searchConfig) {
+        GenericPaginatedResponseDto paginatedRecords = loadService.findPaginatedRecords(entityName, searchConfig);
+        return Response.ok().entity(paginatedRecords).links(buildLink(entityName)).build();
+    }
     
     @Override
     public Response get(String entityName, Long id, GenericRequestDto requestDto) {

@@ -67,8 +67,6 @@ public class GenericApiUpdateService extends GenericApiService {
         }
     }
     
-    PersistenceService getPersistenceService(Class entityClass) {
-        return (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
-    }
+   
     
 }

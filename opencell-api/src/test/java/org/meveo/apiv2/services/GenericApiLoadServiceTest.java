@@ -3,7 +3,10 @@ package org.meveo.apiv2.services;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.GenericPagingAndFiltering;
 import org.meveo.api.dto.generic.GenericRequestDto;
+import org.meveo.api.dto.response.generic.GenericPaginatedResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -14,6 +17,7 @@ import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
+import org.meveo.service.base.PersistenceService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,9 +28,11 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,9 +40,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,13 +61,19 @@ public class GenericApiLoadServiceTest {
     
     @Mock
     private EntityManagerWrapper entityManagerWrapper;
+    
     @Mock
     private EntityManager entityManager;
     
+    @Mock
+    private PersistenceService persistenceService;
+    
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(entityManagerWrapper.getEntityManager()).thenReturn(entityManager);
         configureFindMock();
+        doReturn(persistenceService).when(sut).getPersistenceService(any());
+        when(persistenceService.list(any(PaginationConfiguration.class))).thenReturn(new ArrayList<>());
     }
     
     @Test
@@ -166,7 +180,7 @@ public class GenericApiLoadServiceTest {
         Object param = "flirtikit";
         //When
         String expected = sut.toJson(param);
-        //Then"
+        //Then
         assertThat(expected).isEqualTo("flirtikit");
     }
     
@@ -300,14 +314,88 @@ public class GenericApiLoadServiceTest {
         
     }
     
+    @Test
+    public void given_null_entity_name_when_find_paginate_recprds_then_should_throw_meveo_exception() {
+        //Given
+        String entityName = null;
+        GenericPagingAndFiltering searchConfig = new GenericPagingAndFiltering();
+        assertFindPaginateRecords(entityName, searchConfig, EntityDoesNotExistsException.class, "The entityName should not be null or empty");
+    }
+    
+    @Test
+    public void given_empty_entity_name_when_find_paginate_records_then_should_throw_meveo_exception() {
+        //Given
+        String entityName = "";
+        GenericPagingAndFiltering searchConfig = new GenericPagingAndFiltering();
+        assertFindPaginateRecords(entityName, searchConfig, EntityDoesNotExistsException.class, "The entityName should not be null or empty");
+    }
+    
+    @Test
+    public void given_null_search_config_when_find_paginate_records_then_should_init() {
+        //Given
+        String entityName = "Customer";
+        GenericPagingAndFiltering searchConfig = null;
+        ArgumentCaptor<GenericPagingAndFiltering> captor = ArgumentCaptor.forClass(GenericPagingAndFiltering.class);
+        sut.findPaginatedRecords(entityName, searchConfig);
+        verify(sut).buildGenericPaginatedResponse(captor.capture(), eq(Customer.class));
+        assertThat(captor.getValue()).isNotNull();
+    }
+    
+    @Test
+    public void should_transform_paging_and_filtering_to_pagination_configuration() {
+        //Given
+        HashMap<String, Object> map = new HashMap<>();
+        String textFilter = "fulltest";
+        String fields = "fields";
+        int offset = 5;
+        int limit = 15;
+        String sortBy = "flirtikit";
+        SortOrder order = SortOrder.DESCENDING;
+        String encodedQuery = "flirtikit:5|bidlidz:gninendiden";
+        GenericPagingAndFiltering searchConfig = new GenericPagingAndFiltering(textFilter, map, fields, offset, limit, sortBy, order);
+        //When
+        PaginationConfiguration paginationConfiguration = sut.paginationConfiguration(searchConfig);
+        //Then
+        assertThat(paginationConfiguration.getFirstRow()).isEqualTo(offset);
+        assertThat(paginationConfiguration.getNumberOfRows()).isEqualTo(limit);
+        assertThat(paginationConfiguration.getSortField()).isEqualTo(sortBy);
+        assertThat(paginationConfiguration.getOrdering().name()).isEqualTo(order.name());
+    }
+    
+    @Test
+    public void should_return_valid_list_of_customers() {
+        //Given
+        List<Customer> customers = buildCustomerList(5);
+        GenericPagingAndFiltering genericPagingAndFiltering = new GenericPagingAndFiltering("fulltest", new HashMap<>(), "addressbook", 0, 3, "id", SortOrder.DESCENDING);
+        when(persistenceService.list(any(PaginationConfiguration.class))).thenReturn(customers);
+        //When
+        GenericPaginatedResponseDto response = sut.findPaginatedRecords("customer", genericPagingAndFiltering);
+        //Then
+        assertThat(response).isNotNull();
+        assertThat(response.getData()).hasSize(5);
+    }
+    
+    private void assertFindPaginateRecords(String entityName, GenericPagingAndFiltering searchConfig, Class exception, String message) {
+        try {
+            //When
+            sut.findPaginatedRecords(entityName, searchConfig);
+        } catch (Exception ex) {
+            assertThat(ex).isInstanceOf(exception);
+            assertThat(ex.getMessage()).isEqualTo(message);
+        }
+    }
+    
     private List<Customer> buildCustomerList(int size) {
         return IntStream.range(0, size).mapToObj(this::buildCustomerMock).collect(Collectors.toList());
     }
     
     private Customer buildCustomerMock(long id) {
-        Customer mock = mock(Customer.class);
-        when(mock.getId()).thenReturn(id);
-        return mock;
+        Customer customer = new Customer();
+       customer.setId(id);
+        AddressBook addressbook = new AddressBook();
+        addressbook.setId(id);
+        customer.setAddressbook(addressbook);
+        return customer;
     }
     
     private void assertExpectingModelException(String requestedModelName, String expected) {

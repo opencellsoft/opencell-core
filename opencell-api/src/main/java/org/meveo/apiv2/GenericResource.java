@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.meveo.api.dto.GenericPagingAndFiltering;
 import org.meveo.api.dto.generic.GenericRequestDto;
 import org.meveo.apiv2.common.LinkGenerator;
 
@@ -26,6 +27,17 @@ import javax.ws.rs.core.Response;
         + "for example: if the wanted fields are {code, description} and the requested entity is instance of customer having 2 as id,"
         + "then you should call /admin/generic/Customer/2 and add {fields = [code, description]} in the request body")
 public interface GenericResource {
+    @GET
+    @Path("/all/{entityName}")
+    @ApiOperation(value = "Generic single endpoint to retrieve paginated records of an entity", notes = "specify the entity name, and as body, the configuration of the research."
+            + " also you can define the offset and the limit, you can order by a field and define the sort type"
+            + " see PagingAndFiltering doc for more details. ")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "paginated results succefully retrieved with hypermedia links"),
+            @ApiResponse(code = 400, message = "bad request when entityName not well formed or entity unrecognized")
+    })
+    Response getAll(@PathParam("entityName") String entityName,
+            @ApiParam("requestDto carries the wanted fields ex: {genericFields = [code, description]}") GenericPagingAndFiltering searchConfig);
 
     @GET
     @Path("/{entityName}/{id}")
