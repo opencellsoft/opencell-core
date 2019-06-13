@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -332,6 +333,21 @@ public class ReflectionUtils {
         Set<Class<?>> classes = reflections.getSubTypesOf(parentClass);
 
         return classes;
+    }
+
+    public static Object getSubclassObjectByDiscriminatorValue(Class parentClass, String discriminatorValue) {
+        Set<Class<?>> subClasses = getSubclasses(parentClass);
+        Object result = null;
+        for (Class subClass : subClasses) {
+            Object subclassObject = createObject(subClass.getName());
+            DiscriminatorValue classDiscriminatorValue = subclassObject.getClass().getAnnotation(DiscriminatorValue.class);
+            if (classDiscriminatorValue != null && classDiscriminatorValue.value().equals(discriminatorValue)) {
+                result = subclassObject;
+                break;
+            }
+        }
+
+        return result;
     }
 
     /**
