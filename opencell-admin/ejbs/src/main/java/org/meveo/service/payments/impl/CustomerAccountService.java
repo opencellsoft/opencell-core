@@ -18,23 +18,10 @@
  */
 package org.meveo.service.payments.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
-
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
@@ -52,9 +39,21 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.AccountService;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Customer Account service implementation.
- * 
+ *
  * @author Edward P. Legaspi
  * @author anasseh
  * @lastModifiedVersion 5.0
@@ -143,21 +142,32 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @return the big decimal
      * @throws Exception the exception
      */
-    private BigDecimal computeOccAmount(CustomerAccount customerAccount, OperationCategoryEnum operationCategoryEnum, boolean isFuture, boolean isDue, Date to, MatchingStatusEnum... status) throws Exception {
-        BigDecimal balance = null;
+    private BigDecimal computeOccAmount(CustomerAccount customerAccount, OperationCategoryEnum operationCategoryEnum, boolean isFuture, boolean isDue, Date to,
+            MatchingStatusEnum... status) throws Exception {
         QueryBuilder queryBuilder = new QueryBuilder("select sum(unMatchingAmount) from AccountOperation");
         queryBuilder.addCriterionEnum("transactionCategory", operationCategoryEnum);
         
-		if (!isFuture) {
-			if (isDue) {
-				queryBuilder.addCriterion("dueDate", "<=", to, false);
-				
-			} else {
-				queryBuilder.addCriterion("transactionDate", "<=", to, false);
-			}
-		}
-		
+        addCriterionifFutureAndDue(isFuture, isDue, to, queryBuilder);
+        
         queryBuilder.addCriterionEntity("customerAccount", customerAccount);
+        addCriterionStatuses(queryBuilder, status);
+        Query query = queryBuilder.getQuery(getEntityManager());
+        return (BigDecimal) query.getSingleResult();
+    }
+    
+    BigDecimal computeCreditDebitBalances(CustomerAccount customerAccount, MatchingStatusEnum... status) {
+        Query query =
+                getEntityManager().createNamedQuery("AccountOperation.occAmount", BigDecimal.class).setParameter("customerAccount", customerAccount).setParameter(
+                        "matchingStatus", status);
+        
+        return (BigDecimal) Optional.ofNullable(query.getSingleResult()).orElse(BigDecimal.ZERO);
+    }
+    
+    QueryBuilder getQueryBuilder(String sql) {
+        return new QueryBuilder(sql);
+    }
+    
+    private void addCriterionStatuses(QueryBuilder queryBuilder, MatchingStatusEnum[] status) {
         if (status.length == 1) {
             queryBuilder.addCriterionEnum("matchingStatus", status[0]);
         } else {
@@ -167,9 +177,13 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             }
             queryBuilder.endOrClause();
         }
-        Query query = queryBuilder.getQuery(getEntityManager());
-        balance = (BigDecimal) query.getSingleResult();
-        return balance;
+    }
+    
+    private void addCriterionifFutureAndDue(boolean isFuture, boolean isDue, Date to, QueryBuilder queryBuilder) {
+        if (!isFuture) {
+            String field = isDue ? "dueDate" : "transactionDate";
+            queryBuilder.addCriterion(field, "<=", to, false);
+        }
     }
     
     /**
@@ -189,7 +203,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     /**
      * Computes a balance given a customerAccount. 
      * to and isDue parameters are ignored when isFuture is true.
-     * 
+     *
      * @param customerAccount account of the customer
      * @param to compare the invoice due or transaction date here
      * @param isFuture includes the future due or transaction date
@@ -208,17 +222,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             log.warn("Error when toDate is null!");
             throw new BusinessException("toDate is null");
         }
-        BigDecimal balance = null, balanceDebit = null, balanceCredit = null;
+        BigDecimal balance = computeCreditDebitBalances(customerAccount, status);
         try {
-            balanceDebit = computeOccAmount(customerAccount, OperationCategoryEnum.DEBIT, isFuture, isDue, to, status);
-            balanceCredit = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isFuture, isDue, to, status);
-            if (balanceDebit == null) {
-                balanceDebit = BigDecimal.ZERO;
-            }
-            if (balanceCredit == null) {
-                balanceCredit = BigDecimal.ZERO;
-            }
-            balance = balanceDebit.subtract(balanceCredit);
             ParamBean param = paramBeanFactory.getInstance();
             int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
             balance = balance.multiply(new BigDecimal(balanceFlag));
@@ -445,7 +450,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     /**
      * Transfer amount from a customer account to an other.
-     * 
+     *
      * @param fromCustomerAccountId customer account id
      * @param fromCustomerAccountCode customer account code
      * @param toCustomerAccountId customer account of transfer's destination
@@ -519,7 +524,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     /**
      * get operations from one existed customerAccount by id or code.
-     * 
+     *
      * @param id customer account
      * @param code customer account code
      * @param from date from
@@ -733,7 +738,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     
     /**
      *  Compute  credit balnce.
-     *  
+     *
      * @param customerAccount the customer account 
      * @param isDue if true will compare with the due date else operationn date
      * @param to include AOs until this date
@@ -767,7 +772,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     /**
      * Computes the future dueBalance or the dueBalance at the invoice due date.
      * The total due is a snapshot at invoice generation time of the due balance (not exigible) before invoice calculation+invoice amount. 
-     * 
+     *
      * @param customerAccount Account of the Customer
      * @return computed due balance of a customer account
      * @throws BusinessException when an error occurred in computation
