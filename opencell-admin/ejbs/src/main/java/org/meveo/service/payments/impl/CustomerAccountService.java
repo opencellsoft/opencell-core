@@ -46,6 +46,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -157,8 +158,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     
     BigDecimal computeCreditDebitBalances(CustomerAccount customerAccount, MatchingStatusEnum... status) {
         Query query =
-                getEntityManager().createNamedQuery("AccountOperation.occAmount", BigDecimal.class).setParameter("customerAccount", customerAccount).setParameter(
-                        "matchingStatus", status);
+                getEntityManager().createNamedQuery("AccountOperation.occAmount", BigDecimal.class).setParameter("customerAccount", customerAccount).setParameter("matchingStatus", Arrays.asList(status));
         
         return (BigDecimal) Optional.ofNullable(query.getSingleResult()).orElse(BigDecimal.ZERO);
     }
