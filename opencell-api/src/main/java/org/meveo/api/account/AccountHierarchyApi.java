@@ -693,16 +693,6 @@ public class AccountHierarchyApi extends BaseApi {
             qb.addCriterion("c.address.zipCode", "=", postData.getZipCode(), true);
         }
 
-        // custom fields
-        if (postData.getCustomFields() != null) {
-            for (@SuppressWarnings("unused")
-            CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-                // qb.addCriterion("KEY(c.customFields)", "=", cfDto.getCode(),
-                // true); // TODO FIX me - custom fields are no longer tied to
-                // entity
-            }
-        }
-
         qb.addPaginationConfiguration(paginationConfiguration);
         
         List<Customer> customers = customerService.getCustomersByQueryBuilder(qb);

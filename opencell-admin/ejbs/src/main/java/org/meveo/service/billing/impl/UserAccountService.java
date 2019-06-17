@@ -112,8 +112,4 @@ public class UserAccountService extends AccountService<UserAccount> {
 		return billingAccount.getUsersAccounts();
 	}
 	
-	public UserAccount findUserAccountByCode(String code) {
-		return (UserAccount) getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", code).getSingleResult();
-	}
-	
 }
