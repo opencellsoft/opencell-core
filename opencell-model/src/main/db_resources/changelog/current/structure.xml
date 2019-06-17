@@ -1036,5 +1036,10 @@
 	    <sql>ALTER TABLE ${db.schema.adapted}ar_account_operation CHANGE occ_code code varchar(255);</sql>
 	    <sql>ALTER TABLE ${db.schema.adapted}ar_account_operation CHANGE occ_description description varchar(255);</sql>
 	</changeSet>
-	
+
+    <changeSet id="#4322_20190612 - Add a filter to GenericWorkflow" author="MounirBahije">
+        <addColumn tableName="wf_generic_workflow">
+            <column name="filter_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
