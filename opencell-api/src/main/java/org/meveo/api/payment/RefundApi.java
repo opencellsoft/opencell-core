@@ -163,8 +163,6 @@ public class RefundApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
         }
 
-        customerAccountService.refreshEntity(customerAccount);
-
         List<AccountOperation> ops = customerAccount.getAccountOperations();
         for (AccountOperation op : ops) {
             if (op instanceof Refund) {
