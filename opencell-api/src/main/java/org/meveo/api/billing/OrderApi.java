@@ -998,7 +998,7 @@ public class OrderApi extends BaseApi {
     	productOrder.setElectronicBilling(order.getElectronicBilling());
 
         productOrder.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
-
+        setAuditableFieldsDto(order, productOrder);
         return productOrder;
     }
 
