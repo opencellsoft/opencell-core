@@ -169,9 +169,9 @@ public class MediationApi extends BaseApi {
                 WalletOperationDto walletOperationDto = new WalletOperationDto(walletOperation);
                 result.getWalletOperations().add(walletOperationDto);
             }
-            amountWithTax = amountWithTax.add(walletOperation.getAmountWithTax());
-            amountWithoutTax = amountWithoutTax.add(walletOperation.getAmountWithoutTax());
-            amountTax = amountTax.add(walletOperation.getAmountTax());
+            amountWithTax = amountWithTax.add(walletOperation.getAmountWithTax() != null ? walletOperation.getAmountWithTax() : BigDecimal.ZERO);
+            amountWithoutTax = amountWithoutTax.add(walletOperation.getAmountWithoutTax() != null ? walletOperation.getAmountWithoutTax() : BigDecimal.ZERO);
+            amountTax = amountTax.add(walletOperation.getAmountTax() != null ? walletOperation.getAmountTax() : BigDecimal.ZERO);
         }
         if (returnWalletOperations) {
             result.setWalletOperationCount(result.getWalletOperations().size());
