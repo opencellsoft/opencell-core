@@ -241,8 +241,8 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 				}
 			}
 		}
-		entity = invoiceSubCategoryService.refreshOrRetrieve(entity);
 		if (entity.getId() != null) {
+		    entity = invoiceSubCategoryService.refreshOrRetrieve(entity);
 			super.saveOrUpdate(killConversation);
 			return getListViewName();
 

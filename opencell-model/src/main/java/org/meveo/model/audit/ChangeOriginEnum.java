@@ -7,7 +7,7 @@ package org.meveo.model.audit;
  * @since 7.0
  */
 public enum ChangeOriginEnum {
-    API, JOB, GUI, OTHER;
+    API, JOB, GUI, INBOUND_REQUEST, OTHER;
 
     public String getLabel() {
         return name();

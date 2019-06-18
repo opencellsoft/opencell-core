@@ -22,9 +22,9 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,15 +35,16 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
@@ -216,6 +217,21 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     @Transient
     private Map<String, List<PaymentMethod>> auditedMethodPayments;
+    
+    /**
+     * This method is called implicitly by hibernate, used to enable
+	 * encryption for custom fields of this entity
+     */
+    @PrePersist
+	@PreUpdate
+	public void preUpdate() {
+		if (cfValues != null) {
+			cfValues.setEncrypted(true);
+		}
+		if (cfAccumulatedValues != null) {
+			cfAccumulatedValues.setEncrypted(true);
+		}
+	}
 
     public CustomerAccount() {
         accountType = ACCOUNT_TYPE;
