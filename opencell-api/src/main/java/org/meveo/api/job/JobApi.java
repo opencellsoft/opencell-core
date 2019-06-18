@@ -61,10 +61,13 @@ public class JobApi extends BaseApi {
 
         String code = jobExecution.getCode() != null ? jobExecution.getCode() : jobExecution.getTimerName();
 
-        org.meveo.model.jobs.JobInstance jobInstance = jobInstanceService.findByCode(code);
+        JobInstance jobInstance = jobInstanceService.findByCode(code);
         if (jobInstance == null) {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
+        
+        jobInstanceService.createMissingCustomFieldTemplates(jobInstance);
+        
         // populate customFields
         try {
             populateCustomFields(jobExecution.getCustomFields(), jobInstance, true);

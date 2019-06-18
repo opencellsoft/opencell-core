@@ -16,14 +16,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.script;
+package org.meveo.model.payments;
 
-import javax.ejb.Stateless;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
-import org.meveo.model.scripts.CustomScript;
-import org.meveo.service.base.BusinessService;
+@Entity
+@DiscriminatorValue(value = "W")
+public class WriteOff extends AccountOperation {
 
-@Stateless
-public class GenericScriptService extends BusinessService<CustomScript> {
+    private static final long serialVersionUID = 1L;
 
 }

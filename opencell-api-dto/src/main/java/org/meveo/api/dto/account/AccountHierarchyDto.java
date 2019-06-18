@@ -156,6 +156,12 @@ public class AccountHierarchyDto implements Serializable {
      */
     private String vatNo;
 
+	private String mailingType;
+
+	private String emailTemplate;
+
+	private String ccedEmails;
+
     /**
      * Instantiates a new account hierarchy dto.
      */
@@ -819,4 +825,47 @@ public class AccountHierarchyDto implements Serializable {
 	public void setDiscountPlansForInstantiation(List<DiscountPlanDto> discountPlansForInstantiation) {
 		this.discountPlansForInstantiation = discountPlansForInstantiation;
 	}
+
+	/**
+	 * @return mailingType
+	 */
+	public String getMailingType() {
+		return mailingType;
+	}
+
+	/**
+	 * @return emailTemplate
+	 */
+	public String getEmailTemplate() {
+		return emailTemplate;
+	}
+
+	/**
+	 * @return ccedEmails
+	 */
+	public String getCcedEmails() {
+		return ccedEmails;
+	}
+
+	/**
+	 * @param mailingType
+	 */
+	public void setMailingType(String mailingType) {
+		this.mailingType = mailingType;
+	}
+
+	/**
+	 * @param emailTemplate
+	 */
+	public void setEmailTemplate(String emailTemplate) {
+		this.emailTemplate = emailTemplate;
+	}
+
+	/**
+	 * @param ccedEmails
+	 */
+	public void setCcedEmails(String ccedEmails) {
+		this.ccedEmails = ccedEmails;
+	}
+	
 }

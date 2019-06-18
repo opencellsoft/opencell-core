@@ -410,6 +410,8 @@ public class EntityToDtoConverter {
             setFormattedMapValue(dto, cft, (Map) value);
         } else if (value instanceof EntityReferenceWrapper) {
             dto.setEntityReferenceValue(new EntityReferenceDto((EntityReferenceWrapper) value));
+        } else if (value instanceof Boolean) {
+            dto.setBooleanValue((Boolean) value);
         }
 
         return dto;
@@ -433,6 +435,7 @@ public class EntityToDtoConverter {
         dto.setDescription(cft.getDescription());
         dto.setFieldType(cft.getFieldType());
         dto.setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(cft.getDescriptionI18n()));
+        dto.setGuiPosition(cft.getGuiPosition());
         if (cfValue.getPeriod() != null) {
             dto.setValuePeriodStartDate(cfValue.getPeriod().getFrom());
             dto.setValuePeriodEndDate(cfValue.getPeriod().getTo());

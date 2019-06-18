@@ -64,7 +64,7 @@
                 showFormButtons="false" ajaxSubmit="true" showMessages="false" label="#{messages['subscription.oneShotChgDetails']}" rendered="#{subscriptionBean.showApplyOneShotForm}">
 
                 <h:panelGroup id="chargeTemplateSelectId">
-                    <hftl:formField label="#{messages['businessEntity.code']}" field="chargeTemplate" valueLabelField="code" required="true"
+                    <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true"
                         rendered="#{!subscriptionBean.oneShotChargeInstance.transient}" />
 
                     <hftl:decorateFormField fieldId="chargeTemplateSelectId_text" label="#{messages['businessEntity.code']}" rendered="#{subscriptionBean.oneShotChargeInstance.transient}">

@@ -45,7 +45,7 @@ public class AccOpGenerationAsync {
      * @param result Job Execution result
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
-     * @param script script to execute        
+     * @param script script to execute
      * @return Future String
      */
     @Asynchronous
@@ -54,8 +54,10 @@ public class AccOpGenerationAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
+        int i = 0;
         for (Long id : ids) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                 break;
             }
             unitAccountOperationsGenerationJobBean.execute(result, id, script);

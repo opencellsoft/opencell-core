@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -362,6 +363,72 @@ public class CatalogHierarchyBuilderService {
             List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
         return duplicateService(offerServiceTemplate, null, prefix, pricePlansInMemory, chargeTemplateInMemory);
     }
+    public OfferServiceTemplate duplicateServiceWithoutDuplicatingChargeTemplates(OfferServiceTemplate offerServiceTemplate, ServiceTemplate serviceTemplate, ServiceConfigurationDto serviceConfiguration, String prefix) throws BusinessException {
+        OfferServiceTemplate newOfferServiceTemplate = new OfferServiceTemplate();
+
+        if (serviceConfiguration != null) {
+            newOfferServiceTemplate.setMandatory(serviceConfiguration.isMandatory());
+        } else {
+            newOfferServiceTemplate.setMandatory(offerServiceTemplate.isMandatory());
+        }
+
+        if (offerServiceTemplate.getIncompatibleServices() != null) {
+            newOfferServiceTemplate.getIncompatibleServices().addAll(offerServiceTemplate.getIncompatibleServices());
+        }
+        newOfferServiceTemplate.setValidity(offerServiceTemplate.getValidity());
+
+        ServiceTemplate newServiceTemplate = new ServiceTemplate();
+        String newCode = prefix + serviceTemplate.getCode();
+        try {
+            BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);
+            boolean instantiatedFromBOM = serviceConfiguration != null && serviceConfiguration.isInstantiatedFromBSM();
+
+            if (instantiatedFromBOM) {
+                // append a unique id
+                newCode = newCode + "-" + UUID.randomUUID();
+            }
+            newServiceTemplate.setCode(newCode);
+            if (serviceConfiguration != null) {
+                newServiceTemplate.setDescription(serviceConfiguration.getDescription());
+            }
+
+            newServiceTemplate.setId(null);
+            newServiceTemplate.setVersion(0);
+            newServiceTemplate.clearCfValues();
+            newServiceTemplate.clearUuid();
+            this.duplicateAndSetImgPath(serviceTemplate, newServiceTemplate, serviceConfiguration != null ? serviceConfiguration.getImagePath() : "");
+
+            // set custom fields
+            // TODO note, that this value is available in GUI only - see serviceConfiguration.getCfValues() comment
+            if (serviceConfiguration != null && serviceConfiguration.getCfValues() != null) {
+                newServiceTemplate.getCfValuesNullSafe().setValuesByCode(serviceConfiguration.getCfValues());
+
+            } else if (serviceTemplate.getCfValues() != null) {
+                newServiceTemplate.getCfValuesNullSafe().setValuesByCode(serviceTemplate.getCfValues().getValuesByCode());
+            }
+            // update code if duplicate
+            if (instantiatedFromBOM) {
+                Integer serviceConfItemIndex = serviceConfiguration.getItemIndex();
+                if (serviceConfItemIndex != null) {
+                    prefix = prefix + serviceConfItemIndex + "_";
+                } else {
+                    prefix = prefix + newServiceTemplate.getId() + "_";
+                }
+                newServiceTemplate.setCode(prefix + serviceTemplate.getCode());
+
+            } else if (serviceTemplateService.findByCode(newCode) != null) {
+                newCode = newServiceTemplate.getCode();
+                newServiceTemplate.setCode(newCode + "_" + UUID.randomUUID());
+            }
+            duplicateCharges(newServiceTemplate);
+            serviceTemplateService.create(newServiceTemplate);
+
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new BusinessException(e.getMessage());
+        }
+        newOfferServiceTemplate.setServiceTemplate(newServiceTemplate);
+        return newOfferServiceTemplate;
+    }
 
     public OfferServiceTemplate duplicateService(OfferServiceTemplate offerServiceTemplate, ServiceConfigurationDto serviceConfiguration, String prefix,
             List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
@@ -382,6 +449,33 @@ public class CatalogHierarchyBuilderService {
             duplicateServiceTemplate(offerServiceTemplate.getServiceTemplate().getCode(), prefix, serviceConfiguration, pricePlansInMemory, chargeTemplateInMemory));
         return newOfferServiceTemplate;
 
+    }
+    private void duplicateCharges(ServiceTemplate entity) {
+        entity.setServiceRecurringCharges(new ArrayList<>(entity.getServiceRecurringCharges()));
+        entity.getServiceRecurringCharges().forEach(sctRecurring -> {
+            serviceChargeTemplateRecurringService.detach(sctRecurring);
+            linkAnExistingChargeToNewServiceTemplate(entity, sctRecurring);
+        });
+        entity.setServiceSubscriptionCharges(new ArrayList<>(entity.getServiceSubscriptionCharges()));
+        entity.getServiceSubscriptionCharges().forEach(sctSubscription -> {
+            serviceChargeTemplateSubscriptionService.detach(sctSubscription);
+            linkAnExistingChargeToNewServiceTemplate(entity, sctSubscription);
+        });
+        entity.setServiceTerminationCharges(new ArrayList<>(entity.getServiceTerminationCharges()));
+        entity.getServiceTerminationCharges().forEach(sctTermination -> {
+            serviceChargeTemplateTerminationService.detach(sctTermination);
+            linkAnExistingChargeToNewServiceTemplate(entity, sctTermination);
+        });
+        entity.setServiceUsageCharges(new ArrayList<>(entity.getServiceUsageCharges()));
+        entity.getServiceUsageCharges().forEach(sctUsageCharge -> {
+            serviceChargeTemplateUsageService.detach(sctUsageCharge);
+            linkAnExistingChargeToNewServiceTemplate(entity, sctUsageCharge);
+        });
+    }
+
+    private void linkAnExistingChargeToNewServiceTemplate(ServiceTemplate entity, ServiceChargeTemplate termination) {
+        termination.setId(null);
+        termination.setServiceTemplate(entity);
     }
 
     public ServiceTemplate duplicateServiceTemplate(String serviceTemplateSourceCode, String prefix, ServiceConfigurationDto serviceConfiguration,

@@ -59,7 +59,6 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -287,7 +286,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
-    private String uuid = UUID.randomUUID().toString();
+    private String uuid;
 
     /**
      * Custom field values in JSON format
@@ -412,6 +411,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     public void prePersistOrUpdate() {
         this.dueDate = DateUtils.truncateTime(this.dueDate);
         this.invoiceDate = DateUtils.truncateTime(this.invoiceDate);
+        setUUIDIfNull();
     }
 
     public List<RatedTransaction> getRatedTransactions() {
@@ -717,8 +717,18 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         this.orders = orders;
     }
 
+    /**
+     * setting uuid if null
+     */
+    public void setUUIDIfNull() {
+    	if (uuid == null) {
+    		uuid = UUID.randomUUID().toString();
+    	}
+    }
+    
     @Override
     public String getUuid() {
+    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
 
@@ -772,7 +782,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         this.linkedInvoices = linkedInvoices;
     }
 
-    public void addInvoiceAggregate(InvoiceAgregate obj) {
+	public void addInvoiceAggregate(InvoiceAgregate obj) {
         invoiceAgregates.add(obj);
     }
 
@@ -988,4 +998,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     public void setDontSend(boolean dontSend) {
         this.dontSend = dontSend;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s[%s, invoiceNumber=%s, invoiceType=%s]", this.getClass().getSimpleName(), super.toString(), invoiceNumber, invoiceType);
+    }
+
 }

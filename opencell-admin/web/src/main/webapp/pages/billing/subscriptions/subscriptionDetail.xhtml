@@ -71,14 +71,14 @@
         <hftl:entityPopup id="userAccountPopup"
 			header="#{messages['userAccount.popup.header']}"
 			backingBean="#{userAccountBean}"
-			 dataModel="#{userAccountBean.listAllUserAccountWithBillingAccountAndDiscountPlan()}"
 			searchField1Label="#{messages['userAccount.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['userAccount.name']}"
 			searchField2="name" column1Label="#{messages['userAccount.code']}"
 			column1="code" column2Label="#{messages['userAccount.name']}"
 			column2="name" selection="#{subscriptionBean.entity.userAccount}"
-			updateField=":subscriptionTab:subscriptionFormId:informationTab">
+			updateField=":subscriptionTab:subscriptionFormId:informationTab"
+			selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="refreshUAInformation">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="offerPopup"
@@ -98,13 +98,11 @@
 			column3="validity" column3Child="from"
 			column4Label="#{messages['commons.validTo']}" column4="validity"
 			column4Child="to" selection="#{subscriptionBean.entity.offer}"
-			width="1000" lazy="false"
-			dataModel="#{offerTemplateBean.listActiveByDate(subscriptionBean.entity.subscriptionDate)}"
+			width="1000" lazy="true"
+			dataModel="#{subscriptionBean.activeOfferTemplateDataModel}"
 			updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:sellerSelectId_entity :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text :subscriptionTab:subscriptionFormId:informationTab:subscriptionAndRenewalDates :subscriptionTab:subscriptionFormId:informationTab:minimumAmountEl :subscriptionTab:subscriptionFormId:informationTab:minimumLabelEl :subscriptionTab:subscriptionFormId:informationTab:minimumAmountElSpark :subscriptionTab:subscriptionFormId:informationTab:minimumLabelElSpark"
-			selectionListenerBean="#{subscriptionBean}"
-			selectionListenerMethod="copyInfoFromOffer">
+			selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="copyInfoFromOffer">
 		</hftl:entityPopup>
-
 		<!-- 		<hftl:entityPopup id="chargeTemplatePopup" -->
 <!-- 			header="#{messages['chargeTemplate.popup.header']}" -->
 <!-- 			backingBean="#{oneShotChargeTemplateBean}" -->
@@ -533,7 +531,7 @@
                                             <h:outputText id="balanceEx_text" rendered="#{true or !subscriptionBean.edit}" value="#{subscriptionBean.getBalanceExigibleWithoutLitigation()}"
                                                 style="font-weight:bold;" converter="bigDecimalConverter" />
                                         </hftl:decorateFormField>
-                                 	
+
 										<hftl:formField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
                             				popupId="billingCyclePopup" />
                             				
@@ -547,7 +545,7 @@
 										<hftl:formField label="#{messages['subscription.ratingGroup']}" field="ratingGroup" size="50" />
 										
                                         <h:panelGroup id="subscriptionAndRenewalDates">
-                                        	<hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" required="true" newLine="true" listenerUpdate="offerPopup, subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}" actionListenerMethod="updateSubscribedTillDate" />
+                                        	<hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" required="true" newLine="true" listenerUpdate="offerPopup, subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}" actionListenerMethod="onSubscriptionDateChange" />
                                         	<hftl:formField label="#{messages['subscription.initialTermType']}" field="subscriptionRenewal" childField="initialTermType" listenerUpdate="termType"></hftl:formField>
                                         	<hftl:formField label="#{messages['subscription.autoEndOfEngagement']}"
 												field="autoEndOfEngagement" actionListenerBean="#{subscriptionBean}" actionListenerMethod="autoUpdateEndOfEngagementDate"
@@ -875,6 +873,13 @@
 													</p:panel>
 												</h:form>
 											</p:tab>
+					<p:tab id="counterPeriodTab"
+						   title="#{messages['counterPeriod.title']}"
+						   rendered="#{not empty subscriptionBean.entity.id}">
+						<p:outputPanel id="counterPeriodTabPanel">
+							<ui:include src="counterPeriodTab.xhtml" />
+						</p:outputPanel>
+					</p:tab>
 				</p:tabView>
 			</h:panelGroup>
         </h:panelGroup>
@@ -911,7 +916,7 @@
 			<p:outputPanel id="usageChgPanel">
                 <hftl:formPanel edit="#{subscriptionBean.usageChargeInstance.status == 'INACTIVE'}" backingBean="#{subscriptionBean}" columns="1" entity="#{subscriptionBean.usageChargeInstance}"
                     formId="usageChgForm1" showFormButtons="false" ajaxSubmit="true" rendered="#{subscriptionBean.usageChargeInstance!=null}">
-                    <hftl:formField id="USchargeTemplateSelectId" label="#{messages['businessEntity.code']}" field="chargeTemplate" valueLabelField="code" edit="false" />
+                    <hftl:formField id="USchargeTemplateSelectId" label="#{messages['businessEntity.code']}" field="code" edit="false" />
                     <hftl:formField label="#{messages['commons.status']}" field="status" edit="false" />
                     <hftl:formField label="#{messages['businessEntity.description']}" field="description" edit="false" />
                     <hftl:formField label="#{messages['chargeInstance.prepaidWallets']}" field="prepaidWalletInstances" listType="pickUpList" valueLabelField="descriptionAndCode" edit="false" rendered="#{subscriptionBean.usageChargeInstance.prepaid}" componentWidth="50" /> 
@@ -1064,12 +1069,12 @@
 									<h:outputText
 										value="#{messages['walletOperation.amountWithoutTax']}" />
 								</f:facet>
-								<h:outputText value="#{shotApplication.amountWithoutTax}" />
+								<h:outputText value="#{shotApplication.amountWithoutTax}" converter="bigDecimal12DigitsConverter" />
 							</p:column>
 							<p:column rendered="#{!appProvider.entreprise}" sortBy="#{shotApplication.amountWithTax}">
 								<f:facet name="header">
 									<h:outputText
-										value="#{messages['walletOperation.amountWithTax']}" />
+										value="#{messages['walletOperation.amountWithTax']}" converter="bigDecimal12DigitsConverter" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.amountWithTax}" />
 							</p:column>

@@ -76,7 +76,7 @@ public class UserAccountDto extends AccountDto {
      */
 	public UserAccountDto(UserAccount e) {
 		super(e);
-
+        id = e.getId();
 		if (e.getBillingAccount() != null) {
 			setBillingAccount(e.getBillingAccount().getCode());
 			setBillingAccountDescription(e.getBillingAccount().getDescription());

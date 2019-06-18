@@ -501,7 +501,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             remove(InvoiceAgregate.class, invoiceAgregate);
         }
         getEntityManager().flush();
-        
+
 		// deleting SubCategoryInvoiceAgregate
 		this.cleanSubCategoryInvoiceAgregateByBR(billingRun);
 
@@ -518,7 +518,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         queryBA.setParameter("billingRun", billingRun);
         queryBA.executeUpdate();
     }
-    
+
 	private void cleanInvoiceByBR(BillingRun billingRun) {
 		Query queryInvoice = getEntityManager()
 				.createQuery(new StringBuilder("update RatedTransaction rt set rt.invoice = null ").append(
@@ -967,12 +967,21 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
 
         boolean proceedToPostInvoicing = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())
-                && ((billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC) || appProvider.isAutomaticInvoicing()));
+                && ((billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) || appProvider.isAutomaticInvoicing()));
 
         if (proceedToPostInvoicing) {
             createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
+            if(billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC){
+                billingRun = billingRunExtensionService.findById(billingRun.getId());
+            }
         }
+
+        if (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) && billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC ) {
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTVALIDATED, null);
+            billingRun = billingRunExtensionService.findById(billingRun.getId());
+        }
+
 
         if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
             invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
