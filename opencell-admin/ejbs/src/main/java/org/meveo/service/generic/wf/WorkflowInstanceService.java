@@ -48,6 +48,9 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
     @Inject
     private FilterService filterService;
 
+    @Inject
+    private GenericWorkflowService genericWorkflowService;
+
     public WorkflowInstance findByEntityIdAndGenericWorkflow(Long entityInstanceId, GenericWorkflow genericWorkflow) throws BusinessException {
         TypedQuery<WorkflowInstance> query = getEntityManager()
             .createQuery("select be from " + entityClass.getSimpleName() + " wi where wi.entityInstanceId = :entityInstanceId and wi.genericWorkflow = :genericWorkflow",
@@ -89,6 +92,9 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
     public List<BusinessEntity> findEntitiesWithoutWFInstance(GenericWorkflow gwf) throws BusinessException {
 
         Map<String, Object> params = Maps.newHashMap();
+        if (gwf.getId() != null) {
+            gwf = genericWorkflowService.findById(gwf.getId());
+        }
         if (gwf.getFilter() != null) {
             Filter filter = gwf.getFilter();
             List<BusinessEntity> entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
