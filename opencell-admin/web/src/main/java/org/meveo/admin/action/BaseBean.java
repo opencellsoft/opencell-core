@@ -18,25 +18,7 @@
  */
 package org.meveo.admin.action;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.enterprise.context.Conversation;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
+import com.lapis.jsfexporter.csv.CSVExportOptions;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -49,7 +31,6 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.ModuleItem;
@@ -80,7 +61,22 @@ import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.lapis.jsfexporter.csv.CSVExportOptions;
+import javax.enterprise.context.Conversation;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Base GUI bean class. Used as a backing bean foundation for both detail and searchable list pages. Provides a brigde between xhtml pages and service level classes.
@@ -130,7 +126,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private ElasticClient elasticClient;
 
     /** Search filters. */
-    protected Map<String, Object> filters = new HashMap<String, Object>();
+    protected Map<String, Object> filters = new HashMap<>();
 
     /** Entity to edit/view. */
     protected T entity;
@@ -765,7 +761,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     public Map<String, Object> getFilters() {
         if (filters == null) {
-            filters = new HashMap<String, Object>();
+            filters = new HashMap<>();
         }
         return filters;
     }
@@ -775,7 +771,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     public void clean() {
         dataModel = null;
-        filters = new HashMap<String, Object>();
+        filters = new HashMap<>();
         listFilter = null;
     }
 
@@ -932,7 +928,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 @Override
                 protected Map<String, Object> getSearchCriteria(Map<String, Object> customFilters) {
                     // Omit empty or null values
-                    Map<String, Object> cleanFilters = new HashMap<String, Object>();
+                    Map<String, Object> cleanFilters = new HashMap<>();
 
                     cleanupFilters(filters, cleanFilters);
                     cleanupFilters(MapUtils.emptyIfNull(customFilters), cleanFilters);
