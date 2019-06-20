@@ -56,6 +56,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -101,7 +102,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
         @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
         @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId") })
-public class Invoice extends AuditableEntity implements ICustomFieldEntity {
+public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
 
@@ -402,6 +403,17 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
      */
     @Transient
     private Boolean draft;
+
+    /**
+     * Code
+     */
+    @Transient
+    private String code;
+    /**
+     * Description
+     */
+    @Transient
+    private String description;
 
     /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
@@ -1004,4 +1016,23 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         return String.format("%s[%s, invoiceNumber=%s, invoiceType=%s]", this.getClass().getSimpleName(), super.toString(), invoiceNumber, invoiceType);
     }
 
+    @Override
+    public String getCode() {
+        return invoiceNumber;
+    }
+
+    @Override
+    public void setCode(String code) {
+
+    }
+
+    @Override
+    public String getDescription() {
+        return alias;
+    }
+
+    @Override
+    public void setDescription(String description) {
+
+    }
 }

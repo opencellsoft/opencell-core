@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ISearchable;
 
 /**
  * Sales channel
@@ -21,7 +22,7 @@ import org.meveo.model.ExportIdentifier;
 @Table(name = "cat_channel", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_channel_seq"), })
-public class Channel extends EnableBusinessEntity {
+public class Channel extends EnableBusinessEntity implements ISearchable {
 
     private static final long serialVersionUID = 6877386866687396135L;
 
