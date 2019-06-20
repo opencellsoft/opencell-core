@@ -22,7 +22,7 @@
         <env>dev</env>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <version.keycloak>2.5.5.Final</version.keycloak>
+        <version.keycloak>4.2.1.Final</version.keycloak>
         <version.pdfbox>2.0.11</version.pdfbox>
         <version.barcode>2.1</version.barcode>
 
@@ -92,7 +92,7 @@
             <dependency>
                 <groupId>org.wildfly.bom</groupId>
                 <artifactId>wildfly-javaee7-with-tools</artifactId>
-                <version>10.1.0.Final</version>
+                <version>11.0.0.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
