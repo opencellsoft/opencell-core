@@ -41,6 +41,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ISearchable;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
 import org.meveo.model.intcrm.AddressBook;
@@ -56,7 +57,7 @@ import org.meveo.model.intcrm.AddressBook;
 @DiscriminatorValue(value = "ACCT_CTACT")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "com_contact_seq"), })
-public class Contact extends AccountEntity {
+public class Contact extends AccountEntity implements ISearchable {
 
     private static final long serialVersionUID = 3772773449495155646L;
 
