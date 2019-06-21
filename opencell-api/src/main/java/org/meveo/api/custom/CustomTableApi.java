@@ -258,8 +258,8 @@ public class CustomTableApi extends BaseApi {
                     // Convert to long
                     if (id instanceof String) {
                         id = Long.parseLong((String) id);
-                    } else if (id instanceof BigInteger) {
-                        id = ((BigInteger) id).longValue();
+                    } else if (id instanceof Number) {
+                        id = ((Number) id).longValue();
                     }
                     ids.add((Long) id);
 
@@ -309,8 +309,8 @@ public class CustomTableApi extends BaseApi {
                 // Convert to long
                 if (id instanceof String) {
                     id = Long.parseLong((String) id);
-                } else if (id instanceof BigInteger) {
-                    id = ((BigInteger) id).longValue();
+                } else if (id instanceof Number) {
+                    id = ((Number) id).longValue();
                 }
                 ids.add((Long) id);
 

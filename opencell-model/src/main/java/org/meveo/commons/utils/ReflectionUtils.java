@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -51,12 +52,16 @@ import org.slf4j.LoggerFactory;
  * Utils class for java reflection api.
  * 
  * @author Ignas Lelys
+ * @author khalid HORRI
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author khalid HORRI
+ * @lastModifiedVersion 7.1
  */
 public class ReflectionUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
+
+    public static final String SET_PREFIX = "set";
 
     /**
      * Mapping between an entity class and entity classes containing a field that that class.
@@ -88,7 +93,7 @@ public class ReflectionUtils {
 
     /**
      * Get a list of classes from a given package
-     * 
+     *
      * @param packageName Package name
      * @return A list of classes
      * @throws ClassNotFoundException Class discovery issue
@@ -129,7 +134,7 @@ public class ReflectionUtils {
 
     /**
      * Get fields of a given class and it's superclasses
-     * 
+     *
      * @param fields A list of fields to supplement to
      * @param type Class
      * @return A list of field (same as fields parameter plus newly discovered fields
@@ -146,7 +151,7 @@ public class ReflectionUtils {
 
     /**
      * Get enum object from string value for a given enum type
-     * 
+     *
      * @param enumType Enum class
      * @param enumValue Enum value as string
      * @return Enum object
@@ -328,6 +333,21 @@ public class ReflectionUtils {
         Set<Class<?>> classes = reflections.getSubTypesOf(parentClass);
 
         return classes;
+    }
+
+    public static Object getSubclassObjectByDiscriminatorValue(Class parentClass, String discriminatorValue) {
+        Set<Class<?>> subClasses = getSubclasses(parentClass);
+        Object result = null;
+        for (Class subClass : subClasses) {
+            Object subclassObject = createObject(subClass.getName());
+            DiscriminatorValue classDiscriminatorValue = subclassObject.getClass().getAnnotation(DiscriminatorValue.class);
+            if (classDiscriminatorValue != null && classDiscriminatorValue.value().equals(discriminatorValue)) {
+                result = subclassObject;
+                break;
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -577,6 +597,23 @@ public class ReflectionUtils {
         }
         classReferences.put(fieldClass, matchedFields);
         return matchedFields;
+    }
+
+    /**
+     * Find methods annotated with annotationClass
+     * @param clazz the class where to search methods
+     * @param annotationClass the annotation class
+     * @return a list of methods
+     */
+    public static List<Method> findAnnotatedMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+        Method[] methods = clazz.getMethods();
+        List<Method> annotatedMethods = new ArrayList<Method>(methods.length);
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(annotationClass)) {
+                annotatedMethods.add(method);
+            }
+        }
+        return annotatedMethods;
     }
 
 

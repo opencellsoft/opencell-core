@@ -57,7 +57,8 @@ import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
  *
  * @author Wassim Drira
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
+ * @author khalid HORRI
+ * @lastModifiedVersion 6.1
  */
 @Stateless
 public class RecurringChargeInstanceService extends BusinessService<RecurringChargeInstance> {
@@ -215,7 +216,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         }
 
         if (serviceChargeTemplateRecurring.getCounterTemplate() != null) {
-            CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance.getSubscription().getUserAccount(),
+            CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance,
                 serviceChargeTemplateRecurring.getCounterTemplate(), isVirtual);
             chargeInstance.setCounter(counterInstance);
 

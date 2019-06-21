@@ -310,12 +310,9 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
             Object id = values.get(NativePersistenceService.FIELD_ID);
             if (id instanceof String) {
                 id = Long.parseLong((String) id);
-            } else if (id instanceof BigDecimal) {
-                id = ((BigDecimal) id).longValue();
-            } else if (id instanceof BigInteger) {
-                id = ((BigInteger) id).longValue();
+            } else if (id instanceof Number) {
+                id = ((Number) id).longValue();
             }
-
             ids.add((long) id);
 
         }

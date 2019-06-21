@@ -1,12 +1,5 @@
 package org.meveo.api.generic.wf;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
@@ -24,15 +17,30 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.filter.Filter;
 import org.meveo.model.generic.wf.GWFTransition;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
+import org.meveo.service.filter.FilterService;
 import org.meveo.service.generic.wf.GWFTransitionService;
 import org.meveo.service.generic.wf.GenericWorkflowService;
 import org.meveo.service.generic.wf.WFStatusService;
 import org.meveo.service.generic.wf.WorkflowInstanceHistoryService;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * The Class GenericWorkflowApi
+ *
+ * @author Amine Ben Aicha
+ * @author Mounir Bahije
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWorkflowDto> {
 
@@ -50,6 +58,9 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
 
     @Inject
     private WFStatusService wfStatusService;
+
+    @Inject
+    private FilterService filterService;
 
     @Override
     public GenericWorkflow create(GenericWorkflowDto genericWorkflowDto) throws MeveoApiException, BusinessException {
@@ -199,6 +210,15 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
             genericWorkflow.setTargetCetCode(dto.getTargetCetCode());
             if (dto.isDisabled() != null) {
                 genericWorkflow.setDisabled(dto.isDisabled());
+            }
+            if (dto.getFilter() != null) {
+                Filter filter = filterService.findByCode(dto.getFilter().getCode()) ;
+                if (filter.getPrimarySelector() != null) {
+                    String clazzName = filter.getPrimarySelector().getTargetEntity();
+                    if (clazzName.equals(dto.getTargetEntityClass())) {
+                        genericWorkflow.setFilter(filterService.findByCode(dto.getFilter().getCode()));
+                    }
+                }
             }
         }
 

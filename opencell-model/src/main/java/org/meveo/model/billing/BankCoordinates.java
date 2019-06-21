@@ -21,10 +21,12 @@ package org.meveo.model.billing;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Size;
 
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.commons.encryption.BankDataEncryptor;
 import org.meveo.commons.utils.AesEncrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,15 +72,17 @@ public class BankCoordinates implements Serializable, Cloneable {
     /**
      * IBAN number
      */
-    @Column(name = "iban", length = 80)
-    @Size(max = 80)
+    @Convert(converter=BankDataEncryptor.class)
+    @Column(name = "iban", length = 100)
+    @Size(max = 100)
     private String iban;
 
     /**
      * BIC number
      */
-    @Column(name = "bic", length = 11)
-    @Size(max = 11)
+    @Convert(converter=BankDataEncryptor.class)
+    @Column(name = "bic", length = 100)
+    @Size(max = 100)
     private String bic;
 
     /**

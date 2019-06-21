@@ -3,6 +3,7 @@ package org.meveo.service.catalog.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -66,6 +67,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
     @Inject
     private BusinessProductModelService businessProductModelService;
+    private List<BusinessServiceModel> businessServiceModels;
 
     /**
      * Creates an offer given a BusinessOfferModel.
@@ -297,32 +299,37 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
             return newOfferServiceTemplates;
         }
 
+        List<ServiceTemplate> serviceTemplateServiceByCodes = serviceTemplateService
+                .findByCodes(serviceCodes.stream().map(serviceConfigurationDto -> serviceConfigurationDto.getCode().toUpperCase()).collect(Collectors.toList()));
         // check if service exists in offer
         for (ServiceConfigurationDto serviceCodeDto : serviceCodes) {
             boolean serviceFound = false;
-            String serviceCode = serviceCodeDto.getCode();
 
-            OfferServiceTemplate tempOfferServiceTemplate = null;
             if (serviceCodeDto.isInstantiatedFromBSM()) {
+                OfferServiceTemplate tempOfferServiceTemplate = null;
                 // no need to check in offer, we initialized a new instance and add to the newly created offer
                 // instantiated from bsm
-                ServiceTemplate stSource = serviceTemplateService.findByCode(serviceCode);
+                ServiceTemplate stSource = serviceTemplateServiceByCodes.stream()
+                        .filter(serviceTemplate -> serviceTemplate.getCode().equalsIgnoreCase(serviceCodeDto.getCode()))
+                        .findFirst().orElseGet(null);
                 if (stSource != null) {
                     // check if exists in bsm or is from offer entity
                     // (meaning not from bsm = non transient)
                     BusinessServiceModel bsm = findBsmFromBom(businessOfferModel, stSource);
                     if (bsm != null) {
+                        stSource.getServiceRecurringCharges().size();
+                        stSource.getServiceSubscriptionCharges().size();
+                        stSource.getServiceTerminationCharges().size();
+                        stSource.getServiceUsageCharges().size();
                         tempOfferServiceTemplate = new OfferServiceTemplate();
                         tempOfferServiceTemplate.setMandatory(serviceCodeDto.isMandatory());
                         tempOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
 
-                        ServiceTemplate stTarget = new ServiceTemplate();
-                        stTarget.setCode(stSource.getCode());
-                        stTarget.setDescription(stSource.getDescription());
-                        stTarget.setInstantiatedFromBSM(serviceCodeDto.isInstantiatedFromBSM());
-                        stTarget.setBusinessServiceModel(bsm);
+                        stSource.setDescription(stSource.getDescription());
+                        stSource.setInstantiatedFromBSM(serviceCodeDto.isInstantiatedFromBSM());
+                        stSource.setBusinessServiceModel(bsm);
 
-                        tempOfferServiceTemplate.setServiceTemplate(stTarget);
+                        tempOfferServiceTemplate.setServiceTemplate(stSource);
                         offerServiceTemplates.add(tempOfferServiceTemplate);
                         serviceFound = true;
                     }
@@ -330,7 +337,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
             } else {
                 for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
                     ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
-                    if (serviceCode.equals(serviceTemplate.getCode()) && !serviceCodeDto.isInstantiatedFromBSM()) {
+                    if (serviceCodeDto.getCode().equals(serviceTemplate.getCode()) && !serviceCodeDto.isInstantiatedFromBSM()) {
                         serviceFound = true;
                         break;
                     }
@@ -339,16 +346,14 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
             if (!serviceFound) {
                 // service is not defined in offer
-                throw new BusinessException("Service " + serviceCode + " is not defined in the offer");
+                throw new BusinessException("Service " + serviceCodeDto.getCode() + " is not defined in the offer");
             }
         }
 
-        List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
-        List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
         // duplicate the services
         // note that ost now contains st with null id from bsm
         for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
-            ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode());
+            ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
 
             boolean serviceFound = false;
             ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
@@ -378,9 +383,12 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
                     log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
                 }
             }
-
-            OfferServiceTemplate newOfferServiceTemplate = catalogHierarchyBuilderService.duplicateService(offerServiceTemplate, serviceConfigurationDto, prefix,
-                pricePlansInMemory, chargeTemplateInMemory);
+            serviceTemplate.getServiceRecurringCharges().size();
+            serviceTemplate.getServiceSubscriptionCharges().size();
+            serviceTemplate.getServiceTerminationCharges().size();
+            serviceTemplate.getServiceUsageCharges().size();
+            serviceTemplateService.detach(serviceTemplate);
+            OfferServiceTemplate newOfferServiceTemplate = catalogHierarchyBuilderService.duplicateServiceWithoutDuplicatingChargeTemplates(offerServiceTemplate, serviceTemplate, serviceConfigurationDto, prefix);
             newOfferServiceTemplates.add(newOfferServiceTemplate);
 
             if (serviceScipt != null) {
@@ -416,18 +424,29 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
      * @return business service model.
      */
     public BusinessServiceModel findBsmFromBom(BusinessOfferModel businessOfferModel, ServiceTemplate serviceTemplate) {
-        for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
-            if (item.getItemClass().equals(BusinessServiceModel.class.getName())) {
-                BusinessServiceModel bsm = businessServiceModelService.findByCode(item.getItemCode());
-                if (bsm.getServiceTemplate().equals(serviceTemplate)) {
-                    return bsm;
-                }
+        for (BusinessServiceModel bsm : getBusinessServiceModelsFromMeveoModuleItem(businessOfferModel)) {
+            if (bsm.getServiceTemplate().equals(serviceTemplate)) {
+                return bsm;
             }
         }
 
         return null;
     }
     
+
+    private List<BusinessServiceModel> getBusinessServiceModelsFromMeveoModuleItem(BusinessOfferModel businessOfferModel) {
+        if(businessServiceModels == null){
+            businessServiceModels = businessServiceModelService.findByCodes(businessOfferModel.getModuleItems().stream()
+                    .filter(meveoModuleItem -> meveoModuleItem.getItemClass().equals(BusinessServiceModel.class.getName()))
+                    .map(meveoModuleItem -> meveoModuleItem.getItemCode())
+                    .collect(Collectors.toList()));
+            if(businessServiceModels == null){
+                businessServiceModels = new ArrayList<>();
+            }
+        }
+        return businessServiceModels;
+    }
+
     @SuppressWarnings("unchecked")
     public List<BusinessOfferModel> listByOfferTemplate(OfferTemplate offerTemplate) {
         QueryBuilder qb = new QueryBuilder(BusinessOfferModel.class, "b");

@@ -317,6 +317,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         SubscriptionRenewal serviceRenewal = serviceTemplate.getServiceRenewal();
         serviceInstance.setServiceRenewal(serviceRenewal);
+        serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
+        serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
+        serviceInstance.setMinimumAmountElSpark(serviceTemplate.getMinimumAmountElSpark());
+        serviceInstance.setMinimumLabelElSpark(serviceTemplate.getMinimumLabelElSpark());
 
         if (!isVirtual) {
             create(serviceInstance);
