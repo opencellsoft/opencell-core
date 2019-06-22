@@ -1091,4 +1091,12 @@
 			alter table ${db.schema.adapted}account_entity modify lastname varchar(100); </sql>
     </changeSet>
     
+    <changeSet id="#4313_17062019" author="mohamed.el.youssoufi">
+		<addColumn tableName="wf_generic_workflow">
+			<column name="cf_values_accum" type="${type.json}"></column>
+			<column name="cf_values" type="${type.json}"></column>
+			<column name="uuid" type="varchar(60)" />
+		</addColumn>
+	</changeSet>
+    
 </databaseChangeLog>
