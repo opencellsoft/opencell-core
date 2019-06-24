@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -19,6 +19,7 @@
 package org.meveo.service.admin.impl;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.FileFormat;
 import org.meveo.service.base.PersistenceService;
 
@@ -44,7 +45,7 @@ public class FileFormatService extends PersistenceService<FileFormat> {
      * @return found File format
      */
     public FileFormat findByCode(String code) {
-        if (code == null) {
+        if (StringUtils.isBlank(code)) {
             return null;
         }
         QueryBuilder qb = new QueryBuilder(FileFormat.class, "c");
@@ -64,7 +65,7 @@ public class FileFormatService extends PersistenceService<FileFormat> {
     @SuppressWarnings("unchecked")
     public List<FileFormat> list() {
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "e", null);
-        queryBuilder.addOrderCriterion("e.description", true);
+        queryBuilder.addOrderCriterion("e.code", true);
         Query query = queryBuilder.getQuery(getEntityManager());
         return query.getResultList();
     }

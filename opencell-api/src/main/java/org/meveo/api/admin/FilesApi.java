@@ -29,8 +29,8 @@ import java.util.zip.ZipOutputStream;
  * @author Edward P. Legaspi
  * @author Wassim Drira
  * @author Youssef IZEM
- * @lastModifiedVersion 5.4
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class FilesApi extends BaseApi {
@@ -124,11 +124,6 @@ public class FilesApi extends BaseApi {
 
             fop = new FileOutputStream(file);
 
-
-            if(!StringUtils.isBlank(fileFormat)){
-                flatFileValidator.validateFileFormat(file, filename, fileFormat);
-            }
-
             fop.write(data);
             fop.flush();
 
@@ -137,6 +132,10 @@ public class FilesApi extends BaseApi {
                 // get parent dir
                 String parentDir = file.getParent();
                 FileUtils.unzipFile(parentDir, new FileInputStream(file));
+            }
+
+            if (!StringUtils.isBlank(fileFormat)) {
+                flatFileValidator.validateFileFormat(file, filename, fileFormat, null);
             }
 
         } catch (Exception e) {

@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -20,18 +20,9 @@ package org.meveo.model.bi;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.FileFormat;
-import org.meveo.model.audit.AuditChangeTypeEnum;
-import org.meveo.model.audit.AuditTarget;
-import org.meveo.model.billing.Language;
-import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.UserAccount;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -42,8 +33,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Flat file entity
@@ -59,7 +48,16 @@ public class FlatFile extends AuditableEntity {
 
     private static final long serialVersionUID = -4989724064567423956L;
 
-    /** File name. */
+    /**
+     * File code .
+     */
+    @Column(name = "code", length = 255, unique = true)
+    @Size(max = 255)
+    private String code;
+
+    /**
+     * File name.
+     */
     @Column(name = "file_name", length = 255)
     @Size(max = 255)
     private String fileName;
@@ -69,7 +67,7 @@ public class FlatFile extends AuditableEntity {
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private FileStatusEnum status = FileStatusEnum.OK;
+    private FileStatusEnum status = FileStatusEnum.WELL_FORMED;
 
     /**
      * File Format
@@ -79,17 +77,30 @@ public class FlatFile extends AuditableEntity {
     @NotNull
     private FileFormat fileFormat;
 
-    /** Flag field that indicates if the file is processed or not yet. */
-    @Type(type = "numeric_boolean")
-    @Column(name = "processed")
-    private boolean processed;
-
     /**
      * Rejection reason
      */
     @Column(name = "error_message", length = 4000)
     @Size(max = 4000)
     private String errorMessage;
+
+    /**
+     * Gets the code
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     /**
      * Gets the fileName
@@ -143,24 +154,6 @@ public class FlatFile extends AuditableEntity {
      */
     public void setFileFormat(FileFormat fileFormat) {
         this.fileFormat = fileFormat;
-    }
-
-    /**
-     * Gets the processed
-     *
-     * @return the processed
-     */
-    public boolean isProcessed() {
-        return processed;
-    }
-
-    /**
-     * Sets the processed.
-     *
-     * @param processed the new processed
-     */
-    public void setProcessed(boolean processed) {
-        this.processed = processed;
     }
 
     /**

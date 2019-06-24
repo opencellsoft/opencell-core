@@ -15,7 +15,8 @@ import org.meveo.api.rest.impl.BaseRs;
 /**
  * @author Edward P. Legaspi
  * @author Youssef IZEM
- * @lastModifiedVersion 5.4
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.3.0
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })

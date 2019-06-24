@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * File format entity
@@ -51,48 +52,65 @@ public class FileFormat extends AuditableEntity {
 
     private static final long serialVersionUID = 1932955932186440723L;
 
-
-    /** File code e.g. CDR for CDR File. */
-    @Column(name = "code", length = 10, unique = true)
+    /**
+     * File code e.g. CDR for CDR File.
+     */
+    @Column(name = "code", length = 10, nullable = false, unique = true)
     @Size(max = 10)
     private String code;
 
-    /** File name. */
+    /**
+     * File name.
+     */
     @Column(name = "file_name", length = 255)
     @Size(max = 255)
     private String fileName;
 
-    /** File name. */
+    /**
+     * File name.
+     */
     @Column(name = "file_type", length = 255)
     @Size(max = 255)
     private String fileType;
 
-    /** Configuration template. */
+    /**
+     * Configuration template.
+     */
     @Column(name = "configuration_template", length = 4000)
-    @Size(max = 255)
+    @Size(max = 4000)
     private String configurationTemplate;
 
-    /** File name. */
+    /**
+     * File name.
+     */
     @Column(name = "record_name", length = 255)
     @Size(max = 255)
     private String recordName;
 
-    /** Input directory. */
+    /**
+     * Input directory.
+     */
     @Column(name = "input_directory", length = 255)
     @Size(max = 255)
     private String inputDirectory;
 
-    /** Output directory. */
+    /**
+     * Output directory.
+     */
     @Column(name = "output_directory", length = 255)
     @Size(max = 255)
     private String outputDirectory;
 
-    /** Reject directory. */
+    /**
+     * Reject directory.
+     */
     @Column(name = "reject_directory", length = 255)
     @Size(max = 255)
     private String rejectDirectory;
 
-    /** Archive directory. */
+    /**
+     * Archive directory.
+     */
     @Column(name = "archive_directory", length = 255)
     @Size(max = 255)
     private String archiveDirectory;
@@ -100,7 +118,7 @@ public class FileFormat extends AuditableEntity {
     /**
      * Account's subscriptions
      */
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "fileFormat", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlatFile> files = new ArrayList<>();
 
     /**
@@ -281,5 +299,20 @@ public class FileFormat extends AuditableEntity {
      */
     public void setFiles(List<FlatFile> files) {
         this.files = files;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        FileFormat that = (FileFormat) o;
+        return Objects.equals(code, that.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), code);
     }
 }

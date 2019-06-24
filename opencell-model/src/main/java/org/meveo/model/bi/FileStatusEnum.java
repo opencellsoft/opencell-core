@@ -26,5 +26,5 @@ package org.meveo.model.bi;
  */
 public enum FileStatusEnum {
 
-    OK, KO
+    BAD_FORMED, WELL_FORMED, VALID, REJECTED, ARCHIVED
 }

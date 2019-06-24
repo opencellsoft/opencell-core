@@ -19,12 +19,15 @@
 package org.meveo.service.bi.impl;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.FileFormat;
 import org.meveo.model.bi.FileStatusEnum;
 import org.meveo.model.bi.FlatFile;
 import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 /**
  * Flat file service
@@ -36,22 +39,43 @@ import javax.ejb.Stateless;
 @Stateless
 public class FlatFileService extends PersistenceService<FlatFile> {
 
-    public void create(String fileName, FileFormat fileFormat, String errorMessage, FileStatusEnum status, boolean processed) throws BusinessException {
+    public FlatFile create(String fileName, FileFormat fileFormat, String errorMessage, FileStatusEnum status) throws BusinessException {
         FlatFile flatFile = new FlatFile();
         flatFile.setFileName(fileName);
         flatFile.setFileFormat(fileFormat);
         flatFile.setErrorMessage(errorMessage);
         flatFile.setStatus(status);
-        flatFile.setProcessed(processed);
         create(flatFile);
+        String code = (fileFormat != null ? fileFormat.getCode() : "CODE") + flatFile.getId();
+        flatFile.setCode(code);
+        return flatFile;
     }
 
-    public void update(FlatFile flatFile, String fileName, FileFormat fileFormat, String errorMessage, FileStatusEnum status, boolean processed) throws BusinessException {
+    public void update(FlatFile flatFile, String fileName, FileFormat fileFormat, String errorMessage, FileStatusEnum status) throws BusinessException {
         flatFile.setFileName(fileName);
         flatFile.setFileFormat(fileFormat);
         flatFile.setErrorMessage(errorMessage);
         flatFile.setStatus(status);
-        flatFile.setProcessed(processed);
         create(flatFile);
+    }
+
+    /**
+     * Find the flat file by code.
+     *
+     * @param code flat file code.
+     * @return found flat file
+     */
+    public FlatFile findByCode(String code) {
+        if (StringUtils.isBlank(code)) {
+            return null;
+        }
+        QueryBuilder qb = new QueryBuilder(FlatFile.class, "c");
+        qb.addCriterion("code", "=", code, false);
+
+        try {
+            return (FlatFile) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }
