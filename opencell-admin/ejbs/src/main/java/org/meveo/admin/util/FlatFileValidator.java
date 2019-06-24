@@ -175,7 +175,7 @@ public class FlatFileValidator {
                 log.info("file validation {} done.", fileName);
                 if (file != null) {
                     if (!StringUtils.isBlank(inputDirectory) || !StringUtils.isBlank(fileFormat.getInputDirectory())) {
-                        inputDirectory = !StringUtils.isBlank(inputDirectory) ? inputDirectory : fileFormat.getInputDirectory();
+                        inputDirectory = !StringUtils.isBlank(inputDirectory) ? inputDirectory : getFileManagementDirectory(fileFormat.getInputDirectory());
                         if (!new File(inputDirectory).exists()) {
                             new File(inputDirectory).mkdirs();
                         }
