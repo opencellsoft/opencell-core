@@ -1274,7 +1274,6 @@ public class DeleteCustomersScript extends Script {
 						,"FlatFileProcessingJob_scriptsFlow":[{"string":"org.meveo.service.script.DeleteCustomersScript"}]
 						,"FlatFileProcessingJob_inputDir":[{"string":"/batch/customer/delete"}]}]]>
             </column>
-            <column name="exclude_inv_without_amount" value="null" />
             <column name="verbose_report" value="1" />
             
           </insert>
