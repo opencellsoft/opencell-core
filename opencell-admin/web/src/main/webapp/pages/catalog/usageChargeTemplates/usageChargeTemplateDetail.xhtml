@@ -58,13 +58,16 @@
 							field="amountEditable" />						
 						<hftl:formField label="#{messages['usageChargeTemplate.priority']}"
 							field="priority" />
-						<hftl:formField
-							label="#{messages['chargeTemplate.inputUnitDescription']}"
-							field="inputUnitDescription" />
-						<hftl:formField
-							label="#{messages['chargeTemplate.ratingUnitDescription']}"
-							field="ratingUnitDescription" />
-						<hftl:formField
+
+					<hftl:formField
+							label="#{messages['chargeTemplate.inputUnitOfMesure']}"
+							field="inputUnitOfMeasure" valueLabelField="symbol" listBean="#{unitOfMeasureBean}"/>
+
+					<hftl:formField
+							label="#{messages['chargeTemplate.ratingUnitOfMesure']}"
+							field="ratingUnitOfMeasure" valueLabelField="symbol" listBean="#{unitOfMeasureBean}"/>
+
+					<hftl:formField
 							label="#{messages['chargeTemplate.unitMultiplicator']}"
 							field="unitMultiplicator" converter="bigDecimal12DigitsConverter" />
 						<hftl:formField label="#{messages['chargeTemplate.unitNbDecimal']}"

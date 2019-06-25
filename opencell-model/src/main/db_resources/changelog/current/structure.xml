@@ -239,4 +239,64 @@
         <addDefaultValue tableName="meveo_job_instance" columnName="exclude_inv_without_amount" defaultValueNumeric="0" />
         <sql>update ${db.schema.adapted}meveo_job_instance set exclude_inv_without_amount = 0 where exclude_inv_without_amount is null</sql>
     </changeSet>
+
+    <changeSet id="#3510_20190516" author="MounirBahije">
+        <createTable tableName="cat_unit_of_measure">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_unit_of_measure_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+<!--            <column name="multiplicator" type="bigint" />-->
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="symbol" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+            <column name="multiplicator" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="parent_id" type="bigint" />
+        </createTable>
+
+        <createSequence sequenceName="cat_unit_of_measure_seq" />
+
+        <addColumn tableName="cat_charge_template">
+            <column name="input_unitofmeasure" type="bigint"/>
+            <column name="rating_unitofmeasure" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="cat_charge_template" constraintName="fk_input_cat_charge_template_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+
+        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="cat_charge_template" constraintName="fk_rating_cat_charge_template_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+
+        <addColumn tableName="billing_wallet_operation">
+            <column name="input_unitofmeasure" type="bigint"/>
+            <column name="rating_unitofmeasure" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="billing_wallet_operation" constraintName="fk_input_billing_wallet_operation_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_wallet_operation" />
+
+        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="billing_wallet_operation" constraintName="fk_rating_billing_wallet_operation_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_wallet_operation" />
+
+
+        <addNotNullConstraint tableName="cat_unit_of_measure" columnName="multiplicator"/>
+        <addDefaultValue tableName="cat_unit_of_measure" columnName="multiplicator" defaultValueNumeric="1"/>
+
+    </changeSet>
+
 </databaseChangeLog> 

@@ -18,11 +18,20 @@
  */
 package org.meveo.model.catalog;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.finance.RevenueRecognitionRule;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -41,21 +50,11 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ModuleItem;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.OperationTypeEnum;
-import org.meveo.model.finance.RevenueRecognitionRule;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Charge template/definition
@@ -124,6 +123,20 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
     @Column(name = "rating_unit_description", length = 20)
     @Size(max = 20)
     protected String ratingUnitDescription;
+
+    /**
+     * input_unit_unitOfMeasure
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "input_unitofmeasure")
+    private UnitOfMeasure inputUnitOfMeasure;
+
+    /**
+     * rating_unit_unitOfMeasure
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rating_unitofmeasure")
+    private UnitOfMeasure ratingUnitOfMeasure;
 
     /**
      * Unit multiplicator between input and rating unit
@@ -311,5 +324,21 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
     protected int getRoundingUnityNbDecimal() {
         computeRoundingValues(); // See if this can be computed only once upon entity load or upon value change
         return roundingUnityNbDecimal;
+    }
+
+    public UnitOfMeasure getInputUnitOfMeasure() {
+        return inputUnitOfMeasure;
+    }
+
+    public void setInputUnitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
+        this.inputUnitOfMeasure = inputUnitOfMeasure;
+    }
+
+    public UnitOfMeasure getRatingUnitOfMeasure() {
+        return ratingUnitOfMeasure;
+    }
+
+    public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
+        this.ratingUnitOfMeasure = ratingUnitOfMeasure;
     }
 }
