@@ -39852,7 +39852,7 @@ public class RegisterHierarchy extends org.meveo.service.script.Script {
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create BAM" id="29e60ec9-03ff-4290-a7cc-55f81e77626f">
+      <con:testStep type="request" name="Create BAM" id="29e60ec9-03ff-4290-a7cc-55f81e77626f" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
