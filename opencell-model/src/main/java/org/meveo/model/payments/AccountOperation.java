@@ -97,10 +97,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
                 "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
                 "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
         @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao"
-                + ".customerAccount=:customerAccount"),
-        @NamedQuery(name = "AccountOperation.occAmount", query = "select sum(case when ao.transactionCategory = 'DEBIT' then ao.unMatchingAmount else (-1 * ao"
-                + ".unMatchingAmount) end) "
-                + "from AccountOperation as ao where ao.customerAccount = :customerAccount and ao.matchingStatus in(:matchingStatus)")
+                + ".customerAccount=:customerAccount")
 })
 public class AccountOperation extends BusinessEntity implements ICustomFieldEntity, ISearchable, IWFEntity {
 
