@@ -14,58 +14,62 @@ import javax.persistence.Table;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.jobs.JobInstance;
 
+/**
+ * Notification to trigger Job execution
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ModuleItem
-@Table(name="adm_notif_job")
+@Table(name = "adm_notif_job")
 public class JobTrigger extends Notification {
-	
-	private static final long serialVersionUID = -8948201462950547554L;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "adm_notif_job_params") 
-	private Map<String, String> jobParams = new HashMap<String, String>();
-	
+    private static final long serialVersionUID = -8948201462950547554L;
+
+    /**
+     * Job execution parameters
+     */
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "adm_notif_job_params")
+    private Map<String, String> jobParams = new HashMap<String, String>();
+
+    /**
+     * Job to execute
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_instance_id")
     private JobInstance jobInstance;
- 
-   public  JobTrigger(){
-	   
-   }
 
+    public JobTrigger() {
 
-	
-	/**
- * @return the jobParams
- */
-public Map<String, String> getJobParams() {
-	return jobParams;
-}
+    }
 
+    /**
+     * @return the jobParams
+     */
+    public Map<String, String> getJobParams() {
+        return jobParams;
+    }
 
+    /**
+     * @param jobParams the jobParams to set
+     */
+    public void setJobParams(Map<String, String> jobParams) {
+        this.jobParams = jobParams;
+    }
 
-/**
- * @param jobParams the jobParams to set
- */
-public void setJobParams(Map<String, String> jobParams) {
-	this.jobParams = jobParams;
-}
+    /**
+     * @return the jobInstance
+     */
+    public JobInstance getJobInstance() {
+        return jobInstance;
+    }
 
+    /**
+     * @param jobInstance the jobInstance to set
+     */
+    public void setJobInstance(JobInstance jobInstance) {
+        this.jobInstance = jobInstance;
+    }
 
-
-	/**
-	 * @return the jobInstance
-	 */
-	public JobInstance getJobInstance() {
-		return jobInstance;
-	}
-	
-	/**
-	 * @param jobInstance the jobInstance to set
-	 */
-	public void setJobInstance(JobInstance jobInstance) {
-		this.jobInstance = jobInstance;
-	}
-    
-   
 }

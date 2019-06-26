@@ -40,6 +40,11 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
+/**
+ * Matching between Account operations information
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code" })
@@ -50,24 +55,42 @@ public class MatchingCode extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Code
+     */
     @Column(name = "code", length = 255)
     @Size(max = 255)
     private String code;
 
+    /**
+     * Match type
+     */
     @Column(name = "matching_type")
     @Enumerated(EnumType.STRING)
     private MatchingTypeEnum matchingType;
 
+    /**
+     * Date that matching was done
+     */
     @Column(name = "matching_date")
     @Temporal(TemporalType.DATE)
     private Date matchingDate;
 
+    /**
+     * Matched account operations and amounts
+     */
     @OneToMany(mappedBy = "matchingCode", cascade = CascadeType.ALL)
     private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
 
+    /**
+     * Total matched amount credit
+     */
     @Column(name = "matching_amount_credit", precision = 23, scale = 12)
     private BigDecimal matchingAmountCredit;
 
+    /**
+     * Total matched amount debit
+     */
     @Column(name = "matching_amount_debit", precision = 23, scale = 12)
     private BigDecimal matchingAmountDebit;
 

@@ -9,11 +9,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 import org.meveo.model.Auditable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * Equivalent of AuditableEntity in DTO
  * Contain the entity creation and modification dates.
  * @author Edward P. Legaspi
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AuditableDto implements Serializable {
 

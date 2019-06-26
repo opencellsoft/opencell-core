@@ -37,6 +37,11 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
+/**
+ * Language enabled in application
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "language.languageCode" })
@@ -55,14 +60,24 @@ import org.meveo.model.ObservableEntity;
 public class TradingLanguage extends EnableEntity {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Language
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "language_id")
     private Language language;
 
+    /**
+     * Description. Deprecated in 5.3. Use language.description instead.
+     */
+    @Deprecated
     @Column(name = "pr_description", length = 255)
     @Size(max = 255)
     private String prDescription;
 
+    /**
+     * Language code
+     */
     @Transient
     String languageCode;
 

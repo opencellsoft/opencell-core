@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.commons.utils.CustomDateSerializer;
@@ -20,11 +21,18 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+
+/**
+ * The Class ProductOrder Dto.
+ *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.3.0
+ */
 @XmlRootElement(name = "ProductOrder", namespace = "http://www.tmforum.org")
 @XmlType(name = "ProductOrder", namespace = "http://www.tmforum.org")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(value = Include.NON_NULL)
-public class ProductOrder implements Serializable {
+public class ProductOrder extends AuditableEntityDto {
 
     private static final long serialVersionUID = -4883520016795545598L;
 
@@ -64,10 +72,38 @@ public class ProductOrder implements Serializable {
     @XmlElement(name = "methodOfPayment")
     private List<PaymentMethodDto> paymentMethods;
 
+    /**
+     * Expression to calculate Invoice due date delay value
+     */
     private String dueDateDelayEL;
-    
+
+    /**
+     * Expression to calculate Invoice due date delay value - for Spark
+     */
+    private String dueDateDelayELSpark;
+
     /** The billing cycle. */
     private String billingCycle;
+
+    /** The electronic billing. */
+    private Boolean electronicBilling;
+
+    /** The email. */
+    private String email;
+    /**
+     * Mailing type
+     */
+    private String mailingType;
+
+    /**
+     * Email Template code
+     */
+    private String emailTemplate;
+
+    /**
+     * A list of emails separated by comma
+     */
+    private String ccedEmails;
 
     public String getId() {
         return id;
@@ -213,12 +249,32 @@ public class ProductOrder implements Serializable {
         this.paymentMethods = paymentMethods;
     }
 
+    /**
+     * @return Expression to calculate Invoice due date delay value
+     */
     public String getDueDateDelayEL() {
         return dueDateDelayEL;
     }
 
+    /**
+     * @param dueDateDelayEL Expression to calculate Invoice due date delay value
+     */
     public void setDueDateDelayEL(String dueDateDelayEL) {
         this.dueDateDelayEL = dueDateDelayEL;
+    }
+
+    /**
+     * @return Expression to calculate Invoice due date delay value - for Spark
+     */
+    public String getDueDateDelayELSpark() {
+        return dueDateDelayELSpark;
+    }
+
+    /**
+     * @param dueDateDelayELSpark Expression to calculate Invoice due date delay value - for Spark
+     */
+    public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
+        this.dueDateDelayELSpark = dueDateDelayELSpark;
     }
 
     public String getBillingCycle() {
@@ -229,4 +285,43 @@ public class ProductOrder implements Serializable {
         this.billingCycle = billingCycle;
     }
 
+    public Boolean getElectronicBilling() {
+        return electronicBilling;
+    }
+
+    public void setElectronicBilling(Boolean electronicBilling) {
+        this.electronicBilling = electronicBilling;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMailingType() {
+        return mailingType;
+    }
+
+    public void setMailingType(String mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    public String getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    public void setEmailTemplate(String emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
 }

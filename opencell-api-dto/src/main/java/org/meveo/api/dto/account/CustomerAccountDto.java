@@ -1,4 +1,4 @@
-	package org.meveo.api.dto.account;
+package org.meveo.api.dto.account;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -47,13 +47,13 @@ public class CustomerAccountDto extends AccountDto {
 
     /** The status. */
     private CustomerAccountStatusEnum status;
-    
+
     /** The credit category. */
     private String creditCategory;
-    
+
     /** The date status. */
     private Date dateStatus;
-    
+
     /** The date dunning level. */
     private Date dateDunningLevel;
 
@@ -72,10 +72,10 @@ public class CustomerAccountDto extends AccountDto {
 
     /** balanceExigible (status=O, P; isDue=true; dunning=false) - creditBalance. */
     private BigDecimal balance = BigDecimal.ZERO;
-    
+
     /** exigibleWithoutLitigation; status=O, P; isDue=true; dunning=true. */
     private BigDecimal totalInvoiceBalance = BigDecimal.ZERO;
-    
+
     /** totalInvoiceBalance - creditBalance. */
     private BigDecimal accountBalance = BigDecimal.ZERO;
     /**
@@ -86,9 +86,16 @@ public class CustomerAccountDto extends AccountDto {
     /** The termination date. */
     // currently not use
     private Date terminationDate;
-    
-    /** The due date delay EL. */
+
+    /**
+     * Expression to calculate Invoice due date delay value
+     */
     private String dueDateDelayEL;
+
+    /**
+     * Expression to calculate Invoice due date delay value - for Spark
+     */
+    private String dueDateDelayELSpark;
 
     /** The payment methods. */
     @XmlElementWrapper(name = "paymentMethods")
@@ -108,7 +115,7 @@ public class CustomerAccountDto extends AccountDto {
      * Use for GET / LIST only.
      */
     private BillingAccountsDto billingAccounts = new BillingAccountsDto();
-    
+
     private List<AccountOperationDto> accountOperations;
 
     /**
@@ -117,53 +124,54 @@ public class CustomerAccountDto extends AccountDto {
     public CustomerAccountDto() {
         super();
     }
-    
+
     /**
      * Instantiates a new customer account dto.
      * 
      * @param e CustomerAccount entity
      */
-	public CustomerAccountDto(CustomerAccount e) {
-		super(e);
+    public CustomerAccountDto(CustomerAccount e) {
+        super(e);
 
-		if (e.getCustomer() != null) {
-			setCustomer(e.getCustomer().getCode());
-		}
+        if (e.getCustomer() != null) {
+            setCustomer(e.getCustomer().getCode());
+        }
 
-		if (e.getTradingCurrency() != null) {
-			setCurrency(e.getTradingCurrency().getCurrencyCode());
-		}
+        if (e.getTradingCurrency() != null) {
+            setCurrency(e.getTradingCurrency().getCurrencyCode());
+        }
 
-		if (e.getTradingLanguage() != null) {
-			setLanguage(e.getTradingLanguage().getLanguageCode());
-		}
+        if (e.getTradingLanguage() != null) {
+            setLanguage(e.getTradingLanguage().getLanguageCode());
+        }
 
-		setStatus(e.getStatus());
-		setDateStatus(e.getDateStatus());
-		try {
-			setCreditCategory(e.getCreditCategory().getCode());
-		} catch (NullPointerException ex) {
-		}
-		setDunningLevel(e.getDunningLevel());
-		setDateStatus(e.getDateStatus());
-		setDateDunningLevel(e.getDateDunningLevel());
-		if (e.getContactInformation() != null) {
-			setContactInformation(new ContactInformationDto(e.getContactInformation()));
-		}
-		setDueDateDelayEL(e.getDueDateDelayEL());
-		setExcludedFromPayment(e.isExcludedFromPayment());
+        setStatus(e.getStatus());
+        setDateStatus(e.getDateStatus());
+        try {
+            setCreditCategory(e.getCreditCategory().getCode());
+        } catch (NullPointerException ex) {
+        }
+        setDunningLevel(e.getDunningLevel());
+        setDateStatus(e.getDateStatus());
+        setDateDunningLevel(e.getDateDunningLevel());
+        if (e.getContactInformation() != null) {
+            setContactInformation(new ContactInformationDto(e.getContactInformation()));
+        }
+        setDueDateDelayEL(e.getDueDateDelayEL());
+        setDueDateDelayELSpark(e.getDueDateDelayELSpark());
+        setExcludedFromPayment(e.isExcludedFromPayment());
 
-		if (e.getPaymentMethods() != null && !e.getPaymentMethods().isEmpty()) {
-			setPaymentMethods(new ArrayList<>());
-			for (PaymentMethod pm : e.getPaymentMethods()) {
-				getPaymentMethods().add(new PaymentMethodDto(pm));
-			}
+        if (e.getPaymentMethods() != null && !e.getPaymentMethods().isEmpty()) {
+            setPaymentMethods(new ArrayList<>());
+            for (PaymentMethod pm : e.getPaymentMethods()) {
+                getPaymentMethods().add(new PaymentMethodDto(pm));
+            }
 
-			// Start compatibility with pre-4.6 versions
-			setPaymentMethod(e.getPaymentMethods().get(0).getPaymentType());
-			// End compatibility with pre-4.6 versions
-		}
-	}
+            // Start compatibility with pre-4.6 versions
+            setPaymentMethod(e.getPaymentMethods().get(0).getPaymentType());
+            // End compatibility with pre-4.6 versions
+        }
+    }
 
     /**
      * Gets the customer.
@@ -400,21 +408,31 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
-     * Gets the due date delay EL.
-     *
-     * @return the dueDateDelayEL
+     * @return Expression to calculate Invoice due date delay value
      */
     public String getDueDateDelayEL() {
         return dueDateDelayEL;
     }
 
     /**
-     * Sets the due date delay EL.
-     *
-     * @param dueDateDelayEL the dueDateDelayEL to set
+     * @param dueDateDelayEL Expression to calculate Invoice due date delay value
      */
     public void setDueDateDelayEL(String dueDateDelayEL) {
         this.dueDateDelayEL = dueDateDelayEL;
+    }
+
+    /**
+     * @return Expression to calculate Invoice due date delay value - for Spark
+     */
+    public String getDueDateDelayELSpark() {
+        return dueDateDelayELSpark;
+    }
+
+    /**
+     * @param dueDateDelayELSpark Expression to calculate Invoice due date delay value - for Spark
+     */
+    public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
+        this.dueDateDelayELSpark = dueDateDelayELSpark;
     }
 
     /**
@@ -524,7 +542,7 @@ public class CustomerAccountDto extends AccountDto {
     public void setCreditBalance(BigDecimal creditBalance) {
         this.creditBalance = creditBalance;
     }
-    
+
     @Override
     public String toString() {
         return "CustomerAccountDto [code=" + code + ", customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", creditCategory="
@@ -532,14 +550,14 @@ public class CustomerAccountDto extends AccountDto {
                 + dunningLevel + ",  balance=" + balance + ", terminationDate=" + terminationDate + ", billingAccounts=" + billingAccounts + "]";
     }
 
-	public List<AccountOperationDto> getAccountOperations() {
-		if (accountOperations == null) {
-			accountOperations = new ArrayList<>();
-		}
-		return accountOperations;
-	}
+    public List<AccountOperationDto> getAccountOperations() {
+        if (accountOperations == null) {
+            accountOperations = new ArrayList<>();
+        }
+        return accountOperations;
+    }
 
-	public void setAccountOperations(List<AccountOperationDto> accountOperations) {
-		this.accountOperations = accountOperations;
-	}    
+    public void setAccountOperations(List<AccountOperationDto> accountOperations) {
+        this.accountOperations = accountOperations;
+    }
 }

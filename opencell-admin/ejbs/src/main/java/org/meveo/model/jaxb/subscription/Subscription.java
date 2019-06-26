@@ -39,8 +39,7 @@ import org.meveo.model.jaxb.customer.CustomFields;
  * Java class for anonymous complex type.
  * 
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType&gt;
@@ -68,225 +67,226 @@ import org.meveo.model.jaxb.customer.CustomFields;
 @XmlRootElement(name = "subscription")
 public class Subscription {
 
-	protected String subscriptionDate;
-	protected String endAgreementDate;
-	@XmlElement(required = true)
-	protected Status status;
-	protected String description;
-	protected CustomFields customFields;
-	protected Services services;
-	@XmlAttribute(name = "code")
-	protected String code;
-	@XmlAttribute(name = "userAccountId")
-	protected String userAccountId;
-	@XmlAttribute(name = "offerCode")
-	protected String offerCode;
-	@XmlAttribute(name = "ignoreCheck")
-	protected Boolean ignoreCheck;
-	protected Accesses accesses;
+    protected String subscriptionDate;
+    protected String endAgreementDate;
+    @XmlElement(required = true)
+    protected Status status;
+    protected String description;
+    protected CustomFields customFields;
+    protected Services services;
+    @XmlAttribute(name = "code")
+    protected String code;
+    @XmlAttribute(name = "userAccountId")
+    protected String userAccountId;
+    @XmlAttribute(name = "offerCode")
+    protected String offerCode;
+    @XmlAttribute(name = "sellerCode")
+    protected String sellerCode;
+    @XmlAttribute(name = "ignoreCheck")
+    protected Boolean ignoreCheck;
+    protected Accesses accesses;
 
-	public Subscription() {
-	}
+    public Subscription() {
+    }
 
-	/**
-	 * Gets the value of the subscriptionDate property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getSubscriptionDate() {
-		return subscriptionDate;
-	}
+    /**
+     * Gets the value of the subscriptionDate property.
+     * 
+     * @return possible object is {@link String }
+     * 
+     */
+    public String getSubscriptionDate() {
+        return subscriptionDate;
+    }
 
-	/**
-	 * Sets the value of the subscriptionDate property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setSubscriptionDate(String value) {
-		this.subscriptionDate = value;
-	}
+    /**
+     * Sets the value of the subscriptionDate property.
+     * 
+     * @param value allowed object is {@link String }
+     * 
+     */
+    public void setSubscriptionDate(String value) {
+        this.subscriptionDate = value;
+    }
 
-	/**
-	 * Gets the value of the endAgreementDate property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getEndAgreementDate() {
-		return endAgreementDate;
-	}
+    /**
+     * Gets the value of the endAgreementDate property.
+     * 
+     * @return possible object is {@link String }
+     * 
+     */
+    public String getEndAgreementDate() {
+        return endAgreementDate;
+    }
 
-	/**
-	 * Sets the value of the endAgreementDate property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setEndAgreementDate(String value) {
-		this.endAgreementDate = value;
-	}
+    /**
+     * Sets the value of the endAgreementDate property.
+     * 
+     * @param value allowed object is {@link String }
+     * 
+     */
+    public void setEndAgreementDate(String value) {
+        this.endAgreementDate = value;
+    }
 
-	/**
-	 * Gets the value of the status property.
-	 * 
-	 * @return possible object is {@link Status }
-	 * 
-	 */
-	public Status getStatus() {
-		return status;
-	}
+    /**
+     * Gets the value of the status property.
+     * 
+     * @return possible object is {@link Status }
+     * 
+     */
+    public Status getStatus() {
+        return status;
+    }
 
-	/**
-	 * Sets the value of the status property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link Status }
-	 * 
-	 */
-	public void setStatus(Status value) {
-		this.status = value;
-	}
+    /**
+     * Sets the value of the status property.
+     * 
+     * @param value allowed object is {@link Status }
+     * 
+     */
+    public void setStatus(Status value) {
+        this.status = value;
+    }
 
-	/**
-	 * Gets the value of the description property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Gets the value of the description property.
+     * 
+     * @return possible object is {@link String }
+     * 
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * Sets the value of the description property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setDescription(String value) {
-		this.description = value;
-	}
+    /**
+     * Sets the value of the description property.
+     * 
+     * @param value allowed object is {@link String }
+     * 
+     */
+    public void setDescription(String value) {
+        this.description = value;
+    }
 
-	/**
-	 * Gets the value of the services property.
-	 * 
-	 * @return possible object is {@link Services }
-	 * 
-	 */
-	public Services getServices() {
-		return services;
-	}
+    /**
+     * Gets the value of the services property.
+     * 
+     * @return possible object is {@link Services }
+     * 
+     */
+    public Services getServices() {
+        return services;
+    }
 
-	/**
-	 * Sets the value of the services property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link Services }
-	 * 
-	 */
-	public void setServices(Services value) {
-		this.services = value;
-	}
+    /**
+     * Sets the value of the services property.
+     * 
+     * @param value allowed object is {@link Services }
+     * 
+     */
+    public void setServices(Services value) {
+        this.services = value;
+    }
 
-	/**
-	 * Gets the value of the code property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getCode() {
-		return code;
-	}
+    /**
+     * Gets the value of the code property.
+     * 
+     * @return possible object is {@link String }
+     * 
+     */
+    public String getCode() {
+        return code;
+    }
 
-	/**
-	 * Sets the value of the code property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setCode(String value) {
-		this.code = value;
-	}
+    /**
+     * Sets the value of the code property.
+     * 
+     * @param value allowed object is {@link String }
+     * 
+     */
+    public void setCode(String value) {
+        this.code = value;
+    }
 
-	/**
-	 * Gets the value of the userAccountId property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getUserAccountId() {
-		return userAccountId;
-	}
+    /**
+     * Gets the value of the userAccountId property.
+     * 
+     * @return possible object is {@link String }
+     * 
+     */
+    public String getUserAccountId() {
+        return userAccountId;
+    }
 
-	/**
-	 * Sets the value of the userAccountId property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setUserAccountId(String value) {
-		this.userAccountId = value;
-	}
+    /**
+     * Sets the value of the userAccountId property.
+     * 
+     * @param value allowed object is {@link String }
+     * 
+     */
+    public void setUserAccountId(String value) {
+        this.userAccountId = value;
+    }
 
-	/**
-	 * Gets the value of the offerCode property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getOfferCode() {
-		return offerCode;
-	}
+    /**
+     * Gets the value of the offerCode property.
+     * 
+     * @return possible object is {@link String }
+     * 
+     */
+    public String getOfferCode() {
+        return offerCode;
+    }
 
-	/**
-	 * Sets the value of the offerCode property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setOfferCode(String value) {
-		this.offerCode = value;
-	}
+    /**
+     * Sets the value of the offerCode property.
+     * 
+     * @param value allowed object is {@link String }
+     * 
+     */
+    public void setOfferCode(String value) {
+        this.offerCode = value;
+    }
 
-	/**
-	 * @return the ignoreCheck
-	 */
-	public Boolean getIgnoreCheck() {
-		return ignoreCheck;
-	}
+    /**
+     * @return the ignoreCheck
+     */
+    public Boolean getIgnoreCheck() {
+        return ignoreCheck;
+    }
 
-	/**
-	 * @param ignoreCheck the ignoreCheck to set
-	 */
-	public void setIgnoreCheck(Boolean ignoreCheck) {
-		this.ignoreCheck = ignoreCheck;
-	}
+    /**
+     * @param ignoreCheck the ignoreCheck to set
+     */
+    public void setIgnoreCheck(Boolean ignoreCheck) {
+        this.ignoreCheck = ignoreCheck;
+    }
 
-	public Accesses getAccesses() {
-		if (accesses == null) {
-			accesses = new Accesses();
-		}
-		return accesses;
-	}
+    public Accesses getAccesses() {
+        if (accesses == null) {
+            accesses = new Accesses();
+        }
+        return accesses;
+    }
 
-	public void setAccesses(Accesses value) {
-		this.accesses = value;
-	}
+    public void setAccesses(Accesses value) {
+        this.accesses = value;
+    }
 
-	public CustomFields getCustomFields() {
-		return customFields;
-	}
+    public CustomFields getCustomFields() {
+        return customFields;
+    }
 
-	public void setCustomFields(CustomFields customFields) {
-		this.customFields = customFields;
-	}
+    public void setCustomFields(CustomFields customFields) {
+        this.customFields = customFields;
+    }
 
+    public String getSellerCode() {
+        return sellerCode;
+    }
+
+    public void setSellerCode(String sellerCode) {
+        this.sellerCode = sellerCode;
+    }
 }

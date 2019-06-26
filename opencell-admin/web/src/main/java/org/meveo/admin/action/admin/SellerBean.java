@@ -73,11 +73,11 @@ public class SellerBean extends CustomFieldBean<Seller> {
     public SellerBean() {
         super(Seller.class);
     }
-    
+
     /**
-     * Initialize bean's entity 
+     * Initialize bean's entity
      * 
-     * @return bean's entity 
+     * @return bean's entity
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.2
      */
@@ -114,6 +114,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
         return super.saveOrUpdate(killConversation);
     }
 

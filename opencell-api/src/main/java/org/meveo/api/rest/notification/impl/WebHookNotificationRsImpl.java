@@ -12,10 +12,14 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.notification.WebHookApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.WebHookNotificationRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.notification.WebHook;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotificationRs {
@@ -28,7 +32,10 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.create(postData);
+            WebHook webHook = webhookNotificationApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(webHook.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -80,7 +87,10 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.createOrUpdate(postData);
+            WebHook webHook = webhookNotificationApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(webHook.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

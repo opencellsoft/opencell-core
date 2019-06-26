@@ -35,6 +35,9 @@ public class InvoiceSubCategoryCountryDto extends AuditableEntityDto {
     /** The tax code EL. */
     private String taxCodeEL;
 
+    /** The tax code EL - for Spark */
+    private String taxCodeELSpark;
+
     /** The discount code. */
     private String discountCode;
 
@@ -43,10 +46,10 @@ public class InvoiceSubCategoryCountryDto extends AuditableEntityDto {
 
     /** The start validity date. */
     private Date startValidityDate;
-    
+
     /** The end validity date. */
     private Date endValidityDate;
-    
+
     /** The priority. */
     private int priority;
 
@@ -69,6 +72,7 @@ public class InvoiceSubCategoryCountryDto extends AuditableEntityDto {
         country = invoiceSubcategoryCountry.getTradingCountry() == null ? null : invoiceSubcategoryCountry.getTradingCountry().getCountryCode();
         tax = invoiceSubcategoryCountry.getTax() == null ? null : invoiceSubcategoryCountry.getTax().getCode();
         taxCodeEL = invoiceSubcategoryCountry.getTaxCodeEL();
+        taxCodeELSpark = invoiceSubcategoryCountry.getTaxCodeELSpark();
         filterEL = invoiceSubcategoryCountry.getFilterEL();
         startValidityDate = invoiceSubcategoryCountry.getStartValidityDate();
         endValidityDate = invoiceSubcategoryCountry.getEndValidityDate();
@@ -148,21 +152,31 @@ public class InvoiceSubCategoryCountryDto extends AuditableEntityDto {
     }
 
     /**
-     * Gets the tax code EL.
-     *
-     * @return the tax code EL
+     * @return Expression to determine tax code
      */
     public String getTaxCodeEL() {
         return taxCodeEL;
     }
 
     /**
-     * Sets the tax code EL.
-     *
-     * @param taxCodeEL the new tax code EL
+     * @param taxCodeEL Expression to determine tax code
      */
     public void setTaxCodeEL(String taxCodeEL) {
         this.taxCodeEL = taxCodeEL;
+    }
+
+    /**
+     * @return Expression to determine tax code - for Spark
+     */
+    public String getTaxCodeELSpark() {
+        return taxCodeELSpark;
+    }
+
+    /**
+     * @param taxCodeELSpark Expression to determine tax code - for Spark
+     */
+    public void setTaxCodeELSpark(String taxCodeELSpark) {
+        this.taxCodeELSpark = taxCodeELSpark;
     }
 
     /**
@@ -201,7 +215,9 @@ public class InvoiceSubCategoryCountryDto extends AuditableEntityDto {
         this.filterEL = filterEL;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override

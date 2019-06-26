@@ -12,6 +12,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -149,7 +150,7 @@ public class InvoiceCategoryApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceCategory.class, code);
         }
 
-        result = new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceCategory, true));
+        result = new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceCategory, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
         return result;
     }

@@ -59,8 +59,10 @@ public class PaymentScheduleProcessingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
+        int i = 0;
         for (PaymentScheduleInstanceItem item : paymentScheduleInstanceItems) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             unitPaymentScheduleJobBean.execute(result, item);

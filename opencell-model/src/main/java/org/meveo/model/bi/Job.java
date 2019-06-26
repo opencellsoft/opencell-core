@@ -46,29 +46,51 @@ public class Job extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Job name
+     */
     @Column(name = "name", unique = true, length = 50)
     @Size(max = 50)
     private String name;
 
+    /**
+     * Last execution timestamp
+     */
     @Column(name = "last_execution_date")
     private Date lastExecutionDate;
 
+    /**
+     * Next execution date
+     */
     @Column(name = "next_execution_date")
     private Date nextExecutionDate;
 
+    /**
+     * Is job enabled
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "active")
     private boolean active;
 
+    /**
+     * Job frequency identifier
+     */
     @Column(name = "job_frequency")
     private Integer jobFrequencyId;
 
+    /**
+     * Job repository identifier
+     */
     @Column(name = "job_repository_id")
     private Integer jobRepositoryId;
 
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+
+    /**
+     * Job execution histories
+     */
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<JobExecutionHisto> jobHistory;
 
     public String getName() {

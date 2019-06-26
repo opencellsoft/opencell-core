@@ -24,6 +24,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.security.CurrentUser;
@@ -36,7 +37,8 @@ import org.slf4j.Logger;
  * 
  * @author Andrius Karpavicius
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  * 
  */
 @Stateless
@@ -117,6 +119,11 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         if (notif.getScriptInstance() != null) {
             notif.getScriptInstance().getCode();
         }
+        if (notif instanceof EmailNotification) {
+            if (((EmailNotification) notif).getEmailTemplate() != null) {
+                ((EmailNotification) notif).getEmailTemplate().getCode();
+            }
+        }
 
         try {
 
@@ -193,15 +200,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public List<Notification> getApplicableNotifications(NotificationEventTypeEnum eventType, Object entityOrEvent) {
 
-        // Determine a base entity
-        Object entity = null;
-        if (entityOrEvent instanceof IEntity) {
-            entity = (IEntity) entityOrEvent;
-        } else if (entityOrEvent instanceof IEvent) {
-            entity = (IEntity) ((IEvent) entityOrEvent).getEntity();
-        } else {
-            entity = entityOrEvent;
-        }
+        Object entity = getEntity(entityOrEvent);
 
         List<Notification> notifications = new ArrayList<Notification>();
 
@@ -291,6 +290,21 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
      */
     public void markNoNotifications(NotificationEventTypeEnum eventType, Object entityOrEvent) {
 
+        Object entity = getEntity(entityOrEvent);
+
+        CacheKeyStr cacheKey = getCacheKey(eventType, entity.getClass());
+        if (!eventNotificationCache.getAdvancedCache().containsKey(cacheKey)) {
+            eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, new ArrayList<Notification>());
+        }
+    }
+
+    /**
+     * Get the entity
+     * 
+     * @param entityOrEvent entity or event
+     * @return entity
+     */
+    public Object getEntity(Object entityOrEvent) {
         // Determine a base entity
         Object entity = null;
         if (entityOrEvent instanceof IEntity) {
@@ -300,10 +314,6 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         } else {
             entity = entityOrEvent;
         }
-
-        CacheKeyStr cacheKey = getCacheKey(eventType, entity.getClass());
-        if (!eventNotificationCache.getAdvancedCache().containsKey(cacheKey)) {
-            eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, new ArrayList<Notification>());
-        }
+        return entity;
     }
 }

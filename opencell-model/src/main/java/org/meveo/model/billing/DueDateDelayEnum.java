@@ -5,6 +5,6 @@ package org.meveo.model.billing;
  **/
 public enum DueDateDelayEnum {
 
-	ORDER, CA, BC
+    ORDER, CA, BC
 
 }

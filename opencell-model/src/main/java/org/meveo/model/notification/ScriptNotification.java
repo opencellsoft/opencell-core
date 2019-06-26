@@ -5,6 +5,11 @@ import javax.persistence.Table;
 
 import org.meveo.model.ModuleItem;
 
+/**
+ * Notification that executes a script
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ModuleItem
 @Table(name = "adm_script_notification")
@@ -12,8 +17,4 @@ public class ScriptNotification extends Notification {
 
     private static final long serialVersionUID = -2527123286118840886L;
 
-  
-    
-    
-    
 }

@@ -18,76 +18,138 @@
  */
 package org.meveo.model.crm;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ISearchable;
+import org.meveo.model.billing.AccountingCode;
 
+/**
+ * Customer category
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
-@ExportIdentifier({ "code"})
-@Table(name = "crm_customer_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "crm_customer_category_seq"), })
-public class CustomerCategory extends BusinessEntity {
+@CustomFieldEntity(cftCodePrefix = "CustomerCategory")
+@ExportIdentifier({ "code" })
+@Table(name = "crm_customer_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "crm_customer_category_seq"), })
+public class CustomerCategory extends BusinessCFEntity implements ISearchable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Type(type="numeric_boolean")
+    /**
+     * Is account exonerated from taxes
+     */
+    @Type(type = "numeric_boolean")
     @Column(name = "exonerated_from_taxes")
-	private boolean exoneratedFromTaxes=false ;
-	
-	@Column(name = "exoneration_tax_el", length = 2000)
-	@Size(max = 2000)
-	private String exonerationTaxEl;
-	
-	@Column(name = "exoneration_reason", length = 255)
+    private boolean exoneratedFromTaxes = false;
+
+    /**
+     * Expression to determine if account is exonerated from taxes
+     */
+    @Column(name = "exoneration_tax_el", length = 2000)
+    @Size(max = 2000)
+    private String exonerationTaxEl;
+
+    /**
+     * Expression to determine if account is exonerated from taxes - for Spark
+     */
+    @Column(name = "exoneration_tax_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String exonerationTaxElSpark;
+
+    /**
+     * Exoneration reason
+     */
+    @Column(name = "exoneration_reason", length = 255)
     @Size(max = 255)
-	private String exonerationReason;
+    private String exonerationReason;
 
-	public boolean getExoneratedFromTaxes() {
-		return exoneratedFromTaxes;
-	}
+    /**
+     * related Accounting Code
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
 
-	public void setExoneratedFromTaxes(boolean exoneratedFromTaxes) {
-		this.exoneratedFromTaxes = exoneratedFromTaxes;
-	}
+    /**
+     * @return True if account is exonerated from taxes
+     */
+    public boolean getExoneratedFromTaxes() {
+        return exoneratedFromTaxes;
+    }
 
-	/**
-	 * @return the exonerationTaxEl
-	 */
-	public String getExonerationTaxEl() {
-		return exonerationTaxEl;
-	}
+    /**
+     * @param exoneratedFromTaxes True if account is exonerated from taxes
+     */
+    public void setExoneratedFromTaxes(boolean exoneratedFromTaxes) {
+        this.exoneratedFromTaxes = exoneratedFromTaxes;
+    }
 
-	/**
-	 * @param exonerationTaxEl the exonerationTaxEl to set
-	 */
-	public void setExonerationTaxEl(String exonerationTaxEl) {
-		this.exonerationTaxEl = exonerationTaxEl;
-	}
+    /**
+     * @return Expression to determine if account is exonerated from taxes
+     */
+    public String getExonerationTaxEl() {
+        return exonerationTaxEl;
+    }
 
-	/**
-	 * @return the exonerationReason
-	 */
-	public String getExonerationReason() {
-		return exonerationReason;
-	}
+    /**
+     * @param exonerationTaxEl Expression to determine if account is exonerated from taxes
+     */
+    public void setExonerationTaxEl(String exonerationTaxEl) {
+        this.exonerationTaxEl = exonerationTaxEl;
+    }
 
-	/**
-	 * @param exonerationReason the exonerationReason to set
-	 */
-	public void setExonerationReason(String exonerationReason) {
-		this.exonerationReason = exonerationReason;
-	}
-	
-	
-	
+    /**
+     * @return Expression to determine if account is exonerated from taxes - for Spark
+     */
+    public String getExonerationTaxElSpark() {
+        return exonerationTaxElSpark;
+    }
+
+    /**
+     * @param exonerationTaxElSpark Expression to determine if account is exonerated from taxes - for Spark
+     */
+    public void setExonerationTaxElSpark(String exonerationTaxElSpark) {
+        this.exonerationTaxElSpark = exonerationTaxElSpark;
+    }
+
+    /**
+     * @return the exonerationReason
+     */
+    public String getExonerationReason() {
+        return exonerationReason;
+    }
+
+    /**
+     * @param exonerationReason the exonerationReason to set
+     */
+    public void setExonerationReason(String exonerationReason) {
+        this.exonerationReason = exonerationReason;
+    }
+
+    /**
+     * @return the accounting code
+     */
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
+
+    /**
+     * @param accountingCode the accounting code to set
+     */
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
+    }
+
 }

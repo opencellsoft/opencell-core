@@ -30,62 +30,63 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "code"})
-@Table(name = "rm_service_param_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "rm_service_param_template_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "rm_service_param_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "rm_service_param_template_seq"), })
 public class ServiceParameterTemplate extends BusinessEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "value", length = 255)
+    @Column(name = "value", length = 255)
     @Size(max = 255)
-	private String value;
+    private String value;
 
-	@Column(name = "name", length = 255)
-	@Size(max = 255)
-	private String name;
-
-	@Column(name = "cumulative_periods")
-	private Integer cumulativePeriods;
-
-	@Column(name = "default_value", length = 255)
+    @Column(name = "name", length = 255)
     @Size(max = 255)
-	private String defaultValue;
+    private String name;
 
-	public String getDefaultValue() {
-		return defaultValue;
-	}
+    @Column(name = "cumulative_periods")
+    private Integer cumulativePeriods;
 
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
-	}
+    @Column(name = "default_value", length = 255)
+    @Size(max = 255)
+    private String defaultValue;
 
-	public Integer getCumulativePeriods() {
-		return cumulativePeriods;
-	}
+    public String getDefaultValue() {
+        return defaultValue;
+    }
 
-	public void setCumulativePeriods(Integer cumulativePeriods) {
-		this.cumulativePeriods = cumulativePeriods;
-	}
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public Integer getCumulativePeriods() {
+        return cumulativePeriods;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setCumulativePeriods(Integer cumulativePeriods) {
+        this.cumulativePeriods = cumulativePeriods;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String toString() {
-		return name;
-	}
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String toString() {
+        return name;
+    }
 
 }

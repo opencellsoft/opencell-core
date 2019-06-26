@@ -95,7 +95,7 @@ public class DDRequestItem extends AuditableEntity {
     @JoinColumn(name = "ddrequest_lot_id")
     private DDRequestLOT ddRequestLOT;
 
-    @OneToMany(mappedBy = "ddRequestItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)   
+    @OneToMany(mappedBy = "ddRequestItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<AccountOperation> accountOperations;
 
     @Column(name = "error_msg", length = 1000)
@@ -105,6 +105,15 @@ public class DDRequestItem extends AuditableEntity {
     @OneToOne(optional = true)
     @JoinColumn(name = "payment_id")
     private AutomatedPayment automatedPayment;
+    
+    @OneToOne(optional = true)
+    @JoinColumn(name = "refund_id")
+    private AutomatedRefund automatedRefund;
+    
+    @Column(name = "rejected_file_name", length = 1000)
+    @Size(max = 1000)    
+    private String rejectedFileName;
+    
 
     public DDRequestItem() {
 
@@ -198,7 +207,6 @@ public class DDRequestItem extends AuditableEntity {
         this.ddRequestLOT = ddRequestLOT;
     }
 
-
     public String getPaymentInfo6() {
         return paymentInfo6;
     }
@@ -228,8 +236,6 @@ public class DDRequestItem extends AuditableEntity {
     public void setErrorMsg(String errorMsg) {
         this.errorMsg = errorMsg;
     }
-    
-
 
     /**
      * @return the accountOperations
@@ -244,10 +250,35 @@ public class DDRequestItem extends AuditableEntity {
     public void setAccountOperations(List<AccountOperation> accountOperations) {
         this.accountOperations = accountOperations;
     }
+    
+    
+
+    /**
+     * @return the refund
+     */
+    public AutomatedRefund getAutomatedRefund() {
+        return automatedRefund;
+    }
+
+    /**
+     * @param refund the refund to set
+     */
+    public void setAutomatedRefund(AutomatedRefund refund) {
+        this.automatedRefund = refund;
+    }
 
     @Transient
     public boolean hasError() {
         return !(errorMsg == null || errorMsg.trim().length() == 0);
     }
+
+	public String getRejectedFileName() {
+		return rejectedFileName;
+	}
+
+	public void setRejectedFileName(String rejectedFileName) {
+		this.rejectedFileName = rejectedFileName;
+	}
+
 
 }

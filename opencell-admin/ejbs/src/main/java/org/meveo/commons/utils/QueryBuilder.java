@@ -31,7 +31,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 
 /**
  * Query builder class for building JPA queries.
@@ -543,7 +546,6 @@ public class QueryBuilder {
     public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field, Date valueTo) {
         return addCriterionDateRangeToTruncatedToDay(field, valueTo, true);
     }
-    
 
     /**
      * Adds the criterion date range to truncated to day.
@@ -560,7 +562,7 @@ public class QueryBuilder {
         Calendar calTo = Calendar.getInstance();
         calTo.setTime(valueTo);
         if (includeEndDate) {
-            calTo.add(Calendar.DATE, 1);    
+            calTo.add(Calendar.DATE, 1);
         }
         calTo.set(Calendar.HOUR_OF_DAY, 0);
         calTo.set(Calendar.MINUTE, 0);
@@ -645,44 +647,6 @@ public class QueryBuilder {
     }
 
     /**
-     * @param orderColumn orderBy column
-     * @param ascending true/false
-     * @param orderColumn2 orderBy column 2
-     * @param ascending2 true/false
-     * @return instance of QueryBuilder
-     */
-    public QueryBuilder addOrderDoubleCriterion(String orderColumn, boolean ascending, String orderColumn2, boolean ascending2) {
-        q.append(" ORDER BY " + orderColumn);
-        if (ascending) {
-            q.append(" ASC ");
-        } else {
-            q.append(" DESC ");
-        }
-        q.append(", " + orderColumn2);
-        if (ascending2) {
-            q.append(" ASC ");
-        } else {
-            q.append(" DESC ");
-        }
-        return this;
-    }
-
-    /**
-     * @param orderColumn order column
-     * @param ascending true/false
-     * @return instance of QueryBuilder.
-     */
-    public QueryBuilder addOrderUniqueCriterion(String orderColumn, boolean ascending) {
-        q.append(" ORDER BY " + orderColumn);
-        if (ascending) {
-            q.append(" ASC ");
-        } else {
-            q.append(" DESC ");
-        }
-        return this;
-    }
-    
-    /**
      * Append an ORDER BY clause for multiple fields
      * 
      * @param orderRules An array of column name and order direction combinations. Order direction is expressed as a boolean with True for ascending order. E.g. "NAME,
@@ -731,11 +695,13 @@ public class QueryBuilder {
     }
 
     /**
+     * Get a JPA query object
+     * 
      * @param em entity manager
      * @return instance of Query.
      */
     public Query getQuery(EntityManager em) {
-        applyPagination(paginationSortAlias);
+        applyOrdering(paginationSortAlias);
 
         Query result = em.createQuery(q.toString());
         applyPagination(result);
@@ -747,13 +713,37 @@ public class QueryBuilder {
     }
 
     /**
+     * Get Hibernate native query object
+     * 
+     * @param em entity manager
+     * @param convertToMap If False, query will return a list of Object[] values. If True, query will return a list of map of values.
+     * @return instance of Query.
+     */
+    public SQLQuery getNativeQuery(EntityManager em, boolean convertToMap) {
+        applyOrdering(paginationSortAlias);
+
+        Session session = em.unwrap(Session.class);
+        SQLQuery result = session.createSQLQuery(q.toString());
+        applyPagination(result);
+
+        if (convertToMap) {
+            result.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
+        }
+        for (Map.Entry<String, Object> e : params.entrySet()) {
+            result.setParameter(e.getKey(), e.getValue());
+        }
+
+        return result;
+    }
+
+    /**
      * Return a query to retrive ids.
      * 
      * @param em entity Manager
      * @return typed query instance
      */
     public TypedQuery<Long> getIdQuery(EntityManager em) {
-        applyPagination(paginationSortAlias);
+        applyOrdering(paginationSortAlias);
 
         String from = "from ";
         String s = "select " + (alias != null ? alias + "." : "") + "id " + q.toString().substring(q.indexOf(from));
@@ -768,6 +758,8 @@ public class QueryBuilder {
     }
 
     /**
+     * Convert to a query to count number of entities matched: "select .. from" is changed to "select count(*) from"
+     * 
      * @param em entity Manager
      * @return instance of Query.
      */
@@ -802,6 +794,30 @@ public class QueryBuilder {
     }
 
     /**
+     * Convert to a query to count number of records matched: "select .. from" is changed to "select count(*) from". To be used with NATIVE query in conjunction with
+     * getNativeQuery()
+     * 
+     * @param em entity Manager
+     * @return instance of Query.
+     */
+    public Query getNativeCountQuery(EntityManager em) {
+        String from = "from ";
+
+        String countSql = "select count(*) " + q.toString().substring(q.indexOf(from));
+
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // log.trace("Count query is {}", countSql);
+
+        Query result = em.createNativeQuery(countSql);
+        for (Map.Entry<String, Object> e : params.entrySet()) {
+            result.setParameter(e.getKey(), e.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * Count a number of entities matching search criteria
+     * 
      * @param em entity Manager
      * @return number of query.
      */
@@ -811,6 +827,8 @@ public class QueryBuilder {
     }
 
     /**
+     * Perform a search and return a list of entities matching search criteria
+     * 
      * @param em entity manager
      * @return list of result
      */
@@ -844,9 +862,11 @@ public class QueryBuilder {
     }
 
     /**
+     * Apply ordering to the query
+     * 
      * @param alias alias of column?
      */
-    private void applyPagination(String alias) {
+    private void applyOrdering(String alias) {
         if (paginationConfiguration == null) {
             return;
         }
@@ -857,7 +877,9 @@ public class QueryBuilder {
     }
 
     /**
-     * @param query query using for pagination.
+     * Apply pagination criteria to a JPA query
+     * 
+     * @param query JPA query to apply pagination to
      */
     private void applyPagination(Query query) {
         if (paginationConfiguration == null) {
@@ -868,11 +890,42 @@ public class QueryBuilder {
     }
 
     /**
-     * @param query query instance
+     * Apply pagination criteria to a JPA query
+     * 
+     * @param query JPA query to apply pagination to
      * @param firstRow the index of first row
      * @param numberOfRows number of rows shoud return.
      */
     public void applyPagination(Query query, Integer firstRow, Integer numberOfRows) {
+        if (firstRow != null) {
+            query.setFirstResult(firstRow);
+        }
+        if (numberOfRows != null) {
+            query.setMaxResults(numberOfRows);
+        }
+    }
+
+    /**
+     * Apply pagination criteria to a Hibernate query
+     * 
+     * @param query Hibernate query to apply pagination to
+     */
+    private void applyPagination(SQLQuery query) {
+        if (paginationConfiguration == null) {
+            return;
+        }
+
+        applyPagination(query, paginationConfiguration.getFirstRow(), paginationConfiguration.getNumberOfRows());
+    }
+
+    /**
+     * Apply pagination criteria to a Hibernate query
+     * 
+     * @param query Hibernate query to apply pagination to
+     * @param firstRow the index of first row
+     * @param numberOfRows number of rows shoud return.
+     */
+    public void applyPagination(SQLQuery query, Integer firstRow, Integer numberOfRows) {
         if (firstRow != null) {
             query.setFirstResult(firstRow);
         }

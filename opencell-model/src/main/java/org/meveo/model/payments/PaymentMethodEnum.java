@@ -37,6 +37,7 @@ public enum PaymentMethodEnum {
 
     /**
      * Is it as simple payment method that does not required any additional information.
+     * 
      * @return true/fale
      */
     public boolean isSimple() {

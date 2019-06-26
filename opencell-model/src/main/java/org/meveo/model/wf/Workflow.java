@@ -41,8 +41,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 
 /**
- * Workflow change what user group order is assigned to. And only that user can
- * execute some workflow action/script that change order status.
+ * Workflow for entity data processing
  */
 @Entity
 @ModuleItem
@@ -55,17 +54,26 @@ public class Workflow extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Workflow type
+     */
     @Column(name = "wf_type", length = 255)
     @NotNull
     @Size(max = 255)
-    String wfType = null;
+    String wfType;
 
+    /**
+     * A list of transitions making up worklfow
+     */
     @OneToMany(mappedBy = "workflow", fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE })
     @OrderBy("priority ASC")
     private List<WFTransition> transitions = new ArrayList<WFTransition>();
 
+    /**
+     * Should worklfow history be tracked
+     */
     @Type(type = "numeric_boolean")
-    @Column(name = "enable_hostory")
+    @Column(name = "enable_history")
     private boolean enableHistory;
 
     /**

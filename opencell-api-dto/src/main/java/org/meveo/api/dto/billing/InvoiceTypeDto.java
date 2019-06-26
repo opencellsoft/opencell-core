@@ -42,7 +42,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The occ template code EL. */
     private String occTemplateCodeEl;
-    
+
     /** The occ template negative code EL. */
     private String occTemplateNegativeCodeEl;
 
@@ -62,6 +62,9 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The matching auto. */
     private boolean matchingAuto = false;
+    
+    /** Used to decide if AccountOperations will be created or not , during AO_Job execution */
+    private Boolean invoiceAccountable;
 
     /** The billing template name. */
     private String billingTemplateName;
@@ -78,11 +81,15 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The billing template name EL. */
     private String billingTemplateNameEL;
-    
+
     private CustomFieldsDto customFields;
 
     /** The use Self Sequence . */
     private boolean useSelfSequence = true;
+
+    private String mailingType;
+
+    private String emailTemplateCode;
 
     /**
      * Instantiates a new invoice type dto.
@@ -92,13 +99,13 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     }
 
     /**
-     * Instantiates a new invoice type dto.
+     * Instantiates a new invoice type dto
      *
-     * @param invoiceType the invoice type
+     * @param invoiceType Invoice type
+     * @param customFieldInstances Custom field values DTO
      */
     public InvoiceTypeDto(InvoiceType invoiceType, CustomFieldsDto customFieldInstances) {
         super(invoiceType);
-
         this.occTemplateCode = invoiceType.getOccTemplate() != null ? invoiceType.getOccTemplate().getCode() : null;
         this.occTemplateNegativeCode = invoiceType.getOccTemplateNegative() != null ? invoiceType.getOccTemplateNegative().getCode() : null;
         this.occTemplateCodeEl = invoiceType.getOccTemplateCodeEl();
@@ -118,7 +125,8 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.pdfFilenameEL = invoiceType.getPdfFilenameEL();
         this.xmlFilenameEL = invoiceType.getXmlFilenameEL();
         this.billingTemplateNameEL = invoiceType.getBillingTemplateNameEL();
-        
+        this.mailingType = invoiceType.getMailingType() != null ? invoiceType.getMailingType().getLabel() : null;
+        this.emailTemplateCode = invoiceType.getEmailTemplate() != null ? invoiceType.getEmailTemplate().getCode() : null;
         customFields = customFieldInstances;
         this.useSelfSequence = invoiceType.isUseSelfSequence();
     }
@@ -324,7 +332,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     public void setUseSelfSequence(boolean useSelfSequence) {
         this.useSelfSequence = useSelfSequence;
     }
-    
+
     /**
      * Gets the occ template code EL.
      *
@@ -379,10 +387,34 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.customInvoiceXmlScriptInstanceCode = customInvoiceXmlScriptInstanceCode;
     }
 
+    public String getMailingType() {
+        return mailingType;
+    }
+
+    public void setMailingType(String mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    public String getEmailTemplateCode() {
+        return emailTemplateCode;
+    }
+
+    public void setEmailTemplateCode(String emailTemplateCode) {
+        this.emailTemplateCode = emailTemplateCode;
+    }
+
+    public Boolean isInvoiceAccountable() {
+		return invoiceAccountable;
+	}
+
+	public void setInvoiceAccountable(Boolean invoiceAccountable) {
+		this.invoiceAccountable = invoiceAccountable;
+	}
+
 	@Override
     public String toString() {
         return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode="
-                + occTemplateNegativeCode + ", customInvoiceXmlScriptInstanceCode=" + customInvoiceXmlScriptInstanceCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto
-                + ", useSelfSequence=" + useSelfSequence + "]";
+                + occTemplateNegativeCode + ", customInvoiceXmlScriptInstanceCode=" + customInvoiceXmlScriptInstanceCode + ", sequenceDto=" + sequenceDto + ", sellerSequences="
+                + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto + ", useSelfSequence=" + useSelfSequence + ", invoiceAccountable=" + invoiceAccountable + "]";
     }
 }

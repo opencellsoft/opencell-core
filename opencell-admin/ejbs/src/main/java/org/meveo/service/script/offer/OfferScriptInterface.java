@@ -7,6 +7,7 @@ import org.meveo.service.script.ScriptInterface;
 
 /**
  * @author phung
+ * @author Edward P. Legaspi
  *
  */
 public interface OfferScriptInterface extends ScriptInterface {

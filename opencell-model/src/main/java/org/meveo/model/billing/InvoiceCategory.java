@@ -45,11 +45,12 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.payments.OCCTemplate;
 
-
 /**
- * InvoiceCategory Entity
+ * Invoice category
+ * 
  * @author anasseh
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @Cacheable
@@ -58,7 +59,7 @@ import org.meveo.model.payments.OCCTemplate;
 @Table(name = "billing_invoice_cat", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_cat_seq"), })
-@CustomFieldEntity(cftCodePrefix = "INV_CAT")
+@CustomFieldEntity(cftCodePrefix = "InvoiceCategory")
 @NamedQueries({
         @NamedQuery(name = "invoiceCategory.getNbrInvoiceCatNotAssociated", query = "select count(*) from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null)"),
 
@@ -67,21 +68,36 @@ public class InvoiceCategory extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * A list of Invoice subcategories that make up this invoice category
+     */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "invoiceCategory", fetch = FetchType.LAZY)
     private List<InvoiceSubCategory> invoiceSubCategories;
 
+    /**
+     * Sorting index
+     */
     @Column(name = "sort_index")
     private Integer sortIndex;
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
-    
+
+    /**
+     * Account operation template
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "occ_template_id")
     private OCCTemplate occTemplate;
 
+    /**
+     * An opposite account operation template
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "occ_templ_negative_id")
     private OCCTemplate occTemplateNegative;
@@ -150,6 +166,5 @@ public class InvoiceCategory extends BusinessCFEntity {
     public void setOccTemplateNegative(OCCTemplate occTemplateNegative) {
         this.occTemplateNegative = occTemplateNegative;
     }
-    
-    
+
 }

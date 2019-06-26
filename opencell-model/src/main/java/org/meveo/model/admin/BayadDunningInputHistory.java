@@ -22,7 +22,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
- * Information about Bayad dunning process received and processed inputs. 
+ * Information about Bayad dunning process received and processed inputs.
  */
 @Entity
 @DiscriminatorValue("BAYAD_DUNNING")
@@ -36,8 +36,7 @@ public class BayadDunningInputHistory extends InputHistory {
     /**
      * Convert from {@link InputHistory} to {@link BayadDunningInputHistory}.
      * 
-     * @param inputInfo
-     *            {@link InputHistory} superclass.
+     * @param inputInfo {@link InputHistory} superclass.
      */
     public BayadDunningInputHistory(InputHistory inputInfo) {
         // TODO this conversion is possible source of the bug (in case of

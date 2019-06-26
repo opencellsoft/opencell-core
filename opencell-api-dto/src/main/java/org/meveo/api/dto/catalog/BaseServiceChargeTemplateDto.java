@@ -1,11 +1,20 @@
 package org.meveo.api.dto.catalog;
 
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+
+@XmlType(name = "baseServiceChargeTemplateDto", propOrder = {
+        "code",
+        "wallets",
+        "counterTemplate"
+})
 
 /**
  * The Class BaseServiceChargeTemplateDto.
  *
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
  */
 public abstract class BaseServiceChargeTemplateDto implements Serializable {
 
@@ -17,6 +26,9 @@ public abstract class BaseServiceChargeTemplateDto implements Serializable {
 
     /** The wallets. */
     private WalletsDto wallets;
+    
+    /** The counter template. */
+    private String counterTemplate;
 
     /**
      * Gets the code.
@@ -56,8 +68,27 @@ public abstract class BaseServiceChargeTemplateDto implements Serializable {
         this.wallets = wallets;
     }
     
+    /**
+     * Gets the counter template.
+     *
+     * @return the counter template
+     */
+    public String getCounterTemplate() {
+        return counterTemplate;
+    }
+
+    /**
+     * Sets the counter template.
+     *
+     * @param counterTemplate the new counter template
+     */
+    public void setCounterTemplate(String counterTemplate) {
+        this.counterTemplate = counterTemplate;
+    }
+
+    
     @Override
     public String toString() {
-        return "BaseServiceChargeTemplateDto [code=" + code + ", wallets=" + wallets + "]";
+        return "BaseServiceChargeTemplateDto [code=" + code + ", wallets=" + wallets + ", counterTemplate=" + counterTemplate + "]";
     }   
 }

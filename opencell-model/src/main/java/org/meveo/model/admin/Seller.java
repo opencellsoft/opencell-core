@@ -22,15 +22,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -39,7 +43,10 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.billing.GeneralLedger;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.TradingCountry;
@@ -48,43 +55,94 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 
 /**
+ * Seller
+ *
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.2
- **/
+ * @author Khalid HORRI
+ * @author Amine BEN AICHA
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 
 @Entity
+@WorkflowedEntity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "SELLER")
+@Cacheable
+@CustomFieldEntity(cftCodePrefix = "Seller", inheritCFValuesFrom = "seller", inheritFromProvider = true)
 @ExportIdentifier({ "code" })
 @Table(name = "crm_seller", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_seller_seq"), })
-public class Seller extends BusinessCFEntity {
+public class Seller extends BusinessCFEntity implements IWFEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Currency
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
     private TradingCurrency tradingCurrency;
 
+    /**
+     * Country
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country_id")
     private TradingCountry tradingCountry;
 
+    /**
+     * Language
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
 
+    /**
+     * Address
+     */
     @Embedded
     private Address address;
 
+    /**
+     * Contact information
+     */
     @Embedded
     private ContactInformation contactInformation;
+
+    /**
+     * The seller VAT No
+     */
+    @Size(max = 100)
+    @Column(name = "vat_no", length = 100)
+    private String vatNo;
+
+    /**
+     * The seller registration No
+     */
+    @Size(max = 100)
+    @Column(name = "registration_no", length = 100)
+    private String registrationNo;
+
+    /**
+     * A legal text for the seller
+     */
+    @Size(max = 2000)
+    @Column(name = "legal_text", columnDefinition = "text")
+    private String legalText;
+
+    /**
+     * The legal type of the seller
+     */
+    @Size(max = 100)
+    @Column(name = "legal_type", length = 255)
+    private String legalType;
 
     /**
      * Parent seller in seller hierarchy
@@ -93,15 +151,34 @@ public class Seller extends BusinessCFEntity {
     @JoinColumn(name = "parent_seller_id")
     private Seller seller;
 
+    /**
+     * Invoice numbering sequence
+     */
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvoiceTypeSellerSequence> invoiceTypeSequence = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    /**
+     * Business account model that created this Seller
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bam_id")
     private BusinessAccountModel businessAccountModel;
-    
+
+    /**
+     * Customer invoice numbering sequences
+     */
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CustomerSequence> customerSequences = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PaymentGateway> paymentGateways = new ArrayList<>();
+
+    /**
+     * General Ledger association
+     */
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "general_ledger_id")
+    private GeneralLedger generalLedger;
 
     public Seller() {
         super();
@@ -137,6 +214,80 @@ public class Seller extends BusinessCFEntity {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    /**
+     * Gets the seller's VAT No
+     * 
+     * @return a VAT No
+     *
+     */
+    public String getVatNo() {
+        return vatNo;
+    }
+
+    /**
+     * Sets the seller's VAT No
+     * 
+     * @param vatNo new VAT No
+     */
+    public void setVatNo(String vatNo) {
+        this.vatNo = vatNo;
+    }
+
+    /**
+     * Gets the seller's registration No
+     * 
+     * @return a registration No
+     *
+     */
+    public String getRegistrationNo() {
+        return registrationNo;
+    }
+
+    /**
+     * Sets the seller's registration No
+     * 
+     * @param registrationNo new registration No
+     */
+    public void setRegistrationNo(String registrationNo) {
+        this.registrationNo = registrationNo;
+    }
+
+    /**
+     * Gets the seller's legal text
+     * 
+     * @return a legal text
+     */
+    public String getLegalText() {
+        return legalText;
+    }
+
+    /**
+     * Sets the seller's legal text
+     * 
+     * @param legalText new legal text
+     */
+    public void setLegalText(String legalText) {
+        this.legalText = legalText;
+    }
+
+    /**
+     * Gets the seller's legal type
+     * 
+     * @return a legal type
+     */
+    public String getLegalType() {
+        return legalType;
+    }
+
+    /**
+     * Sets the seller's legal type
+     * 
+     * @param legalType new legal type
+     */
+    public void setLegalType(String legalType) {
+        this.legalType = legalType;
     }
 
     /**
@@ -246,11 +397,34 @@ public class Seller extends BusinessCFEntity {
         return getSeller().findSellerForInvoiceNumberingSequence(cfName, date, invoiceType);
     }
 
-	public List<CustomerSequence> getCustomerSequences() {
-		return customerSequences;
-	}
+    public List<CustomerSequence> getCustomerSequences() {
+        return customerSequences;
+    }
 
-	public void setCustomerSequences(List<CustomerSequence> customerSequences) {
-		this.customerSequences = customerSequences;
-	}
+    public void setCustomerSequences(List<CustomerSequence> customerSequences) {
+        this.customerSequences = customerSequences;
+    }
+
+    /**
+     * @return the paymentGateways
+     */
+    public List<PaymentGateway> getPaymentGateways() {
+        return paymentGateways;
+    }
+
+    /**
+     * @param paymentGateways the paymentGateways to set
+     */
+    public void setPaymentGateways(List<PaymentGateway> paymentGateways) {
+        this.paymentGateways = paymentGateways;
+    }
+    
+
+    public GeneralLedger getGeneralLedger() {
+        return generalLedger;
+    }
+
+    public void setGeneralLedger(GeneralLedger generalLedger) {
+        this.generalLedger = generalLedger;
+    }
 }

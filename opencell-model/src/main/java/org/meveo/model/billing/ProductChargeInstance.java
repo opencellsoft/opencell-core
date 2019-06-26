@@ -31,6 +31,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.catalog.ProductChargeTemplate;
 
+/**
+ * Product charge as part of purchased product. Can be either part of subscription or not.
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "billing_product_charge_inst")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -39,14 +44,23 @@ public class ProductChargeInstance extends ChargeInstance {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Charge template/definition that charge was instantiated from
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_chrg_tmpl_id")
     private ProductChargeTemplate productChargeTemplate;
 
+    /**
+     * Purchased product
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_instance_id")
     private ProductInstance productInstance;
 
+    /**
+     * Quantity purchased
+     */
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
 

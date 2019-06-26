@@ -243,6 +243,37 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             hostedCheckoutInput.setCountryCode(customerAccount.getAddress().getCountry().getCountryCode().toLowerCase());
         }
         GatewayPaymentInterface gatewayPaymentInterface = null;
+        gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount);
+        hostedCheckoutInput.setCustomerAccountId(customerAccount.getId());
+        String hostedCheckoutUrl = gatewayPaymentInterface.getHostedCheckoutUrl(hostedCheckoutInput);
+
+        return hostedCheckoutUrl;
+    }
+
+    /**
+     * Gets Client Object
+     * @param customerAccountId
+     * @return
+     * @throws BusinessException
+     */
+    public Object getClient(Long customerAccountId) throws BusinessException {
+        CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
+        if (customerAccount == null) {
+            throw new BusinessException("Can't found CustomerAccount with Id:" + customerAccountId);
+        }
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount);
+        return gatewayPaymentInterface.getClientObject();
+    }
+
+    /**
+     * Gets Gateway Payment Interface
+     * @param customerAccount
+     * @return
+     * @throws BusinessException
+     */
+    public GatewayPaymentInterface getGatewayPaymentInterface(CustomerAccount customerAccount) throws BusinessException {
+        GatewayPaymentInterface gatewayPaymentInterface = null;
         PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, null, null);
         if (matchedPaymentGatewayForTheCA == null) {
             throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
@@ -252,28 +283,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         } catch (Exception e1) {
             throw new BusinessException("Can't build gatewayPaymentInterface");
         }
-        hostedCheckoutInput.setCustomerAccountId(customerAccount.getId());
-        String hostedCheckoutUrl = gatewayPaymentInterface.getHostedCheckoutUrl(hostedCheckoutInput);
-
-        return hostedCheckoutUrl;
-    }
-
-    public Object getClient(Long customerAccountId) throws BusinessException {
-        CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
-        if (customerAccount == null) {
-            throw new BusinessException("Can't found CustomerAccount with Id:" + customerAccountId);
-        }
-        GatewayPaymentInterface gatewayPaymentInterface = null;
-        PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, null, null);
-        if (matchedPaymentGatewayForTheCA == null) {
-                throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
-            }
-        try {
-                gatewayPaymentInterface = gatewayPaymentFactory.getInstance(matchedPaymentGatewayForTheCA);
-            } catch (Exception e1) {
-                throw new BusinessException("Can't build gatewayPaymentInterface");
-            }
-        return gatewayPaymentInterface.getClientObject();
+        return gatewayPaymentInterface;
     }
 
 }

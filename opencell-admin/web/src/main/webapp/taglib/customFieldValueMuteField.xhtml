@@ -56,7 +56,9 @@
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DOUBLE}">
         <c:if test="#{! edit}">
-            <h:outputText value="#{field}" />
+            <h:outputText value="#{field}">
+                <f:convertNumber pattern="#0.00"/>
+            </h:outputText>
         </c:if>
         <c:if test="#{edit}">
             <p:inputText value="#{field}" required="#{required}" label="#{label}" placeholder="#{placeholder}" converter="javax.faces.Double">

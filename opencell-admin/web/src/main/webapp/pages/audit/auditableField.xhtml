@@ -1,0 +1,20 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org">
+
+    <p:tab id="lifecycleTab_#{auditableFieldListBean.getId(auditableEntity, auditableFieldName)}" title="#{messages['audit.lifecycle']}">
+        <hftl:dataList label="#{messages['audit.lifecycle']}" backingBean="#{auditableFieldListBean}"
+                       sortBy="created" sortOrder="DESCENDING" selectionMode="single"
+                       resultsId="results_#{auditableFieldListBean.getId(auditableEntity, auditableFieldName)}"
+                       formId="form_#{auditableFieldListBean.getId(auditableEntity, auditableFieldName)}"
+                       dataModel="#{auditableFieldListBean.listAuditableFields(auditableEntity, auditableFieldName)}"
+                       exportToXml="false" exportXlsxButton="false" checkMany="false">
+            <hftl:column label="#{messages['audit.lifecycle.created']}" field="created"/>
+            <hftl:column label="#{messages['audit.lifecycle.actor']}" field="actor"/>
+            <hftl:column label="#{messages['audit.lifecycle.origin']}" field="changeOrigin"/>
+            <hftl:column label="#{messages['audit.lifecycle.originName']}" field="originName"/>
+            <hftl:column label="#{messages['audit.lifecycle.previousState']}" field="previousState"/>
+            <hftl:column label="#{messages['audit.lifecycle.currentState']}" field="currentState"/>
+        </hftl:dataList>
+    </p:tab>
+</ui:composition>

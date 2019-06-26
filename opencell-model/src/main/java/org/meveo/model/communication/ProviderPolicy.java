@@ -28,20 +28,21 @@ import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "com_provider_policy")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_prov_pol_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "com_prov_pol_seq"), })
 public class ProviderPolicy extends BaseEntity {
 
-	private static final long serialVersionUID = -1L;
+    private static final long serialVersionUID = -1L;
 
-	@Embedded
-	private CommunicationPolicy policy;
+    @Embedded
+    private CommunicationPolicy policy;
 
-	public CommunicationPolicy getPolicy() {
-		return policy;
-	}
+    public CommunicationPolicy getPolicy() {
+        return policy;
+    }
 
-	public void setPolicy(CommunicationPolicy policy) {
-		this.policy = policy;
-	}
+    public void setPolicy(CommunicationPolicy policy) {
+        this.policy = policy;
+    }
 
 }

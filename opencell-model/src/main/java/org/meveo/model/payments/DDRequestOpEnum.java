@@ -23,9 +23,7 @@ package org.meveo.model.payments;
 
 public enum DDRequestOpEnum {
 
-    CREATE(1, "DDRequestOpEnum.CREATE"),
-    PAYMENT(2, "DDRequestOpEnum.PAYMENT"),
-    FILE(3, "DDRequestOpEnum.FILE");
+    CREATE(1, "DDRequestOpEnum.CREATE"), PAYMENT(2, "DDRequestOpEnum.PAYMENT"), FILE(3, "DDRequestOpEnum.FILE");
 
     private Integer id;
     private String label;
@@ -46,7 +44,7 @@ public enum DDRequestOpEnum {
     public static DDRequestOpEnum getValue(Integer id) {
         if (id != null) {
             for (DDRequestOpEnum value : values()) {
-                if (value.getId() == id) {
+            	if ( id.equals(value.getId()) ) {
                     return value;
                 }
             }

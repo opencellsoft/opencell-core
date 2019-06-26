@@ -1,6 +1,8 @@
 package org.meveo.model.crm;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
@@ -38,6 +40,11 @@ public class EntityReferenceWrapper implements Serializable, IReferenceEntity {
     public EntityReferenceWrapper() {
     }
 
+    /**
+     * Constructor
+     * 
+     * @param entity Reference to store
+     */
     public EntityReferenceWrapper(BusinessEntity entity) {
         super();
         if (entity == null) {
@@ -49,7 +56,12 @@ public class EntityReferenceWrapper implements Serializable, IReferenceEntity {
         }
         code = entity.getCode();
     }
-    
+
+    /**
+     * Constructor
+     * 
+     * @param entity Reference to store
+     */
     public EntityReferenceWrapper(IReferenceEntity entity) {
         super();
         if (entity == null) {
@@ -62,32 +74,57 @@ public class EntityReferenceWrapper implements Serializable, IReferenceEntity {
         code = entity.getReferenceCode();
     }
 
+    /**
+     * Constructor
+     * 
+     * @param classname Classname of an entity
+     * @param classnameCode Custom entity template code - applicable and required when reference is to Custom Entity Template type
+     * @param code Entity code
+     */
     public EntityReferenceWrapper(String classname, String classnameCode, String code) {
         this.classname = classname;
         this.classnameCode = classnameCode;
         this.code = code;
     }
 
+    /**
+     * @return Classname of an entity
+     */
     public String getClassname() {
         return classname;
     }
 
+    /**
+     * @param classname Classname of an entity
+     */
     public void setClassname(String classname) {
         this.classname = classname;
     }
 
+    /**
+     * @return Custom entity template code - applicable and required when reference is to Custom Entity Template type
+     */
     public String getClassnameCode() {
         return classnameCode;
     }
 
+    /**
+     * @param classnameCode Custom entity template code - applicable and required when reference is to Custom Entity Template type
+     */
     public void setClassnameCode(String classnameCode) {
         this.classnameCode = classnameCode;
     }
 
+    /**
+     * @return Entity code
+     */
     public String getCode() {
         return code;
     }
 
+    /**
+     * @param code Entity code
+     */
     public void setCode(String code) {
         this.code = code;
     }
@@ -102,17 +139,34 @@ public class EntityReferenceWrapper implements Serializable, IReferenceEntity {
     }
 
     @Override
-	public String getReferenceCode() {
-		return getCode();
-	}
-    
-    @Override
-	public void setReferenceCode(Object value) {
-		setCode(value.toString());
-	}
+    public String getReferenceCode() {
+        return getCode();
+    }
 
-	@Override
-	public String getReferenceDescription() {
-		return null;
-	}
+    @Override
+    public void setReferenceCode(Object value) {
+        setCode(value.toString());
+    }
+
+    @Override
+    public String getReferenceDescription() {
+        return null;
+    }
+
+    /**
+     * Convert fields to a map of values
+     * 
+     * @return A map of field values
+     */
+    public Map<String, String> toMap() {
+
+        Map<String, String> map = new HashMap<>();
+        map.put("code", code);
+        map.put("classname", classname);
+        if (classnameCode != null) {
+            map.put("classnameCode", classnameCode);
+        }
+
+        return map;
+    }
 }

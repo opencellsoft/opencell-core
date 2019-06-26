@@ -23,8 +23,7 @@ package org.meveo.model.payments;
 
 public enum DDRequestFileFormatEnum {
 
-    SEPA(1, "DDRequestFileFormatEnum.SEPA"),
-    PAYNUM(2, "DDRequestFileFormatEnum.PAYNUM");
+    SEPA(1, "DDRequestFileFormatEnum.SEPA"), PAYNUM(2, "DDRequestFileFormatEnum.PAYNUM");
 
     private Integer id;
     private String label;
@@ -45,7 +44,7 @@ public enum DDRequestFileFormatEnum {
     public static DDRequestFileFormatEnum getValue(Integer id) {
         if (id != null) {
             for (DDRequestFileFormatEnum value : values()) {
-                if (value.getId() == id) {
+            	if ( id.equals(value.getId()) ) {
                     return value;
                 }
             }

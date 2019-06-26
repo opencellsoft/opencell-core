@@ -33,168 +33,174 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 
+/**
+ * Bank operation
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "ar_bank_operation")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_bank_operation_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_bank_operation_seq"), })
 public class BankOperation extends AuditableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "code_op", length = 255)
+    @Column(name = "code_op", length = 255)
     @Size(max = 255)
-	private String codeOp;
+    private String codeOp;
 
-	@Column(name = "date_op")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateOp;
+    @Column(name = "date_op")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateOp;
 
-	@Column(name = "date_val")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateVal;
+    @Column(name = "date_val")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateVal;
 
-	@Column(name = "label_1", length = 255)
+    @Column(name = "label_1", length = 255)
     @Size(max = 255)
-	private String lebel1;
+    private String lebel1;
 
-	@Column(name = "label_2", length = 255)
+    @Column(name = "label_2", length = 255)
     @Size(max = 255)
-	private String lebel2;
+    private String lebel2;
 
-	@Column(name = "label_3", length = 255)
+    @Column(name = "label_3", length = 255)
     @Size(max = 255)
-	private String lebel3;
+    private String lebel3;
 
-	@Column(name = "invoice_id", length = 255)
+    @Column(name = "invoice_id", length = 255)
     @Size(max = 255)
-	private String invocieId;
+    private String invocieId;
 
-	@Column(name = "reference", length = 255)
+    @Column(name = "reference", length = 255)
     @Size(max = 255)
-	private String refrence;
+    private String refrence;
 
-	@Column(name = "debit")
-	private BigDecimal debit;
+    @Column(name = "debit")
+    private BigDecimal debit;
 
-	@Column(name = "credit")
-	private BigDecimal credit;
+    @Column(name = "credit")
+    private BigDecimal credit;
 
-	@Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "is_valid")
-	private boolean isValid;
+    private boolean isValid;
 
-	@Column(name = "error_cause", length = 255)
+    @Column(name = "error_cause", length = 255)
     @Size(max = 255)
-	private String errorMessage;
+    private String errorMessage;
 
-	@Column(name = "file_name", length = 255)
+    @Column(name = "file_name", length = 255)
     @Size(max = 255)
-	private String fileName;
+    private String fileName;
 
-	public BankOperation() {
-	}
+    public BankOperation() {
+    }
 
-	public String getCodeOp() {
-		return codeOp;
-	}
+    public String getCodeOp() {
+        return codeOp;
+    }
 
-	public void setCodeOp(String codeOp) {
-		this.codeOp = codeOp;
-	}
+    public void setCodeOp(String codeOp) {
+        this.codeOp = codeOp;
+    }
 
-	public Date getDateOp() {
-		return dateOp;
-	}
+    public Date getDateOp() {
+        return dateOp;
+    }
 
-	public void setDateOp(Date dateOp) {
-		this.dateOp = dateOp;
-	}
+    public void setDateOp(Date dateOp) {
+        this.dateOp = dateOp;
+    }
 
-	public Date getDateVal() {
-		return dateVal;
-	}
+    public Date getDateVal() {
+        return dateVal;
+    }
 
-	public void setDateVal(Date dateVal) {
-		this.dateVal = dateVal;
-	}
+    public void setDateVal(Date dateVal) {
+        this.dateVal = dateVal;
+    }
 
-	public String getLebel1() {
-		return lebel1;
-	}
+    public String getLebel1() {
+        return lebel1;
+    }
 
-	public void setLebel1(String lebel1) {
-		this.lebel1 = lebel1;
-	}
+    public void setLebel1(String lebel1) {
+        this.lebel1 = lebel1;
+    }
 
-	public String getLebel2() {
-		return lebel2;
-	}
+    public String getLebel2() {
+        return lebel2;
+    }
 
-	public void setLebel2(String lebel2) {
-		this.lebel2 = lebel2;
-	}
+    public void setLebel2(String lebel2) {
+        this.lebel2 = lebel2;
+    }
 
-	public String getLebel3() {
-		return lebel3;
-	}
+    public String getLebel3() {
+        return lebel3;
+    }
 
-	public void setLebel3(String lebel3) {
-		this.lebel3 = lebel3;
-	}
+    public void setLebel3(String lebel3) {
+        this.lebel3 = lebel3;
+    }
 
-	public String getInvocieId() {
-		return invocieId;
-	}
+    public String getInvocieId() {
+        return invocieId;
+    }
 
-	public void setInvocieId(String invocieId) {
-		this.invocieId = invocieId;
-	}
+    public void setInvocieId(String invocieId) {
+        this.invocieId = invocieId;
+    }
 
-	public String getRefrence() {
-		return refrence;
-	}
+    public String getRefrence() {
+        return refrence;
+    }
 
-	public void setRefrence(String refrence) {
-		this.refrence = refrence;
-	}
+    public void setRefrence(String refrence) {
+        this.refrence = refrence;
+    }
 
-	public BigDecimal getDebit() {
-		return debit;
-	}
+    public BigDecimal getDebit() {
+        return debit;
+    }
 
-	public void setDebit(BigDecimal debit) {
-		this.debit = debit;
-	}
+    public void setDebit(BigDecimal debit) {
+        this.debit = debit;
+    }
 
-	public BigDecimal getCredit() {
-		return credit;
-	}
+    public BigDecimal getCredit() {
+        return credit;
+    }
 
-	public void setCredit(BigDecimal credit) {
-		this.credit = credit;
-	}
+    public void setCredit(BigDecimal credit) {
+        this.credit = credit;
+    }
 
-	public boolean isValid() {
-		return isValid;
-	}
+    public boolean isValid() {
+        return isValid;
+    }
 
-	public void setValid(boolean isValid) {
-		this.isValid = isValid;
-	}
+    public void setValid(boolean isValid) {
+        this.isValid = isValid;
+    }
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
-	public String getFileName() {
-		return fileName;
-	}
+    public String getFileName() {
+        return fileName;
+    }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
 }

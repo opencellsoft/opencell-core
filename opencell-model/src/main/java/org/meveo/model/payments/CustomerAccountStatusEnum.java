@@ -20,8 +20,7 @@ package org.meveo.model.payments;
 
 public enum CustomerAccountStatusEnum {
 
-    ACTIVE(1, "customerAccountStatus.active"),
-    CLOSE(2, "customerAccountStatus.close");
+    ACTIVE(1, "customerAccountStatus.active"), CLOSE(2, "customerAccountStatus.close");
 
     private Integer id;
     private String label;

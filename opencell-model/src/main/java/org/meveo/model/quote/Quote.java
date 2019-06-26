@@ -10,6 +10,7 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -32,18 +33,28 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 
+/**
+ * Quote to subscribe to services or [purchase] products
+ * 
+ * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Entity
+@WorkflowedEntity
 @ExportIdentifier({ "code" })
-@CustomFieldEntity(cftCodePrefix = "QUOTE")
+@CustomFieldEntity(cftCodePrefix = "Quote")
 @Table(name = "ord_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_quote_seq"), })
-public class Quote extends BusinessCFEntity {
+public class Quote extends BusinessCFEntity implements IWFEntity {
 
     private static final long serialVersionUID = -9060067698650286828L;
 
@@ -81,7 +92,8 @@ public class Quote extends BusinessCFEntity {
     /**
      * Quote validity dates
      */
-    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
+    @Embedded
+    @AttributeOverrides(value = { @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity = new DatePeriod();
 
     /**
@@ -119,6 +131,9 @@ public class Quote extends BusinessCFEntity {
     @NotNull
     private QuoteStatusEnum status = QuoteStatusEnum.IN_PROGRESS;
 
+    /**
+     * Status message
+     */
     @Column(name = "status_message", length = 2000)
     private String statusMessage;
 
@@ -128,10 +143,16 @@ public class Quote extends BusinessCFEntity {
     @OneToMany(mappedBy = "quote", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuoteItem> quoteItems;
 
+    /**
+     * User group that quote processing is routed to
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routed_to_user_group_id")
     private UserHierarchyLevel routedToUserGroup;
 
+    /**
+     * Application/source that quote requets was received from
+     */
     @Column(name = "received_from", length = 50)
     private String receivedFromApp;
 
@@ -148,9 +169,15 @@ public class Quote extends BusinessCFEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "quote", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invoice> invoices = new ArrayList<Invoice>();
 
+    /**
+     * Order produced from this quote
+     */
     @OneToOne(mappedBy = "quote", fetch = FetchType.LAZY)
     private Order order;
-    
+
+    /**
+     * Should PDF be generated
+     */
     @Transient
     private boolean generatePdf = true;;
 

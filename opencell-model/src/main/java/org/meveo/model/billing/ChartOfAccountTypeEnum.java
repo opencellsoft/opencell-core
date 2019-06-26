@@ -10,7 +10,7 @@ package org.meveo.model.billing;
  **/
 public enum ChartOfAccountTypeEnum {
     ASSETS, LIABILITIES, EQUITY, REVENUE, EXPENSE;
-    
+
     public String getLabel() {
         return "ChartOfAccountTypeEnum." + name();
     }

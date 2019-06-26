@@ -117,6 +117,28 @@ public class ChannelApi extends BaseCrudApi<Channel, ChannelDto> {
     }
 
     /**
+     * Allows to get All or only the active channel list
+     * 
+     * @return list of channels
+     * @throws MeveoApiException meveo api exception
+     */
+    public List<ChannelDto> list(Boolean active) throws MeveoApiException {
+        List<ChannelDto> ChannelDtos = new ArrayList<ChannelDto>();
+
+        List<Channel> channels = channelService.list(active);
+        if (channels != null && !channels.isEmpty()) {
+            for (Channel channel : channels) {
+                ChannelDto ChannelDto = new ChannelDto();
+                ChannelDto.setCode(channel.getCode());
+                ChannelDto.setDescription(channel.getDescriptionAndCode());
+                ChannelDtos.add(ChannelDto);
+            }
+        }
+
+        return ChannelDtos;
+    }
+
+    /**
      * 
      * @param ChannelId channel's id
      * 

@@ -27,9 +27,6 @@ import org.slf4j.Logger;
 @Stateless
 public class UnitRecurringRatingJobBean implements Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 2226065462536318643L;
 
     @Inject
@@ -51,13 +48,12 @@ public class UnitRecurringRatingJobBean implements Serializable {
             } else if (ratingStatus.getNbRating() > 1) {
                 result.registerWarning(ID_activeRecurringChargeInstance + " rated " + ratingStatus.getNbRating() + " times");
             } else {
-                if(ratingStatus.getStatus() != RatingStatusEnum.NOT_RATED_FALSE_FILTER) {
+                if (ratingStatus.getStatus() != RatingStatusEnum.NOT_RATED_FALSE_FILTER) {
                     result.registerWarning(ID_activeRecurringChargeInstance + " not rated");
                 }
             }
         } catch (BusinessException e) {
             result.registerError(ID_activeRecurringChargeInstance, e.getMessage());
         }
-        log.debug("end executed!");
     }
 }

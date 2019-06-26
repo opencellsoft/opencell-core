@@ -37,6 +37,11 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
+/**
+ * Workflow decicion rule
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ExportIdentifier({ "name", "value" })
 @Table(name = "wf_decision_rule", uniqueConstraints = @UniqueConstraint(columnNames = { "name", "value" }))
@@ -46,30 +51,48 @@ public class WFDecisionRule extends BaseEntity implements Comparable<WFDecisionR
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Name
+     */
     @Column(name = "name")
     @Size(max = 255)
     @NotNull
     private String name;
 
+    /**
+     * Value
+     */
     @Size(max = 255)
     @Column(name = "value")
     @NotNull
     private String value;
 
+    /**
+     * Decision rule type
+     */
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     @NotNull
     private DecisionRuleTypeEnum type;
 
+    /**
+     * Expression to evaluate if decision rule applies
+     */
     @Column(name = "condition_el", length = 2000)
     @Size(max = 2000)
     @NotNull
     private String conditionEl;
 
+    /**
+     * Is this a model
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "model")
     private boolean model = false;
 
+    /**
+     * Transitions that have this decision rule
+     */
     @ManyToMany(mappedBy = "wfDecisionRules")
     private Set<WFTransition> wfTransitions = new HashSet<>();
 

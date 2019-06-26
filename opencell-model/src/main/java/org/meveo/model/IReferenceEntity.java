@@ -6,10 +6,10 @@ package org.meveo.model;
  */
 public interface IReferenceEntity {
 
-	String getReferenceCode();
-	
-	void setReferenceCode(Object value);
+    String getReferenceCode();
 
-	String getReferenceDescription();
+    void setReferenceCode(Object value);
+
+    String getReferenceDescription();
 
 }

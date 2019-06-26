@@ -18,11 +18,15 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.OfferTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.serialize.RestDateParam;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
@@ -35,7 +39,10 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateApi.create(postData);
+            OfferTemplate offerTemplate = offerTemplateApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(offerTemplate.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -58,12 +65,12 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
     @Override
     public GetOfferTemplateResponseDto find(String offerTemplateCode, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate,
-            boolean loadOfferProductTemplate, boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate) {
+            boolean loadOfferProductTemplate, boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan) {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
             result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo, inheritCF, loadOfferServiceTemplate, loadOfferProductTemplate,
-                loadServiceChargeTemplate, loadProductChargeTemplate));
+                loadServiceChargeTemplate, loadProductChargeTemplate, loadAllowedDiscountPlan));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -118,7 +125,10 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateApi.createOrUpdate(postData);
+            OfferTemplate offerTemplate = offerTemplateApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(offerTemplate.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

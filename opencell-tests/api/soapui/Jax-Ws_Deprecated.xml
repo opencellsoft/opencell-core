@@ -19146,7 +19146,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <!--Optional:-->
          <customField code="CF_CUST1" description="CF_CUST1">
             <fieldType>STRING</fieldType>
-            <accountLevel>CUST</accountLevel>
+            <accountLevel>Customer</accountLevel>
             <!--Optional:--> 
             <storageType>SINGLE</storageType>  
          </customField>
@@ -19159,7 +19159,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <!--Optional:-->
          <customField code="CF_BA1" description="CF_BA1">
             <fieldType>STRING</fieldType>
-            <accountLevel>BA</accountLevel>
+            <accountLevel>BillingAccount</accountLevel>
             <!--Optional:--> 
             <storageType>SINGLE</storageType>  
          </customField>
@@ -19172,7 +19172,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <!--Optional:-->
          <customField code="CF_CA1" description="CF_CA1">
             <fieldType>STRING</fieldType>
-            <accountLevel>CA</accountLevel>
+            <accountLevel>CustomerAccount</accountLevel>
             <!--Optional:--> 
             <storageType>SINGLE</storageType>  
          </customField>
@@ -19185,7 +19185,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <!--Optional:-->
          <customField code="CF_UA1" description="CF_UA1">
             <fieldType>STRING</fieldType>
-            <accountLevel>UA</accountLevel>
+            <accountLevel>UserAccount</accountLevel>
             <!--Optional:--> 
             <storageType>SINGLE</storageType>  
          </customField>
@@ -21387,7 +21387,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <!--Optional:-->
          <customField code="CF_CUST" description="CF_CUST">
             <fieldType>STRING</fieldType>
-            <accountLevel>CUST</accountLevel>
+            <accountLevel>Customer</accountLevel>
             <!--Optional:--> 
             <storageType>SINGLE</storageType>  
          </customField>
@@ -21400,7 +21400,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <!--Optional:-->
          <customField code="CF_BA" description="CF_BA">
             <fieldType>STRING</fieldType>
-            <accountLevel>BA</accountLevel>
+            <accountLevel>BillingAccount</accountLevel>
             <!--Optional:--> 
             <storageType>SINGLE</storageType>  
          </customField>
@@ -21413,7 +21413,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <!--Optional:-->
          <customField code="CF_CA" description="CF_CA">
             <fieldType>STRING</fieldType>
-            <accountLevel>CA</accountLevel>
+            <accountLevel>CustomerAccount</accountLevel>
             <!--Optional:--> 
             <storageType>SINGLE</storageType>  
          </customField>
@@ -21426,7 +21426,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <!--Optional:-->
          <customField code="CF_UA" description="CF_UA">
             <fieldType>STRING</fieldType>
-            <accountLevel>UA</accountLevel>
+            <accountLevel>UserAccount</accountLevel>
             <!--Optional:--> 
             <storageType>SINGLE</storageType>  
          </customField>
@@ -21439,7 +21439,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <!--Optional:-->
          <customField code="CF_SUB" description="CF_SUB">
             <fieldType>STRING</fieldType>
-            <accountLevel>SUB</accountLevel>
+            <accountLevel>Subscription</accountLevel>
             <!--Optional:--> 
             <storageType>SINGLE</storageType>  
          </customField>
@@ -21452,7 +21452,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <!--Optional:-->
          <customField code="CF_ACCESS" description="CF_ACCESS">
             <fieldType>STRING</fieldType>
-            <accountLevel>ACC</accountLevel>
+            <accountLevel>Access</accountLevel>
             <!--Optional:--> 
             <storageType>SINGLE</storageType>  
          </customField>
@@ -25265,7 +25265,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          <customField code="${#TestSuite#ticket}_CFT_code${#TestSuite#index}" description="${#TestSuite#ticket}_CFT_description${#TestSuite#index}">
             <valueRequired/><versionable/><triggerEndPeriodEvent/><listValues/><fieldType>STRING</fieldType>
             <storageType>SINGLE</storageType>
-            <appliesTo>CUST</appliesTo>
+            <appliesTo>Customer</appliesTo>
          </customField>
       </ws:createField>
    </soapenv:Body>
@@ -25390,7 +25390,7 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
                <listValues />
                <fieldType>STRING</fieldType>
                <storageType>SINGLE</storageType>
-               <appliesTo>CUST</appliesTo>
+               <appliesTo>Customer</appliesTo>
             </cftDtos>
             <!--Zero or more repetitions:-->
             <filterDtos code="${#TestSuite#ticket}_filter" description="${#TestSuite#ticket}_filter">
@@ -25480,7 +25480,7 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
                   <listValues />
                   <fieldType>STRING</fieldType>
                   <storageType>SINGLE</storageType>
-                  <appliesTo>CUST</appliesTo>
+                  <appliesTo>Customer</appliesTo>
                </cftDtos>
                <!--Zero or more repetitions:-->
                <filterDtos code="${#TestSuite#ticket}_filter" description="${#TestSuite#ticket}_filter">
@@ -25602,8 +25602,8 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
                </customEntityTemplate>\r
                <customFieldTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_CONSUMPTION" description="Consumption">\r
                   <fieldType>DOUBLE</fieldType>\r
-                  <accountLevel>CUST</accountLevel>\r
-                  <appliesTo>CUST</appliesTo>\r
+                  <accountLevel>Customer</accountLevel>\r
+                  <appliesTo>Customer</appliesTo>\r
                   <defaultValue>25.0</defaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
@@ -25822,8 +25822,8 @@ public class Script1 extends org.meveo.service.script.Script {
                      </customEntityTemplate>\r
                      <customFieldTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_HIGH_CONSUMP_FLAG" description="High consumer">\r
                         <fieldType>STRING</fieldType>\r
-                        <accountLevel>CUST</accountLevel>\r
-                        <appliesTo>CUST</appliesTo>\r
+                        <accountLevel>Customer</accountLevel>\r
+                        <appliesTo>Customer</appliesTo>\r
                         <defaultValue>X</defaultValue>\r
                         <storageType>SINGLE</storageType>\r
                         <valueRequired>false</valueRequired>\r
@@ -26103,7 +26103,7 @@ public class Script2 extends org.meveo.service.script.Script {
                <listValues />
                <fieldType>STRING</fieldType>
                <storageType>SINGLE</storageType>
-               <appliesTo>CUST</appliesTo>
+               <appliesTo>Customer</appliesTo>
             </cftDtos>
             <!--Zero or more repetitions:-->
             <filterDtos code="${#TestSuite#ticket}_filter" description="${#TestSuite#ticket}_filter">
@@ -26193,7 +26193,7 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
                   <listValues />
                   <fieldType>STRING</fieldType>
                   <storageType>SINGLE</storageType>
-                  <appliesTo>CUST</appliesTo>
+                  <appliesTo>Customer</appliesTo>
                </cftDtos>
                <!--Zero or more repetitions:-->
                <filterDtos code="${#TestSuite#ticket}_filter" description="${#TestSuite#ticket}_filter">
@@ -26317,7 +26317,7 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
          <!--Optional:-->
          <customFieldTemplateCode>${#TestSuite#ticket}_CFT_code${#TestSuite#index}</customFieldTemplateCode>
          <!--Optional:-->
-         <appliesTo>CUST</appliesTo>
+         <appliesTo>Customer</appliesTo>
       </ws:removeField>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="6f292af6-90f1-471a-bf26-37b0e39c195c"/><con:assertion type="XPath Match" id="79021a66-7b7b-436d-824f-3ebac353f12f" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';

@@ -18,44 +18,45 @@ import org.meveo.model.BaseEntity;
 @Entity
 @Table(name = "meveo_native_filter_condition")
 @DiscriminatorValue(value = "NATIVE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_native_filter_condition_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "meveo_native_filter_condition_seq"), })
 public class NativeFilterCondition extends FilterCondition {
 
-	private static final long serialVersionUID = 8649912992576398066L;
+    private static final long serialVersionUID = 8649912992576398066L;
 
-	@Column(name = "el", length = 2000)
-	@Size(max = 2000)
-	private String el;
-
-	@Column(name = "jpql", length = 2000)
+    @Column(name = "el", length = 2000)
     @Size(max = 2000)
-	private String jpql;
+    private String el;
 
-	@Override
-	public boolean match(BaseEntity e) {
-		// evaluate el
-		return false;
-	}
+    @Column(name = "jpql", length = 2000)
+    @Size(max = 2000)
+    private String jpql;
 
-	@Override
-	public List<BaseEntity> filter(List<BaseEntity> e) {
-		return null;
-	}
+    @Override
+    public boolean match(BaseEntity e) {
+        // evaluate el
+        return false;
+    }
 
-	public String getEl() {
-		return el;
-	}
+    @Override
+    public List<BaseEntity> filter(List<BaseEntity> e) {
+        return null;
+    }
 
-	public void setEl(String el) {
-		this.el = el;
-	}
+    public String getEl() {
+        return el;
+    }
 
-	public String getJpql() {
-		return jpql;
-	}
+    public void setEl(String el) {
+        this.el = el;
+    }
 
-	public void setJpql(String jpql) {
-		this.jpql = jpql;
-	}
+    public String getJpql() {
+        return jpql;
+    }
+
+    public void setJpql(String jpql) {
+        this.jpql = jpql;
+    }
 
 }

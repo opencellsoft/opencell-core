@@ -20,11 +20,8 @@ package org.meveo.model.bi;
 
 public enum ExecutionFrequencyEnum {
 
-    NO_SCHEDULING(0, "executionTypeEnum.noScheduling"),
-    INTERVAL(1, "executionTypeEnum.interval"),
-    DAILY(2, "executionTypeEnum.daily"),
-    WEEKLY(3, "executionTypeEnum.weekly"),
-    MONTHLY(4, "executionTypeEnum.monthly");
+    NO_SCHEDULING(0, "executionTypeEnum.noScheduling"), INTERVAL(1, "executionTypeEnum.interval"), DAILY(2, "executionTypeEnum.daily"), WEEKLY(3,
+            "executionTypeEnum.weekly"), MONTHLY(4, "executionTypeEnum.monthly");
 
     private Integer id;
     private String label;

@@ -9,7 +9,7 @@ package org.meveo.model.payments;
  */
 public enum PaymentErrorTypeEnum {
     ERROR, REJECT;
-    
+
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();
     }

@@ -222,10 +222,10 @@ public class ImportAccountsJobBean {
         }
 
         for (org.meveo.model.jaxb.account.BillingAccount billingAccountDto : billingAccounts.getBillingAccount()) {
-            if (!jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
-            i++;
 
             if (billingCheckError(billingAccountDto)) {
                 nbBillingAccountsError++;
@@ -355,7 +355,7 @@ public class ImportAccountsJobBean {
             accountImportService.updateUserAccount(billingAccount, billingAccountDto, uAccount);
         } else {
             try {
-                userAccount = accountImportService.importUserAccount(billingAccount, billingAccountDto, uAccount);
+                userAccount = accountImportService.importUserAccount(billingAccount, billingAccountDto, uAccount, null);
 
                 log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j + " code:" + uAccount.getCode() + ", status:Created");
                 nbUserAccountsCreated++;

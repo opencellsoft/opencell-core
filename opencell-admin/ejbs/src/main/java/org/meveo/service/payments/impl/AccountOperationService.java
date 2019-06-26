@@ -29,15 +29,20 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
 /**
  * AccountOperation service implementation.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.3 
  */
 @Stateless
 public class AccountOperationService extends PersistenceService<AccountOperation> {
@@ -116,14 +121,17 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * @param paymentMethodEnum the payment method enum
      * @param fromDueDate the from due date
      * @param toDueDate the to due date
+     * @param opCatToProcess the op cat to process
      * @param customerAccountId the customer account id
      * @return the a os to pay
      */
     @SuppressWarnings("unchecked")
-    public List<AccountOperation> getAOsToPay(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate, Long customerAccountId) {
+    public List<AccountOperation> getAOsToPayOrRefund(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate, OperationCategoryEnum opCatToProcess,
+            Long customerAccountId) {
         try {
-            return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAoToPay").setParameter("paymentMethodIN", paymentMethodEnum)
-                .setParameter("caIdIN", customerAccountId).setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate).getResultList();
+            return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAoToPayOrRefund").setParameter("paymentMethodIN", paymentMethodEnum)
+                .setParameter("caIdIN", customerAccountId).setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate)
+                .setParameter("opCatToProcessIN", opCatToProcess).getResultList();
         } catch (NoResultException e) {
             return null;
         }
@@ -135,33 +143,27 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * @param paymentMethodEnum the payment method enum
      * @param fromDueDate the from due date
      * @param toDueDate the to due date
+     * @param opCatToProcess the op cat to process
+     * @param seller the seller
      * @return the a os to pay
      */
     @SuppressWarnings("unchecked")
-    public List<AccountOperation> getAOsToPay(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate) {
+    public List<AccountOperation> getAOsToPayOrRefund(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate, OperationCategoryEnum opCatToProcess, Seller seller) {
         try {
-            return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAoToPayWithoutCA").setParameter("paymentMethodIN", paymentMethodEnum)
-                .setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate).getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
+            String queryName = "AccountOperation.listAoToPayOrRefundWithoutCA";
+            if (seller != null) {
+                queryName = "AccountOperation.listAoToPayOrRefundWithoutCAbySeller";
+            }
+            Query query = getEntityManager().createNamedQuery(queryName).setParameter("paymentMethodIN", paymentMethodEnum).setParameter("fromDueDateIN", fromDueDate)
+                .setParameter("toDueDateIN", toDueDate).setParameter("opCatToProcessIN", opCatToProcess);
 
-    /**
-     * Return list credit AO to refund.
-     *
-     * @param paymentMethodEnum payment method.
-     * @param fromDueDate the from due date
-     * @param toDueDate the to due date
-     * @param customerAccountId the customer account id
-     * @return list of account operations.
-     */
-    @SuppressWarnings("unchecked")
-    public List<AccountOperation> getAOsToRefund(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate, Long customerAccountId) {
-        try {
-            return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAOIdsToRefund").setParameter("paymentMethodIN", paymentMethodEnum)
-                .setParameter("caIdIN", customerAccountId).setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate).getResultList();
+            if (seller != null) {
+                query.setParameter("sellerIN", seller);
+            }
+            return (List<AccountOperation>) query.getResultList();
+
         } catch (NoResultException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -228,7 +230,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             return null;
         }
     }
-    
+
     /**
      * Find by order number.
      *

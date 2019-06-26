@@ -29,13 +29,12 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.communication.CommunicationRequestDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.communication.MeveoInstance;
@@ -82,7 +81,7 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
         String username = meveoInstance.getAuthUsername() != null ? meveoInstance.getAuthUsername() : "";
         String password = meveoInstance.getAuthPassword() != null ? meveoInstance.getAuthPassword() : "";
         try {
-            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyClient client = new ResteasyClientProxyBuilder().build();
             ResteasyWebTarget target = client.target(baseurl + url);
             BasicAuthentication basicAuthentication = new BasicAuthentication(username, password);
             target.register(basicAuthentication);
@@ -121,9 +120,9 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
      String username = meveoInstance.getAuthUsername() != null ? meveoInstance.getAuthUsername() : "";
      String password = meveoInstance.getAuthPassword() != null ? meveoInstance.getAuthPassword() : "";
      try {
-         ResteasyClient client = new ResteasyClientBuilder().build();
+         ResteasyClient client = new ResteasyClientProxyBuilder().build();
          ResteasyWebTarget target = client.target(baseurl + url);
-         log.debug("call {} with body:{}",baseurl + url,body);
+         log.debug("call {} with body:{}", (baseurl + url), body);
          BasicAuthentication basicAuthentication = new BasicAuthentication(username, password);
          target.register(basicAuthentication);
 

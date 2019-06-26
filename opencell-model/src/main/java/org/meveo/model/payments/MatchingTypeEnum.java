@@ -20,10 +20,7 @@ package org.meveo.model.payments;
 
 public enum MatchingTypeEnum {
 
-    A(1, "matchingTypeEnum.a"),
-    M(2, "matchingTypeEnum.m"),
-    A_TIP(3, "matchingTypeEnum.A_TIP"),
-    A_DERICT_DEBIT(4, "matchingTypeEnum.A_DERICT_DEBIT");
+    A(1, "matchingTypeEnum.a"), M(2, "matchingTypeEnum.m"), A_TIP(3, "matchingTypeEnum.A_TIP"), A_DERICT_DEBIT(4, "matchingTypeEnum.A_DERICT_DEBIT");
 
     private Integer id;
     private String label;

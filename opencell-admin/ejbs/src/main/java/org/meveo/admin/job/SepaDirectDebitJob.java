@@ -15,11 +15,14 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.DDRequestBuilder;
+import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.service.job.Job;
 
 
 /**
  * The Class SepaDirectDebitJob generate sepa/paynum or custom files for available DirectDebit request operations.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class SepaDirectDebitJob extends Job {
@@ -28,7 +31,7 @@ public class SepaDirectDebitJob extends Job {
     @Inject
     private SepaDirectDebitJobBean sepaDirectDebitJobBean;
     
-    private static final String APPLIES_TO_NAME = "JOB_SepaDirectDebitJob";
+    private static final String APPLIES_TO_NAME = "JobInstance_SepaDirectDebitJob";
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -66,8 +69,33 @@ public class SepaDirectDebitJob extends Job {
         aoFilterScript.setValueRequired(false);
         aoFilterScript.setDefaultValue("");
         result.put(cfAoFilterScriptCode, aoFilterScript);
+        
+        CustomFieldTemplate sellerCF = new CustomFieldTemplate();
+        final String sellerCFcode = "SepaJob_seller";
+        sellerCF.setCode(sellerCFcode);
+        sellerCF.setAppliesTo(APPLIES_TO_NAME);
+        sellerCF.setActive(true);
+        sellerCF.setDescription(resourceMessages.getString("seller.title"));
+        sellerCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+        sellerCF.setEntityClazz("org.meveo.model.admin.Seller");
+        sellerCF.setValueRequired(false);
+        sellerCF.setDefaultValue("");
+        result.put(sellerCFcode, sellerCF);
 
-       
+        Map<String, String> lisValuesCreditDebit = new HashMap<String, String>();
+        lisValuesCreditDebit.put(PaymentOrRefundEnum.PAYMENT.name(), PaymentOrRefundEnum.PAYMENT.name());
+        lisValuesCreditDebit.put(PaymentOrRefundEnum.REFUND.name(), PaymentOrRefundEnum.REFUND.name());
+        
+        CustomFieldTemplate creditOrDebitCF = new CustomFieldTemplate();
+        creditOrDebitCF.setCode("SepaJob_paymentOrRefund");
+        creditOrDebitCF.setAppliesTo(APPLIES_TO_NAME);
+        creditOrDebitCF.setActive(true);
+        creditOrDebitCF.setDefaultValue(PaymentOrRefundEnum.PAYMENT.name());
+        creditOrDebitCF.setDescription(resourceMessages.getString("jobExecution.paymentOrRefund"));
+        creditOrDebitCF.setFieldType(CustomFieldTypeEnum.LIST);
+        creditOrDebitCF.setValueRequired(true);
+        creditOrDebitCF.setListValues(lisValuesCreditDebit);
+        result.put("SepaJob_paymentOrRefund", creditOrDebitCF);
         return result;
     }
 }

@@ -21,6 +21,7 @@ public class GenericSequenceValueResponseDto extends BaseResponse {
 	private GenericSequenceDto sequence;
 	private String value;
 	private String seller;
+	private String paymentGateway;
 
 	public String getValue() {
 		return value;
@@ -44,6 +45,14 @@ public class GenericSequenceValueResponseDto extends BaseResponse {
 
 	public void setSeller(String seller) {
 		this.seller = seller;
+	}
+
+	public String getPaymentGateway() {
+		return paymentGateway;
+	}
+
+	public void setPaymentGateway(String paymentGateway) {
+		this.paymentGateway = paymentGateway;
 	}
 
 }

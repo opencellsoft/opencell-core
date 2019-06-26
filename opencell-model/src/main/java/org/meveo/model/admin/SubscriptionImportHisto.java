@@ -62,8 +62,7 @@ public class SubscriptionImportHisto extends JobHistory {
     }
 
     /**
-     * @param fileName
-     *            the fileName to set
+     * @param fileName the fileName to set
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
@@ -77,8 +76,7 @@ public class SubscriptionImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbSubscriptions
-     *            the nbSubscriptions to set
+     * @param nbSubscriptions the nbSubscriptions to set
      */
     public void setNbSubscriptions(Integer nbSubscriptions) {
         this.nbSubscriptions = nbSubscriptions;
@@ -92,8 +90,7 @@ public class SubscriptionImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbSubscriptionsError
-     *            the nbSubscriptionsError to set
+     * @param nbSubscriptionsError the nbSubscriptionsError to set
      */
     public void setNbSubscriptionsError(Integer nbSubscriptionsError) {
         this.nbSubscriptionsError = nbSubscriptionsError;
@@ -107,8 +104,7 @@ public class SubscriptionImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbSubscriptionsIgnored
-     *            the nbSubscriptionsIgnored to set
+     * @param nbSubscriptionsIgnored the nbSubscriptionsIgnored to set
      */
     public void setNbSubscriptionsIgnored(Integer nbSubscriptionsIgnored) {
         this.nbSubscriptionsIgnored = nbSubscriptionsIgnored;
@@ -122,8 +118,7 @@ public class SubscriptionImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbSubscriptionsCreated
-     *            the nbSubscriptionsCreated to set
+     * @param nbSubscriptionsCreated the nbSubscriptionsCreated to set
      */
     public void setNbSubscriptionsCreated(Integer nbSubscriptionsCreated) {
         this.nbSubscriptionsCreated = nbSubscriptionsCreated;
@@ -137,8 +132,7 @@ public class SubscriptionImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbSubscriptionsTerminated
-     *            the nbSubscriptionsTerminated to set
+     * @param nbSubscriptionsTerminated the nbSubscriptionsTerminated to set
      */
     public void setNbSubscriptionsTerminated(Integer nbSubscriptionsTerminated) {
         this.nbSubscriptionsTerminated = nbSubscriptionsTerminated;

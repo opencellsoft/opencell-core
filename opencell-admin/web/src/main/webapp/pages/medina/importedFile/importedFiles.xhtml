@@ -17,28 +17,30 @@
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
-				<p:menuitem outcome="importedFiles" value="#{messages['menu.importedFiles']}" />
+				<p:menuitem outcome="importedFiles" value="#{messages['menu.transferredFiles']}" />
 			</p:breadCrumb>
 		</h:form> 
 		<hftl:searchPanel columns="2"
-			label="#{messages['importedFile.search']}"
+			label="#{messages['transferredFile.search']}"
 			backingBean="#{ftpImportedFileListBean}" renderNewButton="false">
-			<hftl:searchField label="#{messages['importedFile.importDate']}" field="importDate" />
-			<hftl:searchField label="#{messages['importedFile.uri']}" field="uri" />
-			<hftl:searchField label="#{messages['importedFile.description']}" field="description" />
-			<hftl:searchField label="#{messages['importedFile.lastModified']}"
+			<hftl:searchField label="#{messages['transferredFile.transferDate']}" field="transferDate" />
+			<hftl:searchField label="#{messages['transferredFile.uri']}" field="uri" />
+			<hftl:searchField label="#{messages['transferredFile.description']}" field="description" />
+			<hftl:searchField label="#{messages['transferredFile.lastModified']}"
 				field="lastModification" />
+			<hftl:searchField label="#{messages['transferredFile.operation']}" field="operation" />
 		</hftl:searchPanel>
 
-		<hftl:dataList label="#{messages['importedFile.title']}"
-			backingBean="#{ftpImportedFileListBean}" sortBy="importDate" sortOrder="DESCENDING">
-			<hftl:column label="#{messages['importedFile.importDate']}" field="importDate"/>
-			<hftl:column label="#{messages['importedFile.code']}" field="code"/>
-			<hftl:column label="#{messages['importedFile.description']}" field="description"/>
-			<hftl:column label="#{messages['importedFile.uri']}" field="uri"/>
-			<hftl:column label="#{messages['importedFile.size']}" field="size" />
-			<hftl:column label="#{messages['importedFile.lastModified']}"
+		<hftl:dataList label="#{messages['transferredFile.title']}"
+			backingBean="#{ftpImportedFileListBean}" sortBy="transferDate" sortOrder="DESCENDING">
+			<hftl:column label="#{messages['transferredFile.transferDate']}" field="transferDate"/>
+			<hftl:column label="#{messages['transferredFile.code']}" field="code"/>
+			<hftl:column label="#{messages['transferredFile.description']}" field="description"/>
+			<hftl:column label="#{messages['transferredFile.uri']}" field="uri"/>
+			<hftl:column label="#{messages['transferredFile.size']}" field="size" />
+			<hftl:column label="#{messages['transferredFile.lastModified']}"
 				field="lastModification" isDate="true" />
+			<hftl:column label="#{messages['transferredFile.operation']}" field="operation" />
 			<hftl:actionsColumn
 				permission="#{currentUser.hasRole('billingManagement')}" />
 		</hftl:dataList>

@@ -5,7 +5,6 @@ import java.util.Date;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InvoiceSequence;
-import org.meveo.model.billing.Sequence;
 
 /**
  * A summary of invoices for assigning invoice numbers to. All grouped invoices match same invoice type, seller and invoice date

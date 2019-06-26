@@ -1,0 +1,35 @@
+<meveoExport version="5.3.0-20181031">
+    <exportTemplate xsId="1" name="CustomerCategory" entityToExport="org.meveo.model.crm.CustomerCategory" canDeleteAfterExport="false">
+        <exportAllClassesAsFull>false</exportAllClassesAsFull>
+        <classesToExportAsFull xsId="2" />
+        <classesToExportAsShort xsId="3" />
+        <classesToExportAsId xsId="4" />
+        <classesToIgnoreFKNotFound xsId="5" />
+        <groupedTemplates xsId="6" />
+    </exportTemplate>
+    <data>
+        <org.meveo.model.crm.CustomerCategory xsId="7">
+            <id>-1</id>
+            <version>0</version>
+            <auditable xsId="8">
+                <created class="sql-timestamp" xsId="9">2015-03-18 23:04:19.089</created>
+            </auditable>
+            <code>PROSPECT</code>
+            <description>Prospect</description>
+            <exoneratedFromTaxes>false</exoneratedFromTaxes>
+        </org.meveo.model.crm.CustomerCategory>
+        <org.meveo.model.crm.CustomerCategory xsId="10">
+            <id>-2</id>
+            <version>1</version>
+            <auditable xsId="11">
+                <created class="sql-timestamp" xsId="12">2015-03-18 23:04:19.11</created>
+                <updated class="sql-timestamp" xsId="13">2019-01-02 17:27:26.141</updated>
+                <updater>opencell.admin</updater>
+            </auditable>
+            <code>CLIENT</code>
+            <uuid>something</uuid>
+            <description>Individual</description>
+            <exoneratedFromTaxes>false</exoneratedFromTaxes>
+        </org.meveo.model.crm.CustomerCategory>
+    </data>
+</meveoExport>

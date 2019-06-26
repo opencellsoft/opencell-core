@@ -9,15 +9,17 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 
 /**
+ * Script category
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.1
  */
 @Entity
 @Table(name = "meveo_script_instance_cat", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-		@Parameter(name = "sequence_name", value = "meveo_script_instance_cat_seq"), })
+        @Parameter(name = "sequence_name", value = "meveo_script_instance_cat_seq"), })
 public class ScriptInstanceCategory extends BusinessEntity {
 
-	private static final long serialVersionUID = 3368033230915325843L;
+    private static final long serialVersionUID = 3368033230915325843L;
 
 }

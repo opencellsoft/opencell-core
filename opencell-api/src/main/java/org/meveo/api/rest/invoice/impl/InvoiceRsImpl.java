@@ -4,9 +4,11 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.QueryParam;
+import java.util.List;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
 import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
@@ -25,6 +27,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.invoice.InvoiceRs;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 
 /**
@@ -49,6 +52,12 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         try {
             result = invoiceApi.create(invoiceDto);
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+            if (invoiceDto.isReturnPdf() != null && invoiceDto.isReturnPdf() && !invoiceDto.isDraft()) {
+                invoiceDto.setCheckAlreadySent(true);
+                invoiceDto.setInvoiceId(result.getInvoiceId());
+                boolean res = invoiceApi.sendByEmail(invoiceDto, MailingTypeEnum.AUTO);
+                result.setSentByEmail(res);
+            }
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -76,6 +85,11 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         try {
             result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+            if (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF()) {
+                List<GenerateInvoiceResultDto> invoicesResult = result.getGenerateInvoiceResultDto();
+                invoicesResult = invoiceApi.sendByEmail(invoicesResult);
+                result.setGenerateInvoiceResultDto(invoicesResult);
+            }
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -242,6 +256,23 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
             processException(e, result.getActionStatus());
         }
 
+        return result;
+    }
+
+    @Override
+    public ActionStatus sendByEmail(InvoiceDto invoiceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            boolean response = invoiceApi.sendByEmail(invoiceDto, MailingTypeEnum.MANUAL);
+            result.setMessage("INVOICE_SENT_BY_EMAIL");
+            if (!response) {
+                result.setStatus(ActionStatusEnum.FAIL);
+                result.setMessage("INVOICE_NOT_SENT_BY_EMAIL");
+            }
+
+        } catch (Exception e) {
+            processException(e, result);
+        }
         return result;
     }
 }

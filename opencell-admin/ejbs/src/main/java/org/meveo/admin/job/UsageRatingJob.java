@@ -19,6 +19,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class UsageRatingJob rate all opened EDRs.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class UsageRatingJob extends Job {
@@ -44,17 +46,17 @@ public class UsageRatingJob extends Job {
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("nbRuns");
-        nbRuns.setAppliesTo("JOB_UsageRatingJob");
+        nbRuns.setAppliesTo("JobInstance_UsageRatingJob");
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         nbRuns.setValueRequired(false);
-        nbRuns.setDefaultValue("1");
+        nbRuns.setDefaultValue("-1");
         result.put("nbRuns", nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
         waitingMillis.setCode("waitingMillis");
-        waitingMillis.setAppliesTo("JOB_UsageRatingJob");
+        waitingMillis.setAppliesTo("JobInstance_UsageRatingJob");
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
@@ -64,12 +66,24 @@ public class UsageRatingJob extends Job {
 
         CustomFieldTemplate rateUntilDate = new CustomFieldTemplate();
         rateUntilDate.setCode("rateUntilDate");
-        rateUntilDate.setAppliesTo("JOB_UsageRatingJob");
+        rateUntilDate.setAppliesTo("JobInstance_UsageRatingJob");
         rateUntilDate.setActive(true);
         rateUntilDate.setDescription(resourceMessages.getString("jobExecution.rateUntilDate"));
         rateUntilDate.setFieldType(CustomFieldTypeEnum.DATE);
         rateUntilDate.setValueRequired(false);
+        rateUntilDate.setMaxValue(50L);
         result.put("rateUntilDate", rateUntilDate);
+        
+        CustomFieldTemplate ratingGroup = new CustomFieldTemplate();
+        ratingGroup.setCode("ratingGroup");
+        ratingGroup.setAppliesTo("JobInstance_UsageRatingJob");
+        ratingGroup.setActive(true);
+        ratingGroup.setDescription(resourceMessages.getString("subscription.ratingGroup"));
+        ratingGroup.setFieldType(CustomFieldTypeEnum.STRING);
+        ratingGroup.setValueRequired(false);
+        ratingGroup.setDefaultValue(null);
+        ratingGroup.setMaxValue(50L);
+        result.put("ratingGroup", ratingGroup);
 
         return result;
     }

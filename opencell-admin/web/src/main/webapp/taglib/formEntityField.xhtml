@@ -15,12 +15,12 @@
             <h:panelGroup id="#{id}_entity">
                 <c:if test="#{edit}">
                     <c:if test="#{empty fieldItem}">
-                        <p:inputText id="#{id}_text" value="#{fieldItem}" disabled="true" />
-                        <p:inputText id="#{id}" type="hidden" value="#{fieldItem}" required="#{required}" />
+                        <p:inputText id="#{id}_text" value="#{fieldItem}" disabled="true" label="#{label}"/>
+                        <p:inputText id="#{id}" type="hidden" value="#{fieldItem}" required="#{required}" label="#{label}"/>
                     </c:if>
                     <c:if test="#{! empty fieldItem}">
-                        <p:inputText id="#{id}_text" value="#{fieldItem[valueLabelField]}" size="#{size}" disabled="true" />
-                        <p:inputText id="#{id}" type="hidden" value="#{fieldItem[valueLabelField]}" required="#{required}" />
+                        <p:inputText id="#{id}_text" value="#{fieldItem[valueLabelField]}" size="#{size}" disabled="true" label="#{label}"/>
+                        <p:inputText id="#{id}" type="hidden" value="#{fieldItem[valueLabelField]}" required="#{required}" label="#{label}"/>
                     </c:if>
                     <p:commandButton immediate="true" rendered="#{((!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)) and !disabled}" id="#{id}_selectLink"
                         onclick="PF('dlg_#{popupId}').show()" icon="ui-icon-search" type="button" />

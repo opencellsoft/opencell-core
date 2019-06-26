@@ -9,17 +9,21 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ISearchable;
 
 /**
+ * Credit category
+ * 
  * @author Edward P. Legaspi
  **/
 @Entity
 @Cacheable
-@ExportIdentifier({ "code"})
-@Table(name = "ar_credit_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_credit_category_seq"), })
-public class CreditCategory extends BusinessEntity {
+@ExportIdentifier({ "code" })
+@Table(name = "ar_credit_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_credit_category_seq"), })
+public class CreditCategory extends BusinessEntity implements ISearchable {
 
-	private static final long serialVersionUID = 3517517101499066805L;
+    private static final long serialVersionUID = 3517517101499066805L;
 
 }

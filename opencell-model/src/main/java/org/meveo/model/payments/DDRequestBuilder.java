@@ -27,11 +27,13 @@ import org.meveo.model.scripts.ScriptInstance;
  *
  * @author anasseh
  * @since Opencell 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 
 @Entity
 @ModuleItem
-@CustomFieldEntity(cftCodePrefix = "DDREQ_BUILDER")
+@CustomFieldEntity(cftCodePrefix = "DDRequestBuilder")
 @Table(name = "ar_ddrequest_builder")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_ddrequest_builder_seq"), })
@@ -59,17 +61,16 @@ public class DDRequestBuilder extends EnableBusinessCFEntity {
     /** The nb operation per file. */
     @Column(name = "nb_ops_file")
     private Long nbOperationPerFile;
-    
+
     /** The max size file in ko */
     @Column(name = "max_size_file")
     private Long maxSizeFile;
-    
+
     @Column(name = "payment_level")
     @Enumerated(EnumType.STRING)
     @NotNull
     private PaymentLevelEnum paymentLevel;
 
- 
     public DDRequestBuilder() {
 
     }
@@ -80,7 +81,7 @@ public class DDRequestBuilder extends EnableBusinessCFEntity {
     public DDRequestBuilderTypeEnum getType() {
         return type;
     }
-    
+
     /**
      * @param type the type to set
      */
@@ -156,6 +157,6 @@ public class DDRequestBuilder extends EnableBusinessCFEntity {
      */
     public void setPaymentLevel(PaymentLevelEnum paymentLevel) {
         this.paymentLevel = paymentLevel;
-    }    
-    
+    }
+
 }

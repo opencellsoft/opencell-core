@@ -23,10 +23,16 @@ import org.meveo.model.IEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.OfferServiceTemplate;
 
+/**
+ * A mapping between Invoice type, seller and invoice numbering sequence
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ExportIdentifier({ "invoiceType.code", "seller.code" })
 @Table(name = "billing_seq_invtyp_sell")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "bill_seq_it_sell_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "bill_seq_it_sell_seq"), })
 public class InvoiceTypeSellerSequence implements IEntity {
 
     @Id
@@ -35,20 +41,32 @@ public class InvoiceTypeSellerSequence implements IEntity {
     @Access(AccessType.PROPERTY)
     protected Long id;
 
+    /**
+     * Invoice type
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "invoicetype_id")
     @NotNull
     private InvoiceType invoiceType;
 
+    /**
+     * Seller
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "seller_id")
     @NotNull
     private Seller seller;
 
+    /**
+     * Invoice numbering sequence
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "invoice_sequence_id")
     private InvoiceSequence invoiceSequence;
-    
+
+    /**
+     * Expression to calculate Invoice number prefix
+     */
     @Column(name = "prefix_el", length = 2000)
     @Size(max = 2000)
     private String prefixEL = "";
@@ -97,22 +115,22 @@ public class InvoiceTypeSellerSequence implements IEntity {
     }
 
     public InvoiceSequence getInvoiceSequence() {
-		return invoiceSequence;
-	}
+        return invoiceSequence;
+    }
 
-	public void setInvoiceSequence(InvoiceSequence invoiceSequence) {
-		this.invoiceSequence = invoiceSequence;
-	}
-	
-	public String getPrefixEL() {
-		return prefixEL;
-	}
+    public void setInvoiceSequence(InvoiceSequence invoiceSequence) {
+        this.invoiceSequence = invoiceSequence;
+    }
 
-	public void setPrefixEL(String prefixEL) {
-		this.prefixEL = prefixEL;
-	}
+    public String getPrefixEL() {
+        return prefixEL;
+    }
 
-	@Override
+    public void setPrefixEL(String prefixEL) {
+        this.prefixEL = prefixEL;
+    }
+
+    @Override
     public boolean equals(Object obj) {
 
         if (this == obj) {
@@ -126,7 +144,7 @@ public class InvoiceTypeSellerSequence implements IEntity {
         InvoiceTypeSellerSequence other = (InvoiceTypeSellerSequence) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-             return true;
+            return true;
         }
 
         if (invoiceType != null) {

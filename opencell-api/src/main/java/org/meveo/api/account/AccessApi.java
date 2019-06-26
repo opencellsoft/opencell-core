@@ -16,6 +16,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.medina.impl.AccessService;
@@ -136,7 +137,7 @@ public class AccessApi extends BaseApi {
             throw new EntityDoesNotExistsException(Access.class, accessCode);
         }
 
-        return new AccessDto(access, entityToDtoConverter.getCustomFieldsDTO(access, true));
+        return new AccessDto(access, entityToDtoConverter.getCustomFieldsDTO(access, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 
     public void remove(String accessCode, String subscriptionCode) throws MeveoApiException, BusinessException {
@@ -178,7 +179,7 @@ public class AccessApi extends BaseApi {
         List<Access> accesses = accessService.listBySubscription(subscription);
         if (accesses != null) {
             for (Access ac : accesses) {
-                result.getAccess().add(new AccessDto(ac, entityToDtoConverter.getCustomFieldsDTO(ac, true)));
+                result.getAccess().add(new AccessDto(ac, entityToDtoConverter.getCustomFieldsDTO(ac, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
             }
         }
 

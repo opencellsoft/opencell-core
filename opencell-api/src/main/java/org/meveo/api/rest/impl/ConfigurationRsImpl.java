@@ -7,12 +7,14 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.ConfigurationApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.response.GetConfigurationResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.ConfigurationRs;
 
 /** 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.1
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -22,13 +24,12 @@ public class ConfigurationRsImpl extends BaseRs implements ConfigurationRs {
 	private ConfigurationApi configurationApi;
 
 	@Override
-	public ActionStatus systemProperties() {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
+	public GetConfigurationResponse systemProperties() {
+        GetConfigurationResponse result = new GetConfigurationResponse();
         try {
-            result.setMessage(configurationApi.getPropertiesAsJsonString());
+            result.setProperties(configurationApi.getProperties());
         } catch (Exception e) {
-            processException(e, result);
+            processException(e, result.getActionStatus());
         }
 
         return result;

@@ -34,6 +34,7 @@ import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -42,7 +43,8 @@ import org.primefaces.model.SortOrder;
 /**
  * @author Edward P. Legaspi(edward.legaspi@manaty.net)
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  *
  */
 @Stateless
@@ -80,7 +82,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
     private ProductTemplateDto convertProductTemplateToDto(ProductTemplate productTemplate) {
 
-        ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false, true);
+        ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false, true);
         processProductChargeTemplateToDto(productTemplate, productTemplateDto);
         return productTemplateDto;
     }
@@ -88,9 +90,6 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
     @Override
     public ProductTemplate create(ProductTemplateDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(postData.getName())) {
             missingParameters.add("name");
         }

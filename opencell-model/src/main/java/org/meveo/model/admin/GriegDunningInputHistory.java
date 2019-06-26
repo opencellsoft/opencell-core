@@ -28,30 +28,29 @@ import javax.persistence.Entity;
 @DiscriminatorValue("GRIEG_DUNNING")
 public class GriegDunningInputHistory extends InputHistory {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public GriegDunningInputHistory() {
-	}
+    public GriegDunningInputHistory() {
+    }
 
-	/**
-	 * Convert from {@link InputHistory} to {@link GriegDunningInputHistory}.
-	 * 
-	 * @param inputInfo
-	 *            {@link InputHistory} superclass.
-	 */
-	public GriegDunningInputHistory(InputHistory inputInfo) {
-		// TODO this conversion is possible source of the bug (in case of
-		// InputInfo changes)
-		// so it should be either tested or generalized somehow.
-		this.setId(inputInfo.getId());
-		this.setVersion(inputInfo.getVersion());
-		this.setAnalysisEndDate(inputInfo.getAnalysisEndDate());
-		this.setAnalysisStartDate(inputInfo.getAnalysisStartDate());
-		this.setName(inputInfo.getName());
-		this.setParsedTickets(inputInfo.getParsedTickets());
-		this.setSucceededTickets(inputInfo.getSucceededTickets());
-		this.setRejectedTickets(inputInfo.getRejectedTickets());
-		this.setIgnoredTickets(inputInfo.getIgnoredTickets());
-	}
+    /**
+     * Convert from {@link InputHistory} to {@link GriegDunningInputHistory}.
+     * 
+     * @param inputInfo {@link InputHistory} superclass.
+     */
+    public GriegDunningInputHistory(InputHistory inputInfo) {
+        // TODO this conversion is possible source of the bug (in case of
+        // InputInfo changes)
+        // so it should be either tested or generalized somehow.
+        this.setId(inputInfo.getId());
+        this.setVersion(inputInfo.getVersion());
+        this.setAnalysisEndDate(inputInfo.getAnalysisEndDate());
+        this.setAnalysisStartDate(inputInfo.getAnalysisStartDate());
+        this.setName(inputInfo.getName());
+        this.setParsedTickets(inputInfo.getParsedTickets());
+        this.setSucceededTickets(inputInfo.getSucceededTickets());
+        this.setRejectedTickets(inputInfo.getRejectedTickets());
+        this.setIgnoredTickets(inputInfo.getIgnoredTickets());
+    }
 
 }

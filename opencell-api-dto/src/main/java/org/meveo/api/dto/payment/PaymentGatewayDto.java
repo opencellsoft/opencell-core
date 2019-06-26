@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentGatewayTypeEnum;
@@ -18,7 +19,8 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * The PaymentGateway Dto.
  * 
  * @author anasseh
- *
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2
  */
 @XmlRootElement(name = "PaymentGateway")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -50,21 +52,38 @@ public class PaymentGatewayDto extends EnableBusinessDto {
 
     /** The card type. */
     private CreditCardTypeEnum cardType;
-    
+
     /** The marchand id. */
     private String marchandId;
-    
+
     /** The secret key. */
     private String secretKey;
-    
+
     /** The api key. */
     private String apiKey;
-    
+
+    /** The webhooks secret key. */
+    private String webhooksSecretKey;
+
+    /** The webhooks key id. */
+    private String webhooksKeyId;
+
     /** The profile. */
     private String profile;
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+
+    /**
+     * The RUM sequence associated to this PaymentGateway.
+     */
+    private PaymentGatewayRumSequenceDto rumSequence;
+
+    /** The seller code. */
+    private String sellerCode;
+
+    /** The bank coordinates. */
+    private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
 
     /**
      * Instantiates a new payment gateway dto.
@@ -94,8 +113,16 @@ public class PaymentGatewayDto extends EnableBusinessDto {
         this.marchandId = paymentGateway.getMarchandId();
         this.secretKey = "*******";
         this.apiKey = paymentGateway.getApiKey();
+        this.webhooksKeyId = paymentGateway.getWebhooksKeyId();
+        this.webhooksSecretKey = paymentGateway.getWebhooksSecretKey();
         this.profile = paymentGateway.getProfile();
-        
+        if (paymentGateway.getRumSequence() != null) {
+            rumSequence = new PaymentGatewayRumSequenceDto(paymentGateway.getRumSequence());
+        }
+        this.sellerCode = paymentGateway.getSeller() == null ? null : paymentGateway.getSeller().getCode();
+        if (paymentGateway.getBankCoordinates() != null) {
+            this.setBankCoordinates(new BankCoordinatesDto(paymentGateway.getBankCoordinates()));
+        }
     }
 
     /**
@@ -259,8 +286,6 @@ public class PaymentGatewayDto extends EnableBusinessDto {
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
-    
-    
 
     /**
      * @return the marchandId
@@ -305,6 +330,42 @@ public class PaymentGatewayDto extends EnableBusinessDto {
     }
 
     /**
+     * Gets Webhooks Secret Key
+     * 
+     * @return
+     */
+    public String getWebhooksSecretKey() {
+        return webhooksSecretKey;
+    }
+
+    /**
+     * Sets Webhooks Secret Key
+     * 
+     * @param webhooksSecretKey
+     */
+    public void setWebhooksSecretKey(String webhooksSecretKey) {
+        this.webhooksSecretKey = webhooksSecretKey;
+    }
+
+    /**
+     * Gets Webhooks Key Id
+     * 
+     * @return
+     */
+    public String getWebhooksKeyId() {
+        return webhooksKeyId;
+    }
+
+    /**
+     * Sets webhooks Key Id
+     * 
+     * @param webhooksKeyId
+     */
+    public void setWebhooksKeyId(String webhooksKeyId) {
+        this.webhooksKeyId = webhooksKeyId;
+    }
+
+    /**
      * @return the profile
      */
     public String getProfile() {
@@ -322,7 +383,44 @@ public class PaymentGatewayDto extends EnableBusinessDto {
     public String toString() {
         return "PaymentGatewayDto [id=" + id + ", code=" + code + ", description=" + description + ", updatedCode=" + updatedCode + ", type=" + type + ", paymentMethodType="
                 + paymentMethodType + ", scriptInstanceCode=" + scriptInstanceCode + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL
-                + ", countryCode=" + countryCode + ", tradingCurrencyCode=" + tradingCurrencyCode + ", cardType=" + cardType + ", marchandId="+marchandId+"]";
+                + ", countryCode=" + countryCode + ", tradingCurrencyCode=" + tradingCurrencyCode + ", cardType=" + cardType + ", marchandId=" + marchandId + ", sellerCode="
+                + sellerCode + "]";
+    }
+
+    public PaymentGatewayRumSequenceDto getRumSequence() {
+        return rumSequence;
+    }
+
+    public void setRumSequence(PaymentGatewayRumSequenceDto rumSequence) {
+        this.rumSequence = rumSequence;
+    }
+
+    /**
+     * @return the sellerCode
+     */
+    public String getSellerCode() {
+        return sellerCode;
+    }
+
+    /**
+     * @param sellerCode the sellerCode to set
+     */
+    public void setSellerCode(String sellerCode) {
+        this.sellerCode = sellerCode;
+    }
+
+    /**
+     * @return the bankCoordinates
+     */
+    public BankCoordinatesDto getBankCoordinates() {
+        return bankCoordinates;
+    }
+
+    /**
+     * @param bankCoordinates the bankCoordinates to set
+     */
+    public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
+        this.bankCoordinates = bankCoordinates;
     }
 
 }

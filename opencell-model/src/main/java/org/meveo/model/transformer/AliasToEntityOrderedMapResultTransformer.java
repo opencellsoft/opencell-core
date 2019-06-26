@@ -15,7 +15,7 @@ import org.hibernate.transform.AliasedTupleSubsetResultTransformer;
 public class AliasToEntityOrderedMapResultTransformer extends AliasedTupleSubsetResultTransformer {
 
     private static final long serialVersionUID = -4573333062530289943L;
-    
+
     public static final AliasToEntityOrderedMapResultTransformer INSTANCE = new AliasToEntityOrderedMapResultTransformer();
 
     /**

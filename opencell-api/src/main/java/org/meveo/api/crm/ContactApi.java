@@ -41,6 +41,10 @@ import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.intcrm.impl.ContactService;
 import org.primefaces.model.SortOrder;
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class ContactApi extends AccountEntityApi {
@@ -81,7 +85,7 @@ public class ContactApi extends AccountEntityApi {
 
 		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("email");
-			missingParameters.add("code");
+			//missingParameters.add("code");
 		}
 		else if(StringUtils.isBlank(postData.getEmail())) {
 			missingParameters.add("email");
@@ -135,21 +139,32 @@ public class ContactApi extends AccountEntityApi {
 		return contact;
 	}
 
-	public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {
-		if (StringUtils.isBlank(postData.getName().getFirstName())) {
-			missingParameters.add("firstName");
-		}
+	private void checkAndHandleMissingParameters(ContactDto postData) throws MissingParameterException {
+		if (postData.getName() == null) {
+			missingParameters.add("name");
+		}else {
+			if (StringUtils.isBlank(postData.getName().getFirstName())) {
+				missingParameters.add("firstName");
+			}
 
-		if (StringUtils.isBlank(postData.getName().getLastName())) {
-			missingParameters.add("lastName");
+			if (StringUtils.isBlank(postData.getName().getLastName())) {
+				missingParameters.add("lastName");
+			}
 		}
 
 		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("email");
 			missingParameters.add("code");
 		}
+		else if(StringUtils.isBlank(postData.getEmail())) {
+			missingParameters.add("email");
+		}
 
 		handleMissingParameters();
+	}
+
+	public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {
+		checkAndHandleMissingParameters(postData);
 		
 		String code = null;
 		if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
@@ -255,7 +270,7 @@ public class ContactApi extends AccountEntityApi {
 
 		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("email");
-			missingParameters.add("code");
+			//missingParameters.add("code");
 		}
 
 		handleMissingParameters();

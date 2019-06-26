@@ -18,79 +18,99 @@
  */
 package org.meveo.model.payments;
 
+import org.meveo.model.dunning.DunningDocument;
+
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @Entity
 @DiscriminatorValue(value = "P")
 public class Payment extends AccountOperation {
 
     private static final long serialVersionUID = 1L;
-   
+
+    /**
+     * if a payment is done as part of a dunning process
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dunning_document_id")
+    private DunningDocument dunningDocument;
+
     /**
      * Number assigned by the Operator bank
      */
     @Column(name = "payment_order")
     private String paymentOrder;
-    
-   /**
-    *  Amount of financial expenses exluded in the amount
-    */
+
+    /**
+     * Amount of financial expenses exluded in the amount
+     */
     @Column(name = "payment_fees")
-    private BigDecimal fees = BigDecimal.ZERO; 
+    private BigDecimal fees = BigDecimal.ZERO;
 
     /**
      * Comments Text free if litigation or special conditions
      */
     @Column(name = "comment", columnDefinition = "LONGTEXT")
     private String comment;
-    
 
-	/**
-	 * @return the paymentOrder
-	 */
-	public String getPaymentOrder() {
-		return paymentOrder;
-	}
+    /**
+     * get the  associated dunning doc if exists
+     * @return
+     */
+    public DunningDocument getDunningDocument() {
+        return dunningDocument;
+    }
 
-	/**
-	 * @param paymentOrder the paymentOrder to set
-	 */
-	public void setPaymentOrder(String paymentOrder) {
-		this.paymentOrder = paymentOrder;
-	}
+    /**
+     * set the dunning doc of the payment
+     * @param dunningDocument
+     */
+    public void setDunningDocument(DunningDocument dunningDocument) {
+        this.dunningDocument = dunningDocument;
+    }
 
-	/**
-	 * @return the fees
-	 */
-	public BigDecimal getFees() {
-		return fees;
-	}
+    /**
+     * @return the paymentOrder
+     */
+    public String getPaymentOrder() {
+        return paymentOrder;
+    }
 
-	/**
-	 * @param fees the fees to set
-	 */
-	public void setFees(BigDecimal fees) {
-		this.fees = fees;
-	}
+    /**
+     * @param paymentOrder the paymentOrder to set
+     */
+    public void setPaymentOrder(String paymentOrder) {
+        this.paymentOrder = paymentOrder;
+    }
 
-	/**
-	 * @return the comment
-	 */
-	public String getComment() {
-		return comment;
-	}
+    /**
+     * @return the fees
+     */
+    public BigDecimal getFees() {
+        return fees;
+    }
 
-	/**
-	 * @param comment the comment to set
-	 */
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-    
-    
+    /**
+     * @param fees the fees to set
+     */
+    public void setFees(BigDecimal fees) {
+        this.fees = fees;
+    }
+
+    /**
+     * @return the comment
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * @param comment the comment to set
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
 }

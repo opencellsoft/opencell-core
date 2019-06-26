@@ -10,21 +10,35 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.meveo.model.module.MeveoModule;
 
+/**
+ * Business service model used for service template customization
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "cat_business_serv_model")
 public class BusinessServiceModel extends MeveoModule {
 
     private static final long serialVersionUID = 683873220792653929L;
 
+    /**
+     * Service template
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_template_id")
     private ServiceTemplate serviceTemplate;
 
-    @Type(type="numeric_boolean")
+    /**
+     * Should service be duplicated
+     */
+    @Type(type = "numeric_boolean")
     @Column(name = "duplicate_service")
     private boolean duplicateService;
 
-    @Type(type="numeric_boolean")
+    /**
+     * Should price plan be duplicated
+     */
+    @Type(type = "numeric_boolean")
     @Column(name = "duplicate_price_plan")
     private boolean duplicatePricePlan;
 

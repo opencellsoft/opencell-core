@@ -20,10 +20,7 @@ package org.meveo.model.payments;
 
 public enum DunningActionTypeEnum {
 
-    FILE(1, "DunningActionTypeEnum.file"),
-    LETTER(2, "DunningActionTypeEnum.letter"),
-    EMAIL(3, "DunningActionTypeEnum.email"),
-    CHARGE(3, "DunningActionTypeEnum.charge");
+    FILE(1, "DunningActionTypeEnum.file"), LETTER(2, "DunningActionTypeEnum.letter"), EMAIL(3, "DunningActionTypeEnum.email"), CHARGE(3, "DunningActionTypeEnum.charge");
 
     private Integer id;
     private String label;

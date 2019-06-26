@@ -20,6 +20,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -163,7 +164,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         if (cei == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
         }
-        return new CustomEntityInstanceDto(cei, entityToDtoConverter.getCustomFieldsDTO(cei, true));
+        return new CustomEntityInstanceDto(cei, entityToDtoConverter.getCustomFieldsDTO(cei, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 
     public List<CustomEntityInstanceDto> list(String cetCode) throws MeveoApiException {
@@ -185,7 +186,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         List<CustomEntityInstanceDto> customEntityInstanceDtos = new ArrayList<>();
 
         for (CustomEntityInstance instance : customEntityInstances) {
-            customEntityInstanceDtos.add(new CustomEntityInstanceDto(instance, entityToDtoConverter.getCustomFieldsDTO(instance, true)));
+            customEntityInstanceDtos.add(new CustomEntityInstanceDto(instance, entityToDtoConverter.getCustomFieldsDTO(instance, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
         }
 
         return customEntityInstanceDtos;

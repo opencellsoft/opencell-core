@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -36,7 +37,7 @@ import org.meveo.service.crm.impl.CustomerCategoryService;
  */
 @Named
 @ViewScoped
-public class CustomerCategoryBean extends BaseBean<CustomerCategory> {
+public class CustomerCategoryBean extends CustomFieldBean<CustomerCategory> {
 
 	private static final long serialVersionUID = 1L;
 

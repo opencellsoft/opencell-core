@@ -53,6 +53,7 @@ public final class ListUtils {
 
     /**
      * Sort map by it's values.
+     * 
      * @param <K> key
      * @param <V> value
      * @param map Map to sort
@@ -76,5 +77,16 @@ public final class ListUtils {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
+    }
+
+    /**
+     * Get a an empty collection if null.
+     *
+     * @param <T> the generic type
+     * @param collection the collection
+     * @return the collection
+     */
+    public static <T> Collection<T> safe(Collection<T> collection) {
+        return collection == null ? Collections.EMPTY_LIST : collection;
     }
 }

@@ -61,7 +61,7 @@ public interface OfferTemplateRs extends IBaseRs {
      * @param offerTemplateCode The offer template's code
      * @param validFrom Offer template validity range - from date
      * @param validTo Offer template validity range - to date
-     * @param inheritCF Custom field inheritance type
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @param loadOfferServiceTemplate if true loads the services
      * @param loadOfferProductTemplate if true loads the products
      * @param loadServiceChargeTemplate if true load the service charges
@@ -73,7 +73,8 @@ public interface OfferTemplateRs extends IBaseRs {
     GetOfferTemplateResponseDto find(@QueryParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") @RestDateParam Date validFrom,
             @QueryParam("validTo") @RestDateParam Date validTo, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
             @QueryParam("loadOfferServiceTemplate") @DefaultValue("false") boolean loadOfferServiceTemplate, @QueryParam("loadOfferProductTemplate") @DefaultValue("false") boolean loadOfferProductTemplate,
-            @QueryParam("loadServiceChargeTemplate") @DefaultValue("false") boolean loadServiceChargeTemplate, @QueryParam("loadProductChargeTemplate") @DefaultValue("false") boolean loadProductChargeTemplate);
+            @QueryParam("loadServiceChargeTemplate") @DefaultValue("false") boolean loadServiceChargeTemplate, @QueryParam("loadProductChargeTemplate") @DefaultValue("false") boolean loadProductChargeTemplate,
+            @QueryParam("loadAllowedDiscountPlan") @DefaultValue("false") boolean loadAllowedDiscountPlan);
 
     /**
      * List Offer templates matching filtering and query criteria or code and validity dates.
@@ -90,7 +91,7 @@ public interface OfferTemplateRs extends IBaseRs {
      * @param limit Pagination - number of records to retrieve
      * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder Sorting - sort order.
-     * @param inheritCF Custom field inheritance type
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return A list of offer templates
      */
     @GET

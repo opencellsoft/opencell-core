@@ -38,6 +38,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.catalog.UsageChargeTemplate;
 
+/**
+ * Usage charge as part of subscribed service
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "billing_usage_charge_inst")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -49,18 +54,31 @@ public class UsageChargeInstance extends ChargeInstance {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Subscribed service
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_instance_id")
     private ServiceInstance serviceInstance;
 
+    /**
+     * Counter for consumption tracking
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counter_id")
     private CounterInstance counter;
 
+    /**
+     * Rating unit description
+     */
     @Column(name = "rating_unit_description", length = 20)
     @Size(max = 20)
     private String ratingUnitDescription;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_update")
     private Date lastUpdate;

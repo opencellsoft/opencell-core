@@ -32,6 +32,7 @@ import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * @lastModifiedVersion 5.2
  */
 public class DateUtils {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(DateUtils.class);
 
     private static long lastTime = System.currentTimeMillis() / 1000;
@@ -79,10 +80,10 @@ public class DateUtils {
     }
 
     /**
-     * Evaluates a date inside a pre-determined delimiters in a string.
+     * Replaces a date format string in text with a current date. E.g. sales-#{re.id}-[yyyy_MM_dd].html changes to sales-#{re.id}-2018-05-18.html
      * 
-     * @param input string that contains the date
-     * @return Result of date evaluate
+     * @param input string that contains the date format
+     * @return Text with date value replaced
      */
     public static String evaluteDateFormat(String input) {
         if (!(input.contains(START_DATE_DELIMITER) && input.contains(END_DATE_DELIMITER))) {
@@ -181,7 +182,7 @@ public class DateUtils {
         } else if (end == null) {
             result = (dateToCheck.after(start) || dateToCheck.equals(start));
         } else {
-            result = (dateToCheck.before(end) );
+            result = (dateToCheck.before(end));
         }
         return result;
 
@@ -491,14 +492,15 @@ public class DateUtils {
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(gCalendar);
 
     }
-    
+
     public static XMLGregorianCalendar dateToXMLGregorianCalendarFieldUndefined(Date date) throws DatatypeConfigurationException {
         if (date == null) {
             return null;
         }
         GregorianCalendar cal = new GregorianCalendar();
         cal.setTime(date);
-        return DatatypeFactory.newInstance().newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
+        return DatatypeFactory.newInstance().newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH),
+            DatatypeConstants.FIELD_UNDEFINED);
     }
 
     final static Pattern fourDigitsPattern = Pattern.compile("(?<!\\d)\\d{4}(?!\\d)");
@@ -635,7 +637,7 @@ public class DateUtils {
 
         return !dateToCheck.before(startDate) && !dateToCheck.after(endDate);
     }
-    
+
     /**
      * Format DDMMY : <br>
      * SimpleDateFormat way is not working for this format. e.g : with sfd, 2009 will return '9' but 2018 will return 18<br>
@@ -644,16 +646,16 @@ public class DateUtils {
      * @param date the date
      * @return the string
      */
-    public static String formatDDMMY (Date date) {
-        
+    public static String formatDDMMY(Date date) {
+
         String ddMM = formatDateWithPattern(date, "ddMM");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         String y = String.valueOf(calendar.get(Calendar.YEAR) % 10);
-        
-        return ddMM+y;
+
+        return ddMM + y;
     }
-    
+
     public static Date truncateTime(Date date) {
         try {
             if (date == null) {
@@ -669,6 +671,21 @@ public class DateUtils {
         } catch (Exception e) {
             LOG.error(" error on truncateTime : [{}] ", e.getMessage());
             return date;
+        }
+    }
+
+    public static String changeFormat(String dateValue, String fromFormat, String toFormat) {
+        try {
+            if (StringUtils.isEmpty(dateValue) || StringUtils.isEmpty(fromFormat) || StringUtils.isEmpty(toFormat)) {
+                return dateValue;
+            }
+            
+            Date date = parseDateWithPattern(dateValue, fromFormat);
+            return formatDateWithPattern(date, toFormat);
+            
+        } catch (Exception e) {
+            LOG.error(" error on changeFormat : [{}] ", e.getMessage());
+            return dateValue;
         }
     }
 }

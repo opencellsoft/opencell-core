@@ -19,13 +19,12 @@
 package org.meveo.model;
 
 /**
- * Interface for IndentifiableEnum. This is used when enum is mapped in model
- * as integer. Meveo framework then recognized it (for example in search) and 
- * uses id field then for search instead of string.
+ * Interface for IndentifiableEnum. This is used when enum is mapped in model as integer. Meveo framework then recognized it (for example in search) and uses id field then for
+ * search instead of string.
  * 
  */
 public interface IdentifiableEnum {
 
-	public Integer getId();
+    public Integer getId();
 
 }

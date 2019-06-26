@@ -27,9 +27,9 @@ import org.meveo.model.bi.JobHistory;
 @DiscriminatorValue(value = "BANK_FILE_IMPORT")
 public class BankFileImportHisto extends JobHistory {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public BankFileImportHisto() {
+    public BankFileImportHisto() {
 
-	}
+    }
 }

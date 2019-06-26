@@ -33,6 +33,11 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.shared.Address;
 
+/**
+ * Provider contact information
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ObservableEntity
 @Cacheable
@@ -44,36 +49,60 @@ public class ProviderContact extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * First name
+     */
     @Column(name = "firstname", length = 50)
     @Size(max = 50)
     protected String firstName;
 
+    /**
+     * Last name
+     */
     @Column(name = "lastname", length = 50)
     @Size(max = 50)
     protected String lastName;
 
-    @Column(name = "email", length = 100)
     // @Pattern(regexp = ".+@.+\\..{2,4}")
+    /**
+     * Email address
+     */
+    @Column(name = "email", length = 100)
     @Size(max = 100)
     protected String email;
 
+    /**
+     * Phone
+     */
     @Column(name = "phone", length = 50)
     @Size(max = 50)
     protected String phone;
 
+    /**
+     * Mobile phone number
+     */
     @Column(name = "mobile", length = 50)
     @Size(max = 50)
     protected String mobile;
 
+    /**
+     * Fax number
+     */
     @Column(name = "fax", length = 50)
     @Size(max = 50)
     protected String fax;
 
-    @Column(name = "generic_mail", length = 100)
     // @Pattern(regexp = ".+@.+\\..{2,4}")
+    /**
+     * General email address
+     */
+    @Column(name = "generic_mail", length = 100)
     @Size(max = 100)
     protected String genericMail;
 
+    /**
+     * Address
+     */
     @Embedded
     private Address address;
 

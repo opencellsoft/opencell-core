@@ -30,16 +30,22 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.omnifaces.cdi.Param;
 
 /**
  * Standard backing bean for {@link ServiceInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Named
 @ViewScoped
@@ -50,12 +56,18 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     @Inject
     private ServiceInstanceService serviceInstanceService;
 
+    @Inject
+    private CounterInstanceService counterInstanceService;
+
+
     /**
      * Offer Id passed as a parameter. Used when creating new Service from Offer window, so default offer will be set on newly created service.
      */
     @Inject
     @Param
     private Long offerInstanceId;
+
+    private CounterInstance selectedCounterInstance;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -76,6 +88,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
         if (offerInstanceId != null) {
             // entity.setOfferInstance(offerInstanceService.findById(offerInstanceId.get());
         }
+        selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
 
         return entity;
     }
@@ -152,23 +165,26 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
         return null;
     }
 
-    public String cancelService() {
-        log.info("cancelService serviceInstanceId:" + entity.getId());
+    public String reactiveService() {
+        log.info("reactiveService serviceInstanceId:" + entity.getId());
 
         try {
-            entity.setStatus(InstanceStatusEnum.CANCELED);
-            serviceInstanceService.update(entity);
-            messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+            entity = serviceInstanceService.refreshOrRetrieve(entity);
+            serviceInstanceService.serviceReactivation(entity, new Date());
+            messages.info(new BundleKey("messages", "activation.activateSuccessful"));
 
+        } catch (BusinessException e) {
+            log.error("failed to reactive service", e);
+            messages.error(e.getMessage());
         } catch (Exception e) {
-            log.error("failed to cancel service ", e);
+            log.error("error generated in reactive service ", e);
             messages.error(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
         }
         return null;
     }
-
+    
     public String suspendService() {
-        log.info("closeAccount serviceInstanceId:" + entity.getId());
+        log.info("suspendService serviceInstanceId:" + entity.getId());
 
         try {
             entity = serviceInstanceService.refreshOrRetrieve(entity);
@@ -216,5 +232,42 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
      */
     public void  autoUpdateEndOfEngagementDate() {
         entity.autoUpdateEndOfEngagementDate();
+    }
+
+    /**
+     * Check is terminated service
+     *
+     * @return true is the service is terminated
+     */
+    public boolean isTerminatedService() {
+        return serviceInstanceService.willBeTerminatedInFuture(entity);
+    }
+
+    /**
+     * cancel subscription termination.
+     */
+    @ActionMethod
+    public void cancelServiceTermination() throws BusinessException {
+        log.debug("cancelTermination...");
+        entity = serviceInstanceService.refreshOrRetrieve(entity);
+        serviceInstanceService.cancelServiceTermination(entity);
+        serviceInstanceService.refresh(entity);
+        messages.info(new BundleKey("messages", "termination.cancelTerminationSuccessful"));
+
+    }
+
+    public CounterInstance getSelectedCounterInstance() {
+        if (entity == null) {
+            initEntity();
+        }
+        return selectedCounterInstance;
+    }
+
+    public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+        if (selectedCounterInstance != null) {
+            this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
+        } else {
+            this.selectedCounterInstance = null;
+        }
     }
 }
