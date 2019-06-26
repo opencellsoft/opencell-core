@@ -578,7 +578,7 @@
 		<dependency>
    			 <groupId>com.ingenico.connect.gateway</groupId>
   			<artifactId>connect-sdk-java</artifactId>
-  			<version>5.18.0</version>
+  			<version>${version.ingenico-connect-sdk}</version>
 		</dependency>
 		
 		<dependency>
