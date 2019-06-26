@@ -195,7 +195,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 
         String result = super.saveOrUpdate(killConversation);
 
-        if (entity.isError().booleanValue()) {
+        if (entity.isError()) {
             // if (entity.isError()) {
             // messages.error(new BundleKey("messages", "scriptInstance.compilationFailed"));
             // }

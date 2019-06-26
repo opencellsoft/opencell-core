@@ -107,7 +107,7 @@ public class SubscriptionRenewal implements Serializable {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "auto_renew")
-    private boolean autoRenew;
+    private boolean autoRenew = false;
 
     /**
      * Linked to auto_renew
