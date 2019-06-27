@@ -115,6 +115,14 @@ public class NumberUtils {
     }
 
     /**
+     * @param bigDecimal
+     * @return A null-safe Plain String value of the bigDecimal
+     */
+    public static String toPlainString(BigDecimal bigDecimal) {
+        return bigDecimal != null ? bigDecimal.toPlainString() : BigDecimal.ZERO.toPlainString();
+    }
+
+    /**
      * Compute derived amounts amountWithoutTax/amountWithTax/amountTax
      * 
      * @param amountWithoutTax Amount without tax
