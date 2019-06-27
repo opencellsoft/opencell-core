@@ -44,6 +44,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -151,7 +152,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
-    private String uuid = UUID.randomUUID().toString();
+    private String uuid;
 
     /**
      * Custom field values in JSON format
@@ -325,7 +326,56 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
         } catch (ClassNotFoundException e) {
             // do nothing
         }
+        
+		// secured entities from role
+		if (getRoles() != null && !getRoles().isEmpty()) {
+			for (Role r : getRoles()) {
+				try {
+					for (SecuredEntity securedEntity : r.getSecuredEntities()) {
+						Class<?> securedBusinessEntityClass = Class.forName(securedEntity.getEntityClass());
+						if (securedEntitiesMap.get(securedBusinessEntityClass) == null) {
+							securedEntitySet = new HashSet<>();
+							securedEntitiesMap.put(securedBusinessEntityClass, securedEntitySet);
+						}
+						securedEntitiesMap.get(securedBusinessEntityClass).add(securedEntity);
+					}
+				} catch (ClassNotFoundException e) {
+					// do nothing
+				}
+			}
+		}
+        
     }
+    
+    /**
+     * Returns all the secured entities associated with this user's roles.
+     * @return list of secured entities
+     */
+	public List<SecuredEntity> getRoleSecuredEntities() {
+		List<SecuredEntity> result = new ArrayList<>();
+
+		if (getRoles() != null && !getRoles().isEmpty()) {
+			for (Role r : getRoles()) {
+				if (r.getSecuredEntities() != null && !r.getSecuredEntities().isEmpty()) {
+					result.addAll(r.getSecuredEntities());
+				}
+			}
+		}
+
+		return result;
+	}
+	
+	/**
+	 * Returns all the secured entities of this user and all its roles.
+	 * @return list of secured entities
+	 */
+	public List<SecuredEntity> getAllSecuredEntities() {
+		List<SecuredEntity> result = new ArrayList<>();
+		result.addAll(getSecuredEntities());
+		result.addAll(getRoleSecuredEntities());
+		
+		return result;
+	}
 
     public UserHierarchyLevel getUserLevel() {
         return userLevel;
@@ -342,9 +392,20 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
 
         return userName;
     }
-
+    
+    /**
+     * setting uuid if null
+     */
+    @PrePersist
+    public void setUUIDIfNull() {
+    	if (uuid == null) {
+    		uuid = UUID.randomUUID().toString();
+    	}
+    }
+    
     @Override
     public String getUuid() {
+    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
 

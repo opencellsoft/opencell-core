@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -95,6 +96,28 @@ public class PaymentDto extends BaseEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    /**
+     * Instantiates a new payment dto.
+     */
+    public PaymentDto() {
+    }
+    
+    /**
+     * Instantiates a new payment dto.
+     * 
+     * @param payment Payment
+     */
+    public PaymentDto(Payment payment) {
+        this.setReference(payment.getReference());
+        this.setAmount(payment.getAmount());
+        this.setDueDate(payment.getDueDate());
+        this.setTransactionDate(payment.getTransactionDate());
+        this.setDescription(payment.getDescription());
+        this.setPaymentMethod(payment.getPaymentMethod());
+        this.setType(payment.getType());
+    }
+
 
     /**
      * Gets the custom fields.

@@ -368,6 +368,9 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setJobTitle(postData.getJobTitle());
         billingAccountDto.setDiscountPlansForInstantiation(postData.getDiscountPlansForInstantiation());
         billingAccountDto.setDiscountPlansForTermination(postData.getDiscountPlansForTermination());
+        billingAccountDto.setMailingType(postData.getMailingType());
+        billingAccountDto.setEmailTemplate(postData.getEmailTemplate());
+        billingAccountDto.setCcedEmails(postData.getCcedEmails());
 
         billingAccountApi.create(billingAccountDto);
 
@@ -570,7 +573,19 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setJobTitle(postData.getJobTitle());
         billingAccountDto.setDiscountPlansForInstantiation(postData.getDiscountPlansForInstantiation());
         billingAccountDto.setDiscountPlansForTermination(postData.getDiscountPlansForTermination());
+        
+        if(postData.getMailingType() != null) {
+        	billingAccountDto.setMailingType(postData.getMailingType());
+        }
+        
+        if(postData.getEmailTemplate() != null) {
+        	billingAccountDto.setEmailTemplate(postData.getEmailTemplate());
+        }
 
+        if(postData.getCcedEmails() != null) {
+        	billingAccountDto.setCcedEmails(postData.getCcedEmails());
+        }
+        
         billingAccountApi.createOrUpdate(billingAccountDto);
 
         String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);

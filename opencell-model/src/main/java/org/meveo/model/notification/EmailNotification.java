@@ -135,7 +135,7 @@ public class EmailNotification extends Notification {
     public String toString() {
         final int maxLen = 10;
         return String.format("EmailNotification [emailFrom=%s, emailToEl=%s, emails=%s,  subject=%s, attachmentExpressions=%s, notification=%s]", emailFrom, emailToEl,
-            emails != null ? toString(emails, maxLen) : null, emailTemplate != null ? emailTemplate.getSubject() : null, attachmentExpressions != null ? toString(attachmentExpressions, maxLen) : null, super.toString());
+            emails != null ? toString(emails, maxLen) : null, emailTemplate != null ? emailTemplate.getId() : null, attachmentExpressions != null ? toString(attachmentExpressions, maxLen) : null, super.toString());
     }
 
     private String toString(Collection<?> collection, int maxLen) {

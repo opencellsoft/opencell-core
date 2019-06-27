@@ -42,7 +42,9 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -272,7 +274,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (terminationReason == null) {
             throw new ValidationException("Termination reason not provided", "subscription.error.noTerminationReason");
 
-        } else if (DateUtils.setDateToEndOfDay(terminationDate).before(DateUtils.setDateToEndOfDay(subscription.getSubscriptionDate()))) {
+        } else if (terminationDate.before(subscription.getSubscriptionDate())) {
             throw new ValidationException("Termination date can not be before the subscription date", "subscription.error.terminationDateBeforeSubscriptionDate");
         }
 
@@ -648,4 +650,94 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.setSubscribedTillDate(subscribedTillDate);
         update(subscription);
     }
+
+    /**
+     * check compatibility of services before instantiation
+     *
+     * @param subscription
+     * @param selectedItemsAsList
+     * @throws BusinessException
+     */
+    public void checkCompatibilityOfferServices(Subscription subscription, List<ServiceTemplate> selectedItemsAsList) throws BusinessException {
+
+        if (subscription == null) {
+            throw new BusinessException("subscription is Null in checkCompatibilityOfferServices ");
+        }
+        List<ServiceInstance> serviceInstances =  subscription.getServiceInstances();
+        OfferTemplate offerTemplate = subscription.getOffer();
+
+        // loop in selected Available services for subscription
+        for (ServiceTemplate serviceTemplate : selectedItemsAsList) {
+            OfferServiceTemplate offerServiceTemplate = getOfferServiceTemplate(serviceTemplate.getCode(), offerTemplate);
+            if (offerServiceTemplate == null) {
+                throw new BusinessException("No offerServiceTemplate corresponds to " + serviceTemplate.getCode());
+            }
+
+            // list of incompatible services of an element of current Available services selected
+            List<ServiceTemplate> serviceTemplateIncompatibles = offerServiceTemplate.getIncompatibleServices();
+
+            // check if other selected Available services are part of incompatible services
+            for (ServiceTemplate serviceTemplateOther : selectedItemsAsList) {
+                if (!serviceTemplateOther.getCode().equals(serviceTemplate.getCode())){
+                    for (ServiceTemplate serviceTemplateIncompatible : serviceTemplateIncompatibles) {
+                        if (serviceTemplateOther.getCode().equals(serviceTemplateIncompatible.getCode())) {
+                            throw new BusinessException("Services Incompatibility between "
+                                    + serviceTemplateIncompatible.getCode()
+                                    + " and "
+                                    + serviceTemplate.getCode());
+                        }
+                    }
+                }
+            }
+
+            // check if subscribed service's are part of incompatible services of selected available services
+            for (ServiceInstance subscribedService : serviceInstances) {
+                for (ServiceTemplate serviceTemplateIncompatible : serviceTemplateIncompatibles) {
+                    if (subscribedService.getCode().equals(serviceTemplateIncompatible.getCode())) {
+                        throw new BusinessException("Services Incompatibility between "
+                                + serviceTemplateIncompatible.getCode()
+                                + " and "
+                                + serviceTemplate.getCode());
+                    }
+                }
+            }
+        }
+
+        // check if selected available services are part of incompatible services of subscribed service's
+        for (ServiceInstance subscribedService : serviceInstances) {
+            OfferServiceTemplate offerServiceTemplateSubscribedService = getOfferServiceTemplate(subscribedService.getCode(), offerTemplate);
+            // list of incompatible services of an element of current subscribed service's
+            List<ServiceTemplate> serviceTemplateSubscribedServiceIncompatibles = offerServiceTemplateSubscribedService.getIncompatibleServices();
+
+            for (ServiceTemplate serviceTemplateSelectedItem : selectedItemsAsList) {
+                for (ServiceTemplate serviceTemplateSubscribedServiceIncompatible : serviceTemplateSubscribedServiceIncompatibles) {
+                    if (serviceTemplateSelectedItem.getCode().equals(serviceTemplateSubscribedServiceIncompatible.getCode())) {
+                        throw new BusinessException("Services Incompatibility between "
+                                + serviceTemplateSelectedItem.getCode()
+                                + " and "
+                                + subscribedService.getCode());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Get OfferServiceTemplate which corresponds to serviceCode and offerTemplate
+     * @param serviceCode
+     * @param offerTemplate
+     * @return offerServiceTemplate
+     */
+    public OfferServiceTemplate getOfferServiceTemplate(String serviceCode, OfferTemplate offerTemplate){
+        OfferServiceTemplate offerServiceTemplateResult = null;
+        List<OfferServiceTemplate> offerServiceTemplates = offerTemplate.getOfferServiceTemplates();
+        for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates){
+            List<ServiceTemplate> serviceTemplates = offerServiceTemplate.getIncompatibleServices();
+            if (serviceCode.equals(offerServiceTemplate.getServiceTemplate().getCode())) {
+                offerServiceTemplateResult = offerServiceTemplate;
+            }
+        }
+        return  offerServiceTemplateResult;
+    }
+
 }
