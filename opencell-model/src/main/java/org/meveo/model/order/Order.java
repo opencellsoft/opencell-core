@@ -36,6 +36,8 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
@@ -151,6 +153,7 @@ public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntit
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20, nullable = false)
     @NotNull
+    @AuditTarget(type = AuditChangeTypeEnum.STATUS, history = true, notif = true)
     private OrderStatusEnum status = OrderStatusEnum.IN_CREATION;
 
     /**
