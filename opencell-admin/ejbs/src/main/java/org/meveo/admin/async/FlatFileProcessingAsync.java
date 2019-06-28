@@ -19,9 +19,14 @@ import org.meveo.admin.job.FlatFileProcessingJob;
 import org.meveo.admin.job.UnitFlatFileProcessingJobBean;
 import org.meveo.commons.parsers.IFileParser;
 import org.meveo.commons.parsers.RecordContext;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInterface;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 
@@ -47,6 +52,14 @@ public class FlatFileProcessingAsync {
     /** The job execution service. */
     @Inject
     private JobExecutionService jobExecutionService;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+    
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
     /**
      * Read/parse file and execute script for each line.
@@ -83,6 +96,8 @@ public class FlatFileProcessingAsync {
                 executeParams.put(recordVariableName, recordContext.getRecord());
                 executeParams.put(originFilename, fileName);
                 if (FlatFileProcessingJob.ROLLBBACK.equals(errorAction)) {
+                    executeParams.put(Script.CONTEXT_CURRENT_USER, currentUser);
+                    executeParams.put(Script.CONTEXT_APP_PROVIDER, appProvider);
                     script.execute(executeParams);
                 } else {
                     unitFlatFileProcessingJobBean.execute(script, executeParams);

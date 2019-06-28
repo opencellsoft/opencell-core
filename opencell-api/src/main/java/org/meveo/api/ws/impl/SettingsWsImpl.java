@@ -62,6 +62,7 @@ import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.communication.MeveoInstanceDto;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelDto;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelsDto;
+import org.meveo.api.dto.response.BankingDateStatusResponse;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
@@ -106,10 +107,17 @@ import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
 import org.meveo.api.hierarchy.UserHierarchyLevelApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SettingsWs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.ProviderContact;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
+ * SOAP endpoints for settings.
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @WebService(serviceName = "SettingsWs", endpointInterface = "org.meveo.api.ws.SettingsWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -171,7 +179,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Inject
     private InvoiceTypeApi invoiceTypeApi;
-    
+
     @Inject
     private InvoiceSequenceApi invoiceSequenceApi;
 
@@ -566,7 +574,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            sellerApi.create(postData);
+            Seller seller = sellerApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(seller.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -588,11 +599,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetSellerResponse findSeller(String sellerCode) {
+    public GetSellerResponse findSeller(String sellerCode,CustomFieldInheritanceEnum inheritCF) {
         GetSellerResponse result = new GetSellerResponse();
 
         try {
-            result.setSeller(sellerApi.find(sellerCode));
+            result.setSeller(sellerApi.find(sellerCode, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -888,6 +899,20 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
+    
+    @Override
+    public BankingDateStatusResponse getBankingDateStatus(Date date) {
+        
+        BankingDateStatusResponse result = new BankingDateStatusResponse();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        try {
+            result.setBankingDateStatus(calendarApi.getBankingDateStatus(date));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
 
     @Override
     public ListCalendarResponse listCalendars() {
@@ -1145,7 +1170,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     public ActionStatus createOrUpdateSeller(SellerDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            sellerApi.createOrUpdate(postData);
+            Seller seller = sellerApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(seller.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1293,10 +1321,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetRoleResponse findRole(String name) {
+    public GetRoleResponse findRole(String name, boolean includeSecuredEntities) {
         GetRoleResponse result = new GetRoleResponse();
         try {
-            result.setRoleDto(roleApi.find(name));
+            result.setRoleDto(roleApi.find(name, includeSecuredEntities));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -1585,7 +1613,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
         return result;
     }
-    
+
     @Override
     public GetInvoiceTypesResponse listInvoiceTypes() {
         GetInvoiceTypesResponse result = new GetInvoiceTypesResponse();
@@ -1597,7 +1625,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
         return result;
     }
-    
+
     @Override
     public ActionStatus createInvoiceSequence(InvoiceSequenceDto invoiceSequenceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -1631,7 +1659,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
         return result;
     }
-    
+
     @Override
     public ActionStatus createOrUpdateInvoiceSequence(InvoiceSequenceDto invoiceSequenceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -1642,7 +1670,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
         return result;
     }
-    
+
     @Override
     public GetInvoiceSequencesResponse listInvoiceSequences() {
         GetInvoiceSequencesResponse result = new GetInvoiceSequencesResponse();
@@ -1687,7 +1715,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerContactApi.create(providerContactDto);
+            ProviderContact providerContact = providerContactApi.create(providerContactDto);
+            if (StringUtils.isBlank(providerContactDto.getCode())) {
+                result.setEntityCode(providerContact.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1751,7 +1782,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerContactApi.createOrUpdate(providerContactDto);
+            ProviderContact providerContact = providerContactApi.createOrUpdate(providerContactDto);
+            if (StringUtils.isBlank(providerContactDto.getCode())) {
+                result.setEntityCode(providerContact.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -2096,10 +2130,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus getSystemProperties() {
-    	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             result.setMessage(configurationApi.getPropertiesAsJsonString());

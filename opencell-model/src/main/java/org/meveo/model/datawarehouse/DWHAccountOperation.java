@@ -45,172 +45,173 @@ import org.meveo.model.billing.AccountingCode;
 @Deprecated
 @Entity
 @Table(name = "dwh_account_operation")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "dwh_account_operation_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "dwh_account_operation_seq"), })
 public class DWHAccountOperation extends BaseEntity {
 
-	private static final long serialVersionUID = 1L;
-	
-	@Column(name = "account_code", length = 50)
-	@Size(max = 50)
-	private String accountCode;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "account_description", length = 255)
-    @Size(max = 255)
-	private String accountDescription;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "accounting_code_id")
-	private AccountingCode accountingCode;
-
-	@Column(name = "accounting_code_client_side", length = 255)
-    @Size(max = 255)
-	private String accountingCodeClientSide;
-
-	@Column(name = "transaction_date")
-	@Temporal(TemporalType.DATE)
-	private Date transactionDate;
-
-	@Column(name = "due_date")
-	@Temporal(TemporalType.DATE)
-	private Date dueDate;
-
-	@Column(name = "due_month")
-	private Integer dueMonth;
-
-	@Column(name = "category")
-	private int category;
-
-	@Column(name = "type")
-	private int type;
-
-	@Column(name = "occ_code", length = 10)
-	@Size(max = 10)
-	private String occCode;
-
-	@Column(name = "occ_description", length = 255)
-    @Size(max = 255)
-	private String occDescription;
-
-	@Column(name = "reference", length = 50)
+    @Column(name = "account_code", length = 50)
     @Size(max = 50)
-	private String reference;
+    private String accountCode;
 
-	@Column(name = "amount")
-	private BigDecimal amount;
+    @Column(name = "account_description", length = 255)
+    @Size(max = 255)
+    private String accountDescription;
 
-	@Column(name = "status")
-	private int status;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
 
-	public String getAccountCode() {
-		return accountCode;
-	}
+    @Column(name = "accounting_code_client_side", length = 255)
+    @Size(max = 255)
+    private String accountingCodeClientSide;
 
-	public void setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
-	}
+    @Column(name = "transaction_date")
+    @Temporal(TemporalType.DATE)
+    private Date transactionDate;
 
-	public String getAccountDescription() {
-		return accountDescription;
-	}
+    @Column(name = "due_date")
+    @Temporal(TemporalType.DATE)
+    private Date dueDate;
 
-	public void setAccountDescription(String accountDescription) {
-		this.accountDescription = accountDescription;
-	}
+    @Column(name = "due_month")
+    private Integer dueMonth;
 
-	public AccountingCode getAccountingCode() {
-		return accountingCode;
-	}
+    @Column(name = "category")
+    private int category;
 
-	public void setAccountingCode(AccountingCode accountingCode) {
-		this.accountingCode = accountingCode;
-	}
+    @Column(name = "type")
+    private int type;
 
-	public String getAccountingCodeClientSide() {
-		return accountingCodeClientSide;
-	}
+    @Column(name = "occ_code", length = 10)
+    @Size(max = 10)
+    private String occCode;
 
-	public void setAccountingCodeClientSide(String accountingCodeClientSide) {
-		this.accountingCodeClientSide = accountingCodeClientSide;
-	}
+    @Column(name = "occ_description", length = 255)
+    @Size(max = 255)
+    private String occDescription;
 
-	public Date getTransactionDate() {
-		return transactionDate;
-	}
+    @Column(name = "reference", length = 50)
+    @Size(max = 50)
+    private String reference;
 
-	public void setTransactionDate(Date transactionDate) {
-		this.transactionDate = transactionDate;
-	}
+    @Column(name = "amount")
+    private BigDecimal amount;
 
-	public Date getDueDate() {
-		return dueDate;
-	}
+    @Column(name = "status")
+    private int status;
 
-	public void setDueDate(Date dueDate) {
-		this.dueDate = dueDate;
-	}
+    public String getAccountCode() {
+        return accountCode;
+    }
 
-	public Integer getDueMonth() {
-		return dueMonth;
-	}
+    public void setAccountCode(String accountCode) {
+        this.accountCode = accountCode;
+    }
 
-	public void setDueMonth(Integer dueMonth) {
-		this.dueMonth = dueMonth;
-	}
+    public String getAccountDescription() {
+        return accountDescription;
+    }
 
-	public int getCategory() {
-		return category;
-	}
+    public void setAccountDescription(String accountDescription) {
+        this.accountDescription = accountDescription;
+    }
 
-	public void setCategory(int category) {
-		this.category = category;
-	}
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
 
-	public int getType() {
-		return type;
-	}
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
+    }
 
-	public void setType(int type) {
-		this.type = type;
-	}
+    public String getAccountingCodeClientSide() {
+        return accountingCodeClientSide;
+    }
 
-	public String getOccCode() {
-		return occCode;
-	}
+    public void setAccountingCodeClientSide(String accountingCodeClientSide) {
+        this.accountingCodeClientSide = accountingCodeClientSide;
+    }
 
-	public void setOccCode(String occCode) {
-		this.occCode = occCode;
-	}
+    public Date getTransactionDate() {
+        return transactionDate;
+    }
 
-	public String getOccDescription() {
-		return occDescription;
-	}
+    public void setTransactionDate(Date transactionDate) {
+        this.transactionDate = transactionDate;
+    }
 
-	public void setOccDescription(String occDescription) {
-		this.occDescription = occDescription;
-	}
+    public Date getDueDate() {
+        return dueDate;
+    }
 
-	public String getReference() {
-		return reference;
-	}
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
 
-	public void setReference(String reference) {
-		this.reference = reference;
-	}
+    public Integer getDueMonth() {
+        return dueMonth;
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public void setDueMonth(Integer dueMonth) {
+        this.dueMonth = dueMonth;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    public int getCategory() {
+        return category;
+    }
 
-	public int getStatus() {
-		return status;
-	}
+    public void setCategory(int category) {
+        this.category = category;
+    }
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public String getOccCode() {
+        return occCode;
+    }
+
+    public void setOccCode(String occCode) {
+        this.occCode = occCode;
+    }
+
+    public String getOccDescription() {
+        return occDescription;
+    }
+
+    public void setOccDescription(String occDescription) {
+        this.occDescription = occDescription;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
 }

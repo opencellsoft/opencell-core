@@ -3,6 +3,11 @@ package org.meveo.model.payments;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+/**
+ * Payment by check payment method
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @DiscriminatorValue(value = "CHECK")
 public class CheckPaymentMethod extends PaymentMethod {

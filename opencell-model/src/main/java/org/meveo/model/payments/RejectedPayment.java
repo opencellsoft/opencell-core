@@ -18,13 +18,16 @@
  */
 package org.meveo.model.payments;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
@@ -50,6 +53,9 @@ public class RejectedPayment extends AccountOperation {
     @Column(name = "rejected_code", length = 255)
     @Size(max = 255)
     private String rejectedCode;
+    
+    @OneToMany(mappedBy = "rejectedPayment")
+    List<AccountOperation> listAaccountOperationSupposedPaid = new ArrayList<AccountOperation>();
 
     public Date getRejectedDate() {
         return rejectedDate;
@@ -81,6 +87,20 @@ public class RejectedPayment extends AccountOperation {
 
     public void setRejectedType(RejectedType rejectedType) {
         this.rejectedType = rejectedType;
+    }
+
+    /**
+     * @return the listAaccountOperationSupposedPaid
+     */
+    public List<AccountOperation> getListAaccountOperationSupposedPaid() {
+        return listAaccountOperationSupposedPaid;
+    }
+
+    /**
+     * @param listAaccountOperationSupposedPaid the listAaccountOperationSupposedPaid to set
+     */
+    public void setListAaccountOperationSupposedPaid(List<AccountOperation> listAaccountOperationSupposedPaid) {
+        this.listAaccountOperationSupposedPaid = listAaccountOperationSupposedPaid;
     }
 
 }

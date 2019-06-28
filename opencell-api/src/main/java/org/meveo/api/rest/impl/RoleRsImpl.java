@@ -15,6 +15,11 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.RoleRs;
 
+/**
+ * REST API for managing {@link Role}.
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 6.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class RoleRsImpl extends BaseRs implements RoleRs {
@@ -59,10 +64,10 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     }
 
     @Override
-    public GetRoleResponse find(String roleName) {
+    public GetRoleResponse find(String roleName, boolean includeSecuredEntities) {
         GetRoleResponse result = new GetRoleResponse();
         try {
-            result.setRoleDto(roleApi.find(roleName));
+            result.setRoleDto(roleApi.find(roleName, includeSecuredEntities));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

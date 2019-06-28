@@ -105,4 +105,15 @@ public interface OrderRs {
     @PUT
     @Path("/{orderId}/simpleDueDateDelay")
     public Response simpleDueDateDelay(@PathParam("orderId") String orderId, ApplicableDueDateDelayDto postData, @Context UriInfo info);
+
+    /**
+     * validate a product order
+     *
+     * @param productOrder Product order information
+     * @param info Http request context
+     * @return Product order information
+     */
+    @GET
+    @Path("/validate")
+    public Response validateProductOrder(ProductOrder productOrder, @Context UriInfo info);
 }

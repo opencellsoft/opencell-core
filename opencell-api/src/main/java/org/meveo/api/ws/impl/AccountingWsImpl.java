@@ -13,11 +13,14 @@ import org.meveo.api.dto.response.billing.AccountingCodeGetResponseDto;
 import org.meveo.api.dto.response.billing.AccountingCodeListResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.AccountingWs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.AccountingCode;
 
 /**
  * @author Edward P. Legaspi
- * @version 23 Feb 2018
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @WebService(serviceName = "AccountingWs", endpointInterface = "org.meveo.api.ws.AccountingWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class AccountingWsImpl extends BaseWs implements AccountingWs {
@@ -30,7 +33,10 @@ public class AccountingWsImpl extends BaseWs implements AccountingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accountingCodeApi.create(postData);
+            AccountingCode accountingCode = accountingCodeApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(accountingCode.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -56,7 +62,10 @@ public class AccountingWsImpl extends BaseWs implements AccountingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accountingCodeApi.createOrUpdate(postData);
+            AccountingCode accountingCode = accountingCodeApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(accountingCode.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

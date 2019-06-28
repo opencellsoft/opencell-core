@@ -18,6 +18,9 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.inject.Produces;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -37,6 +40,9 @@ import org.meveo.service.billing.impl.WalletOperationService;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 7.0
  */
 @Named
 @ViewScoped
@@ -93,6 +99,21 @@ public class RatedTransactionBean extends BaseBean<RatedTransaction> {
 			return null;
 		}
 	}
+	
+	public List<String> getWalletOperationCodes(Long ratedTransactionId){
+		if(ratedTransactionId == null){
+			return null;
+		}
+		
+		List<String> result = new ArrayList<>();
+		List<WalletOperation> wos = walletOperationService.listByRatedTransactionId(ratedTransactionId);
+		if (wos != null && !wos.isEmpty()) {
+			wos.stream().forEach(e -> result.add(e.getCode()));
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * #1661 [GUI](#349) ratedTransactionDetail ; make all fields on readOnly if status == BILLED;
 	 * @author mhammam

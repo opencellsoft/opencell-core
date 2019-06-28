@@ -46,72 +46,106 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ISearchable;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.WorkflowedEntity;
+
 
 /**
+ * User account
+ * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "UA")
+@WorkflowedEntity
+@CustomFieldEntity(cftCodePrefix = "UserAccount", inheritCFValuesFrom = "billingAccount")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_UA")
 @Table(name = "billing_user_account")
-@NamedQueries({
-    @NamedQuery(name = "UserAccount.findByCode", query = "select u from  UserAccount u where u.code = :code and lower(u.accountType) = 'acct_ua'")})
-public class UserAccount extends AccountEntity {
+@NamedQueries({ @NamedQuery(name = "UserAccount.findByCode", query = "select u from  UserAccount u where u.code = :code and lower(u.accountType) = 'acct_ua'") })
+public class UserAccount extends AccountEntity implements IWFEntity, ICounterEntity, ISearchable {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) UserAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Account status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 10)
     private AccountStatusEnum status = AccountStatusEnum.ACTIVE;
 
+    /**
+     * Last account status change timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
     private Date statusDate = new Date();
 
+    /**
+     * Billing account creation date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
     private Date subscriptionDate = new Date();
 
+    /**
+     * Account termination date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "termination_date")
     private Date terminationDate;
 
+    /**
+     * Parent Billing account
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id")
     private BillingAccount billingAccount;
 
-    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * Account's subscriptions
+     */
+    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Subscription> subscriptions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
-    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * Primary waller
+     */
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
 
-    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
-    @MapKey(name = "code")
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    /**
+     * Prepaid wallets
+     */
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
     private Map<String, WalletInstance> prepaidWallets = new HashMap<>();
 
-    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
-    @MapKey(name = "code")
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    // key is the counter template code
+    /**
+     * Counters instantiated on the User account with Counter template code as a key
+     */
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
     private Map<String, CounterInstance> counters = new HashMap<>();
 
+    /**
+     * Account termination reason
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
@@ -195,14 +229,6 @@ public class UserAccount extends AccountEntity {
         this.counters = counters;
     }
 
-    public List<InvoiceAgregate> getInvoiceAgregates() {
-        return invoiceAgregates;
-    }
-
-    public void setInvoiceAgregates(List<InvoiceAgregate> invoiceAgregates) {
-        this.invoiceAgregates = invoiceAgregates;
-    }
-
     public SubscriptionTerminationReason getTerminationReason() {
         return terminationReason;
     }
@@ -221,7 +247,10 @@ public class UserAccount extends AccountEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { billingAccount };
+        if (billingAccount != null) {
+            return new ICustomFieldEntity[] { billingAccount };
+        }
+        return null;
     }
 
     @Override

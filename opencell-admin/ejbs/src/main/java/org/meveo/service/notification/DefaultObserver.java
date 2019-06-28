@@ -1,28 +1,26 @@
 package org.meveo.service.notification;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.ftp.event.FileDelete;
 import org.meveo.admin.ftp.event.FileDownload;
 import org.meveo.admin.ftp.event.FileRename;
 import org.meveo.admin.ftp.event.FileUpload;
+import org.meveo.audit.AuditableFieldEvent;
 import org.meveo.audit.logging.annotations.MeveoAudit;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.event.CounterPeriodEvent;
-import org.meveo.event.IEvent;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.event.logging.LoggedEvent;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
@@ -31,6 +29,7 @@ import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
 import org.meveo.event.qualifier.EndOfTerm;
 import org.meveo.event.qualifier.InboundRequestReceived;
+import org.meveo.event.qualifier.InstantiateWF;
 import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.event.qualifier.Processed;
@@ -39,37 +38,32 @@ import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Terminated;
 import org.meveo.event.qualifier.Updated;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.IEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditableFieldHistory;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.mediation.MeveoFtpFile;
-import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
-import org.meveo.model.notification.InstantMessagingNotification;
-import org.meveo.model.notification.JobTrigger;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
-import org.meveo.model.notification.NotificationHistory;
-import org.meveo.model.notification.NotificationHistoryStatusEnum;
-import org.meveo.model.notification.ScriptNotification;
-import org.meveo.model.notification.WebHook;
-import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.billing.impl.CounterInstanceService;
-import org.meveo.service.billing.impl.CounterValueInsufficientException;
-import org.meveo.service.script.Script;
-import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInterface;
+import org.meveo.service.generic.wf.GenericWorkflowService;
+import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles events associated with CDRUD operations on entities
  * 
- * @lastModifiedVersion willBeSetLater
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Singleton
 @Startup
@@ -77,26 +71,13 @@ import org.slf4j.Logger;
 @Lock(LockType.READ)
 public class DefaultObserver {
 
-    @Inject
-    private Logger log;
+    private static Logger log = LoggerFactory.getLogger(DefaultObserver.class);
 
     @Inject
-    private BeanManager manager;
+    private GenericWorkflowService genericWorkflowService;
 
     @Inject
-    private NotificationHistoryService notificationHistoryService;
-
-    @Inject
-    private EmailNotifier emailNotifier;
-
-    @Inject
-    private WebHookNotifier webHookNotifier;
-
-    @Inject
-    private InstantMessagingNotifier imNotifier;
-
-    @Inject
-    private CounterInstanceService counterInstanceService;
+    private WorkflowInstanceService workflowInstanceService;
 
     @Inject
     private GenericNotificationService genericNotificationService;
@@ -105,162 +86,11 @@ public class DefaultObserver {
     // private RemoteInstanceNotifier remoteInstanceNotifier;
 
     @Inject
-    private ScriptInstanceService scriptInstanceService;
-
-    @Inject
-    private JobTriggerLauncher jobTriggerLauncher;
-
-    @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-
-    private boolean matchExpression(String expression, Object entityOrEvent) throws BusinessException {
-        Boolean result = true;
-        if (StringUtils.isBlank(expression)) {
-            return result;
-        }
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
-        userMap.put("event", entityOrEvent);
-
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
-        try {
-            result = (Boolean) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to boolean but " + res);
-        }
-        return result == null ? false : result;
-    }
-
-    private void executeScript(ScriptInstance scriptInstance, Object entityOrEvent, Map<String, String> params, Map<String, Object> context) throws BusinessException {
-        log.debug("execute notification script: {}", scriptInstance.getCode());
-
-        try {
-            ScriptInterface scriptInterface = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
-            Map<Object, Object> userMap = new HashMap<>();
-            userMap.put("event", entityOrEvent);
-            userMap.put("manager", manager);
-
-            context.put("entityOrEvent", entityOrEvent);
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                context.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression(entry.getValue(), userMap, Object.class));
-            }
-
-            scriptInterface.init(context);
-            scriptInterface.execute(context);
-            scriptInterface.finalize(context);
-        } catch (Exception e) {
-            log.error("failed script execution", e);
-            if (e instanceof BusinessException) {
-                throw e;
-            } else {
-                throw new BusinessException(e);
-            }
-        }
-    }
-
-    private boolean fireNotification(Notification notif, Object entityOrEvent) throws BusinessException {
-        if (notif == null) {
-            return false;
-        }
-
-        IEntity entity = null;
-        if (entityOrEvent instanceof IEntity) {
-            entity = (IEntity) entityOrEvent;
-        } else if (entityOrEvent instanceof IEvent) {
-            entity = ((IEvent) entityOrEvent).getEntity();
-        }
-
-        log.debug("Fire Notification for notif with {} and entity with id={}", notif, entity.getId());
-        try {
-            if (!matchExpression(notif.getElFilter(), entityOrEvent)) {
-                log.debug("Expression {} does not match", notif.getElFilter());
-                return false;
-            }
-
-            boolean sendNotify = true;
-            // Check if the counter associated to notification was not exhausted yet
-            if (notif.getCounterInstance() != null) {
-                try {
-                    counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(), notif.getAuditable().getCreated(), new BigDecimal(1));
-                } catch (CounterValueInsufficientException ex) {
-                    sendNotify = false;
-                }
-            }
-
-            if (!sendNotify) {
-                return false;
-            }
-
-            Map<String, Object> context = new HashMap<String, Object>();
-            // Rethink notif and script - maybe create pre and post script
-            if (!(notif instanceof WebHook)) {
-                if (notif.getScriptInstance() != null) {
-                    executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context);
-                }
-            }
-
-            // Execute notification
-
-            // ONLY ScriptNotifications will produce notification history in synchronous mode. Other type notifications will produce notification history in asynchronous mode and
-            // thus
-            // will not be related to inbound request.
-            if (notif instanceof ScriptNotification) {
-                NotificationHistory histo = notificationHistoryService.create(notif, entityOrEvent, (String) context.get(Script.RESULT_VALUE), NotificationHistoryStatusEnum.SENT);
-
-                if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ && histo != null) {
-                    histo.setInboundRequest((InboundRequest) entityOrEvent);
-                    ((InboundRequest) entityOrEvent).add(histo);
-                }
-
-            } else if (notif instanceof EmailNotification) {
-                MeveoUser lastCurrentUser = currentUser.unProxy();
-                emailNotifier.sendEmail((EmailNotification) notif, entityOrEvent, context, lastCurrentUser);
-
-            } else if (notif instanceof WebHook) {
-                MeveoUser lastCurrentUser = currentUser.unProxy();
-                webHookNotifier.sendRequest((WebHook) notif, entityOrEvent, context, lastCurrentUser);
-
-            } else if (notif instanceof InstantMessagingNotification) {
-                MeveoUser lastCurrentUser = currentUser.unProxy();
-                imNotifier.sendInstantMessage((InstantMessagingNotification) notif, entityOrEvent, lastCurrentUser);
-
-            } else if (notif instanceof JobTrigger) {
-                MeveoUser lastCurrentUser = currentUser.unProxy();
-                jobTriggerLauncher.launch((JobTrigger) notif, entityOrEvent, lastCurrentUser);
-            }
-
-        } catch (Exception e1) {
-            log.error("Error while firing notification {} ", notif.getCode(), e1);
-            try {
-                NotificationHistory notificationHistory = notificationHistoryService.create(notif, entityOrEvent, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
-                if (entityOrEvent instanceof InboundRequest) {
-                    ((InboundRequest) entityOrEvent).add(notificationHistory);
-                }
-            } catch (Exception e2) {
-                log.error("Failed to create notification history", e2);
-            }
-            if (!(e1 instanceof BusinessException)) {
-                throw new BusinessException(e1);
-            } else {
-                throw (BusinessException) e1;
-            }
-        }
-
-        return true;
-    }
-
-    private void fireCdrNotification(Notification notif, Object cdr) throws BusinessException {
-        log.debug("Fire Cdr Notification for notif {} and  cdr {}", notif, cdr);
-        try {
-            if (!StringUtils.isBlank(notif.getScriptInstance()) && matchExpression(notif.getElFilter(), cdr)) {
-                executeScript(notif.getScriptInstance(), cdr, notif.getParams(), new HashMap<String, Object>());
-            }
-        } catch (BusinessException e1) {
-            log.error("Error while firing notification {}: {} ", notif.getCode(), e1);
-            throw e1;
-        }
-
-    }
+    
+    @Inject
+    private DefaultNotificationService defaultNotificationService;
 
     /**
      * Check and fire all matched notifications
@@ -272,10 +102,28 @@ public class DefaultObserver {
      */
     private boolean checkEvent(NotificationEventTypeEnum type, Object entityOrEvent) throws BusinessException {
         boolean result = false;
-        for (Notification notif : genericNotificationService.getApplicableNotifications(type, entityOrEvent)) {
-            result = fireNotification(notif, entityOrEvent) || result;
-        }
+        
+		for (Notification notif : genericNotificationService.getApplicableNotifications(type, entityOrEvent)) {
+			if (notif.isRunAsync()) {
+				defaultNotificationService.fireNotificationAsync(notif, entityOrEvent);
+				result = true;
+
+			} else {
+				result = defaultNotificationService.fireNotification(notif, entityOrEvent) || result;
+			}
+
+		}
+		
         return result;
+    }
+
+    public void entityInstantiateWF(@Observes @InstantiateWF BusinessEntity e) throws BusinessException {
+        log.debug("Defaut observer : Entity {} with id {} instantiateWF", e.getClass().getName(), e.getId());
+
+        List<GenericWorkflow> genericWorkflows = genericWorkflowService.findByBusinessEntity(e);
+        for (GenericWorkflow genericWorkflow : genericWorkflows) {
+            workflowInstanceService.create(e, genericWorkflow);
+        }
     }
 
     public void entityCreated(@Observes @Created BaseEntity e) throws BusinessException {
@@ -326,7 +174,7 @@ public class DefaultObserver {
     public void cdrRejected(@Observes @RejectedCDR Object cdr) throws BusinessException {
         log.debug("Defaut observer : cdr {} rejected", cdr);
         for (Notification notif : genericNotificationService.getApplicableNotifications(NotificationEventTypeEnum.REJECTED_CDR, cdr)) {
-            fireCdrNotification(notif, cdr);
+            defaultNotificationService.fireCdrNotification(notif, cdr);
         }
     }
 
@@ -397,6 +245,57 @@ public class DefaultObserver {
     public void counterUpdated(@Observes CounterPeriodEvent event) throws BusinessException {
         log.debug("DefaultObserver.counterUpdated " + event);
         checkEvent(NotificationEventTypeEnum.COUNTER_DEDUCED, event);
+    }
+
+    private void fieldUpdated(BaseEntity entity, AuditableFieldEvent field, NotificationEventTypeEnum notificationType) throws BusinessException {
+        if (entity != null) {
+            log.debug("observe a dirty status of entity {} with id {}", entity.getClass().getName(), entity.getId());
+            checkEvent(notificationType, field);
+        }
+    }
+
+    private void fieldUpdated(AuditableEntity entity, AuditableFieldHistory fieldHistory) throws BusinessException {
+        AuditableFieldEvent field = new AuditableFieldEvent();
+        try {
+            BeanUtils.copyProperties(field, fieldHistory);
+            field.setEntity(entity);
+            // In the case of a status field, we fire an status event.
+            if (fieldHistory.getAuditType() == AuditChangeTypeEnum.STATUS) {
+                fieldUpdated(entity, field, NotificationEventTypeEnum.STATUS_UPDATED);
+            }
+            // In the case of a renewal field, we fire an renewal event.
+            if (fieldHistory.getAuditType() == AuditChangeTypeEnum.RENEWAL) {
+                fieldUpdated(entity, field, NotificationEventTypeEnum.RENEWAL_UPDATED);
+            }
+            fieldHistory.setNotified(true);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            fieldHistory.setNotified(false);
+            log.error("Failed to fire field updated notification");
+            throw new BusinessException(e.getMessage());
+        } catch (BusinessException e) {
+            fieldHistory.setNotified(false);
+            log.error("Failed to fire field updated notification");
+            throw e;
+        }
+    }
+
+    public void fieldsUpdated(@Observes Set<BaseEntity> event) throws BusinessException {
+        if (event != null && !event.isEmpty()) {
+            for (BaseEntity baseEntity : event) {
+                AuditableEntity entity = (AuditableEntity) baseEntity;
+                Set<AuditableFieldHistory> auditableFields = entity.getAuditableFields();
+                if (!entity.isNotified() && auditableFields != null && !auditableFields.isEmpty()) {
+                    for (AuditableFieldHistory fieldHistory : auditableFields) {
+                        // Check if the field is notifiable and is not yet notified
+                        if (fieldHistory.isNotfiable() && !fieldHistory.isNotified()) {
+                            fieldUpdated(entity, fieldHistory);
+                        }
+                    }
+                    entity.setNotified(true);
+                }
+
+            }
+        }
     }
 
 }

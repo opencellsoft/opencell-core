@@ -1,6 +1,7 @@
 package org.meveo.admin.action.notification;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
@@ -8,22 +9,31 @@ import java.util.Enumeration;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.HttpConstraint;
+import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.qualifier.InboundRequestReceived;
+import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.notification.InboundRequest;
+import org.meveo.service.audit.AuditOrigin;
 import org.meveo.service.notification.InboundRequestService;
 import org.slf4j.Logger;
 
 /**
  * To call this servlet the url must be in this format: /inbound/&lt;provider.code&gt;
+ * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.3.0
  */
 @WebServlet("/inbound/*")
+@ServletSecurity(@HttpConstraint(rolesAllowed = "apiAccess"))
 public class InboundServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1551787937225264581L;
@@ -38,12 +48,18 @@ public class InboundServlet extends HttpServlet {
     @InboundRequestReceived
     protected Event<InboundRequest> eventProducer;
 
+    @Inject
+    private AuditOrigin auditOrigin;
+
     private void doService(HttpServletRequest req, HttpServletResponse res) {
 
         try {
 
             String path = req.getPathInfo();
             log.debug("received request for method {} , path={}", req.getMethod(), path);
+
+            auditOrigin.setAuditOrigin(ChangeOriginEnum.INBOUND_REQUEST);
+            auditOrigin.setAuditOriginName(path);
 
             InboundRequest inReq = new InboundRequest();
             inReq.setCode(req.getRemoteAddr() + "_" + req.getRemotePort() + "_" + req.getMethod() + "_" + System.nanoTime());
@@ -131,8 +147,10 @@ public class InboundServlet extends HttpServlet {
                 } else {
                     res.setStatus(200);
                 }
-
-                if (inReq.getResponseBody() != null) {
+                if(inReq.getBytes() != null) {
+                    IOUtils.copy(new ByteArrayInputStream(inReq.getBytes()), res.getOutputStream());
+                    res.flushBuffer();
+                } else if (inReq.getResponseBody() != null) {
                     try (PrintWriter out = res.getWriter()) {
                         out.print(inReq.getResponseBody());
                     } catch (IOException e) {
@@ -144,9 +162,11 @@ public class InboundServlet extends HttpServlet {
 
             inReq = inboundRequestService.update(inReq);
 
+
+
             log.debug("Inbound request finished with status {}", res.getStatus());
 
-        } catch (BusinessException e) {
+        } catch (BusinessException | IOException e) {
             log.error("Failed to process Inbound request ", e);
         }
 

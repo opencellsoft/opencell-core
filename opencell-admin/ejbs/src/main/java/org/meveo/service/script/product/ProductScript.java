@@ -10,20 +10,15 @@ import org.meveo.service.script.module.ModuleScript;
  */
 public class ProductScript extends ModuleScript implements ProductScriptInterface {
 
-    /**
-     * Called before a new product is created.
-     */
-	@Override
-	public void beforeCreate(Map<String, Object> methodContext) throws BusinessException {
+    private static final long serialVersionUID = 109603059581188830L;
 
-	}
+    @Override
+    public void beforeCreate(Map<String, Object> methodContext) throws BusinessException {
 
-	/**
-	 * Called after a new product is created.
-	 */
-	@Override
-	public void afterCreate(Map<String, Object> methodContext) throws BusinessException {
+    }
 
-	}
+    @Override
+    public void afterCreate(Map<String, Object> methodContext) throws BusinessException {
 
+    }
 }

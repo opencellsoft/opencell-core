@@ -5,6 +5,10 @@ import java.util.Map;
 
 import org.meveo.model.crm.EntityReferenceWrapper;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 7.0
+ */
 public enum CustomFieldTypeEnum {
     /**
      * String value
@@ -49,7 +53,12 @@ public enum CustomFieldTypeEnum {
     /**
      * Multi value (map) type value
      */
-    MULTI_VALUE(true, Map.class);
+    MULTI_VALUE(true, Map.class),
+
+    /**
+     * A boolean value
+     */
+    BOOLEAN(false, Boolean.class);
 
     /**
      * Is value stored in a serialized form in DB

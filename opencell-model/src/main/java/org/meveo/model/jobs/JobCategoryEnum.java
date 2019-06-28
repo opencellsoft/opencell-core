@@ -18,49 +18,40 @@
  */
 package org.meveo.model.jobs;
 
-
 public enum JobCategoryEnum {
-	
-        RATING(1, "jobCategoryEnum.rating"),
-	    INVOICING(2, "jobCategoryEnum.invoicing"),
-	    IMPORT_HIERARCHY(3, "jobCategoryEnum.importHierarchy"),
-	    DWH(4, "jobCategoryEnum.dwh"),
-	    ACCOUNT_RECEIVABLES(5,"jobCategoryEnum.accountReceivables"),
-	    WALLET(6, "jobCategoryEnum.wallet"),
-	    UTILS(7, "jobCategoryEnum.utils"),
-	    MEDIATION(8, "jobCategoryEnum.mediation");
-	    
 
-	    private Integer id;
-	    private String label;
-	    
+    RATING(1, "jobCategoryEnum.rating"), INVOICING(2, "jobCategoryEnum.invoicing"), IMPORT_HIERARCHY(3, "jobCategoryEnum.importHierarchy"), DWH(4,
+            "jobCategoryEnum.dwh"), ACCOUNT_RECEIVABLES(5,
+                    "jobCategoryEnum.accountReceivables"), WALLET(6, "jobCategoryEnum.wallet"), UTILS(7, "jobCategoryEnum.utils"), MEDIATION(8, "jobCategoryEnum.mediation");
 
+    private Integer id;
+    private String label;
 
-		private JobCategoryEnum(Integer id, String label) {
-	        this.id = id;
-	        this.label = label;
-	    }
+    private JobCategoryEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
+    }
 
-	    public String getLabel() {
-	        return label;
-	    }
+    public String getLabel() {
+        return label;
+    }
 
-	    public Integer getId() {
-	        return id;
-	    }
+    public Integer getId() {
+        return id;
+    }
 
-	    public static JobCategoryEnum getValue(Integer id) {
-	        if (id != null) {
-	            for (JobCategoryEnum status : values()) {
-	                if (id.equals(status.getId())) {
-	                    return status;
-	                }
-	            }
-	        }
-	        return null;
-	    }
+    public static JobCategoryEnum getValue(Integer id) {
+        if (id != null) {
+            for (JobCategoryEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
 
-	    public String toString() {
-	        return label.toString();
-	    }
-	}
+    public String toString() {
+        return label.toString();
+    }
+}

@@ -3,6 +3,7 @@ package org.meveo.service.payments.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.jfree.util.Log;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
@@ -15,7 +16,8 @@ import org.meveo.service.filter.FilterService;
 /**
  *  An abstract class to centralize some common methods such as getting the list of AOs to pay.
  *  @author Said Ramli
- *  @lastModifiedVersion 5.2
+ *  @author anasseh
+ *  @lastModifiedVersion 5.3
  */
 public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterface {
     
@@ -35,7 +37,6 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
 
         List<AccountOperation> listAoToPay = null;
         if (filter == null) {
-//            log.info("createDDRquestLot fromDueDate: {}   toDueDate: {}", fromDueDate, toDueDate);
             if (fromDueDate == null) {
                 throw new BusinessEntityException("fromDuDate is empty");
             }
@@ -45,11 +46,10 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
             if (fromDueDate.after(toDueDate)) {
                 throw new BusinessEntityException("fromDueDate is after toDueDate");
             }
-            listAoToPay = accountOperationService.getAOsToPay(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate);
+            listAoToPay = accountOperationService.getAOsToPayOrRefund(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate,ddrequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess(),ddrequestLotOp.getSeller());
         } else {
             listAoToPay = (List<AccountOperation>) filterService.filteredListAsObjects(filter);
         }
-
         return listAoToPay;
     }
     

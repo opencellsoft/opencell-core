@@ -43,50 +43,74 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 
+/**
+ * Counter template/definition
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ModuleItem
 @Cacheable
 @ObservableEntity
-@ExportIdentifier({ "code"})
-@Table(name = "cat_counter_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_counter_template_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "cat_counter_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_counter_template_seq"), })
 @NamedQueries({
-@NamedQuery(name = "counterTemplate.getNbrCounterWithNotService", 
-	           query = "select count(*) from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv)"),
+        @NamedQuery(name = "counterTemplate.getNbrCounterWithNotService", query = "select count(*) from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv)"),
 
-@NamedQuery(name = "counterTemplate.getCounterWithNotService", 
-	           query = "from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv) ")         	                  	         
-})
+        @NamedQuery(name = "counterTemplate.getCounterWithNotService", query = "from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv) ") })
 public class CounterTemplate extends EnableBusinessEntity {
 
     private static final long serialVersionUID = -1246995971618884001L;
 
+    /**
+     * Counter type
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "counter_type", nullable = false)
     @NotNull
     private CounterTypeEnum counterType = CounterTypeEnum.USAGE;
 
+    /**
+     * Calendar for counter period calculation
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendar_id")
     private Calendar calendar;
 
+    /**
+     * Initial counter value
+     */
     @Column(name = "level_num", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal ceiling;
 
+    /**
+     * Unit description
+     */
     @Column(name = "unity_description", length = 20)
     @Size(max = 20)
     private String unityDescription;
 
+    /**
+     * On what account type counter is grouped on
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "counter_level", nullable = false)
     @NotNull
     private CounterTemplateLevel counterLevel = CounterTemplateLevel.UA;
 
+    /**
+     * Expression to calculate the initial counter value
+     */
     @Column(name = "ceiling_expression_el", length = 2000)
     @Size(max = 2000)
     private String ceilingExpressionEl;
 
+    /**
+     * Comma separated levels at which notification should be fired
+     */
     @Column(name = "notification_levels", length = 70)
     @Size(max = 70)
     private String notificationLevels;

@@ -11,16 +11,19 @@
 
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                <p:menuitem value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" disabled="true" />
+                <p:menuitem rendered="#{wfTransitionBean.workflowOrder != null}" value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" disabled="true" />
             </p:breadCrumb>
         </h:form>
 
-        <h:panelGroup rendered="#{wfTransitionBean.disabledOrderWF}">
+        <h:panelGroup rendered="#{wfTransitionBean.disabledOrderWF or wfTransitionBean.workflowOrder == nul}">
             <div class="ui-messages ui-widget">
                 <div class="ui-messages-warn ui-corner-all">
                     <span class="ui-messages-info-warn"></span>
                     <ul>
-                        <li><h:outputText value="#{messages['mmTransition.orderWFDisabled']}" styleClass="ui-messages-warn-summary" /></li>
+                        <li>
+	                        <h:outputText value="#{messages['mmTransition.orderWFDisabled']}" styleClass="ui-messages-warn-summary" rendered="#{wfTransitionBean.disabledOrderWF}" />
+	                        <h:outputText value="#{messages['mmTransition.orderWF.null']}" styleClass="ui-messages-warn-summary" rendered="#{wfTransitionBean.workflowOrder == nul}" />
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -31,7 +34,7 @@
                 <p:panel>
                     <div class="btn-wrapper">
                         <i class="fa fa-plus text-blue"></i>
-                        <p:link styleClass="no-text-decoration" outcome="mm_workflowDetail" value=" #{messages['mmTransition.addNew']}">
+                        <p:link styleClass="no-text-decoration" outcome="mm_workflowDetail" value=" #{messages['mmTransition.addNew']}" disabled="#{wfTransitionBean.workflowOrder == null}">
                             <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                             <f:param name="edit" value="true" />
                         </p:link>
@@ -117,7 +120,7 @@
                             <h:outputText value="#{messages['mmTransition.defaultTeam']}"></h:outputText>
                         </p:panel>
                         <p:panel>
-                            <p:button id="editDefaultBtn" icon="ui-icon-document" outcome="mm_workflowDefault">
+                            <p:button id="editDefaultBtn" icon="ui-icon-document" outcome="mm_workflowDefault" disabled="#{wfTransitionBean.catchAll == null}">
                                 <f:param name="objectId" value="#{wfTransitionBean.catchAll.id}"></f:param>
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                                 <f:param name="edit" value="true" />

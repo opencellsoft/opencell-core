@@ -12,7 +12,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
  * The Class UsageChargeTemplateDto.
  *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 7.0
  */
 @XmlRootElement(name = "UsageChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -44,8 +44,22 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
     @Size(max = 2000)
     private String filterExpression = null;
 
+    /** The filter expression. */
+    @Size(max = 2000)
+    private String filterExpressionSpark;
+
     /** The priority. */
     private int priority = 1;
+    
+    /**
+     * If true and (charge has no counter associated) then the next matching charge with the full quantity of the EDR.
+     */
+    protected Boolean triggerNextCharge = false;
+    
+    /**
+     * Overrides the triggerNextCharge switch.
+     */
+    protected String triggerNextChargeEL;
 
     /**
      * Instantiates a new usage charge template dto.
@@ -66,8 +80,11 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
         filterParam2 = usageChargeTemplate.getFilterParam2();
         filterParam3 = usageChargeTemplate.getFilterParam3();
         filterParam4 = usageChargeTemplate.getFilterParam4();
-        setFilterExpression(usageChargeTemplate.getFilterExpression());
+        filterExpression = usageChargeTemplate.getFilterExpression();
+        filterExpressionSpark = usageChargeTemplate.getFilterExpressionSpark();
         priority = usageChargeTemplate.getPriority();
+        triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
+        triggerNextChargeEL = usageChargeTemplate.getTriggerNextChargeEL();
     }
 
     /**
@@ -160,28 +177,55 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
         this.priority = priority;
     }
 
-
     /**
-     * Gets the filter expression.
-     *
-     * @return the filter expression
+     * @return Expression to determine if charge applies
      */
     public String getFilterExpression() {
         return filterExpression;
     }
 
     /**
-     * Sets the filter expression.
-     *
-     * @param filterExpression the new filter expression
+     * @param filterExpression Expression to determine if charge applies
      */
     public void setFilterExpression(String filterExpression) {
         this.filterExpression = filterExpression;
     }
-    
+
+    /**
+     * @return Expression to determine if charge applies - for Spark
+     */
+    public String getFilterExpressionSpark() {
+        return filterExpressionSpark;
+    }
+
+    /**
+     * @param filterExpressionSpark Expression to determine if charge applies - for Spark
+     */
+    public void setFilterExpressionSpark(String filterExpressionSpark) {
+        this.filterExpressionSpark = filterExpressionSpark;
+    }
+
     @Override
     public String toString() {
         return "UsageChargeTemplateDto [filterParam1=" + filterParam1 + ", filterParam2=" + filterParam2 + ", filterParam3=" + filterParam3 + ", filterParam4=" + filterParam4
-                + ", filterExpression=" + getFilterExpression() + ", priority=" + priority + "]";
+                + ", filterExpression=" + filterExpression + ", filterExpressionSpark=" + filterExpressionSpark + ", priority=" + priority + ", id=" + id + ", code=" + code
+                + ", description=" + description + ", updatedCode=" + updatedCode + "]";
     }
+
+	public Boolean getTriggerNextCharge() {
+		return triggerNextCharge;
+	}
+
+	public void setTriggerNextCharge(Boolean triggerNextCharge) {
+		this.triggerNextCharge = triggerNextCharge;
+	}
+
+	public String getTriggerNextChargeEL() {
+		return triggerNextChargeEL;
+	}
+
+	public void setTriggerNextChargeEL(String triggerNextChargeEL) {
+		this.triggerNextChargeEL = triggerNextChargeEL;
+	}
+
 }

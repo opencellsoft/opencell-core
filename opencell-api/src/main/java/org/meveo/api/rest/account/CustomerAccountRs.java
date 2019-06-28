@@ -59,7 +59,7 @@ public interface CustomerAccountRs extends IBaseRs {
      * 
      * @param customerAccountCode The customer account's code
      * @param calculateBalances  true if needs  to calculate balances
-     * @param inheritCF Custom field inheritance type
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return customer account
      */
     @GET

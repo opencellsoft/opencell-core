@@ -78,7 +78,6 @@ public class QuoteService extends BusinessService<Quote> {
      * @return list of invoice
      * @throws BusinessException business exception
      */
-    @SuppressWarnings("unused")
     public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos) throws BusinessException {
         return provideQuote(quoteInvoiceInfos, true);
     }
@@ -92,7 +91,7 @@ public class QuoteService extends BusinessService<Quote> {
      * @throws BusinessException business exception
      */
     @SuppressWarnings("unused")
-    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos, boolean generatePdf) throws BusinessException {    	
+    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos, boolean generatePdf) throws BusinessException {        
         log.info("Creating simulated invoice for {}", quoteInvoiceInfos);
 
         List<Invoice> invoices = new ArrayList<>();
@@ -121,7 +120,7 @@ public class QuoteService extends BusinessService<Quote> {
                 }
 
                 Subscription subscription = quoteInvoiceInfo.getSubscription();
-				if (subscription != null) {
+                if (subscription != null) {
 
                     billingAccount = subscription.getUserAccount().getBillingAccount();
 
@@ -230,6 +229,7 @@ public class QuoteService extends BusinessService<Quote> {
                 }
             }
             invoiceService.create(invoice);
+            invoiceService.postCreate(invoice);
             invoices.add(invoice);
         }
         return invoices;

@@ -15,6 +15,8 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.sequence.GenericSequence;
 
 /**
+ * Customer numbering sequence
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
  */
@@ -22,35 +24,38 @@ import org.meveo.model.sequence.GenericSequence;
 @ExportIdentifier({ "code", "seller.code" })
 @Table(name = "crm_customer_sequence")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-		@Parameter(name = "sequence_name", value = "crm_customer_sequence_seq"), })
+        @Parameter(name = "sequence_name", value = "crm_customer_sequence_seq"), })
 public class CustomerSequence extends BusinessEntity {
 
-	private static final long serialVersionUID = 181203276349593823L;
+    private static final long serialVersionUID = 181203276349593823L;
 
-	@Embedded
-	private GenericSequence genericSequence = new GenericSequence();
+    /**
+     * Sequence rule
+     */
+    @Embedded
+    private GenericSequence genericSequence = new GenericSequence();
 
-	/**
-	 * This field is only use in CustomerSequence.
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "seller_id")
-	private Seller seller;
+    /**
+     * Seller associated to a customer
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
 
-	public GenericSequence getGenericSequence() {
-		return genericSequence;
-	}
+    public GenericSequence getGenericSequence() {
+        return genericSequence;
+    }
 
-	public void setGenericSequence(GenericSequence genericSequence) {
-		this.genericSequence = genericSequence;
-	}
+    public void setGenericSequence(GenericSequence genericSequence) {
+        this.genericSequence = genericSequence;
+    }
 
-	public Seller getSeller() {
-		return seller;
-	}
+    public Seller getSeller() {
+        return seller;
+    }
 
-	public void setSeller(Seller seller) {
-		this.seller = seller;
-	}
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
 
 }

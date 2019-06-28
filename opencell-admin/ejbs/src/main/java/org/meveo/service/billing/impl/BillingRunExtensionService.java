@@ -33,9 +33,11 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
         BillingRun billingRun = findById(billingRunId);
         
         for(IBillableEntity entity : entites) {
-        	amountTax = amountTax.add(entity.getTotalInvoicingAmountTax());
-        	amountWithoutTax = amountWithoutTax.add(entity.getTotalInvoicingAmountWithoutTax());
-        	amountWithTax = amountWithTax.add(entity.getTotalInvoicingAmountWithTax());
+            if (entity.getTotalInvoicingAmountTax() != null) {
+                amountTax = amountTax.add(entity.getTotalInvoicingAmountTax());
+                amountWithoutTax = amountWithoutTax.add(entity.getTotalInvoicingAmountWithoutTax());
+                amountWithTax = amountWithTax.add(entity.getTotalInvoicingAmountWithTax());
+            }
         }
             
         billingRun.setPrAmountWithoutTax(amountWithoutTax);
@@ -49,7 +51,7 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateBillingRun(Long billingRunId, Integer sizeBA, Integer billableBA, BillingRunStatusEnum status, Date dateStatus) throws BusinessException {
 
-        log.error("UpdateBillingRun in new transaction");
+        log.debug("UpdateBillingRun in new transaction");
         BillingRun billingRun = findById(billingRunId);
 
         if (sizeBA != null) {

@@ -1,8 +1,10 @@
 package org.meveo.api.dto.payment;
 
-import org.meveo.api.dto.ActionStatus;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import javax.xml.bind.annotation.*;
+import org.meveo.api.dto.ActionStatus;
 
 /**
  * The Class PaymentGatewayResponseDto.
@@ -18,9 +20,7 @@ public class PaymentHostedCheckoutResponseDto extends ActionStatus {
     private static final long serialVersionUID = -3151651854190686940L;
 
     /** The urlPaymentHostedCheckout. */
-    @XmlElementWrapper(name = "result")
-    @XmlElement(name = "result")
-    private Result result       ;
+    private Result result;
 
     /**
      * Instantiates a new payment gateway response dto.
@@ -30,12 +30,9 @@ public class PaymentHostedCheckoutResponseDto extends ActionStatus {
     }
 
     public PaymentHostedCheckoutResponseDto(String hostedCheckoutUrl, String ca, String returnUrl) {
-        Result result = new Result( hostedCheckoutUrl,  ca,  returnUrl);
+        Result result = new Result(hostedCheckoutUrl, ca, returnUrl);
         this.result = result;
     }
-
-
-
 
     public Result getResult() {
         return result;
@@ -50,7 +47,6 @@ class Result {
     String hostedCheckoutUrl;
     String ca;
     String returnUrl;
-
 
     public Result(String hostedCheckoutUrl, String ca, String returnUrl) {
         this.hostedCheckoutUrl = hostedCheckoutUrl;

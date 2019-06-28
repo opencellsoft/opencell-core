@@ -7,5 +7,5 @@ package org.meveo.model.sequence;
  * @lastModifiedVersion 5.2
  */
 public enum SequenceTypeEnum {
-	RUM, CUSTOMER_NO
+    RUM, CUSTOMER_NO
 }

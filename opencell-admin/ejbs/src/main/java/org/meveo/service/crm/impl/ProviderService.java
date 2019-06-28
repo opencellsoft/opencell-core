@@ -21,6 +21,7 @@ package org.meveo.service.crm.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -33,8 +34,8 @@ import org.keycloak.KeycloakSecurityContext;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.UserDto;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.commons.utils.EjbUtils;
+import org.meveo.cache.TenantCacheContainerProvider;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.crm.Provider;
@@ -66,38 +67,62 @@ public class ProviderService extends PersistenceService<Provider> {
      */
     @Inject
     private HttpServletRequest request;
-    
+
     @Inject
     private ServiceSingleton serviceSingleton;
 
+    @Inject
+    private TenantCacheContainerProvider tenantCacheContainerProvider;
+
+    @Inject
+    private KeycloakAdminClientService kcService;
+
+    static boolean useTenantCache = true;
+
+    @PostConstruct
+    private void init() {
+        useTenantCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cacheTenant", "true"));
+    }
+
     /**
-     * @return provider
+     * Get current provider retrieved from Cache or database. Populates cache if not found in cache.
+     * 
+     * @return Current provider retrieved from Cache or database
      */
     public Provider getProvider() {
+        Provider provider = null;
+        if (useTenantCache) {
+            provider = tenantCacheContainerProvider.getTenant();
+        }
+        if (provider == null) {
+            provider = getProviderNoCache();
+            tenantCacheContainerProvider.addUpdateTenant(provider);
+        }
+        return provider;
+    }
 
-        Provider provider = getEntityManager().createNamedQuery("Provider.first", Provider.class).getResultList().get(0);
+    /**
+     * Get current provider retrieved from Database. Does not use cache.
+     * 
+     * @return Current provider retrieved from Database
+     */
+    public Provider getProviderNoCache() {
 
-        if (provider.getCurrency() != null) {
-            provider.getCurrency().getCurrencyCode();
-        }
-        if (provider.getCountry() != null) {
-            provider.getCountry().getCountryCode();
-        }
-        if (provider.getLanguage() != null) {
-            provider.getLanguage().getLanguageCode();
-        }
+        Provider provider = getEntityManager().find(Provider.class, Provider.CURRENT_PROVIDER_ID);
         if (provider.getInvoiceConfiguration() != null) {
             provider.getInvoiceConfiguration().getDisplayBillingCycle();
         }
-        provider.getPaymentMethods().size();
+        if (provider.getGdprConfiguration() != null) {
+            provider.getGdprConfiguration().getInvoiceLife();
+        }
         return provider;
     }
 
     @Override
     public void create(Provider provider) throws BusinessException {
         super.create(provider);
+        createProviderUserInKC(provider);
         providerRegistry.addTenant(provider);
-        createProviderUser(provider);
     }
 
     @Override
@@ -108,23 +133,29 @@ public class ProviderService extends PersistenceService<Provider> {
 
     @Override
     public Provider update(Provider provider) throws BusinessException {
+
         provider = super.update(provider);
-        // Refresh appProvider application scope variable
-        refreshAppProvider(provider);
-        // clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
+
+        // Refresh appProvider request scope variable if applicable
+        if (appProvider.getId().equals(provider.getId())) {
+            refreshAppProvider(provider);
+        }
+
         return provider;
     }
 
     /**
-     * Update appProvider's code.
+     * Ensure that provider code in secondary provider schema matches the tenant/provider code as it was listed in main provider's secondary tenant/provider record.
+     * 
+     * Note: This is to ensure db level data correctness only to cover cases when database schema is initialized with a default data - thus a default (DEMO) provider code
      * 
      * @param newCode New code to update to
      * @throws BusinessException Business exception
      */
-    public void updateProviderCode(String newCode) throws BusinessException {
-        Provider provider = getProvider();
+    public void updateSecondaryTenantsCode(String newCode) throws BusinessException {
+        Provider provider = getProviderNoCache();
         provider.setCode(newCode);
-        update(provider);
+        updateNoCheck(provider);
     }
 
     /**
@@ -136,8 +167,9 @@ public class ProviderService extends PersistenceService<Provider> {
 
         try {
             BeanUtils.copyProperties(appProvider, provider);
+
         } catch (IllegalAccessException | InvocationTargetException e) {
-            log.error("Failed to update alProvider fields");
+            log.error("Failed to update appProvider fields");
         }
 
         appProvider.setCurrency(provider.getCurrency() != null ? provider.getCurrency() : null);
@@ -146,6 +178,8 @@ public class ProviderService extends PersistenceService<Provider> {
         appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         appProvider.setPaymentMethods(provider.getPaymentMethods());
         appProvider.setCfValues(provider.getCfValues());
+
+        tenantCacheContainerProvider.addUpdateTenant(provider);
     }
 
     /**
@@ -175,8 +209,9 @@ public class ProviderService extends PersistenceService<Provider> {
      * Create the superadmin user of a new provider.
      * 
      * @param provider the tenant information
+     * @throws BusinessException Failed to create a user
      */
-    private void createProviderUser(Provider provider) {
+    private void createProviderUserInKC(Provider provider) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
         log.info("> addTenant > getTokenString : " + session.getTokenString());
 
@@ -194,33 +229,29 @@ public class ProviderService extends PersistenceService<Provider> {
         userDto.setRoles(Arrays.asList("CUSTOMER_CARE_USER", "superAdministrateur"));
         userDto.setExternalRoles(Arrays.asList(new RoleDto("CC_ADMIN"), new RoleDto("SUPER_ADMIN")));
 
-        // Get services
-        KeycloakAdminClientService kc = (KeycloakAdminClientService) EjbUtils.getServiceInterface(KeycloakAdminClientService.class.getSimpleName());
         try {
-            kc.createUser(request, userDto, provider.getCode());
-        } catch (EntityDoesNotExistsException e) {
-            e.printStackTrace();
+            kcService.createUser(request, userDto, provider.getCode());
         } catch (BusinessException e) {
-            e.printStackTrace();
-
+            log.error("Failed to create a user in Keycloak", e);
+            throw e;
         }
     }
 
-    public GenericSequence getNextMandateNumber() throws BusinessException {		
-		GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.RUM);
-		Provider provider = findById(appProvider.getId());
-		provider.setRumSequence(genericSequence);
-		update(provider);
-		
-		return genericSequence;
-	}
-    
-    public GenericSequence getNextCustomerNumber() throws BusinessException {		
-		GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.CUSTOMER_NO);
-		Provider provider = findById(appProvider.getId());
-		provider.setCustomerNoSequence(genericSequence);
-		update(provider);
-		
-		return genericSequence;
-	}
+    public GenericSequence getNextMandateNumber() throws BusinessException {
+        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.RUM);
+        Provider provider = findById(appProvider.getId());
+        provider.setRumSequence(genericSequence);
+        update(provider);
+
+        return genericSequence;
+    }
+
+    public GenericSequence getNextCustomerNumber() throws BusinessException {
+        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.CUSTOMER_NO);
+        Provider provider = findById(appProvider.getId());
+        provider.setCustomerNoSequence(genericSequence);
+        update(provider);
+
+        return genericSequence;
+    }
 }

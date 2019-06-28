@@ -24,6 +24,7 @@ import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentHistoryDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -36,6 +37,7 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
@@ -48,6 +50,7 @@ import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -58,15 +61,21 @@ import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
- * @author anasseh
- * @lastModifiedVersion 5.0.2
+ * @author Youssef IZEM
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class PaymentApi extends BaseApi {
 
+    private static final String DEFAULT_SORT_ORDER_ID = "id";
+    
     @Inject
     private PaymentService paymentService;
+
+    @Inject
+    private AccountOperationService accountOperationService;
 
     @Inject
     private RecordedInvoiceService recordedInvoiceService;
@@ -127,8 +136,8 @@ public class PaymentApi extends BaseApi {
         payment.setUnMatchingAmount(paymentDto.getAmount());
         payment.setMatchingAmount(BigDecimal.ZERO);
         payment.setAccountingCode(occTemplate.getAccountingCode());
-        payment.setOccCode(occTemplate.getCode());
-        payment.setOccDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
+        payment.setCode(occTemplate.getCode());
+        payment.setDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
         payment.setTransactionCategory(occTemplate.getOccCategory());
         payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
         payment.setCustomerAccount(customerAccount);
@@ -182,14 +191,15 @@ public class PaymentApi extends BaseApi {
      * Get payment list by customer account code
      * 
      * @param customerAccountCode customer account code
+     * @param pagingAndFiltering
      * @return list of payment dto
      * @throws Exception exception.
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
-    public List<PaymentDto> getPaymentList(String customerAccountCode) throws Exception {
-        List<PaymentDto> result = new ArrayList<PaymentDto>();
+    public CustomerPaymentsResponse getPaymentList(String customerAccountCode, PagingAndFiltering pagingAndFiltering) throws Exception {
 
+        CustomerPaymentsResponse result = new CustomerPaymentsResponse();
         CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
 
         if (customerAccount == null) {
@@ -198,7 +208,21 @@ public class PaymentApi extends BaseApi {
 
         customerAccountService.getEntityManager().refresh(customerAccount);
 
-        List<AccountOperation> ops = customerAccount.getAccountOperations();
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+        PaginationConfiguration paginationConfiguration = preparePaginationConfiguration(pagingAndFiltering, customerAccount);
+
+        List<AccountOperation> ops = accountOperationService.list(paginationConfiguration);
+        Long total = accountOperationService.count(paginationConfiguration);
+
+        // Remove the filters added by preparePaginationConfiguration function
+        pagingAndFiltering.getFilters().remove("type_class");
+        pagingAndFiltering.getFilters().remove("customerAccount");
+        
+        pagingAndFiltering.setTotalNumberOfRecords(total.intValue());
+        result.setPaging(pagingAndFiltering);
+
         for (AccountOperation op : ops) {
             if (op instanceof Payment) {
                 Payment p = (Payment) op;
@@ -206,35 +230,54 @@ public class PaymentApi extends BaseApi {
                 paymentDto.setType(p.getType());
                 paymentDto.setAmount(p.getAmount());
                 paymentDto.setDueDate(p.getDueDate());
-                paymentDto.setOccTemplateCode(p.getOccCode());
+                paymentDto.setOccTemplateCode(p.getCode());
                 paymentDto.setPaymentMethod(p.getPaymentMethod());
                 paymentDto.setReference(p.getReference());
                 paymentDto.setTransactionDate(p.getTransactionDate());
                 paymentDto.setPaymentOrder(p.getPaymentOrder());
                 paymentDto.setFees(p.getFees());
                 paymentDto.setComment(p.getComment());
-                paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, true));
+                paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                 if (p instanceof AutomatedPayment) {
                     AutomatedPayment ap = (AutomatedPayment) p;
                     paymentDto.setBankCollectionDate(ap.getBankCollectionDate());
                     paymentDto.setBankLot(ap.getBankLot());
                     paymentDto.setDepositDate(ap.getDepositDate());
                 }
-                result.add(paymentDto);
+                result.addPaymentDto(paymentDto);
             } else if (op instanceof OtherCreditAndCharge) {
                 OtherCreditAndCharge occ = (OtherCreditAndCharge) op;
                 PaymentDto paymentDto = new PaymentDto();
                 paymentDto.setType(occ.getType());
-                paymentDto.setDescription(op.getOccDescription());
+                paymentDto.setDescription(op.getDescription());
                 paymentDto.setAmount(occ.getAmount());
                 paymentDto.setDueDate(occ.getDueDate());
-                paymentDto.setOccTemplateCode(occ.getOccCode());
+                paymentDto.setOccTemplateCode(occ.getCode());
                 paymentDto.setReference(occ.getReference());
                 paymentDto.setTransactionDate(occ.getTransactionDate());
-                result.add(paymentDto);
+                result.addPaymentDto(paymentDto);
             }
         }
         return result;
+    }
+    
+    /**
+     * Prepare paginationConfiguration to get only Payment and OtherCreditAndCharge operations related to the customerAccount
+     * 
+     * @param pagingAndFiltering
+     * @param customerAccount
+     * @return
+     * @throws Exception
+     */
+    private PaginationConfiguration preparePaginationConfiguration(PagingAndFiltering pagingAndFiltering, CustomerAccount customerAccount) throws Exception {
+
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(DEFAULT_SORT_ORDER_ID, SortOrder.ASCENDING, null, pagingAndFiltering, AccountOperation.class);
+
+        List<String> classFilter = Arrays.asList("org.meveo.model.payments.Payment", "org.meveo.model.payments.AutomatedPayment", "org.meveo.model.payments.OtherCreditAndCharge");
+        pagingAndFiltering.addFilter("customerAccount", customerAccount);
+        pagingAndFiltering.addFilter("type_class", classFilter);
+
+        return paginationConfiguration;
     }
 
     /**
@@ -362,7 +405,7 @@ public class PaymentApi extends BaseApi {
         if (paymentOrRefund.getMatchingAmounts() != null && !paymentOrRefund.getMatchingAmounts().isEmpty()) {
             for (MatchingAmount ma : paymentOrRefund.getMatchingAmounts().get(0).getMatchingCode().getMatchingAmounts()) {
                 if (ma.getAccountOperation().getTransactionCategory() != paymentOrRefund.getTransactionCategory()) {
-                    result.add(new AccountOperationDto(ma.getAccountOperation(), entityToDtoConverter.getCustomFieldsDTO(ma.getAccountOperation(), true)));
+                    result.add(new AccountOperationDto(ma.getAccountOperation(), entityToDtoConverter.getCustomFieldsDTO(ma.getAccountOperation(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
                 }
             }
         }
@@ -394,10 +437,10 @@ public class PaymentApi extends BaseApi {
         paymentHistoryDto.setPaymentMethodName(paymentHistory.getPaymentMethodName());
         paymentHistoryDto.setPaymentMethodType(paymentHistory.getPaymentMethodType());
         if (paymentHistory.getRefund() != null) {
-            paymentHistoryDto.setRefund(new AccountOperationDto(paymentHistory.getRefund(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getRefund(), true)));
+            paymentHistoryDto.setRefund(new AccountOperationDto(paymentHistory.getRefund(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getRefund(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
         }
         if (paymentHistory.getPayment() != null) {
-            paymentHistoryDto.setPayment(new AccountOperationDto(paymentHistory.getPayment(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getPayment(), true)));
+            paymentHistoryDto.setPayment(new AccountOperationDto(paymentHistory.getPayment(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getPayment(), CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
         }
         paymentHistoryDto.setSyncStatus(paymentHistory.getSyncStatus());
         paymentHistoryDto.setStatus(paymentHistory.getStatus());

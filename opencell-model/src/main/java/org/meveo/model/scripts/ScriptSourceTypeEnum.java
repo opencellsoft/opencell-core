@@ -18,46 +18,42 @@
  */
 package org.meveo.model.scripts;
 
+public enum ScriptSourceTypeEnum {
+    JAVA(1, "scriptSourceTypeEnum.JAVA");
+    // GROOVY(2, "scriptSourceTypeEnum.GROOVY"),
+    // JAVA_SCRIPT(3, "scriptSourceTypeEnum.JAVA_SCRIPT"),
+    // BEAN_SHELL(4, "scriptSourceTypeEnum.BEAN_SHELL"),
+    // SQL(5, "scriptSourceTypeEnum.SQL"),
+    // PERL(6, "scriptSourceTypeEnum.PERL");
 
-public enum ScriptSourceTypeEnum {	
-        JAVA(1, "scriptSourceTypeEnum.JAVA");
-//	    GROOVY(2, "scriptSourceTypeEnum.GROOVY"),
-//	    JAVA_SCRIPT(3, "scriptSourceTypeEnum.JAVA_SCRIPT"),
-//	    BEAN_SHELL(4, "scriptSourceTypeEnum.BEAN_SHELL"),
-//	    SQL(5, "scriptSourceTypeEnum.SQL"),
-//	    PERL(6, "scriptSourceTypeEnum.PERL");
-	    
+    private Integer id;
+    private String label;
 
-	    private Integer id;
-	    private String label;
-	    
+    private ScriptSourceTypeEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
+    }
 
+    public String getLabel() {
+        return label;
+    }
 
-		private ScriptSourceTypeEnum(Integer id, String label) {
-	        this.id = id;
-	        this.label = label;
-	    }
+    public Integer getId() {
+        return id;
+    }
 
-	    public String getLabel() {
-	        return label;
-	    }
+    public static ScriptSourceTypeEnum getValue(Integer id) {
+        if (id != null) {
+            for (ScriptSourceTypeEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
 
-	    public Integer getId() {
-	        return id;
-	    }
-
-	    public static ScriptSourceTypeEnum getValue(Integer id) {
-	        if (id != null) {
-	            for (ScriptSourceTypeEnum status : values()) {
-	                if (id.equals(status.getId())) {
-	                    return status;
-	                }
-	            }
-	        }
-	        return null;
-	    }
-
-	    public String toString() {
-	        return label.toString();
-	    }
-	}
+    public String toString() {
+        return label.toString();
+    }
+}

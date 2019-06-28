@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -52,7 +51,8 @@ import org.meveo.util.ApplicationProvider;
  * The Class PaymentScheduleInstanceItemService.
  *
  * @author anasseh
- * @since 5.2
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class PaymentScheduleInstanceItemService extends PersistenceService<PaymentScheduleInstanceItem> {
@@ -176,7 +176,6 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             categoryInvoiceAgregate.setDescription(invoiceSubCat.getInvoiceCategory().getDescription());
             categoryInvoiceAgregate.addSubCategoryInvoiceAggregate(subCategoryInvoiceAgregate);
             categoryInvoiceAgregate.setInvoice(invoice);
-            categoryInvoiceAgregate.setAccountingCode(tax.getAccountingCode());
             categoryInvoiceAgregate.setAmountWithoutTax(amounts[0]);
             categoryInvoiceAgregate.setAmountWithTax(amounts[2]);
             categoryInvoiceAgregate.setAmountTax(amounts[1]);
@@ -191,9 +190,9 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             invoice.setAmountWithTax(amounts[2]);
             invoice.setNetToPay(amounts[2]);
 
-            invoiceService.create(invoice);
             invoiceService.assignInvoiceNumber(invoice);
-            invoice = invoiceService.update(invoice);
+            invoiceService.create(invoice);
+            invoiceService.postCreate(invoice);
 
             paymentScheduleInstanceItem.setInvoice(invoice);
         }
@@ -311,8 +310,8 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         recordedInvoicePS.setUnMatchingAmount(recordedInvoicePS.getAmount());
         recordedInvoicePS.setMatchingAmount(BigDecimal.ZERO);
         recordedInvoicePS.setAccountingCode(occTemplate.getAccountingCode());
-        recordedInvoicePS.setOccCode(occTemplate.getCode());
-        recordedInvoicePS.setOccDescription(occTemplate.getDescription());
+        recordedInvoicePS.setCode(occTemplate.getCode());
+        recordedInvoicePS.setDescription(occTemplate.getDescription());
         recordedInvoicePS.setTransactionCategory(occTemplate.getOccCategory());
         recordedInvoicePS.setCustomerAccount(customerAccount);
         recordedInvoicePS.setReference(invoice == null ? "psItemID:" + paymentScheduleInstanceItem.getId() : invoice.getInvoiceNumber());

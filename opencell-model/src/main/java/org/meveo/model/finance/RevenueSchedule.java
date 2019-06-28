@@ -18,79 +18,79 @@ import org.meveo.model.billing.ChargeInstance;
 
 @Entity
 @Table(name = "ar_revenue_schedule", uniqueConstraints = @UniqueConstraint(columnNames = { "charge_instance_id", "revenue_date" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_revenue_schedule_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_revenue_schedule_seq"), })
 public class RevenueSchedule extends BaseEntity {
 
-	private static final long serialVersionUID = 7793758853731725829L;
+    private static final long serialVersionUID = 7793758853731725829L;
 
-	@ManyToOne(optional=false)
-	@JoinColumn(name = "charge_instance_id")
-	@NotNull
-	private ChargeInstance chargeInstance;
-	
-	@Column(name="revenue_date",nullable=false)
-	@NotNull
-	private Date revenueDate;
-	
-	@Column(name="recognized_revenue")
-	private BigDecimal recognizedRevenue=BigDecimal.ZERO;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "charge_instance_id")
+    @NotNull
+    private ChargeInstance chargeInstance;
 
-	@Column(name="invoiced_revenue")
-	private BigDecimal invoicedRevenue=BigDecimal.ZERO;
+    @Column(name = "revenue_date", nullable = false)
+    @NotNull
+    private Date revenueDate;
 
-	@Column(name="accrued_revenue")
-	private BigDecimal accruedRevenue=BigDecimal.ZERO;
+    @Column(name = "recognized_revenue")
+    private BigDecimal recognizedRevenue = BigDecimal.ZERO;
 
-	@Column(name="deffered_revenue")
-	private BigDecimal defferedRevenue=BigDecimal.ZERO;
+    @Column(name = "invoiced_revenue")
+    private BigDecimal invoicedRevenue = BigDecimal.ZERO;
 
-	public ChargeInstance getChargeInstance() {
-		return chargeInstance;
-	}
+    @Column(name = "accrued_revenue")
+    private BigDecimal accruedRevenue = BigDecimal.ZERO;
 
-	public void setChargeInstance(ChargeInstance chargeInstance) {
-		this.chargeInstance = chargeInstance;
-	}
+    @Column(name = "deffered_revenue")
+    private BigDecimal defferedRevenue = BigDecimal.ZERO;
 
-	public Date getRevenueDate() {
-		return revenueDate;
-	}
+    public ChargeInstance getChargeInstance() {
+        return chargeInstance;
+    }
 
-	public void setRevenueDate(Date revenueDate) {
-		this.revenueDate = revenueDate;
-	}
+    public void setChargeInstance(ChargeInstance chargeInstance) {
+        this.chargeInstance = chargeInstance;
+    }
 
-	public BigDecimal getRecognizedRevenue() {
-		return recognizedRevenue;
-	}
+    public Date getRevenueDate() {
+        return revenueDate;
+    }
 
-	public void setRecognizedRevenue(BigDecimal recognizedRevenue) {
-		this.recognizedRevenue = recognizedRevenue;
-	}
+    public void setRevenueDate(Date revenueDate) {
+        this.revenueDate = revenueDate;
+    }
 
-	public BigDecimal getInvoicedRevenue() {
-		return invoicedRevenue;
-	}
+    public BigDecimal getRecognizedRevenue() {
+        return recognizedRevenue;
+    }
 
-	public void setInvoicedRevenue(BigDecimal invoicedRevenue) {
-		this.invoicedRevenue = invoicedRevenue;
-	}
+    public void setRecognizedRevenue(BigDecimal recognizedRevenue) {
+        this.recognizedRevenue = recognizedRevenue;
+    }
 
-	public BigDecimal getAccruedRevenue() {
-		return accruedRevenue;
-	}
+    public BigDecimal getInvoicedRevenue() {
+        return invoicedRevenue;
+    }
 
-	public void setAccruedRevenue(BigDecimal accruedRevenue) {
-		this.accruedRevenue = accruedRevenue;
-	}
+    public void setInvoicedRevenue(BigDecimal invoicedRevenue) {
+        this.invoicedRevenue = invoicedRevenue;
+    }
 
-	public BigDecimal getDefferedRevenue() {
-		return defferedRevenue;
-	}
+    public BigDecimal getAccruedRevenue() {
+        return accruedRevenue;
+    }
 
-	public void setDefferedRevenue(BigDecimal defferedRevenue) {
-		this.defferedRevenue = defferedRevenue;
-	}
-	
-	
+    public void setAccruedRevenue(BigDecimal accruedRevenue) {
+        this.accruedRevenue = accruedRevenue;
+    }
+
+    public BigDecimal getDefferedRevenue() {
+        return defferedRevenue;
+    }
+
+    public void setDefferedRevenue(BigDecimal defferedRevenue) {
+        this.defferedRevenue = defferedRevenue;
+    }
+
 }

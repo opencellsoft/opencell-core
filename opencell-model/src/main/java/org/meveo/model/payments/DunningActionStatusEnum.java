@@ -19,5 +19,5 @@
 package org.meveo.model.payments;
 
 public enum DunningActionStatusEnum {
-	A, T, E;
+    A, T, E;
 }

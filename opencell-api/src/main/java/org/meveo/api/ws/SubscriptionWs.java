@@ -11,6 +11,7 @@ import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
+import org.meveo.api.dto.billing.SubscriptionAndServicesToActivateRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
 import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
@@ -18,13 +19,13 @@ import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.dto.response.RawResponseDto;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 @WebService
 public interface SubscriptionWs extends IBaseWs {
@@ -55,7 +56,7 @@ public interface SubscriptionWs extends IBaseWs {
 
     @WebMethod
     ActionStatus activateSubscription(@WebParam(name = "subscriptionCode") String subscriptionCode);
-    
+
     /**
      * Activate a given Subscription for a customer.
      *
@@ -64,15 +65,16 @@ public interface SubscriptionWs extends IBaseWs {
      */
     @WebMethod
     SubscriptionForCustomerResponseDto activateForCustomer(@WebParam(name = "subscription") SubscriptionForCustomerRequestDto postData);
-    
+
     /**
      * Cancels the renewal term of an active subscription.
+     * 
      * @param subscriptionCode code of the subscription
      * @return status of the request
      */
     @WebMethod
-    ActionStatus cancelSubscriptionRenewal(@WebParam(name="subscriptionCode") String subscriptionCode);
-    
+    ActionStatus cancelSubscriptionRenewal(@WebParam(name = "subscriptionCode") String subscriptionCode);
+
     /**
      * List subscriptions by a user account. Deprecated in v.4.7.2. Use listAll() instead.
      * 
@@ -93,8 +95,15 @@ public interface SubscriptionWs extends IBaseWs {
     @WebMethod
     SubscriptionsListResponseDto listAll(@Deprecated @WebParam(name = "mergedCF") Boolean mergedCF, @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
+    /**
+     * Find subscription by its code
+     * 
+     * @param subscriptionCode Subscription code
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @return Subscription information
+     */
     @WebMethod
-    GetSubscriptionResponseDto findSubscription(@WebParam(name = "subscriptionCode") String subscriptionCode);
+    GetSubscriptionResponseDto findSubscription(@WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * Create or update subscription information ONLY. Does not include access, services nor products
@@ -165,5 +174,14 @@ public interface SubscriptionWs extends IBaseWs {
     @WebMethod
     GetListServiceInstanceResponseDto listServiceInstance(@WebParam(name = "subscriptionCode") String subscriptionCode,
             @WebParam(name = "serviceInstanceCode") String serviceInstanceCode);
+
+    /**
+     * Create a subscription and activate services in a single transaction.
+     * 
+     * @param postData Subscription and services to activate data
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus subscribeAndActivateServices(@WebParam(name = "subscribeAndActivateServices") SubscriptionAndServicesToActivateRequestDto postData);
 
 }

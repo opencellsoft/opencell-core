@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -35,25 +36,57 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.shared.DateUtils;
 
+/**
+ * Instantiated counter
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
+@Cacheable
 @Table(name = "billing_counter")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_counter_instance_seq"), })
 public class CounterInstance extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;
 
+    /**
+     * Counter template that counter was instantiated from
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counter_template_id")
     private CounterTemplate counterTemplate;
 
+    /**
+     * User account that counter is tracked on
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
+    /**
+     * Billing account that counter is tracked on
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id")
     private BillingAccount billingAccount;
 
+    /**
+     * Subscription that counter is tracked on
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
+
+    /**
+     * Service instance that counter is tracked on
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_instance_id")
+    private ServiceInstance serviceInstance;
+
+    /**
+     * Counter periods
+     */
     @OneToMany(mappedBy = "counterInstance", fetch = FetchType.LAZY)
     private List<CounterPeriod> counterPeriods = new ArrayList<CounterPeriod>();
 
@@ -105,4 +138,35 @@ public class CounterInstance extends BusinessEntity {
         return null;
     }
 
+    /**
+     * Gets the subscription
+     * @return a subscription
+     */
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    /**
+     * Sets subscription
+     * @param subscription a subscription
+     */
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
+
+    /**
+     * Gets a service instance
+     * @return a service instance
+     */
+    public ServiceInstance getServiceInstance() {
+        return serviceInstance;
+    }
+
+    /**
+     * Sets a service instance
+     * @param serviceInstance a service instance
+     */
+    public void setServiceInstance(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 }

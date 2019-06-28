@@ -19,12 +19,14 @@ import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
+import org.meveo.api.dto.payment.PaymentGatewayRumSequenceDto;
 import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
@@ -34,22 +36,29 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
 import org.meveo.api.dto.response.payment.CreditCategoryResponseDto;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
+import org.meveo.api.dto.response.payment.PaymentGatewayRumSequenceResponseDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.CreditCategoryApi;
 import org.meveo.api.payment.DDRequestBuilderApi;
 import org.meveo.api.payment.DDRequestLotOpApi;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.api.payment.PaymentGatewayApi;
+import org.meveo.api.payment.PaymentGatewayRumSequenceApi;
 import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.payment.PaymentScheduleApi;
 import org.meveo.api.ws.PaymentWs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 
 /**
  * The implementation for PaymentWs.
  * 
- * @author anasseh
- * @lastModifiedVersion 5.2
+ * @author Edward Legaspi
+ * @author Youssef IZEM
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @SuppressWarnings("deprecation")
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
@@ -76,6 +85,9 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     
     @Inject
     private PaymentScheduleApi paymentScheduleApi;
+    
+    @Inject
+    private PaymentGatewayRumSequenceApi paymentGatewayRumSequenceApi;
 
     @Override
     public ActionStatus create(PaymentDto postData) {
@@ -91,12 +103,12 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     }
 
     @Override
-    public CustomerPaymentsResponse list(String customerAccountCode) {
+    public CustomerPaymentsResponse list(String customerAccountCode, PagingAndFiltering pagingAndFiltering) {
         CustomerPaymentsResponse result = new CustomerPaymentsResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
+            result = paymentApi.getPaymentList(customerAccountCode, pagingAndFiltering);
             result.setBalance(paymentApi.getBalance(customerAccountCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -321,7 +333,10 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            creditCategoryApi.create(postData);
+            CreditCategory creditCategory = creditCategoryApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(creditCategory.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -347,7 +362,10 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            creditCategoryApi.createOrUpdate(postData);
+            CreditCategory creditCategory = creditCategoryApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(creditCategory.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -725,6 +743,16 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         return result;
     }
 
+    @Override
+    public PaymentScheduleInstanceResponseDto findPaymentScheduleInstance(Long id) {
+    	PaymentScheduleInstanceResponseDto response = new PaymentScheduleInstanceResponseDto();    	
+    	try {
+    		response = paymentScheduleApi.findPaymentScheduleInstance(id);
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+    	return response;
+    }
 
     @Override
     public ActionStatus terminatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) {
@@ -749,4 +777,69 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         }
         return result;
     }
+
+	@Override
+	public ActionStatus createPaymentGatewayRumSequence(PaymentGatewayRumSequenceDto postData) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			paymentGatewayRumSequenceApi.create(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus updatePaymentGatewayRumSequence(PaymentGatewayRumSequenceDto postData) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			paymentGatewayRumSequenceApi.update(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public PaymentGatewayRumSequenceResponseDto findPaymentGatewayRumSequence(String code) {
+		PaymentGatewayRumSequenceResponseDto result = new PaymentGatewayRumSequenceResponseDto();
+
+		try {
+			result.setPaymentGatewayRumSequence(paymentGatewayRumSequenceApi.find(code));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus deletePaymentGatewayRumSequence(String code) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			paymentGatewayRumSequenceApi.delete(code);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public GenericSequenceValueResponseDto getNextPaymentGatewayRumSequenceNumber(String code) {
+		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+
+		try {
+			result = paymentGatewayRumSequenceApi.getNextNumber(code);
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
 }

@@ -20,9 +20,9 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
@@ -37,7 +37,7 @@ public class InvoicingAsync {
 
     /** The billing account service. */
     @Inject
-    private BillingAccountService billingAccountService;
+    private RatedTransactionService ratedTransactionService;
 
     /** The invoice service. */
     @Inject
@@ -72,16 +72,17 @@ public class InvoicingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         List<IBillableEntity> billableEntities = new ArrayList<IBillableEntity>();
+        int i = 0;
         for (IBillableEntity entity : entities) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            i++;
+            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
-            IBillableEntity billableEntity = billingAccountService.updateEntityTotalAmounts(entity, billingRun);
+            IBillableEntity billableEntity = ratedTransactionService.updateEntityTotalAmounts(entity, billingRun);
             if (billableEntity != null) {
-            	billableEntities.add(billableEntity);
+                billableEntities.add(billableEntity);
             }
         }
-        log.info("WorkSet billable entities: " + billableEntities.size());
         return new AsyncResult<List<IBillableEntity>>(billableEntities);
     }
 
@@ -97,48 +98,59 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsync(List<?> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser) {
+    public Future<String> createAgregatesAndInvoiceAsync(List<? extends IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        for (IBillableEntity entity : (List<IBillableEntity>) entities) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+        int i = 0;
+        for (IBillableEntity entity : entities) {
+            i++;
+            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
-                invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, entity.getMinRatedTransactions(), false);
+                invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, entity.getMinRatedTransactions(), false, false);
             } catch (Exception e) {
-                log.error("Error for entity=" + entity + " : " + e);
+                log.error("Error for entity {}/{}", entity.getClass().getSimpleName(), entity.getId(), e);
             }
         }
         return new AsyncResult<String>("OK");
     }
-    
+
     /**
      * Assign invoice number and increment BA invoice dates async. One invoice at a time in a separate transaction.
      *
+     * @param billingRun the billing run to process
      * @param invoiceIds the invoice ids
      * @param invoicesToNumberInfo the invoices to number info
      * @param jobInstanceId the job instance id
+     * @param result the Job execution result
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return the future
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo, Long jobInstanceId,
-            MeveoUser lastCurrentUser) {
+    public Future<String> assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(BillingRun billingRun, List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo,
+            Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
+        int i = 0;
         for (Long invoiceId : invoiceIds) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            i++;
+            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
                 invoiceService.assignInvoiceNumberAndIncrementBAInvoiceDate(invoiceId, invoicesToNumberInfo);
+
             } catch (Exception e) {
                 log.error("Failed to increment invoice date for invoice {}", invoiceId, e);
+
+                if (result != null) {
+                    result.registerWarning("Failed when assign invoice number to invoice " + invoiceId + " : " + e.getMessage());
+                }
             }
         }
         return new AsyncResult<String>("OK");
@@ -159,8 +171,10 @@ public class InvoicingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
+        int i = 0;
         for (Long invoiceId : invoiceIds) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             try {
@@ -192,8 +206,10 @@ public class InvoicingAsync {
 
         boolean allOk = true;
 
+        int i = 0;
         for (Long invoiceId : invoiceIds) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             try {

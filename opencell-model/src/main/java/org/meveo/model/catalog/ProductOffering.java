@@ -11,6 +11,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -45,6 +46,8 @@ import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
+ * Product/Service offerings
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
@@ -67,28 +70,47 @@ public abstract class ProductOffering extends EnableBusinessCFEntity implements 
 
     private static final long serialVersionUID = 6877386866687396135L;
 
+    /**
+     * Offering name
+     */
     @Column(name = "name", length = 100)
     @Size(max = 100)
     private String name;
 
+    /**
+     * Categories
+     */
     @ManyToMany
     @JoinTable(name = "cat_product_offer_tmpl_cat", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "offer_template_cat_id"))
     @OrderColumn(name = "INDX")
     private List<OfferTemplateCategory> offerTemplateCategories = new ArrayList<>();
 
-    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
+    /**
+     * Offer validity
+     */
+    @Embedded
+    @AttributeOverrides(value = { @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity;
 
+    /**
+     * Image/logo path
+     */
     @ImageType
     @Column(name = "image_path", length = 100)
     @Size(max = 100)
     private String imagePath;
 
+    /**
+     * Attachments
+     */
     @ManyToMany
     @JoinTable(name = "cat_product_offer_digital_res", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "digital_resource_id"))
     @OrderColumn(name = "INDX")
     private List<DigitalResource> attachments = new ArrayList<>();
 
+    /**
+     * Lifecycle status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "life_cycle_status")
     private LifeCycleStatusEnum lifeCycleStatus = LifeCycleStatusEnum.IN_DESIGN;
@@ -102,31 +124,52 @@ public abstract class ProductOffering extends EnableBusinessCFEntity implements 
     @OrderColumn(name = "INDX")
     private List<BusinessAccountModel> businessAccountModels = new ArrayList<>();
 
+    /**
+     * Sales channels
+     */
     @ManyToMany
     @JoinTable(name = "cat_product_offer_channels", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "channel_id"))
     @OrderColumn(name = "INDX")
     private List<Channel> channels = new ArrayList<>();
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
 
+    /**
+     * Long description
+     */
     @Size(max = 2000)
     @Column(name = "long_description", columnDefinition = "TEXT")
     private String longDescription;
 
+    /**
+     * Translated long descriptions in JSON format with langauge code as a key and translated description as a value
+     */
     @Type(type = "json")
     @Column(name = "long_description_i18n", columnDefinition = "text")
     private Map<String, String> longDescriptionI18n;
 
+    /**
+     * Rating script to run when rating wallet operation
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance globalRatingScriptInstance;
 
+    /**
+     * Sellers that provide this offering. If empty - any seller is available.
+     */
     @ManyToMany
     @JoinTable(name = "cat_product_offer_seller", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "seller_id"))
     private List<Seller> sellers = new ArrayList<>();
 
+    /**
+     * Customer categories that offering is available to
+     */
     @ManyToMany
     @JoinTable(name = "cat_product_offer_customer_category", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "customer_category_id"))
     @OrderColumn(name = "INDX")

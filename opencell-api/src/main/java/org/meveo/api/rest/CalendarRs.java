@@ -1,5 +1,7 @@
 package org.meveo.api.rest;
 
+import java.util.Date;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -13,8 +15,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CalendarDto;
+import org.meveo.api.dto.response.BankingDateStatusResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
+import org.meveo.api.serialize.RestDateParam;
 
 /**
  * @author Edward P. Legaspi
@@ -54,6 +58,16 @@ public interface CalendarRs extends IBaseRs {
     @Path("/")
     @GET
     GetCalendarResponse find(@QueryParam("calendarCode") String calendarCode);
+    
+    /**
+     * Gets the banking date status.
+     *
+     * @param date the date to check if is a working date or not
+     * @return the banking date status
+     */
+    @Path("/bankingDateStatus")
+    @GET
+    BankingDateStatusResponse getBankingDateStatus(@QueryParam("date") @RestDateParam Date date);
 
     /**
      * Retrieve a list of all calendars.

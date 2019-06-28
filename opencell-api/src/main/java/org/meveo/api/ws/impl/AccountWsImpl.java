@@ -71,8 +71,14 @@ import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.payment.RumSequenceApi;
 import org.meveo.api.ws.AccountWs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -80,7 +86,8 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * 
  * @author anasseh
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -112,10 +119,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 
     @Inject
     private TitleApi titleApi;
-    
+
     @Inject
     private RumSequenceApi rumSequenceApi;
-    
+
     @Inject
     private CustomerSequenceApi customerSequenceApi;
 
@@ -124,7 +131,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerApi.create(postData);
+            Customer customer = customerApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(customer.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -146,11 +156,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public GetCustomerResponseDto findCustomer(String customerCode) {
+    public GetCustomerResponseDto findCustomer(String customerCode, CustomFieldInheritanceEnum inheritCF) {
         GetCustomerResponseDto result = new GetCustomerResponseDto();
 
         try {
-            result.setCustomer(customerApi.find(customerCode));
+            result.setCustomer(customerApi.find(customerCode, inheritCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -228,7 +238,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.create(postData);
+            CustomerAccount customerAccount = customerAccountApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(customerAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -250,11 +263,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public GetCustomerAccountResponseDto findCustomerAccount(String customerAccountCode, Boolean calculateBalances) {
+    public GetCustomerAccountResponseDto findCustomerAccount(String customerAccountCode, Boolean calculateBalances, CustomFieldInheritanceEnum inheritCF) {
         GetCustomerAccountResponseDto result = new GetCustomerAccountResponseDto();
 
         try {
-            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, calculateBalances));
+            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, calculateBalances, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -332,7 +345,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingAccountApi.create(postData);
+            BillingAccount billingAccount = billingAccountApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(billingAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -354,11 +370,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public GetBillingAccountResponseDto findBillingAccount(String billingAccountCode) {
+    public GetBillingAccountResponseDto findBillingAccount(String billingAccountCode, CustomFieldInheritanceEnum inheritCF) {
         GetBillingAccountResponseDto result = new GetBillingAccountResponseDto();
 
         try {
-            result.setBillingAccount(billingAccountApi.find(billingAccountCode));
+            result.setBillingAccount(billingAccountApi.find(billingAccountCode, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -384,7 +400,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.create(postData);
+            UserAccount userAccount = userAccountApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(userAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -406,11 +425,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public GetUserAccountResponseDto findUserAccount(String userAccountCode) {
+    public GetUserAccountResponseDto findUserAccount(String userAccountCode, CustomFieldInheritanceEnum inheritCF) {
         GetUserAccountResponseDto result = new GetUserAccountResponseDto();
 
         try {
-            result.setUserAccount(userAccountApi.find(userAccountCode));
+            result.setUserAccount(userAccountApi.find(userAccountCode, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -512,11 +531,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public CustomerListResponse findAccountHierarchy(AccountHierarchyDto postData) {
+    public CustomerListResponse findAccountHierarchy(AccountHierarchyDto postData, Boolean calculateBalances) {
         CustomerListResponse result = new CustomerListResponse();
 
         try {
-            result.setCustomers(accountHierarchyApi.find(postData));
+            result.setCustomers(accountHierarchyApi.find(postData, calculateBalances));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -719,7 +738,6 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         return result;
     }
 
-
     @Override
     public GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData) {
         GetAccountHierarchyResponseDto result = new GetAccountHierarchyResponseDto();
@@ -774,7 +792,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.createOrUpdate(postData);
+            UserAccount userAccount = userAccountApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(userAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -787,7 +808,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingAccountApi.createOrUpdate(postData);
+            BillingAccount billingAccount = billingAccountApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(billingAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -813,7 +837,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.createOrUpdate(postData);
+            CustomerAccount customerAccount = customerAccountApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(customerAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -826,7 +853,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerApi.createOrUpdate(postData);
+            Customer customer = customerApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(customer.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1187,12 +1217,12 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         return result;
     }
 
-	@Override
-	public ActionStatus exportCustomerHierarchy(String customerCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		 MessageContext mc = webServiceContext.getMessageContext();
-         HttpServletResponse response = (HttpServletResponse) mc.get(MessageContext.SERVLET_RESPONSE);
-         
+    @Override
+    public ActionStatus exportCustomerHierarchy(String customerCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        MessageContext mc = webServiceContext.getMessageContext();
+        HttpServletResponse response = (HttpServletResponse) mc.get(MessageContext.SERVLET_RESPONSE);
+
         try {
             customerApi.exportCustomerHierarchy(customerCode, response);
         } catch (Exception e) {
@@ -1200,72 +1230,72 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus anonymizeGpdr(String customerCode) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus anonymizeGpdr(String customerCode) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			customerApi.anonymizeGpdr(customerCode);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        try {
+            customerApi.anonymizeGpdr(customerCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus updateMandateNumberSequence(GenericSequenceDto postData) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus updateMandateNumberSequence(GenericSequenceDto postData) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			rumSequenceApi.update(postData);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        try {
+            rumSequenceApi.update(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public GenericSequenceValueResponseDto getNextMandateNumberSequence() {
-		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+    @Override
+    public GenericSequenceValueResponseDto getNextMandateNumberSequence() {
+        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
 
-		try {
-			result = rumSequenceApi.getNextMandateNumber();
-		} catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
+        try {
+            result = rumSequenceApi.getNextMandateNumber();
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			customerApi.updateCustomerNumberSequence(postData);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        try {
+            customerApi.updateCustomerNumberSequence(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public GenericSequenceValueResponseDto getNextCustomerNumberSequence() {
-		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+    @Override
+    public GenericSequenceValueResponseDto getNextCustomerNumberSequence() {
+        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
 
-		try {
-			result = customerApi.getNextCustomerNumber();
-		} catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
+        try {
+            result = customerApi.getNextCustomerNumber();
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
 	@Override
 	public ActionStatus createCustomerSequence(CustomerSequenceDto postData) {

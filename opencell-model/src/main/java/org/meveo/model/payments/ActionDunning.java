@@ -39,143 +39,144 @@ import org.meveo.model.wf.WFAction;
 
 @Entity
 @Table(name = "ar_action_dunning")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_action_dunning_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_action_dunning_seq"), })
 public class ActionDunning extends AuditableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "creaton_date")
-	@Temporal(TemporalType.DATE)
-	private Date creationDate;
+    @Column(name = "creaton_date")
+    @Temporal(TemporalType.DATE)
+    private Date creationDate;
 
-	@Column(name = "action_type")
-	@Enumerated(EnumType.STRING)
-	private DunningActionTypeEnum typeAction;
+    @Column(name = "action_type")
+    @Enumerated(EnumType.STRING)
+    private DunningActionTypeEnum typeAction;
 
-	@Column(name = "status")
-	@Enumerated(EnumType.STRING)
-	private DunningActionStatusEnum status;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private DunningActionStatusEnum status;
 
-	@Column(name = "status_date")
-	@Temporal(TemporalType.DATE)
-	private Date statusDate;
+    @Column(name = "status_date")
+    @Temporal(TemporalType.DATE)
+    private Date statusDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "customer_account_id")
-	private CustomerAccount customerAccount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_account_id")
+    private CustomerAccount customerAccount;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "recorded_invoice_id")
-	private RecordedInvoice recordedInvoice;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recorded_invoice_id")
+    private RecordedInvoice recordedInvoice;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "dunning_lot_id")
-	private DunningLOT dunningLOT;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dunning_lot_id")
+    private DunningLOT dunningLOT;
 
-	@Column(name = "from_level")
-	@Enumerated(EnumType.STRING)
-	private DunningLevelEnum fromLevel;
+    @Column(name = "from_level")
+    @Enumerated(EnumType.STRING)
+    private DunningLevelEnum fromLevel;
 
-	@Column(name = "to_level")
-	@Enumerated(EnumType.STRING)
-	private DunningLevelEnum toLevel;
+    @Column(name = "to_level")
+    @Enumerated(EnumType.STRING)
+    private DunningLevelEnum toLevel;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "action_plan_item_id")
-	private WFAction actionPlanItem;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "action_plan_item_id")
+    private WFAction actionPlanItem;
 
-	@Column(name = "amount_due")
-	private BigDecimal amountDue;
+    @Column(name = "amount_due")
+    private BigDecimal amountDue;
 
-	public ActionDunning() {
-	}
+    public ActionDunning() {
+    }
 
-	public DunningActionStatusEnum getStatus() {
-		return status;
-	}
+    public DunningActionStatusEnum getStatus() {
+        return status;
+    }
 
-	public void setStatus(DunningActionStatusEnum status) {
-		this.status = status;
-	}
+    public void setStatus(DunningActionStatusEnum status) {
+        this.status = status;
+    }
 
-	public Date getStatusDate() {
-		return statusDate;
-	}
+    public Date getStatusDate() {
+        return statusDate;
+    }
 
-	public void setStatusDate(Date statusDate) {
-		this.statusDate = statusDate;
-	}
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
+    }
 
-	public CustomerAccount getCustomerAccount() {
-		return customerAccount;
-	}
+    public CustomerAccount getCustomerAccount() {
+        return customerAccount;
+    }
 
-	public void setCustomerAccount(CustomerAccount customerAccount) {
-		this.customerAccount = customerAccount;
-	}
+    public void setCustomerAccount(CustomerAccount customerAccount) {
+        this.customerAccount = customerAccount;
+    }
 
-	public RecordedInvoice getRecordedInvoice() {
-		return recordedInvoice;
-	}
+    public RecordedInvoice getRecordedInvoice() {
+        return recordedInvoice;
+    }
 
-	public void setRecordedInvoice(RecordedInvoice recordedInvoice) {
-		this.recordedInvoice = recordedInvoice;
-	}
+    public void setRecordedInvoice(RecordedInvoice recordedInvoice) {
+        this.recordedInvoice = recordedInvoice;
+    }
 
-	public void setTypeAction(DunningActionTypeEnum typeAction) {
-		this.typeAction = typeAction;
-	}
+    public void setTypeAction(DunningActionTypeEnum typeAction) {
+        this.typeAction = typeAction;
+    }
 
-	public DunningActionTypeEnum getTypeAction() {
-		return typeAction;
-	}
+    public DunningActionTypeEnum getTypeAction() {
+        return typeAction;
+    }
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
+    public Date getCreationDate() {
+        return creationDate;
+    }
 
-	public void setDunningLOT(DunningLOT dunningLOT) {
-		this.dunningLOT = dunningLOT;
-	}
+    public void setDunningLOT(DunningLOT dunningLOT) {
+        this.dunningLOT = dunningLOT;
+    }
 
-	public DunningLOT getDunningLOT() {
-		return dunningLOT;
-	}
+    public DunningLOT getDunningLOT() {
+        return dunningLOT;
+    }
 
-	public void setFromLevel(DunningLevelEnum fromLevel) {
-		this.fromLevel = fromLevel;
-	}
+    public void setFromLevel(DunningLevelEnum fromLevel) {
+        this.fromLevel = fromLevel;
+    }
 
-	public DunningLevelEnum getFromLevel() {
-		return fromLevel;
-	}
+    public DunningLevelEnum getFromLevel() {
+        return fromLevel;
+    }
 
-	public void setToLevel(DunningLevelEnum toLevel) {
-		this.toLevel = toLevel;
-	}
+    public void setToLevel(DunningLevelEnum toLevel) {
+        this.toLevel = toLevel;
+    }
 
-	public DunningLevelEnum getToLevel() {
-		return toLevel;
-	}
+    public DunningLevelEnum getToLevel() {
+        return toLevel;
+    }
 
-	public void setActionPlanItem(WFAction actionPlanItem) {
-		this.actionPlanItem = actionPlanItem;
-	}
+    public void setActionPlanItem(WFAction actionPlanItem) {
+        this.actionPlanItem = actionPlanItem;
+    }
 
-	public WFAction getActionPlanItem() {
-		return actionPlanItem;
-	}
+    public WFAction getActionPlanItem() {
+        return actionPlanItem;
+    }
 
-	public void setAmountDue(BigDecimal amountDue) {
-		this.amountDue = amountDue;
-	}
+    public void setAmountDue(BigDecimal amountDue) {
+        this.amountDue = amountDue;
+    }
 
-	public BigDecimal getAmountDue() {
-		return amountDue;
-	}
+    public BigDecimal getAmountDue() {
+        return amountDue;
+    }
 
 }

@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -51,11 +52,16 @@ import org.slf4j.LoggerFactory;
  * Utils class for java reflection api.
  * 
  * @author Ignas Lelys
- * 
+ * @author khalid HORRI
+ * @author Abdellatif BARI
+ * @author khalid HORRI
+ * @lastModifiedVersion 7.1
  */
 public class ReflectionUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
+
+    public static final String SET_PREFIX = "set";
 
     /**
      * Mapping between an entity class and entity classes containing a field that that class.
@@ -85,6 +91,14 @@ public class ReflectionUtils {
         return object;
     }
 
+    /**
+     * Get a list of classes from a given package
+     *
+     * @param packageName Package name
+     * @return A list of classes
+     * @throws ClassNotFoundException Class discovery issue
+     * @throws IOException Class discovery issue
+     */
     @SuppressWarnings("rawtypes")
     public static List<Class> getClasses(String packageName) throws ClassNotFoundException, IOException {
 
@@ -101,9 +115,11 @@ public class ReflectionUtils {
 
             ArrayList<Class> classList = new ArrayList<Class>();
 
-            for (Object clazz : classes) {
-                if (((Class) clazz).getName().startsWith(packageName)) {
-                    classList.add((Class) clazz);
+            synchronized(classes) {
+                for (Object clazz : classes) {
+                    if (((Class) clazz).getName().startsWith(packageName)) {
+                        classList.add((Class) clazz);
+                    }
                 }
             }
 
@@ -116,6 +132,13 @@ public class ReflectionUtils {
         return new ArrayList<Class>();
     }
 
+    /**
+     * Get fields of a given class and it's superclasses
+     *
+     * @param fields A list of fields to supplement to
+     * @param type Class
+     * @return A list of field (same as fields parameter plus newly discovered fields
+     */
     public static List<Field> getAllFields(List<Field> fields, Class<?> type) {
         fields.addAll(Arrays.asList(type.getDeclaredFields()));
 
@@ -126,10 +149,17 @@ public class ReflectionUtils {
         return fields;
     }
 
-    public static <T extends Enum<T>> T getEnumFromString(Class<T> c, String string) {
-        if (c != null && string != null) {
+    /**
+     * Get enum object from string value for a given enum type
+     *
+     * @param enumType Enum class
+     * @param enumValue Enum value as string
+     * @return Enum object
+     */
+    public static <T extends Enum<T>> T getEnumFromString(Class<T> enumType, String enumValue) {
+        if (enumType != null && enumValue != null) {
             try {
-                return Enum.valueOf(c, string.trim().toUpperCase());
+                return Enum.valueOf(enumType, enumValue.trim().toUpperCase());
             } catch (IllegalArgumentException ex) {
             }
         }
@@ -157,6 +187,28 @@ public class ReflectionUtils {
         }
 
         return classname;
+    }
+
+    /**
+     * Get a clean class from the proxy class
+     * 
+     * @param clazz Class or a proxied class
+     * @return Class that is not proxied
+     */
+    public static Class<?> getCleanClass(Class<?> clazz) {
+
+        String className = clazz.getName();
+
+        if (className.contains("$$")) {
+            className = getCleanClassName(className);
+            try {
+                clazz = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
+                log.error("Failed to obtain a class by name {}", className);
+            }
+        }
+        return clazz;
     }
 
     /**
@@ -281,6 +333,21 @@ public class ReflectionUtils {
         Set<Class<?>> classes = reflections.getSubTypesOf(parentClass);
 
         return classes;
+    }
+
+    public static Object getSubclassObjectByDiscriminatorValue(Class parentClass, String discriminatorValue) {
+        Set<Class<?>> subClasses = getSubclasses(parentClass);
+        Object result = null;
+        for (Class subClass : subClasses) {
+            Object subclassObject = createObject(subClass.getName());
+            DiscriminatorValue classDiscriminatorValue = subclassObject.getClass().getAnnotation(DiscriminatorValue.class);
+            if (classDiscriminatorValue != null && classDiscriminatorValue.value().equals(discriminatorValue)) {
+                result = subclassObject;
+                break;
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -530,5 +597,55 @@ public class ReflectionUtils {
         }
         classReferences.put(fieldClass, matchedFields);
         return matchedFields;
+    }
+
+    /**
+     * Find methods annotated with annotationClass
+     * @param clazz the class where to search methods
+     * @param annotationClass the annotation class
+     * @return a list of methods
+     */
+    public static List<Method> findAnnotatedMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+        Method[] methods = clazz.getMethods();
+        List<Method> annotatedMethods = new ArrayList<Method>(methods.length);
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(annotationClass)) {
+                annotatedMethods.add(method);
+            }
+        }
+        return annotatedMethods;
+    }
+
+
+    private static Method getMethodFromInterface(Class<?> cls, Class<? extends Annotation> annotationClass, String methodName, Class... parameterTypes) {
+        while (cls != null) {
+            Class<?>[] interfaces = cls.getInterfaces();
+
+            for (int i = 0; i < interfaces.length; ++i) {
+                if (interfaces[i].isAnnotationPresent(annotationClass) && Modifier.isPublic(interfaces[i].getModifiers())) {
+                    try {
+                        return interfaces[i].getDeclaredMethod(methodName, parameterTypes);
+                    } catch (NoSuchMethodException nsme) {
+                        Method method = getMethodFromInterface(interfaces[i], annotationClass, methodName, parameterTypes);
+                        if (method != null) {
+                            return method;
+                        }
+                    }
+                }
+            }
+            cls = cls.getSuperclass();
+        }
+        return null;
+    }
+
+    /**
+     * Get parent method from interface having the annotation in parameter
+     *
+     * @param method the class method
+     * @param annotationClass the annotation of the desired interface
+     * @return the matching interface method
+     */
+    public static Method getMethodFromInterface(Method method, Class<? extends Annotation> annotationClass) {
+        return getMethodFromInterface(method.getDeclaringClass(), annotationClass, method.getName(), method.getParameterTypes());
     }
 }

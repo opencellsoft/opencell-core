@@ -2,6 +2,7 @@ package org.meveo.api.dto.account;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
@@ -21,12 +22,19 @@ public class CustomerCategoryDto extends BusinessEntityDto {
 
     /** The exonerated from taxes. */
     private Boolean exoneratedFromTaxes;
-    
+
     /** The exoneration tax el. */
     private String exonerationTaxEl;
-    
+
+    /** The exoneration tax el for Spark. */
+    private String exonerationTaxElSpark;
+
     /** The exoneration reason. */
     private String exonerationReason;
+
+    /** The accounting code. */
+    @XmlElement(required = true)
+    private String accountingCode;
 
     /**
      * Instantiates a new customer category dto.
@@ -43,47 +51,57 @@ public class CustomerCategoryDto extends BusinessEntityDto {
     public CustomerCategoryDto(CustomerCategory customerCategory) {
         super(customerCategory);
         exoneratedFromTaxes = customerCategory.getExoneratedFromTaxes();
+        exonerationReason = customerCategory.getExonerationReason();
+        exonerationTaxEl = customerCategory.getExonerationTaxEl();
+        exonerationTaxElSpark = customerCategory.getExonerationTaxElSpark();
+        if(customerCategory.getAccountingCode() != null) {
+            accountingCode = customerCategory.getAccountingCode().getCode();
+        }
     }
 
     /**
-     * Checks if is exonerated from taxes.
-     *
-     * @return the boolean
+     * @return True if account is exonerated from taxes
      */
     public Boolean isExoneratedFromTaxes() {
         return exoneratedFromTaxes;
     }
 
     /**
-     * Sets the exonerated from taxes.
-     *
-     * @param exoneratedFromTaxes the new exonerated from taxes
+     * @param exoneratedFromTaxes True if account is exonerated from taxes
      */
     public void setExoneratedFromTaxes(Boolean exoneratedFromTaxes) {
         this.exoneratedFromTaxes = exoneratedFromTaxes;
     }
 
     /**
-     * Gets the exoneration tax el.
-     *
-     * @return the exonerationTaxEl
+     * @return Expression to determine if account is exonerated from taxes
      */
     public String getExonerationTaxEl() {
         return exonerationTaxEl;
     }
 
     /**
-     * Sets the exoneration tax el.
-     *
-     * @param exonerationTaxEl the exonerationTaxEl to set
+     * @param exonerationTaxEl Expression to determine if account is exonerated from taxes
      */
     public void setExonerationTaxEl(String exonerationTaxEl) {
         this.exonerationTaxEl = exonerationTaxEl;
     }
 
     /**
-     * Gets the exoneration reason.
-     *
+     * @return Expression to determine if account is exonerated from taxes - for Spark
+     */
+    public String getExonerationTaxElSpark() {
+        return exonerationTaxElSpark;
+    }
+
+    /**
+     * @param exonerationTaxElSpark Expression to determine if account is exonerated from taxes - for Spark
+     */
+    public void setExonerationTaxElSpark(String exonerationTaxElSpark) {
+        this.exonerationTaxElSpark = exonerationTaxElSpark;
+    }
+
+    /**
      * @return the exonerationReason
      */
     public String getExonerationReason() {
@@ -91,17 +109,28 @@ public class CustomerCategoryDto extends BusinessEntityDto {
     }
 
     /**
-     * Sets the exoneration reason.
-     *
      * @param exonerationReason the exonerationReason to set
      */
     public void setExonerationReason(String exonerationReason) {
         this.exonerationReason = exonerationReason;
     }
-    
+
+    /**
+     * @return the accounting code
+     */
+    public String getAccountingCode() {
+        return accountingCode;
+    }
+    /**
+     * @param accountingCode the accounting code to set
+     */
+    public void setAccountingCode(String accountingCode) {
+        this.accountingCode = accountingCode;
+    }
+
     @Override
     public String toString() {
-        return "CustomerCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", exoneratedFromTaxes=" + exoneratedFromTaxes + ", exonerationTaxEl="
-                + exonerationTaxEl + ", exonerationReason=" + exonerationReason + "]";
-    }    
+        return "CustomerCategoryDto [exoneratedFromTaxes=" + exoneratedFromTaxes + ", exonerationTaxEl=" + exonerationTaxEl + ", exonerationTaxElSpark=" + exonerationTaxElSpark
+                + ", exonerationReason=" + exonerationReason + ", accountingCode=" + accountingCode + "]";
+    }
 }

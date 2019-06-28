@@ -25,6 +25,6 @@ import javax.persistence.Entity;
 @DiscriminatorValue("COMM")
 public class CommunicatorInputHistory extends InputHistory {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 }

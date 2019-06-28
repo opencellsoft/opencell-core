@@ -24,9 +24,13 @@ import javax.mail.internet.MimeMultipart;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class EmailSender {
+	
+	private Logger log = LoggerFactory.getLogger(EmailSender.class);
 
     @Resource(lookup = "java:/MeveoMail")
     private Session mailSession;
@@ -140,7 +144,9 @@ public class EmailSender {
 
         try {
             if (to == null || to.isEmpty()) {
-                throw new MissingParameterException(Arrays.asList("addressTo"));
+                //throw new MissingParameterException(Arrays.asList("addressTo"));
+            	log.warn("addressTo is null. Email will not be sent");
+            	return;
             }
             MimeMessage msg = new MimeMessage(mailSession);
             if (!StringUtils.isBlank(from)) {

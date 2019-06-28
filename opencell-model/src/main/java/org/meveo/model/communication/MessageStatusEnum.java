@@ -19,9 +19,5 @@
 package org.meveo.model.communication;
 
 public enum MessageStatusEnum {
-WAITING,
-PROCESSING,
-TREATED,
-REJECTED,
-CANCELED;
+    WAITING, PROCESSING, TREATED, REJECTED, CANCELED;
 }

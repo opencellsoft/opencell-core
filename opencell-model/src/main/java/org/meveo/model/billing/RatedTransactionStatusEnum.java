@@ -19,33 +19,28 @@
 package org.meveo.model.billing;
 
 public enum RatedTransactionStatusEnum {
-    
-    OPEN(1, "ratedTransactionStatus.open"), 
-    BILLED(2, "ratedTransactionStatus.billed"), 
-    REJECTED(3,"ratedTransactionStatus.rejected"),
-    RERATED(4, "ratedTransactionStatus.rerated"), 
-    CANCELED(5,"ratedTransactionStatus.canceled");
-   
 
-	private Integer id;
-	private String label;
- 
-	
-	private RatedTransactionStatusEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
-	}
+    OPEN(1, "ratedTransactionStatus.open"), BILLED(2, "ratedTransactionStatus.billed"), REJECTED(3, "ratedTransactionStatus.rejected"), RERATED(4,
+            "ratedTransactionStatus.rerated"), CANCELED(5, "ratedTransactionStatus.canceled");
 
-	public String getLabel() {
-		return label;
-	}
+    private Integer id;
+    private String label;
 
-	public Integer getId() {
-		return id;
-	}
+    private RatedTransactionStatusEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
+    }
 
-	public String toString() {
-		return name();
-	}
+    public String getLabel() {
+        return label;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String toString() {
+        return name();
+    }
 
 }

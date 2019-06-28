@@ -47,6 +47,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -58,6 +59,8 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
@@ -66,17 +69,22 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.util.view.LazyDataModelWSize;
 import org.omnifaces.cdi.Param;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
- * 
+ *
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author Edward P. Legaspi
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  */
 @Named
 @ViewScoped
@@ -126,6 +134,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     private Boolean xmlGenerated;
 
+    private Map<String, LazyDataModelWSize<RatedTransaction>> ratedTransactionsDM = new HashMap<>();
+
+    private List<InvoiceCategoryDTO> categoryDTOs;
+
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -135,7 +147,12 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     @Override
     public Invoice initEntity() {
-        return super.initEntity();
+        entity = super.initEntity();
+        if (categoryDTOs == null) {
+            categoryDTOs = initInvoiceCategories();
+        }
+
+        return entity;
     }
 
     /**
@@ -171,10 +188,60 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             log.warn("billingRun is null");
         } else {
             filters.put("billingRun", br);
+            configureFilters();
             return getLazyDataModel();
         }
 
         return null;
+    }
+
+    /**
+     * Configure filters
+     */
+    private void configureFilters() {
+        if (filters.containsKey("billingAccount")) {
+            Object billingAccounts = filters.get("billingAccount");
+            if (isNullOrEmpty(billingAccounts)) {
+                filters.remove("billingAccount");
+            } else {
+                if (billingAccounts instanceof Object[]) {
+                    List<BillingAccount> baList = new ArrayList<>();
+                    for (Object ba : (Object[]) billingAccounts) {
+                        baList.add((BillingAccount) ba);
+                    }
+                    filters.put("billingAccount", baList);
+                }
+
+            }
+        }
+        if (filters.containsKey("billingAccount.description")) {
+            Object billingAccountDescription = filters.get("billingAccount.description");
+            filters.put(PersistenceService.SEARCH_WILDCARD_OR_IGNORE_CAS + " billingAccount.description", billingAccountDescription);
+            filters.remove("billingAccount.description");
+        }
+
+    }
+
+    /**
+     * @param billingAccounts a billing accounts list
+     * @return return true if BillingAccounts list is null or empty
+     */
+    private boolean isNullOrEmpty(Object billingAccounts) {
+        if (billingAccounts == null) {
+            return true;
+        }
+        if (billingAccounts instanceof List && ((List) billingAccounts).isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param br a Billing run
+     * @return a list of BillingAccounts
+     */
+    public List<BillingAccount> getBillingAccounts(BillingRun br) {
+        return br.getBillableBillingAccounts();
     }
 
     @Override
@@ -183,7 +250,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public List<InvoiceCategoryDTO> getInvoiceCategories() {
-        entity = invoiceService.refreshOrRetrieve(entity);
+        return categoryDTOs;
+    }
+
+    public ArrayList<InvoiceCategoryDTO> initInvoiceCategories() {
         LinkedHashMap<String, InvoiceCategoryDTO> headerCategories = new LinkedHashMap<String, InvoiceCategoryDTO>();
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
         for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
@@ -438,7 +508,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             log.debug("excludeBillingAccounts getSelectedEntities=" + getSelectedEntities().size());
             if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
                 for (Invoice invoice : getSelectedEntities()) {
-                    invoiceService.deleteInvoice(invoice);
+                    invoiceService.cancelInvoice(invoice);
                     billingrun.getInvoices().remove(invoice);
                 }
                 messages.info(new BundleKey("messages", "info.invoicing.billingAccountExcluded"));
@@ -638,15 +708,16 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                     ratedTransactionService.create(rt);
                 }
             }
-            super.saveOrUpdate(false);
             if (billingAccountId != 0) {
                 BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
                 entity.setBillingAccount(billingAccount);
                 invoiceService.assignInvoiceNumber(entity);
             }
+
+            super.saveOrUpdate(false);
         }
         if (isDetailed()) {
-            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, null, new Date());
+            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
             entity = invoiceService.update(entity);
 
         } else {
@@ -655,7 +726,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             }
             entity = invoiceService.update(entity);
         }
-        entity = invoiceService.refreshOrRetrieve(entity);
+
         entity.getAdjustedInvoice().getLinkedInvoices().add(entity);
         invoiceService.update(entity.getAdjustedInvoice());
 
@@ -691,7 +762,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
         return detailedInvoiceAdjustment;
     }
-    
+
     /**
      * Checks if list of selectedEntities is empty to disable or not the exclude button
      *
@@ -744,4 +815,106 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         this.isSelectedInvoices = isSelectedInvoices;
     }
 
+    /**
+     * Activate/deactivate the generating PDF button
+     *
+     * @return
+     */
+    public boolean getGeneratePdfBtnActive() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
+        }
+        String value = ParamBean.getInstance().getProperty("billing.activateGenaratePdfBtn", "true");
+        if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
+            return Boolean.valueOf(value);
+        }
+        return true;
+    }
+
+    /**
+     * Activate/deactivate the generating XML button
+     *
+     * @return
+     */
+    public boolean getGenerateXmlBtnActive() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
+        }
+        String value = ParamBean.getInstance().getProperty("billing.activateGenarateXmlBtn", "true");
+        if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
+            return Boolean.valueOf(value);
+        }
+        return true;
+    }
+
+    /**
+     * Activate/deactivate Send by Email button
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getSendByEmailBtnActive() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
+        }
+        return true;
+    }
+
+    public void sendInvoiceByEmail() throws BusinessException {
+        entity = invoiceService.refreshOrRetrieve(entity);
+        if (invoiceService.sendByEmail(entity, MailingTypeEnum.MANUAL, null)) {
+            messages.info(new BundleKey("messages", "invoice.send.success"));
+        } else {
+            messages.error(new BundleKey("messages", "invoice.send.error"));
+        }
+
+    }
+
+    public LazyDataModelWSize<RatedTransaction> getRatedTransactions(InvoiceSubCategoryDTO invoiceSubCategoryDTO) {
+        LazyDataModelWSize<RatedTransaction> lazyRatedTransactions = ratedTransactionsDM.get(invoiceSubCategoryDTO.getCode());
+        if (lazyRatedTransactions != null) {
+            return lazyRatedTransactions;
+        }
+
+        LazyDataModelWSize<RatedTransaction> lazyDataModelWSize = new LazyDataModelWSize<RatedTransaction>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public List<RatedTransaction> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
+
+                List<RatedTransaction> entities = invoiceSubCategoryDTO.getRatedTransactions();
+
+                setRowCount(entities.size());
+
+                return invoiceSubCategoryDTO.getRatedTransactions().subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));
+            }
+        };
+
+        ratedTransactionsDM.put(invoiceSubCategoryDTO.getCode(), lazyDataModelWSize);
+
+        return lazyDataModelWSize;
+    }
+
+    /**
+     * Activate/deactivate New aggregated invoice adjustment
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getShowBtnNewIAAggregateds() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Activate/deactivate New detailed invoice adjustment
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getShowBtnNewIADetailed() {
+        if (invoiceService.isPrepaidReport(entity)) {
+            return false;
+        }
+        return true;
+    }
 }

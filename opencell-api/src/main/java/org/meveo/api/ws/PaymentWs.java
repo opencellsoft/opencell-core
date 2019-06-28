@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.ws.rs.QueryParam;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CreditCategoryDto;
@@ -18,12 +19,14 @@ import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
+import org.meveo.api.dto.payment.PaymentGatewayRumSequenceDto;
 import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
@@ -33,13 +36,16 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
 import org.meveo.api.dto.response.payment.CreditCategoryResponseDto;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
+import org.meveo.api.dto.response.payment.PaymentGatewayRumSequenceResponseDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 
 /**
  * The Interface PaymentWs.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.2
+ * @author Edward Legaspi
+ * @lastModifiedVersion 5.3
  */
 @SuppressWarnings("deprecation")
 @WebService
@@ -58,10 +64,11 @@ public interface PaymentWs extends IBaseWs {
      * List.
      *
      * @param customerAccountCode the customer account code
+     * @param pagingAndFiltering
      * @return the customer payments response
      */
     @WebMethod
-    public CustomerPaymentsResponse list(@WebParam(name = "customerAccountCode") String customerAccountCode);
+    public CustomerPaymentsResponse list(@WebParam(name = "customerAccountCode") String customerAccountCode, PagingAndFiltering pagingAndFiltering);
 
     /**
      * create a ddrequestLotOp by dto
@@ -338,6 +345,49 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public ActionStatus disablePaymentGateway(@WebParam(name = "code") String code);
+    
+    /**
+     * Creates a RUM sequence associated to the given payment gateway.
+     * @param paymentGatewayRumSequence the RUM sequence details
+     * @return Request processing status
+     */
+    @WebMethod
+	ActionStatus createPaymentGatewayRumSequence(
+			@WebParam(name = "paymentGatewayRumSequence") PaymentGatewayRumSequenceDto paymentGatewayRumSequence);
+    
+    /**
+     * Updates a RUM sequence associated to the given payment gateway.
+     * @param paymentGatewayRumSequence the RUM sequence details
+     * @return Request processing status
+     */
+    @WebMethod
+	ActionStatus updatePaymentGatewayRumSequence(
+			@WebParam(name = "paymentGatewayRumSequence") PaymentGatewayRumSequenceDto paymentGatewayRumSequence);
+    
+    /**
+     * Finds the RUM sequence with the specified code.
+     * @param code code of the RUM sequence 
+     * @return Request processing status
+     */
+    @WebMethod
+	PaymentGatewayRumSequenceResponseDto findPaymentGatewayRumSequence(@WebParam(name = "code") String code);
+    
+    /**
+     * Deletes the RUM sequence with the specified code.
+     * @param code code of the RUM sequence
+     * @return Request processing status
+     */
+    @WebMethod
+	ActionStatus deletePaymentGatewayRumSequence(@WebParam(name = "code") String code);
+    
+    /**
+	 * Generates the next RUM sequence number.
+	 * @param code code of the sequence
+	 * @return sequence value dto
+	 */
+    @WebMethod
+	GenericSequenceValueResponseDto getNextPaymentGatewayRumSequenceNumber(@WebParam(name = "code") String code);
+
 
     /**
      * List payment history matching a given criteria
@@ -489,6 +539,15 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public ActionStatus updatePaymentScheduleInstance(@WebParam(name = "paymentScheduleInstanceDto") PaymentScheduleInstanceDto paymentScheduleInstanceDto);
+    
+    /**
+     * Find  PaymentScheduleInstance by ID
+     * 
+     * @param id PaymentScheduleInstance ID
+     * @return A paymentScheduleInstance dto
+     */
+    @WebMethod
+    public PaymentScheduleInstanceResponseDto findPaymentScheduleInstance(@WebParam(name = "paymentScheduleInstanceId") Long id);
     
     /**
      * List payment PaymentScheduleInstance matching a given criteria

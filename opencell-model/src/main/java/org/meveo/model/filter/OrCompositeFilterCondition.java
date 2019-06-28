@@ -18,18 +18,18 @@ import javax.persistence.Table;
 @Table(name = "meveo_or_composite_filter_condition")
 public class OrCompositeFilterCondition extends FilterCondition {
 
-	private static final long serialVersionUID = 8683573995597386129L;
+    private static final long serialVersionUID = 8683573995597386129L;
 
-	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "composite_or_filter_condition_id")
-	private Set<FilterCondition> filterConditions;
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "composite_or_filter_condition_id")
+    private Set<FilterCondition> filterConditions;
 
-	public Set<FilterCondition> getFilterConditions() {
-		return filterConditions;
-	}
+    public Set<FilterCondition> getFilterConditions() {
+        return filterConditions;
+    }
 
-	public void setFilterConditions(Set<FilterCondition> filterConditions) {
-		this.filterConditions = filterConditions;
-	}
+    public void setFilterConditions(Set<FilterCondition> filterConditions) {
+        this.filterConditions = filterConditions;
+    }
 
 }

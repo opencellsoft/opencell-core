@@ -38,11 +38,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
@@ -54,11 +56,13 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 
 /**
- * @author akadid abdelmounaim
+ * Custom field template
+ * 
+ * @author Andrius Karpavicius
+ * @author Khalid HORRI
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2
-
- **/
+ * @lastModifiedVersion 7.0
+ */
 @Entity
 @ModuleItem
 @Cacheable
@@ -72,7 +76,8 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "CustomFieldTemplate.getCFTByCodeAndAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.code=:code and cft.appliesTo=:appliesTo", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
         @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo=:appliesTo order by cft.code", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+        @NamedQuery(name = "CustomFieldTemplate.getCFTsForAccumulation", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo='Seller' or cft.code in (SELECT cftu.code from CustomFieldTemplate cftu where cftu.appliesTo in :appliesTo group by cftu.code having count(cftu.code)>1) order by cft.code") })
 public class CustomFieldTemplate extends EnableBusinessEntity implements Comparable<CustomFieldTemplate> {
 
     private static final long serialVersionUID = -1403961759495272885L;
@@ -92,58 +97,92 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         }
     }
 
+    /**
+     * Field data type
+     */
     @Column(name = "field_type", nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull
     private CustomFieldTypeEnum fieldType;
 
+    /**
+     * Entity type that field applies to
+     */
     @Column(name = "applies_to", nullable = false, length = 100)
     @Size(max = 100)
     @NotNull
     private String appliesTo;
 
+    /**
+     * Is value mandatory
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "value_required")
     private boolean valueRequired;
 
+    /**
+     * Values for selection from a picklist
+     */
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "crm_custom_field_tmpl_val")
     private Map<String, String> listValues;
 
+    /**
+     * Matrix columns. Contains both key and value columns.
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @OrderBy("columnUse ASC, position ASC")
     @CollectionTable(name = "crm_custom_field_tmpl_mcols", joinColumns = { @JoinColumn(name = "cft_id") })
-    @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 20)),
+    @AttributeOverrides(value = { @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 20)),
             @AttributeOverride(name = "label", column = @Column(name = "label", nullable = false, length = 50)),
             @AttributeOverride(name = "keyType", column = @Column(name = "key_type", nullable = false, length = 10)),
+            @AttributeOverride(name = "position", column = @Column(name = "position", nullable = false)),
             @AttributeOverride(name = "columnUse", column = @Column(name = "column_use", nullable = false)) })
     private List<CustomFieldMatrixColumn> matrixColumns = new ArrayList<CustomFieldMatrixColumn>();
 
+    /**
+     * Matrix key type columns
+     */
     @Transient
     private List<CustomFieldMatrixColumn> matrixKeyColumns;
 
+    /**
+     * Matrix value type columns
+     */
     @Transient
     private List<CustomFieldMatrixColumn> matrixValueColumns;
 
+    /**
+     * Is field value versionable
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "versionable")
     private boolean versionable;
 
+    /**
+     * Calendar to calculate period date range
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calendar_id")
     private Calendar calendar;
 
-    // @Column(name = "cache_value_for")
-    // private Integer cacheValueTimeperiod;
-
+    /**
+     * Default value
+     */
     @Column(name = "default_value", length = 250)
     @Size(max = 250)
     private String defaultValue;
 
+    /**
+     * Use parent's entities field value as a default value
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "inh_as_def_value")
     private boolean useInheritedAsDefaultValue;
-    
+
+    /**
+     * Should value not be updated once entered
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "cf_protectable")
     protected boolean protectable;
@@ -155,15 +194,24 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Size(max = 255)
     private String entityClazz;
 
+    /**
+     * Field data grouping type
+     */
     @Column(name = "storage_type", nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull
     private CustomFieldStorageTypeEnum storageType = CustomFieldStorageTypeEnum.SINGLE;
 
+    /**
+     * Key data type for Map type field
+     */
     @Column(name = "mapkey_type")
     @Enumerated(EnumType.STRING)
     private CustomFieldMapKeyEnum mapKeyType;
 
+    /**
+     * Should event be fired when end period is reached for versioned values
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "trigger_end_period_event", nullable = false)
     private boolean triggerEndPeriodEvent;
@@ -181,34 +229,47 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Size(max = 2000)
     private String guiPosition;
 
+    /**
+     * Allow to edit value
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "allow_edit")
     @NotNull
     private boolean allowEdit = true;
 
+    /**
+     * If true, field wont be visible/appicable on new entity entry
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "hide_on_new")
     @NotNull
     private boolean hideOnNew;
 
+    /**
+     * Validation - maximum value
+     */
     @Column(name = "max_value")
     private Long maxValue;
 
+    /**
+     * Validation - minimum value
+     */
     @Column(name = "min_value")
     private Long minValue;
 
+    /**
+     * Validation - regular expression
+     */
     @Column(name = "reg_exp", length = 80)
     @Size(max = 80)
     private String regExp;
 
+    /**
+     * Expression to determine if field is applies
+     */
     @Column(name = "applicable_on_el", length = 2000)
     @Size(max = 2000)
     private String applicableOnEl;
-
-    // @Type(type = "numeric_boolean")
-    // @Column(name = "cache_value")
-    // @NotNull
-    // private boolean cacheValue;
 
     /**
      * Child entity fields to display as summary. Field names are separated by a comma.
@@ -231,9 +292,43 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Size(max = 2000)
     private String tags;
 
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
+
+    /**
+     * Value display format - pattern
+     */
+    @Column(name = "display_format", length = 80)
+    @Size(max = 80)
+    private String displayFormat;
+    /**
+     * Number of digits in decimal part, if the fieldType is double.
+     */
+    @Column(name = "nb_decimal")
+    private Integer nbDecimal;
+
+    /**
+     * Rounding mode, Possible values {@link RoundingModeEnum}.
+     */
+    @Column(name = "rounding_mode", length = 50)
+    @Enumerated(EnumType.STRING)
+    private RoundingModeEnum roundingMode;
+
+    /**
+     * Should field be not manageable in GUI, irrelevant of any other settings
+     */
+    @Transient
+    private boolean hideInGUI;
+
+    /**
+     * Database field name - derived from code
+     */
+    @Transient
+    private String dbFieldname;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -265,7 +360,8 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * create a Map of attribute from sorted List
-     * @return  a sorted LinkedHashMap values
+     * 
+     * @return a sorted LinkedHashMap values
      */
     public Map<String, String> getListValuesSorted() {
         if (listValues != null && !listValues.isEmpty()) {
@@ -485,6 +581,11 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         this.guiPosition = guiPosition;
     }
 
+    /**
+     * Parse GUIPosition field value e.g. 'tab:Configuration:0;fieldGroup:Price:5;field:0' and return 'tab', 'fieldGroup' and 'field' item values as a map
+     *
+     * @return A map with 'tab_pos', 'tab_name', 'fieldGroup_pos', 'fieldGroup_name' and 'field_pos' as keys
+     */
     public Map<String, String> getGuiPositionParsed() {
 
         if (guiPosition == null) {
@@ -508,6 +609,24 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         }
 
         return parsedInfo;
+    }
+
+    /**
+     * Get GUI 'field' position value in a GUIPosition value as in e.g. "tab:Configuration:0;fieldGroup:Purge counter periods:1;field:0"
+     *
+     * @return GUI 'field' position value
+     */
+    public int getGUIFieldPosition() {
+        if (guiPosition != null) {
+            String position = getGuiPositionParsed().get(GroupedCustomFieldTreeItemType.field.positionTag + "_pos");
+            if (position != null) {
+                try {
+                    return Integer.parseInt(position);
+                } catch (NumberFormatException e) {
+                }
+            }
+        }
+        return 0;
     }
 
     public boolean isAllowEdit() {
@@ -663,7 +782,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      * @return Date period matching calendar's dates
      */
     public DatePeriod getDatePeriod(Date date) {
-        if (isVersionable() && getCalendar() != null) {
+        if (isVersionable() && getCalendar() != null && date != null) {
             return new DatePeriod(getCalendar().previousCalendarDate(date), getCalendar().nextCalendarDate(date));
         }
         return null;
@@ -830,7 +949,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         boolean valueSet = false;
         StringBuilder valBuilder = new StringBuilder();
         for (CustomFieldMatrixColumn column : matrixValueColumns) {
-            valBuilder.append(valBuilder.length() == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
+            valBuilder.append(matrixValueColumns.indexOf(column) == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
             Object columnValue = mapValues.get(column.getCode());
             if (StringUtils.isBlank(columnValue)) {
                 continue;
@@ -871,5 +990,88 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      */
     public void setProtectable(boolean protectable) {
         this.protectable = protectable;
+    }
+
+    /**
+     * @return the displayFormat
+     */
+    public String getDisplayFormat() {
+        return displayFormat;
+    }
+
+    /**
+     * @param displayFormat the displayFormat to set
+     */
+    public void setDisplayFormat(String displayFormat) {
+        this.displayFormat = displayFormat;
+    }
+
+    /**
+     * @return Should field be not manageable in GUI, irrelevant of any other settings
+     */
+    public boolean isHideInGUI() {
+        return hideInGUI;
+    }
+
+    /**
+     * @param hideInGUI Should field be not manageable in GUI, irrelevant of any other settings
+     */
+    public void setHideInGUI(boolean hideInGUI) {
+        this.hideInGUI = hideInGUI;
+    }
+
+    /**
+     * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
+     *
+     * @return Database field name
+     */
+    public String getDbFieldname() {
+        if (dbFieldname == null && code != null) {
+            dbFieldname = CustomFieldTemplate.getDbFieldname(code);
+        }
+        return dbFieldname;
+    }
+
+
+    /**
+     * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
+     *
+     * @param code Field code
+     * @return Database field name
+     */
+    public static String getDbFieldname(String code) {
+        return BaseEntity.cleanUpAndLowercaseCodeOrId(code);
+    }
+
+    /**
+     * Gets the number of digits in decimal part.
+     * @return number of digits.
+     */
+    public Integer getNbDecimal() {
+        return nbDecimal;
+    }
+
+    /**
+     * Sets number of digits in decimal part.
+     * @param nbDecimal the number of digits.
+     */
+    public void setNbDecimal(Integer nbDecimal) {
+        this.nbDecimal = nbDecimal;
+    }
+
+    /**
+     * Gets the rounding mode.
+     * @return the rounding mode.
+     */
+    public RoundingModeEnum getRoundingMode() {
+        return roundingMode;
+    }
+
+    /**
+     * Sets the rounding mode.
+     * @param roundingMode rounding mode.
+     */
+    public void setRoundingMode(RoundingModeEnum roundingMode) {
+        this.roundingMode = roundingMode;
     }
 }

@@ -33,35 +33,36 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "code"})
-@Table(name = "com_msg_tmpl_variable", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_msg_tmpl_var_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "com_msg_tmpl_variable", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "com_msg_tmpl_var_seq"), })
 public class MessageTemplateVariable extends BusinessEntity {
 
-	private static final long serialVersionUID = -8541728044647573746L;
+    private static final long serialVersionUID = -8541728044647573746L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "template_id")
-	private MessageTemplate messageTemplate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "template_id")
+    private MessageTemplate messageTemplate;
 
-	@Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "mandatory")
-	private boolean mandatory;
+    private boolean mandatory;
 
-	public MessageTemplate getMessageTemplate() {
-		return messageTemplate;
-	}
+    public MessageTemplate getMessageTemplate() {
+        return messageTemplate;
+    }
 
-	public void setMessageTemplate(MessageTemplate messageTemplate) {
-		this.messageTemplate = messageTemplate;
-	}
+    public void setMessageTemplate(MessageTemplate messageTemplate) {
+        this.messageTemplate = messageTemplate;
+    }
 
-	public boolean isMandatory() {
-		return mandatory;
-	}
+    public boolean isMandatory() {
+        return mandatory;
+    }
 
-	public void setMandatory(boolean mandatory) {
-		this.mandatory = mandatory;
-	}
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
 
 }

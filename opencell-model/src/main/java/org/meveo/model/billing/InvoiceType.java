@@ -21,18 +21,7 @@ package org.meveo.model.billing;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -43,21 +32,23 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.scripts.ScriptInstance;
-
 
 /**
  * @author Edward P. Legaspi
  * @author Bahije Mounir
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @Cacheable
 @ExportIdentifier({ "code" })
 @Table(name = "billing_invoice_type", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@CustomFieldEntity(cftCodePrefix = "INVOICE_TYPE")
+@CustomFieldEntity(cftCodePrefix = "InvoiceType")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_type_seq"), })
 public class InvoiceType extends BusinessCFEntity {
@@ -83,7 +74,7 @@ public class InvoiceType extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_sequence_id", nullable = true)
     private InvoiceSequence invoiceSequence;
-    
+
     @Column(name = "prefix_el", length = 2000)
     @Size(max = 2000)
     private String prefixEL = "";
@@ -94,11 +85,19 @@ public class InvoiceType extends BusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "matching_auto")
     private boolean matchingAuto = false;
+    
+
+    /** 
+     * Used to decide if AccountOperations will be created or not , during AO_Job execution
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "invoice_accountable")
+    private boolean invoiceAccountable = true;
 
     @Column(name = "billing_template_name")
     @Size(max = 50)
     private String billingTemplateName;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "use_self_sequence")
     private boolean useSelfSequence = true;
@@ -120,18 +119,26 @@ public class InvoiceType extends BusinessCFEntity {
     @Column(name = "billing_template_name_el", length = 2000)
     @Size(max = 2000)
     private String billingTemplateNameEL;
-    
-    @ManyToOne()
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tax_script_instance_id")
     private ScriptInstance taxScript;
 
     @Column(name = "occ_template_code_el", length = 2000)
     @Size(max = 2000)
     private String occTemplateCodeEl;
-    
+
     @Column(name = "occ_template_negative_code_el", length = 2000)
     @Size(max = 2000)
     private String occTemplateNegativeCodeEl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "email_template_id")
+    private EmailTemplate emailTemplate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mailing_type")
+    private MailingTypeEnum mailingType;
 
     public OCCTemplate getOccTemplate() {
         return occTemplate;
@@ -158,14 +165,14 @@ public class InvoiceType extends BusinessCFEntity {
     }
 
     public InvoiceSequence getInvoiceSequence() {
-		return invoiceSequence;
-	}
+        return invoiceSequence;
+    }
 
-	public void setInvoiceSequence(InvoiceSequence invoiceSequence) {
-		this.invoiceSequence = invoiceSequence;
-	}
+    public void setInvoiceSequence(InvoiceSequence invoiceSequence) {
+        this.invoiceSequence = invoiceSequence;
+    }
 
-	public List<InvoiceTypeSellerSequence> getSellerSequence() {
+    public List<InvoiceTypeSellerSequence> getSellerSequence() {
         return sellerSequence;
     }
 
@@ -242,12 +249,11 @@ public class InvoiceType extends BusinessCFEntity {
     public void setTaxScript(ScriptInstance taxScript) {
         this.taxScript = taxScript;
     }
-    
+
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return null;
     }
-    
 
     /**
      * @return the useSelfSequence
@@ -263,7 +269,7 @@ public class InvoiceType extends BusinessCFEntity {
         this.useSelfSequence = useSelfSequence;
     }
 
-        public String getOccTemplateCodeEl() {
+    public String getOccTemplateCodeEl() {
         return occTemplateCodeEl;
     }
 
@@ -279,13 +285,13 @@ public class InvoiceType extends BusinessCFEntity {
         this.occTemplateNegativeCodeEl = occTemplateNegativeCodeEl;
     }
 
-	public String getPrefixEL() {
-		return prefixEL;
-	}
+    public String getPrefixEL() {
+        return prefixEL;
+    }
 
-	public void setPrefixEL(String prefixEL) {
-		this.prefixEL = prefixEL;
-	}
+    public void setPrefixEL(String prefixEL) {
+        this.prefixEL = prefixEL;
+    }
 
     public ScriptInstance getCustomInvoiceXmlScriptInstance() {
         return customInvoiceXmlScriptInstance;
@@ -294,4 +300,44 @@ public class InvoiceType extends BusinessCFEntity {
     public void setCustomInvoiceXmlScriptInstance(ScriptInstance customInvoiceXmlScriptInstance) {
         this.customInvoiceXmlScriptInstance = customInvoiceXmlScriptInstance;
     }
+
+    /**
+     * Gets Email Template.
+     * @return Email Template.
+     */
+    public EmailTemplate getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    /**
+     * Sets Email template.
+     * @param emailTemplate the Email template.
+     */
+    public void setEmailTemplate(EmailTemplate emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    /**
+     * Gets Mailing Type.
+     * @return Mailing Type.
+     */
+    public MailingTypeEnum getMailingType() {
+        return mailingType;
+    }
+
+    /**
+     * Sets Mailing Type.
+     * @param mailingType mailing type
+     */
+    public void setMailingType(MailingTypeEnum mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    public boolean isInvoiceAccountable() {
+		return invoiceAccountable;
+	}
+
+	public void setInvoiceAccountable(boolean invoiceAccountable) {
+		this.invoiceAccountable = invoiceAccountable;
+	}
 }

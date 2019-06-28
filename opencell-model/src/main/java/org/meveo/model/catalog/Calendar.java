@@ -37,11 +37,16 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
+/**
+ * Calendar
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ObservableEntity
 @Cacheable
-@ExportIdentifier({ "code"})
-@Table(name = "cat_calendar", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@ExportIdentifier({ "code" })
+@Table(name = "cat_calendar", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "cal_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -50,10 +55,16 @@ public abstract class Calendar extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Calendar type
+     */
     @Column(name = "cal_type", insertable = false, updatable = false)
     @Size(max = 31)
     private String calendarType;
 
+    /**
+     * Calendar initialization date
+     */
     @Transient
     private Date initDate;
 

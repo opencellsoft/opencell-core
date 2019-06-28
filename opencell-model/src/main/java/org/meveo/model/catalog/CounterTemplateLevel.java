@@ -8,8 +8,8 @@ package org.meveo.model.catalog;
 public enum CounterTemplateLevel {
     SI, SU, UA, BA;
 
-	public String getLabel() {
-		return "enum.counterTemplateLevel." + name();
-	}
+    public String getLabel() {
+        return "enum.counterTemplateLevel." + name();
+    }
 
 }

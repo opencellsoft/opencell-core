@@ -11,14 +11,16 @@ import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.PaymentOrRefundEnum;
 
 /**
  * The Class DDRequestLotOpDto.
  *
  * @author Tyshan Shi(tyshan@manaty.net)
- * @since Jul 11, 2016 7:15:09 PM
+ * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @since Jul 11, 2016 7:15:09 PM
+ * @lastModifiedVersion 5.3
  */
 @XmlRootElement(name = "DDRequestLotOp")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,6 +57,12 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     
     /** The recurrent flag : to decide if a new dd request lot operation will be created at end , or not. */
     private Boolean recurrent;
+    
+    private PaymentOrRefundEnum paymentOrRefundEnum;
+    
+
+    /** The seller code. */
+    private String sellerCode;
 
     /**
      * Instantiates a new DD request lot op dto.
@@ -77,6 +85,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
         this.errorCause = ddrequestLotOp.getErrorCause();
         this.ddRequestBuilderCode = ddrequestLotOp.getDdRequestBuilder() != null ? ddrequestLotOp.getDdRequestBuilder().getCode() : null;
         this.filterCode = ddrequestLotOp.getFilter() != null ? ddrequestLotOp.getFilter().getCode() : null;
+        this.paymentOrRefundEnum = ddrequestLotOp.getPaymentOrRefundEnum();
+        this.sellerCode = ddrequestLotOp.getSeller() != null ? ddrequestLotOp.getSeller().getCode() : null;
     }
 
     /**
@@ -206,6 +216,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the due date rage script code.
+     *
      * @return the dueDateRageScriptCode
      */
     public String getDueDateRageScriptCode() {
@@ -213,6 +225,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the recurrent.
+     *
      * @return the recurrent
      */
     public Boolean getRecurrent() {
@@ -220,6 +234,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     }
 
     /**
+     * Sets the due date rage script code.
+     *
      * @param dueDateRageScriptCode the dueDateRageScriptCode to set
      */
     public void setDueDateRageScriptCode(String dueDateRageScriptCode) {
@@ -227,10 +243,48 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     }
 
     /**
+     * Sets the recurrent.
+     *
      * @param recurrent the recurrent to set
      */
     public void setRecurrent(Boolean recurrent) {
         this.recurrent = recurrent;
     }
+
+   
+
+    /**
+     * @return the paymentOrRefundEnum
+     */
+    public PaymentOrRefundEnum getPaymentOrRefundEnum() {
+        return paymentOrRefundEnum;
+    }
+
+    /**
+     * @param paymentOrRefundEnum the paymentOrRefundEnum to set
+     */
+    public void setPaymentOrRefundEnum(PaymentOrRefundEnum paymentOrRefundEnum) {
+        this.paymentOrRefundEnum = paymentOrRefundEnum;
+    }
+
+    /**
+     * Gets the payment gateway code.
+     *
+     * @return the sellerCode
+     */
+    public String getSellerCode() {
+        return sellerCode;
+    }
+
+    /**
+     * Sets the payment gateway code.
+     *
+     * @param sellerCode the sellerCode to set
+     */
+    public void setSellerCode(String sellerCode) {
+        this.sellerCode = sellerCode;
+    }
+    
+    
 
 }

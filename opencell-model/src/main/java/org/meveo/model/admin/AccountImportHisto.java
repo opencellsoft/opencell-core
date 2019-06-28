@@ -76,8 +76,7 @@ public class AccountImportHisto extends JobHistory {
     }
 
     /**
-     * @param fileName
-     *            the fileName to set
+     * @param fileName the fileName to set
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
@@ -91,8 +90,7 @@ public class AccountImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbBillingAccounts
-     *            the nbBillingAccounts to set
+     * @param nbBillingAccounts the nbBillingAccounts to set
      */
     public void setNbBillingAccounts(Integer nbBillingAccounts) {
         this.nbBillingAccounts = nbBillingAccounts;
@@ -106,8 +104,7 @@ public class AccountImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbBillingAccountsError
-     *            the nbBillingAccountsError to set
+     * @param nbBillingAccountsError the nbBillingAccountsError to set
      */
     public void setNbBillingAccountsError(Integer nbBillingAccountsError) {
         this.nbBillingAccountsError = nbBillingAccountsError;
@@ -121,8 +118,7 @@ public class AccountImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbBillingAccountsWarning
-     *            the nbBillingAccountsWarning to set
+     * @param nbBillingAccountsWarning the nbBillingAccountsWarning to set
      */
     public void setNbBillingAccountsWarning(Integer nbBillingAccountsWarning) {
         this.nbBillingAccountsWarning = nbBillingAccountsWarning;
@@ -136,8 +132,7 @@ public class AccountImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbBillingAccountsIgnored
-     *            the nbBillingAccountsIgnored to set
+     * @param nbBillingAccountsIgnored the nbBillingAccountsIgnored to set
      */
     public void setNbBillingAccountsIgnored(Integer nbBillingAccountsIgnored) {
         this.nbBillingAccountsIgnored = nbBillingAccountsIgnored;
@@ -151,8 +146,7 @@ public class AccountImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbBillingAccountsCreated
-     *            the nbBillingAccountsCreated to set
+     * @param nbBillingAccountsCreated the nbBillingAccountsCreated to set
      */
     public void setNbBillingAccountsCreated(Integer nbBillingAccountsCreated) {
         this.nbBillingAccountsCreated = nbBillingAccountsCreated;
@@ -166,8 +160,7 @@ public class AccountImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbUserAccounts
-     *            the nbUserAccounts to set
+     * @param nbUserAccounts the nbUserAccounts to set
      */
     public void setNbUserAccounts(Integer nbUserAccounts) {
         this.nbUserAccounts = nbUserAccounts;
@@ -181,8 +174,7 @@ public class AccountImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbUserAccountsError
-     *            the nbUserAccountsError to set
+     * @param nbUserAccountsError the nbUserAccountsError to set
      */
     public void setNbUserAccountsError(Integer nbUserAccountsError) {
         this.nbUserAccountsError = nbUserAccountsError;
@@ -196,8 +188,7 @@ public class AccountImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbUserAccountsWarning
-     *            the nbUserAccountsWarning to set
+     * @param nbUserAccountsWarning the nbUserAccountsWarning to set
      */
     public void setNbUserAccountsWarning(Integer nbUserAccountsWarning) {
         this.nbUserAccountsWarning = nbUserAccountsWarning;
@@ -211,8 +202,7 @@ public class AccountImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbUserAccountsIgnored
-     *            the nbUserAccountsIgnored to set
+     * @param nbUserAccountsIgnored the nbUserAccountsIgnored to set
      */
     public void setNbUserAccountsIgnored(Integer nbUserAccountsIgnored) {
         this.nbUserAccountsIgnored = nbUserAccountsIgnored;
@@ -226,8 +216,7 @@ public class AccountImportHisto extends JobHistory {
     }
 
     /**
-     * @param nbUserAccountsCreated
-     *            the nbUserAccountsCreated to set
+     * @param nbUserAccountsCreated the nbUserAccountsCreated to set
      */
     public void setNbUserAccountsCreated(Integer nbUserAccountsCreated) {
         this.nbUserAccountsCreated = nbUserAccountsCreated;

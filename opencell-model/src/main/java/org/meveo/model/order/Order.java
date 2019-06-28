@@ -25,32 +25,49 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.Email;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.ISearchable;
+import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.Address;
 
+/**
+ * Order to subscribe to services or [purchase] products or change or cancel existing subscription
+ * 
+ * @author Andrius Karpavicius
+ * @author Khalid HORRI
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Entity
+@WorkflowedEntity
 @ObservableEntity
 @ExportIdentifier({ "code" })
-@CustomFieldEntity(cftCodePrefix = "ORDER")
+@CustomFieldEntity(cftCodePrefix = "Order")
 @Table(name = "ord_order", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_order_seq"), })
-public class Order extends BusinessCFEntity implements IBillableEntity {
+public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntity, ISearchable {
 
     private static final long serialVersionUID = -9060067698650286828L;
 
@@ -62,6 +79,13 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     @Column(name = "external_id", length = 100)
     @Size(max = 100)
     private String externalId;
+
+    /**
+     * Order number
+     */
+    @Column(name = "order_number", length = 255)
+    @Size(max = 255)
+    private String orderNumber;
 
     /**
      * Delivery instructions
@@ -130,8 +154,12 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20, nullable = false)
     @NotNull
+    @AuditTarget(type = AuditChangeTypeEnum.STATUS, history = true, notif = true)
     private OrderStatusEnum status = OrderStatusEnum.IN_CREATION;
 
+    /**
+     * Status message
+     */
     @Column(name = "status_message", length = 2000)
     private String statusMessage;
 
@@ -141,47 +169,111 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
+    /**
+     * User group that order processing is routed to
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routed_to_user_group_id")
     private UserHierarchyLevel routedToUserGroup;
 
+    /**
+     * Application/source that order was received from
+     */
     @Column(name = "received_from", length = 50)
     private String receivedFromApp;
 
+    /**
+     * Invoices produced
+     */
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "orders")
     private List<Invoice> invoices = new ArrayList<>();
 
-    @Column(name = "DUE_DATE_DELAY_EL", length = 2000)
+    /**
+     * Expression to calculate Invoice due date delay value
+     */
+    @Column(name = "due_date_delay_el", length = 2000)
     @Size(max = 2000)
     private String dueDateDelayEL;
 
+    /**
+     * Expression to calculate Invoice due date delay value - for Spark
+     */
+    @Column(name = "due_date_delay_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String dueDateDelayELSpark;
+
+    /**
+     * Allowed payment methods
+     */
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
+    /**
+     * Quote that was transformed into order
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id")
     private Quote quote;
-    
+
+    /**
+     * Billing cycle when invoicing by order
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle")
     private BillingCycle billingCycle;
-    
+
+    /**
+     * Last billing run that processed this order
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
-    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "email_template_id")
+    private EmailTemplate emailTemplate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mailing_type")
+    private MailingTypeEnum mailingType;
+
+    @Column(name = "cced_emails", length = 2000)
+    @Size(max = 2000)
+    private String ccedEmails;
+
+    @Column(name = "email", length = 255)
+    @Email
+    @Size(max = 255)
+    private String email;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "electronic_billing")
+    private boolean electronicBilling;
+
+    /**
+     * Rated transactions to reach minimum amount per invoice
+     */
     @Transient
     private List<RatedTransaction> minRatedTransactions;
-    
+
+    /**
+     * Total invoicing amount without tax
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountWithoutTax;
-    
+    private BigDecimal totalInvoicingAmountWithoutTax;
+
+    /**
+     * Total invoicing amount with tax
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountWithTax;
-    
+    private BigDecimal totalInvoicingAmountWithTax;
+
+    /**
+     * Total invoicing tax amount
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountTax;
+    private BigDecimal totalInvoicingAmountTax;
 
     public String getExternalId() {
         return externalId;
@@ -333,8 +425,18 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
         return userAccounts;
     }
 
+    /**
+     * @return Order number
+     */
     public String getOrderNumber() {
-        return StringUtils.isBlank(externalId) ? code : externalId;
+        return orderNumber;
+    }
+
+    /**
+     * @param orderNumber Order number
+     */
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
     public Address getShippingAddress() {
@@ -344,12 +446,32 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
         return null;
     }
 
+    /**
+     * @return Expression to calculate Invoice due date delay value
+     */
     public String getDueDateDelayEL() {
         return dueDateDelayEL;
     }
 
+    /**
+     * @param dueDateDelayEL Expression to calculate Invoice due date delay value
+     */
     public void setDueDateDelayEL(String dueDateDelayEL) {
         this.dueDateDelayEL = dueDateDelayEL;
+    }
+
+    /**
+     * @return Expression to calculate Invoice due date delay value - for Spark
+     */
+    public String getDueDateDelayELSpark() {
+        return dueDateDelayELSpark;
+    }
+
+    /**
+     * @param dueDateDelayELSpark Expression to calculate Invoice due date delay value - for Spark
+     */
+    public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
+        this.dueDateDelayELSpark = dueDateDelayELSpark;
     }
 
     public PaymentMethod getPaymentMethod() {
@@ -367,7 +489,7 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     public void setQuote(Quote quote) {
         this.quote = quote;
     }
-    
+
     public BillingCycle getBillingCycle() {
         return billingCycle;
     }
@@ -375,7 +497,7 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     public void setBillingCycle(BillingCycle billingCycle) {
         this.billingCycle = billingCycle;
     }
-    
+
     public BillingRun getBillingRun() {
         return billingRun;
     }
@@ -383,36 +505,116 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     public void setBillingRun(BillingRun billingRun) {
         this.billingRun = billingRun;
     }
-    
-	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
-		minRatedTransactions = ratedTransactions;
-	}
 
-	public List<RatedTransaction> getMinRatedTransactions() {
-		return minRatedTransactions;
-	}
+    public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        minRatedTransactions = ratedTransactions;
+    }
 
-	public BigDecimal getTotalInvoicingAmountWithoutTax() {
-		return totalInvoicingAmountWithoutTax;
-	}
+    public List<RatedTransaction> getMinRatedTransactions() {
+        return minRatedTransactions;
+    }
 
-	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
-		this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
-	}
+    public BigDecimal getTotalInvoicingAmountWithoutTax() {
+        return totalInvoicingAmountWithoutTax;
+    }
 
-	public BigDecimal getTotalInvoicingAmountWithTax() {
-		return totalInvoicingAmountWithTax;
-	}
+    public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+        this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
+    }
 
-	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
-		this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
-	}
+    public BigDecimal getTotalInvoicingAmountWithTax() {
+        return totalInvoicingAmountWithTax;
+    }
 
-	public BigDecimal getTotalInvoicingAmountTax() {
-		return totalInvoicingAmountTax;
-	}
+    public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+        this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
+    }
 
-	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
-		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
-	}
+    public BigDecimal getTotalInvoicingAmountTax() {
+        return totalInvoicingAmountTax;
+    }
+
+    public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+        this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+    }
+
+    /**
+     * Gets Email Template.
+     * @return Email Template.
+     */
+    public EmailTemplate getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    /**
+     * Sets Email template.
+     * @param emailTemplate the Email template.
+     */
+    public void setEmailTemplate(EmailTemplate emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    /**
+     * Gets Mailing Type.
+     * @return Mailing Type.
+     */
+    public MailingTypeEnum getMailingType() {
+        return mailingType;
+    }
+
+    /**
+     * Sets Mailing Type
+     * @param mailingType mailing type
+     */
+    public void setMailingType(MailingTypeEnum mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    /**
+     * Gets cc Emails
+     * @return CC emails
+     */
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    /**
+     * Sets cc Emails
+     * @param ccedEmails Cc Emails
+     */
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
+
+    /**
+     * Gets Email address.
+     * @return The Email address
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * Sets Email
+     * @param email the Email address
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * Check id electronic billing is enabled.
+     * @return True if enabled, false else
+     */
+    public boolean getElectronicBilling() {
+        return electronicBilling;
+    }
+
+    /**
+     * Sets the electronic billing
+     * @param electronicBilling True or False
+     */
+    public void setElectronicBilling(boolean electronicBilling) {
+        this.electronicBilling = electronicBilling;
+    }
 }

@@ -27,22 +27,24 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         }
     }
 
-    @Override
-    public void create(DiscountPlanItem dpi) throws BusinessException {
-        super.create(dpi);
-        // Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it is cached
-        // refresh(dpi.getDiscountPlan());
-        dpi.setDiscountPlan(discountPlanService.findById(dpi.getDiscountPlan().getId()));
-    }
+	@Override
+	public void create(DiscountPlanItem dpi) throws BusinessException {
+		dpi.setDiscountPlan(discountPlanService.findById(dpi.getDiscountPlan().getId()));
+		super.create(dpi);
+		// Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it
+		// is cached
+		// refresh(dpi.getDiscountPlan());
+	}
 
-    @Override
-    public DiscountPlanItem update(DiscountPlanItem dpi) throws BusinessException {
-        dpi = super.update(dpi);
-        // Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it is cached
-        // refresh(dpi.getDiscountPlan());
-        dpi.setDiscountPlan(discountPlanService.findById(dpi.getDiscountPlan().getId()));
-        return dpi;
-    }
+	@Override
+	public DiscountPlanItem update(DiscountPlanItem dpi) throws BusinessException {
+		dpi.setDiscountPlan(discountPlanService.findById(dpi.getDiscountPlan().getId()));
+		dpi = super.update(dpi);
+		// Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it
+		// is cached
+		// refresh(dpi.getDiscountPlan());
+		return dpi;
+	}
 
     @Override
     public void remove(DiscountPlanItem dpi) throws BusinessException {

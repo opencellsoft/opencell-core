@@ -45,4 +45,12 @@ public interface ScriptInstanceWs extends IBaseWs {
     @WebMethod
     ActionStatus disable(@WebParam(name = "code") String code);
 
+    /**
+     * Execute script by its code
+     * 
+     * @param code Script code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus execute(@WebParam(name = "code") String code);
 }

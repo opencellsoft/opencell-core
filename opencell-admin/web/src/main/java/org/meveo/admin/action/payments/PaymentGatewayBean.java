@@ -19,6 +19,7 @@
 package org.meveo.admin.action.payments;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,10 +37,12 @@ import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentGatewayRumSequence;
 import org.meveo.model.payments.PaymentGatewayTypeEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.payments.impl.PaymentGatewayRumSequenceService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.util.PaymentGatewayClass;
 
@@ -55,12 +58,17 @@ public class PaymentGatewayBean extends CustomFieldBean<PaymentGateway> {
      * Injected @{link PaymentGateway} service. Extends {@link PersistenceService}.
      */
     @Inject
-    private PaymentGatewayService paymentGatewayeService;
+    private PaymentGatewayService paymentGatewayService;
 
     @Inject
     private PaymentMethodApi paymentMethodApi;
+    
+    @Inject
+    private PaymentGatewayRumSequenceService paymentGatewayRumSequenceService;
 
     private String redirectionUrl;
+    
+    private PaymentGatewayRumSequence selectedRumSequence;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -108,7 +116,7 @@ public class PaymentGatewayBean extends CustomFieldBean<PaymentGateway> {
      */
     @Override
     protected IPersistenceService<PaymentGateway> getPersistenceService() {
-        return paymentGatewayeService;
+        return paymentGatewayService;
     }
 
     @Override
@@ -235,5 +243,46 @@ public class PaymentGatewayBean extends CustomFieldBean<PaymentGateway> {
     public void setRedirectionUrl(String redirectionUrl) {
         this.redirectionUrl = redirectionUrl;
     }
+	
+	public void newRumSequence() {
+		selectedRumSequence = new PaymentGatewayRumSequence();
+		selectedRumSequence.setPaymentGateway(entity);
+	}
+	
+	public void selectRumSequence(PaymentGatewayRumSequence rumSequence) {
+		this.selectedRumSequence = rumSequence;
+	}
+	
+	public void deleteRumSequence(PaymentGatewayRumSequence rumSequence) throws BusinessException {
+		paymentGatewayRumSequenceService.remove(rumSequence);
+		entity = paymentGatewayService.refreshOrRetrieve(entity);
+	}
+	
+	public void resetRumSequence() {
+        selectedRumSequence = null;
+    }
+    
+	public void saveOrUpdateRumSequence() throws BusinessException {
+		if (selectedRumSequence.isTransient()) {
+			paymentGatewayRumSequenceService.create(selectedRumSequence);
+		} else {
+			paymentGatewayRumSequenceService.update(selectedRumSequence);
+		}
+		
+		entity = paymentGatewayService.refreshOrRetrieve(entity);
+		resetRumSequence();
+	}
+
+	public PaymentGatewayRumSequence getSelectedRumSequence() {
+		return selectedRumSequence;
+	}
+
+	public void setSelectedRumSequence(PaymentGatewayRumSequence selectedRumSequence) {
+		this.selectedRumSequence = selectedRumSequence;
+	}
+	
+	public List<PaymentGatewayRumSequence> getSingleListRumSequences() {
+		return entity.getRumSequence() == null ? new ArrayList<>() : Arrays.asList(entity.getRumSequence());
+	}
 
 }

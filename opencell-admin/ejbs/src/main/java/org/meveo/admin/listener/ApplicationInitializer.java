@@ -17,15 +17,18 @@ import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
+import org.meveo.cache.TenantCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.index.ElasticClient;
+import org.meveo.service.index.ElasticSearchIndexPopulationService;
 import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptCompilerService;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 
@@ -50,10 +53,13 @@ public class ApplicationInitializer {
     private JobInstanceService jobInstanceService;
 
     @Inject
-    private ScriptInstanceService scriptInstanceService;
+    private ScriptCompilerService scriptCompilerService;
 
     @Inject
     private EntityManagerProvider entityManagerProvider;
+
+    @Inject
+    private CfValueAccumulator cfValueAcumulator;
 
     @Inject
     private Logger log;
@@ -74,7 +80,13 @@ public class ApplicationInitializer {
     private JobCacheContainerProvider jobCache;
 
     @Inject
+    private TenantCacheContainerProvider tenantCache;
+
+    @Inject
     private ElasticClient elasticClient;
+
+    @Inject
+    private ElasticSearchIndexPopulationService esPopulationService;
 
     public void init() {
 
@@ -121,14 +133,14 @@ public class ApplicationInitializer {
 
         // Ensure that provider code in secondary provider schema matches the tenant/provider code as it was listed in main provider's secondary tenant/provider record
         if (!isMainProvider) {
-            providerService.updateProviderCode(provider.getCode());
+            // providerService.updateSecondaryTenantsCode(provider.getCode());
         }
 
         // Register jobs
         jobInstanceService.registerJobs();
 
         // Initialize scripts
-        scriptInstanceService.compileAll();
+        scriptCompilerService.compileAll();
 
         // Initialize caches
         walletCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
@@ -136,10 +148,16 @@ public class ApplicationInitializer {
         notifCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         cftCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         jobCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+        tenantCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
 
         if (createESIndex) {
-            elasticClient.cleanAndReindex(MeveoUser.instantiate("applicationInitializer", isMainProvider ? null : provider.getCode()));
+            // Here cache will be populated as part of reindexing
+            elasticClient.cleanAndReindex(MeveoUser.instantiate("applicationInitializer", isMainProvider ? null : provider.getCode()), true);
+        } else {
+            esPopulationService.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         }
+
+        cfValueAcumulator.loadCfAccumulationRules();
 
         log.info("Initialized application for provider {}", provider.getCode());
 

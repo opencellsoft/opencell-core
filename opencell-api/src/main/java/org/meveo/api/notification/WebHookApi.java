@@ -21,9 +21,12 @@ import org.meveo.service.notification.WebHookService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
+ * The CRUD Api for WebHook Entity.
+ *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
 
@@ -39,9 +42,6 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
     @Override
     public WebHook create(WebHookDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(postData.getClassNameFilter())) {
             missingParameters.add("classNameFilter");
         }
@@ -116,6 +116,7 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         if (postData.isDisabled() != null) {
             webHook.setDisabled(postData.isDisabled());
         }
+        webHook.setRunAsync(postData.isRunAsync());
         webHookService.create(webHook);
 
         return webHook;
@@ -217,6 +218,9 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         if (postData.getParams() != null) {
             webHook.getWebhookParams().putAll(postData.getParams());
         }
+		if (postData.isRunAsync() != null) {
+			webHook.setRunAsync(postData.isRunAsync());
+		}
 
         webHook = webHookService.update(webHook);
 

@@ -20,6 +20,7 @@ package org.meveo.model.communication;
 
 import java.util.Date;
 import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -41,127 +42,127 @@ import org.meveo.model.ExportIdentifier;
 @ExportIdentifier({ "campaign" })
 @Table(name = "com_campaign", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-		@Parameter(name = "sequence_name", value = "com_campaign_seq")})
+        @Parameter(name = "sequence_name", value = "com_campaign_seq") })
 public class Campaign extends BusinessEntity {
 
-	private static final long serialVersionUID = -5865150907978275819L;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "schedule_date")
-	private Date scheduleDate;
+    private static final long serialVersionUID = -5865150907978275819L;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "start_date")
-	private Date startDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "schedule_date")
+    private Date scheduleDate;
 
-	@Column(name = "thread_id")
-	private Integer processingThreadId;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "start_date")
+    private Date startDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "end_date")
-	private Date endDate;
+    @Column(name = "thread_id")
+    private Integer processingThreadId;
 
-	@Enumerated(EnumType.ORDINAL)
-	@Column(name = "priority")
-	private PriorityEnum priority;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "end_date")
+    private Date endDate;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "media")
-	private MediaEnum media;
+    @Enumerated(value = EnumType.ORDINAL)
+    @Column(name = "priority")
+    private PriorityEnum priority;
 
-	@Column(name = "sub_media", length = 255)
-	@Size(max = 255)
-	private String subMedia;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "media")
+    private MediaEnum media;
 
-	@Type(type = "numeric_boolean")
-	@Column(name = "use_any_media")
-	private Boolean useAnyMedia;
+    @Column(name = "sub_media", length = 255)
+    @Size(max = 255)
+    private String subMedia;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "status")
-	private CampaignStatusEnum status;
+    @Type(type = "numeric_boolean")
+    @Column(name = "use_any_media")
+    private Boolean useAnyMedia;
 
-	@OneToMany(mappedBy = "campaign")
-	private List<Message> messages;
-	
-	public Date getScheduleDate() {
-		return scheduleDate;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private CampaignStatusEnum status;
 
-	public void setScheduleDate(Date scheduleDate) {
-		this.scheduleDate = scheduleDate;
-	}
+    @OneToMany(mappedBy = "campaign")
+    private List<Message> messages;
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    public Date getScheduleDate() {
+        return scheduleDate;
+    }
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public void setScheduleDate(Date scheduleDate) {
+        this.scheduleDate = scheduleDate;
+    }
 
-	public Integer getProcessingThreadId() {
-		return processingThreadId;
-	}
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public void setProcessingThreadId(Integer processingThreadId) {
-		this.processingThreadId = processingThreadId;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    public Integer getProcessingThreadId() {
+        return processingThreadId;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    public void setProcessingThreadId(Integer processingThreadId) {
+        this.processingThreadId = processingThreadId;
+    }
 
-	public PriorityEnum getPriority() {
-		return priority;
-	}
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	public void setPriority(PriorityEnum priority) {
-		this.priority = priority;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	public MediaEnum getMedia() {
-		return media;
-	}
+    public PriorityEnum getPriority() {
+        return priority;
+    }
 
-	public void setMedia(MediaEnum media) {
-		this.media = media;
-	}
+    public void setPriority(PriorityEnum priority) {
+        this.priority = priority;
+    }
 
-	public String getSubMedia() {
-		return subMedia;
-	}
+    public MediaEnum getMedia() {
+        return media;
+    }
 
-	public void setSubMedia(String subMedia) {
-		this.subMedia = subMedia;
-	}
+    public void setMedia(MediaEnum media) {
+        this.media = media;
+    }
 
-	public Boolean isUseAnyMedia() {
-		return useAnyMedia;
-	}
+    public String getSubMedia() {
+        return subMedia;
+    }
 
-	public void setUseAnyMedia(Boolean useAnyMedia) {
-		this.useAnyMedia = useAnyMedia;
-	}
+    public void setSubMedia(String subMedia) {
+        this.subMedia = subMedia;
+    }
 
-	public CampaignStatusEnum getStatus() {
-		return status;
-	}
+    public Boolean isUseAnyMedia() {
+        return useAnyMedia;
+    }
 
-	public void setStatus(CampaignStatusEnum status) {
-		this.status = status;
-	}
+    public void setUseAnyMedia(Boolean useAnyMedia) {
+        this.useAnyMedia = useAnyMedia;
+    }
 
-	public List<Message> getMessages() {
-		return messages;
-	}
+    public CampaignStatusEnum getStatus() {
+        return status;
+    }
 
-	public void setMessages(List<Message> messages) {
-		this.messages = messages;
-	}
+    public void setStatus(CampaignStatusEnum status) {
+        this.status = status;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
 
 }

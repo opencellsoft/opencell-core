@@ -24,7 +24,7 @@ public enum InstanceStatusEnum {
             "accountStatusEnum.terminated"), SUSPENDED(4, "accountStatusEnum.suspended"), CLOSED(4, "accountStatusEnum.closed");
 
     private Integer id;
-    
+
     private String label;
 
     InstanceStatusEnum(Integer id, String label) {
@@ -43,6 +43,7 @@ public enum InstanceStatusEnum {
 
     /**
      * Gets enum by its id.
+     * 
      * @param id id of instance status
      * @return instance status.
      */

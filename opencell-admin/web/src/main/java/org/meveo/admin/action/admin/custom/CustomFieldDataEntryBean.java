@@ -25,6 +25,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
@@ -57,11 +58,14 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.EntityCustomActionService;
-import org.meveo.service.script.CustomScriptService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptUtils;
 import org.meveo.util.EntityCustomizationUtils;
+import org.meveo.util.view.LazyDataModelWSize;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +83,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
  * @author akadid abdelmounaim
  * @author Said Ramli
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
  */
 @Named
 @ViewScoped
@@ -130,7 +135,12 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @Inject
     protected Messages messages;
-    
+
+    /**
+     * Selected item in dataTable.
+     */
+    private Map<String, Object> selectedItem;
+
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -250,16 +260,19 @@ public class CustomFieldDataEntryBean implements Serializable {
         GroupedCustomField groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
         groupedFieldTemplates.put(entity.getUuid(), groupedCustomField);
 
-        Map<String, List<CustomFieldValue>> cfValuesByCode = null;
         // Get custom field instances mapped by a CFT code if entity has any field defined
-        // if (!((IEntity) entity).isTransient() && customFieldTemplates != null && customFieldTemplates.size() > 0) {
-        // No longer checking for isTransient as for offer new version creation, CFs are duplicated, but entity is not persisted, offering to review it in GUI before saving it.
-        if (customFieldTemplates != null && customFieldTemplates.size() > 0 && ((ICustomFieldEntity) entity).getCfValues() != null) {
-            cfValuesByCode = ((ICustomFieldEntity) entity).getCfValues().getValuesByCode(); // TODO need to close the values
+        if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+
+            Map<String, List<CustomFieldValue>> cfValuesByCode = new HashMap<>();
+            if (((ICustomFieldEntity) entity).getCfValues() != null && ((ICustomFieldEntity) entity).getCfValues().getValuesByCode() != null) {
+                cfValuesByCode = ((ICustomFieldEntity) entity).getCfValues().getValuesByCode();
+            }
+
+            cfValuesByCode = prepareCFIForGUI(customFieldTemplates, cfValuesByCode, entity);
+
+            CustomFieldValueHolder entityFieldsValues = new CustomFieldValueHolder(customFieldTemplates, cfValuesByCode, entity);
+            fieldsValues.put(entity.getUuid(), entityFieldsValues);
         }
-        cfValuesByCode = prepareCFIForGUI(customFieldTemplates, cfValuesByCode, entity);
-        CustomFieldValueHolder entityFieldsValues = new CustomFieldValueHolder(customFieldTemplates, cfValuesByCode, entity);
-        fieldsValues.put(entity.getUuid(), entityFieldsValues);
     }
 
     /**
@@ -277,7 +290,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         CustomFieldValueHolder entityFieldsValues = fieldsValues.get(entity.getUuid());
 
-        // Populate new value defaults formap, list and matrix fields
+        // Populate new value defaults for map, list and matrix fields
         entityFieldsValues.populateNewValueDefaults(customFieldTemplates.values(), null);
 
         // Populate new value defaults for simple fields
@@ -289,7 +302,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Prepare custom field values for GUI - instantiate fields with default values, deserialize values for GUI
+     * Prepare custom field values for GUI - instantiate fields with default values, deserialize values for GUI.
      * 
      * @param customFieldTemplates Custom field templates applicable for the entity, mapped by a custom CFT code
      * @param cfValuesByCode Custom field values mapped by a CFT code
@@ -303,7 +316,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         Map<String, List<CustomFieldValue>> cfisPrepared = new HashMap<>();
 
         // For each template, check if custom field value exists, and instantiate one if needed with a default value
-        for (CustomFieldTemplate cft : customFieldTemplates.values()) {
+        cftLoop: for (CustomFieldTemplate cft : customFieldTemplates.values()) {
 
             List<CustomFieldValue> cfValuesByTemplate = null;
             if (cfValuesByCode != null) {
@@ -324,14 +337,31 @@ public class CustomFieldDataEntryBean implements Serializable {
                         cfValue.setValue(inheritedValue);
                     }
                 }
-
                 cfValuesByTemplate.add(cfValue);
             }
 
-            // Deserialize values if applicable
-            for (CustomFieldValue cfValue : cfValuesByTemplate) {
-                deserializeForGUI(cfValue, cft);
+            // Mark field as not visible in GUI if its a List/Map/Matrix and contains a large amount of data and ignore its value, as exiting value in entity will be used during
+            // saving process
+            if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST || cft.getStorageType() == CustomFieldStorageTypeEnum.MAP
+                    || cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+                cft.setHideInGUI(false);
+
+                for (CustomFieldValue cfValue : cfValuesByTemplate) {
+                    if (cfValue.isExcessiveInSize()) {
+                        cft.setHideInGUI(true);
+                        continue cftLoop;
+                    }
+                }
             }
+
+            // Clone values and deserialize values for GUI if applicable
+            List<CustomFieldValue> cfValuesByTemplateCloned = new ArrayList<>();
+            for (CustomFieldValue cfValue : cfValuesByTemplate) {
+                cfValue = cfValue.clone(); // SerializationUtils.clone(cfValue);
+                deserializeForGUI(cfValue, cft);
+                cfValuesByTemplateCloned.add(cfValue);
+            }
+            cfValuesByTemplate = cfValuesByTemplateCloned;
 
             // Make sure that only one value is retrieved
             if (!cft.isVersionable()) {
@@ -594,6 +624,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
 
         cfv.getMapValuesForGUI().add(value);
+        cfv.setDatasetForGUI(null);
 
         entityValueHolder.clearNewValues();
     }
@@ -603,9 +634,9 @@ public class CustomFieldDataEntryBean implements Serializable {
      * 
      * @param wildcode A partial entity code match
      * @return A list of entities [partially] matching code
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
-     * @throws ClassNotFoundException 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws ClassNotFoundException
      */
     public List<BusinessEntity> autocompleteEntityForCFV(String wildcode) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         String classname = (String) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get("classname");
@@ -626,8 +657,8 @@ public class CustomFieldDataEntryBean implements Serializable {
         for (CustomFieldTemplate cft : groupedFieldTemplates.get(entity.getUuid()).getFields()) {
 
             // Ignore the validation on a field when creating entity and CFT.hideOnNew=true or editing entity and CFT.allowEdit=false or when CFT.applicableOnEL expression
-            // evaluates to false
-            if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
+            // evaluates to false or when field is hidden in GUI CFT.hiddenInGUI=true
+            if (cft.isDisabled() || !cft.isValueRequired() || cft.isHideInGUI() || (isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
                     || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
                 continue;
 
@@ -868,6 +899,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
 
         cfValue.getMatrixValuesForGUI().add(rowKeysAndValues);
+        cfValue.setDatasetForGUI(null);
 
         entityValueHolder.clearNewValues();
     }
@@ -885,13 +917,13 @@ public class CustomFieldDataEntryBean implements Serializable {
         try {
 
             action = entityActionScriptService.retrieveIfNotManaged(action);
-            
-            Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
+
+            Map<String, Object> context = ScriptUtils.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_ACTION, action.getCode());
-			Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
+            Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
 
             // Display a message accordingly on what is set in result
-			if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
+            if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
                 messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
                 log.info("A key message to show after entity custom action execution (RESULT_GUI_MESSAGE_KEY) is : {}", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY));
 
@@ -930,7 +962,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         try {
 
-            Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
+            Map<String, Object> context = ScriptUtils.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_PARENT_ENTITY, parentEntity);
             context.put(Script.CONTEXT_ACTION, action.getCode());
 
@@ -969,20 +1001,15 @@ public class CustomFieldDataEntryBean implements Serializable {
      */
     public Map<String, List<CustomFieldValue>> saveCustomFieldsToEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
         String uuid = entity.getUuid();
-        return saveCustomFieldsToEntity(entity, uuid, false, isNewEntity);
-    }
-
-    public Map<String, List<CustomFieldValue>> saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity)
-            throws BusinessException {
-        return saveCustomFieldsToEntity(entity, uuid, duplicateCFI, isNewEntity, false);
+        return saveCustomFieldsToEntity(entity, uuid, false, isNewEntity, false);
     }
 
     /**
      * Save custom fields for a given entity.
      * 
      * @param entity Entity, the fields relate to
-     * @param uuid Unique uid of field value holder
-     * @param duplicateCFI duplicateCFI
+     * @param uuid Unique uuid of field value holder
+     * @param duplicateCFI Should custom field value be duplicated.
      * @param isNewEntity Is it a new entity
      * @param removedOriginalCFI - When duplicating a CFI, this boolean is true when we want to remove the original CFI. Use specially in offer instantiation where we assigned CFT
      *        values on entity a but then save it on entity b. Entity a is then reverted. This flag is needed because on some part CFI is duplicated first, but is not updated,
@@ -1000,8 +1027,8 @@ public class CustomFieldDataEntryBean implements Serializable {
         if (groupedCustomFields != null) {
             for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
 
-                // Do not update existing CF value if it is not updatable
-                if (!isNewEntity && !cft.isAllowEdit()) {
+                // Do not update existing CF value if it is not updatable or was hidden in GUI
+                if ((!isNewEntity && !cft.isAllowEdit()) || cft.isHideInGUI()) {
 
                     if (entity != null && entity.getCfValues() != null) {
                         List<CustomFieldValue> previousCfValues = entity.getCfValues().getValuesByCode().get(cft.getCode());
@@ -1053,13 +1080,13 @@ public class CustomFieldDataEntryBean implements Serializable {
                 }
             }
         }
-        // Update entity custom values field
 
+        // Update entity custom values field
         if (entity != null) {
             if (newValuesByCode.isEmpty()) {
                 entity.clearCfValues();
             } else {
-                entity.getCfValuesNullSafe().setValuesByCode(newValuesByCode);
+                entity.getCfValuesNullSafe().setValues(newValuesByCode);
             }
         }
 
@@ -1255,7 +1282,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
                 StringBuilder keyBuilder = new StringBuilder();
                 for (String column : keyColumns) {
-                    keyBuilder.append(keyBuilder.length() == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
+                    keyBuilder.append(keyColumns.indexOf(column) == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
                     keyBuilder.append(mapItem.get(column));
                 }
 
@@ -1619,9 +1646,8 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
         return componentId;
     }
-    
-    public boolean hasVisibleTabs(List<GroupedCustomField> children, ICustomFieldEntity entity,
-            CustomFieldValueHolder cfValueHolder) {
+
+    public boolean hasVisibleTabs(List<GroupedCustomField> children, ICustomFieldEntity entity, CustomFieldValueHolder cfValueHolder) {
         for (GroupedCustomField cfTab : children) {
             if (cfTab.hasVisibleCustomFields(entity, cfValueHolder)) {
                 return true;
@@ -1634,18 +1660,29 @@ public class CustomFieldDataEntryBean implements Serializable {
      * Get key of ron type.
      * 
      * @param key custom field key
-     * @return the custom field key or null in the error case 
+     * @return the custom field key or null in the error case
      */
     private Object getRonKey(Object key) {
         Object ronkey = key;
         if (ronkey != null) {
             String[] ron = ((String) ronkey).split(CustomFieldValue.RON_VALUE_SEPARATOR);
-            if (ron[0] == null && ron[1] == null) {
+
+            if(ron.length > 0 && !((String) ronkey).isEmpty()) {
+
+                for(String valueOfRON : ron) {
+                    if(!valueOfRON.isEmpty() && !NumberUtils.isParsable(valueOfRON)) {
+                        messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
+                        FacesContext.getCurrentInstance().validationFailed();
+                        return null;
+                    }
+                }
+
+                if (ron[0] == null && ron.length > 1 && ron[1] == null) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
                 FacesContext.getCurrentInstance().validationFailed();
                 return null;
 
-            } else if (ron[0] != null && ron[1] != null) {
+                } else if (ron[0] != null  && !ron[0].isEmpty() && ron.length > 1 && ron[1] != null) {
                 try {
                     if (Double.valueOf(ron[0]).compareTo(Double.valueOf(ron[1])) >= 0) {
                         messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
@@ -1658,6 +1695,19 @@ public class CustomFieldDataEntryBean implements Serializable {
                     FacesContext.getCurrentInstance().validationFailed();
                     return null;
                 }
+                } else if (ron[0] != null && ron.length == 1) {
+                    try {
+                        Double.parseDouble(ron[0]);
+                    } catch (NumberFormatException e) {
+                        messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
+                        FacesContext.getCurrentInstance().validationFailed();
+                        return null;
+            }
+                }
+        } else {
+                messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return null;
             }
         } else {
             messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyNotSpecified"));
@@ -1701,13 +1751,24 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @return the custom field value or null in the error case
      */
     private Object getMapValue(CustomFieldTemplate cft, Map<String, Object> csvLine) {
-        Object value = (String) csvLine.get(CustomFieldValue.MAP_VALUE);
-        if (value == null) {
-            messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
-            FacesContext.getCurrentInstance().validationFailed();
-            return null;
+        switch (cft.getFieldType()){
+            case DOUBLE:
+                return Double.parseDouble((String) csvLine.get(CustomFieldValue.MAP_VALUE));
+            case LONG:
+                return Long.parseLong((String) csvLine.get(CustomFieldValue.MAP_VALUE));
+            case STRING:
+            case DATE:
+            case TEXT_AREA:
+            case ENTITY:
+            case CHILD_ENTITY:
+            case LIST:
+            case MULTI_VALUE:
+                return csvLine.get(CustomFieldValue.MAP_VALUE);
+            default:
+                messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return null;
         }
-        return value;
     }
 
     /**
@@ -1906,7 +1967,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get the values matrix
-     *  
+     * 
      * @param cft the custom field
      * @param matrixValuesForGUI the matrix values for GUI
      * @param csvLine the csv line
@@ -1992,12 +2053,12 @@ public class CustomFieldDataEntryBean implements Serializable {
 
                     if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST || cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
                         if (!addMapValuesItem(cft, mapValuesForGUI, csvLine)) {
-                            messages.error(new BundleKey("messages", "customFieldTemplate.importFile.fail"), importedLines+1);
+                            messages.error(new BundleKey("messages", "customFieldTemplate.importFile.fail"), importedLines + 1);
                             return;
                         }
                     } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
                         if (!addMatrixValuesItem(cft, matrixValuesForGUI, csvLine)) {
-                            messages.error(new BundleKey("messages", "customFieldTemplate.importFile.fail"), importedLines+1);
+                            messages.error(new BundleKey("messages", "customFieldTemplate.importFile.fail"), importedLines + 1);
                             return;
                         }
                     }
@@ -2023,4 +2084,72 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     }
 
+    @SuppressWarnings("rawtypes")
+    public LazyDataModel getValueDataset(CustomFieldValue cfv, CustomFieldStorageTypeEnum storageType) {
+        return getValueDataset(cfv, storageType, null, false);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public LazyDataModel getValueDataset(CustomFieldValue cfv, CustomFieldStorageTypeEnum storageType, Map<String, Object> inputFilters, boolean forceReload) {
+        if (cfv == null) {
+            return null;
+        }
+
+        if (cfv.getDatasetForGUI() == null || forceReload) {
+
+            LazyDataModel dataset = new LazyDataModelWSize() {
+
+                private static final long serialVersionUID = -5796910936316457322L;
+
+                @SuppressWarnings("unchecked")
+                @Override
+                public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+                    List valueList = storageType == CustomFieldStorageTypeEnum.MATRIX ? cfv.getMatrixValuesForGUI() : cfv.getMapValuesForGUI();
+                    setRowCount(valueList.size());
+
+                    if (getRowCount() > 0) {
+                        int toNr = first + pageSize;
+                        return new ArrayList(valueList.subList(first, getRowCount() <= toNr ? getRowCount() : toNr));
+
+                    } else {
+                        return new ArrayList();
+                    }
+                }
+            };
+            cfv.setDatasetForGUI(dataset);
+        }
+        return (LazyDataModel) cfv.getDatasetForGUI();
+    }
+
+
+    /**
+     * Gets the selectedItem
+     *
+     * @return the selectedItem
+     */
+    public Map<String, Object> getSelectedItem() {
+        return selectedItem;
+    }
+
+    /**
+     * Sets the selectedItem.
+     *
+     * @param selectedItem the new selectedItem
+     */
+    public void setSelectedItem(Map<String, Object> selectedItem) {
+        this.selectedItem = selectedItem;
+    }
+
+    /**
+     * Remove value from a map of values.
+     *
+     * @param cfv Map value holder
+     * @param storageType storage ype.
+     * @param mapValues map of values
+     */
+    public void removeValue(CustomFieldValue cfv, CustomFieldStorageTypeEnum storageType, Map<String, Object> mapValues) {
+        List valueList = storageType == CustomFieldStorageTypeEnum.MATRIX ? cfv.getMatrixValuesForGUI() : cfv.getMapValuesForGUI();
+        valueList.remove(mapValues);
+        cfv.setDatasetForGUI(null);
+    }
 }

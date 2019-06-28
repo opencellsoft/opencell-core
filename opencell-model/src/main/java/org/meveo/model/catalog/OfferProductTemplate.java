@@ -23,6 +23,8 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 
 /**
+ * Offer template to product, included in an offer, mapping
+ * 
  * @author Edward P. Legaspi
  */
 @Entity
@@ -36,20 +38,32 @@ public class OfferProductTemplate implements IEntity, Serializable {
 
     private static final long serialVersionUID = -3681938016130405800L;
 
+    /**
+     * Identifier
+     */
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
     @Column(name = "id")
     @Access(AccessType.PROPERTY)
     protected Long id;
 
+    /**
+     * Offer template
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "offer_template_id")
     private OfferTemplate offerTemplate;
 
+    /**
+     * Product template
+     */
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = { CascadeType.REFRESH })
     @JoinColumn(name = "product_template_id")
     private ProductTemplate productTemplate;
 
+    /**
+     * Is product purchase mandatory
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "mandatory")
     private boolean mandatory;

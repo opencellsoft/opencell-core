@@ -17,7 +17,7 @@
 			</p:breadCrumb>
 		</h:form>	
 
-		<hftl:searchPanel label="#{messages['reportExtractHistories.search']}" backingBean="#{reportExtractExecutionResultListBean}">
+		<hftl:searchPanel label="#{messages['reportExtractHistories.search']}" backingBean="#{reportExtractExecutionResultListBean}" renderNewButton="false">
 			<hftl:searchField label="#{messages['commons.status']}" field="status" />
 			<hftl:searchField label="#{messages['reportExtract.origin']}" field="origin" />
 			<hftl:searchField label="#{messages['businessEntity.code']}" field="reportExtract.code" />

@@ -4,11 +4,13 @@ import java.io.Serializable;
 
 import javax.validation.constraints.Pattern;
 
+import org.meveo.model.sequence.GenericSequence;
+
 /**
  * Sequence value DTO representation.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.3
  */
 public class GenericSequenceDto implements Serializable {
 
@@ -19,16 +21,27 @@ public class GenericSequenceDto implements Serializable {
 	 */
 	@Pattern(regexp = "^[\\p{Upper}-]{1,16}$")
 	private String prefix = "";
-	
+
 	/**
-	 * Size of the sequence. Maximum allowable for RUM is 35. That means 35 - prefix.length.
+	 * Size of the sequence. Maximum allowable for RUM is 35. That means 35 -
+	 * prefix.length.
 	 */
 	private Long sequenceSize;
-	
+
 	/**
 	 * Current value of the sequence.
 	 */
 	private Long currentSequenceNb = 0L;
+
+	public GenericSequenceDto() {
+
+	}
+
+	public GenericSequenceDto(GenericSequence sequence) {
+		prefix = sequence.getPrefix();
+		sequenceSize = sequence.getSequenceSize();
+		currentSequenceNb = sequence.getCurrentSequenceNb();
+	}
 
 	public String getPrefix() {
 		return prefix;

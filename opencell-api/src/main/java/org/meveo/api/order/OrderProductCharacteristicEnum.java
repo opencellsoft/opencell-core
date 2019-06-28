@@ -110,6 +110,11 @@ public enum OrderProductCharacteristicEnum {
     SUBSCRIPTION_RENEW_FOR("renewFor", Integer.class),
 
     /**
+     * Seller code
+     */
+    SUBSCRIPTION_SELLER("seller", String.class),
+
+    /**
      * The criteria1
      */
     CRITERIA_1("criteria_1", String.class),

@@ -22,10 +22,14 @@ import org.meveo.api.finance.ReportExtractApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.RevenueRecognitionRuleApi;
 import org.meveo.api.ws.FinanceWs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.finance.ReportExtract;
+import org.meveo.model.finance.RevenueRecognitionRule;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @WebService(serviceName = "FinanceWs", endpointInterface = "org.meveo.api.ws.FinanceWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -41,7 +45,10 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
     public ActionStatus createRevenueRecognitionRule(RevenueRecognitionRuleDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            rrrApi.create(postData);
+            RevenueRecognitionRule revenueRecognitionRule = rrrApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(revenueRecognitionRule.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -106,7 +113,10 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
     public ActionStatus createOrUpdateRevenueRecognitionRule(RevenueRecognitionRuleDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            rrrApi.createOrUpdate(postData);
+            RevenueRecognitionRule revenueRecognitionRule = rrrApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(revenueRecognitionRule.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -119,7 +129,10 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            reportExtractApi.create(postData);
+            ReportExtract reportExtract = reportExtractApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(reportExtract.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -145,7 +158,10 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            reportExtractApi.createOrUpdate(postData);
+            ReportExtract reportExtract = reportExtractApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(reportExtract.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

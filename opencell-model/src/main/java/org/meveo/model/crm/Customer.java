@@ -18,7 +18,6 @@
  */
 package org.meveo.model.crm;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -156,8 +155,11 @@ public class Customer extends AccountEntity {
 	@Override
 	public void anonymize(String code) {
 		super.anonymize(code);
-		if (isNotEmpty(this.customerAccounts)) {
-			this.customerAccounts.forEach(ca -> ca.anonymize(code));
+		getContactInformationNullSafe().anonymize(code);
+		if (getCustomerAccounts() != null) {
+			for (CustomerAccount ca : getCustomerAccounts()) {
+				ca.anonymize(code);
+			}
 		}
 	}
 

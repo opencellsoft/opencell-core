@@ -19,100 +19,101 @@ import org.meveo.model.BaseEntity;
 @Entity
 @Table(name = "meveo_primitive_filter_condition")
 @DiscriminatorValue(value = "PRIMITIVE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_primitive_filter_condition_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "meveo_primitive_filter_condition_seq"), })
 public class PrimitiveFilterCondition extends FilterCondition {
 
-	private static final long serialVersionUID = 5812098177203454113L;
+    private static final long serialVersionUID = 5812098177203454113L;
 
-	@Column(name = "field_name", length = 60)
+    @Column(name = "field_name", length = 60)
     @Size(max = 60)
-	private String fieldName;
+    private String fieldName;
 
-	@Column(name = "operator", length = 60)
+    @Column(name = "operator", length = 60)
     @Size(max = 60)
-	private String operator;
+    private String operator;
 
-	@Column(name = "operand", length = 255)
+    @Column(name = "operand", length = 255)
     @Size(max = 255)
-	private String operand;
+    private String operand;
 
-	@Transient
-	private String className;
+    @Transient
+    private String className;
 
-	@Transient
-	private String label;
+    @Transient
+    private String label;
 
-	@Transient
-	private String defaultValue;
-	
-	@Transient
-	private int index;
+    @Transient
+    private String defaultValue;
 
-	@Override
-	public boolean match(BaseEntity e) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Transient
+    private int index;
 
-	@Override
-	public List<BaseEntity> filter(List<BaseEntity> e) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public boolean match(BaseEntity e) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	public String getFieldName() {
-		return fieldName;
-	}
+    @Override
+    public List<BaseEntity> filter(List<BaseEntity> e) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public void setFieldName(String fieldName) {
-		this.fieldName = fieldName;
-	}
+    public String getFieldName() {
+        return fieldName;
+    }
 
-	public String getOperator() {
-		return operator;
-	}
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
 
-	public void setOperator(String operator) {
-		this.operator = operator;
-	}
+    public String getOperator() {
+        return operator;
+    }
 
-	public String getOperand() {
-		return operand;
-	}
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
 
-	public void setOperand(String operand) {
-		this.operand = operand;
-	}
+    public String getOperand() {
+        return operand;
+    }
 
-	public String getClassName() {
-		return className;
-	}
+    public void setOperand(String operand) {
+        this.operand = operand;
+    }
 
-	public void setClassName(String className) {
-		this.className = className;
-	}
+    public String getClassName() {
+        return className;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public void setClassName(String className) {
+        this.className = className;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	public String getDefaultValue() {
-		return defaultValue;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
-	}
-	
-	public int getIndex() {
-		return index;
-	}
-	
-	public void setIndex(int index) {
-		this.index = index;
-	}
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
 }

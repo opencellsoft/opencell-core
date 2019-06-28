@@ -31,7 +31,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 
 /**
- * RejectedBillingAccount.
+ * Billing account rejected during invoicing
  */
 @Entity
 @Table(name = "billing_rejected_billing_accounts")
@@ -41,14 +41,23 @@ public class RejectedBillingAccount extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Rejected Billing account
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account")
     private BillingAccount billingAccount;
 
+    /**
+     * Billing run during which account was rejected
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
 
+    /**
+     * Rejection reason
+     */
     @Column(name = "reject_cause", length = 3000)
     @Size(max = 3000)
     private String rejectCause;

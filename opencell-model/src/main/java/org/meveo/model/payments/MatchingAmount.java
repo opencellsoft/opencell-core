@@ -30,6 +30,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 
+/**
+ * Matching amount among Account operations
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "ar_matching_amount")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -38,14 +43,23 @@ public class MatchingAmount extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Matching information
+     */
     @ManyToOne
     @JoinColumn(name = "matching_code_id")
     private MatchingCode matchingCode;
 
+    /**
+     * Account operation matched
+     */
     @ManyToOne
     @JoinColumn(name = "account_operation_id")
     private AccountOperation accountOperation;
 
+    /**
+     * Amount matched
+     */
     @Column(name = "matching_amount", precision = 23, scale = 12)
     private BigDecimal matchingAmount;
 

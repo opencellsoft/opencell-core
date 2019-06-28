@@ -15,13 +15,13 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.finance.RevenueSchedule;
 import org.meveo.service.finance.RevenueScheduleService;
 import org.meveo.service.script.Script;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class RevenueRecognitionScript extends Script implements RevenueRecognitionScriptInterface{
 
 	
-	RevenueScheduleService revenueScheduleService= (RevenueScheduleService)getServiceInterface("RevenueScheduleService");
+    private static final long serialVersionUID = -7845233582698212807L;
+    
+    RevenueScheduleService revenueScheduleService= (RevenueScheduleService)getServiceInterface("RevenueScheduleService");
 
     public void createRevenueSchedule(ChargeInstance chargeInstance) throws BusinessException{
 		List<WalletOperation> woList = new ArrayList<WalletOperation>(chargeInstance.getWalletOperations());
@@ -88,6 +88,6 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 			} else {
 				log.debug("createRevenueSchedule no schedule created for chargeInstance {}",chargeInstance.getId());
 			}
-		}
-	}
+        }
+    }
 }

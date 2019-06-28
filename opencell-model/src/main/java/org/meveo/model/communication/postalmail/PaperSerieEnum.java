@@ -19,5 +19,5 @@
 package org.meveo.model.communication.postalmail;
 
 public enum PaperSerieEnum {
-	A, B, C;
+    A, B, C;
 }

@@ -38,6 +38,7 @@ import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.BundleTemplateService;
@@ -47,8 +48,8 @@ import org.primefaces.model.SortOrder;
 /**
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -87,7 +88,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
     }
 
     private BundleTemplateDto convertBundleTemplateToDto(BundleTemplate bundleTemplate) {
-        BundleTemplateDto bundleTemplateDto = new BundleTemplateDto(bundleTemplate, entityToDtoConverter.getCustomFieldsDTO(bundleTemplate, true), false);
+        BundleTemplateDto bundleTemplateDto = new BundleTemplateDto(bundleTemplate, entityToDtoConverter.getCustomFieldsDTO(bundleTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false);
 
         processProductChargeTemplateToDto(bundleTemplate, bundleTemplateDto);
 
@@ -103,7 +104,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
                 bundleProductTemplateDto.setQuantity(bundleProductTemplate.getQuantity());
                 productTemplate = bundleProductTemplate.getProductTemplate();
                 if (productTemplate != null) {
-                    bundleProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false, true));
+                    bundleProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false, true));
                 }
                 bundleProductTemplates.add(bundleProductTemplateDto);
             }
@@ -115,10 +116,6 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
     @Override
     public BundleTemplate create(BundleTemplateDto postData) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
 
         List<BundleProductTemplateDto> bundleProductTemplates = postData.getBundleProductTemplates();
         if (bundleProductTemplates == null || bundleProductTemplates.isEmpty()) {

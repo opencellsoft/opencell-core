@@ -1,5 +1,5 @@
 package org.meveo.model.billing;
 
 public enum ReservationStatus {
-	OPEN, CANCELLED, CONFIRMED, EXPIRED
+    OPEN, CANCELLED, CONFIRMED, EXPIRED
 }

@@ -26,6 +26,7 @@ import org.meveo.service.catalog.impl.CalendarService;
 /**
  * Service class for WalletReservation entity
  * 
+ * @author Edward P. Legaspi
  * @author Wassim Drira
  * @lastModifiedVersion 5.0.1
  */
@@ -138,7 +139,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
     public BigDecimal getSpentCredit(Seller seller, OfferTemplate offerTemplate, UserAccount userAccount, Date subscriptionDate, String param1, String param2, String param3,
             BigDecimal quantity, boolean isWithTax) throws BusinessException {
 
-        BigDecimal servicesSum = computeServicesSum(offerTemplate, userAccount, subscriptionDate, param1, param2, param3, quantity, isWithTax);
+        BigDecimal servicesSum = computeServicesSum(offerTemplate, seller, userAccount, subscriptionDate, param1, param2, param3, quantity, isWithTax);
 
         BigDecimal ratedAmount = computeRatedAmount(seller, userAccount, subscriptionDate, isWithTax);
 
@@ -161,13 +162,13 @@ public class WalletReservationService extends PersistenceService<WalletReservati
         return ratedAmount;
     }
 
-    public BigDecimal computeServicesSum(OfferTemplate offerTemplate, UserAccount userAccount, Date subscriptionDate, String param1, String param2, String param3,
+    public BigDecimal computeServicesSum(OfferTemplate offerTemplate, Seller seller, UserAccount userAccount, Date subscriptionDate, String param1, String param2, String param3,
             BigDecimal quantity, boolean isWithTax) throws BusinessException {
         BigDecimal servicesSum = new BigDecimal(0);
 
         for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {
-            servicesSum = servicesSum.add(realtimeChargingService.getActivationServicePrice(userAccount.getBillingAccount(), st.getServiceTemplate(), subscriptionDate,
-                offerTemplate.getCode(), quantity, param1, param2, param3, isWithTax));
+            servicesSum = servicesSum.add(realtimeChargingService.getActivationServicePrice(seller, userAccount.getBillingAccount(), st.getServiceTemplate(), subscriptionDate,
+                offerTemplate, quantity, param1, param2, param3, isWithTax));
         }
 
         return servicesSum;
@@ -208,7 +209,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
     private Amounts getBalanceAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
             Date endDate, Long walletId, String walletCode, BalanceTypeEnum mode) {
 
-        Amounts result = new Amounts(BigDecimal.ZERO, BigDecimal.ZERO);
+        Amounts result = new Amounts();
 
         LevelEnum level = LevelEnum.PROVIDER;
 
@@ -226,7 +227,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
         try {
             StringBuilder strQuery = new StringBuilder();
-            strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithTax), SUM(r.amountWithoutTax)) from WalletOperation r " + "WHERE 1=1 ");
+            strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithoutTax), SUM(r.amountWithTax)) from WalletOperation r " + "WHERE 1=1 ");
 
             if (startDate != null) {
                 strQuery.append(" AND r.operationDate>=:startDate ");

@@ -19,10 +19,16 @@ import org.meveo.api.notification.EmailNotificationApi;
 import org.meveo.api.notification.ScriptNotificationApi;
 import org.meveo.api.notification.WebHookApi;
 import org.meveo.api.ws.NotificationWs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.notification.EmailNotification;
+import org.meveo.model.notification.ScriptNotification;
+import org.meveo.model.notification.WebHook;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @WebService(serviceName = "NotificationWs", endpointInterface = "org.meveo.api.ws.NotificationWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class NotificationWsImpl extends BaseWs implements NotificationWs {
@@ -93,7 +99,10 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.create(postData);
+            WebHook webHook = webhookNotificationApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(webHook.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -145,7 +154,10 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.create(postData);
+            EmailNotification emailNotification = emailNotificationApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(emailNotification.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -223,7 +235,10 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.createOrUpdate(postData);
+            EmailNotification emailNotification = emailNotificationApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(emailNotification.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -248,7 +263,10 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.createOrUpdate(postData);
+            WebHook webHook = webhookNotificationApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(webHook.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

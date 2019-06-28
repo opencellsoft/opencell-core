@@ -14,6 +14,9 @@
             <f:facet name="header">
                 <h:outputText value="#{messages['matchingCode.selectMatching']}" />
             </f:facet>
+            <hftl:formPanel showFormButtons="#{false}" label="#{messages['matchingCode.panel']}">
+                <p:commandButton value="#{messages['action.back']}" onclick="window.history.back();"/>
+            </hftl:formPanel>
             <h:outputText value="#{messages['matchingCode.opInManyMatchings']}" />
             <hftl:dataList backingBean="#{matchingAmountBean}" dataModel="#{accountOperationBean.entity.matchingAmounts}" edit="false">
                 <hftl:column label="#{messages['matchingCode.code']}" field="matchingCode.id" />

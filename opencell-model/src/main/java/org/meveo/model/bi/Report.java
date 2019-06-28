@@ -41,7 +41,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.crm.Email;
 
 /**
- * Report entity.
+ * Report entity
  */
 @Entity
 @ExportIdentifier({ "name" })
@@ -51,66 +51,120 @@ import org.meveo.model.crm.Email;
 public class Report extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Name
+     */
     @Column(name = "name", length = 50)
     @Size(max = 50)
     private String name;
 
+    /**
+     * Description
+     */
     @Column(name = "description", nullable = true, length = 255)
     @Size(max = 255)
     protected String description;
 
+    /**
+     * A list of emails
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "bi_report_emails", joinColumns = @JoinColumn(name = "report_id"), inverseJoinColumns = @JoinColumn(name = "email_id"))
     private List<Email> emails;
 
+    /**
+     * Report schedule
+     */
     @Column(name = "schedule")
     private Date schedule;
 
+    /**
+     * Start date
+     */
     @Column(name = "start_date")
     private Date startDate;
 
+    /**
+     * End date
+     */
     @Column(name = "end_date")
     private Date endDate;
 
+    /**
+     * Filename
+     */
     @Column(name = "report_file_name", length = 255)
     @Size(max = 255)
     private String fileName;
 
+    /**
+     * Producer class name
+     */
     @Column(name = "producer_class_name", length = 255)
     @Size(max = 255)
     private String producerClassName;
 
+    /**
+     * Record path
+     */
     @Column(name = "ds_record_path", length = 255)
     @Size(max = 255)
     private String recordPath;
 
+    /**
+     * Frequency
+     */
     @Column(name = "report_frequency", nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull
     private ExecutionFrequencyEnum frequency;
 
+    /**
+     * Execution hour
+     */
     @Column(name = "execution_hour")
     private Integer executionHour;
 
+    /**
+     * Execution minutes
+     */
     @Column(name = "execution_minutes")
     private Integer executionMinutes;
 
+    /**
+     * Execution interval in minutes
+     */
     @Column(name = "execution_interval_minutes")
     private Integer executionIntervalMinutes;
 
+    /**
+     * Execution interval in seconds
+     */
     @Column(name = "execution_interval_seconds")
     private Integer executionIntervalSeconds;
 
+    /**
+     * Execution day of the week
+     */
     @Column(name = "execution_day_of_week")
     private Integer executionDayOfWeek;
 
+    /**
+     * Execution day of the month
+     */
     @Column(name = "execution_day_of_month")
     private Integer executionDayOfMonth;
 
+    /**
+     * Action name
+     */
     @Enumerated(value = EnumType.STRING)
     @Column(name = "action_name")
     private JobNameEnum actionName;
 
+    /**
+     * Output format
+     */
     @Column(name = "output_format", nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull
