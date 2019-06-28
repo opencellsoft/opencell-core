@@ -67,6 +67,7 @@ import org.apache.poi.util.IOUtils;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
+import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
@@ -934,9 +935,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     for (Object[] aggregateAndRtIds : rtMassUpdates) {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
                         List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
-
-                        em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
-                            .setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("ids", rtIds).executeUpdate();
+                        int chunk=10000;
+                        int sulistcount=(rtIds.size())/chunk;
+                        SubListCreator<Long> subListCreator = new SubListCreator<Long>(rtIds, sulistcount);
+                        while (subListCreator.isHasNext()) {
+                        	List<Long> subList= subListCreator.getNextWorkSet();
+                            em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
+                            .setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("ids", subList).executeUpdate();
+                        }
                     }
                     for (Object[] aggregateAndRts : rtUpdates) {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRts[0];
