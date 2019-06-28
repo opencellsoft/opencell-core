@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.meveo.model.crm;
+
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,68 +38,86 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 
 /**
+ * Customer
+ *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "CUST")
+@WorkflowedEntity
+@CustomFieldEntity(cftCodePrefix = "Customer", inheritCFValuesFrom = "seller")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "crm_customer")
-public class Customer extends AccountEntity {
+public class Customer extends AccountEntity implements IWFEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Customer.class.getAnnotation(DiscriminatorValue.class)).value();
 
     private static final long serialVersionUID = 1L;
 
-
-    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    /**
+     * Address book
+     */
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_book_id")
     private AddressBook addressbook;
-    
-    @ManyToOne(fetch=FetchType.LAZY)
+
+    /**
+     * Customer category
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_category_id")
     private CustomerCategory customerCategory;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    /**
+     * Customer brand
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_brand_id")
     private CustomerBrand customerBrand;
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CustomerAccount> customerAccounts = new ArrayList<>();
 
+    /**
+     * Seller. Deprecated in 5.2. Now seller is set in subscription.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     @Deprecated
     private Seller seller;
-    
-    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+
+    /**
+     * Additional details
+     */
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "additional_details_id")
     private AdditionalDetails additionalDetails;
-    
-    
-    
+
     public AddressBook getAddressbook() {
-		return addressbook;
-	}
+        return addressbook;
+    }
 
-	public void setAddressbook(AddressBook addressbook) {
-		this.addressbook = addressbook;
-	}
+    public void setAddressbook(AddressBook addressbook) {
+        this.addressbook = addressbook;
+    }
 
-	public AdditionalDetails getAdditionalDetails() {
-		return additionalDetails;
-	}
+    public AdditionalDetails getAdditionalDetails() {
+        return additionalDetails;
+    }
 
-	public void setAdditionalDetails(AdditionalDetails additionalDetails) {
-		this.additionalDetails = additionalDetails;
-	}
+    public void setAdditionalDetails(AdditionalDetails additionalDetails) {
+        this.additionalDetails = additionalDetails;
+    }
 
     public Customer() {
         accountType = ACCOUNT_TYPE;
@@ -139,7 +159,10 @@ public class Customer extends AccountEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { seller };
+        if (seller != null) {
+            return new ICustomFieldEntity[] { seller };
+        }
+        return null;
     }
 
     @Override
@@ -151,16 +174,13 @@ public class Customer extends AccountEntity {
     public Class<? extends BusinessEntity> getParentEntityType() {
         return Seller.class;
     }
-	
-	@Override
-	public void anonymize(String code) {
-		super.anonymize(code);
-		getContactInformationNullSafe().anonymize(code);
-		if (getCustomerAccounts() != null) {
-			for (CustomerAccount ca : getCustomerAccounts()) {
-				ca.anonymize(code);
-			}
-		}
-	}
+
+    @Override
+    public void anonymize(String code) {
+        super.anonymize(code);
+        if (isNotEmpty(this.customerAccounts)) {
+            this.customerAccounts.forEach(ca -> ca.anonymize(code));
+        }
+    }
 
 }
