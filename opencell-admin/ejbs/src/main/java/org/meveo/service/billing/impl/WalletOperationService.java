@@ -1549,4 +1549,31 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				.setParameter("ratedTransactionId", ratedTransactionId).getResultList();
     }
 
+    /**
+     * Return a list of open Wallet operation between two date.
+     * @param firstTransactionDate first operation date
+     * @param lastTransactionDate last operation date
+     * @return a list of Wallet Operation
+     */
+    public List<WalletOperation> getOpenWalletOperationBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate){
+        return getEntityManager().createNamedQuery("WalletOperation.listOpenWObetweenTwoDates", WalletOperation.class).setParameter("firstTransactionDate",firstTransactionDate)
+                .setParameter("lastTransactionDate",lastTransactionDate)
+                .getResultList();
+    }
+
+    /**
+     * Remove all not open Wallet operation between two date
+     * @param firstTransactionDate first operation date
+     * @param lastTransactionDate last operation date
+     * @return the number of deleted entities
+     */
+    public long purge(Date firstTransactionDate, Date lastTransactionDate) {
+
+        getEntityManager().createNamedQuery("WalletOperation.prepareToSafeDeleteNotOpenWObetweenTwoDates").setParameter("firstTransactionDate",firstTransactionDate)
+                .setParameter("lastTransactionDate",lastTransactionDate)
+                .executeUpdate();
+        return getEntityManager().createNamedQuery("WalletOperation.deleteNotOpenWObetweenTwoDates").setParameter("firstTransactionDate",firstTransactionDate)
+                .setParameter("lastTransactionDate",lastTransactionDate)
+                .executeUpdate();
+    }
 }

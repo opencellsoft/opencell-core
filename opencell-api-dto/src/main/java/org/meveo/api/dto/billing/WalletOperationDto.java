@@ -149,7 +149,6 @@ public class WalletOperationDto extends BusinessEntityDto {
         if (walletOperation.getWallet() != null && walletOperation.getWallet().getWalletTemplate() != null) {
             walletTemplate = walletOperation.getWallet().getWalletTemplate().getCode();
         }
-
         currency = walletOperation.getCurrency().getCurrencyCode();
         type = walletOperation.getType();
         status = walletOperation.getStatus();

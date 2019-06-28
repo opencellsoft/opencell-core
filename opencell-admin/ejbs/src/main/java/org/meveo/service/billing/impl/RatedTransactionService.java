@@ -2208,4 +2208,28 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return (Amounts) q.getSingleResult();
     }
 
+
+    /**
+     * Gets All open rated transaction between two date.
+     * @param firstTransactionDate first Transaction Date
+     * @param lastTransactionDate last Transaction Date
+     * @return All open rated transaction between two date.
+     */
+    public List<RatedTransaction> getOpenRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate){
+        return getEntityManager().createNamedQuery("RatedTransaction.listOpenBetweenTwoDates", RatedTransaction.class).setParameter("firstTransactionDate",firstTransactionDate)
+                .setParameter("lastTransactionDate",lastTransactionDate)
+                .getResultList();
+    }
+
+    /**
+     * Remove All not open rated transaction between two date.
+     * @param firstTransactionDate first operation date
+     * @param lastTransactionDate last operation date
+     * @return the number of deleted entities
+     */
+    public long purge(Date firstTransactionDate, Date lastTransactionDate) {
+        return getEntityManager().createNamedQuery("RatedTransaction.deleteNotOpenBetweenTwoDates").setParameter("firstTransactionDate",firstTransactionDate)
+                .setParameter("lastTransactionDate",lastTransactionDate)
+                .executeUpdate();
+    }
 }

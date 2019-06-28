@@ -198,4 +198,33 @@ public class EdrService extends PersistenceService<EDR> {
 
         return edrCacheKeys;
     }
+
+    /**
+     * Gets All open EDR between two Date.
+     *
+     * @param firstTransactionDate first Transaction Date
+     * @param lastTransactionDate  last Transaction Date
+     * @return All open EDR between two Date
+     */
+    public List<EDR> getOpenEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
+        return getEntityManager().createNamedQuery("EDR.getOpenEdrBetweenTwoDate", EDR.class).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+    }
+
+    /**
+     * Remove All open EDR between two Date.
+     *
+     * @param firstTransactionDate first Transaction Date
+     * @param lastTransactionDate  last Transaction Date
+     * @return the number of deleted entities
+     */
+    public long purge(Date firstTransactionDate, Date lastTransactionDate) {
+
+        getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+        return getEntityManager().createNamedQuery("EDR.deleteNotOpenEdrBetweenTwoDate").setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+    }
 }
