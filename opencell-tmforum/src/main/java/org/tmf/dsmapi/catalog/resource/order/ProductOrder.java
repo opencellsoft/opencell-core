@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.commons.utils.CustomDateSerializer;
@@ -20,11 +21,18 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+
+/**
+ * The Class ProductOrder Dto.
+ *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.3.0
+ */
 @XmlRootElement(name = "ProductOrder", namespace = "http://www.tmforum.org")
 @XmlType(name = "ProductOrder", namespace = "http://www.tmforum.org")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(value = Include.NON_NULL)
-public class ProductOrder implements Serializable {
+public class ProductOrder extends AuditableEntityDto {
 
     private static final long serialVersionUID = -4883520016795545598L;
 
