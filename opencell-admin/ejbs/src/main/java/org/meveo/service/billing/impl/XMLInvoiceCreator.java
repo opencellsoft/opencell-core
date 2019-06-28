@@ -297,7 +297,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
 
     	invoice = this.retrieveIfNotManaged(invoice);
-    	
+
         Long id = invoice.getId();
         String alias = invoice.getAlias();
         String invoiceNumber = invoice.getInvoiceNumber();
@@ -336,7 +336,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         priceplanIds = new ArrayList<>();
         boolean entreprise = appProvider.isEntreprise();
 
-        int invoiceRounding = appProvider.getInvoiceRounding(); 
+        int invoiceRounding = appProvider.getInvoiceRounding();
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode(); 
 
         if (!isInvoiceAdjustment && billingRun != null && BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus()) && invoiceNumber == null) {
@@ -724,7 +724,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         if (displayDetail) {
 	        int invoiceRounding = appProvider.getInvoiceRounding();
 	        RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
-	        
+
 	        // generate invoice line for min amount RT
 	        Element userAccountTag = doc.createElement("userAccount");
 	        userAccountTag.setAttribute("description", "-");
@@ -1439,7 +1439,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             List<RatedTransaction> ratedTransactions, List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) throws BusinessException {
 
         ParamBean paramBean = paramBeanFactory.getInstance();
-                
+
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
 
@@ -1450,7 +1450,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         boolean entreprise = appProvider.isEntreprise();
         int invoiceRounding = appProvider.getInvoiceRounding();
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
-        
+
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
 
         if (hasInvoiceAgregates) {
@@ -1580,7 +1580,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 									Element woLine = doc.createElement("walletOperation");
 	                            	woLine.setAttribute("code", walletOperation.getCode());
 	                            	line.appendChild(woLine);
-	                            	
+
 									ChargeInstance chargeInstance = walletOperation.getChargeInstance();
 									if (appProvider.getInvoiceConfiguration().getDisplayChargesPeriods()) {
 
@@ -1618,7 +1618,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 										woLine.setAttribute("periodStartDate",
 												DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
 									}
-								}                            
+								}
                             }
     
                             line.setAttribute("code", code != null ? code : "");
@@ -1750,11 +1750,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 									if (chargeInstance instanceof RecurringChargeInstance) {
 										serviceInstance = ((RecurringChargeInstance) walletOperation
 												.getChargeInstance()).getServiceInstance();
-									
+
 									} else if (chargeInstance instanceof UsageChargeInstance) {
 										serviceInstance = ((UsageChargeInstance) walletOperation.getChargeInstance())
 												.getServiceInstance();
-									
+
 									} else if (chargeInstance instanceof OneShotChargeInstance) {
 										serviceInstance = ((OneShotChargeInstance) walletOperation.getChargeInstance())
 												.getSubscriptionServiceInstance();
@@ -1814,7 +1814,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             exoneratedElement.setAttribute("reason", customerCategory.getExonerationReason());
             taxes.appendChild(exoneratedElement);
         } else {
-         
+
             taxes.setAttribute("total", roundToString(amountTax, invoiceRounding, invoiceRoundingMode));
             parent.appendChild(taxes);
             Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
@@ -1983,7 +1983,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         int invoiceRounding = appProvider.getInvoiceRounding();
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
-    
+
         Element categories = doc.createElement("categories");
         parent.appendChild(categories);
         for (XMLInvoiceHeaderCategoryDTO xmlInvoiceHeaderCategoryDTO : headerCategories.values()) {
