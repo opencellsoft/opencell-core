@@ -129,6 +129,11 @@ public class WalletOperationDto extends BusinessEntityDto {
     private WoRatedTransactionDto ratedTransaction;
 
     /**
+     * Wallet Id
+     */
+    private Long walletId;
+
+    /**
      * Instantiates a new wallet operation dto.
      */
     public WalletOperationDto() {
@@ -145,7 +150,9 @@ public class WalletOperationDto extends BusinessEntityDto {
         if(walletOperation.getSeller() != null) {
             seller = walletOperation.getSeller().getCode();
         }
-
+        if (walletOperation.getWallet() != null) {
+            walletId = walletOperation.getWallet().getId();
+        }
         if (walletOperation.getWallet() != null && walletOperation.getWallet().getWalletTemplate() != null) {
             walletTemplate = walletOperation.getWallet().getWalletTemplate().getCode();
         }
@@ -179,6 +186,7 @@ public class WalletOperationDto extends BusinessEntityDto {
         chargeInstanceId = walletOperation.getChargeInstance().getId();
         rawAmountWithoutTax = walletOperation.getRawAmountWithoutTax();
         rawAmountWithTax = walletOperation.getRawAmountWithTax();
+        code = walletOperation.getCode();
     }
 
     /**
@@ -747,6 +755,22 @@ public class WalletOperationDto extends BusinessEntityDto {
      */
     public void setRatedTransaction(WoRatedTransactionDto ratedTransaction) {
         this.ratedTransaction = ratedTransaction;
+    }
+
+    /**
+     *
+     * @return wallet id
+     */
+    public Long getWalletId() {
+        return walletId;
+    }
+
+    /**
+     *
+     * @param walletId wallet id
+     */
+    public void setWalletId(Long walletId) {
+        this.walletId = walletId;
     }
 
     @Override
