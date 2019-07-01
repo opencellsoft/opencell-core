@@ -91,6 +91,7 @@
         <createSequence sequenceName="cat_serv_usagechrg_templt_seq" />
         <createSequence sequenceName="cat_service_template_seq" />
         <createSequence sequenceName="cat_triggered_edr_seq" />
+        <createSequence sequenceName="cat_unit_of_measure_seq" />
         <createSequence sequenceName="cat_wallet_template_seq" />
         <createSequence sequenceName="com_campaign_seq" />
         <createSequence sequenceName="com_contact_coords_seq" />
@@ -729,6 +730,12 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}cat_triggered_edr_seq values(1)</sql>
+        <createTable tableName="cat_unit_of_measure_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_unit_of_measure_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}cat_unit_of_measure_seq values(1)</sql>
         <createTable tableName="cat_wallet_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_wallet_template_seq_pk" />

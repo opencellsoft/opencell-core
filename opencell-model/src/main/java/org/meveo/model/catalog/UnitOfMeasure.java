@@ -65,13 +65,6 @@ public class UnitOfMeasure extends BusinessEntity {
     private String symbol;
 
     /**
-     * Description
-     */
-    @Column(name = "description", length = 100)
-    @Size(max = 100)
-    private String description;
-
-    /**
      * Translated descriptions in JSON format with language code as a key and translated description as a value
      */
     @Type(type = "json")
@@ -120,16 +113,6 @@ public class UnitOfMeasure extends BusinessEntity {
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Map<String, String> getDescriptionI18n() {

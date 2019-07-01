@@ -269,8 +269,6 @@
             <column name="parent_id" type="bigint" />
         </createTable>
 
-        <createSequence sequenceName="cat_unit_of_measure_seq" />
-
         <addColumn tableName="cat_charge_template">
             <column name="input_unitofmeasure" type="bigint"/>
             <column name="rating_unitofmeasure" type="bigint"/>
