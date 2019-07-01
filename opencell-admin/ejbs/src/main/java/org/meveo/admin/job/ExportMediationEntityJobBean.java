@@ -61,13 +61,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * The Class ExportEntityJob bean to export EDR, WO and RTx as XML file.
+ * The Class ExportMediationEntityJob bean to export EDR, WO and RTx as XML file.
  *
  * @author khalid HORRI
  * @lastModifiedVersion 7.3
  */
 @Stateless
-public class ExportEntityJobBean extends BaseJobBean {
+public class ExportMediationEntityJobBean extends BaseJobBean {
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
 
@@ -106,11 +106,14 @@ public class ExportEntityJobBean extends BaseJobBean {
             if (!dir.exists()) {
                 dir.mkdirs();
             }
-            Date firstTransactionDate = (Date) this.getParamOrCFValue(jobInstance, "ExportEntityJob_firstTransactionDate");
-            Date lastTransactionDate = (Date) this.getParamOrCFValue(jobInstance, "ExportEntityJob_lastTransactionDate");
-            Boolean edrCf = (Boolean) this.getParamOrCFValue(jobInstance, "ExportEntityJob_edrCf");
-            Boolean woCf = (Boolean) this.getParamOrCFValue(jobInstance, "ExportEntityJob_woCf");
-            Boolean rtCf = (Boolean) this.getParamOrCFValue(jobInstance, "ExportEntityJob_rtCf");
+            Date firstTransactionDate = (Date) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_firstTransactionDate");
+            Date lastTransactionDate = (Date) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_lastTransactionDate");
+            if (lastTransactionDate == null) {
+                lastTransactionDate = new Date();
+            }
+            Boolean edrCf = (Boolean) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_edrCf");
+            Boolean woCf = (Boolean) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_woCf");
+            Boolean rtCf = (Boolean) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_rtCf");
             long nbItems = 0;
             if (edrCf) {
                 exportEDR(result, param, dir, firstTransactionDate, lastTransactionDate);

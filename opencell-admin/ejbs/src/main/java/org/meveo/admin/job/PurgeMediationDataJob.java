@@ -89,7 +89,7 @@ public class PurgeMediationDataJob extends Job {
         lastTransactionDate.setActive(true);
         lastTransactionDate.setDescription(resourceMessages.getString("exportEntityJob.lastTransactionDate"));
         lastTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
-        lastTransactionDate.setValueRequired(true);
+        lastTransactionDate.setValueRequired(false);
         result.put("PurgeMediationDataJob_lastTransactionDate", lastTransactionDate);
 
         return result;

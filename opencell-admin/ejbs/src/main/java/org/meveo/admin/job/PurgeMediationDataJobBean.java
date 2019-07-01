@@ -73,6 +73,9 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
         try {
             Date firstTransactionDate = (Date) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_firstTransactionDate");
             Date lastTransactionDate = (Date) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_lastTransactionDate");
+            if (lastTransactionDate == null) {
+                lastTransactionDate = new Date();
+            }
             Boolean edrCf = (Boolean) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_edrCf");
             Boolean woCf = (Boolean) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_woCf");
             Boolean rtCf = (Boolean) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_rtCf");
