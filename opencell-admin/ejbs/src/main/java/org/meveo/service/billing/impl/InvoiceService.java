@@ -936,7 +936,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
                         List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
                         int chunk=10000;
-                        int sulistcount=(rtIds.size())/chunk;
+                        int sulistcount=1+(rtIds.size())/chunk;
                         SubListCreator<Long> subListCreator = new SubListCreator<Long>(rtIds, sulistcount);
                         while (subListCreator.isHasNext()) {
                         	List<Long> subList= subListCreator.getNextWorkSet();
