@@ -31,7 +31,7 @@
         "org.meveo.model.customEntities.CustomTableRecord": {
             "index": "#{cetCode}"
         },
-        "org.meveo.model.hierarchy.UserHierarchyLevel": {
+        "org.meveo.model.hierarchy.UserHierarchyLevel, org.meveo.model.admin.User": {
             "index": "user"
         }
     },
@@ -158,9 +158,39 @@
             "customerAccount.name.lastName": "getCustomerAccount().getName().lastName",
             "customerAccount.name.title": "getCustomerAccount().getName().title.description",
             "customerAccount.description": "getCustomerAccount().getDescription()"
+        },
+        "org.meveo.model.admin.User": {
+            "userName":"getUserName()",
+            "name.fullName": "getName().getFullName()",
+            "name.firstName": "name.firstName",
+            "name.lastName": "name.lastName",
+            "email":"email",
+            "roles":"getRolesLabel()",
+            "lastLoginDate":"getLastLoginDate()",
+            "auditable.created": "auditable.created"
         }
     },
     "customFieldTemplates": {
+        "#{cft.fieldType == 'ENTITY' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
+            "properties": {
+                "<fieldName>": {
+                    "properties": {
+                        "code": {
+                            "type": "keyword",
+                            "index": "<indexValue>"
+                        },
+                        "classname": {
+                            "type": "keyword",
+                            "index": "<indexValue>"
+                        },
+                        "classnameCode": {
+                            "type": "keyword",
+                            "index": "<indexValue>"
+                        }
+                    }
+                }
+            }
+        },
         "#{cft.fieldType == 'DATE' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
             "properties": {
                 "<fieldName>": {
@@ -798,9 +828,6 @@
                 "mappings": {
                     "_doc": {
                         "properties": {
-                            "entityType": {
-                                "type": "keyword"
-                            },
                             "id": {
                                 "type": "long"
                             },

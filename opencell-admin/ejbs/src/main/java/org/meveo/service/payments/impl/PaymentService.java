@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -396,8 +395,11 @@ public class PaymentService extends PersistenceService<Payment> {
                 log.warn("Payment with method id {} was rejected. Status: {}", preferredMethod.getId(), doPaymentResponseDto.getPaymentStatus());
             }
 
-            paymentHistoryService.addHistory(customerAccount, isPayment ?  findById(aoPaymentId) : null, !isPayment ? refundService.findById(aoPaymentId) : null,
-                ctsAmount, status, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(), errorType, operationCat, paymentGateway.getCode(), preferredMethod);
+			Refund refund = (!isPayment && aoPaymentId != null) ? refundService.findById(aoPaymentId) : null;
+			Payment payment = (isPayment && aoPaymentId != null) ? findById(aoPaymentId) : null;
+
+			paymentHistoryService.addHistory(customerAccount, payment, refund, ctsAmount, status, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
+					errorType, operationCat, paymentGateway.getCode(), preferredMethod);
 
         } catch (PaymentException e) {
             log.error("PaymentException during payment AO:", e);

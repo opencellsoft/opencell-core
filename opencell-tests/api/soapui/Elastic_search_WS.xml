@@ -20606,7 +20606,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField> 
          <customField code="${#Project#baseEntityPrefix}_CA_STRING" description="String CF field"> 
             <fieldType>STRING</fieldType>
-            <appliesTo>CA</appliesTo>
+            <appliesTo>CustomerAccount</appliesTo>
             <storageType>SINGLE</storageType>
             <indexType>INDEX</indexType>
          </customField>
@@ -20650,7 +20650,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField> 
          <customField code="${#Project#baseEntityPrefix}_CA_DOUBLE" description="Double CF field"> 
             <fieldType>DOUBLE</fieldType>
-            <appliesTo>CA</appliesTo>
+            <appliesTo>CustomerAccount</appliesTo>
             <storageType>SINGLE</storageType>
             <indexType>STORE_ONLY</indexType>
          </customField>
@@ -20694,7 +20694,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_CA_DOUBLE-NI" description="Double CF field not indexed">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>CA</appliesTo>\r
+            <appliesTo>CustomerAccount</appliesTo>\r
             <storageType>SINGLE</storageType>\r
          </customField>\r
       </ws:createOrUpdateField>\r
@@ -22736,7 +22736,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_CA_STRING</customFieldTemplateCode>
-         <appliesTo>CA</appliesTo>
+         <appliesTo>CustomerAccount</appliesTo>
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -22776,7 +22776,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_CA_DOUBLE</customFieldTemplateCode>
-         <appliesTo>CA</appliesTo>
+         <appliesTo>CustomerAccount</appliesTo>
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>

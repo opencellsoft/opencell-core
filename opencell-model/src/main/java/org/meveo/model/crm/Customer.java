@@ -18,6 +18,8 @@
  */
 package org.meveo.model.crm;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,11 +49,12 @@ import org.meveo.model.payments.CustomerAccount;
  * Customer
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @WorkflowedEntity
-@CustomFieldEntity(cftCodePrefix = "CUST", inheritCFValuesFrom = "seller")
+@CustomFieldEntity(cftCodePrefix = "Customer", inheritCFValuesFrom = "seller")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "crm_customer")
@@ -175,12 +178,9 @@ public class Customer extends AccountEntity implements IWFEntity {
     @Override
     public void anonymize(String code) {
         super.anonymize(code);
-        getContactInformationNullSafe().anonymize(code);
-        if (getCustomerAccounts() != null) {
-            for (CustomerAccount ca : getCustomerAccounts()) {
-                ca.anonymize(code);
-            }
-        }
+        if (isNotEmpty(this.customerAccounts)) {
+			this.customerAccounts.forEach(ca -> ca.anonymize(code));
+		}
     }
 
 }

@@ -28,7 +28,8 @@ import org.meveo.service.script.Script;
  * The Class ScriptingJob execute the given script.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class ScriptingJob extends Job {
@@ -36,7 +37,6 @@ public class ScriptingJob extends Job {
     /** The scripting job bean. */
     @Inject
     ScriptingJobBean scriptingJobBean;
-
 
     @SuppressWarnings("unchecked")
     @Override
@@ -51,6 +51,10 @@ public class ScriptingJob extends Job {
                 context = new HashMap<String, Object>();
             }
             context.put(Script.CONTEXT_ENTITY, jobInstance);
+            context.put(Script.CONTEXT_ACTION, scriptCode);
+            context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+            context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+
             scriptingJobBean.init(result, scriptCode, context);
             scriptingJobBean.execute(result, scriptCode, context);
             scriptingJobBean.finalize(result, scriptCode, context);
@@ -61,12 +65,10 @@ public class ScriptingJob extends Job {
         }
     }
 
-
     @Override
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.MEDIATION;
     }
-
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
@@ -74,7 +76,7 @@ public class ScriptingJob extends Job {
 
         CustomFieldTemplate scriptCF = new CustomFieldTemplate();
         scriptCF.setCode("ScriptingJob_script");
-        scriptCF.setAppliesTo("JOB_ScriptingJob");
+        scriptCF.setAppliesTo("JobInstance_ScriptingJob");
         scriptCF.setActive(true);
         scriptCF.setDescription("Script to run");
         scriptCF.setFieldType(CustomFieldTypeEnum.ENTITY);
@@ -84,7 +86,7 @@ public class ScriptingJob extends Job {
 
         CustomFieldTemplate variablesCF = new CustomFieldTemplate();
         variablesCF.setCode("ScriptingJob_variables");
-        variablesCF.setAppliesTo("JOB_ScriptingJob");
+        variablesCF.setAppliesTo("JobInstance_ScriptingJob");
         variablesCF.setActive(true);
         variablesCF.setDescription("Script variables");
         variablesCF.setFieldType(CustomFieldTypeEnum.STRING);

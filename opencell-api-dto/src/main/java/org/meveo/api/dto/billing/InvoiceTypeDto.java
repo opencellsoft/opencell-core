@@ -63,6 +63,9 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The matching auto. */
     private boolean matchingAuto = false;
+    
+    /** Used to decide if AccountOperations will be created or not , during AO_Job execution */
+    private Boolean invoiceAccountable;
 
     /** The billing template name. */
     private String billingTemplateName;
@@ -401,10 +404,18 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.emailTemplateCode = emailTemplateCode;
     }
 
-    @Override
+    public Boolean isInvoiceAccountable() {
+		return invoiceAccountable;
+	}
+
+	public void setInvoiceAccountable(Boolean invoiceAccountable) {
+		this.invoiceAccountable = invoiceAccountable;
+	}
+
+	@Override
     public String toString() {
         return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode="
                 + occTemplateNegativeCode + ", customInvoiceXmlScriptInstanceCode=" + customInvoiceXmlScriptInstanceCode + ", sequenceDto=" + sequenceDto + ", sellerSequences="
-                + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto + ", useSelfSequence=" + useSelfSequence + "]";
+                + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto + ", useSelfSequence=" + useSelfSequence + ", invoiceAccountable=" + invoiceAccountable + "]";
     }
 }

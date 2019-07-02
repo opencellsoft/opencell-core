@@ -73,12 +73,13 @@ import org.meveo.model.shared.InterBankTitle;
  * 
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
 @Cacheable
-@CustomFieldEntity(cftCodePrefix = "PROVIDER")
+@CustomFieldEntity(cftCodePrefix = "Provider")
 @ExportIdentifier("code")
 @Table(name = "crm_provider", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

@@ -20,7 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.qualifier.InboundRequestReceived;
+import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.notification.InboundRequest;
+import org.meveo.service.audit.AuditOrigin;
 import org.meveo.service.notification.InboundRequestService;
 import org.slf4j.Logger;
 
@@ -28,7 +30,7 @@ import org.slf4j.Logger;
  * To call this servlet the url must be in this format: /inbound/&lt;provider.code&gt;
  * 
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3.1
+ * @lastModifiedVersion 7.3.0
  */
 @WebServlet("/inbound/*")
 @ServletSecurity(@HttpConstraint(rolesAllowed = "apiAccess"))
@@ -46,12 +48,18 @@ public class InboundServlet extends HttpServlet {
     @InboundRequestReceived
     protected Event<InboundRequest> eventProducer;
 
+    @Inject
+    private AuditOrigin auditOrigin;
+
     private void doService(HttpServletRequest req, HttpServletResponse res) {
 
         try {
 
             String path = req.getPathInfo();
             log.debug("received request for method {} , path={}", req.getMethod(), path);
+
+            auditOrigin.setAuditOrigin(ChangeOriginEnum.INBOUND_REQUEST);
+            auditOrigin.setAuditOriginName(path);
 
             InboundRequest inReq = new InboundRequest();
             inReq.setCode(req.getRemoteAddr() + "_" + req.getRemotePort() + "_" + req.getMethod() + "_" + System.nanoTime());

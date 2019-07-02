@@ -67,8 +67,8 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  *
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.2
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
@@ -77,7 +77,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @DiscriminatorColumn(name = "transaction_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
-@CustomFieldEntity(cftCodePrefix = "ACC_OP")
+@CustomFieldEntity(cftCodePrefix = "AccountOperation")
 @NamedQueries({
         @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" + 
                 "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
@@ -361,7 +361,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @JoinColumn(name = "rejected_payment_id")
     private RejectedPayment rejectedPayment;
     
-    @ManyToOne(optional = true, cascade = CascadeType.ALL)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "seller_id")
     private Seller seller;
     

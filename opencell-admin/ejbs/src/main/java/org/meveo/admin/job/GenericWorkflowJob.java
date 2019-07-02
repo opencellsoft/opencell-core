@@ -19,6 +19,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class GenericWorkflowJob execute the transition script on each workflowed entity instance.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class GenericWorkflowJob extends Job {
@@ -51,7 +53,7 @@ public class GenericWorkflowJob extends Job {
 
         CustomFieldTemplate worklowCF = new CustomFieldTemplate();
         worklowCF.setCode("gwfJob_generic_wf");
-        worklowCF.setAppliesTo("JOB_GenericWorkflowJob");
+        worklowCF.setAppliesTo("JobInstance_GenericWorkflowJob");
         worklowCF.setActive(true);
         worklowCF.setDescription("Generic workflow");
         worklowCF.setFieldType(CustomFieldTypeEnum.ENTITY);
@@ -61,7 +63,7 @@ public class GenericWorkflowJob extends Job {
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("gwfJob_nbRuns");
-        nbRuns.setAppliesTo("JOB_GenericWorkflowJob");
+        nbRuns.setAppliesTo("JobInstance_GenericWorkflowJob");
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -71,7 +73,7 @@ public class GenericWorkflowJob extends Job {
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
         waitingMillis.setCode("gwfJob_waitingMillis");
-        waitingMillis.setAppliesTo("JOB_GenericWorkflowJob");
+        waitingMillis.setAppliesTo("JobInstance_GenericWorkflowJob");
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);

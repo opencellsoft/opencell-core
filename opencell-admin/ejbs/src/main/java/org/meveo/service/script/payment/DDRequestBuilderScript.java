@@ -17,6 +17,8 @@ import org.meveo.service.script.Script;
  */
 public abstract class DDRequestBuilderScript extends Script implements DDRequestBuilderScriptInterface {
 
+    private static final long serialVersionUID = 504213309864822236L;
+
     /** The Constant DD_REQUEST_LOT. */
     public static final String DD_REQUEST_LOT = "DD_REQUEST_LOT";
 
@@ -50,7 +52,7 @@ public abstract class DDRequestBuilderScript extends Script implements DDRequest
     public DDRejectFileInfos processSCTRejectedFile(Map<String, Object> methodContext) throws BusinessException {
         return null;
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public List<AccountOperation> findListAoToPay(Map<String, Object> methodContext) throws BusinessException {

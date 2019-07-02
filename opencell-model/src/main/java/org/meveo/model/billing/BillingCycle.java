@@ -53,7 +53,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @Entity
 @Cacheable
 @ExportIdentifier({ "code" })
-@CustomFieldEntity(cftCodePrefix = "BILLING_CYCLE")
+@CustomFieldEntity(cftCodePrefix = "BillingCycle")
 @Table(name = "billing_cycle", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_cycle_seq"), })

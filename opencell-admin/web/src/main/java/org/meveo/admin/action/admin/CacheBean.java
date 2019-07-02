@@ -18,19 +18,6 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCache;
@@ -46,10 +33,25 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.service.index.ElasticSearchIndexPopulationService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.view.LazyDataModelWSize;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 @Named
 @ViewScoped
@@ -77,6 +79,9 @@ public class CacheBean implements Serializable {
 
     @Inject
     private ElasticSearchIndexPopulationService esPopulationService;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     /** Logger. */
     @Inject
@@ -141,6 +146,7 @@ public class CacheBean implements Serializable {
             caches.putAll(jobCacheContainerProvider.getCaches());
             caches.putAll(tenantCacheContainerProvider.getCaches());
             caches.putAll(esPopulationService.getCaches());
+            caches.putAll(scriptInstanceService.getCaches());
 
             selectedCache = caches.get(cacheName);
         }
@@ -162,6 +168,7 @@ public class CacheBean implements Serializable {
         caches.putAll(jobCacheContainerProvider.getCaches());
         caches.putAll(tenantCacheContainerProvider.getCaches());
         caches.putAll(esPopulationService.getCaches());
+        caches.putAll(scriptInstanceService.getCaches());
         caches = new TreeMap<String, Cache>(caches);
 
         for (Entry<String, Cache> cache : caches.entrySet()) {
@@ -188,6 +195,7 @@ public class CacheBean implements Serializable {
         customFieldsCacheContainerProvider.refreshCache(cacheName);
         jobCacheContainerProvider.refreshCache(cacheName);
         esPopulationService.refreshCache(cacheName);
+        scriptInstanceService.refreshCache(cacheName);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 
@@ -198,6 +206,7 @@ public class CacheBean implements Serializable {
         customFieldsCacheContainerProvider.refreshCache(null);
         jobCacheContainerProvider.refreshCache(null);
         esPopulationService.refreshCache(null);
+        scriptInstanceService.refreshCache(null);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 
@@ -285,7 +294,14 @@ public class CacheBean implements Serializable {
 
                 @Override
                 public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
-                    List valueList = (List) selectedCacheItem.getValue();
+                    List valueList;
+                    if (selectedCacheItem.getValue() instanceof HashSet) {
+                        valueList = (List) new ArrayList<>((HashSet)selectedCacheItem.getValue());
+
+                    } else {
+                        valueList = (List) selectedCacheItem.getValue();
+
+                    }
                     setRowCount(valueList.size());
 
                     if (getRowCount() > 0) {
@@ -350,7 +366,24 @@ public class CacheBean implements Serializable {
     @SuppressWarnings("rawtypes")
     public String getShortRepresentationOfCachedValue(Object item, boolean returnToStringForSimpleObjects) {
 
-        if (item instanceof List) {
+        if (item instanceof Set) {
+            StringBuilder builder = new StringBuilder();
+            Set setObject = (Set) item;
+            List listObject = (List) new ArrayList<>(setObject);
+
+            for (int i = 0; i < 10 && i < listObject.size(); i++) {
+                builder.append(builder.length() == 0 ? "" : ", ");
+                Object listItem = listObject.get(i);
+                builder.append(getShortRepresentationOfCachedValue(listItem, false));
+            }
+
+            if (listObject.size() > 10) {
+                builder.append(", ...");
+            }
+
+            return builder.toString();
+
+        } else if (item instanceof List) {
             StringBuilder builder = new StringBuilder();
             List listObject = (List) item;
             for (int i = 0; i < 10 && i < listObject.size(); i++) {

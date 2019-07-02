@@ -39,8 +39,9 @@ import org.meveo.util.EntityCustomizationUtils;
 /**
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, CustomEntityTemplateDto> {
 
@@ -101,9 +102,10 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
                 if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE
                         && cftDto.getFieldType() != CustomFieldTypeEnum.DOUBLE && cftDto.getFieldType() != CustomFieldTypeEnum.LIST
-                        && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING)
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN)
                         || (cftDto.isVersionable() != null && cftDto.isVersionable())) {
-                    throw new InvalidParameterException("Custom table supports only unversioned and simple Date, Double, Long, String and Select from list type fields");
+                    throw new InvalidParameterException("Custom table supports only unversioned and simple Date, Double, Long, Boolean, String and Select from list type fields");
                 }
             }
         }
@@ -166,9 +168,10 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
                 if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE
                         && cftDto.getFieldType() != CustomFieldTypeEnum.DOUBLE && cftDto.getFieldType() != CustomFieldTypeEnum.LIST
-                        && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING)
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN)
                         || (cftDto.isVersionable() != null && cftDto.isVersionable())) {
-                    throw new InvalidParameterException("Custom table supports only unversioned and simple Date, Double, Long, String and Select from list type fields");
+                    throw new InvalidParameterException("Custom table supports only unversioned and simple Date, Double, Long, Boolean, String and Select from list type fields");
                 }
             }
         }
@@ -399,7 +402,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         // get all the class annotated with customFieldEntity
         Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
         for (Class<?> clazz : cfClasses) {
-            // check if appliesTo match, eg OFFER
+            // check if appliesTo match, eg OfferTemplate
             if (appliesTo.equals(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
                 entityClass = clazz;
                 break;
@@ -409,7 +412,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         // search for custom field entity filtered by type and code
         ICustomFieldEntity entityInstance = customEntityTemplateService.findByClassAndCode(entityClass, entityCode);
 
-        // custom fields that applies to an entity type, eg. OFFER
+        // custom fields that applies to an entity type, eg. OfferTemplate
         Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo);
         Map<String, EntityCustomAction> caFields = entityCustomActionService.findByAppliesTo(appliesTo);
         result = EntityCustomizationDto.toDTO(entityClass, cetFields.values(), caFields.values());

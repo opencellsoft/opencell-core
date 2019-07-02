@@ -22,6 +22,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class FilteringJob  execute the given script for each entity returned from the given filter.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class FilteringJob extends Job {
@@ -47,7 +49,7 @@ public class FilteringJob extends Job {
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("nbRuns");
-        nbRuns.setAppliesTo("JOB_FilteringJob");
+        nbRuns.setAppliesTo("JobInstance_FilteringJob");
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -57,7 +59,7 @@ public class FilteringJob extends Job {
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
         waitingMillis.setCode("waitingMillis");
-        waitingMillis.setAppliesTo("JOB_FilteringJob");
+        waitingMillis.setAppliesTo("JobInstance_FilteringJob");
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
@@ -67,7 +69,7 @@ public class FilteringJob extends Job {
 
         CustomFieldTemplate filter = new CustomFieldTemplate();
         filter.setCode("FilteringJob_filter");
-        filter.setAppliesTo("JOB_FilteringJob");
+        filter.setAppliesTo("JobInstance_FilteringJob");
         filter.setActive(true);
         filter.setDescription("Filter");
         filter.setFieldType(CustomFieldTypeEnum.ENTITY);
@@ -77,7 +79,7 @@ public class FilteringJob extends Job {
 
         CustomFieldTemplate scriptCF = new CustomFieldTemplate();
         scriptCF.setCode("FilteringJob_script");
-        scriptCF.setAppliesTo("JOB_FilteringJob");
+        scriptCF.setAppliesTo("JobInstance_FilteringJob");
         scriptCF.setActive(true);
         scriptCF.setDescription("Script");
         scriptCF.setFieldType(CustomFieldTypeEnum.ENTITY);
@@ -87,7 +89,7 @@ public class FilteringJob extends Job {
 
         CustomFieldTemplate variablesCF = new CustomFieldTemplate();
         variablesCF.setCode("FilteringJob_variables");
-        variablesCF.setAppliesTo("JOB_FilteringJob");
+        variablesCF.setAppliesTo("JobInstance_FilteringJob");
         variablesCF.setActive(true);
         variablesCF.setDescription("Init and finalize variables");
         variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
@@ -99,7 +101,7 @@ public class FilteringJob extends Job {
 
         CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
         recordVariableName.setCode("FilteringJob_recordVariableName");
-        recordVariableName.setAppliesTo("JOB_FilteringJob");
+        recordVariableName.setAppliesTo("JobInstance_FilteringJob");
         recordVariableName.setActive(true);
         recordVariableName.setDefaultValue("record");
         recordVariableName.setDescription("Record variable name");

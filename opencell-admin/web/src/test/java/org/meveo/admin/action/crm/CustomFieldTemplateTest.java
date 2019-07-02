@@ -38,13 +38,15 @@ import static org.mockito.Mockito.when;
 /**
  * A Test for rounding a custom field has double type
  * @author Khalid HORRI
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CustomFieldTemplateTest {
 
     private static final String DEFAULT_CODE = "CFT_CODE";
     private static final String DEFAULT_DESCRIPTION = "CFT_DESCRIPTION";
-    private static final String DEFAULT_APPLIES_TO = "SELLER";
+    private static final String DEFAULT_APPLIES_TO = "Seller";
     private static final Integer EXPECTED_NUMBER_DECIMAL = 6;
     private static final RoundingModeEnum EXPECTED_ROUNDING_MODE = RoundingModeEnum.NEAREST;
 

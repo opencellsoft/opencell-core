@@ -36,6 +36,8 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
@@ -53,13 +55,14 @@ import org.meveo.model.shared.Address;
  * 
  * @author Andrius Karpavicius
  * @author Khalid HORRI
+ * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
 @Entity
 @WorkflowedEntity
 @ObservableEntity
 @ExportIdentifier({ "code" })
-@CustomFieldEntity(cftCodePrefix = "ORDER")
+@CustomFieldEntity(cftCodePrefix = "Order")
 @Table(name = "ord_order", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_order_seq"), })
@@ -150,6 +153,7 @@ public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntit
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20, nullable = false)
     @NotNull
+    @AuditTarget(type = AuditChangeTypeEnum.STATUS, history = true, notif = true)
     private OrderStatusEnum status = OrderStatusEnum.IN_CREATION;
 
     /**
@@ -225,7 +229,7 @@ public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntit
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email_template_id")
     private EmailTemplate emailTemplate;
 

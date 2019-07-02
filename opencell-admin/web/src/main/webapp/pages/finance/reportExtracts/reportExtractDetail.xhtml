@@ -58,6 +58,7 @@
 							popupId="scriptInstancePopup" />
 					</p:outputPanel>
 					<hftl:formField label="#{messages['reportExtract.category']}" field="category" />
+					<hftl:formField label="#{messages['reportExtract.outputDir']}" field="outputDir" />
 					<hftl:formField label="#{messages['reportExtract.filenameFormat']}" field="filenameFormat" />
 					<p:outputPanel id="scriptTypeSQL">
 						<hftl:decorateFormField label="#{messages['reportExtract.sqlQuery']}" fieldId="sqlQuery" componentWidth="100" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}">

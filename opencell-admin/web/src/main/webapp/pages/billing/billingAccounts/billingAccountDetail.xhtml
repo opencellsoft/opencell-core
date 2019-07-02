@@ -364,6 +364,8 @@
                                                 disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}">
                                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                                             </p:button>
+                                            <p:commandButton action="#{billingAccountBean.generateProformaInvoice()}" value="#{messages['account.generateProformaInvoice']}"
+                                                 immediate="true" disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" ajax="false"/> 
                                             <p:commandButton action="#{billingAccountBean.generateInvoice()}" value="#{messages['account.generateInvoice']}"
                                                  immediate="true" disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />                                            
                                             

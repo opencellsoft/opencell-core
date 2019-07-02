@@ -113,7 +113,8 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
                 + " AND o.wallet.userAccount=:userAccount"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
-                + " AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount") })
+                + " AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
+        @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select status, count(*) from WalletOperation group by status")})
 public class WalletOperation extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -401,7 +402,8 @@ public class WalletOperation extends BusinessEntity {
     /**
      * Offer template
      */
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
     public WalletInstance getWallet() {

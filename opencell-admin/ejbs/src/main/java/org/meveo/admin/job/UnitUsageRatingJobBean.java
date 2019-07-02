@@ -15,7 +15,6 @@ import org.meveo.event.qualifier.Rejected;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRRejectReasonEnum;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.UsageRatingService;
@@ -77,17 +76,18 @@ public class UnitUsageRatingJobBean {
         edr.setRejectReason(StringUtils.truncate(e.getMessage(), 255, true));
         rejectededEdrProducer.fire(edr);
         result.registerError();
-        String aLine = "EdrId : " + edr.getId() + " RejectReason : " + (e != null ? e.getMessage() : edr.getRejectReason()) + "\n";
-        aLine += "eventDate:" + edr.getEventDate() + "\n";
-        aLine += "originBatch:" + edr.getOriginBatch() + "\n";
-        aLine += "originRecord:" + edr.getOriginRecord() + "\n";
-        aLine += "quantity:" + edr.getQuantity() + "\n";
-        aLine += "subscription:" + edr.getSubscription().getCode() + "\n";
-        aLine += "access:" + edr.getAccessCode() + "\n";
-        aLine += "parameter1:" + edr.getParameter1() + "\n";
-        aLine += "parameter2:" + edr.getParameter2() + "\n";
-        aLine += "parameter3:" + edr.getParameter3() + "\n";
-        aLine += "parameter4:" + edr.getParameter4() + "\n";
-        result.addReport(aLine);
-    }
+		String aLine = "EdrId : " + edr.getId() + " RejectReason : "
+				+ (e != null ? e.getMessage() : edr.getRejectReason()) + "\n";
+		aLine += "eventDate:" + edr.getEventDate() + "\n";
+		aLine += "originBatch:" + edr.getOriginBatch() + "\n";
+		aLine += "originRecord:" + edr.getOriginRecord() + "\n";
+		aLine += "quantity:" + edr.getQuantity() + "\n";
+		aLine += "subscription:" + edr.getSubscription().getCode() + "\n";
+		aLine += "access:" + edr.getAccessCode() + "\n";
+		aLine += "parameter1:" + edr.getParameter1() + "\n";
+		aLine += "parameter2:" + edr.getParameter2() + "\n";
+		aLine += "parameter3:" + edr.getParameter3() + "\n";
+		aLine += "parameter4:" + edr.getParameter4() + "\n";
+		result.addReport(aLine);
+	}
 }

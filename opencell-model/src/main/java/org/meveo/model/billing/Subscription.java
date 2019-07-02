@@ -87,7 +87,7 @@ import java.util.List;
 @Entity
 @WorkflowedEntity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "SUB", inheritCFValuesFrom = { "offer", "userAccount" })
+@CustomFieldEntity(cftCodePrefix = "Subscription", inheritCFValuesFrom = { "offer", "userAccount" })
 @ExportIdentifier({ "code" })
 @Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -312,8 +312,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
     private List<DunningDocument> dunningDocuments;
 
-
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email_template_id")
     private EmailTemplate emailTemplate;
 
@@ -333,7 +332,6 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @Type(type = "numeric_boolean")
     @Column(name = "electronic_billing")
     private boolean electronicBilling;
-
 
     /**
      * Extra Rated transactions to reach minimum invoice amount per subscription
@@ -827,8 +825,10 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     public void setAccountOperations(List<AccountOperation> accountOperations) {
         this.accountOperations = accountOperations;
     }
+
     /**
      * Gets Email Template.
+     * 
      * @return Email Template.
      */
     public EmailTemplate getEmailTemplate() {
@@ -837,6 +837,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets Email template.
+     * 
      * @param emailTemplate the Email template.
      */
     public void setEmailTemplate(EmailTemplate emailTemplate) {
@@ -845,6 +846,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Gets Mailing Type.
+     * 
      * @return Mailing Type.
      */
     public MailingTypeEnum getMailingType() {
@@ -853,6 +855,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets Mailing Type.
+     * 
      * @param mailingType mailing type
      */
     public void setMailingType(MailingTypeEnum mailingType) {
@@ -861,6 +864,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Gets cc Emails.
+     * 
      * @return cc Emails
      */
     public String getCcedEmails() {
@@ -869,6 +873,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets cc Emails.
+     * 
      * @param ccedEmails Cc Emails
      */
     public void setCcedEmails(String ccedEmails) {
@@ -877,6 +882,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Gets Email address.
+     * 
      * @return The Email address
      */
     public String getEmail() {
@@ -885,6 +891,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets Email.
+     * 
      * @param email the Email address
      */
     public void setEmail(String email) {
@@ -893,6 +900,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Check id electronic billing is enabled.
+     * 
      * @return True if enabled, false else
      */
     public boolean getElectronicBilling() {
@@ -901,6 +909,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets the electronic billing.
+     * 
      * @param electronicBilling True or False
      */
     public void setElectronicBilling(boolean electronicBilling) {
@@ -918,7 +927,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     @Override
     public void addDiscountPlanInstances(DiscountPlanInstance discountPlanInstance) {
-        if(this.getDiscountPlanInstances() == null){
+        if (this.getDiscountPlanInstances() == null) {
             this.setDiscountPlanInstances(new ArrayList<>());
         }
         this.getDiscountPlanInstances().add(discountPlanInstance);

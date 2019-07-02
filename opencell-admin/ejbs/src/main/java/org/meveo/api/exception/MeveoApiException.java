@@ -5,7 +5,7 @@ import javax.ejb.ApplicationException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 
 @ApplicationException(rollback = true)
-public class MeveoApiException extends Exception {
+public class MeveoApiException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 

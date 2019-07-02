@@ -22,12 +22,13 @@ import org.meveo.service.job.Job;
  * 
  * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class PaymentJob extends Job {
 
-    private static final String APPLIES_TO_NAME = "JOB_PaymentJob";
+    private static final String APPLIES_TO_NAME = "JobInstance_PaymentJob";
     
     /** The payment job bean. */
     @Inject

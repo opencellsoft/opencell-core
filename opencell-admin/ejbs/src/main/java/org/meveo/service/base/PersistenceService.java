@@ -537,6 +537,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (active != null && IEnable.class.isAssignableFrom(entityClass)) {
             queryBuilder.addBooleanCriterion("disabled", !active);
         }
+        if (BusinessEntity.class.isAssignableFrom(entityClass)) {
+            queryBuilder.addOrderCriterionAsIs("code", true);
+        } else {
+            queryBuilder.addOrderCriterionAsIs("id", true);
+        }
         Query query = queryBuilder.getQuery(getEntityManager());
         return query.getResultList();
     }

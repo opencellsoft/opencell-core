@@ -21,13 +21,86 @@
 			</p:breadCrumb>
 		</h:form>
 
-		<hftl:formPanel label="#{messages['role.userRolePanel']}" backingBean="#{userRoleBean}">
-            <hftl:formField label="#{messages['role.name']}" field="name" required="true" />
-            <hftl:formField label="#{messages['role.description']}" field="description" size="50" />
-            <hftl:formField label="#{messages['role.roles']}" field="roles" listType="pickUpList" dualListModel="#{userRoleBean.roleListModel}" valueLabelField="name"
-                styleClass="clearLeft" />
-            <hftl:formField label="#{messages['role.permission']}" field="permissions" listType="pickUpList" dualListModel="#{userRoleBean.permissionListModel}"
-                valueLabelField="name" />
+		<hftl:formPanel formId="roleFormId" label="#{messages['role.userRolePanel']}" backingBean="#{userRoleBean}" ajaxSubmit="true" submitPartialProcess=":roleFormId:tabView">
+			<p:tabView id="tabView" activeIndex="#{userRoleBean.activeTab}">
+				<p:tab title="#{messages['commons.tab.information']}">
+		            <hftl:formField label="#{messages['role.name']}" field="name" required="true" />
+		            <hftl:formField label="#{messages['role.description']}" field="description" size="50" />
+		            <hftl:formField label="#{messages['role.roles']}" field="roles" listType="pickUpList" dualListModel="#{userRoleBean.roleListModel}" valueLabelField="name"
+		                styleClass="clearLeft" />
+		            <hftl:formField label="#{messages['role.permission']}" field="permissions" listType="pickUpList" dualListModel="#{userRoleBean.permissionListModel}"
+		                valueLabelField="name" />
+                </p:tab>
+                
+                <p:tab title="#{messages['user.securedEntitiesTab']}" rendered="#{!(userRoleBean.entity.id==null) and userRoleBean.edit and userRoleBean.canUserUpdateEntity()}">
+					<h:panelGroup id="selectedEntitiesPanel">
+						<p:messages />
+						<p:dataTable id="selectedEntitiesDatatable" var="securedEntity" value="#{userRoleBean.selectedSecuredEntities}" paginator="true" rows="10" sortBy="#{securedEntity.code}"
+							paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" lazy="false"
+							styleClass="custom-grid" rowsPerPageTemplate="10, 20, 50" reflow="true">
+							<p:column headerText="#{messages['BusinessEntity.type']}">
+								<h:outputText value="#{securedEntity.readableEntityClass()}" styleClass="field-value" />
+							</p:column>
+							<p:column headerText="#{messages['BusinessEntity.code']}">
+								<h:outputText value="#{securedEntity.code}" styleClass="field-value" />
+							</p:column>
+							<p:column headerText="#{messages['BusinessEntity.description']}">
+								<h:outputText value="#{securedEntity.description}" styleClass="field-value" />
+							</p:column>
+							<p:column styleClass="actions-column" rendered="#{userRoleBean.edit}">
+								<f:facet name="header">
+									<h:outputText value="#{messages['commons.actions']}" />
+								</f:facet>
+								<p:commandButton action="#{userRoleBean.deleteSecuredEntity(securedEntity)}" rendered="#{userRoleBean.canUserUpdateEntity()}" icon="ui-icon-trash" update=":#{p:component('selectedEntitiesPanel')}" />
+							</p:column>
+							<f:facet name="footer">
+								<p:commandButton id="addEntity" value="#{messages['user.addSecuredEntity']}" rendered="#{userRoleBean.canUserUpdateEntity()}" oncomplete="PF('securedEntitiesDialog').show()"></p:commandButton>
+							</f:facet>
+						</p:dataTable>
+					</h:panelGroup>
+
+					<p:dialog id="securedEntitiesDialog" header="#{messages['user.securedEntities']}" widgetVar="securedEntitiesDialog" dynamic="true" modal="true" styleClass="form-dialog" closeOnEscape="true"
+						width="600" appendTo="@(body)">
+
+						<h:panelGroup id="securedEntitiesDialogPanel" layout="block" styleClass="search-panel">
+							<h:form id="securedEntitiesDialogForm">
+								<h:panelGroup layout="block" styleClass="search-panel">
+									<p:messages />
+									<p:outputPanel styleClass="search-panel-fields">
+										<hftl:decorateFormField fieldId="securedEntityType" label="#{messages['BusinessEntity.type']}">
+											<p:selectOneMenu id="securedEntityType" value="#{userRoleBean.securedEntityType}">
+												<f:selectItem itemLabel="" />
+												<f:selectItems value="#{userRoleBean.securedEntityTypes.entrySet()}" var="item" itemLabel="#{item.key}" itemValue="#{item.value}" />
+												<p:ajax listener="#{userRoleBean.updateSelectedAccountBean}" update=":#{p:component('securedEntitiesDialogPanel')}" />
+											</p:selectOneMenu>
+										</hftl:decorateFormField>
+										<hftl:decorateFormField fieldId="codeSearchField" label="#{messages['BusinessEntity.code']}" rendered="#{userRoleBean.selectedAccountBean != null}">
+											<p:inputText id="codeSearchField" value="#{userRoleBean.selectedAccountBean.filters['code']}" size="20" maxlength="40" disabled="false" />
+										</hftl:decorateFormField>
+									</p:outputPanel>
+									<h:panelGroup layout="block" styleClass="search-panel-actions" rendered="#{userRoleBean.selectedAccountBean != null}">
+										<p:commandButton id="buttonSearch" value="#{messages['commons.search']}" update="@form" />
+										<p:commandButton id="buttonClear" action="#{userRoleBean.selectedAccountBean.clean}" value="#{messages['commons.clean']}" update=":#{p:component('securedEntitiesDialogPanel')}" />
+									</h:panelGroup>
+								</h:panelGroup>
+
+								<p:panel id="securedEntitiesDialogDataPanel" rendered="#{userRoleBean.selectedAccountBean != null}">
+									<p:dataTable id="securedEntitiesDialogDatatable" var="e" paginator="true" resizableColumns="true" value="#{userRoleBean.selectedAccountBean.lazyDataModel}" rows="10"
+										selection="#{userRoleBean.selectedEntity}" selectionMode="single" rowKey="#{e.id}" lazy="true">
+										<p:ajax event="rowSelect" listener="#{userRoleBean.saveSecuredEntity}" oncomplete="PF('securedEntitiesDialog').hide()" update=":#{p:component('securedEntitiesDialogPanel')} :#{p:component('selectedEntitiesPanel')}" />
+										<p:column headerText="#{messages['BusinessEntity.code']}">
+											<h:outputText value="#{e.code}" />
+										</p:column>
+										<p:column headerText="#{messages['BusinessEntity.description']}">
+											<h:outputText value="#{e.description}" />
+										</p:column>
+									</p:dataTable>
+								</p:panel>
+							</h:form>
+						</h:panelGroup>
+					</p:dialog>
+				</p:tab>
+			</p:tabView>
         </hftl:formPanel>
     </ui:define>
 </ui:composition>

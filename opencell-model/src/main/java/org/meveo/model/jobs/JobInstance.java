@@ -49,11 +49,12 @@ import org.meveo.model.ModuleItem;
  * The Class JobInstance.
  * 
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ModuleItem
-@CustomFieldEntity(cftCodePrefix = "JOB", cftCodeFields = "jobTemplate")
+@CustomFieldEntity(cftCodePrefix = "JobInstance", cftCodeFields = "jobTemplate")
 @ExportIdentifier({ "code" })
 @Table(name = "meveo_job_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -122,7 +123,14 @@ public class JobInstance extends EnableBusinessCFEntity {
     /** The include invoices without amount. */
     @Type(type = "numeric_boolean")
     @Column(name = "exclude_inv_without_amount")
-    private Boolean excludeInvoicesWithoutAmount;
+    private boolean excludeInvoicesWithoutAmount;
+
+    /**
+     * Whether a verbose error log will be kept.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "verbose_report")
+    private boolean verboseReport = true;
 
     /** Code of provider, that job belongs to. */
     @Transient
@@ -301,13 +309,15 @@ public class JobInstance extends EnableBusinessCFEntity {
         } else if (!(obj instanceof JobInstance)) {
             return false;
         }
-
-        JobInstance other = (JobInstance) obj;
-
-        if (this.getId() == other.getId()) {
+        
+        JobInstance other = (JobInstance)obj;  
+        
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
+        
         return false;
+        
     }
 
     /**
@@ -365,14 +375,14 @@ public class JobInstance extends EnableBusinessCFEntity {
     /**
      * @return the excludeInvoicesWithoutAmount
      */
-    public Boolean getExcludeInvoicesWithoutAmount() {
+    public boolean isExcludeInvoicesWithoutAmount() {
         return excludeInvoicesWithoutAmount;
     }
 
     /**
      * @param excludeInvoicesWithoutAmount the excludeInvoicesWithoutAmount to set
      */
-    public void setExcludeInvoicesWithoutAmount(Boolean excludeInvoicesWithoutAmount) {
+    public void setExcludeInvoicesWithoutAmount(boolean excludeInvoicesWithoutAmount) {
         this.excludeInvoicesWithoutAmount = excludeInvoicesWithoutAmount;
     }
 
@@ -401,5 +411,23 @@ public class JobInstance extends EnableBusinessCFEntity {
             return null;
         }
         return this.runTimeValues.get(key);
+    }
+
+    /**
+     * Are error logs recorded?
+     * 
+     * @return boolean value
+     */
+    public boolean isVerboseReport() {
+        return verboseReport;
+    }
+
+    /**
+     * Sets whether error logs are recorded
+     * 
+     * @param verboseReport boolean value
+     */
+    public void setVerboseReport(boolean verboseReport) {
+        this.verboseReport = verboseReport;
     }
 }

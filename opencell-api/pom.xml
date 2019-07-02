@@ -6,11 +6,15 @@
         <groupId>com.opencellsoft</groupId>
         <artifactId>opencell</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>7.0.1-SNAPSHOT</version>
+        <version>8.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>opencell-api</artifactId>
     <name>Opencell API</name>
-
+    <properties>
+        <swagger.version>2.0.7</swagger.version>
+        <springfox.swagger.version>2.8.0</springfox.swagger.version>
+        <swagger.ui.version>2.8.0</swagger.ui.version>
+    </properties>
     <dependencies>
 
 
@@ -129,7 +133,6 @@
         </dependency>
 
 
-
         <!-- <dependency> -->
         <!-- <groupId>org.scannotation</groupId> -->
         <!-- <artifactId>scannotation</artifactId> -->
@@ -156,6 +159,39 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-jaxrs2</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-core</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox.swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger.ui.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.23.0</version>
+            <scope>test</scope>
+        </dependency>
         <!-- <dependency> -->
         <!-- <groupId>org.jboss.resteasy</groupId> -->
         <!-- <artifactId>resteasy-jackson-provider</artifactId> -->

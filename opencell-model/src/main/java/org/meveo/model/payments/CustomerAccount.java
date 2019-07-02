@@ -18,6 +18,8 @@
  */
 package org.meveo.model.payments;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +27,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -55,17 +56,17 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.shared.ContactInformation;
 
 /**
  * Customer Account
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @WorkflowedEntity
-@CustomFieldEntity(cftCodePrefix = "CA", inheritCFValuesFrom = "customer")
+@CustomFieldEntity(cftCodePrefix = "CustomerAccount", inheritCFValuesFrom = "customer")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CA")
 @Table(name = "ar_customer_account")
@@ -153,12 +154,6 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
     @Column(name = "date_dunning_level")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateDunningLevel;
-
-    /**
-     * Contact information
-     */
-    @Embedded
-    private ContactInformation contactInformation;
 
     /**
      * Parent customer
@@ -276,14 +271,6 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     public void setAccountOperations(List<AccountOperation> accountOperations) {
         this.accountOperations = accountOperations;
-    }
-
-    public ContactInformation getContactInformation() {
-        return contactInformation;
-    }
-
-    public void setContactInformation(ContactInformation contactInformation) {
-        this.contactInformation = contactInformation;
     }
 
     public void setDunningLevel(DunningLevelEnum dunningLevel) {
@@ -600,11 +587,8 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
     @Override
     public void anonymize(String code) {
         super.anonymize(code);
-        getContactInformationNullSafe().anonymize(code);
-        if (getBillingAccounts() != null) {
-            for (BillingAccount ba : getBillingAccounts()) {
-                ba.anonymize(code);
-            }
-        }
+        if(isNotEmpty(this.billingAccounts) ) {
+			this.billingAccounts.forEach(ba -> ba.anonymize(code));
+		}
     }
 }

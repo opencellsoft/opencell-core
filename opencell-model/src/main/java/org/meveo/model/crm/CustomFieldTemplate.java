@@ -1,16 +1,25 @@
 package org.meveo.model.crm;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.EnableBusinessEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEnum;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.shared.DateUtils;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -33,36 +42,27 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.EnableBusinessEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ModuleItem;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
-import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
-import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEnum;
-import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldValue;
-import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.shared.DateUtils;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * Custom field template
- * 
+ *
  * @author Andrius Karpavicius
- * @author Abdellatif BARI
  * @author Khalid HORRI
+ * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
- **/
+ */
 @Entity
 @ModuleItem
 @Cacheable
@@ -77,7 +77,7 @@ import org.meveo.model.shared.DateUtils;
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
         @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo=:appliesTo order by cft.code", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-        @NamedQuery(name = "CustomFieldTemplate.getCFTsForAccumulation", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo='SELLER' or cft.code in (SELECT cftu.code from CustomFieldTemplate cftu where cftu.appliesTo in :appliesTo group by cftu.code having count(cftu.code)>1) order by cft.code") })
+        @NamedQuery(name = "CustomFieldTemplate.getCFTsForAccumulation", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo='Seller' or cft.code in (SELECT cftu.code from CustomFieldTemplate cftu where cftu.appliesTo in :appliesTo group by cftu.code having count(cftu.code)>1) order by cft.code") })
 public class CustomFieldTemplate extends EnableBusinessEntity implements Comparable<CustomFieldTemplate> {
 
     private static final long serialVersionUID = -1403961759495272885L;
@@ -360,7 +360,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * create a Map of attribute from sorted List
-     * 
+     *
      * @return a sorted LinkedHashMap values
      */
     public Map<String, String> getListValuesSorted() {
@@ -647,6 +647,10 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     public Long getMaxValue() {
         return maxValue;
+    }
+    
+    public Long getMaxValueOrDefault(Long defaultValue) {
+        return Optional.ofNullable(maxValue).orElse(defaultValue);
     }
 
     public void setMaxValue(Long maxValue) {

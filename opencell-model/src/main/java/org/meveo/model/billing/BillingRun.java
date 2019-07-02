@@ -62,7 +62,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  */
 @Entity
 @ReferenceIdentifierQuery("BillingRun.findByIdAndBCCode")
-@CustomFieldEntity(cftCodePrefix = "BILLING_RUN")
+@CustomFieldEntity(cftCodePrefix = "BillingRun")
 @Table(name = "billing_billing_run")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_billing_run_seq") })

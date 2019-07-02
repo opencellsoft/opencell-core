@@ -54,11 +54,12 @@ import org.meveo.model.WorkflowedEntity;
  * User account
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @WorkflowedEntity
-@CustomFieldEntity(cftCodePrefix = "UA", inheritCFValuesFrom = "billingAccount")
+@CustomFieldEntity(cftCodePrefix = "UserAccount", inheritCFValuesFrom = "billingAccount")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_UA")
 @Table(name = "billing_user_account")
