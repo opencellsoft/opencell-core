@@ -1146,5 +1146,86 @@
 			alter table ${db.schema.adapted}account_entity modify firstname varchar(100);
 			alter table ${db.schema.adapted}account_entity modify lastname varchar(100); </sql>
     </changeSet>
+
+
+    <changeSet id="#4371_20190620_1" author="AbdellatifBARI" dbms="mysql">
+        <createTable tableName="adm_file_format_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_file_format_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}adm_file_format_seq values(1)</sql>
+    </changeSet>
+
+    <changeSet id="#4371_20190620_2" author="AbdellatifBARI">
+        <createSequence sequenceName="adm_file_format_seq" startValue="1" />
+        <createTable tableName="adm_file_format">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_file_format_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+            <column name="file_name_pattern" type="varchar(255)" />
+            <column name="file_type" type="varchar(255)" />
+            <column name="configuration_template" type="varchar(40000)" />
+            <column name="record_name" type="varchar(255)" />
+            <column name="input_directory" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="output_directory" type="varchar(255)" />
+            <column name="reject_directory" type="varchar(255)" />
+            <column name="archive_directory" type="varchar(255)" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari5xp8" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_file_format" />
+    </changeSet>
+
+
+    <changeSet id="#4371_20190620_3" author="AbdellatifBARI" dbms="mysql">
+        <createTable tableName="flat_file_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="flat_file_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}flat_file_seq values(1)</sql>
+        <sql>CREATE INDEX flat_file_code_index ON ${db.schema.adapted} flat_file(code)</sql>
+    </changeSet>
+
+    <changeSet id="#4371_20190620_4" author="AbdellatifBARI">
+        <createSequence sequenceName="flat_file_seq" startValue="1" />
+        <createTable tableName="flat_file">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="flat_file_pkey" />
+            </column>
+
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="file_name" type="varchar(255)" />
+            <column name="status" type="varchar(255)" />
+            <column name="file_format_id" type="bigint" />
+            <column name="processed" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="error_message" type="text" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari6yr9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="flat_file" />
+        <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="flat_file" constraintName="fk_d4iavkklx1qg1ani36bari5o5i" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_format" />
+    </changeSet>
+    <changeSet id="#4371_20190620_5" author="AbdellatifBARI" dbms="postgresql">
+        <sql>CREATE INDEX flat_file_code_index ON ${db.schema.adapted} flat_file(lower(code))</sql>
+    </changeSet>
     
 </databaseChangeLog>

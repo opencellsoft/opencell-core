@@ -46,6 +46,7 @@ import javax.persistence.TypedQuery;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
+import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -76,6 +77,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
@@ -85,6 +87,7 @@ import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.script.billing.TaxScriptService;
@@ -140,6 +143,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private WalletService walletService;
+
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
 
     /** constants. */
     private final BigDecimal HUNDRED = new BigDecimal("100");
@@ -2208,4 +2214,68 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return (Amounts) q.getSingleResult();
     }
 
+
+    /**
+     * Gets All open rated transaction between two date.
+     * @param firstTransactionDate first Transaction Date
+     * @param lastTransactionDate last Transaction Date
+     * @return All open rated transaction between two date.
+     */
+    public List<RatedTransaction> getOpenRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate){
+        return getEntityManager().createNamedQuery("RatedTransaction.listOpenBetweenTwoDates", RatedTransaction.class).setParameter("firstTransactionDate",firstTransactionDate)
+                .setParameter("lastTransactionDate",lastTransactionDate)
+                .getResultList();
+    }
+
+    /**
+     * Remove All not open rated transaction between two date.
+     * @param firstTransactionDate first operation date
+     * @param lastTransactionDate last operation date
+     * @return the number of deleted entities
+     */
+    public long purge(Date firstTransactionDate, Date lastTransactionDate) {
+        return getEntityManager().createNamedQuery("RatedTransaction.deleteNotOpenBetweenTwoDates").setParameter("firstTransactionDate",firstTransactionDate)
+                .setParameter("lastTransactionDate",lastTransactionDate)
+                .executeUpdate();
+    }
+
+    public void importRatedTransaction(List<RatedTransactionDto> ratedTransactions) throws BusinessException {
+        for (RatedTransactionDto dto : ratedTransactions) {
+            RatedTransaction ratedTransaction = new RatedTransaction();
+            if (dto.getPriceplanCode() != null) {
+                PricePlanMatrix pricePlan = pricePlanMatrixService.findByCode(dto.getPriceplanCode());
+                ratedTransaction.setPriceplan(pricePlan);
+            }
+            if (dto.getTaxCode() != null) {
+                Tax tax = taxService.findByCode(dto.getTaxCode());
+                ratedTransaction.setTax(tax);
+            }
+            if (dto.getBillingAccountCode() != null) {
+                BillingAccount billingAccount = billingAccountService.findByCode(dto.getBillingAccountCode());
+                ratedTransaction.setBillingAccount(billingAccount);
+            }
+            if (dto.getSellerCode() != null) {
+                Seller seller = sellerService.findByCode(dto.getSellerCode());
+                ratedTransaction.setSeller(seller);
+            }
+
+            ratedTransaction.setUsageDate(dto.getUsageDate());
+            ratedTransaction.setUnitAmountWithoutTax(dto.getUnitAmountWithoutTax());
+            ratedTransaction.setUnitAmountWithTax(dto.getUnitAmountWithTax());
+            ratedTransaction.setUnitAmountTax(dto.getUnitAmountTax());
+            ratedTransaction.setQuantity(dto.getQuantity());
+            ratedTransaction.setAmountWithoutTax(dto.getAmountWithoutTax());
+            ratedTransaction.setAmountWithTax(dto.getAmountWithTax());
+            ratedTransaction.setAmountTax(dto.getAmountTax());
+            ratedTransaction.setCode(dto.getCode());
+            ratedTransaction.setDescription(dto.getDescription());
+            ratedTransaction.setUnityDescription(dto.getUnityDescription());
+            ratedTransaction.setDoNotTriggerInvoicing(dto.isDoNotTriggerInvoicing());
+            ratedTransaction.setStartDate(dto.getStartDate());
+            ratedTransaction.setEndDate(dto.getEndDate());
+            ratedTransaction.setTaxPercent(dto.getTaxPercent());
+            create(ratedTransaction);
+        }
+
+    }
 }

@@ -515,6 +515,47 @@ public class ValidateBRScript extends Script {
         ');
         ]]></sql>
     </changeSet>
+    <changeSet id="4403_20190701_export_job" author="horriKhalid">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-22" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2019-07-01 00:00:00.000" />
+            <column name="job_category" value="IMPORT_HIERARCHY" />
+            <column name="job_template" value="ExportMediationEntityJob" />
+            <column name="code" value="ExportMediationEntityJob" />
+            <column name="creator" value="opencell.admin" />
+            <column name="description" value="Export open EDR, WO, RTx"></column>
+            <column name="uuid" value="ExportMediationEntityJob" />
+            <column name="cf_values" value='{"ExportMediationEntityJob_lastTransactionDate":[{"date":""}],"ExportMediationEntityJob_firstTransactionDate":[{"date":"2017-01-01T00:00:00Z"}],"ExportMediationEntityJob_rtCf":[{"boolean":true}],"ExportMediationEntityJob_edrCf":[{"boolean":true}],"ExportMediationEntityJob_woCf":[{"boolean":true}]}'></column>
+        </insert>
+    </changeSet>
+    <changeSet id="4403_20190701_purge_job" author="horriKhalid">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-23" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2019-07-01 00:00:00.000" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="PurgeMediationDataJob" />
+            <column name="code" value="PurgeMediationDataJob" />
+            <column name="creator" value="opencell.admin" />
+            <column name="description" value="Purge not open EDR, WO, RTx"></column>
+            <column name="uuid" value="PurgeMediationDataJob" />
+            <column name="cf_values" value='{"PurgeMediationDataJob_woCf":[{"boolean":true}],"PurgeMediationDataJob_firstTransactionDate":[{"date":"2017-01-01T00:00:00Z"}],"PurgeMediationDataJob_edrCf":[{"boolean":true}],"PurgeMediationDataJob_lastTransactionDate":[{"date":""}],"PurgeMediationDataJob_rtCf":[{"boolean":true}]}'></column>
+        </insert>
+    </changeSet>
+    <changeSet id="4403_20190701_import_job" author="horriKhalid">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-24" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2019-07-01 00:00:00.000" />
+            <column name="job_category" value="IMPORT_HIERARCHY" />
+            <column name="job_template" value="ImportMediationEntityJob" />
+            <column name="code" value="ImportMediationEntityJob" />
+            <column name="creator" value="opencell.admin" />
+            <column name="description" value="Import open EDR, WO, RTx"></column>
+            <column name="uuid" value="ImportMediationEntityJob" />
+        </insert>
+    </changeSet>
 
 <!--    <changeSet id="rebuild-data-cat_unit_of_measure" author="MounirBahije">-->
 <!--        <insert tableName="cat_unit_of_measure">-->
