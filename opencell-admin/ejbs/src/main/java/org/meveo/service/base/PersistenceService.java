@@ -29,11 +29,13 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -397,8 +399,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     void checkEntityDoesNotcontainReferenceToCustomTable(E entity) {
         if(entity instanceof ICustomFieldEntity) {
             ICustomFieldEntity entityTockeck = (ICustomFieldEntity) entity;
-            Map<String, List<CustomFieldValue>> cfValues = entityTockeck.getCfValues().getValuesByCode();
-            boolean isCustomTable = cfValues.entrySet().stream().flatMap(entry -> entry.getValue().stream().map(CustomFieldValue::getAllEntities).filter(l -> !l.isEmpty())).anyMatch(matchesCustomEntity());
+            Map<String, List<CustomFieldValue>> cfValues = Optional.ofNullable(entityTockeck.getCfValues()).map(CustomFieldValues::getValuesByCode).orElse(new HashMap<>());
+            boolean isCustomTable = !cfValues.isEmpty() && cfValues.entrySet().stream().flatMap(entry -> entry.getValue().stream().map(CustomFieldValue::getAllEntities).filter(l -> !l.isEmpty())).anyMatch(matchesCustomEntity());
             if (isCustomTable) {
                 throw new MeveoApiException(CANNOT_REMOVE_ENTITY_CUSTOM_TABLE_REFERENCE_ERROR_MESSAGE);
             }
