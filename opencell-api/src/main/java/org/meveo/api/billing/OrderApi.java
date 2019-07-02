@@ -238,8 +238,7 @@ public class OrderApi extends BaseApi {
             List<org.tmf.dsmapi.catalog.resource.order.BillingAccount> billingAccount = productOrderItem.getBillingAccount();
             if (billingAccount != null && !billingAccount.isEmpty()) {
                 String billingAccountId = billingAccount.get(0).getId();
-                UserAccount userAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId)
-                        .getSingleResult();
+                UserAccount userAccount = userAccountService.findByCode(billingAccountId);
                 orderItem.setUserAccount(userAccount);
             }
 
@@ -1289,8 +1288,7 @@ public class OrderApi extends BaseApi {
                 throw new MissingParameterException("billingAccount for order item " + productOrderItem.getId());
             }
 
-            UserAccount userAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId)
-                    .getSingleResult();
+            UserAccount userAccount = userAccountService.findByCode(billingAccountId);
 
             if (userAccount == null) {
                 throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
