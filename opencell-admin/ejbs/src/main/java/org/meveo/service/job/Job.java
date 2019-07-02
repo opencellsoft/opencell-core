@@ -122,7 +122,8 @@ public abstract class Job {
                 log.debug("Job {} of type {} execution finished. Job completed {}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobCompleted);
                 eventJobProcessed.fire(executionResult);
 
-                if (jobCompleted != null && jobCompleted) {
+                if (jobCompleted != null && jobExecutionService.isJobRunningOnThis(jobInstance)) {
+                    jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
                     MeveoUser lastCurrentUser = currentUser.unProxy();
                     jobExecutionService.executeNextJob(this, jobInstance, !jobCompleted, lastCurrentUser);
                 }
@@ -240,7 +241,23 @@ public abstract class Job {
 
         return null;
     }
-    
+
+    /**
+     * Gets the parameter CF value if found, otherwise return CF value from job definition
+     *
+     * @param jobInstance the job instance
+     * @param cfCode Custom field code
+     * @param defaultValue Default value if no value found
+     * @return Parameter or custom field value
+     */
+    protected Object getParamOrCFValue(JobInstance jobInstance, String cfCode, Object defaultValue) {
+        Object value = getParamOrCFValue(jobInstance, cfCode);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
+    }
+
     /**
      * Gets the parameter CF value if found , otherwise return CF value from customFieldInstanceService
      *

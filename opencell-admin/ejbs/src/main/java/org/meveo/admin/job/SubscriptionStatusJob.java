@@ -22,6 +22,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionService;
 
 /**
  * Handles subscription renewal or termination once subscription expires, fire handles renewal notice events
@@ -39,10 +40,10 @@ public class SubscriptionStatusJob extends Job {
 
     @Inject
     private SubscriptionService subscriptionService;
-    
+
     @Inject
     private ServiceInstanceService serviceInstanceService;
-    
+
     @Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -54,8 +55,11 @@ public class SubscriptionStatusJob extends Job {
         try {
 
             List<Long> subscriptionIds = subscriptionService.getSubscriptionsToRenewOrNotify(untilDate);
+
+            int i = 0;
             for (Long subscriptionId : subscriptionIds) {
-                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+                i++;
+                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                     break;
                 }
                 subscriptionStatusJobBean.updateSubscriptionStatus(result, subscriptionId, untilDate);
@@ -65,11 +69,13 @@ public class SubscriptionStatusJob extends Job {
             log.error("Failed to run subscription status job {}", jobInstance.getCode(), e);
             result.registerError(e.getMessage());
         }
-        
+
         try {
             List<Long> serviceIds = serviceInstanceService.getSubscriptionsToRenewOrNotify(untilDate);
+            int i = 0;
             for (Long serviceId : serviceIds) {
-                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+                i++;
+                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                     break;
                 }
                 subscriptionStatusJobBean.updateServiceInstanceStatus(result, serviceId, untilDate);
@@ -78,8 +84,7 @@ public class SubscriptionStatusJob extends Job {
         } catch (Exception e) {
             log.error("Failed to run subscription status job {}", jobInstance.getCode(), e);
             result.registerError(e.getMessage());
-        }        
-        
+        }
     }
 
     @Override

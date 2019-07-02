@@ -1,29 +1,28 @@
 package org.meveo.admin.job;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.communication.email.MailingTypeEnum;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.InvoiceTypeService;
-import org.meveo.service.job.JobExecutionService;
-import org.slf4j.Logger;
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.job.JobExecutionService;
+import org.slf4j.Logger;
 
 /**
  * A bean used to send invoices by Email
+ * 
  * @author HORRI Khalid
  * @lastModifiedVersion 7.0
  */
@@ -37,8 +36,6 @@ public class SendInvoiceJobBean extends BaseJobBean {
 
     @Inject
     InvoiceService invoiceService;
-    @Inject
-    private InvoiceTypeService invoiceTypeService;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -51,9 +48,11 @@ public class SendInvoiceJobBean extends BaseJobBean {
 
             List<Invoice> invoices = invoiceService.findByNotAlreadySentAndDontSend();
             result.setNbItemsToProcess(invoices.size());
+            int i = 0;
             for (Invoice invoice : invoices) {
                 String overrideEmail = invoiceService.evaluateOverrideEmail(overrideEmailEl, userMap, invoice);
-                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+                i++;
+                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                     break;
                 }
                 if (invoiceService.isDraft(invoice) && !sendDraft) {
@@ -93,5 +92,3 @@ public class SendInvoiceJobBean extends BaseJobBean {
 
     }
 }
-
-

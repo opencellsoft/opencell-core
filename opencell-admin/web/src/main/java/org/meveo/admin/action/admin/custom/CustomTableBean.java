@@ -1,22 +1,5 @@
 package org.meveo.admin.action.admin.custom;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Future;
-
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
@@ -37,6 +20,22 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.UploadedFile;
+
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Future;
 
 @Named
 @ViewScoped
@@ -65,7 +64,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     private LazyDataModel<Map<String, Object>> customTableBasedDataModel;
 
-    private Map<String, Object> newValues = new HashMap<String, Object>();
+    private Map<String, Object> newValues = new HashMap<>();
 
     private boolean appendImportedData;
 
@@ -154,7 +153,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
      */
     public void clean() {
         customTableBasedDataModel = null;
-        filters = new HashMap<String, Object>();
+        filters = new HashMap<>();
     }
 
     /**

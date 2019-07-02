@@ -22,6 +22,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
@@ -78,7 +79,7 @@ public class Address implements Serializable, Cloneable {
     /**
      * Country
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_country_id")
     protected Country country;
 

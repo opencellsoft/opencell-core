@@ -67,7 +67,7 @@ public class JobApi extends BaseApi {
         }
         // populate customFields
         try {
-            populateCustomFields(jobExecution.getCustomFields(), jobInstance, false);
+            populateCustomFields(jobExecution.getCustomFields(), jobInstance, true);
         } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;

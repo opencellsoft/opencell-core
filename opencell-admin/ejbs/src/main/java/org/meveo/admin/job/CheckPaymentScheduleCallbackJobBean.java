@@ -42,27 +42,21 @@ public class CheckPaymentScheduleCallbackJobBean extends BaseJobBean {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+
         try {
-            List<Long> ids = recordedInvoiceService.queryInvoiceIdsForPS(); 
+            List<Long> ids = recordedInvoiceService.queryInvoiceIdsForPS();
             log.debug("invoices to traite:" + (ids == null ? null : ids.size()));
 
-            Long nbRuns = new Long(1);
-            Long waitingMillis = new Long(0);
-            try {
-                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
-                if (nbRuns == -1) {
-                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
-                }
-            } catch (Exception e) {
-                nbRuns = new Long(1);
-                waitingMillis = new Long(0);
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
-            }
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
             log.debug("block to run:" + subListCreator.getBlocToRun());

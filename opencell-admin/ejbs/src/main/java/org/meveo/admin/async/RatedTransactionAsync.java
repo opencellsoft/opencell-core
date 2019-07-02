@@ -53,9 +53,10 @@ public class RatedTransactionAsync {
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-
+        int i = 0;
         for (Long walletOperationId : ids) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_FAST == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             unitRatedTransactionsJobBean.execute(result, walletOperationId);
@@ -70,23 +71,25 @@ public class RatedTransactionAsync {
      * @param result Job execution result
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
-     * @param aggregationSettings the settings to aggregate the wallet operations     
+     * @param aggregationSettings the settings to aggregate the wallet operations
      * @return Future String
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> launchAndForget(List<AggregatedWalletOperation> nextWorkSet, JobExecutionResultImpl result,
-			MeveoUser lastCurrentUser, RatedTransactionsJobAggregationSetting aggregationSettings, Date invoicingDate) {
-		
-    	currentUserProvider.reestablishAuthentication(lastCurrentUser);
+    public Future<String> launchAndForget(List<AggregatedWalletOperation> nextWorkSet, JobExecutionResultImpl result, MeveoUser lastCurrentUser,
+            RatedTransactionsJobAggregationSetting aggregationSettings, Date invoicingDate) {
 
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+        int i = 0;
         for (AggregatedWalletOperation aggregatedWo : nextWorkSet) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_FAST == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             unitRatedTransactionsJobBean.execute(result, aggregatedWo, aggregationSettings, invoicingDate);
         }
         return new AsyncResult<>("OK");
-	}
+    }
 
 }

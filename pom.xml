@@ -21,8 +21,8 @@
         <!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific configuration (e.g. import.sql) -->
         <env>dev</env>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <version.keycloak>2.5.5.Final</version.keycloak>
+        <version.ingenico-connect-sdk>5.25.0</version.ingenico-connect-sdk>
+        <version.keycloak>4.2.1.Final</version.keycloak>
         <version.pdfbox>2.0.11</version.pdfbox>
         <version.barcode>2.1</version.barcode>
 
@@ -92,7 +92,7 @@
             <dependency>
                 <groupId>org.wildfly.bom</groupId>
                 <artifactId>wildfly-javaee7-with-tools</artifactId>
-                <version>10.1.0.Final</version>
+                <version>11.0.0.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -506,6 +506,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.8.0</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.dbunit</groupId>
                 <artifactId>dbunit</artifactId>
                 <version>2.5.3</version>
@@ -522,7 +528,11 @@
                 <artifactId>barcode4j</artifactId>
                 <version>${version.barcode}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>2.23.0</version>
+            </dependency>
             <!-- <dependency> -->
             <!-- <groupId>org.jboss.arquillian.extension</groupId> -->
             <!-- <artifactId>arquillian-rest-client-impl-3x</artifactId> -->

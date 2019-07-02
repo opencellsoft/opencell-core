@@ -18,16 +18,17 @@ public class LoggingEventInterceptor {
 
     @AroundInvoke
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {
-        log.debug("\r\n\r\n===========================================================");
-        log.debug("Entering method: {} in class {}", invocationContext.getMethod().getName().toUpperCase(), invocationContext.getMethod().getDeclaringClass().getName());
+        if (log.isDebugEnabled()) {
+            log.debug("\r\n\r\n===========================================================");
+            log.debug("Entering method: {} in class {}", invocationContext.getMethod().getName().toUpperCase(), invocationContext.getMethod().getDeclaringClass().getName());
 
-        if (invocationContext.getParameters() != null) {
-            for (Object obj : invocationContext.getParameters()) {
-                log.debug("{}", obj);
+            if (invocationContext.getParameters() != null) {
+                for (Object obj : invocationContext.getParameters()) {
+                    log.debug("{}", obj);
+                }
             }
         }
 
         return invocationContext.proceed();
     }
-
 }

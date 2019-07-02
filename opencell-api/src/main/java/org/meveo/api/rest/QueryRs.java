@@ -1,5 +1,7 @@
 package org.meveo.api.rest;
 
+import org.meveo.api.dto.response.QueryResponse;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -7,8 +9,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
-
-import org.meveo.api.dto.response.QueryResponse;
 
 /**
  * Allows HQL queries to be called directly.

@@ -3,6 +3,7 @@ package org.meveo.admin.job;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.ejb.Stateless;
@@ -21,8 +22,8 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.AggregatedWalletOperation;
 import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
-import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting.AggregationLevelEnum;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.slf4j.Logger;
 
 /**
@@ -32,145 +33,149 @@ import org.slf4j.Logger;
 @Stateless
 public class RatedTransactionsJobBean extends BaseJobBean {
 
-	@Inject
-	private Logger log;
+    /**
+     * Number of Wallet operations to process in a single job run
+     */
+    private static int PROCESS_NR_IN_JOB_RUN = 2000000;
 
-	@Inject
-	private WalletOperationService walletOperationService;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private RatedTransactionAsync ratedTransactionAsync;
+    @Inject
+    private WalletOperationService walletOperationService;
 
-	@Inject
-	@CurrentUser
-	protected MeveoUser currentUser;
+    @Inject
+    private RatedTransactionAsync ratedTransactionAsync;
 
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-		log.debug("Running for with parameter={}", jobInstance.getParametres());
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
-		try {
-			RatedTransactionsJobAggregationSetting aggregationSetting = new RatedTransactionsJobAggregationSetting();
-			Long nbRuns = 1L;
-			Long waitingMillis = 0L;
-			try {
-				nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
-				waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
-				if (nbRuns == -1) {
-					nbRuns = (long) Runtime.getRuntime().availableProcessors();
-				}
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+        log.debug("Running for with parameter={}", jobInstance.getParametres());
 
-				aggregationSetting.setEnable((boolean) this.getParamOrCFValue(jobInstance, "activateAggregation"));
-				aggregationSetting
-						.setAggregateGlobally((boolean) this.getParamOrCFValue(jobInstance, "globalAggregation"));
-				aggregationSetting.setAggregateByDay((boolean) this.getParamOrCFValue(jobInstance, "aggregateByDay"));
-				aggregationSetting.setAggregationLevel(AggregationLevelEnum
-						.valueOf(((String) this.getParamOrCFValue(jobInstance, "aggregationLevel"))));
-				try {
-					aggregationSetting
-							.setAggregateByOrder((boolean) this.getParamOrCFValue(jobInstance, "aggregateByOrder"));
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
 
-				} catch (NullPointerException e) {
-				}
-				try {
-					aggregationSetting
-							.setAggregateByParam1((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam1"));
-				} catch (NullPointerException e) {
-				}
-				try {
-					aggregationSetting
-							.setAggregateByParam2((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam2"));
-				} catch (NullPointerException e) {
-				}
-				try {
-					aggregationSetting
-							.setAggregateByParam3((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam3"));
-				} catch (NullPointerException e) {
-				}
-				try {
-					aggregationSetting.setAggregateByExtraParam(
-							(boolean) this.getParamOrCFValue(jobInstance, "aggregateByExtraParam"));
-				} catch (NullPointerException e) {
-				}
-			} catch (Exception e) {
-				nbRuns = 1L;
-				waitingMillis = 0L;
-				log.warn("Cant get customFields for {} with message {}", jobInstance.getJobTemplate(), e.getMessage());
-			}
+        try {
+            RatedTransactionsJobAggregationSetting aggregationSetting = new RatedTransactionsJobAggregationSetting();
+            try {
+                aggregationSetting.setEnable((boolean) this.getParamOrCFValue(jobInstance, "activateAggregation", false));
+                aggregationSetting.setAggregateGlobally((boolean) this.getParamOrCFValue(jobInstance, "globalAggregation"));
+                aggregationSetting.setAggregateByDay((boolean) this.getParamOrCFValue(jobInstance, "aggregateByDay"));
+                aggregationSetting.setAggregationLevel(AggregationLevelEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "aggregationLevel"))));
+                try {
+                    aggregationSetting.setAggregateByOrder((boolean) this.getParamOrCFValue(jobInstance, "aggregateByOrder"));
 
-			if (aggregationSetting.isEnable()) {
-				executeWithAggregation(result, nbRuns, waitingMillis, aggregationSetting);
+                } catch (NullPointerException e) {
+                }
+                try {
+                    aggregationSetting.setAggregateByParam1((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam1"));
+                } catch (NullPointerException e) {
+                }
+                try {
+                    aggregationSetting.setAggregateByParam2((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam2"));
+                } catch (NullPointerException e) {
+                }
+                try {
+                    aggregationSetting.setAggregateByParam3((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam3"));
+                } catch (NullPointerException e) {
+                }
+                try {
+                    aggregationSetting.setAggregateByExtraParam((boolean) this.getParamOrCFValue(jobInstance, "aggregateByExtraParam"));
+                } catch (NullPointerException e) {
+                }
+            } catch (Exception e) {
+                log.warn("Cant get customFields for {} with message {}", jobInstance.getJobTemplate(), e.getMessage());
+            }
 
-			} else {
-				executeWithoutAggregation(result, nbRuns, waitingMillis);
-			}
+            if (aggregationSetting.isEnable()) {
+                executeWithAggregation(result, nbRuns, waitingMillis, aggregationSetting);
 
-		} catch (Exception e) {
-			log.error("Failed to rate transactions", e);
-		}
-	}
+            } else {
+                executeWithoutAggregation(result, nbRuns, waitingMillis);
+            }
 
-	private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis)
-			throws Exception {
-		List<Long> walletOperationIds = walletOperationService.listToInvoiceIds(new Date());
-		log.info("WalletOperations to convert into rateTransactions={}", walletOperationIds.size());
-		result.setNbItemsToProcess(walletOperationIds.size());
+        } catch (Exception e) {
+            log.error("Failed to rate transactions", e);
+        }
+    }
 
-		SubListCreator<Long> subListCreator = new SubListCreator<>(walletOperationIds, nbRuns.intValue());
-		List<Future<String>> asyncReturns = new ArrayList<>();
-		MeveoUser lastCurrentUser = currentUser.unProxy();
-		while (subListCreator.isHasNext()) {
-			asyncReturns.add(ratedTransactionAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result,
-					lastCurrentUser));
-			try {
-				Thread.sleep(waitingMillis.longValue());
+    private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis) throws Exception {
+        List<Long> walletOperationIds = walletOperationService.listToInvoiceIds(new Date(), PROCESS_NR_IN_JOB_RUN);
+        log.info("WalletOperations to convert into rateTransactions={}", walletOperationIds.size());
+        result.setNbItemsToProcess(walletOperationIds.size());
 
-			} catch (InterruptedException e) {
-				log.error("", e);
-			}
-		}
+        SubListCreator<Long> subListCreator = new SubListCreator<>(walletOperationIds, nbRuns.intValue());
+        List<Future<String>> futures = new ArrayList<>();
+        MeveoUser lastCurrentUser = currentUser.unProxy();
+        while (subListCreator.isHasNext()) {
+            futures.add(ratedTransactionAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
+            try {
+                Thread.sleep(waitingMillis.longValue());
 
-		for (Future<String> futureItsNow : asyncReturns) {
-			futureItsNow.get();
-		}
-	}
+            } catch (InterruptedException e) {
+                log.error("", e);
+            }
+        }
 
-	private void executeWithAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis,
-			RatedTransactionsJobAggregationSetting aggregationSetting) throws Exception {
-		Date invoicingDate = new Date();
-		List<AggregatedWalletOperation> aggregatedWo = walletOperationService.listToInvoiceIdsWithGrouping(invoicingDate,
-				aggregationSetting);
+        // Wait for all async methods to finish
+        for (Future<String> future : futures) {
+            try {
+                future.get();
 
-		if (aggregatedWo == null || aggregatedWo.isEmpty()) {
-			return;
-		}
+            } catch (InterruptedException e) {
+                // It was cancelled from outside - no interest
 
-		log.info("Aggregated walletOperations to convert into rateTransactions={}", aggregatedWo.size());
-		result.setNbItemsToProcess(aggregatedWo.size());
+            } catch (ExecutionException e) {
+                Throwable cause = e.getCause();
+                result.registerError(cause.getMessage());
+                result.addReport(cause.getMessage());
+                log.error("Failed to execute async method", cause);
+            }
+        }
 
-		SubListCreator<AggregatedWalletOperation> subListCreator = new SubListCreator<>(aggregatedWo,
-				nbRuns.intValue());
-		List<Future<String>> asyncReturns = new ArrayList<>();
-		MeveoUser lastCurrentUser = currentUser.unProxy();
-		while (subListCreator.isHasNext()) {
-			asyncReturns.add(
-					ratedTransactionAsync.launchAndForget(
-							(List<AggregatedWalletOperation>) subListCreator.getNextWorkSet(), result, lastCurrentUser,
-							aggregationSetting, invoicingDate));
-			try {
-				Thread.sleep(waitingMillis.longValue());
+        // Check if there are any more Wallet Operations to process and mark job as completed if there are none
+        walletOperationIds = walletOperationService.listToInvoiceIds(new Date(), PROCESS_NR_IN_JOB_RUN);
+        result.setDone(walletOperationIds.isEmpty());
+    }
 
-			} catch (InterruptedException e) {
-				log.error("", e);
-			}
-		}
+    private void executeWithAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis, RatedTransactionsJobAggregationSetting aggregationSetting)
+            throws Exception {
+        Date invoicingDate = new Date();
+        List<AggregatedWalletOperation> aggregatedWo = walletOperationService.listToInvoiceIdsWithGrouping(invoicingDate, aggregationSetting);
 
-		for (Future<String> futureItsNow : asyncReturns) {
-			futureItsNow.get();
-		}
-		
-		walletOperationService.updateAggregatedWalletOperations(invoicingDate);
-	}
+        if (aggregatedWo == null || aggregatedWo.isEmpty()) {
+            return;
+        }
+
+        log.info("Aggregated walletOperations to convert into rateTransactions={}", aggregatedWo.size());
+        result.setNbItemsToProcess(aggregatedWo.size());
+
+        SubListCreator<AggregatedWalletOperation> subListCreator = new SubListCreator<>(aggregatedWo, nbRuns.intValue());
+        List<Future<String>> asyncReturns = new ArrayList<>();
+        MeveoUser lastCurrentUser = currentUser.unProxy();
+        while (subListCreator.isHasNext()) {
+            asyncReturns.add(ratedTransactionAsync.launchAndForget((List<AggregatedWalletOperation>) subListCreator.getNextWorkSet(), result, lastCurrentUser, aggregationSetting,
+                invoicingDate));
+            try {
+                Thread.sleep(waitingMillis.longValue());
+
+            } catch (InterruptedException e) {
+                log.error("", e);
+            }
+        }
+
+        for (Future<String> futureItsNow : asyncReturns) {
+            futureItsNow.get();
+        }
+
+        walletOperationService.updateAggregatedWalletOperations(invoicingDate);
+    }
 
 }
