@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.RatedTransaction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -134,6 +135,10 @@ public class RatedTransactionDto extends BaseEntityDto {
      * Seller code
      */
     private String sellerCode;
+    /**
+     * BillingAccount code
+     */
+    private String billingAccountCode;
 
     /**
      * Instantiates a new rated transaction dto.
@@ -170,10 +175,18 @@ public class RatedTransactionDto extends BaseEntityDto {
             this.setTaxCode(ratedTransaction.getTax().getCode());
         }
         this.setTaxPercent(ratedTransaction.getTaxPercent());
+        if (ratedTransaction.getBillingAccount() != null) {
+            this.setBillingAccountCode(ratedTransaction.getBillingAccount().getCode());
+        }
+        if(ratedTransaction.getSeller() != null){
+            this.setSellerCode(ratedTransaction.getSeller().getCode());
+        }
+
+
     }
 
     /**
-     * Instantiates a new rated transaction dto from an entity
+     * Instantiates a new rated transaction dto from an entity.
      *
      * @param ratedTransaction Rated transaction to convert
      * @param includeUserAccount Include user account code
@@ -599,5 +612,19 @@ public class RatedTransactionDto extends BaseEntityDto {
      */
     public void setSellerCode(String sellerCode) {
         this.sellerCode = sellerCode;
+    }
+
+    /**
+     * @return Billing Account code
+     */
+    public String getBillingAccountCode() {
+        return billingAccountCode;
+    }
+
+    /**
+     * @param billingAccountCode billing account code
+     */
+    public void setBillingAccountCode(String billingAccountCode) {
+        this.billingAccountCode = billingAccountCode;
     }
 }
