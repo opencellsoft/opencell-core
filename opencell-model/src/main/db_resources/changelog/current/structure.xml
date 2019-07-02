@@ -1157,6 +1157,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
             <column name="file_name" type="varchar(255)" />
             <column name="status" type="varchar(255)" />
             <column name="file_format_id" type="bigint" />

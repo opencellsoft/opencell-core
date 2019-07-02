@@ -20,7 +20,7 @@ package org.meveo.model.bi;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.FileFormat;
 
 import javax.persistence.Column;
@@ -45,16 +45,9 @@ import javax.validation.constraints.Size;
 @Table(name = "flat_file", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "flat_file_seq"), })
-public class FlatFile extends AuditableEntity {
+public class FlatFile extends BusinessEntity {
 
     private static final long serialVersionUID = -4989724064567423956L;
-
-    /**
-     * File code .
-     */
-    @Column(name = "code", length = 255, unique = true)
-    @Size(max = 255)
-    private String code;
 
     /**
      * File name.
@@ -83,24 +76,6 @@ public class FlatFile extends AuditableEntity {
      */
     @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
-
-    /**
-     * Gets the code
-     *
-     * @return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * Sets the code.
-     *
-     * @param code the new code
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     /**
      * Gets the fileName

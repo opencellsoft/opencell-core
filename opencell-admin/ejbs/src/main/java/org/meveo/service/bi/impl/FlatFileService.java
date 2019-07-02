@@ -19,15 +19,12 @@
 package org.meveo.service.bi.impl;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.FileFormat;
 import org.meveo.model.bi.FileStatusEnum;
 import org.meveo.model.bi.FlatFile;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
 
 /**
  * Flat file service
@@ -37,7 +34,7 @@ import javax.persistence.NoResultException;
  */
 
 @Stateless
-public class FlatFileService extends PersistenceService<FlatFile> {
+public class FlatFileService extends BusinessService<FlatFile> {
 
     public FlatFile create(String fileName, FileFormat fileFormat, String errorMessage, FileStatusEnum status) throws BusinessException {
         FlatFile flatFile = new FlatFile();
@@ -55,25 +52,5 @@ public class FlatFileService extends PersistenceService<FlatFile> {
         flatFile.setErrorMessage(errorMessage);
         flatFile.setStatus(status);
         update(flatFile);
-    }
-
-    /**
-     * Find the flat file by code.
-     *
-     * @param code flat file code.
-     * @return found flat file
-     */
-    public FlatFile findByCode(String code) {
-        if (StringUtils.isBlank(code)) {
-            return null;
-        }
-        QueryBuilder qb = new QueryBuilder(FlatFile.class, "c");
-        qb.addCriterion("code", "=", code, false);
-
-        try {
-            return (FlatFile) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
     }
 }
