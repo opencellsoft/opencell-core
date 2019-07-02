@@ -189,6 +189,10 @@
                                     rendered="#{field.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
                                     <f:converter converterId="javax.faces.Boolean" />
                                 </h:outputText>
+                                <h:outputText id="#{entity[field.dbFieldname]}_out_entity" value="#{entity[field.dbFieldname]}" styleClass="field-value"
+                                    rendered="#{field.fieldType eq CustomFieldTypeEnum.ENTITY}">
+                                    <f:converter converterId="javax.faces.Long" />
+                                </h:outputText>
                             </f:facet>
                             <f:facet name="input">
                                 <p:inputText id="#{field.dbFieldname}_in_string" value="#{entity[field.dbFieldname]}" placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
@@ -241,6 +245,7 @@
                                     <f:selectItem itemValue="#{false}" itemLabel="false" />
                                     <f:converter converterId="javax.faces.Boolean" />
                                 </p:selectOneMenu>
+
                             </f:facet>
                         </p:cellEditor>
                     </p:columns>
@@ -316,6 +321,14 @@
                                             label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}">
                                             <f:selectItem itemValue="#{null}" itemLabel="" />
                                             <f:selectItems value="#{field.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
+                                        </p:selectOneMenu>
+                                    </c:if>
+                                    <c:if test="#{field.fieldType eq CustomFieldTypeEnum.ENTITY}">
+                                        <p:selectOneMenu id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}" required="#{field.valueRequired}">
+                                            <f:selectItem itemValue="#{null}" itemLabel="" />
+                                            <f:selectItems value="#{customTableBean.entityTypeColumnDatas(field)}" var="data" itemValue="#{data.id}"
+                                                           itemLabel="#{data.id} (#{data.display()})" />
+                                            <f:converter converterId="javax.faces.Long" />
                                         </p:selectOneMenu>
                                     </c:if>
                                 </c:forEach>

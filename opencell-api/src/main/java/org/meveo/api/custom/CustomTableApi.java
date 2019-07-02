@@ -2,10 +2,14 @@ package org.meveo.api.custom;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -29,6 +33,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.primefaces.model.SortOrder;
@@ -49,9 +54,12 @@ public class CustomTableApi extends BaseApi {
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
+    @Inject
+    private CustomEntityInstanceService customEntityInstanceService;
+
     /**
      * Create new records in a custom table with an option of deleting existing data first
-     * 
+     *
      * @param dto Values to add
      * @throws MeveoApiException API exception
      * @throws BusinessException General exception
@@ -89,7 +97,7 @@ public class CustomTableApi extends BaseApi {
 
     /**
      * Update existing records in a custom table. Values must contain an 'id' field value, to identify an existing record.
-     * 
+     *
      * @param dto Values to update
      * @throws MeveoApiException API exception
      * @throws BusinessException General exception
@@ -141,7 +149,7 @@ public class CustomTableApi extends BaseApi {
 
     /**
      * Create new records or update existing ones in a custom table, depending if 'id' value is present
-     * 
+     *
      * @param dto Values to add or update
      * @throws MeveoApiException API exception
      * @throws BusinessException General exception
@@ -178,7 +186,7 @@ public class CustomTableApi extends BaseApi {
 
     /**
      * Retrieve custom table data based on a search criteria
-     * 
+     *
      * @param customTableCode Custom table/custom entity template code
      * @param pagingAndFiltering Search and pagination criteria
      * @return Values and pagination information
@@ -221,14 +229,58 @@ public class CustomTableApi extends BaseApi {
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
         result.getCustomTableData().setCustomTableCode(customTableCode);
 
-        result.getCustomTableData().setValuesFromListofMap(customTableService.list(cet.getDbTablename(), paginationConfig));
+        List<Map<String, Object>> list = customTableService.list(cet.getDbTablename(), paginationConfig);
+        List<Map<String, Object>> resultWithEntities = completeWithEntities(list, cfts, pagingAndFiltering);
+
+        result.getCustomTableData().setValuesFromListofMap(list);
 
         return result;
     }
 
+    private List<Map<String, Object>> completeWithEntities(List<Map<String, Object>> list, Map<String, CustomFieldTemplate> cfts, PagingAndFiltering pagingAndFiltering) {
+        list.forEach(map -> completeWithEntities(cfts, map, 0, pagingAndFiltering.getLoadReferenceDepth()));
+        return list;
+    }
+
+    private void completeWithEntities(Map<String, CustomFieldTemplate> cfts, Map<String, Object> map, int currentDepth, int maxDepth) {
+        if(currentDepth < maxDepth) {
+            Map<String, CustomFieldTemplate> reference = toLowerCaseKeys(cfts);
+            map.entrySet().stream().filter(entry -> reference.containsKey(entry.getKey().toLowerCase())).forEach(entry -> replaceIdValueByItsRepresentation(reference, entry, currentDepth, maxDepth));
+        }
+    }
+
+    void replaceIdValueByItsRepresentation(Map<String, CustomFieldTemplate> reference, Map.Entry<String, Object> entry, int currentDepth, int maxDepth) {
+        CustomFieldTemplate customFieldTemplate = reference.get(entry.getKey().toLowerCase());
+        Optional.ofNullable(customFieldTemplate)
+                .filter(field -> Objects.nonNull(field.getEntityClazz()))
+                .map(field -> getEitherTableOrEntityValue(field, Long.valueOf(entry.getValue().toString())))
+                .filter(values -> values.size() > 0)
+                .ifPresent(values -> replaceValue(entry, customFieldTemplate, values, currentDepth, maxDepth));
+    }
+
+     Map<String, Object> getEitherTableOrEntityValue(CustomFieldTemplate field, Long id) {
+        CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
+        if (relatedEntity.isStoreAsTable()) {
+            return customTableService.findRecordOfTableById(field, id);
+        }
+        return Optional.ofNullable(customEntityInstanceService.findById(id))
+                .map(customEntityInstanceService::customEntityInstanceAsMapWithCfValues).orElse(new HashMap<>());
+    }
+
+    private void replaceValue(Map.Entry<String, Object> entry, CustomFieldTemplate customFieldTemplate, Map<String, Object> values, int currentDepth, int maxDepth) {
+        entry.setValue(values);
+        final int depth = ++currentDepth;
+        Optional.ofNullable(customEntityTemplateService.findByCodeOrDbTablename(customFieldTemplate.tableName()))
+                .ifPresent(cet -> completeWithEntities(customFieldTemplateService.findByAppliesTo(cet.getAppliesTo()), values, depth, maxDepth));
+    }
+
+     Map<String, CustomFieldTemplate> toLowerCaseKeys(Map<String, CustomFieldTemplate> cfts) {
+        return cfts.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().toLowerCase(), Map.Entry::getValue));
+    }
+
     /**
      * Remove records, identified by 'id' value, from a custom table. If no 'id' values are passed, will delete all the records in a table.
-     * 
+     *
      * @param dto Values to remove. Should contain only 'id' field values
      * @throws MeveoApiException API exception
      * @throws BusinessException General exception
@@ -273,7 +325,7 @@ public class CustomTableApi extends BaseApi {
 
     /**
      * Enable or disable records, identified by 'id' value, in a custom table. Applies only to tables that contain field 'disabled'.
-     * 
+     *
      * @param dto Values to enable or disable. Should contain only 'id' field values
      * @param enable True to enable records, False to disable records.
      * @throws MeveoApiException API exception

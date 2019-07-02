@@ -1,5 +1,14 @@
 package org.meveo.admin.action.admin.custom;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
@@ -20,14 +29,6 @@ import org.meveo.service.job.JobInstanceService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 import static java.util.Comparator.comparing;
 
@@ -715,7 +716,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     public CustomFieldTypeEnum[] getFieldTypes() {
         if (isCustomTable()) {
             CustomFieldTypeEnum[] enums = new CustomFieldTypeEnum[] { CustomFieldTypeEnum.DATE, CustomFieldTypeEnum.DOUBLE, CustomFieldTypeEnum.LIST, CustomFieldTypeEnum.LONG,
-                    CustomFieldTypeEnum.STRING, CustomFieldTypeEnum.BOOLEAN };
+                    CustomFieldTypeEnum.STRING, CustomFieldTypeEnum.BOOLEAN, CustomFieldTypeEnum.ENTITY };
             Arrays.sort(enums, comparing(Object::toString));
 
             return enums;

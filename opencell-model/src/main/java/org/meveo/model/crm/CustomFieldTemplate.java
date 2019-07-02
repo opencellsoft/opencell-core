@@ -1,25 +1,17 @@
 package org.meveo.model.crm;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.EnableBusinessEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ModuleItem;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
-import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
-import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEnum;
-import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldValue;
-import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.shared.DateUtils;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -42,18 +34,27 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.EnableBusinessEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEnum;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.shared.DateUtils;
 
 /**
  * Custom field template
@@ -85,6 +86,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     public static long DEFAULT_MAX_LENGTH_STRING = 50L;
 
     public static String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
+    private static final String CUSTOM_TABLE_STRUCTURE_REGEX = "org.meveo.model.customEntities.CustomEntityTemplate - [a-zA-Z\\S]{1,}$";
 
     public enum GroupedCustomFieldTreeItemType {
 
@@ -1077,5 +1079,10 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      */
     public void setRoundingMode(RoundingModeEnum roundingMode) {
         this.roundingMode = roundingMode;
+    }
+
+    public String tableName() {
+        return Optional.ofNullable(this.entityClazz).filter(entityClazz -> entityClazz.matches(CUSTOM_TABLE_STRUCTURE_REGEX))
+                .map(tableName -> tableName.split(ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR)[1]).orElse(null);
     }
 }
