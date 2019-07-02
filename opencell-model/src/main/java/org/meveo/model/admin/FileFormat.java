@@ -22,18 +22,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.bi.FlatFile;
 
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -56,15 +51,16 @@ public class FileFormat extends AuditableEntity {
      * File code e.g. CDR for CDR File.
      */
     @Column(name = "code", length = 10, nullable = false, unique = true)
-    @Size(max = 10)
+    @Size(max = 10, min = 1)
+    @NotNull
     private String code;
 
     /**
-     * File name.
+     * File name pattern with which we control the file name.
      */
-    @Column(name = "file_name", length = 255)
+    @Column(name = "file_name_pattern", length = 255)
     @Size(max = 255)
-    private String fileName;
+    private String fileNamePattern;
 
     /**
      * File name.
@@ -90,8 +86,9 @@ public class FileFormat extends AuditableEntity {
     /**
      * Input directory.
      */
-    @Column(name = "input_directory", length = 255)
+    @Column(name = "input_directory", length = 255, nullable = false)
     @Size(max = 255)
+    @NotNull
     private String inputDirectory;
 
     /**
@@ -116,12 +113,6 @@ public class FileFormat extends AuditableEntity {
     private String archiveDirectory;
 
     /**
-     * Account's subscriptions
-     */
-    @OneToMany(mappedBy = "fileFormat", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FlatFile> files = new ArrayList<>();
-
-    /**
      * Gets the code
      *
      * @return the code
@@ -140,21 +131,21 @@ public class FileFormat extends AuditableEntity {
     }
 
     /**
-     * Gets the fileName
+     * Gets the fileNamePattern
      *
-     * @return the fileName
+     * @return the fileNamePattern
      */
-    public String getFileName() {
-        return fileName;
+    public String getFileNamePattern() {
+        return fileNamePattern;
     }
 
     /**
-     * Sets the fileName.
+     * Sets the fileNamePattern.
      *
-     * @param fileName the new fileName
+     * @param fileNamePattern the new fileNamePattern
      */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFileNamePattern(String fileNamePattern) {
+        this.fileNamePattern = fileNamePattern;
     }
 
     /**
@@ -281,24 +272,6 @@ public class FileFormat extends AuditableEntity {
      */
     public void setArchiveDirectory(String archiveDirectory) {
         this.archiveDirectory = archiveDirectory;
-    }
-
-    /**
-     * Gets the files
-     *
-     * @return the files
-     */
-    public List<FlatFile> getFiles() {
-        return files;
-    }
-
-    /**
-     * Sets the files.
-     *
-     * @param files the new files
-     */
-    public void setFiles(List<FlatFile> files) {
-        this.files = files;
     }
 
     @Override

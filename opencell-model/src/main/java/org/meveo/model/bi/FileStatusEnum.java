@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -19,12 +19,32 @@
 package org.meveo.model.bi;
 
 /**
- * File status enum
+ * File status enum : the status that a file can have from its upload to its registration in the database
  *
  * @author Abdellatif BARI
  * @since 7.3.0
  */
 public enum FileStatusEnum {
 
-    BAD_FORMED, WELL_FORMED, VALID, REJECTED, ARCHIVED
+    /**
+     * indicates that syntactic incorrectness and the file content dosen't respect the configuration template (beanIO or flatWorm)
+     */
+    BAD_FORMED,
+    /**
+     * indicates syntactic correctness and the file content respect the configuration template (beanIO or flatWorm)
+     * Note : the file is only controlled by the fileFormat validator and not yet validated by the appropriate job.
+     */
+    WELL_FORMED,
+    /**
+     * indicates that the file is weel formed and it is validated by the appropriate job (business validation)
+     */
+    VALID,
+    /**
+     * indicates that the file is weel formed but it's not valid (it's rejected by the appropriate job (business validation))
+     */
+    REJECTED,
+    /**
+     * not implemented
+     */
+    ARCHIVED
 }

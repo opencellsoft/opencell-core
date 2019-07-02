@@ -81,8 +81,7 @@ public class FlatFile extends AuditableEntity {
     /**
      * Rejection reason
      */
-    @Column(name = "error_message", length = 4000)
-    @Size(max = 4000)
+    @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
 
     /**

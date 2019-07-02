@@ -1117,11 +1117,13 @@
             <column name="code" type="varchar(10)">
                 <constraints nullable="false" />
             </column>
-            <column name="file_name" type="varchar(255)" />
+            <column name="file_name_pattern" type="varchar(255)" />
             <column name="file_type" type="varchar(255)" />
             <column name="configuration_template" type="varchar(40000)" />
             <column name="record_name" type="varchar(255)" />
-            <column name="input_directory" type="varchar(255)" />
+            <column name="input_directory" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
             <column name="output_directory" type="varchar(255)" />
             <column name="reject_directory" type="varchar(255)" />
             <column name="archive_directory" type="varchar(255)" />
@@ -1159,7 +1161,7 @@
             <column name="status" type="varchar(255)" />
             <column name="file_format_id" type="bigint" />
             <column name="processed" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="error_message" type="varchar(2000)" />
+            <column name="error_message" type="text" />
         </createTable>
         <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari6yr9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="flat_file" />
         <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="flat_file" constraintName="fk_d4iavkklx1qg1ani36bari5o5i" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"

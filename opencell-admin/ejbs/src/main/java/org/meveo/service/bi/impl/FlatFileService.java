@@ -51,12 +51,10 @@ public class FlatFileService extends PersistenceService<FlatFile> {
         return flatFile;
     }
 
-    public void update(FlatFile flatFile, String fileName, FileFormat fileFormat, String errorMessage, FileStatusEnum status) throws BusinessException {
-        flatFile.setFileName(fileName);
-        flatFile.setFileFormat(fileFormat);
+    public void update(FlatFile flatFile, String errorMessage, FileStatusEnum status) throws BusinessException {
         flatFile.setErrorMessage(errorMessage);
         flatFile.setStatus(status);
-        create(flatFile);
+        update(flatFile);
     }
 
     /**

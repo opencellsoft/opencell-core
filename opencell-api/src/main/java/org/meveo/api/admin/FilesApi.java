@@ -135,7 +135,7 @@ public class FilesApi extends BaseApi {
             }
 
             if (!StringUtils.isBlank(fileFormat)) {
-                flatFileValidator.validateFileFormat(file, filename, fileFormat, null);
+                flatFileValidator.validateAndLogFile(file, filename, fileFormat, null);
             }
 
         } catch (Exception e) {

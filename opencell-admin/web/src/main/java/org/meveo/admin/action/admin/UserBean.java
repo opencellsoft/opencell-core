@@ -469,7 +469,7 @@ public class UserBean extends CustomFieldBean<User> {
         // FIXME: use resource bundle
         try {
             String folderPath = null;
-            String filePath = null;
+            String  filePath = null;
             File tempDirectory = null;
             if (fileFormat != null) {
                 folderPath = getFilePath() + File.separator + "temp" + DateUtils.formatDateWithPattern(new Date(), "dd_MM_yyyy-HHmmss");
@@ -499,10 +499,13 @@ public class UserBean extends CustomFieldBean<User> {
             if (fileFormat != null) {
                 File[] files = tempDirectory.listFiles();
                 for (File tempFile : files) {
-                    flatFileValidator.validateFileFormat(tempFile, fileName, fileFormat.getCode(), getFilePath(""));
+                    flatFileValidator.validateAndLogFile(tempFile, fileName, fileFormat.getCode(), getFilePath(""));
                 }
                 tempDirectory.delete();
             }
+        } catch (BusinessException e) {
+            log.error("Failed to upload a file {}", fileName, e);
+            messages.error(e.getMessage());
         } catch (Exception e) {
             log.error("Failed to upload a file {}", fileName, e);
             messages.error("Error while uploading " + fileName);
