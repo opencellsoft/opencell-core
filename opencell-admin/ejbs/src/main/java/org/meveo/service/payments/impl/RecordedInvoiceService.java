@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -37,6 +38,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
@@ -128,11 +130,15 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
     /**
      * @param reference invoice reference
+     * @param invoiceType 
      * @return true if recored invoice exist
      */
-    public boolean isRecordedInvoiceExist(String reference) {
+    public boolean isRecordedInvoiceExist(String reference, InvoiceType invoiceType) {
         RecordedInvoice recordedInvoice = getRecordedInvoice(reference);
-        return recordedInvoice != null;
+        if(recordedInvoice==null) {
+        	return false;
+        }
+        return recordedInvoice.getInvoices().stream().filter(i->i.getInvoiceType().equals(invoiceType)).findFirst().isPresent();
     }
 
     /**
@@ -348,8 +354,8 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     private <T extends RecordedInvoice> T createRecordedInvoice(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, BigDecimal netToPay, Invoice invoice,
             OCCTemplate occTemplate, boolean isRecordedIvoince) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
-        if (isRecordedInvoiceExist((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber())) {
-            throw new InvoiceExistException("Invoice id " + invoice.getId() + " already exist");
+        if (isRecordedInvoiceExist((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber(), invoice.getInvoiceType())) {
+            throw new InvoiceExistException("Invoice number " + invoice.getInvoiceNumber() + " with type "+invoice.getInvoiceType()+ " already exist");
         }
 
         CustomerAccount customerAccount = null;
