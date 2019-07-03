@@ -26,21 +26,16 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Unit Of Measure
@@ -78,24 +73,17 @@ public class UnitOfMeasure extends BusinessEntity {
     private Long multiplicator = 1l;
 
 
-    @OneToMany(mappedBy = "inputUnitOfMeasure", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<ChargeTemplate> chargeTemplatesInput = new ArrayList<>();
-
-    @OneToMany(mappedBy = "ratingUnitOfMeasure", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<ChargeTemplate> chargeTemplatesRating = new ArrayList<>();
+//    @OneToMany(mappedBy = "inputUnitOfMeasure", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+//    private List<ChargeTemplate> chargeTemplatesInput = new ArrayList<ChargeTemplate>();
+//
+//    @OneToMany(mappedBy = "ratingUnitOfMeasure", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+//    private List<ChargeTemplate> chargeTemplatesRating = new ArrayList<>();
 
 
     @SuppressWarnings("rawtypes")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private UnitOfMeasure parentUnitOfMeasure;
-
-    /**
-     * Child entities
-     */
-    @SuppressWarnings("rawtypes")
-    @OneToMany(mappedBy = "parentUnitOfMeasure", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private Set<UnitOfMeasure> childUnitOfMeasures;
 
     public UnitOfMeasure() {
 
@@ -148,19 +136,29 @@ public class UnitOfMeasure extends BusinessEntity {
         return descriptionI18n;
     }
 
-    public List<ChargeTemplate> getChargeTemplatesInput() {
-        return chargeTemplatesInput;
+//    public List<ChargeTemplate> getChargeTemplatesInput() {
+//        return chargeTemplatesInput;
+//    }
+//
+//    public void setChargeTemplatesInput(List<ChargeTemplate> chargeTemplatesInput) {
+//        this.chargeTemplatesInput = chargeTemplatesInput;
+//    }
+//
+//    public List<ChargeTemplate> getChargeTemplatesRating() {
+//        return chargeTemplatesRating;
+//    }
+//
+//    public void setChargeTemplatesRating(List<ChargeTemplate> chargeTemplatesRating) {
+//        this.chargeTemplatesRating = chargeTemplatesRating;
+//    }
+
+    public UnitOfMeasure getParentUnitOfMeasure() {
+        return parentUnitOfMeasure;
     }
 
-    public void setChargeTemplatesInput(List<ChargeTemplate> chargeTemplatesInput) {
-        this.chargeTemplatesInput = chargeTemplatesInput;
+    public void setParentUnitOfMeasure(UnitOfMeasure parentUnitOfMeasure) {
+        this.parentUnitOfMeasure = parentUnitOfMeasure;
     }
 
-    public List<ChargeTemplate> getChargeTemplatesRating() {
-        return chargeTemplatesRating;
-    }
 
-    public void setChargeTemplatesRating(List<ChargeTemplate> chargeTemplatesRating) {
-        this.chargeTemplatesRating = chargeTemplatesRating;
-    }
 }

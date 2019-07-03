@@ -32,7 +32,12 @@
 			<hftl:formField label="#{messages['businessEntity.description']}"
 				field="description" id="description" />
 			<hftl:formField label="#{messages['unitOfMeasure.symbol']}"
-				field="symbol" id="symbol" />
+							field="symbol" id="symbol" />
+			<hftl:formField label="#{messages['unitOfMeasure.multiplicator']}"
+							field="multiplicator" id="multiplicator" />
+			<hftl:formField id="parentUnitOfMeasureId"
+							label="#{messages['unitOfMeasure.parentUnitOfMeasure']}" field="parentUnitOfMeasure"
+							valueLabelField="code" listBean="#{unitOfMeasureBean}"/>
 
 		</hftl:formPanel>
 

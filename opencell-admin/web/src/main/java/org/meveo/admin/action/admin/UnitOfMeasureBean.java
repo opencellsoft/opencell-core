@@ -29,6 +29,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.sql.BatchUpdateException;
 
+/**
+ * @author Mounir Bahije
+ */
 
 @Named
 @ViewScoped

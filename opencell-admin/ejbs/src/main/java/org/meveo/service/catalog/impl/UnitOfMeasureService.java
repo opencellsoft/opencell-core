@@ -24,7 +24,8 @@ import org.meveo.service.base.BusinessService;
 import javax.ejb.Stateless;
 
 /**
- * Title service implementation.
+ * UnitOfMeasure service implementation.
+ * @author Mounir Bahije
  */
 @Stateless
 public class UnitOfMeasureService extends BusinessService<UnitOfMeasure> {
