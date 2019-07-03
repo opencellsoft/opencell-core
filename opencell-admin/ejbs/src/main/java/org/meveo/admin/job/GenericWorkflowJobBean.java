@@ -96,23 +96,26 @@ public class GenericWorkflowJobBean extends BaseJobBean {
             if (genericWf.getId() != null) {
                 genericWf = genericWorkflowService.refreshOrRetrieve(genericWf);
             }
-            Filter filter = filterService.findById(genericWf.getFilter().getId());
-            if (filter != null) {
-                List<BusinessEntity> listFilteredEntities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
-                Map<Long, BusinessEntity> mapFilteredEntities = new HashMap<Long, BusinessEntity>();
-                for (BusinessEntity entity : listFilteredEntities) {
-                    mapFilteredEntities.put(entity.getId(), entity);
-                }
-                List<WorkflowInstance> wfInstancesFiltered = new ArrayList<WorkflowInstance>();
-                for (WorkflowInstance workflowInstance : wfInstances )
-                {
-                    if (workflowInstance.getEntityInstanceId() != null) {
-                        if(mapFilteredEntities.get(workflowInstance.getEntityInstanceId()) != null) {
-                            wfInstancesFiltered.add(workflowInstance);
-                        }
-                    }
-                }
-                wfInstances = wfInstancesFiltered;
+            Filter wfFilter = genericWf.getFilter();
+            if(wfFilter!=null) {
+			Filter filter = filterService.findById(wfFilter.getId());
+	            if (filter != null) {
+	                List<BusinessEntity> listFilteredEntities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
+	                Map<Long, BusinessEntity> mapFilteredEntities = new HashMap<Long, BusinessEntity>();
+	                for (BusinessEntity entity : listFilteredEntities) {
+	                    mapFilteredEntities.put(entity.getId(), entity);
+	                }
+	                List<WorkflowInstance> wfInstancesFiltered = new ArrayList<WorkflowInstance>();
+	                for (WorkflowInstance workflowInstance : wfInstances )
+	                {
+	                    if (workflowInstance.getEntityInstanceId() != null) {
+	                        if(mapFilteredEntities.get(workflowInstance.getEntityInstanceId()) != null) {
+	                            wfInstancesFiltered.add(workflowInstance);
+	                        }
+	                    }
+	                }
+	                wfInstances = wfInstancesFiltered;
+	            }
             }
 
             log.debug("wfInstances:" + wfInstances.size());
