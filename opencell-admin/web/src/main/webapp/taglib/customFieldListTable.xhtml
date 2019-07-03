@@ -250,9 +250,7 @@
 								maxlength="30"
 								rendered="#{column.keyType eq CustomFieldMapKeyEnum.RON}">
 								<p:keyFilter regEx="/[0-9.&lt;]/" />
-								<o:validator validatorId="javax.faces.RegularExpression"
-									pattern="(([0-9]+)(\.[0-9]+)?)?&lt;(([0-9]+)(\.[0-9]+)?)?"
-									message="#{messages['customFieldTemplate.ronInvalid']}" />
+								<f:validator validatorId="ronValidator" />
 							</p:inputText>
 						</f:facet>
 					</p:cellEditor>

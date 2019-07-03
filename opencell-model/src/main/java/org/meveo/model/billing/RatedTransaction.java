@@ -980,8 +980,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
      * @return first id of the WalletOperation
      */
     public Long getWalletOperationId() {
-        if (getWalletOperations() != null && getWalletOperations().isEmpty()) {
-            return getWalletOperations().iterator().next().getId();
+        if (getWalletOperations() != null && getWalletOperations().isEmpty() && getWalletOperations().iterator().hasNext()) {
+            WalletOperation walletOperation = getWalletOperations().iterator().next();
+            if (walletOperation != null) {
+                return walletOperation.getId();
+            }
+            return null;
         }
 
         return null;
