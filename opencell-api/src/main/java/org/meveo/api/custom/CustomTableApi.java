@@ -1,6 +1,5 @@
 package org.meveo.api.custom;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -258,8 +257,8 @@ public class CustomTableApi extends BaseApi {
                     // Convert to long
                     if (id instanceof String) {
                         id = Long.parseLong((String) id);
-                    } else if (id instanceof BigInteger) {
-                        id = ((BigInteger) id).longValue();
+                    } else if (id instanceof Number) {
+                        id = ((Number) id).longValue();
                     }
                     ids.add((Long) id);
 
@@ -296,7 +295,7 @@ public class CustomTableApi extends BaseApi {
         }
 
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
-        if (cfts == null || cfts.isEmpty() || cfts.containsKey(NativePersistenceService.FIELD_DISABLED)) {
+        if (cfts == null || cfts.isEmpty() || !cfts.containsKey(NativePersistenceService.FIELD_DISABLED)) {
             throw new ValidationException("Custom table does not contain a field 'disabled'", "customTable.noDisabledField");
         }
 
@@ -309,8 +308,8 @@ public class CustomTableApi extends BaseApi {
                 // Convert to long
                 if (id instanceof String) {
                     id = Long.parseLong((String) id);
-                } else if (id instanceof BigInteger) {
-                    id = ((BigInteger) id).longValue();
+                } else if (id instanceof Number) {
+                    id = ((Number) id).longValue();
                 }
                 ids.add((Long) id);
 

@@ -26063,8 +26063,8 @@ public class SuspendSubscriptions extends org.meveo.service.script.Script {
              <accountCode>ACCOUNT_CODE</accountCode>
              <accountCodeClientSide>CLIENT_ACCOUNT_CODE</accountCodeClientSide>
              <amount>10</amount>
-             <occCode>CC_REJECT</occCode>
-             <occDescription>[API] Test CC Reject</occDescription>
+             <code>CC_REJECT</code>
+             <description>[API] Test CC Reject</description>
           </accountOperation>
       </ws:createAccountOperation>
    </soapenv:Body>
@@ -39852,7 +39852,7 @@ public class RegisterHierarchy extends org.meveo.service.script.Script {
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create BAM" id="29e60ec9-03ff-4290-a7cc-55f81e77626f">
+      <con:testStep type="request" name="Create BAM" id="29e60ec9-03ff-4290-a7cc-55f81e77626f" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -44236,7 +44236,7 @@ public class ForgotPassword extends ModuleScript{
       <ws:createAccountOperation>
       	<accountOperation>
 		  <customerAccount>${#TestSuite#CUST}</customerAccount>
-		  <occDescription>Payment for ${#TestSuite#invoice1_number}</occDescription>
+		  <description>Payment for ${#TestSuite#invoice1_number}</description>
 		  <amount>${#TestSuite#invoice1_amount}</amount>
 		  <unMatchingAmount>${#TestSuite#invoice1_amount}</unMatchingAmount>
 		  <dueDate>${#TestSuite#LAST_MONTH}-01</dueDate>
@@ -44246,7 +44246,7 @@ public class ForgotPassword extends ModuleScript{
 		  <reference>${#TestSuite#invoice1_number}</reference>
 		  <accountCode>90590_41115_00000_000_0000_00000000_00000</accountCode>
 		  <accountCodeClientSide>90590,51214170,00000,000,0000,00000000,00000</accountCodeClientSide>
-		  <occCode>RG_PLVT</occCode>
+		  <code>RG_PLVT</code>
 		  <otherCreditAndCharge>
 		    <operationDate>${#TestSuite#THIS_MONTH}-10</operationDate>
 		  </otherCreditAndCharge>
@@ -44291,14 +44291,14 @@ public class ForgotPassword extends ModuleScript{
       <ws:createAccountOperation>
       	<accountOperation>
 		  <customerAccount>${#TestSuite#CUST}</customerAccount>
-		  <occDescription>Undue payment</occDescription>
+		  <description>Undue payment</description>
 		  <amount>50</amount>
 		  <unMatchingAmount>50</unMatchingAmount>
 		  <type>OCC</type>
 		  <transactionDate>${#TestSuite#THIS_MONTH}-11</transactionDate>
 		  <transactionCategory>CREDIT</transactionCategory>
 		  <reference>NO_REF</reference>
-		  <occCode>RG_CHQ</occCode>
+		  <code>RG_CHQ</code>
 		  <otherCreditAndCharge>
 		    <operationDate>${#TestSuite#THIS_MONTH}-11</operationDate>
 		  </otherCreditAndCharge>
@@ -44343,14 +44343,14 @@ public class ForgotPassword extends ModuleScript{
       <ws:createAccountOperation>
       	<accountOperation>
 		  <customerAccount>${#TestSuite#CUST}</customerAccount>
-		  <occDescription>Refund undue payment</occDescription>
+		  <description>Refund undue payment</description>
 		  <amount>50</amount>
 		  <unMatchingAmount>50</unMatchingAmount>
 		  <type>OCC</type>
 		  <transactionDate>${#TestSuite#THIS_MONTH}-12</transactionDate>
 		  <transactionCategory>DEBIT</transactionCategory>
 		  <reference>NO_REF</reference>
-		  <occCode>RG_CHQ</occCode>
+		  <code>RG_CHQ</code>
 		  <otherCreditAndCharge>
 		    <operationDate>${#TestSuite#THIS_MONTH}-12</operationDate>
 		  </otherCreditAndCharge>
@@ -44395,7 +44395,7 @@ public class ForgotPassword extends ModuleScript{
       <ws:createAccountOperation>
       	<accountOperation>
 		  <customerAccount>${#TestSuite#CUST}</customerAccount>
-		  <occDescription>Payment for ${#TestSuite#invoice2_number}</occDescription>
+		  <description>Payment for ${#TestSuite#invoice2_number}</description>
 		  <amount>${#TestSuite#invoice2_amount}</amount>
 		  <unMatchingAmount>${#TestSuite#invoice2_amount}</unMatchingAmount>
 		  <dueDate>${#TestSuite#THIS_MONTH}-01</dueDate>
@@ -44405,7 +44405,7 @@ public class ForgotPassword extends ModuleScript{
 		  <reference>${#TestSuite#invoice2_number}</reference>
 		  <accountCode>90590_41115_00000_000_0000_00000000_00000</accountCode>
 		  <accountCodeClientSide>90590,51214170,00000,000,0000,00000000,00000</accountCodeClientSide>
-		  <occCode>RG_PLVT</occCode>
+		  <code>RG_PLVT</code>
 		  <otherCreditAndCharge>
 		    <operationDate>${#TestSuite#THIS_MONTH}-10</operationDate>
 		  </otherCreditAndCharge>

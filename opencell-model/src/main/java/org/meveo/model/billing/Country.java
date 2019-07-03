@@ -28,6 +28,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -35,6 +36,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ISearchable;
 import org.meveo.model.admin.Currency;
 
 /**
@@ -48,7 +50,7 @@ import org.meveo.model.admin.Currency;
 @Table(name = "adm_country")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_country_seq"), })
-public class Country extends AuditableEntity {
+public class Country extends AuditableEntity implements ISearchable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -86,12 +88,28 @@ public class Country extends AuditableEntity {
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
 
+    /**
+     * Code
+     */
+    @Transient
+    private String code;
+
     public String getCountryCode() {
         return countryCode;
     }
 
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
+    }
+
+    @Override
+    public String getCode() {
+        return getCountryCode();
+    }
+
+    @Override
+    public void setCode(String code) {
+        // empty
     }
 
     /**

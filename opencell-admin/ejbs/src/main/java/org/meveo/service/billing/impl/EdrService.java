@@ -30,6 +30,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.billing.EDRDto;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -49,6 +50,9 @@ public class EdrService extends PersistenceService<EDR> {
 
     @Inject
     private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
+
+    @Inject
+    private SubscriptionService subscriptionService;
 
     static boolean useInMemoryDeduplication = true;
     static boolean inMemoryDeduplicationPrepopulated = false;
@@ -197,5 +201,76 @@ public class EdrService extends PersistenceService<EDR> {
         List<String> edrCacheKeys = getEntityManager().createNamedQuery("EDR.getEdrsForCache", String.class).setFirstResult(from).setMaxResults(pageSize).getResultList();
 
         return edrCacheKeys;
+    }
+
+    /**
+     * Gets All open EDR between two Date.
+     *
+     * @param firstTransactionDate first Transaction Date
+     * @param lastTransactionDate  last Transaction Date
+     * @return All open EDR between two Date
+     */
+    public List<EDR> getOpenEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
+        return getEntityManager().createNamedQuery("EDR.getOpenEdrBetweenTwoDate", EDR.class).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+    }
+
+    /**
+     * Remove All open EDR between two Date.
+     *
+     * @param firstTransactionDate first Transaction Date
+     * @param lastTransactionDate  last Transaction Date
+     * @return the number of deleted entities
+     */
+    public long purge(Date firstTransactionDate, Date lastTransactionDate) {
+
+        getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+        return getEntityManager().createNamedQuery("EDR.deleteNotOpenEdrBetweenTwoDate").setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+    }
+
+    public void importEdrs(List<EDRDto> edrs) throws BusinessException {
+        for (EDRDto dto : edrs) {
+            EDR edr = new EDR();
+            if (dto.getSubscriptionCode() != null) {
+                Subscription subscription = subscriptionService.findByCode(dto.getSubscriptionCode());
+                edr.setSubscription(subscription);
+            }
+            if (dto.getStatus() != null) {
+                edr.setStatus(EDRStatusEnum.getByLabel(dto.getStatus()));
+            }
+            edr.setOriginBatch(dto.getOriginBatch());
+            edr.setOriginRecord(dto.getOriginRecord());
+            edr.setEventDate(dto.getEventDate());
+            edr.setQuantity(dto.getQuantity());
+            edr.setParameter1(dto.getParameter1());
+            edr.setParameter2(dto.getParameter2());
+            edr.setParameter3(dto.getParameter3());
+            edr.setParameter4(dto.getParameter4());
+            edr.setParameter5(dto.getParameter5());
+            edr.setParameter6(dto.getParameter6());
+            edr.setParameter7(dto.getParameter7());
+            edr.setParameter8(dto.getParameter8());
+            edr.setParameter9(dto.getParameter9());
+            edr.setDateParam1(dto.getDateParam1());
+            edr.setDateParam2(dto.getDateParam2());
+            edr.setDateParam3(dto.getDateParam3());
+            edr.setDateParam4(dto.getDateParam4());
+            edr.setDateParam5(dto.getDateParam5());
+            edr.setDecimalParam1(dto.getDecimalParam1());
+            edr.setDecimalParam2(dto.getDecimalParam2());
+            edr.setDecimalParam3(dto.getDecimalParam3());
+            edr.setDecimalParam4(dto.getDecimalParam4());
+            edr.setDecimalParam5(dto.getDecimalParam5());
+            edr.setRejectReason(dto.getRejectReason());
+            edr.setCreated(dto.getCreated());
+            edr.setLastUpdate(dto.getLastUpdate());
+            edr.setAccessCode(dto.getAccessCode());
+            edr.setExtraParameter(dto.getExtraParameter());
+            create(edr);
+        }
     }
 }

@@ -107,7 +107,12 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         // get all the taxes of an invoice sub category
         List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = listByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubcategoryCountry.getInvoiceSubCategory(),
             invoiceSubcategoryCountry.getSellingCountry(), invoiceSubcategoryCountry.getTradingCountry(), null, null, null);
-        if (invoiceSubcategoryCountries != null) {
+        return checkValidityDateFromList(invoiceSubcategoryCountry, invoiceSubcategoryCountries);
+    }
+
+	public InvoiceSubcategoryCountry checkValidityDateFromList(InvoiceSubcategoryCountry invoiceSubcategoryCountry,
+			List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) throws BusinessException {
+		if (invoiceSubcategoryCountries != null) {
             InvoiceSubcategoryCountry invoiceSubcategoryCountryFound = null;
             // check for overlap
             for (InvoiceSubcategoryCountry invoiceSubcategoryCountryTemp : invoiceSubcategoryCountries) {
@@ -140,9 +145,8 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
 
             invoiceSubcategoryCountry.setPriority(getNextPriority(invoiceSubcategoryCountries));
         }
-
-        return invoiceSubcategoryCountry;
-    }
+		return invoiceSubcategoryCountry;
+	}
 
     private int getNextPriority(List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
         int maxPriority = 0;
