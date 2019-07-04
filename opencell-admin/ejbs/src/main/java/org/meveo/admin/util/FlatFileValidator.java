@@ -78,7 +78,7 @@ public class FlatFileValidator {
     /**
      * @return the bad lines limit in file
      */
-    private int getBadLinesLimit() {
+    public int getBadLinesLimit() {
         return getProperty("meveo.badLinesLimitInFile", 100);
     }
 
