@@ -58,7 +58,7 @@ public class GroupedCustomField implements Serializable {
         this(GroupedCustomFieldTreeItemType.root, "Root", null, null);
 
         if (fields == null) {
-            fields = new ArrayList<CustomFieldTemplate>();
+            fields = new ArrayList<>();
         }
         this.fields = fields;
 
