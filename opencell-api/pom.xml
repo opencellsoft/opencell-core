@@ -434,6 +434,11 @@
                       <artifactId>swagger-maven-plugin</artifactId>
                       <version>2.0.3</version>
                 </dependency>
+		        <dependency>
+		            <groupId>com.github.javaparser</groupId>
+		            <artifactId>javaparser-symbol-solver-core</artifactId>
+		            <version>LATEST</version>
+		        </dependency>
             </dependencies>
 
             <build>
@@ -479,7 +484,12 @@
                                     <artifactId>resteasy-multipart-provider</artifactId>
                                     <version>2.2.1.GA</version>
                                     <scope>compile</scope>
-                                </dependency>
+                                </dependency>    
+						        <dependency>
+						            <groupId>com.github.javaparser</groupId>
+						            <artifactId>javaparser-symbol-solver-core</artifactId>
+						            <version>LATEST</version>
+						        </dependency>
                           </dependencies>
             
                           <configuration>
