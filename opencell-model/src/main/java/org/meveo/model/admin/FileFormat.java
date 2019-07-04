@@ -72,8 +72,7 @@ public class FileFormat extends AuditableEntity {
     /**
      * Configuration template.
      */
-    @Column(name = "configuration_template", length = 4000)
-    @Size(max = 4000)
+    @Column(name = "configuration_template", columnDefinition = "TEXT")
     private String configurationTemplate;
 
     /**
