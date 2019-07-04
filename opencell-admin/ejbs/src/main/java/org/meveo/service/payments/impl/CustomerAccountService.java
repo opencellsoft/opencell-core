@@ -156,10 +156,14 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return (BigDecimal) query.getSingleResult();
     }
     
-    BigDecimal computeCreditDebitBalances(CustomerAccount customerAccount, MatchingStatusEnum... status) {
-        Query query =
-                getEntityManager().createNamedQuery("AccountOperation.occAmount", BigDecimal.class).setParameter("customerAccount", customerAccount).setParameter("matchingStatus", Arrays.asList(status));
-        
+    BigDecimal computeCreditDebitBalances(CustomerAccount customerAccount, boolean isFuture, boolean isDue, Date to, MatchingStatusEnum... status) {
+        QueryBuilder queryBuilder = getQueryBuilder("select sum(case when ao.transactionCategory = 'DEBIT' then ao.unMatchingAmount else (-1 * ao.unMatchingAmount) end) from AccountOperation as ao");
+
+        addCriterionifFutureAndDue(isFuture, isDue, to, queryBuilder);
+
+        queryBuilder.addCriterionEntity("customerAccount", customerAccount);
+        addCriterionStatuses(queryBuilder, status);
+        Query query = queryBuilder.getQuery(getEntityManager());
         return (BigDecimal) Optional.ofNullable(query.getSingleResult()).orElse(BigDecimal.ZERO);
     }
     
@@ -222,7 +226,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             log.warn("Error when toDate is null!");
             throw new BusinessException("toDate is null");
         }
-        BigDecimal balance = computeCreditDebitBalances(customerAccount, status);
+        BigDecimal balance = computeCreditDebitBalances(customerAccount, isFuture, isDue, to, status);
         try {
             ParamBean param = paramBeanFactory.getInstance();
             int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
