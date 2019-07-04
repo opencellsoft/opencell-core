@@ -520,7 +520,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     public List<T> listAll() {
         if (clazz != null && BusinessEntity.class.isAssignableFrom(clazz)) {
-            return getPersistenceService().list(new PaginationConfiguration("description", SortOrder.ASCENDING));
+            return getPersistenceService().list(new PaginationConfiguration("code", SortOrder.ASCENDING));
         } else {
             return getPersistenceService().list();
         }
