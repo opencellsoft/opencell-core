@@ -18,48 +18,48 @@
  */
 package org.meveo.admin.exception;
 
-import javax.ejb.ApplicationException;
-
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.event.monitoring.CreateEventHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ejb.ApplicationException;
+
 /**
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
  */
 @ApplicationException(rollback = true)
-public class BusinessException extends Exception {
+public class BusinessException extends RuntimeException {
     private static final long serialVersionUID = 1L;
-
+    
     private static final boolean sendException;
-
+    
     static {
         sendException = "true".equals(ParamBean.getInstance().getProperty("monitoring.sendException", "true"));
     }
-
+    
     public BusinessException() {
         super();
         registerEvent();
     }
-
+    
     public BusinessException(String message, Throwable cause) {
         super(message, cause);
         registerEvent();
     }
-
+    
     public BusinessException(String message) {
         super(message);
         registerEvent();
     }
-
+    
     public BusinessException(Throwable cause) {
         super(cause);
         registerEvent();
     }
-
+    
     public void registerEvent() {
         if (sendException) {
             try {

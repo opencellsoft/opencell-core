@@ -345,7 +345,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @JoinColumn(name = "rejected_payment_id")
     private RejectedPayment rejectedPayment;
 
-    @ManyToOne(optional = true, cascade = CascadeType.ALL)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "seller_id")
     private Seller seller;
 

@@ -1,11 +1,15 @@
 package org.meveo.apiv2.common;
 
+import org.assertj.core.util.Arrays;
+import org.meveo.commons.utils.StringUtils;
+
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public abstract class LinkGenerator {
 
@@ -55,6 +59,15 @@ public abstract class LinkGenerator {
 
         public Link build() {
             UriBuilder uriBuilder = getUriBuilderFromResource(this.resourceClass, this.resourceId);
+            return getLink(uriBuilder);
+        }
+        
+        public Link build(String... params) {
+            UriBuilder uriBuilder = getUriBuilderFromResource(this.resourceClass, params);
+            return getLink(uriBuilder);
+        }
+        
+        private Link getLink(UriBuilder uriBuilder) {
             Link.Builder builder = Link.fromUriBuilder(uriBuilder).rel(rel);
             StringBuilder stringBuilder = new StringBuilder();
             actions.forEach(value -> stringBuilder.append(value).append(" "));
@@ -136,11 +149,16 @@ public abstract class LinkGenerator {
             return builder.build();
         }
     }
+    
     public static UriBuilder getUriBuilderFromResource(Class resourceClass, Long resourceId) {
+        return getUriBuilderFromResource(resourceClass, String.valueOf(resourceId));
+    }
+    public static UriBuilder getUriBuilderFromResource(Class resourceClass, String... params) {
         UriBuilder uriBuilder = UriBuilder.fromResource(resourceClass);
-        if(resourceId != null){
-            uriBuilder.path(String.valueOf(resourceId));
+        if (Arrays.isNullOrEmpty(params)) {
+            throw new IllegalArgumentException("Path params should not be null");
         }
-        return uriBuilder;
+       return Stream.of(params).filter(StringUtils::isNotBlank).map(uriBuilder::path).findFirst().orElseThrow(() -> new IllegalArgumentException("Path params should not be "
+               + "empty"));
     }
 }

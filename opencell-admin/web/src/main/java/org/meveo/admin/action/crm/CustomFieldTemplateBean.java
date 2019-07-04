@@ -1,5 +1,22 @@
 package org.meveo.admin.action.crm;
 
+import java.lang.reflect.Modifier;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
@@ -17,24 +34,12 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DualListModel;
 import org.reflections.Reflections;
-
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.lang.reflect.Modifier;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -60,6 +65,9 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
     @Inject
     private CustomizedEntityService customizedEntityService;
+    
+    @Inject
+    private CustomEntityTemplateService customEntityTemplateService;
 
     @Inject
     private ResourceBundle resourceMessages;
@@ -175,6 +183,8 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
         allClassName.addAll(customizedBusinessEntities);
         allClassName.addAll(customizedEntityService.getCustomizedEntities("", false, true, false, null, null));
+        allClassName.addAll(customEntityTemplateService.listCustomTableTemplates().stream().map(i -> new CustomizedEntity(i.getName(), CustomEntityTemplate.class)).collect(
+                Collectors.toList()));
         return allClassName;
     }
 

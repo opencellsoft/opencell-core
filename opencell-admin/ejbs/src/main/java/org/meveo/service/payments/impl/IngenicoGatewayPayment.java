@@ -29,11 +29,15 @@ import com.ingenico.connect.gateway.sdk.java.Client;
 import com.ingenico.connect.gateway.sdk.java.CommunicatorConfiguration;
 import com.ingenico.connect.gateway.sdk.java.DeclinedPaymentException;
 import com.ingenico.connect.gateway.sdk.java.Factory;
+import com.ingenico.connect.gateway.sdk.java.Marshaller;
+import com.ingenico.connect.gateway.sdk.java.defaultimpl.DefaultMarshaller;
 import com.ingenico.connect.gateway.sdk.java.domain.definitions.Address;
 import com.ingenico.connect.gateway.sdk.java.domain.definitions.AmountOfMoney;
 import com.ingenico.connect.gateway.sdk.java.domain.definitions.Card;
 import com.ingenico.connect.gateway.sdk.java.domain.definitions.CardWithoutCvv;
 import com.ingenico.connect.gateway.sdk.java.domain.definitions.CompanyInformation;
+import com.ingenico.connect.gateway.sdk.java.domain.definitions.ContactDetailsBase;
+import com.ingenico.connect.gateway.sdk.java.domain.definitions.OrderStatusOutput;
 import com.ingenico.connect.gateway.sdk.java.domain.errors.definitions.APIError;
 import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedCheckoutRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedCheckoutResponse;
@@ -47,8 +51,14 @@ import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Order;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.OrderReferences;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Payment;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.PaymentStatusOutput;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.PersonalName;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentMethodSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentProduct771SpecificInput;
+import com.ingenico.connect.gateway.sdk.java.domain.payout.CreatePayoutRequest;
+import com.ingenico.connect.gateway.sdk.java.domain.payout.PayoutResponse;
+import com.ingenico.connect.gateway.sdk.java.domain.payout.definitions.CardPayoutMethodSpecificInput;
+import com.ingenico.connect.gateway.sdk.java.domain.payout.definitions.PayoutCustomer;
+import com.ingenico.connect.gateway.sdk.java.domain.payout.definitions.PayoutReferences;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.CustomerToken;
@@ -62,7 +72,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardD
  *
  * @author anasseh
  * @author Mounir Bahije
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.5.2
  */
 @PaymentGatewayClass
 public class IngenicoGatewayPayment implements GatewayPaymentInterface {
@@ -75,6 +85,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     
     /** The client. */
     private  Client client = null;
+    
+    private Marshaller marshaller = null;
 
     /**
      * Connect.
@@ -92,6 +104,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         communicatorConfiguration.setApiKeyId(paymentGateway.getApiKey());
         communicatorConfiguration.setSecretApiKey(paymentGateway.getSecretKey());
         client = Factory.createClient(communicatorConfiguration);
+        marshaller = DefaultMarshaller.INSTANCE;
     }
 
     private ParamBean paramBean() {
@@ -164,7 +177,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
             CreateTokenRequest body = new CreateTokenRequest();
             body.setCard(tokenCard);
-            body.setPaymentProductId(cardType.getId());             
+            body.setPaymentProductId(cardType.getId());    
+          
             CreateTokenResponse response = getClient().merchant(paymentGateway.getMarchandId()).tokens().create(body);
             if (!response.getIsNewToken()) {
                 throw new BusinessException("A token already exist for card:" + CardPaymentMethod.hideCardNumber(cardNumber));
@@ -216,10 +230,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
         try {
             
-            CreatePaymentRequest body = constructNewBody(ddPaymentMethod, paymentCardToken, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType);
+            CreatePaymentRequest body = buildPaymentRequest(ddPaymentMethod, paymentCardToken, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType);
+            
             CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments().create(body);
             
             if (response != null) {
+            	log.info("RESPONSE:"+marshaller.marshal(response));
                 PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
                 doPaymentResponseDto.setPaymentID(response.getPayment().getId());
                 doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getPayment().getStatus()));
@@ -250,7 +266,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         }
     }
     
-    private CreatePaymentRequest constructNewBody(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount,
+    private CreatePaymentRequest buildPaymentRequest(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount,
             String cardNumber, String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType) {
         AmountOfMoney amountOfMoney = new AmountOfMoney();
         amountOfMoney.setAmount(ctsAmount);
@@ -370,6 +386,10 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         if (ingenicoStatus.equals("REFUND_REQUESTED")) {
             return PaymentStatusEnum.PENDING;
         }
+        if (ingenicoStatus.equals("PAYOUT_REQUESTED")) {
+            return PaymentStatusEnum.PENDING;
+        }
+        
         return PaymentStatusEnum.REJECTED;
     }
 
@@ -432,10 +452,82 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         return sepaPmInput;
     }
 
+
     @Override
     public PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
+		try {
+            CustomerAccount customerAccount = paymentToken.getCustomerAccount();
+			AmountOfMoney amountOfMoney = new AmountOfMoney();
+			amountOfMoney.setAmount(ctsAmount);
+			amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
+
+			Address address = getBillingAddress(customerAccount);
+
+			CompanyInformation companyInformation = new CompanyInformation();
+			companyInformation.setName(customerAccount.getCode());
+			ContactDetailsBase contactDetails = new ContactDetailsBase();
+			
+			if(customerAccount.getContactInformation() != null ) {
+				contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail());
+			}
+			
+			PersonalName name = new PersonalName();
+			if (customerAccount.getName() != null) {
+				name.setFirstName(customerAccount.getName().getFirstName());
+				name.setSurname(customerAccount.getName().getLastName());
+				name.setTitle(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getCode());
+			}
+
+			PayoutCustomer customer = new PayoutCustomer();
+			customer.setAddress(address);
+			customer.setCompanyInformation(companyInformation);
+			customer.setContactDetails(contactDetails);
+			customer.setName(name);
+
+			PayoutReferences references = new PayoutReferences();
+			references.setMerchantReference(customerAccount.getId() + "-" + amountOfMoney.getAmount() + "-" + System.currentTimeMillis());
+			CardPayoutMethodSpecificInput cardPayoutMethodSpecificInput = new CardPayoutMethodSpecificInput();
+			cardPayoutMethodSpecificInput.setToken(paymentToken.getTokenId());
+			cardPayoutMethodSpecificInput.setPaymentProductId(paymentToken.getCardType().getId());
+
+			CreatePayoutRequest body = new CreatePayoutRequest();
+			body.setAmountOfMoney(amountOfMoney);
+			body.setCardPayoutMethodSpecificInput(cardPayoutMethodSpecificInput);
+			body.setReferences(references);
+			//body.setCustomer(customer);	
+			getClient();
+			log.info("REQUEST:"+marshaller.marshal(body));
+			PayoutResponse response = client.merchant(paymentGateway.getMarchandId()).payouts().create(body);			
+			if (response != null) {
+				log.info("RESPONSE:"+marshaller.marshal(response));
+				PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+				doPaymentResponseDto.setPaymentID(response.getId());
+				doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getStatus()));
+				if (response.getPayoutOutput() != null && response.getPayoutOutput().getReferences() != null) {
+					doPaymentResponseDto.setTransactionId(response.getPayoutOutput().getReferences().getPaymentReference());
+					doPaymentResponseDto.setBankRefenrence(response.getPayoutOutput().getReferences().getPaymentReference());
+				}
+				OrderStatusOutput statusOutput = response.getStatusOutput();
+				if (statusOutput != null) {
+					List<APIError> errors = statusOutput.getErrors();
+					if (CollectionUtils.isNotEmpty(errors)) {
+						doPaymentResponseDto.setErrorMessage(errors.toString());
+						doPaymentResponseDto.setErrorCode(errors.get(0).getCode());
+					}
+				}
+				return doPaymentResponseDto;
+			} else {
+				throw new BusinessException("Gateway response is null");
+			}
+		} catch (DeclinedPaymentException e) {
+			log.error("Error on doRefundToken :",e);
+			throw new BusinessException(e.getResponseBody());
+		} catch (ApiException e) {
+			log.error("Error on doRefundToken :",e);
+			throw new BusinessException(e.getResponseBody());
+		}
+	}
+
 
     @Override
     public PaymentResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
@@ -459,61 +551,61 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
-        try
-        {
-            String returnUrl = hostedCheckoutInput.getReturnUrl();
-            Long id = hostedCheckoutInput.getCustomerAccountId();
-            String TimeMillisWithcustomerAccountId =  System.currentTimeMillis() + "_-_" + id;
+	@Override
+	public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
+		try {
+			String returnUrl = hostedCheckoutInput.getReturnUrl();
+			Long id = hostedCheckoutInput.getCustomerAccountId();
+			String TimeMillisWithcustomerAccountId = System.currentTimeMillis() + "_-_" + id;
 
-            String redirectionUrl;
-            
-            HostedCheckoutSpecificInput hostedCheckoutSpecificInput = new HostedCheckoutSpecificInput();
-            hostedCheckoutSpecificInput.setLocale(hostedCheckoutInput.getLocale());
-            hostedCheckoutSpecificInput.setVariant(hostedCheckoutInput.getVariant());
-            hostedCheckoutSpecificInput.setReturnUrl(returnUrl);
+			String redirectionUrl;
 
-            AmountOfMoney amountOfMoney = new AmountOfMoney();
-            amountOfMoney.setAmount(Long.valueOf(hostedCheckoutInput.getAmount()));
-            amountOfMoney.setCurrencyCode(hostedCheckoutInput.getCurrencyCode());
+			HostedCheckoutSpecificInput hostedCheckoutSpecificInput = new HostedCheckoutSpecificInput();
+			hostedCheckoutSpecificInput.setLocale(hostedCheckoutInput.getLocale());
+			hostedCheckoutSpecificInput.setVariant(hostedCheckoutInput.getVariant());
+			hostedCheckoutSpecificInput.setReturnUrl(returnUrl);
 
-            Address billingAddress = new Address();
-            billingAddress.setCountryCode(hostedCheckoutInput.getCountryCode());
+			AmountOfMoney amountOfMoney = new AmountOfMoney();
+			amountOfMoney.setAmount(Long.valueOf(hostedCheckoutInput.getAmount()));
+			amountOfMoney.setCurrencyCode(hostedCheckoutInput.getCurrencyCode());
 
-            Customer customer = new Customer();
-            customer.setBillingAddress(billingAddress);
+			Address billingAddress = new Address();
+			billingAddress.setCountryCode(hostedCheckoutInput.getCountryCode());
 
-            OrderReferences orderReferences = new OrderReferences();
-            orderReferences.setMerchantReference(TimeMillisWithcustomerAccountId);
+			Customer customer = new Customer();
+			customer.setBillingAddress(billingAddress);
 
-            Order order = new Order();
-            order.setAmountOfMoney(amountOfMoney);
-            order.setCustomer(customer);
-            order.setReferences(orderReferences);
+			OrderReferences orderReferences = new OrderReferences();
+			orderReferences.setMerchantReference(TimeMillisWithcustomerAccountId);
 
-            CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
-            cardPaymentMethodSpecificInput.setAuthorizationMode(hostedCheckoutInput.getAuthorizationMode());
-            cardPaymentMethodSpecificInput.setTokenize(true);
-            cardPaymentMethodSpecificInput.setSkipAuthentication(hostedCheckoutInput.isSkipAuthentication());
-            cardPaymentMethodSpecificInput.setIsRecurring(true);
-            cardPaymentMethodSpecificInput.setReturnUrl(hostedCheckoutInput.getReturnUrl());
+			Order order = new Order();
+			order.setAmountOfMoney(amountOfMoney);
+			order.setCustomer(customer);
+			order.setReferences(orderReferences);
 
-            CreateHostedCheckoutRequest body = new CreateHostedCheckoutRequest();
-            body.setHostedCheckoutSpecificInput(hostedCheckoutSpecificInput);
-            body.setCardPaymentMethodSpecificInput(cardPaymentMethodSpecificInput);
-            body.setOrder(order);
+			CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
+			cardPaymentMethodSpecificInput.setAuthorizationMode(hostedCheckoutInput.getAuthorizationMode());
+			cardPaymentMethodSpecificInput.setTokenize(true);
+			cardPaymentMethodSpecificInput.setSkipAuthentication(hostedCheckoutInput.isSkipAuthentication());
+			cardPaymentMethodSpecificInput.setIsRecurring(true);
+			cardPaymentMethodSpecificInput.setReturnUrl(hostedCheckoutInput.getReturnUrl());
 
-            CreateHostedCheckoutResponse response = getClient().merchant(paymentGateway.getMarchandId()).hostedcheckouts().create(body);
+			CreateHostedCheckoutRequest body = new CreateHostedCheckoutRequest();
+			body.setHostedCheckoutSpecificInput(hostedCheckoutSpecificInput);
+			body.setCardPaymentMethodSpecificInput(cardPaymentMethodSpecificInput);
+			body.setOrder(order);
+			getClient();
+			log.info("REQUEST:"+marshaller.marshal(body));
+			CreateHostedCheckoutResponse response = client.merchant(paymentGateway.getMarchandId()).hostedcheckouts().create(body);			
+			log.info("RESPONSE:"+marshaller.marshal(response));
+			redirectionUrl = paramBean().getProperty("ingenico.hostedCheckoutUrl.prefix", "https://payment.") + response.getPartialRedirectUrl();
+			return redirectionUrl;
 
-            redirectionUrl = "https://payment." +  response.getPartialRedirectUrl();
-            return redirectionUrl;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new BusinessException(e.getMessage());
-        }
-    }
+		} catch (Exception e) {
+			log.error("Error on getHostedCheckoutUrl:",e);
+			throw new BusinessException(e.getMessage());
+		}
+	}
 
     @Override
     public void setPaymentGateway(PaymentGateway paymentGateway) {
