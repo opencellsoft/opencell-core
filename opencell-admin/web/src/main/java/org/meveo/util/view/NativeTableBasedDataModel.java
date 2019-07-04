@@ -61,7 +61,7 @@ public abstract class NativeTableBasedDataModel extends LazyDataModel<Map<String
             return loadData(paginationConfig);
         }
 
-        return new ArrayList<Map<String, Object>>();
+        return new ArrayList<>();
 
     }
 

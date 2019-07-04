@@ -1,8 +1,17 @@
 package org.meveo.service.crm.impl;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -20,10 +29,16 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.*;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
+import org.meveo.model.ReferenceIdentifierCode;
+import org.meveo.model.ReferenceIdentifierQuery;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
@@ -36,7 +51,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.BaseService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.commons.utils.PersistenceUtils;
+import org.meveo.service.custom.CustomEntityTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -53,6 +68,9 @@ public class CustomFieldInstanceService extends BaseService {
 
     @Inject
     private CustomFieldTemplateService cfTemplateService;
+
+    @Inject
+    private CustomEntityTemplateService customEntityTemplateService;
 
     @Inject
     private Event<CFEndPeriodEvent> cFEndPeriodEventProducer;
@@ -80,28 +98,6 @@ public class CustomFieldInstanceService extends BaseService {
         accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("accumulateCF", "false"));
     }
 
-    // Previous comments
-    // /**
-    // * Convert BusinessEntityWrapper to an entity by doing a lookup in DB
-    // *
-    // * @param businessEntityWrapper Business entity information
-    // * @return A BusinessEntity object
-    // */
-    // @SuppressWarnings("unchecked")
-    // public BusinessEntity convertToBusinessEntityFromCfV(EntityReferenceWrapper businessEntityWrapper) {
-    // if (businessEntityWrapper == null) {
-    // return null;
-    // }
-    // Query query = getEntityManager().createQuery("select e from " + businessEntityWrapper.getClassname() + " e where e.code=:code ");
-    // query.setParameter("code", businessEntityWrapper.getCode());
-    // query;
-    // List<BusinessEntity> entities = query.getResultList();
-    // if (entities.size() > 0) {
-    // return entities.get(0);
-    // } else {
-    // return null;
-    // }
-    // }
 
     /**
      * Find a list of entities of a given class and matching given code. In case classname points to CustomEntityTemplate, find CustomEntityInstances of a CustomEntityTemplate code
@@ -119,15 +115,14 @@ public class CustomFieldInstanceService extends BaseService {
      */
     @SuppressWarnings("unchecked") // TODO review location
     public List<BusinessEntity> findBusinessEntityForCFVByCode(String classNameAndCode, String wildcode)
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+            throws ClassNotFoundException {
         Query query = null;
-
-        Class<?> clazz = Class.forName(classNameAndCode);
+        Class<?> clazz = trimTableNameAndGetClass(classNameAndCode);
 
         if (classNameAndCode.startsWith(CustomEntityTemplate.class.getName())) {
             String cetCode = CustomFieldTemplate.retrieveCetCode(classNameAndCode);
             query = getEntityManager().createQuery("select e from CustomEntityInstance e where cetCode=:cetCode and lower(e.code) like :code");
-            query.setParameter("cetCode", cetCode);
+            query.setParameter("cetCode", cetCode.toLowerCase());
 
         } else if (clazz.isInstance(BusinessEntity.class)) {
             query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(e.code) like :code");
@@ -151,6 +146,11 @@ public class CustomFieldInstanceService extends BaseService {
         query.setParameter("code", "%" + wildcode.toLowerCase() + "%");
         List<BusinessEntity> entities = query.getResultList();
         return entities;
+    }
+
+     Class<?> trimTableNameAndGetClass(String className) throws ClassNotFoundException {
+        String classNameToConvert = Optional.ofNullable(className).filter(c -> c.contains(" - ")).map(c -> c.split(" - ")[0]).orElse(className);
+        return Class.forName(classNameToConvert);
     }
 
     /**
