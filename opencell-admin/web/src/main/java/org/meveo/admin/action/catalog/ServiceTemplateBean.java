@@ -50,6 +50,11 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.primefaces.model.DualListModel;
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.3
+ */
+
 @Named
 @ViewScoped
 public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
@@ -85,6 +90,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     private DualListModel<WalletTemplate> subscriptionWallets;
     private DualListModel<WalletTemplate> terminationWallets;
 
+    @Produces
+    @Named
     private ServiceChargeTemplateRecurring serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
 
     public ServiceChargeTemplateRecurring getServiceChargeTemplateRecurring() {
@@ -283,7 +290,10 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             } else {
                 serviceChargeTemplateSubscription.setServiceTemplate(entity);
                 serviceChargeTemplateSubscriptionService.create(serviceChargeTemplateSubscription);
+
+                entity = getPersistenceService().refreshOrRetrieve(entity);
                 entity.getServiceSubscriptionCharges().add(serviceChargeTemplateSubscription);
+                serviceTemplateService.update(entity);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
         } catch (Exception e) {
@@ -336,7 +346,10 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             } else {
                 serviceChargeTemplateTermination.setServiceTemplate(entity);
                 serviceChargeTemplateTerminationService.create(serviceChargeTemplateTermination);
+                
+                entity = getPersistenceService().refreshOrRetrieve(entity);
                 entity.getServiceTerminationCharges().add(serviceChargeTemplateTermination);
+                serviceTemplateService.update(entity);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
         } catch (Exception e) {
@@ -366,9 +379,11 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             if (serviceChargeTemplateRecurring == null) {
                 return;
             }
+
             for (ServiceChargeTemplateRecurring inc : entity.getServiceRecurringCharges()) {
                 if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getChargeTemplate().getCode())
-                        && !inc.getId().equals(serviceChargeTemplateRecurring.getId())) {
+                        && !inc.getId().equals(serviceChargeTemplateRecurring.getId()) && ((inc.getCounterTemplate() == null && serviceChargeTemplateRecurring.getCounterTemplate() == null)
+                        || inc.getCounterTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getCounterTemplate().getCode()))) {
                     throw new Exception();
                 }
             }
@@ -388,7 +403,10 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             } else {
                 serviceChargeTemplateRecurring.setServiceTemplate(entity);
                 serviceChargeTemplateRecurringService.create(serviceChargeTemplateRecurring);
+                
+                entity = getPersistenceService().refreshOrRetrieve(entity);
                 entity.getServiceRecurringCharges().add(serviceChargeTemplateRecurring);
+                serviceTemplateService.update(entity);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
         } catch (Exception e) {
@@ -443,7 +461,10 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             } else {
                 serviceChargeTemplateUsage.setServiceTemplate(entity);
                 serviceChargeTemplateUsageService.create(serviceChargeTemplateUsage);
+               
+                entity = getPersistenceService().refreshOrRetrieve(entity);
                 entity.getServiceUsageCharges().add(serviceChargeTemplateUsage);
+                serviceTemplateService.update(entity);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
         } catch (Exception e) {

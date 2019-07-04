@@ -32,6 +32,7 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -52,16 +53,18 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletReservationService;
 import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.primefaces.model.SortOrder;
 
 /**
  * Wallet operation and balance related API
- * 
+ *
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  **/
 @Stateless
 public class WalletApi extends BaseApi {
@@ -104,9 +107,12 @@ public class WalletApi extends BaseApi {
 
     @Inject
     private CurrencyService currencyService;
-    
+
     @Inject
     private RatedTransactionService ratedTransactionService;
+
+    @Inject
+    private TaxService taxService;
 
     /**
      * Calculate current (open or reserved) wallet balance at a given level
@@ -405,11 +411,8 @@ public class WalletApi extends BaseApi {
             walletReservation.getParam3(), walletReservation.isAmountWithTax());
     }
 
-    public void createOperation(WalletOperationDto postData) throws MeveoApiException, BusinessException {
+    public WalletOperation createOperation(WalletOperationDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(postData.getUserAccount()) && StringUtils.isBlank(postData.getSubscription())) {
             missingParameters.add("userAccount or subscription");
         }
@@ -487,6 +490,15 @@ public class WalletApi extends BaseApi {
                 throw new EntityDoesNotExistsException(ChargeInstance.class, postData.getChargeInstance());
             }
         }
+
+        Tax tax = null;
+        if (postData.getTaxCode() != null) {
+            tax = taxService.findByCode(postData.getTaxCode());
+            if (tax == null) {
+                throw new EntityDoesNotExistsException(Tax.class, postData.getTaxCode());
+            }
+        }
+
         WalletOperation walletOperation = new WalletOperation();
         walletOperation.setDescription(postData.getDescription());
         walletOperation.setCode(postData.getCode());
@@ -494,7 +506,8 @@ public class WalletApi extends BaseApi {
             // walletOperation.setOfferCode(subscription.getOffer().getCode()); offerCode is set in walletOperation.setOfferTemplate
             walletOperation.setOfferTemplate(subscription.getOffer());
         }
-        walletOperation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+
+        walletOperation.setSeller(chargeInstance.getSeller());
         walletOperation.setCurrency(currency);
         walletOperation.setWallet(walletInstance);
         walletOperation.setChargeInstance(chargeInstance);
@@ -502,6 +515,7 @@ public class WalletApi extends BaseApi {
         walletOperation.setStatus(postData.getStatus());
         walletOperation.setCounter(null);
         walletOperation.setRatingUnitDescription(postData.getRatingUnitDescription());
+        walletOperation.setTax(tax);
         walletOperation.setTaxPercent(postData.getTaxPercent());
         walletOperation.setUnitAmountTax(postData.getUnitAmountTax());
         walletOperation.setUnitAmountWithoutTax(postData.getUnitAmountWithoutTax());
@@ -541,6 +555,7 @@ public class WalletApi extends BaseApi {
         }
 
         walletOperationService.create(walletOperation);
+        return walletOperation;
 
     }
 
@@ -617,11 +632,7 @@ public class WalletApi extends BaseApi {
         pagingAndFiltering.addFilter("chargeInstance.subscription.code", postData.getSubscriptionCode());
     }
 
-    public void create(WalletTemplateDto postData) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
+    public WalletTemplate create(WalletTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getWalletType())) {
             missingParameters.add("walletType");
@@ -643,10 +654,11 @@ public class WalletApi extends BaseApi {
         wt.setRejectLevel(postData.getRejectLevel());
 
         walletTemplateService.create(wt);
+        return wt;
 
     }
 
-    public void update(WalletTemplateDto postData) throws MeveoApiException, BusinessException {
+    public WalletTemplate update(WalletTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -671,7 +683,7 @@ public class WalletApi extends BaseApi {
         wt.setLowBalanceLevel(postData.getLowBalanceLevel());
         wt.setRejectLevel(postData.getRejectLevel());
 
-        walletTemplateService.update(wt);
+        return walletTemplateService.update(wt);
     }
 
     public WalletTemplateDto find(String walletTemplateCode) throws MeveoApiException {
@@ -706,15 +718,17 @@ public class WalletApi extends BaseApi {
      * Create or update walletTemplate.
      * 
      * @param postData wallet template infos
-     * 
+     * @return the wallet template
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception/
      */
-    public void createOrUpdate(WalletTemplateDto postData) throws MeveoApiException, BusinessException {
-        if (walletTemplateService.findByCode(postData.getCode()) == null) {
-            create(postData);
+    public WalletTemplate createOrUpdate(WalletTemplateDto postData) throws MeveoApiException, BusinessException {
+        WalletTemplate walletTemplate = walletTemplateService.findByCode(postData.getCode());
+        if (walletTemplate == null) {
+            walletTemplate = create(postData);
         } else {
-            update(postData);
+            walletTemplate = update(postData);
         }
+        return walletTemplate;
     }
 }

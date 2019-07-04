@@ -1,5 +1,6 @@
 package org.meveo.service.base;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class ValueExpressionWrapper {
      * Evaluate expression.
      * 
      * @param expression Expression to evaluate
-     * @param contextMap Context of values
+     * @param contextMap Context of values (optional)
      * @return A value that expression evaluated to
      * @throws BusinessException business exception.
      */
@@ -55,13 +56,12 @@ public class ValueExpressionWrapper {
             return false;
         }
     }
-    
-    
+
     /**
      * Evaluate expression to a boolean value ignoring exceptions
      * 
      * @param expression Expression to evaluate
-     * @param contextMap Context of values
+     * @param contextMap Context of values (optional)
      * @return A boolean value expression evaluates to. An empty expression evaluates to true. Failure to evaluate, return false;
      */
     public static boolean evaluateToBooleanIgnoreErrors(String expression, Map<Object, Object> contextMap) {
@@ -181,13 +181,16 @@ public class ValueExpressionWrapper {
     /**
      * Evaluate expression.
      * 
+     * @param <T>
+     * 
      * @param expression Expression to evaluate
-     * @param userMap Context of values
+     * @param contextMap Context of values
      * @param resultClass An expected result class
      * @return A value that expression evaluated to
      * @throws BusinessException business exception.
      */
-    public static Object evaluateExpression(String expression, Map<Object, Object> userMap, @SuppressWarnings("rawtypes") Class resultClass) throws BusinessException {
+    public static <T> T evaluateExpression(String expression, Map<Object, Object> contextMap, @SuppressWarnings("rawtypes") Class<T> resultClass) throws BusinessException {
+
         Object result = null;
         if (StringUtils.isBlank(expression)) {
             return null;
@@ -197,26 +200,30 @@ public class ValueExpressionWrapper {
         if (expression.indexOf("#{") < 0) {
             log.debug("the expression '{}' doesn't contain any EL", expression);
             if (resultClass.equals(String.class)) {
-                return expression;
+                return (T) expression;
             } else if (resultClass.equals(Double.class)) {
-                return Double.parseDouble(expression);
+                return (T) new Double(expression);
+            } else if (resultClass.equals(BigDecimal.class)) {
+                return (T) new BigDecimal(expression);
             } else if (resultClass.equals(Boolean.class)) {
                 if ("true".equalsIgnoreCase(expression)) {
-                    return Boolean.TRUE;
+                    return (T) Boolean.TRUE;
                 } else {
-                    return Boolean.FALSE;
+                    return (T) Boolean.FALSE;
                 }
             }
         }
+
         try {
-            result = ValueExpressionWrapper.getValue(expression, userMap, resultClass);
-            log.debug("EL {} => {}", expression, result);
+            result = ValueExpressionWrapper.getValue(expression, contextMap, resultClass);
+            log.trace("EL {} => {}", expression, result);
+
+            return (T) result;
 
         } catch (Exception e) {
-            log.warn("EL {} throw error with variables {}", expression, userMap, e);
+            log.warn("EL {} throw error with variables {}", expression, contextMap, e);
             throw new BusinessException("Error while evaluating expression " + expression + " : " + e.getMessage());
         }
-        return result;
     }
 
     private static Object getValue(String expression, Map<Object, Object> userMap, @SuppressWarnings("rawtypes") Class resultClass) {

@@ -40,6 +40,11 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
+/**
+ * Country enabled in application
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "country.countryCode" })
@@ -53,17 +58,30 @@ public class TradingCountry extends EnableEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Tax application rules by invoice subcategory
+     */
     @OneToMany(mappedBy = "tradingCountry", fetch = FetchType.LAZY)
     private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries;
 
+    /**
+     * Country
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
     private Country country;
 
+    /**
+     * Description. Deprecated in 5.3 for not use.
+     */
+    @Deprecated
     @Column(name = "pr_description", length = 255)
     @Size(max = 255)
     private String prDescription;
 
+    /**
+     * Country code
+     */
     @Transient
     String countryCode;
 

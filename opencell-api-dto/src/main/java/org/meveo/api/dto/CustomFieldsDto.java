@@ -8,11 +8,15 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * The Class CustomFieldsDto.
  *
  * @author Edward P. Legaspi
  */
+@JsonInclude(Include.NON_NULL)
 @XmlRootElement(name = "CustomFields")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomFieldsDto implements Serializable {

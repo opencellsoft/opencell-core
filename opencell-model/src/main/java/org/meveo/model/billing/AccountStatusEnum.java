@@ -20,40 +20,39 @@ package org.meveo.model.billing;
 
 public enum AccountStatusEnum {
 
-	ACTIVE(1, "AccountStatusEnum.active"), CANCELED(2, "AccountStatusEnum.canceled"), TERMINATED(3,
-			"AccountStatusEnum.terminated"), CLOSED(4, "AccountStatusEnum.closed");
+    ACTIVE(1, "AccountStatusEnum.active"), CANCELED(2, "AccountStatusEnum.canceled"), TERMINATED(3, "AccountStatusEnum.terminated"), CLOSED(4, "AccountStatusEnum.closed");
 
-	private Integer id;
-	private String label;
+    private Integer id;
+    private String label;
 
-	AccountStatusEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
+    AccountStatusEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
 
-	}
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	/**
-	 * Gets enum by its id.
-	 *
-	 * @param id account status id
-	 * @return account status.
-	 */
-	public static AccountStatusEnum getValue(Integer id) {
-		if (id != null) {
-			for (AccountStatusEnum status : values()) {
-				if (id.equals(status.getId())) {
-					return status;
-				}
-			}
-		}
-		return null;
-	}
+    /**
+     * Gets enum by its id.
+     *
+     * @param id account status id
+     * @return account status.
+     */
+    public static AccountStatusEnum getValue(Integer id) {
+        if (id != null) {
+            for (AccountStatusEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -19,15 +19,14 @@
 package org.meveo.model.communication;
 
 public enum MediaEnum {
-	POSTAL_MAIL,//Zip file
-	EMAIL,//SMTP
-	SMS,//SMPP
-	IM,//XMPP
-	FAX,
-	VOICE,//VOICE XML
-	WEBSERVICE,//SOAP
-	QUEUE,//JMS
-	FTP_FILE,//FTP
-    CFT_FILE,//CFT
-	DATABASE;//SQL
+    POSTAL_MAIL, // Zip file
+    EMAIL, // SMTP
+    SMS, // SMPP
+    IM, // XMPP
+    FAX, VOICE, // VOICE XML
+    WEBSERVICE, // SOAP
+    QUEUE, // JMS
+    FTP_FILE, // FTP
+    CFT_FILE, // CFT
+    DATABASE;// SQL
 }

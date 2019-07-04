@@ -35,6 +35,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.ExportIdentifier;
 
+/**
+ * Service template to termination ones hot charge template mapping
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code" })
@@ -45,6 +50,9 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
 
     private static final long serialVersionUID = 7811269692204342428L;
 
+    /**
+     * Prepaid wallet templates to charge on
+     */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_serv_trm_wallet_template", joinColumns = @JoinColumn(name = "service_trm_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))

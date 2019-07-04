@@ -34,251 +34,274 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 
 /**
- * The Class RecurringChargeTemplate.
+ * Recurring charge template
  *
  * @author anasseh
  * @lastModifiedVersion 5.0.2
  */
 @Entity
 @Table(name = "cat_recurring_charge_templ")
-@NamedQueries({			
-@NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan", 
-	           query = "select count (*) from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
-	           
-@NamedQuery(name = "recurringChargeTemplate.getRecurringChrgWithNotPricePlan", 
-	           query = "from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
-	           
-@NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgNotAssociated", 
-	           query = "select count(*) from RecurringChargeTemplate r where (r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
-	           		+ " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))   "),
-	           		
-@NamedQuery(name = "recurringChargeTemplate.getRecurringChrgNotAssociated", 
-	 	           query = "from RecurringChargeTemplate r where (r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
-	 	           		+ " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))  ")	                
-	       })
+@NamedQueries({
+        @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan", query = "select count (*) from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
+
+        @NamedQuery(name = "recurringChargeTemplate.getRecurringChrgWithNotPricePlan", query = "from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
+
+        @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgNotAssociated", query = "select count(*) from RecurringChargeTemplate r where (r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
+                + " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))   "),
+
+        @NamedQuery(name = "recurringChargeTemplate.getRecurringChrgNotAssociated", query = "from RecurringChargeTemplate r where (r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
+                + " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))  ") })
 public class RecurringChargeTemplate extends ChargeTemplate {
-	
-	/** The Constant CHARGE_TYPE. */
-	@Transient
-	public static final String CHARGE_TYPE = "RECURRING";
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+    /** The Constant CHARGE_TYPE. */
+    @Transient
+    public static final String CHARGE_TYPE = "RECURRING";
 
-	/** The recurrence type. */
-	@Enumerated(EnumType.STRING)
-	@Column(name = "recurrence_type")
-	private RecurrenceTypeEnum recurrenceType = RecurrenceTypeEnum.CALENDAR;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	/** The calendar. */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "calendar_id")
-	private Calendar calendar;
+    /**
+     * The recurrence type
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "recurrence_type")
+    private RecurrenceTypeEnum recurrenceType = RecurrenceTypeEnum.CALENDAR;
 
-	/** The duration term in month. */
-	@Column(name = "duration_term_in_month")
-	private Integer durationTermInMonth;
+    /**
+     * The calendar
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendar_id")
+    private Calendar calendar;
 
-	/** The subscription prorata. */
-	@Type(type="numeric_boolean")
+    /**
+     * The duration term in month
+     */
+    @Column(name = "duration_term_in_month")
+    private Integer durationTermInMonth;
+
+    /**
+     * Prorate amount when subscribing
+     */
+    @Type(type = "numeric_boolean")
     @Column(name = "subscription_prorata")
-	private Boolean subscriptionProrata;
+    private Boolean subscriptionProrata;
 
-	/** The termination prorata. */
-	@Type(type="numeric_boolean")
+    /**
+     * Prorate amount when terminating
+     */
+    @Type(type = "numeric_boolean")
     @Column(name = "termination_prorata")
-	private Boolean terminationProrata;
+    private Boolean terminationProrata;
 
-	/** The apply in advance. */
-	@Type(type="numeric_boolean")
+    /**
+     * Apply charge in advance - at the beginning of the period. If false, charge will be applied at the end of the period
+     */
+    @Type(type = "numeric_boolean")
     @Column(name = "apply_in_advance")
-	private Boolean applyInAdvance;
+    private Boolean applyInAdvance;
 
-	/** The share level. */
-	@Enumerated(EnumType.STRING)
-	@Column(name= "share_level",length=20)
-	private LevelEnum shareLevel;
-	
-	/** The filter expression. */
-	@Column(name = "filter_expression", length = 2000)
-	@Size(max = 2000)
-	private String filterExpression = null;
-	
-    /** The subscription prorata EL. */
+    /**
+     * At what account level charge is shared
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "share_level", length = 20)
+    private LevelEnum shareLevel;
+
+    /**
+     * The filter expression
+     */
+    @Column(name = "filter_expression", length = 2000)
+    @Size(max = 2000)
+    private String filterExpression = null;
+
+    /**
+     * Expression to determine if subscription amount is prorated
+     */
     @Column(name = "subscription_prorata_el", length = 2000)
     @Size(max = 2000)
     private String subscriptionProrataEl = null;
-    
-    /** The termination prorata EL. */
+
+    /**
+     * Expression to determine if termination amount is prorated
+     */
     @Column(name = "termination_prorata_el", length = 2000)
     @Size(max = 2000)
     private String terminationProrataEl;
-	
-    /** The apply in advance EL. */
+
+    /**
+     * Expression to determine if charge should be applied in advance - at the start of recurring period
+     */
     @Column(name = "apply_in_advance_el", length = 2000)
     @Size(max = 2000)
     private String applyInAdvanceEl;
-    
-    /** The duration term in month EL. */
+
+    /**
+     * Expression to determine duration term in month
+     */
     @Column(name = "duration_term_in_month_el", length = 2000)
     @Size(max = 2000)
     private String durationTermInMonthEl;
-    
-    /** The calendar code EL. */
+
+    /**
+     * Expression to determine calendar code
+     */
     @Column(name = "calendar_code_el", length = 2000)
     @Size(max = 2000)
     private String calendarCodeEl;
-    
-	/**
+
+    /**
      * Gets the calendar.
      *
      * @return the calendar
      */
-	public Calendar getCalendar() {
-		return calendar;
-	}
+    public Calendar getCalendar() {
+        return calendar;
+    }
 
-	/**
+    /**
      * Sets the calendar.
      *
      * @param calendar the new calendar
      */
-	public void setCalendar(Calendar calendar) {
-		this.calendar = calendar;
-	}
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
 
-	/**
+    /**
      * Gets the recurrence type.
      *
      * @return the recurrence type
      */
-	public RecurrenceTypeEnum getRecurrenceType() {
-		return recurrenceType;
-	}
+    public RecurrenceTypeEnum getRecurrenceType() {
+        return recurrenceType;
+    }
 
-	/**
+    /**
      * Sets the recurrence type.
      *
      * @param recurrenceType the new recurrence type
      */
-	public void setRecurrenceType(RecurrenceTypeEnum recurrenceType) {
-		this.recurrenceType = recurrenceType;
-	}
+    public void setRecurrenceType(RecurrenceTypeEnum recurrenceType) {
+        this.recurrenceType = recurrenceType;
+    }
 
-	/**
+    /**
      * Gets the duration term in month.
      *
      * @return the duration term in month
      */
-	public Integer getDurationTermInMonth() {
-		return durationTermInMonth;
-	}
+    public Integer getDurationTermInMonth() {
+        return durationTermInMonth;
+    }
 
-	/**
+    /**
      * Sets the duration term in month.
      *
      * @param durationTermInMonth the new duration term in month
      */
-	public void setDurationTermInMonth(Integer durationTermInMonth) {
-		this.durationTermInMonth = durationTermInMonth;
-	}
+    public void setDurationTermInMonth(Integer durationTermInMonth) {
+        this.durationTermInMonth = durationTermInMonth;
+    }
 
-	/**
+    /**
      * Gets the subscription prorata.
      *
      * @return the subscription prorata
      */
-	public Boolean getSubscriptionProrata() {
-		return subscriptionProrata;
-	}
+    public Boolean getSubscriptionProrata() {
+        return subscriptionProrata;
+    }
 
-	/**
+    /**
      * Sets the subscription prorata.
      *
      * @param subscriptionProrata the new subscription prorata
      */
-	public void setSubscriptionProrata(Boolean subscriptionProrata) {
-		this.subscriptionProrata = subscriptionProrata;
-	}
+    public void setSubscriptionProrata(Boolean subscriptionProrata) {
+        this.subscriptionProrata = subscriptionProrata;
+    }
 
-	/**
+    /**
      * Gets the termination prorata.
      *
      * @return the termination prorata
      */
-	public Boolean getTerminationProrata() {
-		return terminationProrata;
-	}
+    public Boolean getTerminationProrata() {
+        return terminationProrata;
+    }
 
-	/**
+    /**
      * Sets the termination prorata.
      *
      * @param terminationProrata the new termination prorata
      */
-	public void setTerminationProrata(Boolean terminationProrata) {
-		this.terminationProrata = terminationProrata;
-	}
+    public void setTerminationProrata(Boolean terminationProrata) {
+        this.terminationProrata = terminationProrata;
+    }
 
-	/**
+    /**
      * Gets the apply in advance.
      *
      * @return the apply in advance
      */
-	public Boolean getApplyInAdvance() {
-		return applyInAdvance;
-	}
+    public Boolean getApplyInAdvance() {
+        return applyInAdvance;
+    }
 
-	/**
+    /**
      * Sets the apply in advance.
      *
      * @param applyInAdvance the new apply in advance
      */
-	public void setApplyInAdvance(Boolean applyInAdvance) {
-		this.applyInAdvance = applyInAdvance;
-	}
+    public void setApplyInAdvance(Boolean applyInAdvance) {
+        this.applyInAdvance = applyInAdvance;
+    }
 
-	/**
+    /**
      * Gets the share level.
      *
      * @return the share level
      */
-	public LevelEnum getShareLevel() {
-		return shareLevel;
-	}
+    public LevelEnum getShareLevel() {
+        return shareLevel;
+    }
 
-	/**
+    /**
      * Sets the share level.
      *
      * @param shareLevel the new share level
      */
-	public void setShareLevel(LevelEnum shareLevel) {
-		this.shareLevel = shareLevel;
-	}
+    public void setShareLevel(LevelEnum shareLevel) {
+        this.shareLevel = shareLevel;
+    }
 
-	/**
+    /**
      * Gets the filter expression.
      *
      * @return the filter expression
      */
-	public String getFilterExpression() {
-		return filterExpression;
-	}
+    public String getFilterExpression() {
+        return filterExpression;
+    }
 
-	/**
+    /**
      * Sets the filter expression.
      *
      * @param filterExpression the new filter expression
      */
-	public void setFilterExpression(String filterExpression) {
-		this.filterExpression = filterExpression;
-	}
+    public void setFilterExpression(String filterExpression) {
+        this.filterExpression = filterExpression;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.meveo.model.catalog.ChargeTemplate#getChargeType()
-	 */
-	public String getChargeType() {
-		return CHARGE_TYPE;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.model.catalog.ChargeTemplate#getChargeType()
+     */
+    public String getChargeType() {
+        return CHARGE_TYPE;
+    }
 
     /**
      * Gets the subscription prorata El.
@@ -353,6 +376,5 @@ public class RecurringChargeTemplate extends ChargeTemplate {
     public void setCalendarCodeEl(String calendarCodeEl) {
         this.calendarCodeEl = calendarCodeEl;
     }
-    
-    
+
 }

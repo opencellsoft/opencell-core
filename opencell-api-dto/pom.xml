@@ -6,7 +6,7 @@
 		<groupId>com.opencellsoft</groupId>
 		<artifactId>opencell</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>5.2.9-SNAPSHOT</version>
+		<version>7.3.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>opencell-api-dto</artifactId>
 	<name>Opencell API DTO</name>
@@ -46,6 +46,19 @@
         <dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.immutables</groupId>
+			<artifactId>value</artifactId>
+			<version>2.7.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>2.0.7</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 

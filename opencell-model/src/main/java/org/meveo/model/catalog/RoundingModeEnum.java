@@ -1,35 +1,57 @@
 package org.meveo.model.catalog;
 
+import java.math.RoundingMode;
+
+/**
+ * BigDecimal value rounding mode
+ * 
+ * @author Andrius Karpavicius
+ */
 public enum RoundingModeEnum {
 
-	NEAREST(1, "RoundingModeEnum.NEAREST"),
-	DOWN(2, "RoundingModeEnum.DOWN"),
-	UP(3, "RoundingModeEnum.UP");
+    /**
+     * The common rounding. Value of &gt;=0.5 is rounded up.
+     * 
+     * See java.math.RoundingMode.HALF_UP
+     */
+    NEAREST(RoundingMode.HALF_UP),
 
-    private Integer id;
-    private String label;
+    /**
+     * If the value is positive, behave as for RoundingMode.DOWN; if negative, behave as for RoundingMode.UP. Note that this rounding mode never increases the calculated value.
+     * 
+     * See java.math.RoundingMode.FLOOR.
+     */
+    DOWN(RoundingMode.FLOOR),
 
-    RoundingModeEnum(Integer id, String label) {
-        this.id = id;
-        this.label = label;
+    /**
+     * If the value is positive, behaves as for RoundingMode.UP; if negative, behaves as for RoundingMode.DOWN. Note that this rounding mode never decreases the calculated value.
+     * 
+     * See java.math.RoundingMode.CEILING.
+     */
+    UP(RoundingMode.CEILING);
+
+    /**
+     * Rounding mode
+     */
+    private RoundingMode roundingMode;
+
+    private RoundingModeEnum(RoundingMode roundingMode) {
+        this.roundingMode = roundingMode;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
+    /**
+     * @return Label
+     */
     public String getLabel() {
-        return this.label;
+        return this.getClass().getSimpleName() + "." + this.name();
     }
 
-    public static RoundingModeEnum getValue(Integer id) {
-        if (id != null) {
-            for (RoundingModeEnum type : values()) {
-                if (id.equals(type.getId())) {
-                    return type;
-                }
-            }
-        }
-        return null;
+    /**
+     * Get BigDecimal value rounding mode, as JAVA understands it
+     * 
+     * @return BigDecimal value rounding mode in JAVA terms
+     */
+    public RoundingMode getRoundingMode() {
+        return roundingMode;
     }
 }

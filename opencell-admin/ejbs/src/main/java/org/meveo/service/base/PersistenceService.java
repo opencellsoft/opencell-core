@@ -37,8 +37,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -46,6 +46,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -59,6 +60,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
+import org.meveo.event.qualifier.InstantiateWF;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -74,12 +76,15 @@ import org.meveo.model.ISearchable;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.index.ElasticClient;
 
 /**
@@ -129,15 +134,23 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
 
+    protected static boolean accumulateCF = true;
+
+    @PostConstruct
+    private void init() {
+        accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("accumulateCF", "false"));
+    }
+
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
     @Inject
-    private ElasticClient elasticClient;
+    protected ElasticClient elasticClient;
 
     @Inject
-    private Conversation conversation;
+    @InstantiateWF
+    protected Event<BaseEntity> entityInstantiateWFEventProducer;
 
     @Inject
     @Created
@@ -164,7 +177,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Inject
     protected ParamBeanFactory paramBeanFactory;
-    
+
+    @Inject
+    protected CfValueAccumulator cfValueAccumulator;
+
     /**
      * Constructor.
      */
@@ -339,7 +355,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public void remove(E entity) throws BusinessException {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-        entity = findById((Long) entity.getId());
+        entity = retrieveIfNotManaged(entity);
         if (entity != null) {
             getEntityManager().remove(entity);
             if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
@@ -366,7 +382,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 }
             }
         }
-        
+
         if (entity != null) {
             log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), entity.getId());
         }
@@ -413,9 +429,19 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         // Schedule end of period events
-        // Be carefull - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
+        // Be careful - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
         if (entity instanceof ICustomFieldEntity) {
             customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
+        }
+
+        Set<String> dirtyCfValues = null;
+        Set<String> dirtyCfPeriods = null;
+        if (accumulateCF && entity instanceof ICustomFieldEntity) {
+            CustomFieldValues cfValues = ((ICustomFieldEntity) entity).getCfValues();
+            if (cfValues != null) {
+                dirtyCfValues = cfValues.getDirtyCfValues();
+                dirtyCfPeriods = cfValues.getDirtyCfPeriods();
+            }
         }
 
         entity = getEntityManager().merge(entity);
@@ -426,6 +452,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             elasticClient.partialUpdate((BusinessEntity) entity);
         } else if (entity instanceof ISearchable) {
             elasticClient.createOrFullUpdate((ISearchable) entity);
+        }
+
+        if (dirtyCfValues != null && !dirtyCfValues.isEmpty()) {
+            // CustomFieldValues cfValues = ((ICustomFieldEntity) entity).getCfValues();
+            cfValueAccumulator.entityUpdated((ICustomFieldEntity) entity, dirtyCfValues, dirtyCfPeriods);
         }
 
         log.trace("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
@@ -455,14 +486,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
         }
+        // Schedule end of period events
+        // Be careful - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
+        if (entity instanceof ICustomFieldEntity) {
+            customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
+        }
 
         getEntityManager().persist(entity);
 
         // Add entity to Elastic Search
         if (ISearchable.class.isAssignableFrom(entity.getClass())) {
-            // flush first to allow child entities to be lazy loaded
-            // getEntityManager().flush();
-            // getEntityManager().refresh(entity);
             elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
@@ -470,10 +503,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             entityCreatedEventProducer.fire((BaseEntity) entity);
         }
 
-        // Schedule end of period events
-        // Be carefull - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
-        if (entity instanceof ICustomFieldEntity) {
-            customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
+        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(WorkflowedEntity.class)) {
+            entityInstantiateWFEventProducer.fire((BaseEntity) entity);
+        }
+
+        if (accumulateCF && entity instanceof ICustomFieldEntity) {
+            cfValueAccumulator.entityCreated((ICustomFieldEntity) entity);
         }
 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
@@ -501,6 +536,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
         if (active != null && IEnable.class.isAssignableFrom(entityClass)) {
             queryBuilder.addBooleanCriterion("disabled", !active);
+        }
+        if (BusinessEntity.class.isAssignableFrom(entityClass)) {
+            queryBuilder.addOrderCriterionAsIs("code", true);
+        } else {
+            queryBuilder.addOrderCriterionAsIs("id", true);
         }
         Query query = queryBuilder.getQuery(getEntityManager());
         return query.getResultList();
@@ -726,6 +766,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=fiel.value. Applies to date and number type fields.</li>
      * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value&lt;=value</li>
      * <li>list. Value is in field's list value. Applies to date and number type fields.</li>
+     * <li>listInList. Value, which is a list, should be in field value (list)
      * <li>inList/not-inList. Field value is [not] in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value
      * of one item</li>
      * <li>minmaxRange. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields.</li>
@@ -735,8 +776,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>likeCriterias. Multiple fieldnames can be specified. Any of the multiple field values match the value (OR criteria). In case value contains *, a like criteria match will
      * be used. In either case case insensative matching is used. Applies to String type fields.</li>
      * <li>wildcardOr. Similar to likeCriterias. A wildcard match will always used. A * will be appended to start and end of the value automatically if not present. Applies to
-     * <li>wildcardOrIgnoreCase. Similar to wildcardOr but ignoring case
-     * String type fields.</li>
+     * <li>wildcardOrIgnoreCase. Similar to wildcardOr but ignoring case String type fields.</li>
      * <li>ne. Not equal.
      * </ul>
      * 
@@ -773,7 +813,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * </ul>
      * 
      * 
-     * @param config PaginationConfiguration data holding object
+     * @param config Data filtering, sorting and pagination criteria
      * @return query to filter entities according pagination configuration data.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -834,10 +874,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + fieldName, (Date) filterValue);
                         }
 
-                      // Value which is a list should be in field value 
+                        // Value, which is a list, should be in field value (list)
                     } else if ("listInList".equals(condition)) {
                         this.addListInListCreterion(queryBuilder, filterValue, fieldName);
-                     // Value is in field value (list)
+
+                        // Value is in field value (list)
                     } else if ("list".equals(condition)) {
                         String paramName = queryBuilder.convertFieldToParam(fieldName);
                         queryBuilder.addSqlCriterion(":" + paramName + " in elements(a." + fieldName + ")", paramName, filterValue);
@@ -990,7 +1031,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         // Just like wildcardOr but ignoring case :
                     } else if (SEARCH_WILDCARD_OR_IGNORE_CAS.equals(condition)) {
                         queryBuilder.startOrClause();
-                        for (String field : fields) {  // since SEARCH_WILDCARD_OR_IGNORE_CAS , then filterValue is necessary a String
+                        for (String field : fields) { // since SEARCH_WILDCARD_OR_IGNORE_CAS , then filterValue is necessary a String
                             queryBuilder.addSql("lower(a." + field + ") like '%" + String.valueOf(filterValue).toLowerCase() + "%'");
                         }
                         queryBuilder.endOrClause();
@@ -1084,6 +1125,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     /**
      * add a creterion to check if all filterValue (Array) elements are elements of the fieldName (Array)
+     * 
      * @param queryBuilder
      * @param filterValue
      * @param fieldName
@@ -1091,21 +1133,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     private void addListInListCreterion(QueryBuilder queryBuilder, Object filterValue, String fieldName) {
         String paramName = queryBuilder.convertFieldToParam(fieldName);
         if (filterValue.getClass().isArray()) {
-            Object [] values = (Object []) filterValue;
-            IntStream.range(0, values.length).forEach(idx -> queryBuilder.addSqlCriterion(":" + paramName + idx + " in elements(a." + fieldName + ")", paramName + idx, values[idx]));
+            Object[] values = (Object[]) filterValue;
+            IntStream.range(0, values.length)
+                .forEach(idx -> queryBuilder.addSqlCriterion(":" + paramName + idx + " in elements(a." + fieldName + ")", paramName + idx, values[idx]));
         }
-    }
-
-    protected boolean isConversationScoped() {
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                return true;
-            } catch (Exception e) {
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -1117,13 +1148,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
         }
-    }
-
-    /**
-     * Flush data to DB. NOTE: unlike the name suggest, no transaction commit is done
-     */
-    public void commit() {
-        getEntityManager().flush();
     }
 
     /**
@@ -1170,83 +1194,83 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         return aliasToValueMapList;
     }
-    
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public void remove(Class parentClass, Object parentId) {
-		Field idField = getIdField(parentClass);
-		if (idField != null) {
-			List<Field> oneToManyFields = getOneToManyFields(parentClass);
-			for (Field field : oneToManyFields) {
-				Class childClass = getFirstActualTypeArgument(field);
-				if (childClass != null) {
-					Field manyToOneField = getManyToOneField(childClass, parentClass);
-					Field childClassIdField = getIdField(childClass);
-					if (manyToOneField != null && childClassIdField != null) {
-						List<Long> childIds = getEntityManager().createQuery(String.format("select c.%s from %s c where c.%s.%s = :pid", childClassIdField.getName(),
-								childClass.getSimpleName(), manyToOneField.getName(), idField.getName())).setParameter("pid", parentId).getResultList();
-						for (Long childId : childIds) {
-							getEntityManager().createQuery(String.format("delete from %s c where c.%s = :id", childClass.getSimpleName(), childClassIdField.getName()))
-									.setParameter("id", childId).executeUpdate();
-						}
-					}
-				}
-			}
-			getEntityManager().createQuery(String.format("delete from %s e where e.%s = :id", parentClass.getSimpleName(), idField.getName())).setParameter("id", parentId)
-					.executeUpdate();
-		}
-	}
+    @Override
+    public void remove(Class parentClass, Object parentId) {
+        Field idField = getIdField(parentClass);
+        if (idField != null) {
+            List<Field> oneToManyFields = getOneToManyFields(parentClass);
+            for (Field field : oneToManyFields) {
+                Class childClass = getFirstActualTypeArgument(field);
+                if (childClass != null) {
+                    Field manyToOneField = getManyToOneField(childClass, parentClass);
+                    Field childClassIdField = getIdField(childClass);
+                    if (manyToOneField != null && childClassIdField != null) {
+                        List<Long> childIds = getEntityManager().createQuery(String.format("select c.%s from %s c where c.%s.%s = :pid", childClassIdField.getName(),
+                            childClass.getSimpleName(), manyToOneField.getName(), idField.getName())).setParameter("pid", parentId).getResultList();
+                        for (Long childId : childIds) {
+                            getEntityManager().createQuery(String.format("delete from %s c where c.%s = :id", childClass.getSimpleName(), childClassIdField.getName()))
+                                .setParameter("id", childId).executeUpdate();
+                        }
+                    }
+                }
+            }
+            getEntityManager().createQuery(String.format("delete from %s e where e.%s = :id", parentClass.getSimpleName(), idField.getName())).setParameter("id", parentId)
+                .executeUpdate();
+        }
+    }
 
-	@SuppressWarnings("rawtypes")
-	private Class getFirstActualTypeArgument(Field field) {
-		Type genericType = field.getGenericType();
-		if (genericType instanceof ParameterizedType) {
-			ParameterizedType parameterizedType = (ParameterizedType) genericType;
-			Type[] typeArguments = parameterizedType.getActualTypeArguments();
-			if (typeArguments.length > 0) {
-				return (Class<?>) typeArguments[0];
-			}
-		}
-		return null;
-	}
+    @SuppressWarnings("rawtypes")
+    private Class getFirstActualTypeArgument(Field field) {
+        Type genericType = field.getGenericType();
+        if (genericType instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) genericType;
+            Type[] typeArguments = parameterizedType.getActualTypeArguments();
+            if (typeArguments.length > 0) {
+                return (Class<?>) typeArguments[0];
+            }
+        }
+        return null;
+    }
 
-	@SuppressWarnings("rawtypes")
-	private Field getManyToOneField(Class clazz, Class parentClass) {
-		Field[] declaredFields = clazz.getDeclaredFields();
-		for (Field field : declaredFields) {
-			if (field.isAnnotationPresent(ManyToOne.class)) {
-				Class<?> type = field.getType();
-				if (parentClass.equals(type)) {
-					return field;
-				}
-			}
-		}
-		return null;
-	}
+    @SuppressWarnings("rawtypes")
+    private Field getManyToOneField(Class clazz, Class parentClass) {
+        Field[] declaredFields = clazz.getDeclaredFields();
+        for (Field field : declaredFields) {
+            if (field.isAnnotationPresent(ManyToOne.class)) {
+                Class<?> type = field.getType();
+                if (parentClass.equals(type)) {
+                    return field;
+                }
+            }
+        }
+        return null;
+    }
 
-	@SuppressWarnings("rawtypes")
-	private Field getIdField(Class clazz) {
-		Field[] declaredFields = clazz.getDeclaredFields();
-		for (Field field : declaredFields) {
-			if (field.isAnnotationPresent(Id.class)) {
-				return field;
-			}
-		}
-		return null;
-	}
+    @SuppressWarnings("rawtypes")
+    private Field getIdField(Class clazz) {
+        Field[] declaredFields = clazz.getDeclaredFields();
+        for (Field field : declaredFields) {
+            if (field.isAnnotationPresent(Id.class)) {
+                return field;
+            }
+        }
+        return null;
+    }
 
-	@SuppressWarnings("rawtypes")
-	private List<Field> getOneToManyFields(Class clazz) {
-		List<Field> fields = new LinkedList<>();
-		Field[] declaredFields = clazz.getDeclaredFields();
-		for (Field field : declaredFields) {
-			if (field.isAnnotationPresent(OneToMany.class)) {
-				fields.add(field);
-			}
-		}
-		return fields;
-	}
-    
+    @SuppressWarnings("rawtypes")
+    private List<Field> getOneToManyFields(Class clazz) {
+        List<Field> fields = new LinkedList<>();
+        Field[] declaredFields = clazz.getDeclaredFields();
+        for (Field field : declaredFields) {
+            if (field.isAnnotationPresent(OneToMany.class)) {
+                fields.add(field);
+            }
+        }
+        return fields;
+    }
+
     /**
      * Find entities that reference a given class and ID. Used when deleting entities to determine what FK constraints are preventing to remove a given entity
      * 
@@ -1301,5 +1325,23 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         return matchedEntityInfo;
+    }
+
+    /**
+     * Get a list of entities from a named query
+     * 
+     * @param queryName Named query name
+     * @param parameters A list of parameters in a form or parameter name, value, parameter name, value,..
+     * @return A list of entities
+     */
+    public List<E> listByNamedQuery(String queryName, Object... parameters) {
+
+        TypedQuery<E> query = getEntityManager().createNamedQuery(queryName, entityClass);
+
+        for (int i = 0; i < parameters.length; i = i + 2) {
+            query.setParameter((String) parameters[i], parameters[i + 1]);
+        }
+
+        return query.getResultList();
     }
 }

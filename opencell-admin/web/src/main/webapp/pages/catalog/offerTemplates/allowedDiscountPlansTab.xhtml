@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui"
+      xmlns:of="http://omnifaces.org/functions" xmlns:hftl="http://hftl.org">
+
+<ui:composition>
+
+    <c:set var="mainBackingBean" value="#{backingBean}" />
+    <c:set var="mainFormId" value="#{formId}" />
+
+    <hftl:entityPopup id="searchDiscountPlanPopup" header="#{messages['discountPlan.title']}"
+                      updateField="${mainFormId}:tabView:allowedDiscountPlanCode ${mainFormId}:tabView:allowedDiscountPlanCode_text" selection="#{mainBackingBean.allowedDiscountPlan}"
+                      backingBean="#{discountPlanBean}" width="1000" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['businessEntity.description']}"
+                      searchField2="description" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"/>
+
+    <p:dataTable id="allowedDiscountPlans" var="entity" value="#{mainBackingBean.entity.allowedDiscountPlans}" rows="20" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex" resizableColumns="true"
+                 paginator="true" rowsPerPageTemplate="10,15,20,50" reflow="true" paginatorAlwaysVisible="false"
+                 paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+        <hftl:column label="#{messages['BusinessEntity.code']}" field="code" backingBean="#{discountPlanListBean}" isList="false" valueIdField="id" entityView="discountPlanDetail"/>
+        <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
+        <hftl:column label="#{messages['discountPlanItem.startDate']}" field="startDate" isDate="true" />
+        <hftl:column label="#{messages['discountPlanItem.endDate']}" field="endDate" isDate="true" />
+        <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
+
+        <p:column styleClass="actions-column" rendered="#{mainBackingBean.edit}">
+            <f:facet name="header">
+                <h:outputText value="#{messages['commons.actions']}" />
+            </f:facet>
+            <p:commandButton update="#{mainFormId}:messages #{mainFormId}:tabView:allowedDiscountPlansMessages #{mainFormId}:tabView:allowedDiscountPlanDetails"
+                             action="#{mainBackingBean.editAllowedDiscountPlan(entity)}" icon="ui-icon-document" process="@this" />
+            <p:commandButton action="#{mainBackingBean.deleteAllowedDiscountPlan(entity)}" rendered="#{mainBackingBean.edit and mainBackingBean.canUserUpdateEntity()}" icon="ui-icon-trash"
+                             update="#{mainFormId}:messages #{mainFormId}:tabView:allowedDiscountPlansMessages #{mainFormId}:tabView:allowedDiscountPlanDetails #{mainFormId}:tabView:allowedDiscountPlans" process="@this" />
+        </p:column>
+        <f:facet name="footer">
+            <p:commandButton value="#{messages['commons.addNew']}" action="#{offerTemplateBean.newAllowedDiscountPlan()}"
+                             update="#{mainFormId}:messages #{mainFormId}:tabView:allowedDiscountPlansMessages #{mainFormId}:tabView:allowedDiscountPlanDetails" rendered="#{mainBackingBean.edit}" process="@this" />
+        </f:facet>
+    </p:dataTable>
+
+
+
+        <p:messages id="allowedDiscountPlansMessages" redisplay="false" />
+
+       <h:panelGroup id="allowedDiscountPlanDetails">
+
+           <p:separator rendered="#{mainBackingBean.allowedDiscountPlan!=null}" />
+
+           <p:panel header="#{messages['offerTemplate.allowedDiscountPlan']}" rendered="#{mainBackingBean.allowedDiscountPlan!=null}">
+
+               <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
+
+                   <hftl:formField entity="#{mainBackingBean}" label="#{messages['discountPlan.title']}" id="allowedDiscountPlanCode" field="allowedDiscountPlan"
+                                   valueLabelField="code" popup="true" popupId="searchDiscountPlanPopup" required="true"
+                                   disabled="#{!mainBackingBean.allowedDiscountPlan.transient}" />
+
+                   <h:panelGroup layout="block" styleClass="form-panel-actions">
+                       <p:commandButton value="#{messages[mainBackingBean.allowedDiscountPlan.id==null?'action.addSave':'action.update']}"
+                                        action="#{mainBackingBean.saveAllowedDiscountPlan()}"
+                                        update="allowedDiscountPlansMessages ${mainFormId}:tabView:allowedDiscountPlans ${mainFormId}:tabView:allowedDiscountPlanDetails"
+                                        rendered="#{mainBackingBean.edit and mainBackingBean.canUserUpdateEntity()}" process="allowedDiscountPlanDetails" />
+
+                       <p:commandButton value="#{messages['action.cancel']}" action="#{mainBackingBean.cancelAllowedDiscountPlanEdit}"
+                                        update="allowedDiscountPlansMessages ${mainFormId}:tabView:allowedDiscountPlans ${mainFormId}:tabView:allowedDiscountPlanDetails" rendered="#{mainBackingBean.edit}"
+                                        process="@this" />
+                   </h:panelGroup>
+               </p:outputPanel>
+
+           </p:panel>
+       </h:panelGroup>
+</ui:composition>
+</html>

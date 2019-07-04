@@ -27,18 +27,18 @@ import javax.persistence.ManyToOne;
 @Entity
 @DiscriminatorValue(value = "JOB_EXECUTION")
 public class JobExecutionHisto extends JobHistory {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "job_id")
-	private Job job;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_id")
+    private Job job;
 
-	public Job getJob() {
-		return job;
-	}
+    public Job getJob() {
+        return job;
+    }
 
-	public void setJob(Job job) {
-		this.job = job;
-	}
+    public void setJob(Job job) {
+        this.job = job;
+    }
 
 }

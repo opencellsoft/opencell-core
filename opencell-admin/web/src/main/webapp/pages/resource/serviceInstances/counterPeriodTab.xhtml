@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags">
+
+    <hftl:formPanel formId="counterAccountInfo" backingBean="#{serviceInstanceBean}" showFormButtons="false" edit="false" showMessages="false">
+        <hftl:formField label="#{messages['businessEntity.code']}" field="code"/>
+        <hftl:formField label="#{messages['billingAccount.status']}" field="status"/>
+        <hftl:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate"/>
+        <hftl:formField id="customerAccountSelectId" label="#{messages['billingAccount.customerAccount']}" field="subscription.userAccount.customerAccount" valueLabelField="code"/>
+        <hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate"/>
+        <hftl:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate"/>
+    </hftl:formPanel>
+
+    <hftl:decorateFormPanel formId="counters" edit="false" showMessages="false">
+        <ui:define name="fields">
+            <hftl:decorateFormField fieldId="counterPeriod" label="#{messages['counterInstance.title']}">
+                <p:selectOneMenu id="counterPeriod" converter="omnifaces.SelectItemsConverter" value="#{serviceInstanceBean.selectedCounterInstance}">
+                    <f:selectItem itemLabel="#{messages['commons.select']}"/>
+                    <f:selectItems value="#{serviceInstanceBean.entity.counters}" var="item" itemLabel="#{item.code} - #{item.description}"/>
+                    <p:ajax event="valueChange" update="@form"/>
+                </p:selectOneMenu>
+            </hftl:decorateFormField>
+
+            <p:dataTable id="datatable_counters" var="entity" lazy="true" paginator="true" resizableColumns="true" reflow="true"
+                         value="#{counterPeriodBean.getCounterPeriods(serviceInstanceBean.selectedCounterInstance)}" rows="10" rowKey="#{entity.id}"
+                         styleClass="custom-grid" sortBy="#{entity.periodStartDate}" sortOrder="DESCENDING">
+
+                 <hftl:column label="#{messages['counterTemplate.counterType']}" field="counterType.label" isMessage="true"/>
+                <hftl:column label="#{messages['counterPeriod.periodStartDate']}" field="periodStartDate" isDate="true"/>
+                <hftl:column label="#{messages['counterPeriod.periodEndDate']}" field="periodEndDate" isDate="true"/>
+                <hftl:column label="#{messages['counterPeriod.level']}" field="level" converterParam="4digits" wrapHeader="true"/>
+                <hftl:column label="#{messages['counterPeriod.value']}" field="value" converterParam="4digits" wrapHeader="true"/>
+            </p:dataTable>
+        </ui:define>
+    </hftl:decorateFormPanel>
+</ui:composition>

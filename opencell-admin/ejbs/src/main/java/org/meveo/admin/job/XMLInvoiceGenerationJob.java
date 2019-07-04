@@ -18,6 +18,8 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class XMLInvoiceGenerationJob generate XML for all valid invoices that dont have it..
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class XMLInvoiceGenerationJob extends Job {
@@ -41,26 +43,46 @@ public class XMLInvoiceGenerationJob extends Job {
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
+        
+        final String APPLIES_TO = "JobInstance_XMLInvoiceGenerationJob";
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("nbRuns");
-        customFieldNbRuns.setAppliesTo("JOB_XMLInvoiceGenerationJob");
+        customFieldNbRuns.setAppliesTo(APPLIES_TO);
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setValueRequired(false);
-        customFieldNbRuns.setDefaultValue("1");
+        customFieldNbRuns.setDefaultValue("-1");
         result.put("nbRuns", customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("waitingMillis");
-        customFieldNbWaiting.setAppliesTo("JOB_XMLInvoiceGenerationJob");
+        customFieldNbWaiting.setAppliesTo(APPLIES_TO);
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbWaiting.setValueRequired(false);
         customFieldNbWaiting.setDefaultValue("0");
         result.put("waitingMillis", customFieldNbWaiting);
+        
+        CustomFieldTemplate customFieldInvToProcess = new CustomFieldTemplate();
+		final String cfInvToProcessCode = "invoicesToProcess";
+		
+		Map<String, String> invoicesToProcessValues = new HashMap<String, String>();
+		invoicesToProcessValues.put(InvoicesToProcessEnum.FinalOnly.name(), InvoicesToProcessEnum.FinalOnly.name());
+		invoicesToProcessValues.put(InvoicesToProcessEnum.DraftOnly.name(), InvoicesToProcessEnum.DraftOnly.name());
+		invoicesToProcessValues.put(InvoicesToProcessEnum.All.name(), InvoicesToProcessEnum.All.name());
+		
+		customFieldInvToProcess.setCode(cfInvToProcessCode);
+		customFieldInvToProcess.setAppliesTo(APPLIES_TO);
+		customFieldInvToProcess.setActive(true);
+		customFieldInvToProcess.setDefaultValue(InvoicesToProcessEnum.FinalOnly.name());
+		customFieldInvToProcess.setDescription(resourceMessages.getString("InvoicesToProcessEnum.label"));
+		customFieldInvToProcess.setFieldType(CustomFieldTypeEnum.LIST);
+		customFieldInvToProcess.setValueRequired(true);
+		customFieldInvToProcess.setListValues(invoicesToProcessValues);
+		result.put(cfInvToProcessCode, customFieldInvToProcess);
 
         return result;
     }

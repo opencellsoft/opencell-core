@@ -21,22 +21,47 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Tax;
 import org.meveo.service.base.BusinessService;
 
 /**
- * Tax service implementation.
+ * Tax service implementation
  */
 @Stateless
 public class TaxService extends BusinessService<Tax> {
 
+    /**
+     * Get a number of Taxes not associated to any invoice subcategory
+     * 
+     * @return A number of Taxes
+     */
     public int getNbTaxesNotAssociated() {
-        return ((Long) getEntityManager().createNamedQuery("tax.getNbTaxesNotAssociated", Long.class).getSingleResult()).intValue();
+        return getEntityManager().createNamedQuery("Tax.getNbTaxesNotAssociated", Long.class).getSingleResult().intValue();
     }
 
+    /**
+     * Get a list of Taxes not associated to any invoice subcategory
+     * 
+     * @return A list of Tax entities
+     */
     public List<Tax> getTaxesNotAssociated() {
-        return (List<Tax>) getEntityManager().createNamedQuery("tax.getTaxesNotAssociated", Tax.class).getResultList();
+        return getEntityManager().createNamedQuery("Tax.getTaxesNotAssociated", Tax.class).getResultList();
     }
 
+    /**
+     * Find a tax with ZERO percent
+     * 
+     * @return A tax with zero percent
+     * @throws BusinessException When no tax with ZERO % was found.
+     */
+    public Tax getZeroTax() throws BusinessException {
+        try {
+            return getEntityManager().createNamedQuery("Tax.getZeroTax", Tax.class).setMaxResults(1).getSingleResult();
+        } catch (NoResultException e) {
+            throw new BusinessException("No tax defined with ZERO %");
+        }
+    }
 }

@@ -53,8 +53,9 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
     /** The payment label. */
     private String paymentLabel;
 
-    /** The due date days. */
-    private Integer dueDateDays;
+
+    /** The payment day in month. */
+    private Integer paymentDayInMonth;
 
     /** The service template code. */
     private String serviceTemplateCode;
@@ -70,19 +71,24 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
 
     /** The advance payment invoice sub category code. */
     private String advancePaymentInvoiceSubCategoryCode;
-    
+
     /** The apply agreement. */
     private Boolean applyAgreement = false;
 
+    /** The amount el. */
+    private String amountEl;
+
+    /** The filter el. */
+    private String filterEl;
+
     /** The custom fields. */
     private CustomFieldsDto customFields;
-    
-    
+
     /**
      * Instantiates a new payment schedule template dto.
      */
     public PaymentScheduleTemplateDto() {
-        
+
     }
 
     /**
@@ -100,13 +106,15 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         this.code = paymentScheduleTemplate.getCode();
         this.description = paymentScheduleTemplate.getDescription();
         this.amount = paymentScheduleTemplate.getAmount();
-        this.dueDateDays = paymentScheduleTemplate.getDueDateDays();
+        this.paymentDayInMonth = paymentScheduleTemplate.getPaymentDayInMonth();
         this.id = paymentScheduleTemplate.getId();
         this.paymentLabel = paymentScheduleTemplate.getPaymentLabel();
         this.serviceTemplateCode = paymentScheduleTemplate.getServiceTemplate().getCode();
         this.doPayment = paymentScheduleTemplate.isDoPayment();
         this.generateAdvancePaymentInvoice = paymentScheduleTemplate.isGenerateAdvancePaymentInvoice();
         this.applyAgreement = paymentScheduleTemplate.isApplyAgreement();
+        this.amountEl = paymentScheduleTemplate.getAmountEl();
+        this.filterEl = paymentScheduleTemplate.getFilterEl();
         this.customFields = customFields;
     }
 
@@ -146,8 +154,6 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         this.amount = amount;
     }
 
-   
-
     /**
      * Gets the payment label.
      *
@@ -167,21 +173,21 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
     }
 
     /**
-     * Gets the due date days.
+     * Gets the payment day in month.
      *
-     * @return the dueDateDays
+     * @return the payment day in month
      */
-    public Integer getDueDateDays() {
-        return dueDateDays;
+    public Integer getPaymentDayInMonth() {
+        return paymentDayInMonth;
     }
 
     /**
-     * Sets the due date days.
+     * Sets the payment day in month.
      *
-     * @param dueDateDays the dueDateDays to set
+     * @param paymentDayInMonth the new payment day in month
      */
-    public void setDueDateDays(Integer dueDateDays) {
-        this.dueDateDays = dueDateDays;
+    public void setPaymentDayInMonth(Integer paymentDayInMonth) {
+        this.paymentDayInMonth = paymentDayInMonth;
     }
 
     /**
@@ -326,6 +332,42 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
      */
     public void setApplyAgreement(Boolean applyAgreement) {
         this.applyAgreement = applyAgreement;
+    }
+
+    /**
+     * Gets the amount el.
+     *
+     * @return the amountEl
+     */
+    public String getAmountEl() {
+        return amountEl;
+    }
+
+    /**
+     * Sets the amount el.
+     *
+     * @param amountEl the amountEl to set
+     */
+    public void setAmountEl(String amountEl) {
+        this.amountEl = amountEl;
+    }
+
+    /**
+     * Gets the filter el.
+     *
+     * @return the filterEl
+     */
+    public String getFilterEl() {
+        return filterEl;
+    }
+
+    /**
+     * Sets the filter el.
+     *
+     * @param filterEl the filterEl to set
+     */
+    public void setFilterEl(String filterEl) {
+        this.filterEl = filterEl;
     }
 
 }

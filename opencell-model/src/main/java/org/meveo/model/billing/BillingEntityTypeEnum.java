@@ -19,31 +19,27 @@
 package org.meveo.model.billing;
 
 public enum BillingEntityTypeEnum {
-    
-    BILLINGACCOUNT(1, "billingCycleType.billingaccount"), 
-    SUBSCRIPTION(2, "billingCycleType.subscription"), 
-    ORDER(3,"billingCycleType.order");
-   
 
-	private Integer id;
-	private String label;
- 
-	
-	private BillingEntityTypeEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
-	}
+    BILLINGACCOUNT(1, "billingCycleType.billingaccount"), SUBSCRIPTION(2, "billingCycleType.subscription"), ORDER(3, "billingCycleType.order");
 
-	public String getLabel() {
-		return label;
-	}
+    private Integer id;
+    private String label;
 
-	public Integer getId() {
-		return id;
-	}
+    private BillingEntityTypeEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
+    }
 
-	public String toString() {
-		return name();
-	}
+    public String getLabel() {
+        return label;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String toString() {
+        return name();
+    }
 
 }

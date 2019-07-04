@@ -4,6 +4,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
@@ -16,11 +17,15 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.rest.catalog.BusinessOfferModelRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.module.MeveoModule;
 
 /**
  * @author Edward P. Legaspi(edward.legaspi@manaty.net)
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferModelRs {
@@ -28,12 +33,18 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
     @Inject
     private MeveoModuleApi moduleApi;
 
+    @Inject
+    private OfferTemplateApi offerTemplateApi;
+
     @Override
     public ActionStatus create(BusinessOfferModelDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.create(postData);
+            MeveoModule meveoModule = moduleApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(meveoModule.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -91,7 +102,16 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.createOrUpdate(postData);
+            if (postData != null) {
+                if (postData.getOfferTemplate() != null) {
+                    if (offerTemplateApi.find(postData.getOfferTemplate().getCode(), null, null) != null) {
+                        MeveoModule meveoModule = moduleApi.createOrUpdate(postData);
+                        if (StringUtils.isBlank(postData.getCode())) {
+                            result.setEntityCode(meveoModule.getCode());
+                        }
+                    }
+                }
+            }
         } catch (Exception e) {
             processException(e, result);
         }

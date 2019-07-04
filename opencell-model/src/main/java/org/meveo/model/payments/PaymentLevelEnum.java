@@ -21,13 +21,13 @@ package org.meveo.model.payments;
 /**
  * Payment Level Enum.
  * 
- *  @author anasseh
- *  @lastModifiedVersion 5.2 
+ * @author anasseh
+ * @lastModifiedVersion 5.2
  */
 public enum PaymentLevelEnum {
 
     AO, CA;
-    
+
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();
     }

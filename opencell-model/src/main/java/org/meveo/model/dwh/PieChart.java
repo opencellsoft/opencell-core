@@ -9,41 +9,73 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 
+/**
+ * Pie type chart
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "dwh_chart_pie")
 public class PieChart extends Chart {
 
     private static final long serialVersionUID = -3549868233998052477L;
 
-    @Type(type="numeric_boolean")
+    /**
+     * Is it filled
+     */
+    @Type(type = "numeric_boolean")
     @Column(name = "filled")
     private boolean filled;
 
+    /**
+     * Legend position
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "legend_position")
     private LegendPositionEnum legendPosition;
 
+    /**
+     * Series colors
+     */
     @Column(name = "series_colors", length = 1000)
     @Size(max = 1000)
     private String seriesColors = "1b788f";
 
+    /**
+     * Diameter
+     */
     @Column(name = "diameter")
     private Integer diameter;
 
+    /**
+     * Slice margin
+     */
     @Column(name = "slice_margin")
     private int sliceMargin;
 
-    @Type(type="numeric_boolean")
+    /**
+     * Show shadow
+     */
+    @Type(type = "numeric_boolean")
     @Column(name = "shadow")
     private boolean shadow = true;
 
-    @Type(type="numeric_boolean")
+    /**
+     * Show data labels
+     */
+    @Type(type = "numeric_boolean")
     @Column(name = "show_data_labels")
     private boolean showDataLabels;
 
+    /**
+     * Number of legend columns
+     */
     @Column(name = "legend_cols")
     private int legendCols;
 
+    /**
+     * Number of legend rows
+     */
     @Column(name = "legend_rows")
     private int legendRows;
 

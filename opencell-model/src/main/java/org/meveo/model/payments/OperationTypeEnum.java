@@ -20,10 +20,7 @@ package org.meveo.model.payments;
 
 public enum OperationTypeEnum {
 
-    P(1, "OperationTypeEnum.p"),
-    I(2, "OperationTypeEnum.i"),
-    R(3, "OperationTypeEnum.r"),
-    O(4, "OperationTypeEnum.o");
+    P(1, "OperationTypeEnum.p"), I(2, "OperationTypeEnum.i"), R(3, "OperationTypeEnum.r"), O(4, "OperationTypeEnum.o");
 
     private String label;
     private Integer id;

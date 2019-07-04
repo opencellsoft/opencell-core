@@ -20,10 +20,13 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -34,10 +37,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -50,27 +56,45 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.Email;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IDiscountable;
+import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
+import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 
 /**
  * Subscription
+ * 
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Mounir BAHIJE
+ * @author Khalid HORRI
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
+@WorkflowedEntity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "SUB")
+@CustomFieldEntity(cftCodePrefix = "Subscription", inheritCFValuesFrom = { "offer", "userAccount" })
 @ExportIdentifier({ "code" })
 @Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -80,26 +104,42 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
-public class Subscription extends BusinessCFEntity implements IBillableEntity {
+public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable,ICounterEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Offer subscribed to
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_id")
     private OfferTemplate offer;
 
+    /**
+     * Subscription status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
+    @AuditTarget(type = AuditChangeTypeEnum.STATUS, history = true, notif = true)
     private SubscriptionStatusEnum status = SubscriptionStatusEnum.CREATED;
 
+    /**
+     * Last status change timestamp
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
     private Date statusDate = new Date();
 
+    /**
+     * Timestamp when subscribed
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
     private Date subscriptionDate = new Date();
 
+    /**
+     * Subscription termination date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "termination_date")
     private Date terminationDate;
@@ -111,43 +151,78 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @Column(name = "subscribed_till_date")
     private Date subscribedTillDate;
 
+    /**
+     * Services subscribed to
+     */
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<ServiceInstance> serviceInstances = new ArrayList<>();
 
+    /**
+     * Products subscribed to
+     */
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<ProductInstance> productInstances = new ArrayList<>();
 
+    /**
+     * Child access points
+     */
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<Access> accessPoints = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EDR> edrs = new ArrayList<>();
 
+    /**
+     * Parent User account
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id", nullable = false)
     @NotNull
     private UserAccount userAccount;
 
+    /**
+     * Account operations associated with a Subscription
+     */
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AccountOperation> accountOperations = new ArrayList<>();
+
+    /**
+     * End agreement date
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_agrement_date")
     private Date endAgreementDate;
 
+    /**
+     * Subscription termination reason
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_termin_reason_id")
     private SubscriptionTerminationReason subscriptionTerminationReason;
 
+    /**
+     * Deprecated in 5.3 for not use
+     */
+    @Deprecated
     @Type(type = "numeric_boolean")
     @Column(name = "default_level")
     private Boolean defaultLevel = true;
-    
+
+    /**
+     * If true, end of agreement date will be extended automatically till subscribedTillDate field
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
+    /**
+     * Subscription renewal configuration
+     */
     @Embedded
+    @AuditTarget(type = AuditChangeTypeEnum.RENEWAL, history = true, notif = true)
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
 
     /**
@@ -171,38 +246,152 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @Column(name = "renewal_notified_date")
     private Date renewalNotifiedDate;
 
+    /**
+     * Expression to determine minimum amount value
+     */
     @Column(name = "minimum_amount_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountEl;
 
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
-    
+
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    @Column(name = "minimum_amount_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    @Column(name = "minimum_label_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelElSpark;
+
+    /**
+     * Optional billing cycle for invoicing by subscription
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle")
     private BillingCycle billingCycle;
-    
+
+    /**
+     * Last billing run that invoiced this subscription
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
-    
+
+    /**
+     * Seller that offered products/services to subscribe to
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
+    /**
+     * String value matched in the usageRatingJob to group the EDRs for rating.
+     */
+    @Column(name = "rating_group", length = 50)
+    private String ratingGroup;
+
+    /**
+     * Instance of discount plans.
+     */
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<DiscountPlanInstance> discountPlanInstances;
+
+    /**
+     * Applicable discount plan. Replaced by discountPlanInstances. Now used only in GUI.
+     */
+    @Transient
+    private DiscountPlan discountPlan;
+
+    /**
+     * List of dunning docs accociated with this subcription
+     */
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    private List<DunningDocument> dunningDocuments;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "email_template_id")
+    private EmailTemplate emailTemplate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mailing_type")
+    private MailingTypeEnum mailingType;
+
+    @Column(name = "cced_emails", length = 2000)
+    @Size(max = 2000)
+    private String ccedEmails;
+
+    @Column(name = "email", length = 255)
+    @Email
+    @Size(max = 255)
+    private String email;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "electronic_billing")
+    private boolean electronicBilling;
+
+    /**
+     * Counter instances
+     */
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
+    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+
+    /**
+     * Extra Rated transactions to reach minimum invoice amount per subscription
+     */
     @Transient
     private List<RatedTransaction> minRatedTransactions;
-    
+
+    /**
+     * Total invoicing amount without tax
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountWithoutTax;
-    
+    private BigDecimal totalInvoicingAmountWithoutTax;
+
+    /**
+     * Total invoicing amount with tax
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountWithTax;
-    
+    private BigDecimal totalInvoicingAmountWithTax;
+
+    /**
+     * Total invoicing tax amount
+     */
     @Transient
-	private BigDecimal totalInvoicingAmountTax;
+    private BigDecimal totalInvoicingAmountTax;
+
+    /**
+     * Initial subscription renewal configuration
+     */
+    @Column(name = "initial_renewal", columnDefinition = "text")
+    private String initialSubscriptionRenewal;
     
+    /**
+     * This method is called implicitly by hibernate, used to enable
+	 * encryption for custom fields of this entity
+     */
+    @PrePersist
+	@PreUpdate
+	public void preUpdate() {
+		if (cfValues != null) {
+			cfValues.setEncrypted(true);
+		}
+		if (cfAccumulatedValues != null) {
+			cfAccumulatedValues.setEncrypted(true);
+		}
+	}
+
     public Date getEndAgreementDate() {
         return endAgreementDate;
     }
@@ -304,7 +493,28 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { offer, seller, userAccount };
+
+        ICustomFieldEntity[] parents = new ICustomFieldEntity[3];
+        int count = 0;
+        if (offer != null) {
+            parents[count] = offer;
+            count++;
+        }
+        if (seller != null) {
+            parents[count] = seller;
+            count++;
+        }
+        if (userAccount != null) {
+            parents[count] = userAccount;
+            count++;
+        }
+        if (count == 0) {
+            return null;
+        } else if (count == 3) {
+            return parents;
+        } else {
+            return Arrays.copyOfRange(parents, 0, count);
+        }
     }
 
     /**
@@ -379,22 +589,62 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         this.notifyOfRenewalDate = notifyOfRenewalDate;
     }
 
+    /**
+     * @return Expression to determine minimum amount value
+     */
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
 
+    /**
+     * @param minimumAmountEl Expression to determine minimum amount value
+     */
     public void setMinimumAmountEl(String minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
 
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value
+     */
     public String getMinimumLabelEl() {
         return minimumLabelEl;
     }
 
+    /**
+     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
+     */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
-    
+
+    /**
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
+
+    /**
+     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
+    }
+
     public BillingCycle getBillingCycle() {
         return billingCycle;
     }
@@ -428,48 +678,53 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
         return subscribedTillDate != null && DateUtils.setTimeToZero(subscribedTillDate).compareTo(DateUtils.setTimeToZero(new Date())) <= 0;
     }
-    
+
     /**
      * Auto update end of engagement date.
      */
     public void autoUpdateEndOfEngagementDate() {
-        if (BooleanUtils.isTrue(this.autoEndOfEngagement)) {
+        if (this.status != SubscriptionStatusEnum.RESILIATED && !this.isToBeTerminatedWithFutureDate() && BooleanUtils.isTrue(this.autoEndOfEngagement)) {
             this.setEndAgreementDate(this.subscribedTillDate);
-        } 
+        }
+    }
+
+    private boolean isToBeTerminatedWithFutureDate() {
+        return this.subscriptionRenewal.getTerminationReason() != null && !this.subscriptionRenewal.isAutoRenew() && this.subscribedTillDate != null
+                && subscriptionRenewal.getEndOfTermAction() == EndOfTermActionEnum.TERMINATE;
     }
 
     /**
      * Update subscribedTillDate field in subscription while it was not renewed yet. Also calculate Notify of renewal date
      */
-	public void updateSubscribedTillAndRenewalNotifyDates() {
-		if (isRenewed()) {
-			return;
-		}
-		if (getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
-			if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
-				if (getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
-					getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
-				}
-				Calendar calendar = new GregorianCalendar();
-				calendar.setTime(getSubscriptionDate());
-				calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
-				setSubscribedTillDate(calendar.getTime());
+    public void updateSubscribedTillAndRenewalNotifyDates() {
+        if (isRenewed()) {
+            return;
+        }
+        if (getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
+            if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
+                if (getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
+                    getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
+                }
+                Calendar calendar = new GregorianCalendar();
+                calendar.setTime(getSubscriptionDate());
+                calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
+                setSubscribedTillDate(calendar.getTime());
 
-			} else {
-				setSubscribedTillDate(null);
-			}
-		}
+            } else {
+                setSubscribedTillDate(null);
+            }
+        }
 
-		if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
-			Calendar calendar = new GregorianCalendar();
-			calendar.setTime(getSubscribedTillDate());
-			calendar.add(Calendar.DAY_OF_MONTH, getSubscriptionRenewal().getDaysNotifyRenewal() * (-1));
-			setNotifyOfRenewalDate(calendar.getTime());
-		} else {
-			setNotifyOfRenewalDate(null);
-		}
-		this.autoUpdateEndOfEngagementDate();
-	} 
+        if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(getSubscribedTillDate());
+            calendar.add(Calendar.DAY_OF_MONTH, getSubscriptionRenewal().getDaysNotifyRenewal() * (-1));
+            setNotifyOfRenewalDate(calendar.getTime());
+        } else {
+            setNotifyOfRenewalDate(null);
+        }
+        this.autoUpdateEndOfEngagementDate();
+    }
 
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
         if (getSubscribedTillDate() != null && isRenewed()) {
@@ -477,7 +732,34 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         }
 
     }
-    
+
+    /**
+     * create AutoRenewDate
+     */
+    public void createAutoRenewDate() {
+        SubscriptionRenewal subscriptionRenewal = this.getSubscriptionRenewal();
+        if (subscriptionRenewal != null) {
+            subscriptionRenewal.setAutoRenewDate(new Date());
+        }
+    }
+
+    /**
+     * update AutoRenewDate when AutoRenew change
+     *
+     * @param subscriptionOld
+     */
+    public void updateAutoRenewDate(Subscription subscriptionOld) {
+        SubscriptionRenewal subscriptionRenewalOld = subscriptionOld.getSubscriptionRenewal();
+        SubscriptionRenewal subscriptionRenewalNew = this.getSubscriptionRenewal();
+        boolean autoRenewOld = subscriptionRenewalOld.isAutoRenew();
+        boolean autoRenewNew = subscriptionRenewalNew.isAutoRenew();
+        if (autoRenewOld != autoRenewNew) {
+            if (subscriptionRenewalNew != null) {
+                subscriptionRenewalNew.setAutoRenewDate(new Date());
+            }
+        }
+    }
+
     public BillingRun getBillingRun() {
         return billingRun;
     }
@@ -485,39 +767,39 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     public void setBillingRun(BillingRun billingRun) {
         this.billingRun = billingRun;
     }
-    
-	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
-		minRatedTransactions = ratedTransactions;
-	}
 
-	public List<RatedTransaction> getMinRatedTransactions() {
-		return minRatedTransactions;
-	}
+    public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        minRatedTransactions = ratedTransactions;
+    }
 
-	public BigDecimal getTotalInvoicingAmountWithoutTax() {
-		return totalInvoicingAmountWithoutTax;
-	}
+    public List<RatedTransaction> getMinRatedTransactions() {
+        return minRatedTransactions;
+    }
 
-	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
-		this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
-	}
+    public BigDecimal getTotalInvoicingAmountWithoutTax() {
+        return totalInvoicingAmountWithoutTax;
+    }
 
-	public BigDecimal getTotalInvoicingAmountWithTax() {
-		return totalInvoicingAmountWithTax;
-	}
+    public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+        this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
+    }
 
-	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
-		this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
-	}
+    public BigDecimal getTotalInvoicingAmountWithTax() {
+        return totalInvoicingAmountWithTax;
+    }
 
-	public BigDecimal getTotalInvoicingAmountTax() {
-		return totalInvoicingAmountTax;
-	}
+    public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+        this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
+    }
 
-	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
-		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
-	}
-	
+    public BigDecimal getTotalInvoicingAmountTax() {
+        return totalInvoicingAmountTax;
+    }
+
+    public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+        this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+    }
+
     public Seller getSeller() {
         return seller;
     }
@@ -549,4 +831,179 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
 
+    public String getRatingGroup() {
+        return ratingGroup;
+    }
+
+    public void setRatingGroup(String ratingGroup) {
+        this.ratingGroup = ratingGroup;
+    }
+
+    public List<EDR> getEdrs() {
+        return edrs;
+    }
+
+    public void setEdrs(List<EDR> edrs) {
+        this.edrs = edrs;
+    }
+
+    public List<AccountOperation> getAccountOperations() {
+        return accountOperations;
+    }
+
+    public void setAccountOperations(List<AccountOperation> accountOperations) {
+        this.accountOperations = accountOperations;
+    }
+
+    /**
+     * Gets Email Template.
+     *
+     * @return Email Template.
+     */
+    public EmailTemplate getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    /**
+     * Sets Email template.
+     *
+     * @param emailTemplate the Email template.
+     */
+    public void setEmailTemplate(EmailTemplate emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    /**
+     * Gets Mailing Type.
+     *
+     * @return Mailing Type.
+     */
+    public MailingTypeEnum getMailingType() {
+        return mailingType;
+    }
+
+    /**
+     * Sets Mailing Type.
+     *
+     * @param mailingType mailing type
+     */
+    public void setMailingType(MailingTypeEnum mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    /**
+     * Gets cc Emails.
+     *
+     * @return cc Emails
+     */
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    /**
+     * Sets cc Emails.
+     *
+     * @param ccedEmails Cc Emails
+     */
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
+
+    /**
+     * Gets Email address.
+     *
+     * @return The Email address
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * Sets Email.
+     *
+     * @param email the Email address
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * Check id electronic billing is enabled.
+     *
+     * @return True if enabled, false else
+     */
+    public boolean getElectronicBilling() {
+        return electronicBilling;
+    }
+
+    /**
+     * Sets the electronic billing.
+     *
+     * @param electronicBilling True or False
+     */
+    public void setElectronicBilling(boolean electronicBilling) {
+        this.electronicBilling = electronicBilling;
+    }
+
+    public List<DiscountPlanInstance> getDiscountPlanInstances() {
+        return discountPlanInstances;
+    }
+
+    @Override
+    public List<DiscountPlanInstance> getAllDiscountPlanInstances() {
+        return this.getDiscountPlanInstances();
+    }
+
+    @Override
+    public void addDiscountPlanInstances(DiscountPlanInstance discountPlanInstance) {
+        if (this.getDiscountPlanInstances() == null) {
+            this.setDiscountPlanInstances(new ArrayList<>());
+        }
+        this.getDiscountPlanInstances().add(discountPlanInstance);
+    }
+
+    public void setDiscountPlanInstances(List<DiscountPlanInstance> discountPlanInstances) {
+        this.discountPlanInstances = discountPlanInstances;
+    }
+
+    public DiscountPlan getDiscountPlan() {
+        return discountPlan;
+    }
+
+    public void setDiscountPlan(DiscountPlan discountPlan) {
+        this.discountPlan = discountPlan;
+    }
+
+    /**
+     * Gets the initial subscription renewal
+     *
+     * @return the initial subscription renewal
+     */
+    public String getInitialSubscriptionRenewal() {
+        return initialSubscriptionRenewal;
+    }
+
+    /**
+     * Sets the initial subscription renewal.
+     *
+     * @param initialSubscriptionRenewal the new initial subscription renewal
+     */
+    public void setInitialSubscriptionRenewal(String initialSubscriptionRenewal) {
+        this.initialSubscriptionRenewal = initialSubscriptionRenewal;
+    }
+    /**
+     * Gets counters
+     * @return a map of counters
+     */
+    public Map<String, CounterInstance> getCounters() {
+        return counters;
+    }
+
+    /**
+     * Sets counters
+     * @param counters a map of counters
+     */
+    public void setCounters(Map<String, CounterInstance> counters) {
+        this.counters = counters;
+    }
 }

@@ -2,6 +2,8 @@ package org.meveo.model.dwh;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -23,6 +25,11 @@ import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 
+/**
+ * Measurable quantity
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ModuleItem
 @Cacheable
@@ -35,47 +42,81 @@ public class MeasurableQuantity extends EnableBusinessEntity {
 
     private static final long serialVersionUID = -4864192159320969937L;
 
+    /**
+     * Theme
+     */
     @Column(name = "theme", length = 255)
     @Size(max = 255)
     private String theme;
 
+    /**
+     * Measure dimension
+     */
     @Column(name = "dimension_1", length = 255)
     @Size(max = 255)
     private String dimension1;
 
+    /**
+     * Measure dimension
+     */
     @Column(name = "dimension_2", length = 255)
     @Size(max = 255)
     private String dimension2;
 
+    /**
+     * Measure dimension
+     */
     @Column(name = "dimension_3", length = 255)
     @Size(max = 255)
     private String dimension3;
 
+    /**
+     * Measure dimension
+     */
     @Column(name = "dimension_4", length = 255)
     @Size(max = 255)
     private String dimension4;
 
+    /**
+     * Are values editable
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "editable")
     private boolean editable;
 
+    /**
+     * Are values additive
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "additive")
-	private boolean additive;
-	/**
-	 * expect to return a list of (Date measureDate, Long value) that will be
-	 * used to create measuredValue. 
-	 */
-	@Column(name = "sql_query", columnDefinition = "text")
-	private String sqlQuery;
+    private boolean additive;
 
+    /**
+     * Sql clause to to return a list of (Date measureDate, Long value) that will be used to create measuredValue.
+     */
+    @Column(name = "sql_query", columnDefinition = "text")
+    private String sqlQuery;
+
+    /**
+     * Measure period
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "measurement_period")
     private MeasurementPeriodEnum measurementPeriod;
 
+    /**
+     * Last measure date
+     */
     @Column(name = "last_measure_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastMeasureDate;
+
+    /**
+     * Translated descriptions in JSON format with language code as a key and translated description as a value
+     */
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
 
     public String getTheme() {
         return theme;
@@ -147,6 +188,17 @@ public class MeasurableQuantity extends EnableBusinessEntity {
 
     public void setLastMeasureDate(Date lastMeasureDate) {
         this.lastMeasureDate = lastMeasureDate;
+    }
+
+    public Map<String, String> getDescriptionI18nNullSafe() {
+        if (descriptionI18n == null) {
+            descriptionI18n = new HashMap<>();
+        }
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
     }
 
     public Date getPreviousDate(Date date) {

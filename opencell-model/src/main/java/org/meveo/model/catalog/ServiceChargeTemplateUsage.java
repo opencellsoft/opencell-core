@@ -34,6 +34,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.ExportIdentifier;
 
+/**
+ * Service template to usage charge template mapping
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code" })
@@ -44,10 +49,16 @@ public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageCharg
 
     private static final long serialVersionUID = -6881449392209666474L;
 
+    /**
+     * Counter associated to a charge template
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counter_template_id")
     private CounterTemplate counterTemplate;
 
+    /**
+     * Prepaid wallet templates to charge on
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_serv_usage_wallet_template", joinColumns = @JoinColumn(name = "service_usage_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
     @OrderColumn(name = "INDX")

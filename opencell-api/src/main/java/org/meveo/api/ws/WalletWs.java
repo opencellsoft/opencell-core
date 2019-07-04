@@ -15,6 +15,7 @@ import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
+import org.meveo.api.dto.response.billing.RatedTransactionListResponseDto;
 import org.meveo.api.dto.response.billing.WalletBalanceResponseDto;
 
 /**
@@ -94,4 +95,22 @@ public interface WalletWs extends IBaseWs {
     @WebMethod
     FindWalletOperationsResponseDto findOperations(@Deprecated @WebParam(name = "findWalletOperations") FindWalletOperationsDto postData,
             @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+
+    /**
+     * Get a list of rated transactions.
+     *
+     * @param pagingAndFiltering Search and paging criteria. Pass "userAccountCode" as field option to retrieve associated User account's code.
+     * @return A list of Rated transactions
+     */
+    @WebMethod
+    RatedTransactionListResponseDto listRatedTransactions(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+
+    /**
+     * Call service to cancel one or many opened Rated Transactions according to the passed query, cancel an opened Rated Transaction is to set status to CANCELED.
+     * 
+     * @param pagingAndFiltering Search criteria
+     * @return ActionStatus with SUCESS or FAIL status inside
+     */
+    @WebMethod
+    ActionStatus cancelRatedTransactions(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 }

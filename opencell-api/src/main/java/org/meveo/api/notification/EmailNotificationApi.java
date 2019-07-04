@@ -16,6 +16,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.CounterTemplateService;
@@ -23,8 +24,12 @@ import org.meveo.service.notification.EmailNotificationService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
+ * The CRUD Api for EmailNotification Entity.
+ *
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNotificationDto> {
 
@@ -40,9 +45,6 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
     @Override
     public EmailNotification create(EmailNotificationDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(postData.getClassNameFilter())) {
             missingParameters.add("classNameFilter");
         }
@@ -93,9 +95,13 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         notif.setCounterTemplate(counterTemplate);
         notif.setEmailFrom(postData.getEmailFrom());
         notif.setEmailToEl(postData.getEmailToEl());
-        notif.setSubject(postData.getSubject());
-        notif.setBody(postData.getBody());
-        notif.setHtmlBody(postData.getHtmlBody());
+        notif.setRunAsync(postData.isRunAsync());
+        
+        EmailTemplate emailTemplate = new EmailTemplate();
+        emailTemplate.setSubject(postData.getSubject());
+        emailTemplate.setTextContent(postData.getBody());
+        emailTemplate.setHtmlContent(postData.getHtmlBody());
+        notif.setEmailTemplate(emailTemplate);
 
         Set<String> emails = new HashSet<String>();
         for (String email : postData.getSendToMail()) {
@@ -184,9 +190,16 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         notif.setCounterTemplate(counterTemplate);
         notif.setEmailFrom(postData.getEmailFrom());
         notif.setEmailToEl(postData.getEmailToEl());
-        notif.setSubject(postData.getSubject());
-        notif.setBody(postData.getBody());
-        notif.setHtmlBody(postData.getHtmlBody());
+       
+        EmailTemplate emailTemplate = notif.getEmailTemplate();
+        if (emailTemplate == null) {
+            emailTemplate = new EmailTemplate();
+            emailTemplate.setCode(notif.getCode());
+        }
+        emailTemplate.setSubject(postData.getSubject());
+        emailTemplate.setTextContent(postData.getBody());
+        emailTemplate.setHtmlContent(postData.getHtmlBody());
+        notif.setEmailTemplate(emailTemplate);
 
         if (postData.isDisabled() != null) {
             notif.setDisabled(postData.isDisabled());
@@ -197,6 +210,9 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
             emails.add(email);
         }
         notif.setEmails(emails);
+		if (postData.isRunAsync() != null) {
+			notif.setRunAsync(postData.isRunAsync());
+		}
 
         notif = emailNotificationService.update(notif);
 

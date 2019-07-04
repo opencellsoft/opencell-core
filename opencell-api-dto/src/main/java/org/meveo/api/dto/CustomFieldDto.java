@@ -26,9 +26,11 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 /**
  * The Class CustomFieldDto.
  * 
+ * @author Edward P. Legaspi
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2
- */
+ * @lastModifiedVersion 7.0
+*/
+
 @XmlRootElement(name = "CustomField")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(Include.NON_NULL)
@@ -77,8 +79,12 @@ public class CustomFieldDto {
     protected Long longValue;
 
     /** The double value. */
-    @XmlElement()
+    @XmlElement
     protected Double doubleValue;
+    
+    /** The boolean value. */
+    @XmlElement
+    protected Boolean booleanValue;
 
     /** The list value. */
     @XmlElementWrapper(name = "listValue")
@@ -98,6 +104,7 @@ public class CustomFieldDto {
     // A transient object. Contains a converted value from DTO to some object when it is applicable
     @XmlTransient
     protected Object valueConverted;
+   
 
     /** The index type. */
     @XmlElement()
@@ -107,6 +114,21 @@ public class CustomFieldDto {
     @XmlElement
     protected String fileValue;
 
+    /** The formatted value. */
+    @XmlElement()
+    protected CustomFieldFormattedValueDto formattedValue;
+
+    /**
+     * Where field should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;fieldGroup:&lt;fieldgroup name&gt;:&lt;fieldgroup relative
+     * position&gt;;field:&lt;field relative position in fieldgroup/tab&gt;
+     *
+     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;
+     *
+     * e.g. tab:Tab default title|FRA=Title in french|ENG=Title in english:0;fieldGroup:Field group default label|FRA=Field group label in french|ENG=Field group label in
+     * english:0;field:0 OR tab:Second tab:1;field:1
+     */
+    protected String guiPosition;
+    
     /**
      * Instantiates a new custom field dto.
      */
@@ -260,6 +282,24 @@ public class CustomFieldDto {
     public void setDoubleValue(Double doubleValue) {
         this.doubleValue = doubleValue;
     }
+
+    /**
+     * Gets the boolean value.
+     * 
+     * @return the boolean value
+     */
+	public Boolean getBooleanValue() {
+		return booleanValue;
+	}
+
+	/**
+	 * Sets the boolean value.
+	 * 
+	 * @param booleanValue the boolean value
+	 */
+	public void setBooleanValue(Boolean booleanValue) {
+		this.booleanValue = booleanValue;
+	}
 
     /**
      * Gets the value date.
@@ -423,6 +463,8 @@ public class CustomFieldDto {
                 return dateValue == null;
             case DOUBLE:
                 return doubleValue == null;
+            case BOOLEAN:
+            	return booleanValue == null;
             case LONG:
                 return longValue == null;
             case LIST:
@@ -463,6 +505,8 @@ public class CustomFieldDto {
         if (dateValue != null) {
             return false;
         } else if (doubleValue != null) {
+            return false;
+        } else if (booleanValue != null) {
             return false;
         } else if (longValue != null) {
             return false;
@@ -528,10 +572,40 @@ public class CustomFieldDto {
     public void setFileValue(String fileValue) {
         this.fileValue = fileValue;
     }
+    
+    /**
+     * @return the formattedValue
+     */
+    public CustomFieldFormattedValueDto getFormattedValue() {
+        return formattedValue;
+    }
+
+    /**
+     * @param formattedValue the formattedValue to set
+     */
+    public void setFormattedValue(CustomFieldFormattedValueDto formattedValue) {
+        this.formattedValue = formattedValue;
+    }
+
+    /**
+     * Gets the guiPosition
+     * @return the guiPosition
+     */
+    public String getGuiPosition() {
+        return guiPosition;
+    }
+
+    /**
+     * Sets the guiPosition
+     * @param guiPosition the guiPosition
+     */
+    public void setGuiPosition(String guiPosition) {
+        this.guiPosition = guiPosition;
+    }
 
     /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+         * @see java.lang.Object#toString()
+         */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("CustomFieldDto{");
@@ -546,12 +620,14 @@ public class CustomFieldDto {
         sb.append(", dateValue=").append(dateValue);
         sb.append(", longValue=").append(longValue);
         sb.append(", doubleValue=").append(doubleValue);
+        sb.append(", booleanValue=").append(booleanValue);
         sb.append(", listValue=").append(listValue);
         sb.append(", mapValue=").append(mapValue);
         sb.append(", entityReferenceValue=").append(entityReferenceValue);
         sb.append(", valueConverted=").append(valueConverted);
         sb.append(", indexType=").append(indexType);
         sb.append(", fileValue='").append(fileValue).append('\'');
+        sb.append(", formattedValue=").append(formattedValue);
         sb.append('}');
         return sb.toString();
     }

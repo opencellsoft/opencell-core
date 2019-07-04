@@ -268,6 +268,7 @@ public class ImportCustomersJobBean {
             createSellerWarning(null, "File empty");
         }
 
+        int ji = 0;
         for (org.meveo.model.jaxb.customer.Seller sell : sellerList) {
             i++;
             org.meveo.model.admin.Seller seller = null;
@@ -283,8 +284,9 @@ public class ImportCustomersJobBean {
                 seller = createSeller(sell, fileName, i);
 
                 List<org.meveo.model.jaxb.customer.Customer> customerList = sell.getCustomers().getCustomer();
-                for (org.meveo.model.jaxb.customer.Customer cust : customerList) {
-                    if (!jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                 for (org.meveo.model.jaxb.customer.Customer cust : customerList) {
+                    ji++;
+                    if (ji % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                         break;
                     }
                     if (customerCheckError(sell, cust)) {
@@ -484,7 +486,7 @@ public class ImportCustomersJobBean {
 
                     for (org.meveo.model.jaxb.account.UserAccount uAccount : billingAccountJaxb.getUserAccounts().getUserAccount()) {
                         try {
-                            accountImportService.importUserAccount(billingAccount, billingAccountJaxb, uAccount);
+                            accountImportService.importUserAccount(billingAccount, billingAccountJaxb, uAccount, seller);
                         } catch (ImportWarningException e) {
                             log.error("Error when importing User Account", e);
                         }

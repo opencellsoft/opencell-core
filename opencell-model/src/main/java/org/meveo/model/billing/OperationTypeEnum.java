@@ -20,42 +20,41 @@ package org.meveo.model.billing;
 
 public enum OperationTypeEnum {
 
-	CREDIT(1, "operationTypeEnum.credit"), 
-	DEBIT(2, "operationTypeEnum.debit");
+    CREDIT(1, "operationTypeEnum.credit"), DEBIT(2, "operationTypeEnum.debit");
 
-	private String label;
-	private Integer id;
+    private String label;
+    private Integer id;
 
-	OperationTypeEnum(Integer id, String label) {
-		this.label = label;
-		this.id = id;
-	}
+    OperationTypeEnum(Integer id, String label) {
+        this.label = label;
+        this.id = id;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public static OperationTypeEnum getValue(Integer id) {
-		if (id != null) {
-			for (OperationTypeEnum type : values()) {
-				if (id.equals(type.id)) {
-					return type;
-				}
-			}
-		}
-		return null;
-	}
+    public static OperationTypeEnum getValue(Integer id) {
+        if (id != null) {
+            for (OperationTypeEnum type : values()) {
+                if (id.equals(type.id)) {
+                    return type;
+                }
+            }
+        }
+        return null;
+    }
 
 }

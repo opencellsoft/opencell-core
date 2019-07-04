@@ -38,6 +38,9 @@ import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.BusinessProductModelService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 
 /**
  * @author Said Ramli
@@ -51,14 +54,23 @@ public class BusinessOfferApi extends BaseApi {
 
     @Inject
     private BusinessServiceModelService businessServiceModelService;
-    
+
     @Inject
     private OfferTemplateCategoryService offerTemplateCategoryService;
-    
+
     @Inject
     private BusinessProductModelService businessProductModelService;
 
-    public Long instantiateBOM(BomOfferDto postData) throws MeveoApiException {
+    @Inject
+    private OfferTemplateService offerTemplateService;
+
+    @Inject
+    private ServiceTemplateService serviceTemplateService;
+
+    @Inject
+    private ProductTemplateService productTemplateService;
+
+    public Long instantiateBOM(BomOfferDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getBomCode())) {
             missingParameters.add("bomCode");
@@ -82,13 +94,13 @@ public class BusinessOfferApi extends BaseApi {
                 && (bomOffer.getOfferProductTemplates() == null || bomOffer.getOfferProductTemplates().isEmpty())) {
             throw new MeveoApiException("No service or product template attached");
         }
-        
+
         // process bsm
         List<ServiceConfigurationDto> serviceConfigurationDtoFromBSM = getServiceConfiguration(postData.getBusinessServiceModels());
         if (!serviceConfigurationDtoFromBSM.isEmpty()) {
             postData.getServicesToActivate().addAll(serviceConfigurationDtoFromBSM);
         }
-        
+
         // create newOfferTemplate
         OfferTemplate newOfferTemplate = createNewOfferTemplate(postData, businessOfferModel);
 
@@ -98,20 +110,20 @@ public class BusinessOfferApi extends BaseApi {
                 return p;
             }).collect(Collectors.toList());
         }
-        
+
         try {
             saveImage(newOfferTemplate, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {
             log.error("Invalid image data={}", e1.getMessage());
             throw new InvalidImageData();
         }
-        
+
         for (OfferServiceTemplate ost : newOfferTemplate.getOfferServiceTemplates()) {
             ServiceTemplate serviceTemplate = ost.getServiceTemplate();
             for (ServiceConfigurationDto serviceConfigurationDto : postData.getServicesToActivate()) {
-                
+
                 String serviceTemplateCode = constructServiceTemplateCode(newOfferTemplate, ost, serviceTemplate, serviceConfigurationDto);
-                
+
                 if (serviceTemplateCode.equals(serviceTemplate.getCode())) {
                     try {
                         saveImage(serviceTemplate, serviceConfigurationDto.getImagePath(), serviceConfigurationDto.getImageBase64());
@@ -128,16 +140,19 @@ public class BusinessOfferApi extends BaseApi {
             ServiceTemplate serviceTemplate = ost.getServiceTemplate();
 
             for (ServiceConfigurationDto serviceConfigurationDto : postData.getServicesToActivate()) {
-                
-                // Caution the servicode building algo must match that of
-                // BusinessOfferModelService.createOfferFromBOM
+
+                // Caution the service code also must match that of BusinessOfferModelService.createOfferFromBOM
                 String serviceTemplateCode = constructServiceTemplateCode(newOfferTemplate, ost, serviceTemplate, serviceConfigurationDto);
-                
+
                 if (serviceTemplateCode.equals(serviceTemplate.getCode()) && serviceConfigurationDto.getCustomFields() != null && !serviceConfigurationDto.isMatch()) {
                     try {
                         CustomFieldsDto cfsDto = new CustomFieldsDto();
                         cfsDto.setCustomField(serviceConfigurationDto.getCustomFields());
                         populateCustomFields(cfsDto, serviceTemplate, true);
+
+                        serviceTemplate = serviceTemplateService.update(serviceTemplate);
+                        ost.setServiceTemplate(serviceTemplate);
+
                     } catch (MissingParameterException | InvalidParameterException e) {
                         log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
                         throw e;
@@ -165,6 +180,10 @@ public class BusinessOfferApi extends BaseApi {
                             CustomFieldsDto cfsDto = new CustomFieldsDto();
                             cfsDto.setCustomField(productCodeDto.getCustomFields());
                             populateCustomFields(cfsDto, productTemplate, true);
+
+                            productTemplate = productTemplateService.update(productTemplate);
+                            opt.setProductTemplate(productTemplate);
+
                         } catch (MissingParameterException e) {
                             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
                             throw e;
@@ -193,17 +212,19 @@ public class BusinessOfferApi extends BaseApi {
             }
         }
 
+        newOfferTemplate = offerTemplateService.update(newOfferTemplate);
+
         return newOfferTemplate.getId();
     }
 
     private String constructServiceTemplateCode(OfferTemplate newOfferTemplate, OfferServiceTemplate ost, ServiceTemplate serviceTemplate,
             ServiceConfigurationDto serviceConfigurationDto) {
-        
+
         String serviceTemplateCode = ost.getOfferTemplate().getId() + "_" + serviceConfigurationDto.getCode();
         Integer serviceConfItemIndex = serviceConfigurationDto.getItemIndex();
 
         if (serviceConfigurationDto.isInstantiatedFromBSM()) {
-            if(serviceConfItemIndex != null) {
+            if (serviceConfItemIndex != null) {
                 serviceTemplateCode = newOfferTemplate.getId() + "_" + serviceConfItemIndex + "_" + serviceConfigurationDto.getCode();
             } else {
                 serviceTemplateCode = newOfferTemplate.getId() + "_" + serviceTemplate.getId() + "_" + serviceConfigurationDto.getCode();
@@ -224,13 +245,13 @@ public class BusinessOfferApi extends BaseApi {
             bomParams.setServiceCodes(postData.getServicesToActivate());
             bomParams.setProductCodes(postData.getProductsToActivate());
             bomParams.setLifeCycleStatusEnum(postData.getLifeCycleStatusEnum());
-            if(postData.getOfferTemplateCategories() != null) {
+            if (postData.getOfferTemplateCategories() != null) {
                 List<OfferTemplateCategory> offerTemplateCategories = new ArrayList<OfferTemplateCategory>();
-                for(OfferTemplateCategoryDto offerTemplateCategoryDto :  postData.getOfferTemplateCategories()) {
+                for (OfferTemplateCategoryDto offerTemplateCategoryDto : postData.getOfferTemplateCategories()) {
                     OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(offerTemplateCategoryDto.getCode());
                     if (offerTemplateCategory == null) {
                         throw new EntityDoesNotExistsException(OfferTemplateCategory.class, offerTemplateCategoryDto.getCode());
-                    } 
+                    }
                     offerTemplateCategories.add(offerTemplateCategory);
                 }
                 bomParams.setOfferTemplateCategories(offerTemplateCategories);
@@ -286,14 +307,14 @@ public class BusinessOfferApi extends BaseApi {
             throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getBsmCode());
         }
         ServiceTemplate newServiceTemplateCreated = businessServiceModelService.instantiateBSM(bsm, postData.getPrefix(), postData.getCustomFields());
-        
+
         try {
             saveImage(newServiceTemplateCreated, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {
             log.error("Invalid image data={}", e1.getMessage());
             throw new InvalidImageData();
         }
-        
+
         try {
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             cfsDto.setCustomField(postData.getCustomFields());
@@ -310,9 +331,10 @@ public class BusinessOfferApi extends BaseApi {
 
     /**
      * Instantiates a product from a given BusinessProductModel.
+     * 
      * @param postData business product model product
      * @return product template's id
-     * @throws MeveoApiException  meveo api exception
+     * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
     public Long instantiateBPM(BpmProductDto postData) throws MeveoApiException, BusinessException {
@@ -334,16 +356,16 @@ public class BusinessOfferApi extends BaseApi {
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             cfsDto.setCustomField(postData.getCustomFields());
             populateCustomFields(cfsDto, newProducTemplate, true);
-            
+
         } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
-            
+
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-        
+
         return newProducTemplate.getId();
     }
 

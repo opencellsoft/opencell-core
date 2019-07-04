@@ -35,78 +35,77 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "code"})
-@Table(name = "billing_invoice_template", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "code"}),
-		@UniqueConstraint(columnNames = { "file_name" }) })
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_template_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "billing_invoice_template", uniqueConstraints = { @UniqueConstraint(columnNames = { "code" }), @UniqueConstraint(columnNames = { "file_name" }) })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_invoice_template_seq"), })
 public class InvoiceTemplate extends BaseEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "code", nullable = false, length = 255)
-	@Size(max = 255)
-	@NotNull
-	private String code;
-
-	@Column(name = "template_version", nullable = false, length = 255)
-	@Size(max = 255)
-    @NotNull
-	private String templateVersion;
-
-	@Column(name = "validity_start_date", nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	@NotNull
-	private Date validityStartDate;
-
-	@Column(name = "validity_end_date", nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	@NotNull
-	private Date validityEndDate;
-
-	@Column(name = "file_name", nullable = false, length = 255)
+    @Column(name = "code", nullable = false, length = 255)
     @Size(max = 255)
-	@NotNull
-	private String fileName;
+    @NotNull
+    private String code;
 
-	public String getCode() {
-		return code;
-	}
+    @Column(name = "template_version", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
+    private String templateVersion;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    @Column(name = "validity_start_date", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
+    private Date validityStartDate;
 
-	public String getTemplateVersion() {
-		return templateVersion;
-	}
+    @Column(name = "validity_end_date", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
+    private Date validityEndDate;
 
-	public void setTemplateVersion(String templateVersion) {
-		this.templateVersion = templateVersion;
-	}
+    @Column(name = "file_name", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
+    private String fileName;
 
-	public Date getValidityStartDate() {
-		return validityStartDate;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setValidityStartDate(Date validityStartDate) {
-		this.validityStartDate = validityStartDate;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public Date getValidityEndDate() {
-		return validityEndDate;
-	}
+    public String getTemplateVersion() {
+        return templateVersion;
+    }
 
-	public void setValidityEndDate(Date validityEndDate) {
-		this.validityEndDate = validityEndDate;
-	}
+    public void setTemplateVersion(String templateVersion) {
+        this.templateVersion = templateVersion;
+    }
 
-	public String getFileName() {
-		return fileName;
-	}
+    public Date getValidityStartDate() {
+        return validityStartDate;
+    }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    public void setValidityStartDate(Date validityStartDate) {
+        this.validityStartDate = validityStartDate;
+    }
+
+    public Date getValidityEndDate() {
+        return validityEndDate;
+    }
+
+    public void setValidityEndDate(Date validityEndDate) {
+        this.validityEndDate = validityEndDate;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
 }

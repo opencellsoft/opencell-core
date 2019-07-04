@@ -19,24 +19,15 @@
 package org.meveo.model.catalog;
 
 public enum MonthEnum {
-    
-    JANUARY(1, "MonthEnum.january"),
-    FEBRUARY(2, "MonthEnum.february"),
-    MARCH(3, "MonthEnum.march"),
-    APRIL(4, "MonthEnum.april"),
-    MAY(5, "MonthEnum.may"),
-    JUNE(6, "MonthEnum.june"),
-    JULY(7, "MonthEnum.july"),
-    AUGUST(8, "MonthEnum.august"),
-    SEPTEMBER(9, "MonthEnum.september"),
-    OCTOBER(10, "MonthEnum.october"),
-    NOVEMBER(11, "MonthEnum.november"),
-    DECEMBER(12, "MonthEnum.december");
+
+    JANUARY(1, "MonthEnum.january"), FEBRUARY(2, "MonthEnum.february"), MARCH(3, "MonthEnum.march"), APRIL(4, "MonthEnum.april"), MAY(5, "MonthEnum.may"), JUNE(6,
+            "MonthEnum.june"), JULY(7, "MonthEnum.july"), AUGUST(8, "MonthEnum.august"), SEPTEMBER(9,
+                    "MonthEnum.september"), OCTOBER(10, "MonthEnum.october"), NOVEMBER(11, "MonthEnum.november"), DECEMBER(12, "MonthEnum.december");
 
     private Integer id;
 
     private String label;
-    
+
     MonthEnum(Integer id, String label) {
         this.id = id;
         this.label = label;
@@ -60,5 +51,5 @@ public enum MonthEnum {
         }
         return null;
     }
-    
+
 }

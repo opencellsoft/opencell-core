@@ -1,11 +1,17 @@
 package org.meveo.model.security;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -25,7 +31,15 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.admin.SecuredEntity;
 
+/**
+ * Application security role
+ * 
+ * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 6.0
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "name" })
@@ -38,28 +52,46 @@ public class Role extends BaseEntity {
 
     private static final long serialVersionUID = -2309961042891712685L;
 
+    /**
+     * Role name
+     */
     @Column(name = "role_name", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String name;
 
+    /**
+     * Role description
+     */
     @Column(name = "role_description", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String description;
 
+    /**
+     * Permissions held by a role
+     */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "adm_role_permission", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
-    private Set<Permission> permissions = new HashSet<Permission>();
+    private Set<Permission> permissions = new HashSet<>();
 
+    /**
+     * Roles hels by the rolw
+     */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "adm_role_role", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "child_role_id"))
-    private Set<Role> roles = new HashSet<Role>();
-
-    public Role() {
-    }
+    private Set<Role> roles = new HashSet<>();
+    
+    /**
+     * Accessible entities
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "adm_role_secured_entity", joinColumns = { @JoinColumn(name = "role_id") })
+    @AttributeOverrides(value = { @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
+            @AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)) })
+    private List<SecuredEntity> securedEntities = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -169,4 +201,19 @@ public class Role extends BaseEntity {
 
         return allPermissions;
     }
+
+    /**
+     * Returns a list of secured entities
+     */
+	public List<SecuredEntity> getSecuredEntities() {
+		return securedEntities;
+	}
+
+	/**
+	 * Sets a list of {@link SecuredEntity}
+	 * @param securedEntities list of secured entities
+	 */
+	public void setSecuredEntities(List<SecuredEntity> securedEntities) {
+		this.securedEntities = securedEntities;
+	}
 }

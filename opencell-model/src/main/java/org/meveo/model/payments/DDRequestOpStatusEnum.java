@@ -23,9 +23,7 @@ package org.meveo.model.payments;
 
 public enum DDRequestOpStatusEnum {
 
-    WAIT(1, "DDRequestOpStatusEnum.WAIT"),
-    PROCESSED(2, "DDRequestOpStatusEnum.PROCESSED"),
-    ERROR(3, "DDRequestOpStatusEnum.ERROR");
+    WAIT(1, "DDRequestOpStatusEnum.WAIT"), PROCESSED(2, "DDRequestOpStatusEnum.PROCESSED"), ERROR(3, "DDRequestOpStatusEnum.ERROR");
 
     private Integer id;
     private String label;
@@ -46,7 +44,7 @@ public enum DDRequestOpStatusEnum {
     public static DDRequestOpStatusEnum getValue(Integer id) {
         if (id != null) {
             for (DDRequestOpStatusEnum value : values()) {
-                if (value.getId() == id) {
+                if ( id.equals(value.getId()) ) {
                     return value;
                 }
             }

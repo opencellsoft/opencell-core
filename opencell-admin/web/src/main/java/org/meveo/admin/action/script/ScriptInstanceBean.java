@@ -32,16 +32,15 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceCategory;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.script.CustomScriptService;
 import org.meveo.service.script.ScriptInstanceCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptUtils;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 
@@ -50,7 +49,8 @@ import org.primefaces.model.LazyDataModel;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.1
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
  */
 @Named
 @ViewScoped
@@ -65,12 +65,14 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 
     @Inject
     private RoleService roleService;
-    
+
     @Inject
     private ScriptInstanceCategoryService scriptInstanceCategoryService;
 
     private DualListModel<Role> execRolesDM;
     private DualListModel<Role> sourcRolesDM;
+
+    private String logMessages;
 
     public void initCompilationErrors() {
         if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
@@ -164,16 +166,16 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        String code = CustomScriptService.getFullClassname(entity.getScript());
+        String code = ScriptUtils.getFullClassname(entity.getScript());
 
         // check script existed full class name in class path
-        if (CustomScriptService.isOverwritesJavaClass(code)) {
+        if (ScriptUtils.isOverwritesJavaClass(code)) {
             messages.error(new BundleKey("messages", "message.scriptInstance.classInvalid"), code);
             return null;
         }
 
         // check duplicate script
-        CustomScript scriptDuplicate = scriptInstanceService.findByCode(code); // genericScriptService
+        ScriptInstance scriptDuplicate = scriptInstanceService.findByCode(code);
         if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
             return null;
@@ -206,13 +208,15 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         return result;
     }
 
+    @ActionMethod
     public String execute() {
-        scriptInstanceService.test(entity.getCode(), null);
+        logMessages = scriptInstanceService.test(entity, null);
+        messages.info(new BundleKey("messages", "message.scriptInstance.executed"));
         return null;
     }
 
-    public List<String> getLogs() {
-        return scriptInstanceService.getLogs(entity.getCode());
+    public String getLogs() {
+        return logMessages;
     }
 
     public boolean isUserHasSourcingRole(ScriptInstance scriptInstance) {
@@ -222,14 +226,14 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     public void testCompilation() {
 
         // check script existed full class name in class path
-        String code = CustomScriptService.getFullClassname(entity.getScript());
-        if (CustomScriptService.isOverwritesJavaClass(code)) {
+        String code = ScriptUtils.getFullClassname(entity.getScript());
+        if (ScriptUtils.isOverwritesJavaClass(code)) {
             messages.error(new BundleKey("messages", "message.scriptInstance.classInvalid"), code);
             return;
         }
 
         // check duplicate script
-        CustomScript scriptDuplicate = scriptInstanceService.findByCode(code); // genericScriptService
+        ScriptInstance scriptDuplicate = scriptInstanceService.findByCode(code);
         if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
             return;
@@ -240,17 +244,15 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
             messages.info(new BundleKey("messages", "scriptInstance.compilationSuccessfull"));
         }
     }
-    
 
-    
-	public LazyDataModel<ScriptInstance> getScriptInstanceByCategory(String catCode) {
-		ScriptInstanceCategory category = scriptInstanceCategoryService.findByCode(catCode);
-		if (category != null) {
-			filters.put("scriptInstanceCategory", category);
-			return getLazyDataModel();
-		}
-		
-		return null;
-	}
+    public LazyDataModel<ScriptInstance> getScriptInstanceByCategory(String catCode) {
+        ScriptInstanceCategory category = scriptInstanceCategoryService.findByCode(catCode);
+        if (category != null) {
+            filters.put("scriptInstanceCategory", category);
+            return getLazyDataModel();
+        }
+
+        return null;
+    }
 
 }

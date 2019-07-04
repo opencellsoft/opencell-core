@@ -35,6 +35,11 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 
+/**
+ * One shot charge as part of subscribed service
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "billing_one_shot_charge_inst")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -43,14 +48,23 @@ public class OneShotChargeInstance extends ChargeInstance {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Subscribed service - subscription charge relation
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subs_serv_inst_id")
     private ServiceInstance subscriptionServiceInstance;
 
+    /**
+     * Subscribed service - termination charge relation
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "term_serv_inst_id")
     private ServiceInstance terminationServiceInstance;
 
+    /**
+     * Quantity subscribed
+     */
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     @NotNull
     protected BigDecimal quantity = BigDecimal.ONE;

@@ -25,6 +25,11 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.rating.EDR;
 
+/**
+ * Prepaid consumption reservation
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "billing_reservation")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -33,47 +38,83 @@ public class Reservation extends AuditableEntity {
 
     private static final long serialVersionUID = 4110616902439820101L;
 
+    /**
+     * Input message
+     */
     @Column(name = "input_message")
     @Size(max = 255)
     private String inputMessage;
 
+    /**
+     * Reservation timestamp
+     */
     @Temporal(TemporalType.DATE)
     @Column(name = "reservation_date")
     private Date reservationDate;
 
+    /**
+     * Reservation expiration date
+     */
     @Temporal(TemporalType.DATE)
     @Column(name = "expiry_date")
     private Date expiryDate;
 
+    /**
+     * Status
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ReservationStatus status;
 
+    /**
+     * Associated User account
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
+    /**
+     * Associated Subscription
+     */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
+    /**
+     * Prepaid Wallet instance against which reservation is made
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
 
+    /**
+     * Quantity reserved
+     */
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal quantity;
 
+    /**
+     * Reserved amount without tax
+     */
     @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithoutTax = BigDecimal.ZERO;
 
+    /**
+     * Reserved amount with tax
+     */
     @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithTax = BigDecimal.ZERO;
 
+    /**
+     * Previous counter period values
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "billing_resrv_countid")
     private Map<Long, BigDecimal> counterPeriodValues = new HashMap<Long, BigDecimal>();
 
+    /**
+     * EDR record that originated reservation
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "origin_edr_id")
     private EDR originEdr;

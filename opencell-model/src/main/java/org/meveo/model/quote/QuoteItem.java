@@ -25,6 +25,11 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ProductOffering;
 
+/**
+ * Quote item
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ExportIdentifier({ "quote.code", "itemId" })
 @Table(name = "ord_quote_item")
@@ -34,6 +39,9 @@ public class QuoteItem extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
+    /**
+     * Quote
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id", nullable = false, updatable = false)
     @NotNull
@@ -54,7 +62,7 @@ public class QuoteItem extends BaseEntity {
     private List<QuoteItemProductOffering> quoteItemProductOfferings = new ArrayList<>();
 
     /**
-     * Serialized quoteItem dto.
+     * Serialized quoteItem dto
      */
     @Column(name = "source", nullable = false, columnDefinition = "TEXT")
     private String source;
@@ -75,9 +83,15 @@ public class QuoteItem extends BaseEntity {
     @NotNull
     private UserAccount userAccount;
 
+    /**
+     * Deserialized quoteItemDto
+     */
     @Transient
     private Object quoteItemDto;
 
+    /**
+     * Main product offering
+     */
     @Transient
     private ProductOffering mainOffering;
 

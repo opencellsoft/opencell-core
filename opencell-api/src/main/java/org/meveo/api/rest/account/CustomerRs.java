@@ -62,7 +62,7 @@ public interface CustomerRs extends IBaseRs {
      * Search for a customer with a given code
      *
      * @param customerCode The customer's code
-     * @param inheritCF Custom field inheritance type
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return The customer's data
      */
     @GET
@@ -106,7 +106,7 @@ public interface CustomerRs extends IBaseRs {
      * @param limit Pagination - number of records to retrieve
      * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder Sorting - sort order.
-     * @param inheritCF Custom field inheritance type.
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE..
      * @return List of customers
      */
     @GET
@@ -258,7 +258,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return status of the operation
 	 */
 	@PUT
-	@Path("customerNumberSequence")
+	@Path("/customerNumberSequence")
 	ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData);
 	
     /**
@@ -267,7 +267,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return next customer no value
 	 */
 	@POST
-	@Path("customerNumberSequence")
+	@Path("/customerNumberSequence")
 	GenericSequenceValueResponseDto getNextCustomerNumber();
 	
 	/**
@@ -276,7 +276,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return request status
 	 */
 	@POST
-	@Path("/account/customer/sequence")
+	@Path("/sequence")
 	ActionStatus createCustomerSequence(CustomerSequenceDto postData);
 	
 	/**
@@ -285,7 +285,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return request status
 	 */
 	@PUT
-	@Path("/account/customer/sequence")
+	@Path("/sequence")
 	ActionStatus updateCustomerSequence(CustomerSequenceDto postData);
 	
 	/**
@@ -294,7 +294,7 @@ public interface CustomerRs extends IBaseRs {
 	 * @return sequence value dto
 	 */
 	@POST
-	@Path("/account/customer/sequence/{code}/next")
+	@Path("/sequence/{code}/next")
 	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@PathParam("code") String code);
 	
 }

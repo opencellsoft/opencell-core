@@ -4,9 +4,11 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:hftl="http://hftl.org"  
+	xmlns:hftl="http://hftl.org" xmlns:o="http://omnifaces.org/ui"
 	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" 
 	template="/layout/template.xhtml">
+
+    <o:importConstants type="org.meveo.model.audit.AuditableFieldNameEnum" />
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -75,7 +77,8 @@
 			searchField2="name" column1Label="#{messages['userAccount.code']}"
 			column1="code" column2Label="#{messages['userAccount.name']}"
 			column2="name" selection="#{subscriptionBean.entity.userAccount}"
-			updateField=":subscriptionTab:subscriptionFormId:informationTab">
+			updateField=":subscriptionTab:subscriptionFormId:informationTab"
+			selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="refreshUAInformation">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="offerPopup"
@@ -95,13 +98,11 @@
 			column3="validity" column3Child="from"
 			column4Label="#{messages['commons.validTo']}" column4="validity"
 			column4Child="to" selection="#{subscriptionBean.entity.offer}"
-			width="1000" lazy="false"
-			dataModel="#{offerTemplateBean.listActiveByDate(subscriptionBean.entity.subscriptionDate)}"
-			updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:sellerSelectId_entity :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text :subscriptionTab:subscriptionFormId:informationTab:subscriptionAndRenewalDates :subscriptionTab:subscriptionFormId:informationTab:minimumAmountEl :subscriptionTab:subscriptionFormId:informationTab:minimumLabelEl"
-			selectionListenerBean="#{subscriptionBean}"
-			selectionListenerMethod="copySubscriptionRenewalInfo">
+			width="1000" lazy="true"
+			dataModel="#{subscriptionBean.activeOfferTemplateDataModel}"
+			updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:sellerSelectId_entity :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text :subscriptionTab:subscriptionFormId:informationTab:subscriptionAndRenewalDates :subscriptionTab:subscriptionFormId:informationTab:minimumAmountEl :subscriptionTab:subscriptionFormId:informationTab:minimumLabelEl :subscriptionTab:subscriptionFormId:informationTab:minimumAmountElSpark :subscriptionTab:subscriptionFormId:informationTab:minimumLabelElSpark"
+			selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="copyInfoFromOffer">
 		</hftl:entityPopup>
-
 		<!-- 		<hftl:entityPopup id="chargeTemplatePopup" -->
 <!-- 			header="#{messages['chargeTemplate.popup.header']}" -->
 <!-- 			backingBean="#{oneShotChargeTemplateBean}" -->
@@ -143,22 +144,22 @@
 			dataModel="#{billingCycleBean.listSubscriptionBillingCycle()}"
 			updateField=":subscriptionTab:subscriptionFormId:informationTab:billingCycleSelectId :subscriptionTab:subscriptionFormId:informationTab:billingCycleSelectId_text">
 		</hftl:entityPopup>
-		
+
 		<hftl:entityPopup id="sellerPopup"
-			header="#{messages['seller.popup.header']}"
-			backingBean="#{subscriptionBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['businessEntity.description']}"
-			searchField2="description"
-			column1Label="#{messages['businessEntity.code']}" column1="code"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="description"
-			selection="#{subscriptionBean.entity.seller}"
-			dataModel="#{subscriptionBean.listSellers()}"
-			updateField=":subscriptionTab:subscriptionFormId:informationTab:sellerSelectId :subscriptionTab:subscriptionFormId:informationTab:sellerSelectId_text">
+						  header="#{messages['seller.popup.header']}"
+						  backingBean="#{subscriptionBean}"
+						  searchField1Label="#{messages['businessEntity.code']}"
+						  searchField1="code"
+						  searchField2Label="#{messages['businessEntity.description']}"
+						  searchField2="description"
+						  column1Label="#{messages['businessEntity.code']}" column1="code"
+						  column2Label="#{messages['businessEntity.description']}"
+						  column2="description"
+						  selection="#{subscriptionBean.entity.seller}"
+						  dataModel="#{subscriptionBean.listSellers()}"
+						  updateField=":subscriptionTab:subscriptionFormId:informationTab:sellerSelectId :subscriptionTab:subscriptionFormId:informationTab:sellerSelectId_text">
 		</hftl:entityPopup>
-		
+
 		<hftl:entityPopup id="productSellerPopup"
 			header="#{messages['seller.popup.header']}"
 			backingBean="#{subscriptionBean}"
@@ -173,7 +174,20 @@
 			dataModel="#{subscriptionBean.listProductSellers()}"
 			updateField=":subscriptionTab:applyProductForm:productSellerSelectId :subscriptionTab:applyProductForm:productSellerSelectId_text">
 		</hftl:entityPopup>
-		
+		<hftl:entityPopup id="searchEmailTemplatePopup"
+						  header="#{messages['emailTemplate']}"
+						  updateField=":subscriptionTab:subscriptionFormId:informationTab:emailTemplateId :subscriptionTab:subscriptionFormId:informationTab:emailTemplateId_text"
+						  selection="#{subscriptionBean.entity.emailTemplate}"
+						  backingBean="#{emailTemplateBean}"
+						  searchField1Label="#{messages['businessEntity.code']}"
+						  searchField1="code"
+						  column1Label="#{messages['businessEntity.code']}"
+						  column1="code"
+						  column2Label="#{messages['businessEntity.description']}"
+						  column2="description">
+
+		</hftl:entityPopup>
+
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -197,15 +211,17 @@
 
 						<hftl:formField label="#{messages['serviceInstance.code']}"
 							field="code" size="50" edit="false" componentWidth="25"/>
-						<hftl:formField
-							label="#{messages['serviceInstance.terminationDate']}"
-							field="terminationDate" required="true" edit="true" componentWidth="25"/>
-						<hftl:formField
-							label="#{messages['menu.terminationReason']}"
-							field="subscriptionTerminationReason" valueLabelField="descriptionOrCode"
-							required="true"
-							listBean="#{subscriptionTerminationReasonBean}" styleClass="clearLeft" />
-
+                        <hftl:decorateFormField fieldId="serviceTerminationDate" label="#{messages['serviceInstance.terminationDate']}" componentWidth="25">
+                            <p:calendar id="serviceTerminationDate" value="#{subscriptionBean.terminationDate}" pattern="#{paramBean.dateFormat}" required="true" />
+                        </hftl:decorateFormField>
+                        
+                        <hftl:decorateFormField fieldId="serviceTerminationReason" label="#{messages['menu.terminationReason']}" componentWidth="25">
+                            <p:selectOneMenu id="serviceTerminationReason" value="#{subscriptionBean.terminationReason}" required="true">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItems value="#{subscriptionTerminationReasonBean.listAll()}" var="elem" itemLabel="#{elem.descriptionOrCode}" itemValue="#{elem}" />
+                                <hftl:objectConverter />
+                            </p:selectOneMenu>  
+                        </hftl:decorateFormField>
                         <ui:param name="buttons" value="true"/>
                         <ui:define name="buttons">                        
 							<p:commandButton action="#{subscriptionBean.terminateService()}"
@@ -223,7 +239,7 @@
 
 		<p:dialog id="subscriptionTerminationPopup"
 			header="#{messages['subscriptionTerminationPopup.title']}"
-			widgetVar="dlg_subscriptionTerminationPopup"  modal="true" appendTo="@(body)" closeOnEscape="true" width="400" >
+			widgetVar="dlg_subscriptionTerminationPopup"  modal="true" appendTo="@(body)" closeOnEscape="true" width="700" >
 			<p:outputPanel id="subscriptionTerminationPanel">
                 <p:messages id="subTerminationMessages"/>
 				<hftl:formPanel edit="true"
@@ -233,15 +249,17 @@
 
 						<hftl:formField label="#{messages['businessEntity.code']}"
 							field="code" size="50" edit="false" /> 
-						<hftl:formField
-							label="#{messages['serviceInstance.terminationDate']}"
-							field="terminationDate" required="true" edit="true"  pattern="#{paramBean.dateFormat}"/>
-							
-						<hftl:formField
-							label="#{messages['menu.terminationReason']}"
-							field="subscriptionTerminationReason" valueLabelField="descriptionOrCode"
-							required="true"  edit="true"
-							listBean="#{subscriptionTerminationReasonBean}"/>
+                        <hftl:decorateFormField fieldId="subTerminationDate" label="#{messages['serviceInstance.terminationDate']}" componentWidth="25">
+                            <p:calendar id="subTerminationDate" value="#{subscriptionBean.terminationDate}" pattern="#{paramBean.dateFormat}" required="true" />
+                        </hftl:decorateFormField>
+                        
+                        <hftl:decorateFormField fieldId="subTerminationReason" label="#{messages['menu.terminationReason']}" componentWidth="25">
+                            <p:selectOneMenu id="subTerminationReason" value="#{subscriptionBean.terminationReason}" required="true">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItems value="#{subscriptionTerminationReasonBean.listAll()}" var="elem" itemLabel="#{elem.descriptionOrCode}" itemValue="#{elem}" />
+                                <hftl:objectConverter />
+                            </p:selectOneMenu>  
+                        </hftl:decorateFormField>
 
                         <ui:param name="buttons" value="true"/>
                         <ui:define name="buttons">                        
@@ -301,6 +319,61 @@
 								field="terminationDate" />
 
 						</hftl:formPanel>
+
+						<h:panelGroup id="terminableServicesGroup"
+									  rendered="#{subscriptionBean.terminableServices.getSize() > 0}">
+							<h:outputText
+									value="#{messages['subscription.terminableServices']}:"/>
+							<h:form id="terminableServicesForm" prependId="false">
+								<p:dataTable value="#{subscriptionBean.terminableServices}"
+											 var="entity" resizableColumns="true"
+											 selection="#{subscriptionBean.selectedTerminableService}"
+											 rowKey="#{entity.id}">
+									<p:ajax event="rowSelectRadio"
+											update=":#{p:component('terminableServiceOperations')}"/>
+									<p:column selectionMode="single" width="4%"/>
+									<hftl:column label="#{messages['serviceInstance.code']}"
+												 field="code"/>
+									<hftl:column label="#{messages['serviceInstance.status']}"
+												 field="status" showSortLinks="false"/>
+									<hftl:column
+											label="#{messages['serviceInstance.terminationDate']}"
+											field="subscribedTillDate" showSortLinks="false"
+											isDate="true"/>
+									<hftl:column label="#{messages['serviceInstance.terminationReason']}"
+												 field="serviceRenewal.terminationReason" showSortLinks="false"/>
+									<hftl:column label="#{messages['serviceInstance.description']}"
+												 field="description" showSortLinks="false"/>
+
+									<p:column width="55">
+										<f:facet name="header">
+											<h:outputText value="Actions"/>
+										</f:facet>
+										<p:button id="ServiceTerminationButton" outcome="serviceInstanceDetail"
+												  icon="ui-icon-document">
+											<f:param name="serviceInstanceId" value="#{entity.id}"/>
+											<f:param name="edit" value="true"/>
+											<f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+											<f:param name="backView" value="subscriptionDetailWithNavigation"/>
+										</p:button>
+									</p:column>
+								</p:dataTable>
+
+								<h:panelGroup id="terminableServiceOperations"
+											  rendered="#{subscriptionBean.canUserUpdateEntity()}">
+									<p:panel styleClass="action-buttons">
+										<p:commandButton action="#{subscriptionBean.cancelServiceTermination}"
+														 value="#{messages['button.cancelTerminationButton']}"
+														 update=":subscriptionTab"
+														 disabled="#{subscriptionBean.selectedTerminableService == null}">
+											<p:confirm header="#{messages['commons.confirmationHeader']}"
+													   message="#{messages['confirmationMessage.cancelServiceTermination']}"
+													   icon="ui-icon-alert"/>
+										</p:commandButton>
+									</p:panel>
+								</h:panelGroup>
+							</h:form>
+						</h:panelGroup>
 
 						<h:outputText
 							value="#{messages['subscription.subscribedServices']}:" />
@@ -425,7 +498,14 @@
 								<p:tabView id="informationTab" styleClass="tab-child"
 									activeIndex="#{subscriptionBean.activeTab}">
 									<p:tab title="#{messages['subscription.panel']}">
-									
+
+										<h:panelGroup layout="block" styleClass="clearLeft">
+											<h:outputFormat styleClass="note" rendered="#{subscriptionBean.isTerminatedSubscription()}"
+															value="#{messages['subscription.subscriptionTerminationMessage']}">
+												<f:param value="#{subscriptionBean.entity.subscribedTillDate}"/>
+											</h:outputFormat>
+										</h:panelGroup>
+
 										<!--Creation window fields-->
 										<hftl:formField id="userSelectId"
 											label="#{messages['subscription.userAccount']}"
@@ -438,17 +518,20 @@
 										<hftl:formField label="#{messages['businessEntity.code']}"
 											field="code" required="true" validateUnique="true"/>
 										
-										<hftl:formField label="#{messages['offerTemplate.minimumLabel']} EL" field="minimumLabelEl" id="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="30"  />  
-					                    <c:choose> 
-						                    <c:when test="${appProvider.entreprise}">
-										        <c:set var="minimumAmountLabel" value="#{messages['offerTemplate.minimumAmountWithoutTax']} EL" />
-										    </c:when>
-										    <c:otherwise>
-										    	<c:set var="minimumAmountLabel" value="#{messages['offerTemplate.minimumAmountWithTax']} EL" />
-										    </c:otherwise>
-										</c:choose>
-										<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="30" /> 		
-										
+                                     	<hftl:formField label="#{messages['offerTemplate.minimumLabelEl']}" field="minimumLabelEl" id="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true"/>   
+                                     	<hftl:formField label="#{messages[appProvider.entreprise?'offerTemplate.minimumAmountWithoutTaxEl':'offerTemplate.minimumAmountWithTaxEl']}" field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                                     	<hftl:formField label="#{messages['offerTemplate.minimumLabelElSpark']}" field="minimumLabelElSpark" id="minimumLabelElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />   
+                                     	<hftl:formField label="#{messages[appProvider.entreprise?'offerTemplate.minimumAmountWithoutTaxElSpark':'offerTemplate.minimumAmountWithTaxElSpark']}" field="minimumAmountElSpark" id="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                                 	
+                                 		<hftl:decorateFormField fieldId="balance_text" label="#{messages['subscription.balanceDue']}">
+                                            <h:outputText id="balance_text" rendered="#{true or !subscriptionBean.edit}" value="#{subscriptionBean.getBalanceDue()}" style="font-weight:bold;"
+                                                converter="bigDecimalConverter" />
+                                        </hftl:decorateFormField>
+                                        <hftl:decorateFormField fieldId="balanceEx_text" label="#{messages['subscription.balanceExigible']}">
+                                            <h:outputText id="balanceEx_text" rendered="#{true or !subscriptionBean.edit}" value="#{subscriptionBean.getBalanceExigibleWithoutLitigation()}"
+                                                style="font-weight:bold;" converter="bigDecimalConverter" />
+                                        </hftl:decorateFormField>
+
 										<hftl:formField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
                             				popupId="billingCyclePopup" />
                             				
@@ -458,12 +541,13 @@
 										<hftl:formField
 											label="#{messages['businessEntity.description']}"
 											field="description" size="80" />
+											
+										<hftl:formField label="#{messages['subscription.ratingGroup']}" field="ratingGroup" size="50" />
 										
                                         <h:panelGroup id="subscriptionAndRenewalDates">
-                                        	<hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" required="true" newLine="true" listenerUpdate="offerPopup, subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}" actionListenerMethod="updateSubscribedTillDate" />
+                                        	<hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" required="true" newLine="true" listenerUpdate="offerPopup, subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}" actionListenerMethod="onSubscriptionDateChange" />
                                         	<hftl:formField label="#{messages['subscription.initialTermType']}" field="subscriptionRenewal" childField="initialTermType" listenerUpdate="termType"></hftl:formField>
-                                        	<hftl:formField
-												label="#{messages['subscription.autoEndOfEngagement']}"
+                                        	<hftl:formField label="#{messages['subscription.autoEndOfEngagement']}"
 												field="autoEndOfEngagement" actionListenerBean="#{subscriptionBean}" actionListenerMethod="autoUpdateEndOfEngagementDate"
 												listenerUpdate="subscriptionAndRenewalDates" newLine="true" />
                                         	<h:panelGroup id="termType">
@@ -490,12 +574,64 @@
                                             <hftl:formField label="#{messages['subscription.renewalNotifiedDate']}" field="renewalNotifiedDate" edit="false" rendered="#{subscriptionBean.entity.renewalNotifiedDate != null}"/>
                                             <hftl:formField label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
                                                 field="terminationDate" edit="false" rendered="#{subscriptionBean.entity.terminationDate != null}" />
-        
-                                        </h:panelGroup>
-                                    </p:tab>
+
+											<hftl:formField label="#{messages['terminationReason']}"
+												field="subscriptionTerminationReason"
+												valueLabelField="descriptionOrCode" edit="false"
+												listBean="#{subscriptionTerminationReasonBean}"
+												rendered="#{subscriptionBean.entity.status == 'RESILIATED' and (subscriptionBean.entity.subscriptionTerminationReason != null)}" />
+										</h:panelGroup>
+										<p:fieldset legend="#{messages['invoice.discounts']}" styleClass="clearLeft">
+											<p:outputPanel id="discountPanel">
+												<p:messages id="discountMessages"></p:messages>
+												<h:panelGroup layout="block" styleClass="form-panel" style="margin-bottom: 10px" >
+													<c:set var="allowedDiscountPlans"
+														   value="${subscriptionBean.getAllowedDiscountPlans()}" />
+													<hftl:formField disabled="#{empty allowedDiscountPlans or subscriptionBean.entity.id == null}" listenerUpdate="instantiateDiscountPlanDialog" field="discountPlan" valueLabelField="code" listBean="#{discountPlanBean}" listElements="#{allowedDiscountPlans}" />
+													<p:commandButton disabled="#{empty allowedDiscountPlans or subscriptionBean.entity.id == null}" style="float: left" rendered="#{subscriptionBean.edit}" value="#{messages['button.instanciateButton']}" type="button" onclick="PF('dlg_instantiateDiscountPlanDialog').show()"></p:commandButton>
+												</h:panelGroup>
+												<p:dataTable id="datatable_discountPlanInstances" var="entity" lazy="false" paginator="true" resizableColumns="true" reflow="true"
+															 value="#{subscriptionBean.entity.discountPlanInstances}" rows="10" rowKey="#{entity.id}"
+															 styleClass="custom-grid">
+													<hftl:column label="#{messages['discountPlan']}" field="discountPlan.code" />
+													<hftl:column label="#{messages['discountPlanItem.startDate']}" field="startDate" isDate="true" />
+													<hftl:column label="#{messages['discountPlanItem.endDate']}" field="endDate" isDate="true" />
+													<p:column style="width: 5%">
+														<p:commandButton icon="ui-icon-trash" update=":#{p:component('discountPanel')}" action="#{subscriptionBean.deleteDiscountPlanInstance(entity)}" process="@this"></p:commandButton>
+													</p:column>
+												</p:dataTable>
+											</p:outputPanel>
+										</p:fieldset>
+									</p:tab>
+									<p:tab title="#{messages['invoice.electronicBilling']}">
+
+										<hftl:formField label="#{messages['invoice.electronicBilling']}" field="electronicBilling"
+														listenerUpdate=":subscriptionTab:subscriptionFormId:informationTab:email :subscriptionTab:subscriptionFormId:informationTab:ccedEmails :subscriptionTab:subscriptionFormId:informationTab:mailingType :subscriptionTab:subscriptionFormId:informationTab:emailTemplateId"/>
+										<hftl:formField label="#{messages['invoice.email']}"
+														required="#{subscriptionBean.entity.electronicBilling}"
+														id="email" field="email"
+														validateEmail="true"
+														disabled="#{!subscriptionBean.entity.electronicBilling}"/>
+										<hftl:formField label="#{messages['invoice.ccedEmails']}" id="ccedEmails" field="ccedEmails"
+														disabled="#{!subscriptionBean.entity.electronicBilling}"/>
+										<hftl:formField label="#{messages['invoice.mailingType']}" id="mailingType" field="mailingType" noSelectionLabel="false"
+														disabled="#{!subscriptionBean.entity.electronicBilling}" listenerUpdate=":subscriptionTab:subscriptionFormId:informationTab:emailTemplateId"/>
+										<hftl:formField required="#{ not empty subscriptionBean.entity.mailingType}" id="emailTemplateId" label="#{messages['emailTemplate']}" field="emailTemplate" valueLabelField="code"
+                                                        popup="true"
+                                                        popupId="searchEmailTemplatePopup"/>
+
+									</p:tab>
+
+                                    <c:if test="#{subscriptionBean.entity.id != null}">
+                                        <ui:include src="../../audit/auditableField.xhtml">
+                                            <ui:param name="auditableEntity" value="#{subscriptionBean.entity}" />
+                                            <ui:param name="auditableFieldName" value="#{'STATUS'}" />
+                                        </ui:include>
+                                    </c:if>
 
 									<hftl:customFields backingBean="#{subscriptionBean}" messagesId=":subscriptionTab:subscriptionFormId:messages" />
-									<hftl:displayWorkflowsHistory entity="#{subscriptionBean.entity}" />
+									<!-- <hftl:displayWorkflowsHistory entity="#{subscriptionBean.entity}" /> -->
+									<hftl:displayGenericWFsHistory backingBean="#{subscriptionBean}" />
 
 								</p:tabView>
 								<ui:param name="buttons" value="true" />
@@ -507,7 +643,15 @@
 											rendered="#{ (subscriptionBean.entity.status == SubscriptionStatusEnum.ACTIVE or subscriptionBean.entity.status == SubscriptionStatusEnum.SUSPENDED) and subscriptionBean.canUserUpdateEntity()}"
 											type="button"
 											disabled="#{not empty subscriptionBean.entity.terminationDate}" />
-										<p:commandButton action="#{subscriptionBean.cancelSubscriptionRenewal}" value="#{messages['action.subscription.cancelRenewal']}" rendered="#{subscriptionBean.entity.subscriptionRenewal.initialyActiveFor != null}" immediate="true" ajax="false"></p:commandButton>
+										<p:commandButton action="#{subscriptionBean.cancelSubscriptionRenewal}" value="#{messages['action.subscription.cancelRenewal']}" rendered="#{subscriptionBean.entity.subscriptionRenewal.initialyActiveFor != null and subscriptionBean.entity.status != SubscriptionStatusEnum.RESILIATED}" immediate="true" ajax="false"></p:commandButton>
+										<p:commandButton action="#{subscriptionBean.cancelSubscriptionTermination}"
+														 value="#{messages['button.cancelTerminationButton']}"
+														 update=":subscriptionTab"
+														 rendered="#{subscriptionBean.isTerminatedSubscription()}">
+											<p:confirm header="#{messages['commons.confirmationHeader']}"
+													   message="#{messages['confirmationMessage.cancelSubscriptionTermination']}"
+													   icon="ui-icon-alert" />
+										</p:commandButton>
 									</p:panel>
 								</ui:define>
 						</hftl:formPanel>
@@ -576,7 +720,8 @@
 																<h:outputText value="#{entity.amountWithTax}"
 																	  converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
 															</p:column>
-
+															<hftl:column label="#{messages['counterTemplate.title']}"
+																		 field="counter.description" />
 															<p:column styleClass="actions-column">
 																<f:facet name="header">
 																	<h:outputText value="#{messages['commons.actions']}" />
@@ -698,9 +843,9 @@
                                                                 </h:link>
 															</p:column>
 															<hftl:column label="#{messages['access.startDate']}"
-																field="startDate" isDate="true" />
+																field="startDate" isDate="true" time = "true"/>
 															<hftl:column label="#{messages['access.endDate']}"
-																field="endDate" isDate="true" />
+																field="endDate" isDate="true" time = "true"/>
 															<p:column styleClass="actions-column">
 																<f:facet name="header">
 																	<h:outputText value="#{messages['commons.actions']}" />
@@ -728,6 +873,13 @@
 													</p:panel>
 												</h:form>
 											</p:tab>
+					<p:tab id="counterPeriodTab"
+						   title="#{messages['counterPeriod.title']}"
+						   rendered="#{not empty subscriptionBean.entity.id}">
+						<p:outputPanel id="counterPeriodTabPanel">
+							<ui:include src="counterPeriodTab.xhtml" />
+						</p:outputPanel>
+					</p:tab>
 				</p:tabView>
 			</h:panelGroup>
         </h:panelGroup>
@@ -764,7 +916,7 @@
 			<p:outputPanel id="usageChgPanel">
                 <hftl:formPanel edit="#{subscriptionBean.usageChargeInstance.status == 'INACTIVE'}" backingBean="#{subscriptionBean}" columns="1" entity="#{subscriptionBean.usageChargeInstance}"
                     formId="usageChgForm1" showFormButtons="false" ajaxSubmit="true" rendered="#{subscriptionBean.usageChargeInstance!=null}">
-                    <hftl:formField id="USchargeTemplateSelectId" label="#{messages['businessEntity.code']}" field="chargeTemplate" valueLabelField="code" edit="false" />
+                    <hftl:formField id="USchargeTemplateSelectId" label="#{messages['businessEntity.code']}" field="code" edit="false" />
                     <hftl:formField label="#{messages['commons.status']}" field="status" edit="false" />
                     <hftl:formField label="#{messages['businessEntity.description']}" field="description" edit="false" />
                     <hftl:formField label="#{messages['chargeInstance.prepaidWallets']}" field="prepaidWalletInstances" listType="pickUpList" valueLabelField="descriptionAndCode" edit="false" rendered="#{subscriptionBean.usageChargeInstance.prepaid}" componentWidth="50" /> 
@@ -830,6 +982,7 @@
                     <hftl:formField label="#{messages['recurringChargeInstance.criteria3']}" field="criteria3" />
                     <hftl:formField label="#{messages['oneShotChargeInstance.chargeDate']}" field="chargeDate" edit="false" newLine="true" />
                     <hftl:formField label="#{messages['recurringChargeInstance.nextChargeDate']}" field="nextChargeDate" edit="false" />
+					<hftl:formField label="#{messages['counterTemplate.title']}" field="counter" valueLabelField="descriptionOrCode" edit="false" />
 
                     <ui:param name="buttons" value="true" />
                     <ui:define name="buttons">
@@ -916,12 +1069,12 @@
 									<h:outputText
 										value="#{messages['walletOperation.amountWithoutTax']}" />
 								</f:facet>
-								<h:outputText value="#{shotApplication.amountWithoutTax}" />
+								<h:outputText value="#{shotApplication.amountWithoutTax}" converter="bigDecimal12DigitsConverter" />
 							</p:column>
 							<p:column rendered="#{!appProvider.entreprise}" sortBy="#{shotApplication.amountWithTax}">
 								<f:facet name="header">
 									<h:outputText
-										value="#{messages['walletOperation.amountWithTax']}" />
+										value="#{messages['walletOperation.amountWithTax']}" converter="bigDecimal12DigitsConverter" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.amountWithTax}" />
 							</p:column>
@@ -937,6 +1090,29 @@
 				</p:outputPanel>
 			</h:panelGroup>
 		</p:dialog>
-		
+
+		<p:dialog id="instantiateDiscountPlanDialog"
+				  header="#{messages['discountPlan.instantiation']}"
+				  widgetVar="dlg_instantiateDiscountPlanDialog" modal="true" appendTo="@(body)" closeOnEscape="true"
+				  width="600">
+			<hftl:formPanel  formId="formDPI" edit="true" backingBean="#{subscriptionBean}" entity="#{subscriptionBean.entity.discountPlan}" styleClass="formPanel" showFormButtons="false">
+				<p:tabView>
+					<p:tab title="#{messages['commons.information']}">
+							<hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate" />
+							<hftl:formField label="#{messages['discountPlanItem.endDate']}" field="endDate" />
+							<hftl:formField label="#{messages['discountPlanItem.defaultDuration']}" field="defaultDuration" />
+							<hftl:formField label="#{messages['discountPlanItem.durationUnit']}" field="durationUnit" />
+							<p:panel styleClass="action-buttons">
+								<p:commandButton action="#{subscriptionBean.instantiateDiscountPlan()}"
+												 value="#{messages['button.instanciateButton']}" update=":#{p:component('discountPanel')}"
+												 oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_instantiateDiscountPlanDialog').hide()">
+								</p:commandButton>
+								<p:commandButton immediate="true" onclick="PF('dlg_instantiateDiscountPlanDialog').hide()" type="button" value="#{messages['management.close']}" />
+							</p:panel>
+					</p:tab>
+					<hftl:customFields prefix="dpInstance" backingBean="#{discountPlanInstanceBean}" messagesId=":formDPI:messages" />
+				</p:tabView>
+			</hftl:formPanel>
+		</p:dialog>
 	</ui:define>
 </ui:composition>

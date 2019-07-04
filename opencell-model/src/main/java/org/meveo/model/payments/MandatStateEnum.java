@@ -8,5 +8,5 @@ package org.meveo.model.payments;
  * @lastModifiedVersion 5.0
  */
 public enum MandatStateEnum {
-    created,waitingForReference,active,revoked,expired;
+    created, waitingForReference, active, revoked, expired;
 }

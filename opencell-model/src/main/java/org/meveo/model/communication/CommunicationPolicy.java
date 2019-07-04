@@ -21,52 +21,68 @@ package org.meveo.model.communication;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+/**
+ * Communication policy
+ * 
+ * @author Andrius Karpavicius
+ */
 @Embeddable
 public class CommunicationPolicy {
 
-	@Column(name="delay_min")
-	private Long delayMinBetween2messages;
-	
-	@Column(name="nb_max_day")
-	private Long NbMaxMessagePerDay;
-	
-	@Column(name="nb_max_week")
-	private Long NbMaxMessagePerWeek;
-	
-	@Column(name="nb_max_month")
-	private Long NbMaxMessagePerMonth;
+    /**
+     * Minimum delay between two messages
+     */
+    @Column(name = "delay_min")
+    private Long delayMinBetween2messages;
 
-	public Long getDelayMinBetween2messages() {
-		return delayMinBetween2messages;
-	}
+    /**
+     * Maximum number of messages per day
+     */
+    @Column(name = "nb_max_day")
+    private Long NbMaxMessagePerDay;
 
-	public void setDelayMinBetween2messages(Long delayMinBetween2messages) {
-		this.delayMinBetween2messages = delayMinBetween2messages;
-	}
+    /**
+     * Maximum number of messages per week
+     */
+    @Column(name = "nb_max_week")
+    private Long NbMaxMessagePerWeek;
 
-	public Long getNbMaxMessagePerDay() {
-		return NbMaxMessagePerDay;
-	}
+    /**
+     * Maximum number of messages per month
+     */
+    @Column(name = "nb_max_month")
+    private Long NbMaxMessagePerMonth;
 
-	public void setNbMaxMessagePerDay(Long nbMaxMessagePerDay) {
-		NbMaxMessagePerDay = nbMaxMessagePerDay;
-	}
+    public Long getDelayMinBetween2messages() {
+        return delayMinBetween2messages;
+    }
 
-	public Long getNbMaxMessagePerWeek() {
-		return NbMaxMessagePerWeek;
-	}
+    public void setDelayMinBetween2messages(Long delayMinBetween2messages) {
+        this.delayMinBetween2messages = delayMinBetween2messages;
+    }
 
-	public void setNbMaxMessagePerWeek(Long nbMaxMessagePerWeek) {
-		NbMaxMessagePerWeek = nbMaxMessagePerWeek;
-	}
+    public Long getNbMaxMessagePerDay() {
+        return NbMaxMessagePerDay;
+    }
 
-	public Long getNbMaxMessagePerMonth() {
-		return NbMaxMessagePerMonth;
-	}
+    public void setNbMaxMessagePerDay(Long nbMaxMessagePerDay) {
+        NbMaxMessagePerDay = nbMaxMessagePerDay;
+    }
 
-	public void setNbMaxMessagePerMonth(Long nbMaxMessagePerMonth) {
-		NbMaxMessagePerMonth = nbMaxMessagePerMonth;
-	}
-	
-	
+    public Long getNbMaxMessagePerWeek() {
+        return NbMaxMessagePerWeek;
+    }
+
+    public void setNbMaxMessagePerWeek(Long nbMaxMessagePerWeek) {
+        NbMaxMessagePerWeek = nbMaxMessagePerWeek;
+    }
+
+    public Long getNbMaxMessagePerMonth() {
+        return NbMaxMessagePerMonth;
+    }
+
+    public void setNbMaxMessagePerMonth(Long nbMaxMessagePerMonth) {
+        NbMaxMessagePerMonth = nbMaxMessagePerMonth;
+    }
+
 }

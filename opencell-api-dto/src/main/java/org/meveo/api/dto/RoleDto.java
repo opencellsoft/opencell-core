@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 
@@ -20,6 +21,8 @@ import org.meveo.model.security.Role;
  * The Class RoleDto.
  * 
  * @author anasseh
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 6.0
  */
 @XmlRootElement(name = "Role")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -39,12 +42,17 @@ public class RoleDto extends BaseEntityDto {
     /** The permission. */
     @XmlElementWrapper(name = "permissions")
     @XmlElement(name = "permission")
-    private List<PermissionDto> permission = new ArrayList<PermissionDto>();
+    private List<PermissionDto> permission = new ArrayList<>();
 
     /** The roles. */
     @XmlElementWrapper(name = "roles")
     @XmlElement(name = "role")
-    private List<RoleDto> roles = new ArrayList<RoleDto>();
+    private List<RoleDto> roles = new ArrayList<>();
+    
+    /** The secured entities. */
+    @XmlElementWrapper(name = "accessibleEntities")
+    @XmlElement(name = "accessibleEntity")
+    private List<SecuredEntityDto> securedEntities;
 
     /**
      * Instantiates a new role dto.
@@ -61,7 +69,7 @@ public class RoleDto extends BaseEntityDto {
     public RoleDto(String name) {
         this.name = name;
     }
-
+    
     /**
      * Instantiates a new role dto.
      *
@@ -70,6 +78,18 @@ public class RoleDto extends BaseEntityDto {
      * @param includePermissions the include permissions
      */
     public RoleDto(Role role, boolean includeRoles, boolean includePermissions) {
+    	this(role, includeRoles, includePermissions, false);
+    }
+
+    /**
+     * Instantiates a new role dto.
+     *
+     * @param role the role
+     * @param includeRoles the include roles
+     * @param includePermissions the include permissions
+     * @param includeSecuredEntities include secured entities
+     */
+    public RoleDto(Role role, boolean includeRoles, boolean includePermissions, boolean includeSecuredEntities) {
         this.setName(role.getName());
         this.setDescription(role.getDescription());
 
@@ -92,6 +112,16 @@ public class RoleDto extends BaseEntityDto {
             }
             Collections.sort(this.roles, Comparator.comparing(RoleDto::getName));
         }
+        
+		if (includeSecuredEntities && role.getSecuredEntities() != null) {
+			this.securedEntities = new ArrayList<>();
+			SecuredEntityDto securedEntityDto = null;
+			for (SecuredEntity securedEntity : role.getSecuredEntities()) {
+				securedEntityDto = new SecuredEntityDto(securedEntity);
+				this.securedEntities.add(securedEntityDto);
+			}
+			Collections.sort(this.securedEntities, Comparator.comparing(SecuredEntityDto::getCode));
+		}
     }
 
     /**
@@ -175,4 +205,18 @@ public class RoleDto extends BaseEntityDto {
     public void setRoles(List<RoleDto> roles) {
         this.roles = roles;
     }
+
+    /**
+     * Returns a list of secured entities
+     */
+	public List<SecuredEntityDto> getSecuredEntities() {
+		return securedEntities;
+	}
+
+	/**
+	 * Gets a list of secured entities
+	 */
+	public void setSecuredEntities(List<SecuredEntityDto> securedEntities) {
+		this.securedEntities = securedEntities;
+	}
 }

@@ -29,6 +29,11 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
+/**
+ * Hour in day entry for monthly calendar
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "hour", "minute" })
@@ -39,6 +44,18 @@ public class HourInDay extends BaseEntity implements Comparable<HourInDay> {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Hour
+     */
+    @Column(name = "hour")
+    private Integer hour = 0;
+
+    /**
+     * Minute
+     */
+    @Column(name = "min")
+    private Integer minute = 0;
+
     public HourInDay() {
         super();
     }
@@ -48,12 +65,6 @@ public class HourInDay extends BaseEntity implements Comparable<HourInDay> {
         this.hour = hour;
         this.minute = minute;
     }
-
-    @Column(name = "hour")
-    private Integer hour = 0;
-
-    @Column(name = "min")
-    private Integer minute = 0;
 
     public Integer getHour() {
         return hour;

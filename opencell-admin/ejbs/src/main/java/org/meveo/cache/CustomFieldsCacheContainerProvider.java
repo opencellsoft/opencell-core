@@ -23,6 +23,7 @@ import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarYearly;
@@ -34,7 +35,7 @@ import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
-import org.meveo.util.PersistenceUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.slf4j.Logger;
 
 /**
@@ -42,8 +43,8 @@ import org.slf4j.Logger;
  * 
  * @author Andrius Karpavicius
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class CustomFieldsCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
@@ -137,6 +138,8 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
                     ((CalendarYearly) cft.getCalendar()).setDays(PersistenceUtils.initializeAndUnproxy(((CalendarYearly) cft.getCalendar()).getDays()));
                 } else if (cft.getCalendar() instanceof CalendarInterval) {
                     ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
+                } else if (cft.getCalendar() instanceof CalendarBanking) {
+                    ((CalendarBanking)  cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
                 }
             }
             if (cft.getListValues() != null) {
@@ -272,6 +275,9 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
                 ((CalendarYearly) cft.getCalendar()).nextCalendarDate(new Date());
             } else if (cft.getCalendar() instanceof CalendarInterval) {
                 ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
+                ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
+            } else if (cft.getCalendar() instanceof CalendarBanking) {
+                ((CalendarBanking)  cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
                 ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
             }
         }

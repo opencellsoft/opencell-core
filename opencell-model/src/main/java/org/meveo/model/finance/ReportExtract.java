@@ -39,10 +39,11 @@ import org.meveo.model.scripts.ScriptInstance;
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0
- * @lastModifiedVersion 5.1
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "REPORT")
+@CustomFieldEntity(cftCodePrefix = "ReportExtract")
 @Table(name = "dwh_report_extract", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dwh_report_extract_seq"), })
@@ -53,6 +54,9 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
 
     @Column(name = "category", length = 50)
     private String category;
+    
+    @Column(name = "output_dir", length = 100)
+    private String outputDir;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -67,7 +71,7 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
-    @Column(name = "sql_query", columnDefinition = "TEXT")
+    @Column(name = "sql_query", columnDefinition = "text")
     private String sqlQuery;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -80,12 +84,12 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
 
     @Column(name = "style", columnDefinition = "TEXT")
     private String style;
-    
+
     @ImageType
     @Column(name = "image_path", length = 100)
     @Size(max = 100)
     private String imagePath;
-    
+
     @OneToMany(mappedBy = "reportExtract", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<ReportExtractExecutionResult> executionResults = new ArrayList<>();
 
@@ -114,6 +118,14 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
 
     public void setCategory(String category) {
         this.category = category;
+    }
+    
+    public String getOutputDir() {
+        return outputDir;
+    }
+
+    public void setOutputDir(String outputDir) {
+        this.outputDir = outputDir;
     }
 
     public ScriptInstance getScriptInstance() {
@@ -155,7 +167,7 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     public void setParams(Map<String, String> params) {
         this.params = params;
     }
-    
+
     public ReportExtractResultTypeEnum getReportExtractResultType() {
         return reportExtractResultType;
     }

@@ -23,12 +23,14 @@ import org.meveo.model.ModuleItem;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Entity
 @ModuleItem
 @Cacheable
 @ExportIdentifier({ "code" })
-@CustomFieldEntity(cftCodePrefix = "FILTER", cftCodeFields = "code", isManuallyManaged = false)
+@CustomFieldEntity(cftCodePrefix = "Filter", cftCodeFields = "code", isManuallyManaged = false)
 @Table(name = "meveo_filter")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "meveo_filter_seq"), })

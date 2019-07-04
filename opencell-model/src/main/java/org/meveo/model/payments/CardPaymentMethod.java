@@ -3,7 +3,14 @@ package org.meveo.model.payments;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -12,46 +19,68 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.shared.DateUtils;
 
 /**
+ * Payment by card method
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
 @Entity
 @DiscriminatorValue(value = "CARD")
-@NamedQueries({
-        @NamedQuery(name = "PaymentMethod.getNumberOfTokenId", query = "select count(*) from  CardPaymentMethod pm where pm.tokenId = :tokenId and pm.disabled = false") ,
-        @NamedQuery(name = "PaymentMethod.getNumberOfCardCustomerAccount", query = "select count(*) from  CardPaymentMethod pm where    pm.customerAccount.id = :customerAccountId and pm.monthExpiration = :monthExpiration and pm.yearExpiration = :yearExpiration and pm.hiddenCardNumber = :hiddenCardNumber and pm.cardType = :cardType and pm.disabled = false")
-})public class CardPaymentMethod extends PaymentMethod {
+@NamedQueries({ @NamedQuery(name = "PaymentMethod.getNumberOfTokenId", query = "select count(*) from  CardPaymentMethod pm where pm.tokenId = :tokenId and pm.disabled = false"),
+        @NamedQuery(name = "PaymentMethod.getNumberOfCardCustomerAccount", query = "select count(*) from  CardPaymentMethod pm where    pm.customerAccount.id = :customerAccountId and pm.monthExpiration = :monthExpiration and pm.yearExpiration = :yearExpiration and pm.hiddenCardNumber = :hiddenCardNumber and pm.cardType = :cardType and pm.disabled = false") })
+public class CardPaymentMethod extends PaymentMethod {
 
     private static final long serialVersionUID = 8726571628074346184L;
 
+    /**
+     * Card type
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "card_type")
     @NotNull
     private CreditCardTypeEnum cardType;
 
+    /**
+     * Owner as printed on the card
+     */
     @Column(name = "owner")
     @NotNull
     private String owner;
 
+    /**
+     * Expiration month
+     */
     @Column(name = "month_expiration")
     @NotNull
     @Min(1)
     @Max(12)
     private Integer monthExpiration;
 
+    /**
+     * Expiration year
+     */
     @Column(name = "year_expiration")
     @NotNull
     @Min(0)
     @Max(99)
     private Integer yearExpiration;
 
+    /**
+     * Card number last 4 digits
+     */
     @Column(name = "card_number")
     @NotNull
     private String hiddenCardNumber;
 
+    /**
+     * Full card number. Used at data entry time.
+     */
     @Transient
     private String cardNumber;
 
+    /**
+     * Issue number
+     */
     @Transient
     private String issueNumber;
 
@@ -66,8 +95,8 @@ import org.meveo.model.shared.DateUtils;
         this.preferred = preferred;
     }
 
-    public CardPaymentMethod(CustomerAccount customerAccount,boolean isDisabled, String alias, String cardNumber, String owner, boolean preferred, String issueNumber, Integer yearExpiration,
-            Integer monthExpiration, CreditCardTypeEnum cardType) {
+    public CardPaymentMethod(CustomerAccount customerAccount, boolean isDisabled, String alias, String cardNumber, String owner, boolean preferred, String issueNumber,
+            Integer yearExpiration, Integer monthExpiration, CreditCardTypeEnum cardType) {
         super();
         setDisabled(isDisabled);
         setPaymentType(PaymentMethodEnum.CARD);
@@ -207,30 +236,30 @@ import org.meveo.model.shared.DateUtils;
 
     @Override
     public String toString() {
-        return "CardPaymentMethod [tokenId=" + getTokenId() + ", cardType=" + getCardType() + ", owner=" + getOwner() + ", monthExpiration=" + getMonthExpiration() + ", yearExpiration="
-                + getYearExpiration() + ", cardNumber=" + getHiddenCardNumber() + ", userId=" + getUserId() + ", info1=" + getInfo1() + ", info2=" + getInfo2() + ", info3="
-                + getInfo3() + ", info4=" + getInfo4() + ", info5=" + getInfo5() + ", issueNumber=" + getIssueNumber() + "]";
+        return "CardPaymentMethod [tokenId=" + getTokenId() + ", cardType=" + getCardType() + ", owner=" + getOwner() + ", monthExpiration=" + getMonthExpiration()
+                + ", yearExpiration=" + getYearExpiration() + ", cardNumber=" + getHiddenCardNumber() + ", userId=" + getUserId() + ", info1=" + getInfo1() + ", info2="
+                + getInfo2() + ", info3=" + getInfo3() + ", info4=" + getInfo4() + ", info5=" + getInfo5() + ", issueNumber=" + getIssueNumber() + "]";
     }
 
     public static String hideCardNumber(String cardNumber) {
         if (cardNumber == null) {
             return "invalid";
         }
-        cardNumber = cardNumber.replaceAll("\\s+","");
+        cardNumber = cardNumber.replaceAll("\\s+", "");
         if (cardNumber.length() == 4 || cardNumber.length() == 16 || cardNumber.length() == 15) {
             return cardNumber.substring(cardNumber.length() - 4);
         }
         return "invalid";
     }
-    
+
     @Override
     public boolean isExpired() {
         Calendar now = Calendar.getInstance();
-        
+
         Calendar expiration = Calendar.getInstance();
         expiration.set(Calendar.MONTH, monthExpiration - 1);
         expiration.set(Calendar.YEAR, yearExpiration + 2000);
-        
+
         return (now.getTime().after(expiration.getTime())) ? true : false;
     }
 }

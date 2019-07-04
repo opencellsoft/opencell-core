@@ -19,7 +19,9 @@
 package org.meveo.service.billing.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -41,7 +43,9 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.TaxService;
 
 /**
  * Service for Invoice subcategory country entity management and applicable tax determination
@@ -56,6 +60,9 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
 
     @Inject
     private ResourceBundle resourceBundle;
+
+    @Inject
+    private TaxService taxService;
 
     @Override
     public void create(InvoiceSubcategoryCountry invoiceSubcategoryCountry) throws BusinessException {
@@ -100,7 +107,12 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         // get all the taxes of an invoice sub category
         List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = listByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubcategoryCountry.getInvoiceSubCategory(),
             invoiceSubcategoryCountry.getSellingCountry(), invoiceSubcategoryCountry.getTradingCountry(), null, null, null);
-        if (invoiceSubcategoryCountries != null) {
+        return checkValidityDateFromList(invoiceSubcategoryCountry, invoiceSubcategoryCountries);
+    }
+
+	public InvoiceSubcategoryCountry checkValidityDateFromList(InvoiceSubcategoryCountry invoiceSubcategoryCountry,
+			List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) throws BusinessException {
+		if (invoiceSubcategoryCountries != null) {
             InvoiceSubcategoryCountry invoiceSubcategoryCountryFound = null;
             // check for overlap
             for (InvoiceSubcategoryCountry invoiceSubcategoryCountryTemp : invoiceSubcategoryCountries) {
@@ -133,9 +145,8 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
 
             invoiceSubcategoryCountry.setPriority(getNextPriority(invoiceSubcategoryCountries));
         }
-
-        return invoiceSubcategoryCountry;
-    }
+		return invoiceSubcategoryCountry;
+	}
 
     private int getNextPriority(List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
         int maxPriority = 0;
@@ -191,7 +202,7 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         if (StringUtils.isBlank(isc.getTaxCodeEL())) {
             return isc.getTax();
         } else {
-            return invoiceSubCategoryService.evaluateTaxCodeEL(isc.getTaxCodeEL(), userAccount, billingAccount, invoice);
+            return evaluateTaxCodeEL(isc.getTaxCodeEL(), userAccount, billingAccount, invoice);
         }
     }
 
@@ -304,8 +315,7 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
             tax = invoiceSubcategoryCountry.getTax();
         } else {
-            tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),
-                chargeInstance.getUserAccount().getBillingAccount(), null);
+            tax = evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(), chargeInstance.getUserAccount().getBillingAccount(), null);
         }
 
         if (tax == null) {
@@ -316,9 +326,9 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
     }
 
     /**
-     * Determine applicable tax for a given seller/buyer and invoice subcategory combination
+     * Determine applicable tax for a given seller/buyer and invoice subCategory combination
      * 
-     * @param invoiceSubCategory Invoice subcategory
+     * @param invoiceSubCategory Invoice subCategory
      * @param seller Seller
      * @param billingAccount Billing account
      * @param date Date to determine tax validity
@@ -345,7 +355,7 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
             tax = invoiceSubcategoryCountry.getTax();
         } else {
-            tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null, billingAccount, null);
+            tax = evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null, billingAccount, null);
         }
 
         if (tax == null) {
@@ -387,7 +397,7 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
             tax = invoiceSubcategoryCountry.getTax();
         } else {
-            tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null, null, null);
+            tax = evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null, null, null);
         }
 
         if (tax == null) {
@@ -398,5 +408,51 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         }
 
         return tax;
+    }
+
+    private Tax evaluateTaxCodeEL(String expression, UserAccount userAccount, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
+        Tax result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+
+        if (expression.indexOf("seller") >= 0) {
+            userMap.put("seller", billingAccount.getCustomerAccount().getCustomer().getSeller());
+        }
+        if (expression.indexOf("cust") >= 0) {
+            userMap.put("cust", billingAccount.getCustomerAccount().getCustomer());
+            userMap.put("c", billingAccount.getCustomerAccount().getCustomer());
+        }
+        if (expression.indexOf("ca") >= 0) {
+            userMap.put("ca", billingAccount.getCustomerAccount());
+        }
+        if (expression.indexOf("ba") >= 0) {
+            userMap.put("ba", billingAccount);
+        }
+        if (expression.indexOf("ua") >= 0) {
+            userMap.put("ua", userAccount);
+        }
+        if (expression.indexOf("iv") >= 0 || expression.indexOf("invoice") >= 0) {
+            userMap.put("iv", invoice);
+            userMap.put("invoice", invoice);
+        }
+        if (expression.indexOf("date") >= 0) {
+            userMap.put("date", invoice == null ? new Date() : invoice.getInvoiceDate());
+        }
+        String taxCode = null;
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
+        try {
+            taxCode = (String) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to String but " + res);
+        }
+        if (taxCode == null) {
+            throw new BusinessException("Expression " + expression + " evaluates to null  ");
+        } else {
+            result = taxService.findByCode(taxCode);
+        }
+
+        return result;
     }
 }

@@ -7,7 +7,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.billing.RatedTransactionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.billing.RatedTransactionListRequestDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.RatedTransactionListResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -25,23 +25,18 @@ import org.meveo.api.rest.impl.BaseRs;
 @Interceptors({ WsRestApiInterceptor.class })
 public class RatedTransactionRsImpl extends BaseRs implements RatedTransactionRs {
 
-    /**
-     * final Integer 0.
-     */
-    private static final Integer ZERO_INTEGER = new Integer(0);
-
-    /**
-     * used sort by field.
-     */
-    private static final String SORT_BY_FIELD_CODE = "code";
-
     @Inject
     private RatedTransactionApi ratedTransactionApi;
 
     @Override
     public RatedTransactionListResponseDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder, Boolean returnUserAccountCode) {
         try {
-            return ratedTransactionApi.list(new RatedTransactionListRequestDto(query, fields, offset, limit, sortBy, sortOrder, returnUserAccountCode));
+
+            if (returnUserAccountCode != null && returnUserAccountCode) {
+                fields = (fields != null ? fields + ", " : "") + "userAccountCode";
+            }
+
+            return ratedTransactionApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
         } catch (Exception e) {
             RatedTransactionListResponseDto result = new RatedTransactionListResponseDto();
             processException(e, result.getActionStatus());
@@ -50,9 +45,9 @@ public class RatedTransactionRsImpl extends BaseRs implements RatedTransactionRs
     }
 
     @Override
-    public RatedTransactionListResponseDto listPost(RatedTransactionListRequestDto postData) {
+    public RatedTransactionListResponseDto listPost(PagingAndFiltering pagingAndFiltering) {
         try {
-            return ratedTransactionApi.list(postData);
+            return ratedTransactionApi.list(pagingAndFiltering);
         } catch (Exception e) {
             RatedTransactionListResponseDto result = new RatedTransactionListResponseDto();
             processException(e, result.getActionStatus());
@@ -60,18 +55,13 @@ public class RatedTransactionRsImpl extends BaseRs implements RatedTransactionRs
         }
     }
 
-    /*
-     * @see org.meveo.api.rest.billing.RatedTransactionRs#cancelRatedTransactions(java.lang.String)
-     */
     @Override
-    public ActionStatus cancelRatedTransactions(String query) {
+    public ActionStatus cancelRatedTransactions(PagingAndFiltering pagingAndFiltering) {
 
         ActionStatus actionStatus = new ActionStatus();
 
         try {
-            RatedTransactionListRequestDto ratedTransactionListRequestDto = new RatedTransactionListRequestDto(query, null, ZERO_INTEGER, Integer.MAX_VALUE, SORT_BY_FIELD_CODE,
-                SortOrder.ASCENDING, false);
-            ratedTransactionApi.cancelRatedTransactions(ratedTransactionListRequestDto);
+            ratedTransactionApi.cancelRatedTransactions(pagingAndFiltering);
             actionStatus.setStatus(ActionStatusEnum.SUCCESS);
         } catch (Exception e) {
             actionStatus.setStatus(ActionStatusEnum.FAIL);
@@ -81,5 +71,4 @@ public class RatedTransactionRsImpl extends BaseRs implements RatedTransactionRs
 
         return actionStatus;
     }
-
 }

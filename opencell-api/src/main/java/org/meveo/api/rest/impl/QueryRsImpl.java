@@ -43,6 +43,7 @@ public class QueryRsImpl extends BaseRs implements QueryRs {
      *        limit - Pagination - number of records to retrieve<br>
      *        sortBy - Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.<br>
      *        sortOrder - Sorting - sort order.<br>
+     *        groupBy - Grouping - group by clause, allow to use aggregation funciton like sum, avg, count.<br>
      *
      *        all other parameters will be used as query parameters to the HQL
      *
@@ -63,18 +64,19 @@ public class QueryRsImpl extends BaseRs implements QueryRs {
             String limit = parameters.getFirst("limit");
             String sortBy = parameters.getFirst("sortBy");
             String sortOrder = parameters.getFirst("sortOrder");
-
+            String groupBy = parameters.getFirst("groupBy");
+            
             Map<String, Object> queryParams = new HashMap<>();
 
             parameters.keySet().forEach((key) -> {
                 if (!"query".equals(key) && !"alias".equals(key) && !"fields".equals(key) && !"offset".equals(key) && !"limit".equals(key) && !"sortBy".equals(key)
-                        && !"sortOrder".equals(key)) {
+                        && !"sortOrder".equals(key) && !"groupBy".equals(key)) {
                     queryParams.put(key, parameters.getFirst(key));
                 }
             });
 
             try {
-                response = queryApi.list(query, alias, fields, queryParams, offset, limit, sortBy, sortOrder);
+                response = queryApi.list(query, alias, fields, queryParams, offset, limit, sortBy, sortOrder, groupBy);
             } catch (MeveoApiException e) {
                 processException(e, response.getActionStatus());
             }

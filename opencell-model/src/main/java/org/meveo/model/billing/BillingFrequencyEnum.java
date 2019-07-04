@@ -25,39 +25,34 @@ import org.meveo.model.IdentifiableEnum;
  */
 public enum BillingFrequencyEnum implements IdentifiableEnum {
 
-	DAILY(1, "billingFrequency.daily"), 
-	WEEKLY(2, "billingFrequency.weekly"), 
-	BIMONTHLY(3, "billingFrequency.bimonthly"), 
-	MONTHLY(4, "billingFrequency.monthly"), 
-	QUARTERLY(5, "billingFrequency.quarterly"), 
-	BIANNUAL(6, "billingFrequency.biannual"), 
-	ANNUAL(7, "billingFrequency.annual");
+    DAILY(1, "billingFrequency.daily"), WEEKLY(2, "billingFrequency.weekly"), BIMONTHLY(3, "billingFrequency.bimonthly"), MONTHLY(4, "billingFrequency.monthly"), QUARTERLY(5,
+            "billingFrequency.quarterly"), BIANNUAL(6, "billingFrequency.biannual"), ANNUAL(7, "billingFrequency.annual");
 
-	private Integer id;
-	private String label;
+    private Integer id;
+    private String label;
 
-	BillingFrequencyEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
-	}
+    BillingFrequencyEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getLabel() {
-		return this.label;
-	}
+    public String getLabel() {
+        return this.label;
+    }
 
-	public static BillingFrequencyEnum getValue(Integer id) {
-		if (id != null) {
-			for (BillingFrequencyEnum status : values()) {
-				if (id.equals(status.getId())) {
-					return status;
-				}
-			}
-		}
-		return null;
-	}
+    public static BillingFrequencyEnum getValue(Integer id) {
+        if (id != null) {
+            for (BillingFrequencyEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
 
 }

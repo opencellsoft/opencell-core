@@ -27,6 +27,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -38,6 +39,11 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
+/**
+ * Workflow action
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ExportIdentifier({ "uuid" })
 @Table(name = "wf_action", uniqueConstraints = @UniqueConstraint(columnNames = { "uuid" }))
@@ -48,28 +54,54 @@ public class WFAction extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Unique identifier - UUID
+     */
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
-    private String uuid = UUID.randomUUID().toString();
+    private String uuid;
 
+    /**
+     * Expression to resolve action, or execute a sript
+     */
     @Column(name = "action_el", length = 2000)
     @Size(max = 2000)
     @NotNull
     private String actionEl;
 
+    /**
+     * Priority
+     */
     @Column(name = "priority")
     private int priority;
 
+    /**
+     * Expression to check if worklow action applies
+     */
     @Column(name = "condition_el", length = 2000)
     @Size(max = 2000)
     private String conditionEl;
 
+    /**
+     * Parent workflow transition
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wf_transition_id")
     private WFTransition wfTransition;
 
+    /**
+     * setting uuid if null
+     */
+    @PrePersist
+    public void setUUIDIfNull() {
+    	if (uuid == null) {
+    		uuid = UUID.randomUUID().toString();
+    	}
+    }
+    
     public String getUuid() {
+    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
 

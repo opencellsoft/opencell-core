@@ -2,6 +2,7 @@ package org.meveo.api.rest;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -16,6 +17,7 @@ import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * Web service for managing {@link org.meveo.model.admin.Seller}.
@@ -52,11 +54,12 @@ public interface SellerRs extends IBaseRs {
      * Search for seller with a given code.
      * 
      * @param sellerCode seller code
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return found seller.
      */
     @Path("/")
     @GET
-    GetSellerResponse find(@QueryParam("sellerCode") String sellerCode);
+    GetSellerResponse find(@QueryParam("sellerCode") String sellerCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * Remove seller with a given code.

@@ -32,8 +32,9 @@ import org.meveo.service.job.Job;
  * The Class MediationJob consume standard cdr files.
  * 
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- * 
+ * @author HORRI khalid
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class MediationJob extends Job {
@@ -45,24 +46,18 @@ public class MediationJob extends Job {
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+
         try {
-            Long nbRuns = new Long(1);
-            Long waitingMillis = new Long(0);
-            try {
-                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
-                if (nbRuns == -1) {
-                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
-                }
-            } catch (Exception e) {
-                nbRuns = new Long(1);
-                waitingMillis = new Long(0);
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e);
-            }
 
             ParamBean parambean = paramBeanFactory.getInstance();
             String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "metering" + File.separator;
@@ -76,7 +71,7 @@ public class MediationJob extends Job {
             if (!f.exists()) {
                 f.mkdirs();
             }
-            File[] files = FileUtils.getFilesForParsing(inputDir, cdrExtensions);
+            File[] files = FileUtils.listFiles(inputDir, cdrExtensions);
             if (files == null || files.length == 0) {
                 return;
             }
@@ -84,8 +79,9 @@ public class MediationJob extends Job {
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
+            String scriptCode = (String) this.getParamOrCFValue(jobInstance, "scriptJob");
             while (subListCreator.isHasNext()) {
-                futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), lastCurrentUser));
+                futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), lastCurrentUser, scriptCode));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());
@@ -126,23 +122,35 @@ public class MediationJob extends Job {
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("nbRuns");
-        nbRuns.setAppliesTo("JOB_MediationJob");
+        nbRuns.setAppliesTo("JobInstance_MediationJob");
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
-        nbRuns.setDefaultValue("1");
+        nbRuns.setDefaultValue("-1");
         nbRuns.setValueRequired(false);
         result.put("nbRuns", nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
         waitingMillis.setCode("waitingMillis");
-        waitingMillis.setAppliesTo("JOB_MediationJob");
+        waitingMillis.setAppliesTo("JobInstance_MediationJob");
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
         waitingMillis.setDefaultValue("0");
         waitingMillis.setValueRequired(false);
         result.put("waitingMillis", waitingMillis);
+
+        CustomFieldTemplate scriptJob = new CustomFieldTemplate();
+        scriptJob.setCode("scriptJob");
+        scriptJob.setAppliesTo("JobInstance_MediationJob");
+        scriptJob.setActive(true);
+        scriptJob.setAllowEdit(true);
+        scriptJob.setMaxValue(Long.MAX_VALUE);
+        scriptJob.setDescription(resourceMessages.getString("jobExecution.scriptJob"));
+        scriptJob.setFieldType(CustomFieldTypeEnum.STRING);
+        scriptJob.setValueRequired(false);
+        scriptJob.setDefaultValue("");
+        result.put("scriptJob", scriptJob);
 
         return result;
     }

@@ -19,9 +19,15 @@ import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.UserAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
@@ -34,7 +40,10 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.create(postData);
+            UserAccount userAccount = userAccountApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(userAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -99,7 +108,10 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.createOrUpdate(postData);
+            UserAccount userAccount = userAccountApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(userAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

@@ -23,12 +23,8 @@ package org.meveo.model.billing;
  */
 public enum TaskStatusEnum {
 
-    SCHEDULED(1, "taskStatus.scheduled"),
-    ONGOING(2, "taskStatus.ongoing"),
-    PAUSED(3, "taskStatus.paused"),
-    CANCELLED(4, "taskStatus.cancelled"),
-    RESCHEDULING(5, "taskStatus.resheduling"),
-    TERMINATED(6, "taskStatus.terminated");
+    SCHEDULED(1, "taskStatus.scheduled"), ONGOING(2, "taskStatus.ongoing"), PAUSED(3, "taskStatus.paused"), CANCELLED(4, "taskStatus.cancelled"), RESCHEDULING(5,
+            "taskStatus.resheduling"), TERMINATED(6, "taskStatus.terminated");
 
     private Integer id;
     private String label;

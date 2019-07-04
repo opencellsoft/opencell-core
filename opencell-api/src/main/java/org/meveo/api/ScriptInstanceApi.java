@@ -25,23 +25,24 @@ import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
-import org.meveo.service.script.CustomScriptService;
 import org.meveo.service.script.ScriptInstanceCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptUtils;
 
 /**
  * @author Edward P. Legaspi
  * @author Mounir Bahije
- * @lastModifiedVersion 5.2
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
  *
  **/
 
 @Stateless
 public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanceDto> {
-
+    
     @Inject
     private ScriptInstanceService scriptInstanceService;
-    
+
     @Inject
     private ScriptInstanceCategoryService scriptInstanceCategoryService;
 
@@ -154,16 +155,16 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
     /**
      * Execute a script instance with a given code and context
      *
-     * @param scriptInstanceCode
-     * @param context
-     * @return
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param scriptInstanceCode Script instance code
+     * @param context Context of values
+     * @return A map of values
+     * @throws MeveoApiException Api exception
+     * @throws BusinessException General business exception
      */
     public Map<String, Object> execute(String scriptInstanceCode, Map<String, Object> context) throws MeveoApiException, BusinessException {
 
         find(scriptInstanceCode);
-        Map<String, Object> result = scriptInstanceService.execute(scriptInstanceCode, context);
+        Map<String, Object> result = scriptInstanceService.executeWInitAndFinalize(scriptInstanceCode, context);
         return result;
     }
 
@@ -206,13 +207,13 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
         handleMissingParameters();
 
-        String scriptCode = ScriptInstanceService.getFullClassname(dto.getScript());
+        String scriptCode = ScriptUtils.getFullClassname(dto.getScript());
         if (!StringUtils.isBlank(dto.getCode()) && !dto.getCode().equals(scriptCode)) {
             throw new BusinessApiException("The code and the canonical script class name must be identical");
         }
 
         // check script existed full class name in class path
-        if (CustomScriptService.isOverwritesJavaClass(scriptCode)) {
+        if (ScriptUtils.isOverwritesJavaClass(scriptCode)) {
             throw new InvalidParameterException("The class with such name already exists");
         }
 
@@ -239,15 +240,18 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
         scriptInstance.setCode(dto.getCode());
         scriptInstance.setDescription(dto.getDescription());
         scriptInstance.setScript(dto.getScript());
-
-		if (!StringUtils.isBlank(dto.getScriptInstanceCategoryCode())) {
-			ScriptInstanceCategory scriptInstanceCategory = scriptInstanceCategoryService
-					.findByCode(dto.getScriptInstanceCategoryCode());
-			if (scriptInstanceCategory != null) {
-				scriptInstance.setScriptInstanceCategory(scriptInstanceCategory);
-			}
-		}
         
+        if (dto.getReuse()!=null) {
+            scriptInstance.setReuse(dto.getReuse());
+        }
+
+        if (!StringUtils.isBlank(dto.getScriptInstanceCategoryCode())) {
+            ScriptInstanceCategory scriptInstanceCategory = scriptInstanceCategoryService.findByCode(dto.getScriptInstanceCategoryCode());
+            if (scriptInstanceCategory != null) {
+                scriptInstance.setScriptInstanceCategory(scriptInstanceCategory);
+            }
+        }
+
         if (dto.getType() != null) {
             scriptInstance.setSourceTypeEnum(dto.getType());
         } else {

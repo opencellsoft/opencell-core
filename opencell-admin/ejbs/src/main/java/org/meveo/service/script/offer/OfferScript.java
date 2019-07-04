@@ -10,6 +10,8 @@ import org.meveo.service.script.module.ModuleScript;
  **/
 public class OfferScript extends ModuleScript implements OfferScriptInterface {
 
+    private static final long serialVersionUID = 3558009489909516714L;
+
     public static String CONTEXT_ACTIVATION_DATE = "CONTEXT_ACTIVATION_DATE";
     public static String CONTEXT_SUSPENSION_DATE = "CONTEXT_SUSPENSION_DATE";
     public static String CONTEXT_TERMINATION_DATE = "CONTEXT_TERMINATION_DATE";
@@ -36,15 +38,13 @@ public class OfferScript extends ModuleScript implements OfferScriptInterface {
 
     }
 
-	@Override
-	public void beforeCreateOfferFromBOM(Map<String, Object> methodContext) throws BusinessException {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void beforeCreateOfferFromBOM(Map<String, Object> methodContext) throws BusinessException {
 
-	@Override
-	public void afterCreateOfferFromBOM(Map<String, Object> methodContext) throws BusinessException {
-		// TODO Auto-generated method stub
-		
-	}
+    }
+
+    @Override
+    public void afterCreateOfferFromBOM(Map<String, Object> methodContext) throws BusinessException {
+
+    }
 }

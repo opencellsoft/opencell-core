@@ -20,44 +20,42 @@ package org.meveo.model.catalog;
 
 public enum UsageChgTemplateEnum {
 
-	INTEGER(1, "UsageChgTemplateEnum.integer"), DECIMAL(2,
-			"UsageChgTemplateEnum.decimal"), HOURMINSEC(3,
-			"UsageChgTemplateEnum.hourMinSec");
+    INTEGER(1, "UsageChgTemplateEnum.integer"), DECIMAL(2, "UsageChgTemplateEnum.decimal"), HOURMINSEC(3, "UsageChgTemplateEnum.hourMinSec");
 
-	private Integer id;
-	private String label;
+    private Integer id;
+    private String label;
 
-	UsageChgTemplateEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
-	}
+    UsageChgTemplateEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public static UsageChgTemplateEnum getValue(Integer id) {
-		if (id != null) {
-			for (UsageChgTemplateEnum type : values()) {
-				if (id.equals(type.getId())) {
-					return type;
-				}
-			}
-		}
-		
-		return null;
-	}
+    public static UsageChgTemplateEnum getValue(Integer id) {
+        if (id != null) {
+            for (UsageChgTemplateEnum type : values()) {
+                if (id.equals(type.getId())) {
+                    return type;
+                }
+            }
+        }
+
+        return null;
+    }
 
 }

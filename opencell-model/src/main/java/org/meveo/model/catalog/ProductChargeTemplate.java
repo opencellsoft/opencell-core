@@ -33,10 +33,9 @@ import javax.validation.constraints.Size;
 
 /**
  * Product charge template
- * v5.1 Candidate add filter expression to product charge template
  * 
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.1 Candidate
+ * @lastModifiedVersion 5.1
  */
 @Entity
 @Table(name = "cat_product_charge_templ")
@@ -49,11 +48,17 @@ public class ProductChargeTemplate extends ChargeTemplate {
     public static final String CHARGE_TYPE = "PRODUCT";
 
     private static final long serialVersionUID = 1L;
-    
+
+    /**
+     * Expression to determine if charge applies
+     */
     @Column(name = "filter_expression", length = 2000)
     @Size(max = 2000)
     private String filterExpression = null;
 
+    /**
+     * Product templates the charge applies to
+     */
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "productChargeTemplates")
     private List<ProductTemplate> productTemplates = new ArrayList<>();
 
@@ -68,7 +73,7 @@ public class ProductChargeTemplate extends ChargeTemplate {
     public String getChargeType() {
         return CHARGE_TYPE;
     }
-    
+
     public String getFilterExpression() {
         return filterExpression;
     }

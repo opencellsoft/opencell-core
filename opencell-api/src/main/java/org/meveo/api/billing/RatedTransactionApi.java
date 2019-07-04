@@ -9,8 +9,6 @@ import javax.inject.Inject;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.RatedTransactionDto;
-import org.meveo.api.dto.account.RatedTransactionListDto;
-import org.meveo.api.dto.billing.RatedTransactionListRequestDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.RatedTransactionListResponseDto;
 import org.meveo.api.exception.InvalidParameterException;
@@ -32,9 +30,19 @@ public class RatedTransactionApi extends BaseApi {
     @Inject
     private RatedTransactionService ratedTransactionService;
 
-    public RatedTransactionListResponseDto list(RatedTransactionListRequestDto postData) throws InvalidParameterException {
+    /**
+     * List Rated transactions given the filtering criteria
+     * 
+     * @param pagingAndFiltering Search and paging criteria. Pass "userAccountCode" as field option to retrieve associated User account's code.
+     * @return A list of Rated transactions
+     * @throws InvalidParameterException
+     */
+    public RatedTransactionListResponseDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
 
-        PagingAndFiltering pagingAndFiltering = postData.getPagingAndFiltering();
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+
         PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, RatedTransaction.class);
         Long totalCount = ratedTransactionService.count(paginationConfig);
 
@@ -42,28 +50,32 @@ public class RatedTransactionApi extends BaseApi {
         result.setPaging(pagingAndFiltering);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
-        RatedTransactionListDto ratedTransactionListDto = new RatedTransactionListDto();
-        ratedTransactionListDto.setTotalNumberOfRecords(totalCount);
+        boolean returnUserAccountCode = pagingAndFiltering.hasFieldOption("userAccountCode");
+        boolean returnSellerCode = pagingAndFiltering.hasFieldOption("sellerCode");
+        boolean returnInvoiceSubCategoryCode = pagingAndFiltering.hasFieldOption("invoiceSubCategoryCode");
 
         if (totalCount > 0) {
             List<RatedTransaction> ratedTransactions = ratedTransactionService.list(paginationConfig);
             for (RatedTransaction rt : ratedTransactions) {
-                ratedTransactionListDto.getRatedTransactions().add(new RatedTransactionDto(rt, postData.getReturnUserAccountCode()));
+                result.getRatedTransactions().add(new RatedTransactionDto(rt, returnUserAccountCode, returnSellerCode, returnInvoiceSubCategoryCode));
             }
         }
-        result.setRatedTransactionListDto(ratedTransactionListDto);
         return result;
     }
 
     /**
      * 
-     * Call Persistence Service to update passed RatedTransactions ids.
+     * Call Persistence Service to update passed RatedTransactions
      * 
-     * @param postData RatedTransactionListRequestDto containing query filter
+     * @param pagingAndFiltering Query filtering
      * @throws InvalidParameterException can throw InvalidParameterException
      */
-    public void cancelRatedTransactions(RatedTransactionListRequestDto postData) throws InvalidParameterException {
-        List<Long> rsToCancelIds = retreiveRatedTrasactionsToCancel(postData);
+    public void cancelRatedTransactions(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+
+        List<Long> rsToCancelIds = retreiveRatedTrasactionsToCancel(pagingAndFiltering);
         ratedTransactionService.cancelRatedTransactions(rsToCancelIds);
     }
 
@@ -71,12 +83,11 @@ public class RatedTransactionApi extends BaseApi {
      * 
      * Retrieves, filter and construct a list of Rated Transactions ids to cancel according to query and PagingAndFiltering values.
      * 
-     * @param postData contains all filters, specially the query filter
+     * @param pagingAndFiltering Contains all filters, specially the query filter
      * @return list of Rated Transactions ids to cancel
      * @throws InvalidParameterException can throw invalid parameter Exception
      */
-    private List<Long> retreiveRatedTrasactionsToCancel(RatedTransactionListRequestDto postData) throws InvalidParameterException {
-        PagingAndFiltering pagingAndFiltering = postData.getPagingAndFiltering();
+    private List<Long> retreiveRatedTrasactionsToCancel(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
         PaginationConfiguration paginationConfig = toPaginationConfiguration(pagingAndFiltering.getSortBy(), SortOrder.ASCENDING, null, pagingAndFiltering, RatedTransaction.class);
         List<RatedTransaction> ratedTransactions = ratedTransactionService.list(paginationConfig);
         List<Long> rsToCancelIds = new ArrayList<Long>(ratedTransactions.size());
@@ -85,5 +96,4 @@ public class RatedTransactionApi extends BaseApi {
         }
         return rsToCancelIds;
     }
-
 }

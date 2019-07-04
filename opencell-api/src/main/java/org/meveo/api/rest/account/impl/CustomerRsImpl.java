@@ -22,13 +22,18 @@ import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.CustomerRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.CustomerBrand;
+import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.2
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class CustomerRsImpl extends BaseRs implements CustomerRs {
@@ -44,7 +49,10 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerApi.create(postData);
+            Customer customer = customerApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(customer.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -228,7 +236,10 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerApi.createOrUpdate(postData);
+            Customer customer = customerApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(customer.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

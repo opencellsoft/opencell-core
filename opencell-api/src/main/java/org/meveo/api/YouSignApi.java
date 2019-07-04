@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +25,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -42,6 +40,7 @@ import org.meveo.api.dto.document.sign.SignProcedureResponseDto;
 import org.meveo.api.dto.document.sign.YousignEventEnum;
 import org.meveo.api.dto.response.RawResponseDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,7 +115,7 @@ public class YouSignApi extends BaseApi {
             this.prepareMembers(filesToSign, procedure.getMembers(), withInternalMember);
             
             // Creating procedureusing  Yousign platform API :
-            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyClient client = new ResteasyClientProxyBuilder().build();
             ResteasyWebTarget target = client.target(YOU_SIGN_REST_URL.concat("/procedures"));
             Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).post(Entity.json(procedure));
             
@@ -213,7 +212,7 @@ public class YouSignApi extends BaseApi {
             final String YOU_SIGN_REST_URL = this.getMandatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
             final String YOU_SIGN_AUTH_TOKEN = this.getMandatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
             
-            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyClient client = new ResteasyClientProxyBuilder().build();
             ResteasyWebTarget target = client.target(YOU_SIGN_REST_URL.concat("/files/".concat(id).concat("/download")));
             Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).get();
             
@@ -247,7 +246,7 @@ public class YouSignApi extends BaseApi {
             final String YOU_SIGN_REST_URL = this.getMandatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
             final String YOU_SIGN_AUTH_TOKEN = this.getMandatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
             
-            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyClient client = new ResteasyClientProxyBuilder().build();
             ResteasyWebTarget target = client.target( YOU_SIGN_REST_URL.concat("/procedures/".concat(id)) );
             Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).get();
             
@@ -340,25 +339,17 @@ public class YouSignApi extends BaseApi {
      *
      * @param filesToSign the files to sign
      * @param members the members
-     * @param withInternalMember the with internal member
+     * @param withInternalMember the with internal member (not used yet for the moment)
      * @throws MeveoApiException the meveo api exception
      */
     private void prepareMembers(List<SignFileRequestDto> filesToSign, List<SignMemberRequestDto> members, boolean withInternalMember) throws MeveoApiException {
-        
         for (SignMemberRequestDto member : members) {
            List<SignFileObjectRequestDto> fileObjects = new ArrayList<>();
            for (SignFileRequestDto fileToSign : filesToSign) {
-               
-               SignFileObjectRequestDto signFileObject = new SignFileObjectRequestDto(fileToSign.getId());
-               
-               if (BooleanUtils.isTrue(member.getInternal())) {
-                   signFileObject.setPosition(fileToSign.getInternalPosition());
-                   signFileObject.setPage(fileToSign.getInternalPage());
-               } else {
-                   signFileObject.setPosition(fileToSign.getExternalPosition());
-                   signFileObject.setPage(fileToSign.getExternalPage());
+               for (SignFileObjectRequestDto signFileObject : fileToSign.getListExternalPositions()) {
+                   signFileObject.setFile(fileToSign.getId());
+                   fileObjects.add(signFileObject);
                }
-               fileObjects.add(signFileObject);
            }
            member.setFileObjects(fileObjects);
         }
@@ -389,7 +380,7 @@ public class YouSignApi extends BaseApi {
         
         try {
             
-            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyClient client = new ResteasyClientProxyBuilder().build();
             ResteasyWebTarget target = client.target(url.concat("/files"));
             Invocation.Builder resBuilder = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + token);
             
@@ -437,32 +428,30 @@ public class YouSignApi extends BaseApi {
         if (CollectionUtils.isEmpty(filesToSign)) { 
             throw new MeveoApiException(" filesToSign cannot be empty !"); 
         } 
+        int fileIndex = 0;
         for (SignFileRequestDto file : filesToSign) {
             
-            // internal position of the signature object is mandatory just if withInternalMember = true
-            if (withInternalMember) {
-                String internalPosition = file.getInternalPosition();
-                if (StringUtils.isEmpty(internalPosition)) {
-                    this.missingParameters.add("fileToSign -> internalPosition");
-                } else if (!SIGN_OBJECT_POSITION_PATTERN.matcher(internalPosition).matches()) {
-                    throw new MeveoApiException("fileToSign -> internalPosition : format invalid ! should be like '[0-9]+,[0-9]+,[0-9]+,[0-9]+' ");
+            List<SignFileObjectRequestDto> positions = file.getListExternalPositions();
+            if(CollectionUtils.isEmpty(positions)) {
+                throw new MeveoApiException("List of signature positions cannot be empty !");
+            }
+            
+            int posIndex = 0;
+            for (SignFileObjectRequestDto signObj : positions) {
+                String position = signObj.getPosition();
+                if (StringUtils.isEmpty(position)) {
+                    throw new MeveoApiException(String.format("filesToSign[%d] -> listExternalPositions[%d] : missing position", fileIndex, posIndex));
+                } else if (!SIGN_OBJECT_POSITION_PATTERN.matcher(position).matches()) {
+                    throw new MeveoApiException(String.format("filesToSign[%d] -> listExternalPositions[%d] : invalid position ! should be like '[0-9]+,[0-9]+,[0-9]+,[0-9]+'", fileIndex, posIndex));
                 }
+                posIndex++;
             }
-            
-            String externalPosition = file.getExternalPosition();
-            if (StringUtils.isEmpty(externalPosition)) {
-                this.missingParameters.add("fileToSign -> externalPosition");
-            } else if (!SIGN_OBJECT_POSITION_PATTERN.matcher(externalPosition).matches()) {
-                throw new MeveoApiException("fileToSign -> externalPosition : format invalid ! should be like '[0-9]+,[0-9]+,[0-9]+,[0-9]+' ");
-            }
-            
-            this.handleMissingParameters();
             
             byte [] fileContent =  file.getContent();
             String filePath = file.getFilePath();
             // Each file should have either fileContent or filePath !
             if (ArrayUtils.isEmpty(fileContent) && StringUtils.isEmpty(filePath)) {
-                throw new MeveoApiException(" .Each file should have either fileContent or filePath !"); 
+                throw new MeveoApiException(" Each file should have either fileContent or filePath !"); 
             }
             // Creating byte file content if empty :
             if (ArrayUtils.isEmpty(fileContent)) {
@@ -471,6 +460,7 @@ public class YouSignApi extends BaseApi {
                 }
                 file.setContent(getFileAsBytes(filePath)); 
             }
+            fileIndex++;
         }
     } 
     

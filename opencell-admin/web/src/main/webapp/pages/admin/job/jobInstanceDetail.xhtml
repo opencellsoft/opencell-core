@@ -52,6 +52,7 @@
 						</hftl:decorateFormField>
 
 						<hftl:formField label="#{messages['jobInstance.parametres']}" field="parametres" />
+						<hftl:formField label="#{messages['jobInstance.verboseReport']}" field="verboseReport" />
 						<hftl:decorateFormField fieldId="timerFollowingJob" label="#{messages['timer.followingJob']}">
 							<p:selectOneMenu id="timerFollowingJob" value="#{jobInstanceBean.entity.followingJob}" rendered="#{jobInstanceBean.edit}">
 								<hftl:objectConverter />
@@ -79,8 +80,18 @@
 
 				</p:tabView>
 
-				<hf:formButtons execute="#{jobInstanceBean.isAllowedToExecute(jobInstanceBean.entity)}" stop="#{jobInstanceBean.isTimerRunning(jobInstanceBean.entity)== JobRunningStatusEnum.RUNNING_THIS}" executeLabel="#{messages['job.executeJobNow']}" stopLabel="#{messages['job.stopJobNow']}"
-				  backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true" submitPartialProcess=":formId:tabView" showEnableDisableButton="true"  killConversationOnSave="false" killConversationOnBack="false"/>
+				<hf:formButtons execute="#{jobInstanceBean.isAllowedToExecute(jobInstanceBean.entity) and currentUser.hasRole('useJob')}"
+								stop="#{jobInstanceBean.isTimerRunning(jobInstanceBean.entity)== JobRunningStatusEnum.RUNNING_THIS}"
+								executeLabel="#{messages['job.executeJobNow']}"
+								stopLabel="#{messages['job.stopJobNow']}"
+								backingBean="#{jobInstanceBean}"
+								edit="#{jobInstanceBean.edit}"
+								ajaxSubmit="true"
+								submitPartialProcess=":formId:tabView"
+								showEnableDisableButton="#{currentUser.hasRole('useJob')}"
+								showDeleteButton="#{currentUser.hasRole('useJob')}"
+								killConversationOnSave="false"
+								killConversationOnBack="false"/>
 
 
 			</hftl:formPanel>

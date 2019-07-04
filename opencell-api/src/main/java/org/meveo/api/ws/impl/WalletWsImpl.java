@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
+import org.meveo.api.billing.RatedTransactionApi;
 import org.meveo.api.billing.WalletApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -16,22 +17,30 @@ import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
+import org.meveo.api.dto.response.billing.RatedTransactionListResponseDto;
 import org.meveo.api.dto.response.billing.WalletBalanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.WalletWs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.WalletTemplate;
 
 /**
  * Wallet operation and balance related Webservices API
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0.1
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @WebService(serviceName = "WalletWs", endpointInterface = "org.meveo.api.ws.WalletWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class WalletWsImpl extends BaseWs implements WalletWs {
 
     @Inject
     private WalletApi walletApi;
+
+    @Inject
+    private RatedTransactionApi ratedTransactionApi;
 
     @Override
     public WalletBalanceResponseDto currentBalance(WalletBalanceDto calculateParameters) {
@@ -156,7 +165,10 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            walletApi.createOperation(postData);
+            WalletOperation walletOperation = walletApi.createOperation(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(walletOperation.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -182,7 +194,10 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
         ActionStatus result = new ActionStatus();
 
         try {
-            walletApi.create(postData);
+            WalletTemplate walletTemplate = walletApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(walletTemplate.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -234,11 +249,42 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            walletApi.createOrUpdate(postData);
+            WalletTemplate walletTemplate = walletApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(walletTemplate.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
 
         return result;
+    }
+
+    @Override
+    public RatedTransactionListResponseDto listRatedTransactions(PagingAndFiltering pagingAndFiltering) {
+        try {
+            return ratedTransactionApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            RatedTransactionListResponseDto result = new RatedTransactionListResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
+    }
+
+    @Override
+    public ActionStatus cancelRatedTransactions(PagingAndFiltering pagingAndFiltering) {
+
+        ActionStatus actionStatus = new ActionStatus();
+
+        try {
+            ratedTransactionApi.cancelRatedTransactions(pagingAndFiltering);
+            actionStatus.setStatus(ActionStatusEnum.SUCCESS);
+        } catch (Exception e) {
+            actionStatus.setStatus(ActionStatusEnum.FAIL);
+            actionStatus.setMessage(e.getLocalizedMessage());
+            processException(e, actionStatus);
+        }
+
+        return actionStatus;
     }
 }

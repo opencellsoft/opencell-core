@@ -245,9 +245,14 @@
 			<url-pattern>/WalletWs</url-pattern>
 			<http-method>POST</http-method>
 		</web-resource-collection>
-		<web-resource-collection>
+		<!-- <web-resource-collection>
 			<web-resource-name>WorkflowWs</web-resource-name>
 			<url-pattern>/WorkflowWs</url-pattern>
+			<http-method>POST</http-method>
+		</web-resource-collection> -->
+		<web-resource-collection>
+			<web-resource-name>GenericWorkflowWs</web-resource-name>
+			<url-pattern>/GenericWorkflowWs</url-pattern>
 			<http-method>POST</http-method>
 		</web-resource-collection>
 		<auth-constraint>

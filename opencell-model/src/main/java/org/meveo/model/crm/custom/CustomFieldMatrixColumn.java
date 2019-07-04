@@ -4,7 +4,10 @@ import java.io.Serializable;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -37,20 +40,21 @@ public class CustomFieldMatrixColumn implements Serializable {
     /**
      * Is column to be used as key or as value field
      */
-    // @Column(name = "columnUse", nullable = false)
-    // @Enumerated(EnumType.ORDINAL)
+    @Column(name = "column_use", nullable = false)
+    @Enumerated(value = EnumType.ORDINAL)
     @NotNull
     private CustomFieldColumnUseEnum columnUse;
 
     /**
      * Column ordering position
      */
+    @Column(name = "position", nullable = false)
     private int position;
 
     /**
      * Column code
      */
-    // @Column(name = "code", nullable = false, length = 20)
+    @Column(name = "code", nullable = false, length = 20)
     @Size(max = 20)
     @NotNull
     private String code;
@@ -58,7 +62,7 @@ public class CustomFieldMatrixColumn implements Serializable {
     /**
      * Label
      */
-    // @Column(name = "label", nullable = false, length = 50)
+    @Column(name = "label", nullable = false, length = 50)
     @Size(max = 50)
     @NotNull
     private String label;
@@ -66,8 +70,8 @@ public class CustomFieldMatrixColumn implements Serializable {
     /**
      * Data entry type
      */
-    // @Column(name = "key_type", nullable = false, length = 10)
-    // @Enumerated(EnumType.ORDINAL)
+    @Column(name = "key_type", nullable = false, length = 10)
+    @Enumerated(value = EnumType.ORDINAL)
     @NotNull
     private CustomFieldMapKeyEnum keyType;
 

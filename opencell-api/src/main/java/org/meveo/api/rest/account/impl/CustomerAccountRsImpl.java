@@ -14,13 +14,16 @@ import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.CustomerAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.payments.CreditCategory;
+import org.meveo.model.payments.CustomerAccount;
 
 /**
  * @author Edward P. Legaspi
  * @author anasseh
- * 
- * @lastModifiedVersion willBeSetHere
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -34,7 +37,10 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.create(postData);
+            CustomerAccount customerAccount = customerAccountApi.create(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(customerAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }
@@ -125,7 +131,10 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.createOrUpdate(postData);
+            CustomerAccount customerAccount = customerAccountApi.createOrUpdate(postData);
+            if (StringUtils.isBlank(postData.getCode())) {
+                result.setEntityCode(customerAccount.getCode());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

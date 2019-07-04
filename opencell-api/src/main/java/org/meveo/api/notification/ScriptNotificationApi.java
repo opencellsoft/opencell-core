@@ -110,6 +110,7 @@ public class ScriptNotificationApi extends BaseCrudApi<ScriptNotification, Scrip
         } else if (postData.isDisabled() != null) {
             notif.setDisabled(postData.isDisabled());
         }
+        notif.setRunAsync(postData.isRunAsync());
 
         scriptNotificationService.create(notif);
 
@@ -193,6 +194,9 @@ public class ScriptNotificationApi extends BaseCrudApi<ScriptNotification, Scrip
         notif.setCounterTemplate(counterTemplate);
         notif.setParams(postData.getScriptParams());
         notif.setPriority(postData.getPriority());
+		if (postData.isRunAsync() != null) {
+			notif.setRunAsync(postData.isRunAsync());
+		}
 
         notif = scriptNotificationService.update(notif);
 

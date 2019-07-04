@@ -41,6 +41,12 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
+/**
+ * Entity hierarchy
+ * 
+ * @author Andrius Karpavicius
+ * @param <T> Entity class
+ */
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code", "hierarchyType" })
@@ -53,20 +59,32 @@ public abstract class HierarchyLevel<T> extends BusinessEntity implements Compar
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Parent entity
+     */
     @SuppressWarnings("rawtypes")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private HierarchyLevel parentLevel;
 
+    /**
+     * Child entities
+     */
     @SuppressWarnings("rawtypes")
     @OneToMany(mappedBy = "parentLevel", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy("orderLevel")
     private Set<HierarchyLevel> childLevels;
 
+    /**
+     * Hierarcy type
+     */
     @Column(name = "hierarchy_type", insertable = false, updatable = false, length = 10)
     @Size(max = 10)
     private String hierarchyType;
 
+    /**
+     * Order index
+     */
     @Column(name = "order_level")
     protected Long orderLevel = 0L;
 

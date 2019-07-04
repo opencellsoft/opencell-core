@@ -19,9 +19,5 @@
 package org.meveo.model.communication;
 
 public enum FormatEnum {
-	 TXT,
-	 XML,
-	 CSV,
-	 HTML,
-	 PDF;
+    TXT, XML, CSV, HTML, PDF;
 }

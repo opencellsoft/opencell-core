@@ -1,7 +1,7 @@
 package org.meveo.model.billing;
 
 public class RatingStatus {
-    
+
     int nbRating = 0;
     RatingStatusEnum status;
 
@@ -20,5 +20,5 @@ public class RatingStatus {
     public void setStatus(RatingStatusEnum status) {
         this.status = status;
     }
-    
+
 }

@@ -20,39 +20,39 @@ package org.meveo.model.billing;
 
 public enum BillingWalletTypeEnum {
 
-	POSTPAID(1, "BillingWalletTypeEnum.postpaid"), 
-	PREPAID(2, "BillingWalletTypeEnum.prepaid");
+    POSTPAID(1, "BillingWalletTypeEnum.postpaid"), PREPAID(2, "BillingWalletTypeEnum.prepaid");
 
-	private Integer id;
-	private String label;
+    private Integer id;
+    private String label;
 
-	BillingWalletTypeEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
+    BillingWalletTypeEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
 
-	}
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	/**
-	 * Gets enum by its id.
-	 * @param id : id of billing wallet.
-	 * @return instance of BillingWalletTypeEnum
-	 */
-	public static BillingWalletTypeEnum getValue(Integer id) {
-		if (id != null) {
-			for (BillingWalletTypeEnum status : values()) {
-				if (id.equals(status.getId())) {
-					return status;
-				}
-			}
-		}
-		return null;
-	}
+    /**
+     * Gets enum by its id.
+     * 
+     * @param id : id of billing wallet.
+     * @return instance of BillingWalletTypeEnum
+     */
+    public static BillingWalletTypeEnum getValue(Integer id) {
+        if (id != null) {
+            for (BillingWalletTypeEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
 }

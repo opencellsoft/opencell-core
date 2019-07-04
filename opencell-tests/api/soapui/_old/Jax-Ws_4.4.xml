@@ -10935,7 +10935,7 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
  <ws:createOrUpdateCustomFieldTemplate>
  <customField code="${#TestSuite#ticket}_OfferMatrix" description="cf string matrix"> 
   <fieldType>STRING</fieldType>
-  <appliesTo>OFFER</appliesTo>
+  <appliesTo>OfferTemplate</appliesTo>
   <storageType>MATRIX</storageType>
   <matrixColumns>
     <matrixColumn code="Matrix1" keyType="STRING" label="matrix key" position="1"/>
@@ -22443,7 +22443,7 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
                </script>
                 <customFieldTemplate code="PROV_CUSTOM_INV_XML_SCRIPT_CODE" description="Custom invoice XML Script code">
                   <fieldType>STRING</fieldType>                  
-                  <appliesTo>PROVIDER</appliesTo>                 
+                  <appliesTo>Provider</appliesTo>
                   <storageType>SINGLE</storageType>
                   <valueRequired>false</valueRequired>                             
                   <cacheValue>true</cacheValue>                  

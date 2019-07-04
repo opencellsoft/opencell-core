@@ -10,7 +10,7 @@ package org.meveo.model.billing;
  **/
 public enum ChartOfAccountViewTypeEnum {
     VIEW, REGULAR;
-    
+
     public String getLabel() {
         return "ChartOfAccountViewTypeEnum." + name();
     }

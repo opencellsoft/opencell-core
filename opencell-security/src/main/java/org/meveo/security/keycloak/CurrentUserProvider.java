@@ -195,15 +195,14 @@ public class CurrentUserProvider {
             User user = null;
             try {
                 user = em.createNamedQuery("User.getByUsername", User.class).setParameter("username", currentUser.getUserName().toLowerCase()).getSingleResult();
+                currentUser.setFullName(user.getNameOrUsername());
 
-                if (userAuthTimeProducer.get().getAuthTime() != currentUser.getAuthTime()) {
+                if (!userAuthTimeProducer.isUnsatisfied() && userAuthTimeProducer.get().getAuthTime() != currentUser.getAuthTime()) {
                     userAuthTimeProducer.get().setAuthTime(currentUser.getAuthTime());
                     user.setLastLoginDate(new Date());
                     em.merge(user);
                     em.flush();
                 }
-
-                currentUser.setFullName(user.getNameOrUsername());
 
             } catch (NoResultException e) {
 
@@ -228,7 +227,8 @@ public class CurrentUserProvider {
                 log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName() != null ? user.getName().getFullName() : "");
 
             } catch (ContextNotActiveException e) {
-                log.error("No session context={}", e.getMessage());
+                // Commented out as no context is available for scheduled jobs to retrieve userAuthTimeProducer instance
+                // log.error("No session context={}", e.getMessage());
             }
 
         } catch (Exception e) {

@@ -67,16 +67,13 @@
 				field="chargeTemplate" valueLabelField="code" required="false"
 				popup="true" popupId="popupChargeTemplates" />
 
-			<hftl:formField label="#{messages['discountPlanItem.expressionEl']}"
-				field="expressionEl" textArea="true" maxlength="2000" rows="1" />
+            <hftl:formField label="#{messages['discountPlanItem.expressionEl']}" field="expressionEl" textArea="true" maxlength="2000" rows="1" />
+            <hftl:formField label="#{messages['discountPlanItem.expressionElSpark']}" field="expressionElSpark" textArea="true" maxlength="2000" rows="1" />
+            <hftl:formField label="#{messages['discountPlanItem.discountValue']}" field="discountValue" required="true" minValue="-100" maxValue="100" />
+            <hftl:formField label="#{messages['discountPlanItem.discountValueEl']}" field="discountValueEl" textArea="true" maxlength="2000" rows="1" />
+            <hftl:formField label="#{messages['discountPlanItem.discountValueElSpark']}" field="discountValueElSpark" textArea="true" maxlength="2000" rows="1" />
 
-			<hftl:formField label="#{messages['discountPlanItem.percent']}"
-				field="percent" required="true" minValue="-100" maxValue="100" />
-
-			<hftl:formField label="#{messages['discountPlanItem.percent']} EL"
-				field="discountPercentEl" textArea="true" maxlength="2000" rows="1"  />
-
-		</hftl:formPanel>
+        </hftl:formPanel>
 
 	</ui:define>
 

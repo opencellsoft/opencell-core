@@ -31,6 +31,11 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
+/**
+ * Days in year entry for yearly calendar
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "day", "month" })
@@ -41,9 +46,15 @@ public class DayInYear extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Day in month
+     */
     @Column(name = "day")
     private Integer day;
 
+    /**
+     * Month
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "month", length = 20)
     private MonthEnum month;

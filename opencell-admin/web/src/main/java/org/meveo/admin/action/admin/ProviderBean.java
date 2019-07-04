@@ -18,14 +18,6 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -40,9 +32,18 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.DualListModel;
 
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Mounir Bahije
+ *
+ * @lastModifiedVersion 6.X
  */
 @Named
 @ViewScoped
@@ -89,54 +90,50 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         }
 
         super.initEntity();
-        
+
         if (entity.getId() != null && entity.getInvoiceConfiguration() == null) {
             InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
-            invoiceConfiguration.setProvider(entity);
             entity.setInvoiceConfiguration(invoiceConfiguration);
         }
 
         if (entity.getBankCoordinates() == null) {
             entity.setBankCoordinates(new BankCoordinates());
         }
-        
-        if(entity.getGdprConfiguration() == null) {
-        	GdprConfiguration gdprConfiguration = new GdprConfiguration();
-        	gdprConfiguration.setProvider(entity);
-        	entity.setGdprConfiguration(gdprConfiguration);
+
+        if (entity.getGdprConfiguration() == null) {
+            GdprConfiguration gdprConfiguration = new GdprConfiguration();
+            entity.setGdprConfiguration(gdprConfiguration);
         }
-        
-        if(entity.getRumSequence() == null) {
-        	entity.setRumSequence(new GenericSequence());
-		}
 
-		if (entity.getCustomerNoSequence() == null) {
-			entity.setCustomerNoSequence(new GenericSequence());
-		}
-
-        return entity;
-    }
-
-    /**
-     * Save or update provider.
-     * 
-     * @param entity Provider to save.
-     * @throws BusinessException General business exception
-     */
-    @Override
-    protected Provider saveOrUpdate(Provider entity) throws BusinessException {
-        boolean isNew = entity.isTransient();
-        if (isNew) {
-            entity.getInvoiceConfiguration().setProvider(entity);
+        if (entity.getRumSequence() == null) {
+            entity.setRumSequence(new GenericSequence());
         }
-        entity = super.saveOrUpdate(entity);
+
+        if (entity.getCustomerNoSequence() == null) {
+            entity.setCustomerNoSequence(new GenericSequence());
+        }
+
+        if (entity.getCurrency() != null) {
+            entity.getCurrency().getCurrencyCode();
+        }
+        if (entity.getCountry() != null) {
+            entity.getCountry().getCountryCode();
+        }
+        if (entity.getLanguage() != null) {
+            entity.getLanguage().getLanguageCode();
+        }
+
         return entity;
     }
 
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        getEntity().getPaymentMethods().clear();
+        Provider provider = getEntity();
+        if (provider != null) {
+            provider = providerService.findById(provider.getId());
+        }
+        provider.getPaymentMethods().clear();
         getEntity().setPaymentMethods(paymentMethodsModel.getTarget());
         String returnTo = super.saveOrUpdate(killConversation);
 

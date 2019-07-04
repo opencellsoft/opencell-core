@@ -19,8 +19,7 @@
 package org.meveo.model.bi;
 
 public enum OutputFormatEnum {
-    CSV(0, "outputFormatEnum.csv"),
-    PDF(1, "outputFormatEnum.pdf");
+    CSV(0, "outputFormatEnum.csv"), PDF(1, "outputFormatEnum.pdf");
 
     private Integer id;
     private String label;

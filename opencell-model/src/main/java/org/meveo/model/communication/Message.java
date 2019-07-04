@@ -38,116 +38,117 @@ import org.meveo.model.communication.contact.Contact;
 
 @Entity
 @Table(name = "com_message")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_message_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "com_message_seq"), })
 public class Message extends BaseEntity {
 
-	private static final long serialVersionUID = 2760596592135889373L;
+    private static final long serialVersionUID = 2760596592135889373L;
 
-	@Column(name = "templatecode", length = 255)
-	@Size(max = 255)
-	private String templateCode;
+    @Column(name = "templatecode", length = 255)
+    @Size(max = 255)
+    private String templateCode;
 
-	@OneToMany(mappedBy = "message")
-	private List<MessageVariableValue> parameters;
+    @OneToMany(mappedBy = "message")
+    private List<MessageVariableValue> parameters;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "campaign_id")
     private Campaign campaign;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "contact_id")
-	private Contact contact;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contact_id")
+    private Contact contact;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "media")
-	private MediaEnum media;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "media")
+    private MediaEnum media;
 
-	@Column(name = "sub_media", length = 255)
+    @Column(name = "sub_media", length = 255)
     @Size(max = 255)
-	private String subMedia;
+    private String subMedia;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "priority")
-	private PriorityEnum priority;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority")
+    private PriorityEnum priority;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "status")
-	private MessageStatusEnum status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private MessageStatusEnum status;
 
-	@Column(name = "rejection_reason", length = 255)
+    @Column(name = "rejection_reason", length = 255)
     @Size(max = 255)
-	private String rejectionReason;
+    private String rejectionReason;
 
-	public String getTemplateCode() {
-		return templateCode;
-	}
+    public String getTemplateCode() {
+        return templateCode;
+    }
 
-	public void setTemplateCode(String templateCode) {
-		this.templateCode = templateCode;
-	}
+    public void setTemplateCode(String templateCode) {
+        this.templateCode = templateCode;
+    }
 
-	public List<MessageVariableValue> getParameters() {
-		return parameters;
-	}
+    public List<MessageVariableValue> getParameters() {
+        return parameters;
+    }
 
-	public void setParameters(List<MessageVariableValue> parameters) {
-		this.parameters = parameters;
-	}
+    public void setParameters(List<MessageVariableValue> parameters) {
+        this.parameters = parameters;
+    }
 
-	public Campaign getCampaign() {
-		return campaign;
-	}
+    public Campaign getCampaign() {
+        return campaign;
+    }
 
-	public void setCampaign(Campaign campaign) {
-		this.campaign = campaign;
-	}
+    public void setCampaign(Campaign campaign) {
+        this.campaign = campaign;
+    }
 
-	public Contact getContact() {
-		return contact;
-	}
+    public Contact getContact() {
+        return contact;
+    }
 
-	public void setContact(Contact contact) {
-		this.contact = contact;
-	}
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
 
-	public MediaEnum getMedia() {
-		return media;
-	}
+    public MediaEnum getMedia() {
+        return media;
+    }
 
-	public void setMedia(MediaEnum media) {
-		this.media = media;
-	}
+    public void setMedia(MediaEnum media) {
+        this.media = media;
+    }
 
-	public String getSubMedia() {
-		return subMedia;
-	}
+    public String getSubMedia() {
+        return subMedia;
+    }
 
-	public void setSubMedia(String subMedia) {
-		this.subMedia = subMedia;
-	}
+    public void setSubMedia(String subMedia) {
+        this.subMedia = subMedia;
+    }
 
-	public PriorityEnum getPriority() {
-		return priority;
-	}
+    public PriorityEnum getPriority() {
+        return priority;
+    }
 
-	public void setPriority(PriorityEnum priority) {
-		this.priority = priority;
-	}
+    public void setPriority(PriorityEnum priority) {
+        this.priority = priority;
+    }
 
-	public MessageStatusEnum getStatus() {
-		return status;
-	}
+    public MessageStatusEnum getStatus() {
+        return status;
+    }
 
-	public void setStatus(MessageStatusEnum status) {
-		this.status = status;
-	}
+    public void setStatus(MessageStatusEnum status) {
+        this.status = status;
+    }
 
-	public String getRejectionReason() {
-		return rejectionReason;
-	}
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
 
-	public void setRejectionReason(String rejectionReason) {
-		this.rejectionReason = rejectionReason;
-	}
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
 
 }

@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.PaymentScheduleStatusEnum;
@@ -46,75 +47,99 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-   
-   
     /** The end date. */
     private Date endDate;
-    
+
     /** The start date. */
     private Date startDate;
-    
+
     /** The amount. */
     private BigDecimal amount;
- 
+
     /** The calendar code. */
     private String calendarCode;
-        
+
     /** The status. */
     private PaymentScheduleStatusEnum status;
-    
+
     /** The status date. */
     private Date statusDate;
-    
+
     /** The payment schedule template code. */
     private String paymentScheduleTemplateCode;
-             
-    /** The due date days. */
-    private Integer dueDateDays;
-    
-    /** The service instance code. */
-    private String serviceInstanceCode;
-    
+
+    /** The payment day in month. */
+    private Integer paymentDayInMonth;
+
+    /** The service instance template code. */
+    private String serviceInstanceTemplateCode;
+
+    /** The service instance id. */
+    private Long serviceInstanceId;
+
     /** The subscription code. */
     private String subscriptionCode;
-    
+
+    /** The payment schedule instance balance dto. */
     private PaymentScheduleInstanceBalanceDto paymentScheduleInstanceBalanceDto;
-    
+
+    /** The items. */
     @XmlElementWrapper
     @XmlElement(name = "item")
     private List<PaymentScheduleInstanceItemDto> items = new ArrayList<PaymentScheduleInstanceItemDto>();
-    
-    
+
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
+
+    /**
+     * Gets the custom fields.
+     *
+     * @return the customFields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the customFields to set
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
     /**
      * Instantiates a new payment schedule instance dto.
      */
     public PaymentScheduleInstanceDto() {
-        
+
     }
-    
+
     /**
      * Instantiates a new payment schedule instance dto.
      *
      * @param paymentScheduleInstance the payment schedule instance
      */
-    public  PaymentScheduleInstanceDto(PaymentScheduleInstance paymentScheduleInstance) {
+    public PaymentScheduleInstanceDto(PaymentScheduleInstance paymentScheduleInstance) {
         this.id = paymentScheduleInstance.getId();
         this.amount = paymentScheduleInstance.getAmount();
         this.calendarCode = paymentScheduleInstance.getCalendar().getCode();
         this.code = paymentScheduleInstance.getCode();
         this.description = paymentScheduleInstance.getDescription();
-        this.dueDateDays = paymentScheduleInstance.getDueDateDays();
+        this.paymentDayInMonth = paymentScheduleInstance.getPaymentDayInMonth();
         this.endDate = paymentScheduleInstance.getEndDate();
         this.startDate = paymentScheduleInstance.getStartDate();
         this.paymentScheduleTemplateCode = paymentScheduleInstance.getPaymentScheduleTemplate().getCode();
         this.statusDate = paymentScheduleInstance.getStatusDate();
         this.status = paymentScheduleInstance.getStatus();
-        this.serviceInstanceCode = paymentScheduleInstance.getServiceInstance().getCode();
+        this.serviceInstanceTemplateCode = paymentScheduleInstance.getServiceInstance().getCode();
+        this.serviceInstanceId = paymentScheduleInstance.getServiceInstance().getId();
         this.subscriptionCode = paymentScheduleInstance.getServiceInstance().getSubscription().getCode();
-        for(PaymentScheduleInstanceItem item  : paymentScheduleInstance.getPaymentScheduleInstanceItems()) {
-          this.items.add(new PaymentScheduleInstanceItemDto(item) );
+        for (PaymentScheduleInstanceItem item : paymentScheduleInstance.getPaymentScheduleInstanceItems()) {
+            this.items.add(new PaymentScheduleInstanceItemDto(item));
         }
-         
+
     }
 
     /**
@@ -189,42 +214,58 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
         this.status = status;
     }
 
-   
-
     /**
-     * Gets the due date days.
+     * Gets the payment day in month.
      *
-     * @return the dueDateDays
+     * @return the payment day in month
      */
-    public Integer getDueDateDays() {
-        return dueDateDays;
+    public Integer getPaymentDayInMonth() {
+        return paymentDayInMonth;
     }
 
     /**
-     * Sets the due date days.
+     * Sets the payment day in month.
      *
-     * @param dueDateDays the dueDateDays to set
+     * @param paymentDayInMonth the new payment day in month
      */
-    public void setDueDateDays(Integer dueDateDays) {
-        this.dueDateDays = dueDateDays;
+    public void setPaymentDayInMonth(Integer paymentDayInMonth) {
+        this.paymentDayInMonth = paymentDayInMonth;
     }
 
     /**
-     * Gets the service instance code.
+     * Gets the service instance template code.
      *
-     * @return the serviceInstanceCode
+     * @return the serviceInstanceTemplateCode
      */
-    public String getServiceInstanceCode() {
-        return serviceInstanceCode;
+    public String getServiceInstanceTemplateCode() {
+        return serviceInstanceTemplateCode;
     }
 
     /**
-     * Sets the service instance code.
+     * Sets the service instance template code.
      *
-     * @param serviceInstanceCode the serviceInstanceCode to set
+     * @param serviceInstanceTemplateCode the serviceInstanceCode to set
      */
-    public void setServiceInstanceCode(String serviceInstanceCode) {
-        this.serviceInstanceCode = serviceInstanceCode;
+    public void setServiceInstanceTemplateCode(String serviceInstanceTemplateCode) {
+        this.serviceInstanceTemplateCode = serviceInstanceTemplateCode;
+    }
+
+    /**
+     * Gets the service instance id.
+     * 
+     * @return the serviceInstanceId
+     */
+    public Long getServiceInstanceId() {
+        return serviceInstanceId;
+    }
+
+    /**
+     * Sets the service instance id.
+     * 
+     * @param serviceInstanceId the serviceInstanceId to set
+     */
+    public void setServiceInstanceId(Long serviceInstanceId) {
+        this.serviceInstanceId = serviceInstanceId;
     }
 
     /**
@@ -300,6 +341,8 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Gets the items.
+     *
      * @return the items
      */
     public List<PaymentScheduleInstanceItemDto> getItems() {
@@ -307,6 +350,8 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the items.
+     *
      * @param items the items to set
      */
     public void setItems(List<PaymentScheduleInstanceItemDto> items) {
@@ -314,6 +359,8 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Gets the payment schedule instance balance dto.
+     *
      * @return the paymentScheduleInstanceBalanceDto
      */
     public PaymentScheduleInstanceBalanceDto getPaymentScheduleInstanceBalanceDto() {
@@ -321,12 +368,12 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the payment schedule instance balance dto.
+     *
      * @param paymentScheduleInstanceBalanceDto the paymentScheduleInstanceBalanceDto to set
      */
     public void setPaymentScheduleInstanceBalanceDto(PaymentScheduleInstanceBalanceDto paymentScheduleInstanceBalanceDto) {
         this.paymentScheduleInstanceBalanceDto = paymentScheduleInstanceBalanceDto;
     }
-    
-    
 
 }

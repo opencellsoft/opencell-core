@@ -19,22 +19,20 @@
 package org.meveo.model.communication;
 
 public enum PriorityEnum {
-	SLOW(5), 
-	NORMAL(3), 
-	URGENT(1);
+    SLOW(5), NORMAL(3), URGENT(1);
 
-	private Integer mailValue;
+    private Integer mailValue;
 
-	PriorityEnum(Integer mailValue) {
-		this.mailValue = mailValue;
-	}
+    PriorityEnum(Integer mailValue) {
+        this.mailValue = mailValue;
+    }
 
-	public Integer getMailValue() {
-		return mailValue;
-	}
+    public Integer getMailValue() {
+        return mailValue;
+    }
 
-	public void setMailValue(Integer mailValue) {
-		this.mailValue = mailValue;
-	}
-	
+    public void setMailValue(Integer mailValue) {
+        this.mailValue = mailValue;
+    }
+
 }

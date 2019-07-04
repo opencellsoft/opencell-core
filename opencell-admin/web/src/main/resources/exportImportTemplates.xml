@@ -223,13 +223,13 @@
             <entry>
                 <string>appliesTo_in</string>
                 <list>
-                    <string>OFFER</string>
-                    <string>SERVICE</string>
-                    <string>CHARGE</string>
-                    <string>OFFER_CATEGORY</string>
-                    <string>PRODUCT</string>
-                    <string>BUNDLE</string>
-                    <string>PRICEPLAN</string>
+                    <string>OfferTemplate</string>
+                    <string>ServiceTemplate</string>
+                    <string>ChargeTemplate</string>
+                    <string>OfferTemplateCategory</string>
+                    <string>ProductTemplate</string>
+                    <string>BundleTemplate</string>
+                    <string>PricePlanMatrix</string>
                 </list>
             </entry>
         </filters>
@@ -269,6 +269,7 @@
             <template ref="Provider" />
             <template ref="ProviderContact" />
             <template ref="OCCTemplate" />
+            <template ref="ScriptInstance" />     
             <template ref="InvoiceType" />
             <template ref="Seller" />
             <template ref="Title" />
@@ -302,8 +303,7 @@
             <template ref="OfferTemplateCategory" /> 
             <template ref="ProductTemplate" /> 
             <template ref="BundleTemplate" />
-            <template ref="ChargeTemplate" />
-            <template ref="ScriptInstance" />            
+            <template ref="ChargeTemplate" />       
             <template ref="MeveoModule" />           
             <template ref="ServiceTemplate" />   
             <template ref="OfferTemplate" />   
@@ -314,6 +314,7 @@
 
     <template name="Customer hierarchy">
         <groupedTemplates>
+            <template ref="AddressBook" />
             <template ref="Customer" />
             <template ref="CustomerAccount" />
             <template ref="BillingAccount" />

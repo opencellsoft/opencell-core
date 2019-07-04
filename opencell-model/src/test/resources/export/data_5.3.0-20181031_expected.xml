@@ -1,0 +1,126 @@
+<meveoExport version="5.3.0-20181031">
+    <exportTemplate xsId="1" name="Provider" entityToExport="org.meveo.model.crm.Provider" canDeleteAfterExport="false">
+        <exportAllClassesAsFull>false</exportAllClassesAsFull>
+        <classesToExportAsFull xsId="2">
+            <java-class>org.meveo.model.billing.InvoiceConfiguration</java-class>
+        </classesToExportAsFull>
+        <classesToIgnoreFKNotFound xsId="3">
+            <java-class>org.meveo.model.admin.User</java-class>
+        </classesToIgnoreFKNotFound>
+    </exportTemplate>
+    <data>
+        <org.meveo.model.crm.Provider xsId="4">
+            <id>1</id>
+            <version>15</version>
+            <auditable xsId="5">
+                <created class="sql-timestamp" xsId="6">2015-03-19 00:04:08.922</created>
+                <updated class="sql-timestamp" xsId="7">2018-10-31 13:32:58.291</updated>
+                <updater>opencell.admin</updater>
+            </auditable>
+            <code>DEMO</code>
+            <description>Opencell</description>
+            <disabled>false</disabled>
+            <currency xsId="8" id="1" currencyCode="AFA" />
+            <country xsId="10" id="1" countryCode="AD" />
+            <language xsId="12" id="1" languageCode="DEU" />
+            <multicountryFlag>true</multicountryFlag>
+            <multicurrencyFlag>true</multicurrencyFlag>
+            <multilanguageFlag>true</multilanguageFlag>
+            <paymentMethods xsId="14">
+                <org.meveo.model.payments.PaymentMethodEnum>CARD</org.meveo.model.payments.PaymentMethodEnum>
+                <org.meveo.model.payments.PaymentMethodEnum>DIRECTDEBIT</org.meveo.model.payments.PaymentMethodEnum>
+            </paymentMethods>
+            <bankCoordinates xsId="15">
+                <bankCode>SGMB</bankCode>
+                <branchCode>12345</branchCode>
+                <accountNumber>33333333333</accountNumber>
+                <key>11</key>
+                <iban>FR763000600001123456790189</iban>
+                <bic>DADEFRPPCCT</bic>
+                <accountOwner>owner</accountOwner>
+                <bankName>SGMB</bankName>
+                <bankId>11</bankId>
+                <issuerNumber>1111</issuerNumber>
+                <issuerName>DEMO</issuerName>
+                <ics>FRXXZZZ123456</ics>
+            </bankCoordinates>
+            <entreprise>true</entreprise>
+            <automaticInvoicing>false</automaticInvoicing>
+            <amountValidation>false</amountValidation>
+            <levelDuplication>false</levelDuplication>
+            <displayFreeTransacInInvoice>true</displayFreeTransacInInvoice>
+            <uuid>DEMO</uuid>
+            <prepaidReservationExpirationDelayinMillisec>60000</prepaidReservationExpirationDelayinMillisec>
+            <invoiceConfiguration xsId="16">
+                <id>-1</id>
+                <version>2</version>
+                <displaySubscriptions>true</displaySubscriptions>
+                <displayServices>true</displayServices>
+                <displayOffers>true</displayOffers>
+                <displayPricePlans>true</displayPricePlans>
+                <displayEdrs>true</displayEdrs>
+                <displayProvider>true</displayProvider>
+                <displayDetail>true</displayDetail>
+                <displayCfAsXML>true</displayCfAsXML>
+                <displayChargesPeriods>true</displayChargesPeriods>
+                <displayBillingCycle>true</displayBillingCycle>
+                <displayOrders>true</displayOrders>
+                <provider reference="4" />
+                <currentInvoiceNb>0</currentInvoiceNb>
+            </invoiceConfiguration>
+            <recognizeRevenue>false</recognizeRevenue>
+            <cfValues xsId="17">
+                <valuesByCode class="linked-hash-map" xsId="18">
+                    <entry>
+                        <string>CF_P_USAGE_UNITS</string>
+                        <list xsId="19">
+                            <org.meveo.model.crm.custom.CustomFieldValue xsId="20">
+                                <period xsId="21" />
+                                <mapStringValue class="linked-hash-map" xsId="22">
+                                    <entry>
+                                        <string>KB</string>
+                                        <string>KB|Kilo-byte|1.0|KB</string>
+                                    </entry>
+                                </mapStringValue>
+                            </org.meveo.model.crm.custom.CustomFieldValue>
+                        </list>
+                    </entry>
+                </valuesByCode>
+            </cfValues>
+        <rounding>6</rounding>
+            <roundingMode>NEAREST</roundingMode>
+            <invoiceRounding>2</invoiceRounding>
+            <invoiceRoundingMode>NEAREST</invoiceRoundingMode>
+        </org.meveo.model.crm.Provider>
+        <org.meveo.model.crm.Provider xsId="8">
+            <id>1</id>
+            <version>15</version>
+            <auditable xsId="5">
+                <created class="sql-timestamp" xsId="6">2015-03-19 00:04:08.922</created>
+                <updated class="sql-timestamp" xsId="7">2018-10-31 13:32:58.291</updated>
+                <updater>opencell.admin</updater>
+            </auditable>
+            <code>DEMO</code>
+            <description>Opencell</description>
+            <disabled>false</disabled>
+            <rounding>7</rounding>
+            <roundingMode>DOWN</roundingMode>
+            <invoiceRounding>3</invoiceRounding>
+            <invoiceRoundingMode>UP</invoiceRoundingMode>
+            <bankCoordinates xsId="15">
+                <bankCode>SGMB</bankCode>
+                <branchCode>12345</branchCode>
+                <accountNumber>33333333333</accountNumber>
+                <key>11</key>
+                <iban>FR763000600001123456790189</iban>
+                <bic>DADEFRPPCCT</bic>
+                <accountOwner>owner</accountOwner>
+                <bankName>SGMB</bankName>
+                <bankId>11</bankId>
+                <issuerNumber>1111</issuerNumber>
+                <issuerName>DEMO</issuerName>
+                <ics>FRXXZZZ123456</ics>
+            </bankCoordinates>
+        </org.meveo.model.crm.Provider>
+    </data>
+</meveoExport>

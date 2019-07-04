@@ -9,7 +9,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.PaymentActionStatus;
-
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
@@ -20,24 +19,28 @@ import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
+import org.meveo.api.dto.payment.PaymentGatewayRumSequenceDto;
 import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplatesDto;
-
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.payment.PaymentGatewayRumSequenceResponseDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.DDRequestBuilderApi;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.api.payment.PaymentGatewayApi;
+import org.meveo.api.payment.PaymentGatewayRumSequenceApi;
 import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.payment.PaymentScheduleApi;
 import org.meveo.api.rest.impl.BaseRs;
@@ -48,7 +51,8 @@ import org.meveo.api.rest.payment.PaymentRs;
  * 
  * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.3
  */
 @SuppressWarnings("deprecation")
 @RequestScoped
@@ -63,16 +67,19 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
     @Inject
     private PaymentGatewayApi paymentGatewayApi;
-    
+
     @Inject
     private DDRequestBuilderApi ddRequestBuilderApi;
-    
+
     @Inject
     private PaymentScheduleApi paymentScheduleApi;
 
+    @Inject
+    private PaymentGatewayRumSequenceApi paymentGatewayRumSequenceApi;
 
     /**
      * Deprecated and replaced by createPayment
+     * 
      * @return payment action status which contains payment id.
      * @see org.meveo.api.rest.payment.PaymentRs#create(org.meveo.api.dto.payment.PaymentDto)
      */
@@ -90,7 +97,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
         return result;
     }
-    
+
     /**
      * @return payment action status which contains payment id.
      * @see org.meveo.api.rest.payment.PaymentRs#create(org.meveo.api.dto.payment.PaymentDto)
@@ -110,12 +117,12 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     }
 
     @Override
-    public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode) {
+    public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode, PagingAndFiltering pagingAndFiltering) {
         CustomerPaymentsResponse result = new CustomerPaymentsResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
+            result = paymentApi.getPaymentList(customerAccountCode, pagingAndFiltering);
             result.setBalance(paymentApi.getBalance(customerAccountCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -238,7 +245,8 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     }
 
     @Override
-    public PaymentMethodTokensDto listPaymentMethodGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+    public PaymentMethodTokensDto listPaymentMethodGet(String query, String fields, Integer offset, Integer limit,
+            String sortBy, SortOrder sortOrder) {
         PaymentMethodTokensDto result = new PaymentMethodTokensDto();
         try {
             result = paymentMethodApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
@@ -347,7 +355,8 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     }
 
     @Override
-    public PaymentGatewayResponseDto listPaymentGatewaysGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+    public PaymentGatewayResponseDto listPaymentGatewaysGet(String query, String fields, Integer offset, Integer limit,
+            String sortBy, SortOrder sortOrder) {
         PaymentGatewayResponseDto result = new PaymentGatewayResponseDto();
         try {
             result = paymentGatewayApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
@@ -370,7 +379,8 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     }
 
     @Override
-    public PaymentHistoriesDto listPaymentHistoryGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+    public PaymentHistoriesDto listPaymentHistoryGet(String query, String fields, Integer offset, Integer limit,
+            String sortBy, SortOrder sortOrder) {
 
         PaymentHistoriesDto result = new PaymentHistoriesDto();
 
@@ -450,11 +460,11 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
         return result;
     }
-    
+
     /********************************************/
-    /**** DDRequest Builder                 ****/
+    /**** DDRequest Builder ****/
     /******************************************/
-    
+
     @Override
     public DDRequestBuilderResponseDto addDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder) {
         DDRequestBuilderResponseDto response = new DDRequestBuilderResponseDto();
@@ -554,9 +564,9 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         return result;
     }
 
-
     @Override
-    public DDRequestBuilderResponseDto listDDRequestBuildersGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+    public DDRequestBuilderResponseDto listDDRequestBuildersGet(String query, String fields, Integer offset,
+            Integer limit, String sortBy, SortOrder sortOrder) {
         DDRequestBuilderResponseDto result = new DDRequestBuilderResponseDto();
         try {
             result = ddRequestBuilderApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
@@ -567,7 +577,9 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     }
 
     @Override
-    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(String customerAccountCode, String returnUrl, String locale, String amount, String currencyCode, String authorizationMode, String countryCode, Boolean skipAuthentication, String gatewayPaymentName, String variant) {
+    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(String customerAccountCode, String returnUrl,
+            String locale, String amount, String currencyCode, String authorizationMode, String countryCode,
+            Boolean skipAuthentication, String gatewayPaymentName, String variant) {
 
         String paymentUrl = "";
 
@@ -588,7 +600,8 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         } catch (BusinessException e) {
             e.printStackTrace();
         }
-        PaymentHostedCheckoutResponseDto paymentHostedCheckoutResponseDto = new PaymentHostedCheckoutResponseDto(paymentUrl,  customerAccountCode,  returnUrl);
+        PaymentHostedCheckoutResponseDto paymentHostedCheckoutResponseDto = new PaymentHostedCheckoutResponseDto(
+                paymentUrl, customerAccountCode, returnUrl);
 
         return paymentHostedCheckoutResponseDto;
 
@@ -598,14 +611,14 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     public ActionStatus createOrUpdatePaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            result.setMessage("" + paymentScheduleApi.createOrUpdatePaymentScheduleTemplate(paymentScheduleTemplateDto));
+            result.setMessage(
+                    "" + paymentScheduleApi.createOrUpdatePaymentScheduleTemplate(paymentScheduleTemplateDto));
         } catch (Exception e) {
             processException(e, result);
         }
 
         return result;
     }
-
 
     @Override
     public ActionStatus createPaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto) {
@@ -619,7 +632,6 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         return result;
     }
 
-
     @Override
     public ActionStatus updatePaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -632,12 +644,11 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         return result;
     }
 
-
     @Override
     public ActionStatus removePaymentScheduleTemplate(String paymentScheduleTemplateCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-           paymentScheduleApi.removePaymentScheduleTemplate(paymentScheduleTemplateCode);
+            paymentScheduleApi.removePaymentScheduleTemplate(paymentScheduleTemplateCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -645,19 +656,18 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         return result;
     }
 
-
     @Override
     public PaymentScheduleTemplateResponseDto findPaymentScheduleTemplate(String paymentScheduleTemplateCode) {
         PaymentScheduleTemplateResponseDto result = new PaymentScheduleTemplateResponseDto();
         try {
-            result.setPaymentScheduleTemplateDto(paymentScheduleApi.findPaymentScheduleTemplate(paymentScheduleTemplateCode));
+            result.setPaymentScheduleTemplateDto(
+                    paymentScheduleApi.findPaymentScheduleTemplate(paymentScheduleTemplateCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
 
         return result;
     }
-
 
     @Override
     public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(PagingAndFiltering pagingAndFiltering) {
@@ -671,12 +681,13 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         return result;
     }
 
-
     @Override
-    public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+    public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(String query, String fields, Integer offset,
+            Integer limit, String sortBy, SortOrder sortOrder) {
         PaymentScheduleTemplatesDto result = new PaymentScheduleTemplatesDto();
         try {
-            result = paymentScheduleApi.listPaymentScheduleTemplate(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+            result = paymentScheduleApi.listPaymentScheduleTemplate(
+                    new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -684,19 +695,28 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         return result;
     }
 
-
     @Override
     public ActionStatus updatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-           paymentScheduleApi.updatePaymentScheduleInstance(paymentScheduleInstanceDto);
+            paymentScheduleApi.updatePaymentScheduleInstance(paymentScheduleInstanceDto);
         } catch (Exception e) {
             processException(e, result);
         }
 
         return result;
     }
-
+    
+    @Override
+    public PaymentScheduleInstanceResponseDto findPaymentScheduleInstance(Long id) {
+    	PaymentScheduleInstanceResponseDto response = new PaymentScheduleInstanceResponseDto();    	
+    	try {
+    		response = paymentScheduleApi.findPaymentScheduleInstance(id);
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+    	return response;
+    }
 
     @Override
     public PaymentScheduleInstancesDto listPaymentScheduleInstance(PagingAndFiltering pagingAndFiltering) {
@@ -710,24 +730,26 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         return result;
     }
 
-
     @Override
-    public PaymentScheduleInstancesDto listPaymentScheduleInstance(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+    public PaymentScheduleInstancesDto listPaymentScheduleInstance(String query, String fields, Integer offset,
+            Integer limit, String sortBy, SortOrder sortOrder) {
         PaymentScheduleInstancesDto result = new PaymentScheduleInstancesDto();
         try {
-            result = paymentScheduleApi.listPaymentScheduleInstance(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+            result = paymentScheduleApi.listPaymentScheduleInstance(
+                    new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
 
         return result;
     }
+  
 
     @Override
     public ActionStatus terminatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-           paymentScheduleApi.terminatePaymentScheduleInstance(paymentScheduleInstanceDto);
+            paymentScheduleApi.terminatePaymentScheduleInstance(paymentScheduleInstanceDto);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -739,9 +761,74 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     public ActionStatus cancelPaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-           paymentScheduleApi.cancelPaymentScheduleInstance(paymentScheduleInstanceDto);
+            paymentScheduleApi.cancelPaymentScheduleInstance(paymentScheduleInstanceDto);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus createRumSequence(PaymentGatewayRumSequenceDto postData) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentGatewayRumSequenceApi.create(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus updateRumSequence(PaymentGatewayRumSequenceDto postData) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentGatewayRumSequenceApi.update(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public PaymentGatewayRumSequenceResponseDto findRumSequence(String code) {
+        PaymentGatewayRumSequenceResponseDto result = new PaymentGatewayRumSequenceResponseDto();
+
+        try {
+            result.setPaymentGatewayRumSequence(paymentGatewayRumSequenceApi.find(code));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus deleteRumSequence(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentGatewayRumSequenceApi.delete(code);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public GenericSequenceValueResponseDto getNextPaymentGatewayRumSequenceNumber(String code) {
+        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+
+        try {
+            result = paymentGatewayRumSequenceApi.getNextNumber(code);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

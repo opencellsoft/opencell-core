@@ -98,8 +98,10 @@ public class InternalNotificationJobBean {
             @SuppressWarnings("unchecked")
             List<Object> results = query.getResultList();
             result.setNbItemsToProcess(results.size());
+            int i = 0;
             for (Object res : results) {
-                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+                i++;
+                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
 

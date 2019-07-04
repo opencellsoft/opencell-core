@@ -21,6 +21,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
@@ -29,6 +30,7 @@ import org.meveo.service.finance.RevenueRecognitionRuleService;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 7.0
  **/
 @Stateless
 public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, UsageChargeTemplateDto> {
@@ -84,11 +86,14 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         chargeTemplate.setFilterParam3(postData.getFilterParam3());
         chargeTemplate.setFilterParam4(postData.getFilterParam4());
         chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        chargeTemplate.setFilterExpressionSpark(postData.getFilterExpressionSpark());
         chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
         chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+        chargeTemplate.setTriggerNextCharge(postData.getTriggerNextCharge());
+        chargeTemplate.setTriggerNextChargeEL(postData.getTriggerNextChargeEL());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -168,12 +173,19 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         chargeTemplate.setFilterParam2(postData.getFilterParam2());
         chargeTemplate.setFilterParam3(postData.getFilterParam3());
         chargeTemplate.setFilterParam4(postData.getFilterParam4());
-        chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        if (postData.getFilterExpression() != null) {
+            chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        }
+        if (postData.getFilterExpressionSpark() != null) {
+            chargeTemplate.setFilterExpressionSpark(postData.getFilterExpressionSpark());
+        }
         chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
         chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+        chargeTemplate.setTriggerNextCharge(postData.getTriggerNextCharge());
+        chargeTemplate.setTriggerNextChargeEL(postData.getTriggerNextChargeEL());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -228,7 +240,7 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
             handleMissingParameters();
         }
 
-        UsageChargeTemplateDto result = new UsageChargeTemplateDto();
+        UsageChargeTemplateDto result;
 
         // check if code already exists
         UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, Arrays.asList("invoiceSubCategory"));
@@ -236,7 +248,7 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
             throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
         }
 
-        result = new UsageChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, true));
+        result = new UsageChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
         return result;
     }

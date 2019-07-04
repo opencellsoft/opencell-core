@@ -45,6 +45,7 @@ import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -113,7 +114,7 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
             String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
             String username = meveoInstance.getAuthUsername() != null ? meveoInstance.getAuthUsername() : "";
             String password = meveoInstance.getAuthPassword() != null ? meveoInstance.getAuthPassword() : "";
-            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyClient client = new ResteasyClientProxyBuilder().build();
             ResteasyWebTarget target = client.target(baseurl + url);
             BasicAuthentication basicAuthentication = new BasicAuthentication(username, password);
             target.register(basicAuthentication);

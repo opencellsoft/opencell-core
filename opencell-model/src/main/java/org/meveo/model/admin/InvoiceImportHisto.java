@@ -28,21 +28,21 @@ import org.meveo.model.bi.JobHistory;
 @DiscriminatorValue(value = "INVOICE_IMPORT")
 public class InvoiceImportHisto extends JobHistory {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "nb_invoices_ignored")
-	private Integer nbInvoicesIgnored;
+    @Column(name = "nb_invoices_ignored")
+    private Integer nbInvoicesIgnored;
 
-	public InvoiceImportHisto() {
+    public InvoiceImportHisto() {
 
-	}
+    }
 
-	public void setNbInvoicesIgnored(Integer nbInvoicesIgnored) {
-		this.nbInvoicesIgnored = nbInvoicesIgnored;
-	}
+    public void setNbInvoicesIgnored(Integer nbInvoicesIgnored) {
+        this.nbInvoicesIgnored = nbInvoicesIgnored;
+    }
 
-	public Integer getNbInvoicesIgnored() {
-		return nbInvoicesIgnored;
-	}
+    public Integer getNbInvoicesIgnored() {
+        return nbInvoicesIgnored;
+    }
 
 }

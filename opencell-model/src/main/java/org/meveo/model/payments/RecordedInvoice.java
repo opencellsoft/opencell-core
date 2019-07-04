@@ -18,6 +18,8 @@
  */
 package org.meveo.model.payments;
 
+import org.meveo.model.dunning.DunningDocument;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,18 +32,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-
 @Entity
 @DiscriminatorValue(value = "I")
-@NamedQueries({        
-        @NamedQuery(name = "RecordedInvoice.listRecordedInvoiceToPayByDate", query = "Select ri from RecordedInvoice as ri,PaymentMethod as pm  where ri.matchingStatus ='O' "
-                + "and  ri.customerAccount.excludedFromPayment = false and ri.dueDate >=:fromDueDate and ri.dueDate<=:toDueDate and ri.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ri.unMatchingAmount <> 0") })
 public class RecordedInvoice extends AccountOperation {
 
     private static final long serialVersionUID = 1L;
@@ -57,13 +53,19 @@ public class RecordedInvoice extends AccountOperation {
     @Column(name = "net_to_pay", precision = 23, scale = 12)
     private BigDecimal netToPay;
 
-    
     @OneToMany(mappedBy = "recordedInvoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<RecordedInvoiceCatAgregate> recordedInvoiceCatAgregates = new ArrayList<RecordedInvoiceCatAgregate>();
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pay_schdl_inst_item_id")
     private PaymentScheduleInstanceItem paymentScheduleInstanceItem;
+
+    /**
+     * if an invoice becomes unpaid then, it's associated with a dunning doc
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dunning_document_id")
+    private DunningDocument dunningDocument;
 
     public Date getProductionDate() {
         return productionDate;
@@ -89,7 +91,6 @@ public class RecordedInvoice extends AccountOperation {
         this.netToPay = netToPay;
     }
 
-    
     /**
      * @return the recordedInvoiceCatAgregates
      */
@@ -103,8 +104,6 @@ public class RecordedInvoice extends AccountOperation {
     public void setRecordedInvoiceCatAgregates(List<RecordedInvoiceCatAgregate> recordedInvoiceCatAgregates) {
         this.recordedInvoiceCatAgregates = recordedInvoiceCatAgregates;
     }
-    
-    
 
     /**
      * @return the paymentScheduleInstanceItem
@@ -119,5 +118,21 @@ public class RecordedInvoice extends AccountOperation {
     public void setPaymentScheduleInstanceItem(PaymentScheduleInstanceItem paymentScheduleInstanceItem) {
         this.paymentScheduleInstanceItem = paymentScheduleInstanceItem;
     }
+
+    /**
+     * @return dunning doc
+     */
+    public DunningDocument getDunningDocument() {
+        return dunningDocument;
+    }
+
+    /**
+     *
+     * @param dunningDocument dunning Document
+     */
+    public void setDunningDocument(DunningDocument dunningDocument) {
+        this.dunningDocument = dunningDocument;
+    }
+
 
 }

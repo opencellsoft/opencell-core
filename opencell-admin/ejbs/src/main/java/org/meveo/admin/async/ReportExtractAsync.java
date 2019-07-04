@@ -31,18 +31,20 @@ public class ReportExtractAsync {
 
     @Inject
     private JobExecutionService jobExecutionService;
-    
+
     @Inject
     private CurrentUserProvider currentUserProvider;
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, Date startDate, Date endDate, MeveoUser lastCurrentUser) {
-        
+
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-        
+
+        int i = 0;
         for (Long id : ids) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                 break;
             }
             unitReportExtractJobBean.execute(result, id, startDate, endDate);

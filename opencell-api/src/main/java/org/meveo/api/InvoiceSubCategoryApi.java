@@ -16,6 +16,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.billing.impl.AccountingCodeService;
@@ -212,7 +213,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, code);
         }
 
-        result = new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceSubCategory, true));
+        result = new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceSubCategory, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
         return result;
     }

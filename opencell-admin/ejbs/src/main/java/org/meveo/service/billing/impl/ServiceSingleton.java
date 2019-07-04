@@ -12,7 +12,9 @@ import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
@@ -20,8 +22,10 @@ import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentGatewayRumSequence;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -34,7 +38,8 @@ import org.slf4j.Logger;
  * @author Andrius Karpavicius
  * @author Edward Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Singleton
 @Lock(LockType.WRITE)
@@ -58,9 +63,33 @@ public class ServiceSingleton {
 
     @Inject
     private SellerService sellerService;
+    
+    @Inject
+    private CustomGenericEntityCodeService customGenericEntityCodeService;
 
     @Inject
     private Logger log;
+    
+    /**
+     * Gets the sequence from the seller or its parent hierarchy. Otherwise return the sequence from invoiceType.
+     * @param invoiceType {@link InvoiceType}
+     * @param seller {@link Seller}
+     * @return {@link InvoiceSequence}
+     */
+	private InvoiceSequence getSequenceFromSellerHierarchy(InvoiceType invoiceType, Seller seller) {
+		InvoiceSequence sequence = invoiceType.getSellerSequenceSequenceByType(seller);
+
+		if (sequence == null) {
+			// gets the sequence from parent seller
+			if (seller.getSeller() != null) {
+				sequence = getSequenceFromSellerHierarchy(invoiceType, seller.getSeller());
+			} else {
+				sequence = invoiceType.getInvoiceSequence();
+			}
+		}
+
+		return sequence;
+	}
 
     /**
      * Get invoice number sequence. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
@@ -98,10 +127,8 @@ public class ServiceSingleton {
             }
         }
 
-        InvoiceSequence sequence = invoiceType.getSellerSequenceSequenceByType(seller);
-        if (sequence == null) {
-            sequence = invoiceType.getInvoiceSequence();
-        }
+        InvoiceSequence sequence = getSequenceFromSellerHierarchy(invoiceType, seller);
+        		
         if (sequence == null) {
             sequence = new InvoiceSequence();
             sequence.setCurrentInvoiceNb(0L);
@@ -241,11 +268,35 @@ public class ServiceSingleton {
 	@Lock(LockType.WRITE)
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public CustomerSequence getNextCustomerSequenceNumber(CustomerSequence customerSequence) {
+	public CustomerSequence getPaymentGatewayRumSequenceNumber(CustomerSequence customerSequence) {
 		customerSequence.getGenericSequence()
 				.setCurrentSequenceNb(customerSequence.getGenericSequence().getCurrentSequenceNb() + 1L);
 
 		return customerSequence;
 	}
+
+	@Lock(LockType.WRITE)
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public PaymentGatewayRumSequence getPaymentGatewayRumSequenceNumber(PaymentGatewayRumSequence rumSequence) {
+		rumSequence.getGenericSequence()
+				.setCurrentSequenceNb(rumSequence.getGenericSequence().getCurrentSequenceNb() + 1L);
+
+		return rumSequence;
+	}
+
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public CustomGenericEntityCode getGenericCodeEntity(String entityClass) throws BusinessException {
+        CustomGenericEntityCode customGenericEntityCode = null;
+        if (!StringUtils.isBlank(entityClass)) {
+            customGenericEntityCode = customGenericEntityCodeService.findByClass(entityClass);
+            if (customGenericEntityCode != null) {
+                customGenericEntityCode.setSequenceCurrentValue(customGenericEntityCode.getSequenceCurrentValue() != null ? customGenericEntityCode.getSequenceCurrentValue() + 1 : 0);
+            }
+        }
+        return customGenericEntityCode;
+    }
 
 }

@@ -15,28 +15,48 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.admin.User;
 
+/**
+ * Notification by sending instant message
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "adm_notif_im")
 public class InstantMessagingNotification extends Notification {
 
     private static final long serialVersionUID = 7841414559743010567L;
 
+    /**
+     * Instant message provider
+     */
     @Column(name = "im_provider", length = 20)
     @NotNull
     private InstantMessagingProviderEnum imProvider;
 
+    /**
+     * Expression to determine recipient's user identifier
+     */
     @Column(name = "id_expression", length = 2000)
     @Size(max = 2000)
     private String idEl;
 
+    /**
+     * Recipient's user identifiers
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "adm_notif_im_list")
     private Set<String> ids;
 
+    /**
+     * Application users as recipients
+     */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "adm_notif_im_user")
     private Set<User> users;
 
+    /**
+     * Expression to compose a message
+     */
     @Column(name = "message", length = 2000)
     @NotNull
     @Size(max = 2000)
@@ -85,8 +105,8 @@ public class InstantMessagingNotification extends Notification {
     @Override
     public String toString() {
         final int maxLen = 10;
-        return String.format("InstantMessagingNotification [imProvider=%s, idEl=%s, ids=%s,  message=%s, notification=%s]", imProvider, idEl, ids != null ? toString(ids, maxLen)
-                : null, message, super.toString());
+        return String.format("InstantMessagingNotification [imProvider=%s, idEl=%s, ids=%s,  message=%s, notification=%s]", imProvider, idEl,
+            ids != null ? toString(ids, maxLen) : null, message, super.toString());
     }
 
     private String toString(Collection<?> collection, int maxLen) {
