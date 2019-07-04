@@ -865,7 +865,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     /**
      * Recompute derived amounts amountWithoutTax/amountWithTax/amountTax unitAmountWithoutTax/unitAmountWithTax/unitAmountTax
-     * 
+     *
      * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
      * @param rounding Rounding precision to apply
      * @param roundingMode Rounding mode to apply

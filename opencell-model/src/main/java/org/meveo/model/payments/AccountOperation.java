@@ -34,6 +34,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -61,8 +62,7 @@ import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldValues;
-
-
+import org.meveo.model.finance.AccountingWriting;
 
 /**
  * Account operation
@@ -144,6 +144,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
+
+    /**
+     * List of associated accounting writing
+     */
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accountOperations")
+    private List<AccountingWriting> accountingWritings = new ArrayList<>();
 
     /**
      * Deprecated in 5.2. Use accountingCode instead
@@ -334,25 +340,25 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @JoinColumn(name = "ddrequest_item_id")
     private DDRequestItem ddRequestItem;
 
-   
+
     @ManyToOne(optional = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "rejected_payment_id")
     private RejectedPayment rejectedPayment;
-    
+
     @ManyToOne(optional = true)
     @JoinColumn(name = "seller_id")
     private Seller seller;
-    
+
     @OneToOne(mappedBy = "accountOperation")
     private PaymentVentilation paymentVentilation;
-    
+
     /**
      * Associated Subscription
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
-    
+
 
     public Date getDueDate() {
         return dueDate;
@@ -504,7 +510,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     		uuid = UUID.randomUUID().toString();
     	}
     }
-    
+
     @Override
     public String getUuid() {
     	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
@@ -600,6 +606,14 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
     }
+
+    public List<AccountingWriting> getAccountingWritings() {
+		return accountingWritings;
+	}
+
+	public void setAccountingWritings(List<AccountingWriting> accountingWritings) {
+		this.accountingWritings = accountingWritings;
+	}
 
     /**
      * @return the amountWithoutTax

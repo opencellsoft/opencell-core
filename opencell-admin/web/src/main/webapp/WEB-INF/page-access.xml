@@ -320,6 +320,11 @@
 	<page view-id=".+\/finance\/reportExtracts\/.+">
 		<constraint type="READ">currentUser.hasRole('reportExtractManagement')</constraint>
 	</page>
+	<!--  PAGE RULES FOR accounting writing PAGES -->
+	<page view-id=".+\/finance\/accountingWritings\/.+">
+		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
+	</page>
+
 
     <!--  PAGE RULES FOR FULL TEXT SEARCH AND INDEXING PAGES -->
     <page view-id=".+\/index\/index">
