@@ -1,5 +1,16 @@
 package org.meveo.api.billing;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
@@ -50,9 +61,9 @@ import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.CountryService;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.ProductInstanceService;
-import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -71,16 +82,6 @@ import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrderItem;
 import org.tmf.dsmapi.catalog.resource.order.ProductRelationship;
 import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author Andrius Karpavičius
@@ -132,8 +133,8 @@ public class OrderApi extends BaseApi {
     private CountryService countryService;
 
     @Inject
-    private ServiceInstanceService serviceInstanceService;
-
+    private SellerService sellerService;
+    
     @Inject
     private BillingCycleService billingCycleService;
 
@@ -669,7 +670,7 @@ public class OrderApi extends BaseApi {
     }
 
     private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem,
-            Subscription subscription, String orderNumber) throws BusinessException {
+            Subscription subscription, String orderNumber) throws BusinessException, InvalidParameterException {
 
         log.debug("Instantiating product from product template {} for order {} line {}", productTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
@@ -683,13 +684,22 @@ public class OrderApi extends BaseApi {
         String criteria1 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_1.getCharacteristicName(), String.class, null);
         String criteria2 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_2.getCharacteristicName(), String.class, null);
         String criteria3 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_3.getCharacteristicName(), String.class, null);
-
+        String sellerCode = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_SELLER.getCharacteristicName(), String.class, null);
+        
         Seller seller = null;
         if (subscription != null) {
             seller = subscription.getSeller();
         } else {
-            seller = orderItem.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-        }
+            if (sellerCode != null) {
+                seller = sellerService.findByCode(sellerCode);
+                if (seller == null) {                     
+                    throw new InvalidParameterException("seller", sellerCode);
+                }
+            }
+       }
+        if (seller == null) {
+			seller = orderItem.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+		}
 
         ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
             productTemplate.getDescription(), orderNumber, seller);
