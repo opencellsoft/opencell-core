@@ -124,7 +124,13 @@ public interface CatalogRs extends IBaseRs {
     @POST
     @Path("/createServiceFromBSM")
     public Response createServiceFromBSM(BsmServiceDto postData);
-
+  
+    /**
+     * Create product from BPM definition
+     * 
+     * @param postData BPM service information
+     * @return
+     */
     @POST
     @Path("/createProductFromBPM")
     public Response createProductFromBPM(BpmProductDto postData);

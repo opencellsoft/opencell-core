@@ -388,7 +388,134 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>swagger</id>
+            <dependencies>       
+                <dependency>
+                      <groupId>io.openapitools.swagger</groupId>
+                      <artifactId>swagger-maven-plugin</artifactId>
+                      <version>2.0.3</version>
+                </dependency>
+			        <dependency>
+			            <groupId>com.github.javaparser</groupId>
+			            <artifactId>javaparser-symbol-solver-core</artifactId>
+			            <version>LATEST</version>
+			        </dependency>
+            </dependencies>
 
+            <build>
+                <plugins>
+                	<plugin>
+					  <groupId>org.codehaus.mojo</groupId>
+					  <artifactId>exec-maven-plugin</artifactId>
+					  <version>1.2.1</version>
+					  <dependencies>
+					        <dependency>
+					            <groupId>com.github.javaparser</groupId>
+					            <artifactId>javaparser-symbol-solver-core</artifactId>
+					            <version>LATEST</version>
+					        </dependency>
+					  </dependencies>
+					  <executions>
+					    <execution>
+					    	<phase>test</phase>
+					      <goals>
+					        <goal>java</goal>
+					      </goals>
+					    </execution>
+					  </executions>
+					  <configuration>
+					    <mainClass>org.meveo.api.ParserSwagger</mainClass>
+					  </configuration>
+					</plugin>
+                    <plugin>
+                          <groupId>io.openapitools.swagger</groupId>
+                          <artifactId>swagger-maven-plugin</artifactId>
+                          <version>2.0.3</version>
+                          
+                          <dependencies>    
+                                <dependency>
+                                    <groupId>com.opencellsoft</groupId>
+                                    <artifactId>opencell-model</artifactId>
+                                    <version>${project.version}</version>
+                                </dependency>
+                        
+                                <dependency>
+                                    <groupId>com.opencellsoft</groupId>
+                                    <artifactId>opencell-api-dto</artifactId>
+                                    <version>${project.version}</version>
+                                </dependency>
+                                
+                                <dependency>
+                                    <groupId>com.opencellsoft</groupId>
+                                    <artifactId>opencell-admin-ejbs</artifactId>
+                                    <version>${project.version}</version>
+                                </dependency>
+                                
+                                <dependency>
+                                    <groupId>com.opencellsoft</groupId>
+                                    <artifactId>opencell-api</artifactId>
+                                    <version>${project.version}</version>
+                                </dependency>
+                                
+                                <dependency>
+                                    <groupId>javax.servlet</groupId>
+                                    <artifactId>servlet-api</artifactId>
+                                    <version>2.5</version>
+                                    <scope>compile</scope>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.jboss.resteasy</groupId>
+                                    <artifactId>resteasy-multipart-provider</artifactId>
+                                    <version>2.2.1.GA</version>
+                                    <scope>compile</scope>
+                                </dependency>
+                          </dependencies>
+            
+                          <configuration>
+                          <swaggerConfig>
+                              <servers>
+                                <server>
+                                  <url>http://localhost:8080/opencell/api/rest</url>
+                                  <description>Local Host testing</description>
+                                </server>
+                              </servers>
+                              <info>
+                                <title>Swagger of Opencellsoft Api</title>
+                                <version>${project.version}</version>
+                                <description>Opencell agile monetization api rest documentation 
+                                </description>
+                                <contact>
+                                  <email>contact@opencellsoft.fr</email>
+                                  <name>OpenCellSoft</name>
+                                  <url>https://opencellsoft.com/contact_us/</url>
+                                </contact>
+                                <license>
+                                  <url>https://opencellsoft.com/</url>
+                                  <name>Opencellsoft</name>
+                                </license>
+                              </info>                       
+                          </swaggerConfig>
+                            <resourcePackages>
+                                <resourcePackage>org.meveo.api.rest</resourcePackage>
+                            </resourcePackages>
+                            <outputDirectory>${project.build.directory}/doc/swagger</outputDirectory>
+                            <outputFilename>swagger</outputFilename>
+                            <outputFormats>JSON,YAML</outputFormats>
+                            <prettyPrint>true</prettyPrint>
+                            <useResourcePackagesChildren>true</useResourcePackagesChildren>
+                          </configuration>
+                          <executions>
+                            <execution>
+                                <goals>
+                                  <goal>generate</goal>
+                                </goals>
+                            </execution>
+                          </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <!-- An optional Arquillian testing profile that executes tests in your JBoss AS instance -->
             <!-- This profile will start a new JBoss AS instance, and execute the test, shutting it down when done -->

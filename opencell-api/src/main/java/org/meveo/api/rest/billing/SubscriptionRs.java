@@ -153,7 +153,7 @@ public interface SubscriptionRs extends IBaseRs {
      * 
      * @param subscriptionCode The subscription's code
      * @param mergedCF true if merge inherited custom fields.
-     * @return A subscription
+     * @return Request processing status
      */
     @GET
     @Path("/")
@@ -162,7 +162,13 @@ public interface SubscriptionRs extends IBaseRs {
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
 
-
+    /**
+     * Search for a subscription with a given code.
+     * 
+     * @param subscriptionCode The subscription's code
+     * @param oneshotChargeCode one shot Charge Code
+     * @return A subscription
+     */
     @DELETE
     @Path("/oneShotCharge/{subscriptionCode}/{oneshotChargeCode}")
     ActionStatus terminateOneShotCharge(@PathParam("subscriptionCode") String subscriptionCode, @PathParam("oneshotChargeCode") String oneshotChargeCode);

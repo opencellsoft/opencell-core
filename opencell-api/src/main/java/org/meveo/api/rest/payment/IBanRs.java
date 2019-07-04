@@ -23,7 +23,6 @@ public interface IBanRs extends IBaseRs {
      * @param bic the Bank Identifier Code to validate
      * @return the status of the validation
      */
-
     @GET
     @Path("/validate")
     ActionStatus validate(@QueryParam("iban") String iban, @QueryParam("bic") String bic);
