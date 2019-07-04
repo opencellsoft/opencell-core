@@ -205,19 +205,23 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
             }
 
             // Order the list
-            if (config.getSortField() != null) {
-                Comparator<CustomEntityTemplate> comparator = null;
-                if ("description".equals(config.getSortField())) {
-                    comparator = Comparator.comparing(CustomEntityTemplate::getDescription);
-                } else if ("code".equals(config.getSortField())) {
-                    comparator = Comparator.comparing(CustomEntityTemplate::getCode);
-                } else if ("name".equals(config.getSortField())) {
-                    comparator = Comparator.comparing(CustomEntityTemplate::getName);
+            try {
+                if (config.getSortField() != null) {
+                    Comparator<CustomEntityTemplate> comparator = null;
+                    if ("description".equals(config.getSortField())) {
+                        comparator = Comparator.comparing(CustomEntityTemplate::getDescription);
+                    } else if ("code".equals(config.getSortField())) {
+                        comparator = Comparator.comparing(CustomEntityTemplate::getCode);
+                    } else if ("name".equals(config.getSortField())) {
+                        comparator = Comparator.comparing(CustomEntityTemplate::getName);
+                    }
+                    if (!config.isAscendingSorting()) {
+                        comparator = comparator.reversed();
+                    }
+                    cets.sort(comparator);
                 }
-                if (!config.isAscendingSorting()) {
-                    comparator = comparator.reversed();
-                }
-                cets.sort(comparator);
+            }catch (Exception ex){
+                return cets;
             }
             return cets;
 
