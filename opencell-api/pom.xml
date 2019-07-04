@@ -434,38 +434,10 @@
                       <artifactId>swagger-maven-plugin</artifactId>
                       <version>2.0.3</version>
                 </dependency>
-			        <dependency>
-			            <groupId>com.github.javaparser</groupId>
-			            <artifactId>javaparser-symbol-solver-core</artifactId>
-			            <version>LATEST</version>
-			        </dependency>
             </dependencies>
 
             <build>
                 <plugins>
-                	<plugin>
-					  <groupId>org.codehaus.mojo</groupId>
-					  <artifactId>exec-maven-plugin</artifactId>
-					  <version>1.2.1</version>
-					  <dependencies>
-					        <dependency>
-					            <groupId>com.github.javaparser</groupId>
-					            <artifactId>javaparser-symbol-solver-core</artifactId>
-					            <version>LATEST</version>
-					        </dependency>
-					  </dependencies>
-					  <executions>
-					    <execution>
-					    	<phase>test</phase>
-					      <goals>
-					        <goal>java</goal>
-					      </goals>
-					    </execution>
-					  </executions>
-					  <configuration>
-					    <mainClass>org.meveo.api.ParserSwagger</mainClass>
-					  </configuration>
-					</plugin>
                     <plugin>
                           <groupId>io.openapitools.swagger</groupId>
                           <artifactId>swagger-maven-plugin</artifactId>
