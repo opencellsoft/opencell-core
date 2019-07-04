@@ -4,10 +4,12 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.CdrListDto;
+import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -42,7 +44,7 @@ public interface MediationRs extends IBaseRs {
      */
     @POST
     @Path("/chargeCdr")
-    ActionStatus chargeCdr(String cdr);
+    ChargeCDRResponseDto chargeCdr(String cdr, @QueryParam("isVirtual") boolean isVirtual, @QueryParam("rateTriggeredEdr") boolean rateTriggeredEdr, @QueryParam("returnWalletOperations") boolean returnWalletOperations, @QueryParam("maxDepth") Integer maxDepth);
 
     /**
      * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity

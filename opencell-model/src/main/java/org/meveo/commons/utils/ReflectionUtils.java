@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -25,6 +25,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -45,6 +46,8 @@ public class ReflectionUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
 
+    public static final String SET_PREFIX = "set";
+    
     /**
      * Mapping between an entity class and entity classes containing a field that that class.
      */
@@ -320,6 +323,21 @@ public class ReflectionUtils {
 
         return classes;
     }
+    
+    public static Object getSubclassObjectByDiscriminatorValue(Class parentClass, String discriminatorValue) {
+        Set<Class<?>> subClasses = getSubclasses(parentClass);
+        Object result = null;
+        for (Class subClass : subClasses) {
+            Object subclassObject = createObject(subClass.getName());
+            DiscriminatorValue classDiscriminatorValue = subclassObject.getClass().getAnnotation(DiscriminatorValue.class);
+            if (classDiscriminatorValue != null && classDiscriminatorValue.value().equals(discriminatorValue)) {
+                result = subclassObject;
+                break;
+            }
+        }
+        
+        return result;
+    }
 
     /**
      * A check if class represents a DTO or entity class.
@@ -576,6 +594,26 @@ public class ReflectionUtils {
         }
         classReferences.put(fieldClass, matchedFields);
         return matchedFields;
+    }
+    
+    /**
+     * Find methods annotated with annotationClass
+     * @param clazz the class where to search methods
+     * @param annotationClass the annotation class
+     * @return a list of methods
+
+     */
+
+    public static List<Method> findAnnotatedMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+        Method[] methods = clazz.getMethods();
+        List<Method> annotatedMethods = new ArrayList<Method>(methods.length);
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(annotationClass)) {
+                annotatedMethods.add(method);
+            }
+        }
+
+        return annotatedMethods;
     }
 
     private static Method getMethodFromInterface(Class<?> cls, Class<? extends Annotation> annotationClass, String methodName, Class... parameterTypes) {

@@ -214,6 +214,8 @@ public class InvoiceDto extends AuditableEntityDto {
         this.setXmlFilename(invoice.getXmlFilename());
         this.setPdfFilename(invoice.getPdfFilename());
         this.discount = invoice.getDiscount();
+        this.setCheckAlreadySent(invoice.isAlreadySent());
+        this.setSentByEmail(invoice.isDontSend());
 
         for (InvoiceAgregate invoiceAggregate : invoice.getInvoiceAgregates()) {
             if (invoiceAggregate instanceof CategoryInvoiceAgregate) {

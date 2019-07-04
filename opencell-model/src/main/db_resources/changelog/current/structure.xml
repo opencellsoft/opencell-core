@@ -239,4 +239,937 @@
         <addDefaultValue tableName="meveo_job_instance" columnName="exclude_inv_without_amount" defaultValueNumeric="0" />
         <sql>update ${db.schema.adapted}meveo_job_instance set exclude_inv_without_amount = 0 where exclude_inv_without_amount is null</sql>
     </changeSet>
-</databaseChangeLog> 
+    
+
+    <changeSet id="#4282_20190520" author="AndriusKarpavicius">
+       <addColumn tableName="billing_rated_transaction">
+           <column name="service_instance_id" type="bigInt"/>
+       </addColumn>
+       <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_service_instance" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+       <sql>CREATE INDEX rt_subscription_index ON ${db.schema.adapted}billing_rated_transaction  (subscription_id, invoice_id, usage_date)</sql>
+       <sql>CREATE INDEX rt_ba_invoice_index ON ${db.schema.adapted}billing_rated_transaction  (billing_account__id, invoice_id, usage_date)</sql>
+       <sql>CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
+       <sql>CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
+    </changeSet>
+
+    <changeSet id="#4282_20190524" author="AndriusKarpavicius">
+        <sql>DROP INDEX rt_ba_invoice_index</sql>
+        <sql>DROP INDEX rt_subscription_index</sql>
+        <sql>DROP INDEX transaction_billing_index</sql>
+        <sql>DROP INDEX rated_transaction_number</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON billing_rated_transaction (billing_account__id, usage_date, service_instance_id) where status='OPEN' and service_instance_id is not null</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON billing_rated_transaction (billing_account__id, usage_date, subscription_id) where status='OPEN'</sql>
+        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON billing_rated_transaction (subscription_id, usage_date, service_instance_id) where status='OPEN' and subscription_id is not null</sql>
+        <sql>CREATE INDEX rt_invoice_index ON billing_rated_transaction (invoice_id, invoice_sub_category_id, wallet_id) where status='BILLED'</sql>
+        <sql>CREATE INDEX rt_order_index ON billing_rated_transaction (order_number, status, usage_date) where order_number is not null</sql>
+    </changeSet>
+
+    <changeSet id="#4282_20190520-vacuum" author="AndriusKarpavicius" dbms="postgresql">
+       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_scale_factor = 0.0);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_threshold = 5000);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_analyze_scale_factor = 0.0);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_analyze_threshold = 5000);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_vacuum_scale_factor = 0.0);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_vacuum_threshold = 5000);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_analyze_scale_factor = 0.0);</sql>
+       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_analyze_threshold = 5000);</sql>
+    </changeSet>
+
+<!-- Takes many hours on 30M RT
+    <changeSet id="#4282_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_rated_transaction set service_instance_id = wo.service_instance_id from ${db.schema.adapted}billing_wallet_operation wo where
+               wo.rated_transaction_id=billing_rated_transaction.id
+        </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction set service_instance_id =null where billing_rated_transaction.id in (select rated_transaction_id from ${db.schema.adapted}billing_wallet_operation where rated_transaction_id is not null group by rated_transaction_id having count(*)>1 ) </sql>
+    </changeSet>
+
+    <changeSet id="#4282_20190520-M" author="AndriusKarpavicius" dbms="mysql">
+        <sql>update ${db.schema.adapted}billing_rated_transaction rt join ${db.schema.adapted}billing_wallet_operation wo on wo.rated_transaction_id=rt.id set rt.service_instance_id = wo.service_instance_id where wo.service_instance_id is not null
+        </sql>
+    </changeSet>
+ -->
+
+
+    <changeSet id="#4290_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_service_instance set minimum_amount_el = st.minimum_amount_el, minimum_label_el = st.minimum_label_el from ${db.schema.adapted}cat_service_template st where
+               service_template_id = st.id and billing_service_instance.minimum_amount_el is not null
+        </sql>
+        <sql>update ${db.schema.adapted}billing_service_instance set minimum_amount_el_sp = st.minimum_amount_el_sp, minimum_label_el_sp = st.minimum_label_el_sp from ${db.schema.adapted}cat_service_template st where
+               service_template_id = st.id and billing_service_instance.minimum_amount_el_sp is not null
+        </sql>
+    </changeSet>
+
+    <changeSet id="#4290_20190520-M" author="AndriusKarpavicius" dbms="mysql">
+        <sql>update ${db.schema.adapted}billing_service_instance si join ${db.schema.adapted}cat_service_template st on si.service_template_id = st.id
+                set si.minimum_amount_el = st.minimum_amount_el, siminimum_label_el = st.minimum_label_el where si.minimum_amount_el is not null
+        </sql>
+        <sql>update ${db.schema.adapted}billing_service_instance si join ${db.schema.adapted}cat_service_template st on si.service_template_id = st.id
+                set si.minimum_amount_el_sp = st.minimum_amount_el_sp, siminimum_label_el_sp = st.minimum_label_el_sp where si.minimum_amount_el_sp is not null
+        </sql>
+    </changeSet>
+
+    <changeSet id="#4278_20190520_partitions" author="mohamed.el.youssoufi" dbms="postgresql">
+    
+    	<createProcedure><![CDATA[
+		
+			DROP FUNCTION IF EXISTS create_partitions(text,text,text,integer);
+            
+			CREATE OR REPLACE FUNCTION create_partitions(table_name text, start_date text, frequency text, partitions_number int) RETURNS void AS $$
+            -- Function to create partition tables for a given table
+            -- Param1 : table_name => name of the table to be partitonned. Can include a schema name
+            -- Param2 : start_date => date of the beginning of partitonning (input format YYYY_MM_DD)
+            -- Param3 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks)
+            -- Param4 : partitions_number : number of partitions to create starting form param start_date
+
+            -- Call Example : create_partitions('public.rating_edr','2019_03_01','M',5);
+
+            DECLARE
+                partition_date DATE;
+                query text;
+            BEGIN
+
+                partition_date := to_date(start_date,'YYYY_MM_DD');
+    
+                FOR counter IN 1..partitions_number LOOP
+    
+                    query := 'CREATE TABLE ' || table_name || '_' || to_char(partition_date,'YYYY_MM_DD') || ' PARTITION OF ' || table_name || ' FOR VALUES FROM (''' || to_char(partition_date,'YYYY_MM_DD') || ''') TO (''';
+        
+                    IF frequency = 'M' THEN
+                        partition_date := partition_date + interval '1 month';
+                    END IF;
+        
+                    IF frequency = 'Y' THEN
+                        partition_date := partition_date + interval '1 year';
+                    END IF;
+        
+                    IF frequency = 'W' THEN
+                        partition_date := partition_date + interval '1 week';
+                    END IF;
+        
+                    query := query || to_char(partition_date,'YYYY_MM_DD') || ''');';
+        
+                    EXECUTE query;
+        
+                    partition_date := partition_date + interval '1 day';
+        
+                    RAISE NOTICE 'partition created : %', table_name || '_' || to_char(partition_date,'YYYY_MM_DD');
+    
+                END LOOP;
+            END;
+            $$ LANGUAGE plpgsql;
+			
+			-- function detach all child partitions from parent
+			-- param table_name = parent table name
+			-- ------------------------------------------------
+
+			CREATE OR REPLACE FUNCTION detach_partitions(table_name TEXT) RETURNS void AS $$
+
+			DECLARE
+
+			 partitions CURSOR(table_name TEXT) FOR SELECT distinct child.relname AS child FROM pg_inherits JOIN pg_class parent ON pg_inherits.inhparent = parent.oid JOIN pg_class child ON pg_inherits.inhrelid = child.oid JOIN pg_namespace nmsp_parent ON nmsp_parent.oid = parent.relnamespace JOIN pg_namespace nmsp_child ON nmsp_child.oid = child.relnamespace WHERE parent.relname=table_name;
+			 query text;
+			 
+			BEGIN
+				 
+			   FOR row IN partitions(table_name) LOOP
+
+					query := 'ALTER TABLE IF EXISTS ' || table_name || ' DETACH PARTITION ' || row.child;
+					EXECUTE query;
+					RAISE NOTICE 'partition % is detached', row.child;
+
+				END LOOP;
+			 
+			END;
+			$$ LANGUAGE plpgsql;
+			
+			-- function to drop all table indexes
+			-- param table_name = target table name
+			-- ------------------------------------
+
+			CREATE OR REPLACE FUNCTION drop_all_table_indexes(table_name TEXT) RETURNS void AS $$
+
+			DECLARE
+
+			 cur_indexes CURSOR(table_name TEXT) FOR select indexname from pg_indexes where tablename = table_name and indexname not like '%_pkey' and indexname not like '%_pk';
+			 query text;
+			 
+			BEGIN
+				 
+			   FOR row IN cur_indexes(table_name) LOOP
+
+					query := 'DROP INDEX IF EXISTS ' || row.indexname || ' CASCADE';
+					EXECUTE query;
+					RAISE NOTICE 'index : %', row.indexname || ' is deleted';
+
+				END LOOP;
+			 
+			END;
+			$$ LANGUAGE plpgsql;
+
+			-- function to rename all table pks (add _tmp to pk keys)
+			-- param table_name = target table name
+			-- ------------------------------------------------------
+
+			CREATE OR REPLACE FUNCTION rename_all_table_pks(table_name TEXT) RETURNS void AS $$
+
+			DECLARE
+
+			 cur_indexes CURSOR(table_name TEXT) FOR select indexname from pg_indexes where tablename = table_name and (indexname like '%_pkey' or indexname  like '%_pk');
+			 query text;
+			 
+			BEGIN
+				 
+			   FOR row IN cur_indexes(table_name) LOOP
+
+					query := 'ALTER INDEX IF EXISTS ' || row.indexname || ' RENAME TO ' || row.indexname || '_tmp';
+					EXECUTE query;
+					RAISE NOTICE 'index : %', row.indexname || ' is renamed';
+
+				END LOOP;
+			 
+			END;
+			$$ LANGUAGE plpgsql;
+
+			-- function to create all table indexes, from scripts stored in tmp_table_indexes table
+			-- param table_name = target table name
+			-- ------------------------------------------------------------------------------------
+
+			CREATE OR REPLACE FUNCTION create_all_table_indexes(tablename TEXT) RETURNS void AS $$
+
+			DECLARE
+
+			 cur_indexes CURSOR(tablename TEXT) FOR select index_def from tmp_table_indexes where table_name = tablename;
+			 query text;
+			 
+			BEGIN
+				 
+			   FOR row IN cur_indexes(tablename) LOOP
+
+					query := row.index_def;
+					RAISE NOTICE 'index is created';
+					EXECUTE query;
+
+				END LOOP;
+			 
+			END;
+			$$ LANGUAGE plpgsql;
+
+            ]]>
+			
+        </createProcedure>
+    
+		<createProcedure><![CDATA[
+			CREATE OR REPLACE FUNCTION switch_billing_rated_transaction_to_partition(schema_owner text, schema_name text, frequency text) RETURNS void AS $$
+			
+			-- Function to replace billing_rated_transaction table with a partitioned table. Preserves existing data.
+			-- Param1 : schema_name => name of the schema where table is located.
+			-- Param2 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in a table
+			
+			DECLARE
+			  _min_date date;
+			  _max_date date;
+			  _seq_value bigint;
+			  _partitions_number int;
+			
+			BEGIN
+			
+			-- Find values for partition creation and sequence recreation
+			execute 'select min(usage_date), max(usage_date) from ' || schema_name || '.billing_rated_transaction ' into _min_date, _max_date;
+			execute 'select nextval(''' || schema_name || '.billing_rated_transaction_seq'')' into _seq_value;
+			
+			RAISE NOTICE 'min date is % max date is %', _min_date, _max_date;
+
+			-- 1: Indexes : keep indexes creation scripts in a temporary table (tmp_table_indexes) before droping or renaming the target table :
+			-------------------------------------------------------------------------------------------------------------------------------------
+			
+			-- create the temporary table for indexes scripts
+			
+			execute 'create table if not exists ' || schema_name || '.tmp_table_indexes (table_name text not null,index_name text not null,index_def text not null ) with (oids = false ) tablespace pg_default;';
+			
+			execute 'alter table ' || schema_name || '.tmp_table_indexes owner to ' || schema_owner || ';';
+			
+			execute 'truncate table ' || schema_name || '.tmp_table_indexes;';
+			
+			-- save indexes scripts in the temporary table
+			
+			execute 'insert into ' || schema_name || '.tmp_table_indexes (table_name, index_name, index_def) select tablename, indexname, indexdef from pg_indexes where indexname not like ''%_pk%'' and tablename = ''billing_rated_transaction'';';
+			
+			-- 2: Rename billing_rated_transaction to billing_rated_transaction_tmp to avoid data loss :
+			--------------------------------------------------------------------------------------------
+			
+			execute 'alter table '||schema_name||'.billing_rated_transaction rename to billing_rated_transaction_tmp;';
+			
+			-- 3: Drop old table indexes :
+			------------------------------
+			
+			execute 'select drop_all_table_indexes(''billing_rated_transaction_tmp'');';
+			
+			-- 4: Rename old table primary keys :
+			-------------------------------------
+			
+			execute 'select rename_all_table_pks(''billing_rated_transaction_tmp'');';
+			
+			-- 5: Create the new table :
+			----------------------------
+			
+			execute 'create table '||schema_name||'.billing_rated_transaction (
+						  id bigint not null default nextval('''||schema_name||'.billing_rated_transaction_seq''::regclass),
+						  version integer,
+						  amount_tax numeric(23,12),
+						  amount_with_tax numeric(23,12),
+						  amount_without_tax numeric(23,12),
+						  code character varying(255),
+						  description text,
+						  do_not_trigger_invoicing integer NOT NULL DEFAULT 0,
+						  parameter_1 character varying(255),
+						  parameter_2 character varying(255),
+						  parameter_3 character varying(255),
+						  quantity numeric(23,12),
+						  status character varying(255),
+						  unit_amount_tax numeric(23,12),
+						  unit_amount_with_tax numeric(23,12),
+						  unit_amount_without_tax numeric(23,12),
+						  unity_description character varying(20),
+						  usage_date timestamp without time zone,
+						  billing_account__id bigint,
+						  billing_run_id bigint,
+						  invoice_id bigint,
+						  aggregate_id_f bigint,
+						  aggregate_id_r bigint,
+						  aggregate_id_t bigint,
+						  invoice_sub_category_id bigint,
+						  priceplan_id bigint,
+						  wallet_id bigint,
+						  edr_id bigint,
+						  adjusted_rated_tx bigint,
+						  order_number character varying(100),
+						  rating_unit_description character varying(20),
+						  parameter_extra text,
+						  start_date timestamp without time zone,
+						  end_date timestamp without time zone,
+						  subscription_id bigint,
+						  seller_id bigint NOT NULL,
+						  charge_instance_id bigint,
+						  tax_id bigint,
+						  tax_percent numeric(23,12),
+						  user_account_id bigint,
+						  offer_id bigint,
+                          service_instance_id bigint,
+						  constraint billing_rated_transaction_pkey primary key (id, usage_date),
+						  constraint fk_8g8jlmakt1wyw73oxs5yltlsd foreign key (aggregate_id_t)
+							  references '||schema_name||'.billing_invoice_agregate (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_amwacie0nqfumpd1sc7y9nv0p foreign key (aggregate_id_r)
+							  references '||schema_name||'.billing_invoice_agregate (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_anslvrbm465ossqx8surjyu22 foreign key (wallet_id)
+							  references '||schema_name||'.billing_wallet (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_bbnhg8vn7jkttghphr65iwug5 foreign key (billing_account__id)
+							  references '||schema_name||'.billing_billing_account (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_billing_rated_transaction_crm_seller foreign key (seller_id)
+							  references '||schema_name||'.crm_seller (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_billing_rated_transaction_offer_template foreign key (offer_id)
+							  references '||schema_name||'.cat_offer_template (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_eucl7of9ovyut1c4r2jkf01u6 foreign key (priceplan_id)
+							  references '||schema_name||'.cat_price_plan_matrix (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_gq86s178gc3orumcl8symk4nn foreign key (invoice_id)
+							  references '||schema_name||'.billing_invoice (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_o2mp1mqcyi2l7q2b1p88h20dw foreign key (billing_run_id)
+							  references '||schema_name||'.billing_billing_run (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_o5yu3c0bnac626w755w5f0voc foreign key (invoice_sub_category_id)
+							  references '||schema_name||'.billing_invoice_sub_cat (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_rjpm9k6xsumg297fxefffyryh foreign key (aggregate_id_f)
+							  references '||schema_name||'.billing_invoice_agregate (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_rt_tax foreign key (tax_id)
+							  references '||schema_name||'.billing_tax (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_rt_ua foreign key (user_account_id)
+							  references '||schema_name||'.account_entity (id) match simple
+							  on update no action on delete no action,
+                          constraint fk_rt_service_instance foreign key (service_instance_id)
+                              references '||schema_name||'.billing_service_instance (id) match simple
+                              on update no action on delete no action
+				) partition by range (usage_date)';
+			
+			execute 'ALTER TABLE ' ||schema_name|| '.billing_rated_transaction OWNER to ' || schema_owner || ';';
+			
+			-- 6: Change sequence owner to the new table :
+			----------------------------------------------
+			execute 'ALTER SEQUENCE ' ||schema_name|| '.billing_rated_transaction_seq OWNED BY ' ||schema_name|| '.billing_rated_transaction.id;';
+			
+			-- 7: Create index on partition column (will be automatically created for child partitions on pg 11) :
+			------------------------------------------------------------------------------------------------------
+			execute 'CREATE INDEX ON ' ||schema_name|| '.billing_rated_transaction (usage_date);';
+			
+			-- 8: create others indexes from stored scripts:
+			------------------------------------------------
+			execute 'select create_all_table_indexes(''billing_rated_transaction'');';
+			
+			-- 9: Create required partitions. Number of partitions is calculated between min and max partition date based on a frequency
+			IF _min_date IS NOT NULL and frequency IS NOT NULL THEN
+			
+			  _partitions_number := _max_date - _min_date;
+			  
+			  IF frequency = 'M' THEN
+				_partitions_number := _partitions_number/30;
+			  END IF;
+						
+			  IF frequency = 'Y' THEN
+				_partitions_number := _partitions_number/365;
+			  END IF;
+					
+			  IF frequency = 'W' THEN
+				_partitions_number := _partitions_number/7;
+			  END IF;
+			
+			  PERFORM create_partitions(schema_name || '.billing_rated_transaction', to_char(_min_date,'YYYY_MM_DD'), frequency, _partitions_number+1);
+			END IF;
+			
+			-- 10: create a default partition table:
+			----------------------------------------
+			execute 'create table '||schema_name||'.billing_rated_transaction_default partition of '||schema_name||'.billing_rated_transaction default;';
+			execute 'ALTER TABLE ' ||schema_name||'.billing_rated_transaction_default OWNER to ' || schema_owner || ';';
+				
+			-- 11: populate the new table from old table:
+			---------------------------------------------
+			execute 'insert into '||schema_name||'.billing_rated_transaction select * from ' ||schema_name||'.billing_rated_transaction_tmp;';
+			
+			-- 12: Drop unused objects;
+			
+			execute 'drop table '||schema_name||'.tmp_table_indexes cascade;';
+			execute 'drop table '||schema_name||'.billing_rated_transaction_tmp cascade;';
+			
+			    END;
+			$$ LANGUAGE plpgsql;
+			    
+			        ]]>
+        </createProcedure>
+        
+        <createProcedure><![CDATA[
+			CREATE OR REPLACE FUNCTION switch_billing_wallet_operation_to_partition(schema_owner text, schema_name text, frequency text) RETURNS void AS $$
+			
+			-- Function to replace billing_wallet_operation table with a partitioned table. Preserves existing data.
+			-- Param1 : schema_name => name of the schema where table is located.
+			-- Param2 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in a table
+			
+			DECLARE
+			  _min_date date;
+			  _max_date date;
+			  _seq_value bigint;
+			  _partitions_number int;
+			
+			BEGIN
+			
+			-- Find values for partition creation and sequence recreation
+			execute 'select min(operation_date), max(operation_date) from ' || schema_name || '.billing_wallet_operation ' into _min_date, _max_date;
+			execute 'select nextval(''' || schema_name || '.billing_wallet_operation_seq'')' into _seq_value;
+			
+			RAISE NOTICE 'min date is % max date is %', _min_date, _max_date;
+
+			-- 1: Indexes : keep indexes creation scripts in a temporary table (tmp_table_indexes) before droping or renaming the target table :
+			-------------------------------------------------------------------------------------------------------------------------------------
+			
+			-- create the temporary table for indexes scripts
+			
+			execute 'create table if not exists ' || schema_name || '.tmp_table_indexes (table_name text not null,index_name text not null,index_def text not null ) with (oids = false ) tablespace pg_default;';
+			
+			execute 'alter table ' || schema_name || '.tmp_table_indexes owner to ' || schema_owner || ';';
+			
+			execute 'truncate table ' || schema_name || '.tmp_table_indexes;';
+			
+			-- save indexes scripts in the temporary table
+			
+			execute 'insert into ' || schema_name || '.tmp_table_indexes (table_name, index_name, index_def) select tablename, indexname, indexdef from pg_indexes where indexname not like ''%_pk%'' and tablename = ''billing_wallet_operation'';';
+			
+			-- 2: Rename billing_wallet_operation to billing_wallet_operation_tmp to avoid data loss :
+			--------------------------------------------------------------------------------------------
+			
+			execute 'alter table '||schema_name||'.billing_wallet_operation rename to billing_wallet_operation_tmp;';
+			
+			-- 3: Drop old table indexes :
+			------------------------------
+			
+			execute 'select drop_all_table_indexes(''billing_wallet_operation_tmp'');';
+			
+			-- 4: Rename old table primary keys :
+			-------------------------------------
+			
+			execute 'select rename_all_table_pks(''billing_wallet_operation_tmp'');';
+			
+			-- 5: Create the new table :
+			----------------------------
+			
+			execute 'create table '||schema_name||'.billing_wallet_operation (
+			operation_type character varying(31) NOT NULL,
+			  id bigint NOT NULL,
+			  version integer,
+			  created timestamp without time zone NOT NULL,
+			  updated timestamp without time zone,
+			  code character varying(255) NOT NULL,
+			  description character varying(255),
+			  amount_tax numeric(23,12),
+			  amount_with_tax numeric(23,12),
+			  amount_without_tax numeric(23,12),
+			  end_date timestamp without time zone,
+			  offer_code character varying(255),
+			  operation_date timestamp without time zone,
+			  parameter_1 character varying(255),
+			  parameter_2 character varying(255),
+			  parameter_3 character varying(255),
+			  quantity numeric(23,12),
+			  start_date timestamp without time zone,
+			  status character varying(255),
+			  subscription_date timestamp without time zone,
+			  tax_percent numeric(23,12),
+			  credit_debit_flag character varying(255),
+			  unit_amount_tax numeric(23,12),
+			  unit_amount_with_tax numeric(23,12),
+			  unit_amount_without_tax numeric(23,12),
+			  creator character varying(100),
+			  updater character varying(100),
+			  aggregate_serv_id bigint,
+			  charge_instance_id bigint NOT NULL,
+			  counter_id bigint,
+			  currency_id bigint,
+			  priceplan_id bigint,
+			  reratedwalletoperation_id bigint,
+			  seller_id bigint NOT NULL,
+			  wallet_id bigint,
+			  reservation_id bigint,
+			  invoicing_date timestamp without time zone,
+			  input_quantity numeric(23,12),
+			  input_unit_description character varying(20),
+			  rating_unit_description character varying(20),
+			  edr_id bigint,
+			  order_number character varying(100),
+			  parameter_extra text,
+			  raw_amount_without_tax numeric(23,12),
+			  raw_amount_with_tax numeric(23,12),
+			  invoice_sub_category_id bigint,
+			  subscription_id bigint,
+			  tax_id bigint,
+			  rated_transaction_id bigint,
+			  service_instance_id bigint,
+			  offer_id bigint,
+			  constraint billing_wallet_operation_pkey primary key (id, operation_date),
+			  constraint fk_32r2ed0015tnd2pp5196vcqpy foreign key (reservation_id)
+				  references '||schema_name||'.billing_reservation (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_5htics7k9v44an8ap11wivraf foreign key (wallet_id)
+				  references '||schema_name||'.billing_wallet (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_60qrdadyj5wvmyii1einfb2lo foreign key (counter_id)
+				  references '||schema_name||'.billing_counter (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_75hyldnus6ti0y40vwcl49ued foreign key (charge_instance_id)
+				  references '||schema_name||'.billing_charge_instance (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_awekpkm39bhaqrf2k2gwvd4p5 foreign key (aggregate_serv_id)
+				  references '||schema_name||'.billing_service_instance (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_billing_wallet_operation_billing_invoice_sub_cat foreign key (invoice_sub_category_id)
+				  references '||schema_name||'.billing_invoice_sub_cat (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_billing_wallet_operation_offer_template foreign key (offer_id)
+				  references '||schema_name||'.cat_offer_template (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_f0v21kf4sbdcq1wwqsxmb5tsk foreign key (priceplan_id)
+				  references '||schema_name||'.cat_price_plan_matrix (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_hg1a5impet68w8a37dehlnib0 foreign key (seller_id)
+				  references '||schema_name||'.crm_seller (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_rt_charge foreign key (charge_instance_id)
+				  references '||schema_name||'.billing_charge_instance (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_t98kqb1prnfw6scvudimx1u0q foreign key (currency_id)
+				  references '||schema_name||'.adm_currency (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_wallet_operation_service_instance foreign key (service_instance_id)
+				  references '||schema_name||'.billing_service_instance (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_wo_tax foreign key (tax_id)
+				  references '||schema_name||'.billing_tax (id) match simple
+				  on update no action on delete no action
+				) partition by range (operation_date)';
+			
+			execute 'ALTER TABLE ' ||schema_name|| '.billing_wallet_operation OWNER to ' || schema_owner || ';';
+			
+			-- 6: Change sequence owner to the new table :
+			----------------------------------------------
+			execute 'ALTER SEQUENCE ' ||schema_name|| '.billing_wallet_operation_seq OWNED BY ' ||schema_name|| '.billing_wallet_operation.id;';
+			
+			-- 7: Create index on partition column (will be automatically created for child partitions on pg 11) :
+			------------------------------------------------------------------------------------------------------
+			execute 'CREATE INDEX ON ' ||schema_name|| '.billing_wallet_operation (operation_date);';
+			
+			-- 8: create others indexes from stored scripts:
+			------------------------------------------------
+			execute 'select create_all_table_indexes(''billing_wallet_operation'');';
+			
+			-- 9: Create required partitions. Number of partitions is calculated between min and max partition date based on a frequency
+			IF _min_date IS NOT NULL and frequency IS NOT NULL THEN
+			
+			  _partitions_number := _max_date - _min_date;
+			  
+			  IF frequency = 'M' THEN
+				_partitions_number := _partitions_number/30;
+			  END IF;
+						
+			  IF frequency = 'Y' THEN
+				_partitions_number := _partitions_number/365;
+			  END IF;
+					
+			  IF frequency = 'W' THEN
+				_partitions_number := _partitions_number/7;
+			  END IF;
+			
+			  PERFORM create_partitions(schema_name || '.billing_wallet_operation', to_char(_min_date,'YYYY_MM_DD'), frequency, _partitions_number+1);
+			END IF;
+			
+			-- 10: create a default partition table:
+			----------------------------------------
+			execute 'create table '||schema_name||'.billing_wallet_operation_default partition of '||schema_name||'.billing_wallet_operation default;';
+			execute 'ALTER TABLE ' ||schema_name||'.billing_wallet_operation_default OWNER to ' || schema_owner || ';';
+				
+			-- 11: populate the new table from old table:
+			---------------------------------------------
+			execute 'insert into '||schema_name||'.billing_wallet_operation select * from ' ||schema_name||'.billing_wallet_operation_tmp;';
+			
+			-- 12: Drop unused objects;
+			
+			execute 'drop table '||schema_name||'.tmp_table_indexes cascade;';
+			execute 'drop table '||schema_name||'.billing_wallet_operation_tmp cascade;';
+			
+			    END;
+			$$ LANGUAGE plpgsql;
+			    
+			        ]]>
+        </createProcedure>
+        
+        <createProcedure><![CDATA[
+			CREATE OR REPLACE FUNCTION switch_rating_edr_to_partition(schema_owner text, schema_name text, frequency text) RETURNS void AS $$
+			
+			-- Function to replace rating_edr table with a partitioned table. Preserves existing data.
+			-- Param1 : schema_name => name of the schema where table is located.
+			-- Param2 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in a table
+			
+			DECLARE
+			  _min_date date;
+			  _max_date date;
+			  _seq_value bigint;
+			  _partitions_number int;
+			
+			BEGIN
+			
+			-- Find values for partition creation and sequence recreation
+			execute 'select min(event_date), max(event_date) from ' || schema_name || '.rating_edr ' into _min_date, _max_date;
+			execute 'select nextval(''' || schema_name || '.rating_edr_seq'')' into _seq_value;
+			
+			RAISE NOTICE 'min date is % max date is %', _min_date, _max_date;
+
+			-- 1: Indexes : keep indexes creation scripts in a temporary table (tmp_table_indexes) before droping or renaming the target table :
+			-------------------------------------------------------------------------------------------------------------------------------------
+			
+			-- create the temporary table for indexes scripts
+			
+			execute 'create table if not exists ' || schema_name || '.tmp_table_indexes (table_name text not null,index_name text not null,index_def text not null ) with (oids = false ) tablespace pg_default;';
+			
+			execute 'alter table ' || schema_name || '.tmp_table_indexes owner to ' || schema_owner || ';';
+			
+			execute 'truncate table ' || schema_name || '.tmp_table_indexes;';
+			
+			-- save indexes scripts in the temporary table
+			
+			execute 'insert into ' || schema_name || '.tmp_table_indexes (table_name, index_name, index_def) select tablename, indexname, indexdef from pg_indexes where indexname not like ''%_pk%'' and tablename = ''rating_edr'';';
+			
+			-- 2: Rename rating_edr to rating_edr_tmp to avoid data loss :
+			--------------------------------------------------------------------------------------------
+			
+			execute 'alter table '||schema_name||'.rating_edr rename to rating_edr_tmp;';
+			
+			-- 3: Drop old table indexes :
+			------------------------------
+			
+			execute 'select drop_all_table_indexes(''rating_edr_tmp'');';
+			
+			-- 4: Rename old table primary keys :
+			-------------------------------------
+			
+			execute 'select rename_all_table_pks(''rating_edr_tmp'');';
+			
+			-- 5: Create the new table :
+			----------------------------
+			
+			execute 'create table '||schema_name||'.rating_edr (
+			  id bigint not null default nextval('''||schema_name||'.rating_edr_seq''::regclass),
+			  version integer,
+			  created timestamp without time zone,
+			  event_date timestamp without time zone,
+			  last_updated timestamp without time zone,
+			  origin_batch character varying(255),
+			  origin_record character varying(255),
+			  parameter_1 character varying(255),
+			  parameter_2 character varying(255),
+			  parameter_3 character varying(255),
+			  parameter_4 character varying(255),
+			  quantity numeric(23,12),
+			  reject_reason text,
+			  status character varying(255),
+			  subscription_id bigint NOT NULL,
+			  parameter_5 character varying(255),
+			  parameter_6 character varying(255),
+			  parameter_7 character varying(255),
+			  parameter_8 character varying(255),
+			  parameter_9 character varying(255),
+			  date_parameter_1 timestamp without time zone,
+			  date_parameter_2 timestamp without time zone,
+			  date_parameter_3 timestamp without time zone,
+			  date_parameter_4 timestamp without time zone,
+			  date_parameter_5 timestamp without time zone,
+			  decimal_parameter_1 numeric(23,12),
+			  decimal_parameter_2 numeric(23,12),
+			  decimal_parameter_3 numeric(23,12),
+			  decimal_parameter_4 numeric(23,12),
+			  decimal_parameter_5 numeric(23,12),
+			  access_code character varying(255),
+			  header_edr_id bigint,
+			  extra_parameter text,
+			  CONSTRAINT rating_edr_pkey PRIMARY KEY (id, event_date),
+			  CONSTRAINT fk_f5tulmo519cm4il45bhborgq1 FOREIGN KEY (subscription_id)
+				  REFERENCES public.billing_subscription (id) MATCH SIMPLE
+				  ON UPDATE NO ACTION ON DELETE NO ACTION
+			) partition by range (event_date)'; 
+			
+			execute 'ALTER TABLE ' ||schema_name|| '.rating_edr OWNER to ' || schema_owner || ';';
+			
+			-- 6: Change sequence owner to the new table :
+			----------------------------------------------
+			execute 'ALTER SEQUENCE ' ||schema_name|| '.rating_edr_seq OWNED BY ' ||schema_name|| '.rating_edr.id;';
+			
+			-- 7: Create index on partition column (will be automatically created for child partitions on pg 11) :
+			------------------------------------------------------------------------------------------------------
+			execute 'CREATE INDEX ON ' ||schema_name|| '.rating_edr (event_date);';
+			
+			-- 8: create others indexes from stored scripts:
+			------------------------------------------------
+			execute 'select create_all_table_indexes(''rating_edr'');';
+			
+			-- 9: Create required partitions. Number of partitions is calculated between min and max partition date based on a frequency
+			IF _min_date IS NOT NULL and frequency IS NOT NULL THEN
+			
+			  _partitions_number := _max_date - _min_date;
+			  
+			  IF frequency = 'M' THEN
+				_partitions_number := _partitions_number/30;
+			  END IF;
+						
+			  IF frequency = 'Y' THEN
+				_partitions_number := _partitions_number/365;
+			  END IF;
+					
+			  IF frequency = 'W' THEN
+				_partitions_number := _partitions_number/7;
+			  END IF;
+			
+			  PERFORM create_partitions(schema_name || '.rating_edr', to_char(_min_date,'YYYY_MM_DD'), frequency, _partitions_number+1);
+			END IF;
+			
+			-- 10: create a default partition table:
+			----------------------------------------
+			execute 'create table '||schema_name||'.rating_edr_default partition of '||schema_name||'.rating_edr default;';
+			execute 'ALTER TABLE ' ||schema_name||'.rating_edr_default OWNER to ' || schema_owner || ';';
+				
+			-- 11: populate the new table from old table:
+			---------------------------------------------
+			execute 'insert into '||schema_name||'.rating_edr select * from ' ||schema_name||'.rating_edr_tmp;';
+			
+			-- 12: Drop unused objects;
+			
+			execute 'drop table '||schema_name||'.tmp_table_indexes cascade;';
+			execute 'drop table '||schema_name||'.rating_edr_tmp cascade;';
+			
+			    END;
+			$$ LANGUAGE plpgsql;
+			    
+			        ]]>
+        </createProcedure>
+    
+    </changeSet>
+
+    <changeSet author="mohamed.el.youssoufi" id="#4301_23052019 - empty tax amount">
+    	<sql>update ${db.schema.adapted}billing_invoice set amount_tax = (amount_with_tax - amount_without_tax), pdf_filename = null, xml_filename = null where amount_tax = 0 and amount_with_tax != amount_without_tax and amount_tax != (amount_with_tax - amount_without_tax);</sql>
+    </changeSet>
+
+    <changeSet author="abdelkader.bouazza" id="#4026-Order-validation-enhancement">
+        <dropNotNullConstraint tableName="ord_order_item" columnName="user_account_id" columnDataType="bigint" />
+    </changeSet>
+    <changeSet id="#4192_20190506 - add counter for subscription and service" author="KhalidHorri">
+        <addColumn tableName="billing_counter">
+            <column name="subscription_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_counter">
+            <column name="service_instance_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_billing_counter_subscription_id" referencedTableName="billing_subscription"
+                                 baseColumnNames="subscription_id" baseTableName="billing_counter" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_billing_counter_service_instance_id" referencedTableName="billing_service_instance"
+                                 baseColumnNames="service_instance_id" baseTableName="billing_counter" referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#4303_300520191" author="mohamed.el.youssoufi" dbms="postgresql">
+		<sql>ALTER TABLE ${db.schema.adapted}ar_account_operation RENAME COLUMN occ_code TO code;</sql>
+		<sql>ALTER TABLE ${db.schema.adapted}ar_account_operation RENAME COLUMN occ_description TO description;</sql>
+    </changeSet>
+    
+    <changeSet id="#4303_300520192" author="mohamed.el.youssoufi" dbms="mysql">
+	    <sql>ALTER TABLE ${db.schema.adapted}ar_account_operation CHANGE occ_code code varchar(255);</sql>
+	    <sql>ALTER TABLE ${db.schema.adapted}ar_account_operation CHANGE occ_description description varchar(255);</sql>
+	</changeSet>
+
+    <changeSet id="#4322_20190612 - Add a filter to GenericWorkflow" author="MounirBahije">
+        <addColumn tableName="wf_generic_workflow">
+            <column name="filter_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+    
+        <changeSet id="#4054_201917061 - Encryption" author="MohamedElYoussoufi" dbms="postgresql">
+    	<sql>
+			alter table ${db.schema.adapted}crm_provider alter column bic type character varying(100);
+			alter table ${db.schema.adapted}crm_provider alter column iban type character varying(100);
+			
+			alter table ${db.schema.adapted}ar_payment_token alter column bic type character varying(100);
+			alter table ${db.schema.adapted}ar_payment_token alter column iban type character varying(100);
+			
+			alter table ${db.schema.adapted}ar_payment_gateway alter column bic type character varying(100);
+			alter table ${db.schema.adapted}ar_payment_gateway alter column iban type character varying(100);
+			
+			alter table ${db.schema.adapted}crm_seller alter column phone type character varying(100);
+			alter table ${db.schema.adapted}crm_seller alter column mobile type character varying(100);
+			
+			alter table ${db.schema.adapted}account_entity alter column phone type character varying(100);
+			alter table ${db.schema.adapted}account_entity alter column mobile type character varying(100);
+			
+			alter table ${db.schema.adapted}adm_user alter column firstname type character varying(100);
+			alter table ${db.schema.adapted}adm_user alter column lastname type character varying(100);
+			
+			alter table ${db.schema.adapted}account_entity alter column firstname type character varying(100);
+			alter table ${db.schema.adapted}account_entity alter column lastname type character varying(100);
+    	</sql>
+    </changeSet>
+    
+    <changeSet id="#4054_201917062 - Encryption" author="mohamed.el.youssoufi" dbms="mysql">
+    		<sql> alter table ${db.schema.adapted}crm_provider modify bic varchar(100);
+			alter table ${db.schema.adapted}crm_provider modify iban varchar(100);
+			
+			alter table ${db.schema.adapted}ar_payment_token modify bic varchar(100);
+			alter table ${db.schema.adapted}ar_payment_token modify iban varchar(100);
+			
+			alter table ${db.schema.adapted}ar_payment_gateway modify bic varchar(100);
+			alter table ${db.schema.adapted}ar_payment_gateway modify iban varchar(100);
+			
+			alter table ${db.schema.adapted}crm_seller modify phone varchar(100);
+			alter table ${db.schema.adapted}crm_seller modify mobile varchar(100);
+			
+			alter table ${db.schema.adapted}account_entity modify phone varchar(100);
+			alter table ${db.schema.adapted}account_entity modify mobile varchar(100);
+			
+			alter table ${db.schema.adapted}adm_user modify firstname varchar(100);
+			alter table ${db.schema.adapted}adm_user modify lastname varchar(100);
+			
+			alter table ${db.schema.adapted}account_entity modify firstname varchar(100);
+			alter table ${db.schema.adapted}account_entity modify lastname varchar(100); </sql>
+    </changeSet>
+
+
+    <changeSet id="#4371_20190620_1" author="AbdellatifBARI" dbms="mysql">
+        <createTable tableName="adm_file_format_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_file_format_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}adm_file_format_seq values(1)</sql>
+    </changeSet>
+
+    <changeSet id="#4371_20190620_2" author="AbdellatifBARI">
+        <createSequence sequenceName="adm_file_format_seq" startValue="1" />
+        <createTable tableName="adm_file_format">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_file_format_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+            <column name="file_name_pattern" type="varchar(255)" />
+            <column name="file_type" type="varchar(255)" />
+            <column name="configuration_template" type="varchar(40000)" />
+            <column name="record_name" type="varchar(255)" />
+            <column name="input_directory" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="output_directory" type="varchar(255)" />
+            <column name="reject_directory" type="varchar(255)" />
+            <column name="archive_directory" type="varchar(255)" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari5xp8" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_file_format" />
+    </changeSet>
+
+
+    <changeSet id="#4371_20190620_3" author="AbdellatifBARI" dbms="mysql">
+        <createTable tableName="flat_file_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="flat_file_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}flat_file_seq values(1)</sql>
+        <sql>CREATE INDEX flat_file_code_index ON ${db.schema.adapted} flat_file(code)</sql>
+    </changeSet>
+
+    <changeSet id="#4371_20190620_4" author="AbdellatifBARI">
+        <createSequence sequenceName="flat_file_seq" startValue="1" />
+        <createTable tableName="flat_file">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="flat_file_pkey" />
+            </column>
+
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="file_name" type="varchar(255)" />
+            <column name="status" type="varchar(255)" />
+            <column name="file_format_id" type="bigint" />
+            <column name="processed" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="error_message" type="text" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari6yr9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="flat_file" />
+        <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="flat_file" constraintName="fk_d4iavkklx1qg1ani36bari5o5i" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_format" />
+    </changeSet>
+    <changeSet id="#4371_20190620_5" author="AbdellatifBARI" dbms="postgresql">
+        <sql>CREATE INDEX flat_file_code_index ON ${db.schema.adapted} flat_file(lower(code))</sql>
+    </changeSet>
+    
+</databaseChangeLog>

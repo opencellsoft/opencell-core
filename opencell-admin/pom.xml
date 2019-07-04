@@ -9,9 +9,20 @@
     <artifactId>opencell-admin</artifactId>
     <packaging>pom</packaging>
     <name>Opencell Admin Web Application</name>
-
+    
     <modules>
         <module>ejbs</module>
         <module>web</module>
     </modules>
+    
+    <properties>
+        <manaty.filterFile>opencell-admin-filter-${env}.properties</manaty.filterFile>
+    </properties>
+    
+    <build>
+        <filters>
+            <filter>${project.basedir}/../src/filters/${manaty.filterFile}</filter>
+        </filters>
+    </build>
 </project>
+

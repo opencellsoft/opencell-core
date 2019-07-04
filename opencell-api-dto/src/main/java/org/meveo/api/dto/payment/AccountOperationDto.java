@@ -21,7 +21,8 @@ import org.meveo.model.payments.OperationCategoryEnum;
  *
  * @author Edward P. Legaspi
  * @author anasseh
- * @lastModifiedVersion 5.3
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @XmlRootElement(name = "AccountOperation")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -78,10 +79,10 @@ public class AccountOperationDto extends AuditableEntityDto {
     private MatchingStatusEnum matchingStatus;
 
     /** The occ code. */
-    private String occCode;
+    private String code;
 
     /** The occ description. */
-    private String occDescription;
+    private String description;
 
     /** The customer account. */
     private String customerAccount;
@@ -185,8 +186,8 @@ public class AccountOperationDto extends AuditableEntityDto {
         setMatchingAmount(accountOp.getMatchingAmount());
         setUnMatchingAmount(accountOp.getUnMatchingAmount());
         setMatchingStatus(accountOp.getMatchingStatus());
-        setOccCode(accountOp.getOccCode());
-        setOccDescription(accountOp.getOccDescription());
+        setCode(accountOp.getCode());
+        setDescription(accountOp.getDescription());
         setBankLot(accountOp.getBankLot());
         setBankReference(accountOp.getBankReference());
         setDepositDate(accountOp.getDepositDate());
@@ -422,8 +423,8 @@ public class AccountOperationDto extends AuditableEntityDto {
      *
      * @return the occ code
      */
-    public String getOccCode() {
-        return occCode;
+    public String getCode() {
+        return code;
     }
 
     /**
@@ -431,8 +432,8 @@ public class AccountOperationDto extends AuditableEntityDto {
      *
      * @param occCode the new occ code
      */
-    public void setOccCode(String occCode) {
-        this.occCode = occCode;
+    public void setCode(String occCode) {
+        this.code = occCode;
     }
 
     /**
@@ -440,8 +441,8 @@ public class AccountOperationDto extends AuditableEntityDto {
      *
      * @return the occ description
      */
-    public String getOccDescription() {
-        return occDescription;
+    public String getDescription() {
+        return description;
     }
 
     /**
@@ -449,8 +450,8 @@ public class AccountOperationDto extends AuditableEntityDto {
      *
      * @param occDescription the new occ description
      */
-    public void setOccDescription(String occDescription) {
-        this.occDescription = occDescription;
+    public void setDescription(String occDescription) {
+        this.description = occDescription;
     }
 
     /**
