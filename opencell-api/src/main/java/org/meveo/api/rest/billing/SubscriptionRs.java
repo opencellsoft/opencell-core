@@ -304,10 +304,22 @@ public interface SubscriptionRs extends IBaseRs {
     GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("invoiceNumber") String invoiceNumber,
             @QueryParam("invoiceTypeCode") String invoiceTypeCode, @QueryParam("orderCode") String orderCode);
     
+    /**
+     * Give a rate data for subscription
+     * 
+     * @param postData post data
+     * @return list of service instances
+     */
     @POST
     @Path("/rate")
     RateSubscriptionResponseDto rate(RateSubscriptionRequestDto postData);
     
+    /**
+     * Activate a given Subscription.
+     * 
+     * @param subscriptionCode subscription code
+     * @return Request processing status
+     */
     @POST
     @Path("/activate")
     ActionStatus activate(String subscriptionCode);
@@ -316,7 +328,7 @@ public interface SubscriptionRs extends IBaseRs {
      * Activate a given Subscription for a customer.
      *
      * @param postData the post data
-     * @return the raw result holding the Subscription EndAgreementDate in its response.
+     * @return Request processing status
      */
     @POST
     @Path("/activateForCustomer")
