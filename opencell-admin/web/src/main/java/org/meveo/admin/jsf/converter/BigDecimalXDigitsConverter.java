@@ -22,7 +22,7 @@ public class BigDecimalXDigitsConverter extends BigDecimalConverter {
     /**
      * Number of digits in decimal part for a number
      */
-    private Integer nbDecimal = NumberUtils.DEFAULT_NUMBER_DIGITS_DECIMAL;
+    private Integer nbDecimal = NumberUtils.DEFAULT_NUMBER_DIGITS_DECIMAL_UI;
     /**
      * The rounding Mode.
      */

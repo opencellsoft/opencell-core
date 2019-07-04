@@ -62,7 +62,8 @@ import org.primefaces.model.SortOrder;
 /**
  * @author Edward P. Legaspi
  * @author Youssef IZEM
- * @lastModifiedVersion 5.0.15
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -135,8 +136,8 @@ public class PaymentApi extends BaseApi {
         payment.setUnMatchingAmount(paymentDto.getAmount());
         payment.setMatchingAmount(BigDecimal.ZERO);
         payment.setAccountingCode(occTemplate.getAccountingCode());
-        payment.setOccCode(occTemplate.getCode());
-        payment.setOccDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
+        payment.setCode(occTemplate.getCode());
+        payment.setDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
         payment.setTransactionCategory(occTemplate.getOccCategory());
         payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
         payment.setCustomerAccount(customerAccount);
@@ -205,8 +206,6 @@ public class PaymentApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
         }
 
-        customerAccountService.getEntityManager().refresh(customerAccount);
-
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
         }
@@ -229,7 +228,7 @@ public class PaymentApi extends BaseApi {
                 paymentDto.setType(p.getType());
                 paymentDto.setAmount(p.getAmount());
                 paymentDto.setDueDate(p.getDueDate());
-                paymentDto.setOccTemplateCode(p.getOccCode());
+                paymentDto.setOccTemplateCode(p.getCode());
                 paymentDto.setPaymentMethod(p.getPaymentMethod());
                 paymentDto.setReference(p.getReference());
                 paymentDto.setTransactionDate(p.getTransactionDate());
@@ -248,10 +247,10 @@ public class PaymentApi extends BaseApi {
                 OtherCreditAndCharge occ = (OtherCreditAndCharge) op;
                 PaymentDto paymentDto = new PaymentDto();
                 paymentDto.setType(occ.getType());
-                paymentDto.setDescription(op.getOccDescription());
+                paymentDto.setDescription(op.getDescription());
                 paymentDto.setAmount(occ.getAmount());
                 paymentDto.setDueDate(occ.getDueDate());
-                paymentDto.setOccTemplateCode(occ.getOccCode());
+                paymentDto.setOccTemplateCode(occ.getCode());
                 paymentDto.setReference(occ.getReference());
                 paymentDto.setTransactionDate(occ.getTransactionDate());
                 result.addPaymentDto(paymentDto);

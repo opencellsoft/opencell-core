@@ -18,14 +18,6 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -40,9 +32,18 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.DualListModel;
 
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Mounir Bahije
+ *
+ * @lastModifiedVersion 6.X
  */
 @Named
 @ViewScoped
@@ -128,7 +129,11 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        getEntity().getPaymentMethods().clear();
+        Provider provider = getEntity();
+        if (provider != null) {
+            provider = providerService.findById(provider.getId());
+        }
+        provider.getPaymentMethods().clear();
         getEntity().setPaymentMethods(paymentMethodsModel.getTarget());
         String returnTo = super.saveOrUpdate(killConversation);
 

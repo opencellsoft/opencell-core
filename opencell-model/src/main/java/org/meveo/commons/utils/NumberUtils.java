@@ -36,7 +36,9 @@ public class NumberUtils {
 
     private static final BigDecimal HUNDRED = new BigDecimal("100");
 
-    public static final Integer DEFAULT_NUMBER_DIGITS_DECIMAL = 2;
+    public static final Integer DEFAULT_NUMBER_DIGITS_DECIMAL_UI = 2;
+    
+    public static final Integer DEFAULT_NUMBER_DIGITS_DECIMAL = 12;
 
     public static BigDecimal round(BigDecimal what, int howmuch, RoundingModeEnum roundingModeEnum) {
         if (what == null) {
@@ -110,6 +112,14 @@ public class NumberUtils {
         }
         amount = amount.setScale(scale, roundingMode.getRoundingMode());
         return amount.toPlainString();
+    }
+
+    /**
+     * @param bigDecimal
+     * @return A null-safe Plain String value of the bigDecimal
+     */
+    public static String toPlainString(BigDecimal bigDecimal) {
+        return bigDecimal != null ? bigDecimal.toPlainString() : BigDecimal.ZERO.toPlainString();
     }
 
     /**

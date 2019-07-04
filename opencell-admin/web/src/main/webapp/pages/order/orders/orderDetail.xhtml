@@ -641,6 +641,12 @@
                         </p:panel>
                     </h:panelGroup>
                 </p:tab>
+                <c:if test="#{orderBean.entity.id != null}">
+                    <ui:include src="../../audit/auditableField.xhtml">
+                        <ui:param name="auditableEntity" value="#{orderBean.entity}" />
+                        <ui:param name="auditableFieldName" value="#{'STATUS'}" />
+                    </ui:include>
+                </c:if>
                 <hftl:customFields prefix="order" backingBean="#{orderBean}" messagesId=":orderForm:messages" />
                 <!-- <hftl:displayWorkflowsHistory entity="#{orderBean.entity}" /> -->
                 <hftl:displayGenericWFsHistory backingBean="#{orderBean}" />

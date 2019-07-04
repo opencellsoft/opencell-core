@@ -19,8 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -29,28 +31,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-
-import org.apache.commons.collections4.MapUtils;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.document.DocumentField;
-import org.elasticsearch.search.sort.SortOrder;
-import org.hibernate.SQLQuery;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ValidationException;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.customEntities.CustomTableRecord;
-import org.meveo.model.shared.DateUtils;
-import org.meveo.service.base.NativePersistenceService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.index.ElasticClient;
-import org.meveo.service.index.ElasticSearchClassInfo;
 
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -61,6 +41,31 @@ import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.ColumnType;
+
+import org.apache.commons.collections4.MapUtils;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.document.DocumentField;
+import org.elasticsearch.search.sort.SortOrder;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.custom.CustomTableRecordDto;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.customEntities.CustomTableRecord;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.base.NativePersistenceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.index.ElasticClient;
+import org.meveo.service.index.ElasticSearchClassInfo;
 
 @Stateless
 public class CustomTableService extends NativePersistenceService {
@@ -82,47 +87,20 @@ public class CustomTableService extends NativePersistenceService {
     @Inject
     protected ParamBeanFactory paramBeanFactory;
 
-    // public void createClass(String customTableName) {
-    //
-    // ClassPool pool = ClassPool.getDefault();
-    // ClassClassPath classPath = new ClassClassPath(this.getClass());
-    // pool.insertClassPath(classPath);
-    // log.error("AKK inserted classpath {}", classPath);
-    // CtClass cc = pool.makeClass("org.meveo." + customTableName);
-    //
-    // try {
-    // CtField f = new CtField(CtClass.intType, "z", cc);
-    // cc.addField(f);
-    //
-    // cc.addMethod(CtNewMethod.getter("getZ", f));
-    // cc.addMethod(CtNewMethod.setter("setZ", f));
-    // cc.addMethod(CtNewMethod.make("public String toString() {return \" \"+z;}", cc));
-    //
-    // cc.writeFile("C:\\andrius\\programs\\wildfly-10.1.0.Final\\standalone\\deployments\\opencell.war\\WEB-INF\\classes");
-    //
-    // Class clazz = cc.toClass();
-    // Object instance = clazz.newInstance();
-    // Field field = ReflectionUtils.getField(clazz, "z");
-    // field.setAccessible(true);
-    // field.set(instance, 10);
-    // log.error("AKK field value is {}", field.get(instance));
-    //
-    // Object value = getEntityManager().createNativeQuery("select id from cust_cet", CustomTableRecord.class).getSingleResult();
-    //
-    // log.error("AKK Value from DB is {} {}", value);// , field.get(value));
-    //
-    // } catch (
-    //
-    // Exception e) {
-    // log.error("AKK Failed to create a new Class {}", customTableName, e);
-    // }
-    //
-    // }
+    @Inject
+    private CustomEntityInstanceService customEntityInstanceService;
+
+
 
     @Override
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
 
         Long id = super.create(tableName, values, true); // Force to return ID as we need it to retrieve data for Elastic Search population
+        CustomEntityInstance entity = new CustomEntityInstance();
+        entity.setId(id);
+        entity.setCetCode(tableName);
+        entity.setCode(id.toString());
+        customEntityInstanceService.create(entity);
         elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, values, false, true);
 
         return id;
@@ -130,7 +108,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Insert multiple values into table
-     * 
+     *
      * @param tableName Table name to insert values to
      * @param values A list of values to insert
      * @throws BusinessException General exception
@@ -147,7 +125,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Insert multiple values into table with optionally not updating ES. Will execute in a new transaction
-     * 
+     *
      * @param tableName Table name to insert values to
      * @param values Values to insert
      * @param updateES Should Elastic search be updated during record creation. If false, ES population must be done outside this call.
@@ -175,7 +153,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Update multiple values in a table. Record is identified by an "id" field value.
-     * 
+     *
      * @param tableName Table name to update values
      * @param values Values to update. Must contain an 'id' field.
      * @throws BusinessException General exception
@@ -228,6 +206,7 @@ public class CustomTableService extends NativePersistenceService {
     @Override
     public void remove(String tableName, Long id) throws BusinessException {
         super.remove(tableName, id);
+        customEntityInstanceService.remove(id);
         elasticClient.remove(CustomTableRecord.class, tableName, id, true);
     }
 
@@ -245,7 +224,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Export data into a file into exports directory. Filename is in the following format: &lt;db table name&gt;_id_&lt;formated date&gt;.csv
-     * 
+     *
      * @param customEntityTemplate Custom table definition
      * @param config Pagination and search criteria
      * @return A future with a file name where the data will be exported to or an exception occurred
@@ -324,7 +303,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Import data into custom table
-     * 
+     *
      * @param customEntityTemplate Custom table definition
      * @param file Data file
      * @param append True if data should be appended to the existing data
@@ -344,7 +323,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Import data into custom table in asynchronous mode
-     * 
+     *
      * @param customEntityTemplate Custom table definition
      * @param inputStream Data stream
      * @param append True if data should be appended to the existing data
@@ -366,7 +345,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Import data into custom table
-     * 
+     *
      * @param customEntityTemplate Custom table definition
      * @param inputStream Data stream
      * @param append True if data should be appended to the existing data
@@ -466,10 +445,10 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Import data into custom table
-     * 
+     *
      * @param customEntityTemplate Custom table definition
-     * @param values A list of records to import. Each record is a map of values with field name as a map key and field value as a value.
-     * @param append True if data should be appended to the existing data
+     * @param values               A list of records to import. Each record is a map of values with field name as a map key and field value as a value.
+     * @param append               True if data should be appended to the existing data
      * @return Number of records imported
      * @throws BusinessException General business exception
      */
@@ -555,7 +534,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Get the CSV file reader. Schema is created from field's dbFieldname values.
-     * 
+     *
      * @param fields Custom table fields definition
      * @return The CSV file reader
      */
@@ -576,7 +555,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Get the CSV file writer. Schema is created from field's dbFieldname values.
-     * 
+     *
      * @param fields Custom table fields definition
      * @return The CSV file reader
      */
@@ -649,7 +628,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Get field value of the first record matching search criteria
-     * 
+     *
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param fieldToReturn Field value to return
      * @param queryValues Search criteria with condition/field name as a key and field value as a value. See ElasticClient.search() for a query format.
@@ -671,7 +650,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Get field value of the first record matching search criteria for a given date. Applicable to custom tables that contain 'valid_from' and 'valid_to' fields
-     * 
+     *
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param fieldToReturn Field value to return
      * @param date Record validity date, as expressed by 'valid_from' and 'valid_to' fields, to match
@@ -696,7 +675,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Get field values of the first record matching search criteria
-     * 
+     *
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param fieldsToReturn Field values to return. Optional. If not provided all fields will be returned.
      * @param queryValues Search criteria with condition/field name as a key and field value as a value. See ElasticClient.search() for a query format.
@@ -718,7 +697,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Get field values of the first record matching search criteria for a given date. Applicable to custom tables that contain 'valid_from' and 'valid_to' fields
-     * 
+     *
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param fieldsToReturn Field values to return. Optional. If not provided all fields will be returned.
      * @param date Record validity date, as expressed by 'valid_from' and 'valid_to' fields, to match
@@ -743,7 +722,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Convert values to a data type matching field definition
-     * 
+     *
      * @param values A map of values with field name of customFieldTemplate code as a key and field value as a value
      * @param fields Field definitions
      * @param discardNull If True, null values will be discarded
@@ -769,7 +748,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Convert values to a data type matching field definition
-     * 
+     *
      * @param values A map of values with field name of customFieldTemplate code as a key and field value as a value
      * @param fields Field definitions with field name or field code as a key and data class as a value
      * @param discardNull If True, null values will be discarded
@@ -795,7 +774,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Convert values to a data type matching field definition
-     * 
+     *
      * @param values A map of values with customFieldTemplate code or db field name as a key and field value as a value.
      * @param fields Field definitions
      * @param discardNull If True, null values will be discarded
@@ -823,7 +802,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Convert single record values to a data type matching field definition
-     * 
+     *
      * @param values A map of values with customFieldTemplate code or db field name as a key and field value as a value.
      * @param fields Field definitions with field name or field code as a key and data class as a value
      * @param discardNull If True, null values will be discarded
@@ -882,4 +861,36 @@ public class CustomTableService extends NativePersistenceService {
         }
         return valuesConverted;
     }
+
+    public Map<String, Object> findRecordOfTableById(CustomFieldTemplate field, Long id) {
+        try {
+            return Optional.ofNullable(field).map(CustomFieldTemplate::tableName).map(tableName -> findRecordByIdAndTableName(id, tableName)).orElse(new HashMap<>());
+        } catch (Exception ex) {
+            return new HashMap<>();
+        }
+    }
+
+    private Map<String, Object> findRecordByIdAndTableName(Long id, String tableName) {
+        QueryBuilder queryBuilder = getQuery(tableName, null);
+        queryBuilder.addCriterion("id", "=", id, true);
+        Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
+        return (Map<String, Object>) query.uniqueResult();
+    }
+
+    public List<CustomTableRecordDto> selectAllRecordsOfATableAsRecord(String tableName) {
+        return selectAllRecordsOfATableAsMap(tableName).stream()
+                .map(CustomTableRecordDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<Map<String, Object>> selectAllRecordsOfATableAsMap(String tableName) {
+        try {
+            return getQuery(tableName, null)
+                    .getNativeQuery(getEntityManager(), true)
+                    .list();
+        } catch (Exception ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
 }

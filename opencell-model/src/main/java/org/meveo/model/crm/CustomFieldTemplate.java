@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -57,7 +58,7 @@ import org.meveo.model.shared.DateUtils;
 
 /**
  * Custom field template
- * 
+ *
  * @author Andrius Karpavicius
  * @author Khalid HORRI
  * @author Abdellatif BARI
@@ -85,6 +86,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     public static long DEFAULT_MAX_LENGTH_STRING = 50L;
 
     public static String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
+    private static final String CUSTOM_TABLE_STRUCTURE_REGEX = "org.meveo.model.customEntities.CustomEntityTemplate - [a-zA-Z\\S]{1,}$";
 
     public enum GroupedCustomFieldTreeItemType {
 
@@ -360,7 +362,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * create a Map of attribute from sorted List
-     * 
+     *
      * @return a sorted LinkedHashMap values
      */
     public Map<String, String> getListValuesSorted() {
@@ -647,6 +649,10 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     public Long getMaxValue() {
         return maxValue;
+    }
+    
+    public Long getMaxValueOrDefault(Long defaultValue) {
+        return Optional.ofNullable(maxValue).orElse(defaultValue);
     }
 
     public void setMaxValue(Long maxValue) {
@@ -1073,5 +1079,10 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      */
     public void setRoundingMode(RoundingModeEnum roundingMode) {
         this.roundingMode = roundingMode;
+    }
+
+    public String tableName() {
+        return Optional.ofNullable(this.entityClazz).filter(entityClazz -> entityClazz.matches(CUSTOM_TABLE_STRUCTURE_REGEX))
+                .map(tableName -> tableName.split(ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR)[1]).orElse(null);
     }
 }

@@ -168,7 +168,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
         for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {
             servicesSum = servicesSum.add(realtimeChargingService.getActivationServicePrice(seller, userAccount.getBillingAccount(), st.getServiceTemplate(), subscriptionDate,
-                offerTemplate.getCode(), quantity, param1, param2, param3, isWithTax));
+                offerTemplate, quantity, param1, param2, param3, isWithTax));
         }
 
         return servicesSum;
@@ -209,7 +209,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
     private Amounts getBalanceAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
             Date endDate, Long walletId, String walletCode, BalanceTypeEnum mode) {
 
-        Amounts result = new Amounts(BigDecimal.ZERO, BigDecimal.ZERO);
+        Amounts result = new Amounts();
 
         LevelEnum level = LevelEnum.PROVIDER;
 

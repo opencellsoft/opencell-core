@@ -13,12 +13,14 @@ import javax.persistence.Query;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -99,11 +101,7 @@ public class OrderService extends BusinessService<Order> {
 
     @Override
     public void create(Order order) throws BusinessException {
-
-        if (order.getOrderItems() == null || order.getOrderItems().isEmpty()) {
-            throw new ValidationException("At least one order line item is required");
-        }
-
+        this.validate(order);
         // Obtain card payment method token id from a payment gateway
         if (order.getPaymentMethod() != null && order.getPaymentMethod() instanceof CardPaymentMethod && ((CardPaymentMethod) order.getPaymentMethod()).getTokenId() == null) {
             UserAccount userAccount = userAccountService.retrieveIfNotManaged(order.getOrderItems().get(0).getUserAccount());
@@ -120,11 +118,7 @@ public class OrderService extends BusinessService<Order> {
 
     @Override
     public Order update(Order order) throws BusinessException {
-
-        if (order.getOrderItems() == null || order.getOrderItems().isEmpty()) {
-            throw new ValidationException("At least one order line item is required");
-        }
-
+        this.validate(order);
         // Obtain card payment method token id from a payment gateway
         if (order.getPaymentMethod() != null && order.getPaymentMethod() instanceof CardPaymentMethod && ((CardPaymentMethod) order.getPaymentMethod()).getTokenId() == null) {
             UserAccount userAccount = userAccountService.retrieveIfNotManaged(order.getOrderItems().get(0).getUserAccount());
@@ -137,6 +131,13 @@ public class OrderService extends BusinessService<Order> {
         return super.update(order);
     }
     
+    public void validate(Order order) throws BusinessException {
+        boolean validateOnExecuteDisabled = ParamBean.getInstance().getProperty("order.validateOnExecute", "false").equalsIgnoreCase("false");
+        if (validateOnExecuteDisabled && (order.getOrderItems() == null || order.getOrderItems().isEmpty())) {
+            throw new ValidationException("At least one order line item is required");
+        }
+    }
+
     /**
      * Return all orders with now - orderDate date &gt; n years.
      * @param nYear age of the subscription
@@ -156,5 +157,9 @@ public class OrderService extends BusinessService<Order> {
 		for (Order e : inactiveOrders) {
 			remove(e);
 		}
+	}
+
+	public Quote getReference(Class<Quote> clazz, Long quoteId) {
+		return getEntityManager().getReference(clazz, quoteId);
 	}
 }

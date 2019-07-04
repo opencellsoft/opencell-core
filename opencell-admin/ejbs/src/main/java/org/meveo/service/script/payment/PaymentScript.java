@@ -13,6 +13,8 @@ import org.meveo.service.script.Script;
  */
 public class PaymentScript extends Script implements PaymentScriptInterface {
 
+    private static final long serialVersionUID = 2133629637888034337L;
+
     /** The Constant CONTEXT_ALIAS. */
     public static final String CONTEXT_ALIAS = "CONTEXT_ALIAS";
 
@@ -130,6 +132,14 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
     /** The Constant PAYMENT_ID. */
     public static final String PAYMENT_ID = "PAYMENT_ID";
 
+    /** The Constant CONTEXT_HOSTED_CO for hostedCheckoutInput. */
+	public static final String CONTEXT_HOSTED_CO = "CONTEXT_HOSTED_CO";
+	
+	/** The Constant RESULT_HOSTED_CO_URL for  hostedCheckout url result. */
+	public static final String RESULT_HOSTED_CO_URL = "RESULT_HOSTED_CO_URL";
+
+
+
     @Override
     public void doPaymentCard(Map<String, Object> methodContext) throws BusinessException {
     }
@@ -169,4 +179,8 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
     @Override
     public void checkMandat(Map<String, Object> methodContext) throws BusinessException {
     }
+	@Override
+	public void getHostedCheckoutUrl(Map<String, Object> methodContext) throws BusinessException {		
+	}   
+
 }

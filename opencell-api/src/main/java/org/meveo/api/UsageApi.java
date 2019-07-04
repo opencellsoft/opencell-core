@@ -140,7 +140,7 @@ public class UsageApi extends BaseApi {
 						usageDto.setDescription(op.getDescription());
 						usageDto.setAmountWithoutTax(op.getAmountWithoutTax());
 						usageDto.setDateEvent(op.getOperationDate());
-						usageDto.setOfferCode(op.getOfferCode());
+						usageDto.setOfferCode(op.getOfferCode() != null ? op.getOfferCode() : op.getOfferTemplate() != null ? op.getOfferTemplate().getCode() : null);
 						usageDto.setParameter1(op.getParameter1());
 						usageDto.setParameter2(op.getParameter2());
 						usageDto.setParameter3(op.getParameter3());

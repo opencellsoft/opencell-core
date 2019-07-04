@@ -166,7 +166,7 @@
                     selection="#{customTableBean.selectedValues}" sortBy="id">
                     <p:ajax event="cellEdit" listener="#{customTableBean.onCellEdit}" update=":growl" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />/>
                     <p:ajax event="cellEditCancel"  partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />/>
-    
+
                     <p:column id="multiSelect" selectionMode="multiple" width="4%" exportable="false" toggleable="false" />
                     <p:column headerText="id" sortBy="#{id}">
                         <h:outputText value="#{entity['id']}" />
@@ -184,6 +184,14 @@
                                 <h:outputText id="#{entity[field.dbFieldname]}_out_double" value="#{entity[field.dbFieldname]}" styleClass="field-value"
                                     rendered="#{field.fieldType eq CustomFieldTypeEnum.DOUBLE}">
                                     <f:converter converterId="javax.faces.Double" />
+                                </h:outputText>
+                                <h:outputText id="#{entity[field.dbFieldname]}_out_boolean" value="#{entity[field.dbFieldname]}" styleClass="field-value"
+                                    rendered="#{field.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
+                                    <f:converter converterId="javax.faces.Boolean" />
+                                </h:outputText>
+                                <h:outputText id="#{entity[field.dbFieldname]}_out_entity" value="#{entity[field.dbFieldname]}" styleClass="field-value"
+                                    rendered="#{field.fieldType eq CustomFieldTypeEnum.ENTITY}">
+                                    <f:converter converterId="javax.faces.Long" />
                                 </h:outputText>
                             </f:facet>
                             <f:facet name="input">
@@ -229,6 +237,15 @@
                                     <f:selectItem itemValue="#{null}" itemLabel="" />
                                     <f:selectItems value="#{field.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
                                 </p:selectOneMenu>
+
+                                <p:selectOneMenu id="#{field.dbFieldname}_in_boolean"  value="#{entity[field.dbFieldname]}" required="#{field.valueRequired}" onLabel="true"
+                                                       offLabel="false"   style="width:60px" rendered="#{field.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
+                                    <f:selectItem itemValue="#{null}" itemLabel="" />
+                                    <f:selectItem itemValue="#{true}" itemLabel="true" />
+                                    <f:selectItem itemValue="#{false}" itemLabel="false" />
+                                    <f:converter converterId="javax.faces.Boolean" />
+                                </p:selectOneMenu>
+
                             </f:facet>
                         </p:cellEditor>
                     </p:columns>
@@ -250,6 +267,14 @@
                                         <p:inputText id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}"
                                             placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
                                             label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="20" maxlength="#{field.maxValue}" required="#{field.valueRequired}" />
+                                    </c:if>
+                                    <c:if test="#{field.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
+                                        <p:selectBooleanButton id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}"
+                                            placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
+                                                               onLabel="true"
+                                                               offLabel="false"
+                                        label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="20" maxlength="#{field.maxValue}" required="#{field.valueRequired}" >
+                                        </p:selectBooleanButton>
                                     </c:if>
                                     <c:if test="#{field.fieldType eq CustomFieldTypeEnum.DATE}">
                                         <p:calendar id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}"
@@ -296,6 +321,14 @@
                                             label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}">
                                             <f:selectItem itemValue="#{null}" itemLabel="" />
                                             <f:selectItems value="#{field.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
+                                        </p:selectOneMenu>
+                                    </c:if>
+                                    <c:if test="#{field.fieldType eq CustomFieldTypeEnum.ENTITY}">
+                                        <p:selectOneMenu id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}" required="#{field.valueRequired}">
+                                            <f:selectItem itemValue="#{null}" itemLabel="" />
+                                            <f:selectItems value="#{customTableBean.entityTypeColumnDatas(field)}" var="data" itemValue="#{data.id}"
+                                                           itemLabel="#{data.id} (#{data.display()})" />
+                                            <f:converter converterId="javax.faces.Long" />
                                         </p:selectOneMenu>
                                     </c:if>
                                 </c:forEach>

@@ -39,7 +39,8 @@ import org.meveo.service.payments.impl.RefundService;
 /**
  *  @author Edward P. Legaspi
  *  @author anasseh
- *  @lastModifiedVersion 5.0
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class RefundApi extends BaseApi {
@@ -106,8 +107,8 @@ public class RefundApi extends BaseApi {
         refund.setUnMatchingAmount(refundDto.getAmount());
         refund.setMatchingAmount(BigDecimal.ZERO);
         refund.setAccountingCode(occTemplate.getAccountingCode());
-        refund.setOccCode(occTemplate.getCode());
-        refund.setOccDescription(StringUtils.isBlank(refundDto.getDescription()) ? occTemplate.getDescription() : refundDto.getDescription());
+        refund.setCode(occTemplate.getCode());
+        refund.setDescription(StringUtils.isBlank(refundDto.getDescription()) ? occTemplate.getDescription() : refundDto.getDescription());
         refund.setTransactionCategory(occTemplate.getOccCategory());
         refund.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
         refund.setCustomerAccount(customerAccount);
@@ -162,8 +163,6 @@ public class RefundApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
         }
 
-        customerAccountService.getEntityManager().refresh(customerAccount);
-
         List<AccountOperation> ops = customerAccount.getAccountOperations();
         for (AccountOperation op : ops) {
             if (op instanceof Refund) {
@@ -172,7 +171,7 @@ public class RefundApi extends BaseApi {
                 refundDto.setType(refund.getType());
                 refundDto.setAmount(refund.getAmount());
                 refundDto.setDueDate(refund.getDueDate());
-                refundDto.setOccTemplateCode(refund.getOccCode());
+                refundDto.setOccTemplateCode(refund.getCode());
                 refundDto.setPaymentMethod(refund.getPaymentMethod());
                 refundDto.setReference(refund.getReference());
                 refundDto.setTransactionDate(refund.getTransactionDate());

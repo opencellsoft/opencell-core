@@ -89,7 +89,7 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     /** The reference date. */
     private ReferenceDateEnum referenceDate;
-    
+
     /**
      * Code of the script instance.
      */
@@ -112,6 +112,7 @@ public class BillingCycleDto extends BusinessEntityDto {
         super(billingCycleEntity);
 
         if (billingCycleEntity != null) {
+            id = billingCycleEntity.getId();
             billingTemplateName = billingCycleEntity.getBillingTemplateName();
             billingTemplateNameEL = billingCycleEntity.getBillingTemplateNameEL();
             invoiceDateDelay = billingCycleEntity.getInvoiceDateDelay();

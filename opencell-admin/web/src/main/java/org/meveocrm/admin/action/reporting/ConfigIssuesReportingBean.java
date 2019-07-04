@@ -26,7 +26,7 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.rating.EDRStatusEnum;
-import org.meveo.model.scripts.CustomScript;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -43,7 +43,8 @@ import org.primefaces.event.TabChangeEvent;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
  *
  */
 @Named
@@ -100,7 +101,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     List<RecurringChargeTemplate> recurringNotAssociatedList = new ArrayList<RecurringChargeTemplate>();
     List<OneShotChargeTemplate> terminationNotAssociatedList = new ArrayList<OneShotChargeTemplate>();
     List<OneShotChargeTemplate> subNotAssociatedList = new ArrayList<OneShotChargeTemplate>();
-    List<CustomScript> scriptInstanceWithErrorList = new ArrayList<CustomScript>();
+    List<ScriptInstance> scriptInstanceWithErrorList = new ArrayList<ScriptInstance>();
     Map<String, String> jasperFilesList = new HashMap<String, String>();
 
     public int getNbrUsagesWithNotPricePlan() {
@@ -342,7 +343,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
         return subNotAssociatedList;
     }
 
-    public List<CustomScript> getScriptInstanceWithErrorList() {
+    public List<ScriptInstance> getScriptInstanceWithErrorList() {
         return scriptInstanceWithErrorList;
     }
 

@@ -65,6 +65,12 @@ public class CustomFieldValues implements Serializable {
      */
     @Transient
     private Set<String> dirtyCfPeriods = new HashSet<>();
+    
+    /**
+     * indicates if customFieldValues will be encrypted
+     */
+    @Transient
+	private boolean encrypted;
 
     /**
      * Constructor
@@ -590,7 +596,7 @@ public class CustomFieldValues implements Serializable {
 
     private CustomFieldValue getCfValueByPeriod(String cfCode, DatePeriod period, boolean strictMatch, Boolean createIfNotFound) {
         CustomFieldValue valueFound = null;
-        if (valuesByCode.containsKey(cfCode)) {
+        if (valuesByCode != null && valuesByCode.containsKey(cfCode)) {
             for (CustomFieldValue value : valuesByCode.get(cfCode)) {
                 if (value.getPeriod() == null && (valueFound == null || valueFound.getPriority() < value.getPriority())) {
                     valueFound = value;
@@ -934,4 +940,13 @@ public class CustomFieldValues implements Serializable {
     public String toString() {
         return asJson();
     }
+
+	public void setEncrypted(boolean encrypted) {
+		this.encrypted = encrypted;
+	}
+
+	public boolean isEncrypted() {
+		return encrypted;
+	}
+	
 }

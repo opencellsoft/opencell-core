@@ -23,12 +23,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.ICounterEntity;
 import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
-import org.meveo.model.ObservableEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
@@ -50,6 +51,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -66,6 +68,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Service subscribed to.
@@ -86,7 +90,7 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = "ServiceInstance.getExpired", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
         @NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)") })
-public class ServiceInstance extends BusinessCFEntity implements IWFEntity {
+public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -259,6 +263,14 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "renewal_notified_date")
     private Date renewalNotifiedDate;
+
+    /**
+     * Counter instances
+     */
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
+    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+
 
     /**
      * PK of OrderItem.id.
@@ -1030,5 +1042,20 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity {
      */
     public void setInitialServiceRenewal(String initialServiceRenewal) {
         this.initialServiceRenewal = initialServiceRenewal;
+    }
+    /**
+     * Gets counters
+     * @return a map of counters
+     */
+    public Map<String, CounterInstance> getCounters() {
+        return counters;
+    }
+
+    /**
+     * Sets counters
+     * @param counters a map of counters
+     */
+    public void setCounters(Map<String, CounterInstance> counters) {
+        this.counters = counters;
     }
 }

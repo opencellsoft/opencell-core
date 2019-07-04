@@ -16,6 +16,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.CounterTemplateService;
@@ -94,10 +95,13 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         notif.setCounterTemplate(counterTemplate);
         notif.setEmailFrom(postData.getEmailFrom());
         notif.setEmailToEl(postData.getEmailToEl());
-        notif.setSubject(postData.getSubject());
-        notif.setBody(postData.getBody());
-        notif.setHtmlBody(postData.getHtmlBody());
         notif.setRunAsync(postData.isRunAsync());
+        
+        EmailTemplate emailTemplate = new EmailTemplate();
+        emailTemplate.setSubject(postData.getSubject());
+        emailTemplate.setTextContent(postData.getBody());
+        emailTemplate.setHtmlContent(postData.getHtmlBody());
+        notif.setEmailTemplate(emailTemplate);
 
         Set<String> emails = new HashSet<String>();
         for (String email : postData.getSendToMail()) {
@@ -186,9 +190,16 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         notif.setCounterTemplate(counterTemplate);
         notif.setEmailFrom(postData.getEmailFrom());
         notif.setEmailToEl(postData.getEmailToEl());
-        notif.setSubject(postData.getSubject());
-        notif.setBody(postData.getBody());
-        notif.setHtmlBody(postData.getHtmlBody());
+       
+        EmailTemplate emailTemplate = notif.getEmailTemplate();
+        if (emailTemplate == null) {
+            emailTemplate = new EmailTemplate();
+            emailTemplate.setCode(notif.getCode());
+        }
+        emailTemplate.setSubject(postData.getSubject());
+        emailTemplate.setTextContent(postData.getBody());
+        emailTemplate.setHtmlContent(postData.getHtmlBody());
+        notif.setEmailTemplate(emailTemplate);
 
         if (postData.isDisabled() != null) {
             notif.setDisabled(postData.isDisabled());

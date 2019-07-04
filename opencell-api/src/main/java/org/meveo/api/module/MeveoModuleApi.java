@@ -71,6 +71,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptUtils;
 import org.meveo.service.script.module.ModuleScriptInterface;
 import org.meveo.service.script.module.ModuleScriptService;
 import org.primefaces.model.SortOrder;
@@ -80,7 +81,8 @@ import org.primefaces.model.SortOrder;
  * @author Edward P. Legaspi(edward.legaspi@manaty.net)
  * @author Wassim Drira
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
  */
 @Stateless
 public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
@@ -164,7 +166,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
                 // Otherwise code is calculated from script source by combining package and classname
             } else if (!StringUtils.isBlank(moduleDto.getScript().getScript())) {
-                String fullClassname = ScriptInstanceService.getFullClassname(moduleDto.getScript().getScript());
+                String fullClassname = ScriptUtils.getFullClassname(moduleDto.getScript().getScript());
                 if (!StringUtils.isBlank(moduleDto.getScript().getCode()) && !moduleDto.getScript().getCode().equals(fullClassname)) {
                     throw new BusinessApiException("The code and the canonical script class name must be identical");
                 }
@@ -227,7 +229,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
                 // Otherwise code is calculated from script source by combining package and classname
             } else if (!StringUtils.isBlank(moduleDto.getScript().getScript())) {
-                String fullClassname = ScriptInstanceService.getFullClassname(moduleDto.getScript().getScript());
+                String fullClassname = ScriptUtils.getFullClassname(moduleDto.getScript().getScript());
                 if (!StringUtils.isBlank(moduleDto.getScript().getCode()) && !moduleDto.getScript().getCode().equals(fullClassname)) {
                     throw new BusinessApiException("The code and the canonical script class name must be identical");
                 }

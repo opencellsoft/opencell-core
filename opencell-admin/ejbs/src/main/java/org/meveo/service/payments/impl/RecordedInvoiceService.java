@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -37,6 +38,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
@@ -56,8 +58,8 @@ import org.meveo.service.billing.impl.InvoiceAgregateService;
  * 
  * @author Edward P. Legaspi
  * @author anasseh
- * @author Mounir Bahije
- * @lastModifiedVersion 5.2.1
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> {
@@ -128,11 +130,15 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
     /**
      * @param reference invoice reference
+     * @param invoiceType 
      * @return true if recored invoice exist
      */
-    public boolean isRecordedInvoiceExist(String reference) {
+    public boolean isRecordedInvoiceExist(String reference, InvoiceType invoiceType) {
         RecordedInvoice recordedInvoice = getRecordedInvoice(reference);
-        return recordedInvoice != null;
+        if(recordedInvoice==null) {
+        	return false;
+        }
+        return recordedInvoice.getInvoices().stream().filter(i->i.getInvoiceType().equals(invoiceType)).findFirst().isPresent();
     }
 
     /**
@@ -242,110 +248,114 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      */
     public void generateRecordedInvoice(Invoice invoice) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
-        @SuppressWarnings("unchecked")
-        List<CategoryInvoiceAgregate> cats = (List<CategoryInvoiceAgregate>) invoiceAgregateService.listByInvoiceAndType(invoice, "R");
-        List<RecordedInvoiceCatAgregate> listRecordedInvoiceCatAgregate = new ArrayList<RecordedInvoiceCatAgregate>();
+    	if (invoice.getInvoiceType().isInvoiceAccountable()) {
+    		@SuppressWarnings("unchecked")
+            List<CategoryInvoiceAgregate> cats = (List<CategoryInvoiceAgregate>) invoiceAgregateService.listByInvoiceAndType(invoice, "R");
+            List<RecordedInvoiceCatAgregate> listRecordedInvoiceCatAgregate = new ArrayList<RecordedInvoiceCatAgregate>();
 
-        BigDecimal remainingAmountWithoutTaxForRecordedIncoice = invoice.getAmountWithoutTax();
-        BigDecimal remainingAmountWithTaxForRecordedIncoice = invoice.getAmountWithTax();
-        BigDecimal remainingAmountTaxForRecordedIncoice = invoice.getAmountTax();
+            BigDecimal remainingAmountWithoutTaxForRecordedIncoice = invoice.getAmountWithoutTax();
+            BigDecimal remainingAmountWithTaxForRecordedIncoice = invoice.getAmountWithTax();
+            BigDecimal remainingAmountTaxForRecordedIncoice = invoice.getAmountTax();
 
-        boolean allowMultipleAOperInvoice = "true".equalsIgnoreCase(ParamBean.getInstance().getProperty("ao.generateMultipleAOperInvoice", "true"));
-        if (allowMultipleAOperInvoice) {
-            for (CategoryInvoiceAgregate catAgregate : cats) {
-                BigDecimal remainingAmountWithoutTaxForCat = BigDecimal.ZERO;
-                BigDecimal remainingAmountWithTaxForCat = BigDecimal.ZERO;
-                BigDecimal remainingAmountTaxForCat = BigDecimal.ZERO;
-                for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : catAgregate.getSubCategoryInvoiceAgregates()) {
-                    if ((subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate() != null
-                            && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
-                            || (subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplateNegative() != null
-                                    && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0)) {
-                        RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = createRecordedInvoice(subCategoryInvoiceAgregate.getAmountWithoutTax(),
-                            subCategoryInvoiceAgregate.getAmountWithTax(), subCategoryInvoiceAgregate.getAmountTax(), null, invoice,
-                            subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate()
-                                    : subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplateNegative(),
-                            false);
-                        recordedInvoiceCatAgregate.setSubCategoryInvoiceAgregate(subCategoryInvoiceAgregate);
+            boolean allowMultipleAOperInvoice = "true".equalsIgnoreCase(ParamBean.getInstance().getProperty("ao.generateMultipleAOperInvoice", "true"));
+            if (allowMultipleAOperInvoice) {
+                for (CategoryInvoiceAgregate catAgregate : cats) {
+                    BigDecimal remainingAmountWithoutTaxForCat = BigDecimal.ZERO;
+                    BigDecimal remainingAmountWithTaxForCat = BigDecimal.ZERO;
+                    BigDecimal remainingAmountTaxForCat = BigDecimal.ZERO;
+                    for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : catAgregate.getSubCategoryInvoiceAgregates()) {
+                        if ((subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate() != null
+                                && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
+                                || (subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplateNegative() != null
+                                        && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0)) {
+                            RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = createRecordedInvoice(subCategoryInvoiceAgregate.getAmountWithoutTax(),
+                                subCategoryInvoiceAgregate.getAmountWithTax(), subCategoryInvoiceAgregate.getAmountTax(), null, invoice,
+                                subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate()
+                                        : subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplateNegative(),
+                                false);
+                            recordedInvoiceCatAgregate.setSubCategoryInvoiceAgregate(subCategoryInvoiceAgregate);
 
-                        listRecordedInvoiceCatAgregate.add(recordedInvoiceCatAgregate);
-                        remainingAmountWithoutTaxForRecordedIncoice = remainingAmountWithoutTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountWithoutTax());
-                        remainingAmountWithTaxForRecordedIncoice = remainingAmountWithTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountWithTax());
-                        remainingAmountTaxForRecordedIncoice = remainingAmountTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountTax());
-                    } else {
-                        remainingAmountWithoutTaxForCat = remainingAmountWithoutTaxForCat.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
-                        remainingAmountWithTaxForCat = remainingAmountWithTaxForCat.add(subCategoryInvoiceAgregate.getAmountWithTax());
-                        remainingAmountTaxForCat = remainingAmountTaxForCat.add(subCategoryInvoiceAgregate.getAmountTax());
+                            listRecordedInvoiceCatAgregate.add(recordedInvoiceCatAgregate);
+                            remainingAmountWithoutTaxForRecordedIncoice = remainingAmountWithoutTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountWithoutTax());
+                            remainingAmountWithTaxForRecordedIncoice = remainingAmountWithTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountWithTax());
+                            remainingAmountTaxForRecordedIncoice = remainingAmountTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountTax());
+                        } else {
+                            remainingAmountWithoutTaxForCat = remainingAmountWithoutTaxForCat.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
+                            remainingAmountWithTaxForCat = remainingAmountWithTaxForCat.add(subCategoryInvoiceAgregate.getAmountWithTax());
+                            remainingAmountTaxForCat = remainingAmountTaxForCat.add(subCategoryInvoiceAgregate.getAmountTax());
+                        }
                     }
+                    if ((catAgregate.getInvoiceCategory().getOccTemplate() != null && catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
+                            || (catAgregate.getInvoiceCategory().getOccTemplateNegative() != null && catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0)) {
+                        RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = createRecordedInvoice(remainingAmountWithoutTaxForCat, remainingAmountWithTaxForCat,
+                            remainingAmountTaxForCat, null, invoice,
+                            catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? catAgregate.getInvoiceCategory().getOccTemplate()
+                                    : catAgregate.getInvoiceCategory().getOccTemplateNegative(),
+                            false);
+                        recordedInvoiceCatAgregate.setCategoryInvoiceAgregate(catAgregate);
+                        listRecordedInvoiceCatAgregate.add(recordedInvoiceCatAgregate);
+
+                        remainingAmountWithoutTaxForRecordedIncoice = remainingAmountWithoutTaxForRecordedIncoice.subtract(remainingAmountWithoutTaxForCat);
+                        remainingAmountWithTaxForRecordedIncoice = remainingAmountWithTaxForRecordedIncoice.subtract(remainingAmountWithTaxForCat);
+                        remainingAmountTaxForRecordedIncoice = remainingAmountTaxForRecordedIncoice.subtract(remainingAmountTaxForCat);
+                    }
+
                 }
-                if ((catAgregate.getInvoiceCategory().getOccTemplate() != null && catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
-                        || (catAgregate.getInvoiceCategory().getOccTemplateNegative() != null && catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0)) {
-                    RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = createRecordedInvoice(remainingAmountWithoutTaxForCat, remainingAmountWithTaxForCat,
-                        remainingAmountTaxForCat, null, invoice,
-                        catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? catAgregate.getInvoiceCategory().getOccTemplate()
-                                : catAgregate.getInvoiceCategory().getOccTemplateNegative(),
-                        false);
-                    recordedInvoiceCatAgregate.setCategoryInvoiceAgregate(catAgregate);
-                    listRecordedInvoiceCatAgregate.add(recordedInvoiceCatAgregate);
+            }
 
-                    remainingAmountWithoutTaxForRecordedIncoice = remainingAmountWithoutTaxForRecordedIncoice.subtract(remainingAmountWithoutTaxForCat);
-                    remainingAmountWithTaxForRecordedIncoice = remainingAmountWithTaxForRecordedIncoice.subtract(remainingAmountWithTaxForCat);
-                    remainingAmountTaxForRecordedIncoice = remainingAmountTaxForRecordedIncoice.subtract(remainingAmountTaxForCat);
+            OCCTemplate occTemplate = null;
+            if (remainingAmountWithTaxForRecordedIncoice.compareTo(BigDecimal.ZERO) < 0) {
+                String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateNegativeCodeEl(), invoice, invoice.getBillingRun());
+                if (!StringUtils.isBlank(occTemplateCode)) {
+                    occTemplate = occTemplateService.findByCode(occTemplateCode);
                 }
 
-            }
-        }
+                if (occTemplate == null) {
+                    occTemplate = invoice.getInvoiceType().getOccTemplateNegative();
+                }
 
-        OCCTemplate occTemplate = null;
-        if (remainingAmountWithTaxForRecordedIncoice.compareTo(BigDecimal.ZERO) < 0) {
-            String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateNegativeCodeEl(), invoice, invoice.getBillingRun());
-            if (!StringUtils.isBlank(occTemplateCode)) {
-                occTemplate = occTemplateService.findByCode(occTemplateCode);
-            }
+                if (occTemplate == null) {
+                    throw new ImportInvoiceException("Cant find negative OccTemplate");
+                }
+            } else {
+                String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateCodeEl(), invoice, invoice.getBillingRun());
+                if (!StringUtils.isBlank(occTemplateCode)) {
+                    occTemplate = occTemplateService.findByCode(occTemplateCode);
+                }
 
-            if (occTemplate == null) {
-                occTemplate = invoice.getInvoiceType().getOccTemplateNegative();
-            }
+                if (occTemplate == null) {
+                    occTemplate = invoice.getInvoiceType().getOccTemplate();
+                }
 
-            if (occTemplate == null) {
-                throw new ImportInvoiceException("Cant find negative OccTemplate");
-            }
-        } else {
-            String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateCodeEl(), invoice, invoice.getBillingRun());
-            if (!StringUtils.isBlank(occTemplateCode)) {
-                occTemplate = occTemplateService.findByCode(occTemplateCode);
-            }
-
-            if (occTemplate == null) {
-                occTemplate = invoice.getInvoiceType().getOccTemplate();
+                if (occTemplate == null) {
+                    throw new ImportInvoiceException("Cant find OccTemplate");
+                }
             }
 
-            if (occTemplate == null) {
-                throw new ImportInvoiceException("Cant find OccTemplate");
+            RecordedInvoice recordedInvoice = createRecordedInvoice(remainingAmountWithoutTaxForRecordedIncoice, remainingAmountWithTaxForRecordedIncoice,
+                remainingAmountTaxForRecordedIncoice, invoice.getNetToPay(), invoice, occTemplate, true);
+
+            // Link the recorded invoice to subscription
+            recordedInvoice.setSubscription(invoice.getSubscription());
+
+            create(recordedInvoice);
+
+            for (RecordedInvoiceCatAgregate recordedInvoiceCatAgregate : listRecordedInvoiceCatAgregate) {
+                recordedInvoiceCatAgregate.setRecordedInvoice(recordedInvoice);
+                create(recordedInvoiceCatAgregate);
             }
-        }
-
-        RecordedInvoice recordedInvoice = createRecordedInvoice(remainingAmountWithoutTaxForRecordedIncoice, remainingAmountWithTaxForRecordedIncoice,
-            remainingAmountTaxForRecordedIncoice, invoice.getNetToPay(), invoice, occTemplate, true);
-
-        // Link the recorded invoice to subscription
-        recordedInvoice.setSubscription(invoice.getSubscription());
-
-        create(recordedInvoice);
-
-        for (RecordedInvoiceCatAgregate recordedInvoiceCatAgregate : listRecordedInvoiceCatAgregate) {
-            recordedInvoiceCatAgregate.setRecordedInvoice(recordedInvoice);
-            create(recordedInvoiceCatAgregate);
-        }
-        invoice.setRecordedInvoice(recordedInvoice);
+            invoice.setRecordedInvoice(recordedInvoice);
+    	} else {
+    		log.warn(" Invoice type is not accountable : {} ", invoice.getInvoiceType());
+    	}
     }
 
     @SuppressWarnings("unchecked")
     private <T extends RecordedInvoice> T createRecordedInvoice(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, BigDecimal netToPay, Invoice invoice,
             OCCTemplate occTemplate, boolean isRecordedIvoince) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
-        if (isRecordedInvoiceExist((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber())) {
-            throw new InvoiceExistException("Invoice id " + invoice.getId() + " already exist");
+        if (isRecordedInvoiceExist((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber(), invoice.getInvoiceType())) {
+            throw new InvoiceExistException("Invoice number " + invoice.getInvoiceNumber() + " with type "+invoice.getInvoiceType()+ " already exist");
         }
 
         CustomerAccount customerAccount = null;
@@ -396,8 +406,8 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         }
 
         recordedInvoice.setAccountingCode(occTemplate.getAccountingCode());
-        recordedInvoice.setOccCode(occTemplate.getCode());
-        recordedInvoice.setOccDescription(occTemplate.getDescription());
+        recordedInvoice.setCode(occTemplate.getCode());
+        recordedInvoice.setDescription(occTemplate.getDescription());
         recordedInvoice.setTransactionCategory(occTemplate.getOccCategory());
         recordedInvoice.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
 
