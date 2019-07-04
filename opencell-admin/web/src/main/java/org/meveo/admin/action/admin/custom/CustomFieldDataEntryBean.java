@@ -25,6 +25,12 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -69,12 +75,6 @@ import org.primefaces.model.SortOrder;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 /**
  * Provides support for custom field value data entry
@@ -223,7 +223,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         Map<String, EntityCustomAction> actions = entityActionScriptService.findByAppliesTo(entity);
 
-        List<EntityCustomAction> actionList = new ArrayList<EntityCustomAction>(actions.values());
+        List<EntityCustomAction> actionList = new ArrayList<>(actions.values());
         customActions.put(entity.getUuid(), actionList);
     }
 
@@ -264,8 +264,8 @@ public class CustomFieldDataEntryBean implements Serializable {
         if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 
             Map<String, List<CustomFieldValue>> cfValuesByCode = new HashMap<>();
-            if (((ICustomFieldEntity) entity).getCfValues() != null && ((ICustomFieldEntity) entity).getCfValues().getValuesByCode() != null) {
-                cfValuesByCode = ((ICustomFieldEntity) entity).getCfValues().getValuesByCode();
+            if (entity.getCfValues() != null && entity.getCfValues().getValuesByCode() != null) {
+                cfValuesByCode = entity.getCfValues().getValuesByCode();
             }
 
             cfValuesByCode = prepareCFIForGUI(customFieldTemplates, cfValuesByCode, entity);
@@ -365,7 +365,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             // Make sure that only one value is retrieved
             if (!cft.isVersionable()) {
-                cfValuesByTemplate = new ArrayList<CustomFieldValue>(cfValuesByTemplate.subList(0, 1));
+                cfValuesByTemplate = new ArrayList<>(cfValuesByTemplate.subList(0, 1));
             }
             cfisPrepared.put(cft.getCode(), cfValuesByTemplate);
         }
@@ -638,7 +638,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @throws InstantiationException
      * @throws ClassNotFoundException
      */
-    public List<BusinessEntity> autocompleteEntityForCFV(String wildcode) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public List<BusinessEntity> autocompleteEntityForCFV(String wildcode) throws ClassNotFoundException {
         String classname = (String) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get("classname");
         return customFieldInstanceService.findBusinessEntityForCFVByCode(classname, wildcode);
     }
@@ -1611,7 +1611,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             initFields(entity);
         }
 
-        GroupedCustomField groupCF = groupedFieldTemplates.get(entity.getUuid());
+            GroupedCustomField groupCF = groupedFieldTemplates.get(entity.getUuid());
         CustomFieldValueHolder cfValueHolder = getFieldValueHolderByUUID(entity.getUuid());
         int ctr = 0;
         for (GroupedCustomField groupCFChild : groupCF.getChildren()) {

@@ -90,6 +90,8 @@ public class CustomTableService extends NativePersistenceService {
     @Inject
     private CustomEntityInstanceService customEntityInstanceService;
 
+    @Inject
+    private CustomEntityTemplateService customEntityTemplateService;
 
 
     @Override
