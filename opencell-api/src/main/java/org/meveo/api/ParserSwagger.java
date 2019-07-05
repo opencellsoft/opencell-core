@@ -194,8 +194,8 @@ public class ParserSwagger {
 
     //Will create the String for operation for the specific method with a given entry
     private static String operationString(String description, String summary, String returnValue, String typeValue, boolean deprecatedtag) {
-        description = description.replace("\n", "").replace("\r", "").replaceAll("[\"]", "");
-        summary = summary.replace("\n", "").replace("\r", "").replaceAll("(\")", "");
+        description = description.replace("\n", "").replace("\r", "").replaceAll("(\")", "").replaceAll("[\\*]","");
+        summary = summary.replace("\n", "").replace("\r", "").replaceAll("(\")", "").replaceAll("[\\*]","");
         returnValue = returnValue.replace("\n", "").replace("\r", "").replaceAll("(\")", "");
         String deprecated;
         if (typeValue.contains("<String>")) {
