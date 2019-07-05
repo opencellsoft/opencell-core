@@ -64,7 +64,7 @@ import org.meveo.model.intcrm.AddressBook;
 
 /**
  * Customer Account
- * 
+ *
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -217,7 +217,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     @Transient
     private Map<String, List<PaymentMethod>> auditedMethodPayments;
-    
+
     /**
      * This method is called implicitly by hibernate, used to enable
 	 * encryption for custom fields of this entity
@@ -425,7 +425,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     /**
      * Get a payment method marked as preferred
-     * 
+     *
      * @return Payment method marked as preferred
      */
     public PaymentMethod getPreferredPaymentMethod() {
@@ -455,7 +455,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     /**
      * Get a list of card type payment methods
-     * 
+     *
      * @param noTokenOnly Retrieve only those that don't have a token
      * @return A list of card type payment methods
      */
@@ -516,7 +516,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     /**
      * Mark currently valid card payment as preferred
-     * 
+     *
      * @return A currently valid card payment
      */
     public PaymentMethod markCurrentlyValidCardPaymentAsPreferred() {
@@ -547,7 +547,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
     /**
      * Ensure that one and only one payment method is marked as preferred. If currently preferred payment method is of type card, but expired, advance to a currently valid card
      * payment method if possible. If not possible - leave as it is. If no preferred payment method was found - mark the first payment method as preferred.
-     * 
+     *
      * @return A preferred payment method
      */
 
@@ -597,7 +597,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     /**
      * Check if no more valid Card paymentMethod.
-     * 
+     *
      * @return true if no more valid card.
      */
     public boolean isNoMoreValidCard() {
