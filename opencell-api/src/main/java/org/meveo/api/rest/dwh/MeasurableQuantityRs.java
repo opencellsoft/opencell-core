@@ -29,6 +29,8 @@ import org.meveo.model.dwh.MeasurementPeriodEnum;
 public interface MeasurableQuantityRs extends IBaseRs {
 
     /**
+     * Create a Measurable quantity.
+     *
      * @param postData posted data to API
      * @return action status.
      */

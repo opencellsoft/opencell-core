@@ -57,6 +57,12 @@ public interface SubscriptionRs extends IBaseRs {
     @Path("/")
     ActionStatus update(SubscriptionDto postData);
 
+    /**
+     * Instantiate a Service subscription 
+     * 
+     * @param postData Subscription's data
+     * @return Request processing status
+     */
     @POST
     @Path("/instantiateServices")
     ActionStatus instantiateServices(InstantiateServicesRequestDto postData);
@@ -144,6 +150,7 @@ public interface SubscriptionRs extends IBaseRs {
      * @return list of all subscriptions.
      */
     @GET
+    @Deprecated
     @Path("/listAll")
     SubscriptionsListResponseDto listAll(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
             @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);

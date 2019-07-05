@@ -68,6 +68,8 @@ public interface CounterTemplateRs extends IBaseRs {
     ActionStatus remove(@PathParam("counterTemplateCode") String counterTemplateCode);
 
     /**
+     * Create or update a counter Template.
+     *
      * @param postData counter template
      * @return action status
      */

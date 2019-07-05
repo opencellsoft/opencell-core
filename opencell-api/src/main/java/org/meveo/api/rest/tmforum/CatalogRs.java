@@ -120,7 +120,6 @@ public interface CatalogRs extends IBaseRs {
      * @param postData BSM service information
      * @return
      */
-
     @POST
     @Path("/createServiceFromBSM")
     public Response createServiceFromBSM(BsmServiceDto postData);
@@ -281,7 +280,7 @@ public interface CatalogRs extends IBaseRs {
     /**
      * List all productChargeTemplates
      * 
-     * @return
+     * @return List of charge template
      */
     @GET
     @Path("/productChargeTemplate/list")

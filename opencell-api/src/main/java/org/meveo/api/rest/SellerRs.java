@@ -81,6 +81,8 @@ public interface SellerRs extends IBaseRs {
     SellerResponseDto list();
 
     /**
+     * Search for all seller's code.
+     *
      * @return list of seller's code.
      */
     @Path("/listSellerCodes")
@@ -88,6 +90,8 @@ public interface SellerRs extends IBaseRs {
     SellerCodesResponseDto listSellerCodes();
 
     /**
+     * Create or update a seller.
+     *
      * @param postData posted data
      * @return created or updated seller.
      */
