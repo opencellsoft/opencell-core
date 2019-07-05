@@ -1,7 +1,0 @@
-*.iml
-*/target/*
-*/*/target/
-.idea
-container_settings*
-jboss.server.log.*
-*.DS_Store
