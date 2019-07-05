@@ -68,6 +68,8 @@ public interface TaxRs extends IBaseRs {
     ActionStatus remove(@PathParam("taxCode") String taxCode);
 
     /**
+     * Create or uptadate a tax. 
+     *
      * @param postData tax to be created or updated
      * @return action status
      */
