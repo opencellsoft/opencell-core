@@ -55,7 +55,7 @@
 				</f:facet>
 				<p:commandButton id="accountOperationListBtn" icon="ui-icon-document" 
 							oncomplete="PF('accountOperationListDialog').show()" update="accountOperationListDialog"
-							action="#{accountingWritingListBean.setSelectedAWId(entity.id)}">
+							action="#{accountingWritingListBean.selectAccountingWriting(entity.id)}">
 					<f:actionListener></f:actionListener>
                 </p:commandButton>
 			</p:column>
@@ -63,28 +63,28 @@
 		
 		
 		<p:dialog id="accountOperationListDialog" header="#{messages['accountingWriting.accountOperationList']}" modal="true"
-					 closeOnEscape="true" widgetVar="accountOperationListDialog" width="80%" closable="true" appendTo="@(body)">
-			<c:if test="#{not empty accountingWritingListBean.selectedAWId}">
+					 closeOnEscape="true" widgetVar="accountOperationListDialog" width="85%" closable="true" appendTo="@(body)">
+			<c:if test="#{not empty accountingWritingListBean.selectedAccountingWriting}">
 				<hftl:dataList exportToXml="false" exportXlsxButton="false" resultsId="resultsAO"
 					id="accountOperationList" rowsPerPage="50"
 					label="#{messages['accountOperation.title']}"
 					dataModel="#{accountingWritingListBean.getAccountOperations()}">
 
-					<p:column width="10%">
+					<p:column width="6%">
 						<f:facet name="header">
 							<h:outputText value="#{messages['accountOperation.type']}" />
 						</f:facet>
 						<h:outputText value="#{entity.type}" />
 					</p:column>
 
-					<p:column width="10%">
+					<p:column width="9%">
 						<f:facet name="header">
 							<h:outputText value="#{messages['accountOperation.occCode']}" />
 						</f:facet>
 						<h:outputText value="#{entity.occCode}" />
 					</p:column>
 
-					<p:column width="20%">
+					<p:column width="18%">
 						<f:facet name="header">
 							<h:outputText
 								value="#{messages['accountOperation.occDescription']}" />
@@ -92,26 +92,29 @@
 						<h:outputText value="#{entity.occDescription}" />
 					</p:column>
 
-					<p:column width="10%">
+					<p:column width="14%">
 						<f:facet name="header">
-							<h:outputText value="#{messages['order.number']}" />
+							<h:outputText value="#{messages['invoice.invoiceNumber']}" />
 						</f:facet>
-						<h:outputText value="#{entity.orderNumber}" />
+						<h:link value="#{accountingWritingListBean.getInvoice(entity).getInvoiceNumberOrTemporaryNumber()}" outcome="invoiceDetail"
+								rendered="#{accountingWritingListBean.isRecordedInvoice(entity)}">
+							<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+		                    <f:param name="objectId" value="#{accountingWritingListBean.getInvoice(entity).getId()}" />
+		                    <f:param name="edit" value="false" />
+	                        <f:param name="backView" value="accountingWritings" />
+		                </h:link>
 					</p:column>
 
 					<hftl:column label="#{messages['accountOperation.transactionDate']}"
-						field="transactionDate" isDate="true" width="10%" />
-					<hftl:column label="#{messages['accountOperation.dueDate']}"
-						field="dueDate" isDate="true" width="10%" />
-					<p:column headerText="#{messages['accountOperation.debit']}"
-						width="10%">
+						field="transactionDate" isDate="true" width="11%" />
+					
+					<p:column headerText="#{messages['accountOperation.debit']}" width="10%">
 						<h:outputText value="#{entity.amount}"
 							rendered="#{entity.transactionCategory eq 'DEBIT'}">
 							<f:converter converterId="bigDecimal4DigitsConverter" />
 						</h:outputText>
 					</p:column>
-					<p:column headerText="#{messages['accountOperation.credit']}"
-						width="10%">
+					<p:column headerText="#{messages['accountOperation.credit']}" width="10%">
 						<h:outputText value="#{entity.amount}"
 							rendered="#{entity.transactionCategory eq 'CREDIT'}">
 							<f:converter converterId="bigDecimal4DigitsConverter" />
@@ -122,9 +125,20 @@
 						field="unMatchingAmount" converterParam="4digits" width="10%" />
 
 					<hftl:column label="#{messages['accountOperation.matchingStatus']}"
-						field="matchingStatus.label" isMessage="true" width="10%" />
-
-
+						field="matchingStatus.label" isMessage="true" width="7%" />
+					
+					<p:column headerText="#{messages['commons.actions']}" width="5%">
+						<!-- <p:tooltip for="aoEditlink"
+				                   value="#{messages['commons.edit']}" showEffect="slide"
+				                   hideEffect="slide"/> -->
+				        <p:link id="aoEditlink" outcome="#{accountingWritingListBean.displayOperation(entity)}"
+				                  icon="ui-icon-document" value="#{messages['accountingWriting.ao.detail']}">
+				            <f:param name="objectId" value="#{entity.id}"/>
+				            <f:param name="edit" value="false"/>
+				            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+				            <f:param name="backView" value="accountingWritings" />
+				        </p:link>
+			        </p:column>
 				</hftl:dataList>
 			</c:if>
 		</p:dialog>
