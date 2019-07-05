@@ -110,17 +110,6 @@ public class UserAccountService extends AccountService<UserAccount> {
 
 	public List<UserAccount> listByBillingAccount(BillingAccount billingAccount) {
 		return billingAccount.getUsersAccounts();
-		/**
-		 * Check N + 1 query problem
-		QueryBuilder qb = new QueryBuilder(UserAccount.class, "c");
-		qb.addCriterionEntity("billingAccount", billingAccount);
-
-		try {
-			return (List<UserAccount>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			log.warn("error while getting user account list by billing account",e);
-			return null;
-		}*/
 	}
 	
 }

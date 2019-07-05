@@ -39,6 +39,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -50,18 +51,22 @@ import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.FlatFileValidator;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.DetailedSecuredEntity;
+import org.meveo.model.admin.FileFormat;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.security.Role;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
+import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
@@ -80,6 +85,9 @@ import org.primefaces.model.UploadedFile;
 /**
  * Standard backing bean for {@link User} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
  * view, delete operations). It works with Manaty custom JSF components.
+ *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.3.0
  */
 @Named
 @ViewScoped
@@ -108,6 +116,13 @@ public class UserBean extends CustomFieldBean<User> {
     @Named
     private SellerBean sellerBean;
 
+    @Inject
+    private FileFormatService fileFormatService;
+
+    @Inject
+    private FlatFileValidator flatFileValidator;
+
+
     private DualListModel<Role> rolesDM;
 
     private TreeNode userGroupRootNode;
@@ -132,6 +147,8 @@ public class UserBean extends CustomFieldBean<User> {
     private boolean autoUnzipped;
 
     final private String ZIP_FILE_EXTENSION = ".zip";
+
+    private FileFormat fileFormat;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -446,25 +463,52 @@ public class UserBean extends CustomFieldBean<User> {
 
     public void handleFileUpload(FileUploadEvent event) {
         UploadedFile file = event.getFile();
-        String filename = file.getFileName();
-        log.debug("upload file={},autoUnziped {}", filename, autoUnzipped);
+        String fileName = file.getFileName();
+
+        log.debug("upload file={},autoUnziped {}", fileName, autoUnzipped);
         // FIXME: use resource bundle
         try {
+            String folderPath = null;
+            String  filePath = null;
+            File tempDirectory = null;
+            if (fileFormat != null) {
+                folderPath = getFilePath() + File.separator + "temp" + DateUtils.formatDateWithPattern(new Date(), "dd_MM_yyyy-HHmmss");
+                tempDirectory = new File(folderPath);
+                if (!tempDirectory.exists()) {
+                    tempDirectory.mkdirs();
+                }
+                filePath = folderPath + File.separator + fileName;
+            } else {
+                folderPath = getFilePath("");
+                filePath = getFilePath(fileName);
+            }
+
             InputStream fileInputStream = file.getInputstream();
             if (this.isAutoUnzipped()) {
-                if (!filename.endsWith(ZIP_FILE_EXTENSION)) {
-                    messages.info(filename + " isn't a valid zip file!");
-                    copyFile(filename, fileInputStream);
+                if (!fileName.endsWith(ZIP_FILE_EXTENSION)) {
+                    messages.info(fileName + " isn't a valid zip file!");
+                    copyFile(filePath, fileInputStream);
                 } else {
-                    copyUnZippedFile(fileInputStream);
+                    copyUnZippedFile(folderPath, fileInputStream);
                 }
             } else {
-                copyFile(filename, fileInputStream);
+                copyFile(filePath, fileInputStream);
             }
-            messages.info(filename + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
-        } catch (IOException e) {
-            log.error("Failed to upload a file {}", filename, e);
-            messages.error("Error while uploading " + filename);
+            if (fileFormat != null) {
+                File[] files = tempDirectory.listFiles();
+                for (File tempFile : files) {
+                    flatFileValidator.validateAndLogFile(tempFile, fileName, fileFormat.getCode(), getFilePath(""));
+                }
+                tempDirectory.delete();
+                buildFileList();
+            }
+            messages.info(fileName + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
+        } catch (BusinessException e) {
+            log.error("Failed to upload a file {}", fileName, e);
+            messages.error(e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to upload a file {}", fileName, e);
+            messages.error("Error while uploading " + fileName);
         }
     }
 
@@ -472,7 +516,8 @@ public class UserBean extends CustomFieldBean<User> {
         if (file != null) {
             log.debug("upload file={}", file);
             try {
-                copyFile(FilenameUtils.getName(file.getFileName()), file.getInputstream());
+                String filePath = getFilePath(FilenameUtils.getName(file.getFileName()));
+                copyFile(filePath, file.getInputstream());
 
                 messages.info(file.getFileName() + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
             } catch (IOException e) {
@@ -542,10 +587,9 @@ public class UserBean extends CustomFieldBean<User> {
         return null;
     }
 
-    private void copyUnZippedFile(InputStream in) {
+    private void copyUnZippedFile(String filePath, InputStream in) {
         try {
-            String folder = getFilePath("");
-            FileUtils.unzipFile(folder, in);
+            FileUtils.unzipFile(filePath, in);
             buildFileList();
         } catch (Exception e) {
             log.debug("error when upload zip file for new UI", e);
@@ -553,12 +597,11 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     /**
-     * @param fileName file name
+     * @param filePath file path
      * @param in input stream
      */
-    public void copyFile(String fileName, InputStream in) {
-        String filePath = getFilePath(fileName);
-        try (OutputStream out = new FileOutputStream(new File(filePath));) {
+    public void copyFile(String filePath, InputStream in) {
+        try (OutputStream out = new FileOutputStream(new File(filePath))) {
             int read = 0;
             byte[] bytes = new byte[1024];
 
@@ -720,4 +763,37 @@ public class UserBean extends CustomFieldBean<User> {
         log.debug("this.accountBeanMap: {}", this.accountBeanMap);
         log.debug("initSelectionOptions done.");
     }
+
+    /**
+     * Gets the fileFormat
+     *
+     * @return the fileFormat
+     */
+    public FileFormat getFileFormat() {
+        return fileFormat;
+    }
+
+    /**
+     * Sets the fileFormat.
+     *
+     * @param fileFormat the new fileFormat
+     */
+    public void setFileFormat(FileFormat fileFormat) {
+        this.fileFormat = fileFormat;
+    }
+
+    /**
+     * Get a list of file formats
+     *
+     * @return A list of file formats
+     */
+    public List<FileFormat> getFileFormatList() {
+        List<FileFormat> fileFormats = fileFormatService.list();
+        return fileFormats;
+    }
+
+    public void handleFileFormatChange(ValueChangeEvent event) {
+        this.fileFormat = (FileFormat) event.getNewValue();
+    }
+
 }

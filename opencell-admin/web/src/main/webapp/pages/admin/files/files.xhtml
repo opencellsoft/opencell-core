@@ -134,6 +134,15 @@
 				<p:selectBooleanCheckbox id="autoUnzip" value="#{userBean.autoUnzipped}"  itemLabel="#{messages['fileExplore.unzipAutomately']}" styleClass="Padding10">
 					<p:ajax/>
 				</p:selectBooleanCheckbox>
+				 <p:panel>
+				<hftl:decorateFormField fieldId="fileFormat" label="#{messages['fileExplorer.fileFormat']}">
+					<p:selectOneMenu id="fileFormat" value="#{userBean.fileFormat}" onchange="submit()" valueChangeListener="#{userBean.handleFileFormatChange}">
+						<hftl:objectConverter />
+						<f:selectItem itemLabel="#{messages['commons.select']}" />
+						<f:selectItems value="#{userBean.getFileFormatList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
+					 </p:selectOneMenu>
+				</hftl:decorateFormField>
+				 </p:panel>
                 <p:fileUpload fileUploadListener="#{userBean.handleFileUpload}"
                      multiple="true" mode="advanced" dragDropSupport="true"
                      fileLimit="5" update=":fileExplorer" styleClass="TexAlCenter"/>

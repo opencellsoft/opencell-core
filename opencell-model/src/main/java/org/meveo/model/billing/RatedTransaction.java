@@ -149,7 +149,14 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.setStatusToCanceledByRsCodes", query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED"
                 + " where rt.id IN :rsToCancelCodes and rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"),
         @NamedQuery(name = "RatedTransaction.findByWalletOperationId", query = "SELECT o.ratedTransaction FROM WalletOperation o WHERE o.id=:walletOperationId"),
-        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfo", query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, rt.invoiceAgregateF=:invoiceAgregateF, rt.billingRun=:billingRun, invoice=:invoice where rt.id in :ids") })
+        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfo", query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, rt.invoiceAgregateF=:invoiceAgregateF, rt.billingRun=:billingRun, invoice=:invoice where rt.id in :ids"),
+        @NamedQuery(name = "RatedTransaction.listOpenBetweenTwoDates", query =
+                "SELECT r FROM RatedTransaction r join fetch r.priceplan join fetch r.tax join fetch r.billingAccount join fetch r.seller where "
+                + " r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.usageDate desc "),
+        @NamedQuery(name = "RatedTransaction.deleteNotOpenBetweenTwoDates", query = "delete FROM RatedTransaction r where "
+                + " r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate ")})
 public class RatedTransaction extends BaseEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
@@ -858,7 +865,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     /**
      * Recompute derived amounts amountWithoutTax/amountWithTax/amountTax unitAmountWithoutTax/unitAmountWithTax/unitAmountTax
-     * 
+     *
      * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
      * @param rounding Rounding precision to apply
      * @param roundingMode Rounding mode to apply
@@ -973,8 +980,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
      * @return first id of the WalletOperation
      */
     public Long getWalletOperationId() {
-        if (getWalletOperations() != null && getWalletOperations().isEmpty()) {
-            return getWalletOperations().iterator().next().getId();
+        if (getWalletOperations() != null && getWalletOperations().isEmpty() && getWalletOperations().iterator().hasNext()) {
+            WalletOperation walletOperation = getWalletOperations().iterator().next();
+            if (walletOperation != null) {
+                return walletOperation.getId();
+            }
+            return null;
         }
 
         return null;
