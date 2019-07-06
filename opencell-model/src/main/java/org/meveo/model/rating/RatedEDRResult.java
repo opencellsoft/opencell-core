@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -18,28 +18,7 @@
  */
 package org.meveo.model.rating;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.billing.Subscription;
+import java.util.List;
 
 /**
  * The class RatedEDRResult
@@ -49,22 +28,22 @@ import org.meveo.model.billing.Subscription;
  */
 public class RatedEDRResult {
 
-    private EDR triggerdEDR;
-    private boolean eDRfullyRated;
+    private List<EDR> triggerdEDRs;
+    private boolean EDRfullyRated;
 
-    public EDR getTriggerdEDR() {
-        return triggerdEDR;
+    public List<EDR> getTriggerdEDRs() {
+        return triggerdEDRs;
     }
 
-    public void setTriggerdEDR(EDR triggerdEDR) {
-        this.triggerdEDR = triggerdEDR;
+    public void setTriggerdEDRs(List<EDR> triggerdEDRs) {
+        this.triggerdEDRs = triggerdEDRs;
     }
 
     public boolean isEDRfullyRated() {
-        return eDRfullyRated;
+        return EDRfullyRated;
     }
 
     public void setEDRfullyRated(boolean EDRfullyRated) {
-        this.eDRfullyRated = EDRfullyRated;
+        this.EDRfullyRated = EDRfullyRated;
     }
 }
