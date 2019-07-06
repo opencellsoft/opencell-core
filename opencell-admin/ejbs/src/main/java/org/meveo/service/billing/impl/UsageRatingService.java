@@ -1,5 +1,21 @@
 package org.meveo.service.billing.impl;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
@@ -51,22 +67,6 @@ import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.script.catalog.TriggeredEdrScriptService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * UsageRatingService
@@ -424,8 +424,8 @@ public class UsageRatingService implements Serializable {
             chargeTemplate = emWrapper.getEntityManager().find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplate().getId());
         }
 
-        EDR triggerEdr = triggerEDR(chargeTemplate, walletOperation, edr, isVirtual);
-        ratedEDRResult.setTriggerdEDR(triggerEdr);
+        List<EDR> triggeredEdrs = triggerEDRs(chargeTemplate, walletOperation, edr, isVirtual);
+        ratedEDRResult.setTriggerdEDRs(triggeredEdrs);
         return ratedEDRResult;
     }
 
@@ -438,7 +438,8 @@ public class UsageRatingService implements Serializable {
      * @return an EDR
      * @throws BusinessException business exception
      */
-    private EDR triggerEDR(ChargeTemplate chargeTemplate, WalletOperation walletOperation, EDR edr, boolean isVirtual) throws BusinessException {
+    private List<EDR> triggerEDRs(ChargeTemplate chargeTemplate, WalletOperation walletOperation, EDR edr, boolean isVirtual) throws BusinessException {
+        List<EDR> triggredEDRs = new ArrayList<>();
         for (TriggeredEDRTemplate triggeredEDRTemplate : chargeTemplate.getEdrTemplates()) {
             if (triggeredEDRTemplate.getConditionEl() == null || "".equals(triggeredEDRTemplate.getConditionEl())
                     || evaluateBooleanExpression(triggeredEDRTemplate.getConditionEl(), edr, walletOperation)) {
@@ -484,7 +485,7 @@ public class UsageRatingService implements Serializable {
                     if (!isVirtual) {
                         edrService.create(newEdr);
                     }
-                    return newEdr;
+                    triggredEDRs.add(newEdr);
                 } else {
                     if (StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
                         throw new BusinessException("TriggeredEDRTemplate.subscriptionEl must not be null and must point to an existing Access.");
@@ -518,7 +519,7 @@ public class UsageRatingService implements Serializable {
                 }
             }
         }
-        return null;
+        return triggredEDRs;
     }
 
     /**
@@ -659,7 +660,7 @@ public class UsageRatingService implements Serializable {
                 ratedEDRResult = rateEDRonChargeAndCounters(walletOperation, edr, usageChargeInstance, isVirtual);
                 walletOperations.add(walletOperation);
 
-                walletOperations.addAll(rateTriggeredEDR(isVirtual, rateTriggeredEdr, maxDeep, startDeepRating, ratedEDRResult.getTriggerdEDR()));
+                walletOperations.addAll(rateTriggeredEDRs(isVirtual, rateTriggeredEdr, maxDeep, startDeepRating, ratedEDRResult.getTriggerdEDRs()));
 
                 if (ratedEDRResult.isEDRfullyRated()) {
                     boolean triggerNextCharge = false;
@@ -739,12 +740,14 @@ public class UsageRatingService implements Serializable {
      * @return a list of WalletOperation
      * @throws BusinessException
      */
-    private List<WalletOperation> rateTriggeredEDR(boolean isVirtual, boolean rateTriggeredEdr, int maxDeep, int startDeepRating, EDR edr) throws BusinessException {
-        List<WalletOperation> triggeredWO = new ArrayList<>();
-        if (rateTriggeredEdr && edr != null && startDeepRating < maxDeep) {
-            triggeredWO = rateUsageWithinTransaction(edr, isVirtual, true, maxDeep, startDeepRating + 1);
+    private List<WalletOperation> rateTriggeredEDRs(boolean isVirtual, boolean rateTriggeredEdr, int maxDeep, int startDeepRating, List<EDR> triggeredEDRs) throws BusinessException {
+        List<WalletOperation> triggeredWOs = new ArrayList<>();
+        if (rateTriggeredEdr && startDeepRating < maxDeep) {
+            for(EDR edr :triggeredEDRs) {
+                triggeredWOs.addAll(rateUsageWithinTransaction(edr, isVirtual, true, maxDeep, startDeepRating + 1));
+            }
         }
-        return triggeredWO;
+        return triggeredWOs;
     }
 
     /**
