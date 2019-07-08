@@ -26,6 +26,9 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
@@ -132,26 +135,34 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      * @param invoiceType 
      * @return true if recored invoice exist
      */
-    public boolean isRecordedInvoiceExist(String reference, InvoiceType invoiceType) {
-        RecordedInvoice recordedInvoice = getRecordedInvoice(reference);
-        if(recordedInvoice==null) {
+    public boolean isRecordedInvoiceExist(String reference, String invoiceType) {
+        List<RecordedInvoice> recordedInvoice = getRecordedInvoice(reference,invoiceType);
+        if(recordedInvoice==null || recordedInvoice.isEmpty()) {
         	return false;
         }
-        return recordedInvoice.getInvoices().stream().filter(i->i.getInvoiceType().equals(invoiceType)).findFirst().isPresent();
+        return true;
     }
 
     /**
-     * @param reference invoice's reference.
+     * @param invoiceNumber invoice's reference.
+     * @param invoiceType invoice's type.
      * @return instance of RecoredInvoice.
      */
-    public RecordedInvoice getRecordedInvoice(String reference) {
-        RecordedInvoice recordedInvoice = null;
+    public List<RecordedInvoice> getRecordedInvoice(String invoiceNumber, String invoiceTypeCode){
+        List<RecordedInvoice> recordedInvoices = null;
         try {
-            recordedInvoice = (RecordedInvoice) getEntityManager().createQuery("from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference ")
-                .setParameter("reference", reference).getSingleResult();
+        	boolean withType = invoiceTypeCode!=null&&!invoiceTypeCode.isEmpty();
+			String invoiceTypeQuery=withType?" and invoiceTypeCode=:invoiceTypeCode":"";
+            String qlString = "from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference " +invoiceTypeQuery;
+			Query query = getEntityManager().createQuery(qlString).setParameter("reference", invoiceNumber);
+			if(withType) {
+				query.setParameter("invoiceTypeQuery", invoiceTypeQuery);
+			}
+			recordedInvoices = (List<RecordedInvoice>) query.getResultList();
         } catch (Exception e) {
+        	log.warn("exception trying to get recordedInvoice for reference "+invoiceNumber+": "+e.getMessage());
         }
-        return recordedInvoice;
+        return recordedInvoices;
     }
 
     /**
@@ -350,8 +361,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     private <T extends RecordedInvoice> T createRecordedInvoice(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, BigDecimal netToPay, Invoice invoice,
             OCCTemplate occTemplate, boolean isRecordedIvoince) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
-        if (isRecordedInvoiceExist((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber(), invoice.getInvoiceType())) {
-            throw new InvoiceExistException("Invoice number " + invoice.getInvoiceNumber() + " with type "+invoice.getInvoiceType()+ " already exist");
+        String invoiceType = invoice.getInvoiceType().getCode();
+		if (isRecordedInvoiceExist((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber(), invoiceType)) {
+            throw new InvoiceExistException("Invoice number " + invoice.getInvoiceNumber() + " with type "+invoiceType+ " already exist");
         }
 
         CustomerAccount customerAccount = null;
@@ -377,6 +389,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         }
 
         recordedInvoice.setReference((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber());
+        recordedInvoice.setInvoiceTypeCode(invoiceType);
         try {
             customerAccount = billingAccount.getCustomerAccount();
             recordedInvoice.setCustomerAccount(customerAccount);
