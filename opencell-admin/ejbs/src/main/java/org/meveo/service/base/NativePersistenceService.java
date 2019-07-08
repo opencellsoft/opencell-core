@@ -39,6 +39,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
@@ -259,30 +260,33 @@ public class NativePersistenceService extends BaseService {
             StringBuffer findIdFields = new StringBuffer();
 
             boolean first = true;
-            for (String fieldName : values.keySet()) {
-                // Ignore a null ID field
-                if (fieldName.equals(FIELD_ID) && values.get(fieldName) == null) {
-                    continue;
+            if(values.isEmpty()){
+                sql.append(" DEFAULT VALUES");
+            }else {
+                for (String fieldName : values.keySet()) {
+                    // Ignore a null ID field
+                    if (fieldName.equals(FIELD_ID) && values.get(fieldName) == null) {
+                        continue;
+                    }
+
+                    if (!first) {
+                        fields.append(",");
+                        fieldValues.append(",");
+                        findIdFields.append(" and ");
+                    }
+                    fields.append(fieldName);
+                    if (values.get(fieldName) == null) {
+                        fieldValues.append("NULL");
+                        findIdFields.append(fieldName).append(" IS NULL");
+                    } else {
+                        fieldValues.append(":").append(fieldName);
+                        findIdFields.append(fieldName).append("=:").append(fieldName);
+                    }
+                    first = false;
                 }
 
-                if (!first) {
-                    fields.append(",");
-                    fieldValues.append(",");
-                    findIdFields.append(" and ");
-                }
-                fields.append(fieldName);
-                if (values.get(fieldName) == null) {
-                    fieldValues.append("NULL");
-                    findIdFields.append(fieldName).append(" IS NULL");
-                } else {
-                    fieldValues.append(":").append(fieldName);
-                    findIdFields.append(fieldName).append("=:").append(fieldName);
-                }
-                first = false;
+                sql.append(" (").append(fields).append(") values (").append(fieldValues).append(")");
             }
-
-            sql.append(" (").append(fields).append(") values (").append(fieldValues).append(")");
-
             Query query = getEntityManager().createNativeQuery(sql.toString());
             for (String fieldName : values.keySet()) {
                 if (values.get(fieldName) == null) {
@@ -297,8 +301,9 @@ public class NativePersistenceService extends BaseService {
                 if (id != null) {
                     return (Long) id;
                 }
+                StringBuffer requestConstruction = buildSqlInsertionRequest(tableName, findIdFields);
 
-                query = getEntityManager().createNativeQuery("select id from " + tableName + " where " + findIdFields + " order by id desc").setMaxResults(1);
+                query = getEntityManager().createNativeQuery(requestConstruction.toString()).setMaxResults(1);
                 for (String fieldName : values.keySet()) {
                     if (values.get(fieldName) == null) {
                         continue;
@@ -324,6 +329,15 @@ public class NativePersistenceService extends BaseService {
             log.error("Failed to insert values into OR find ID of table {} {} sql {}", tableName, values, sql, e);
             throw e;
         }
+    }
+
+    StringBuffer buildSqlInsertionRequest(String tableName, StringBuffer findIdFields) {
+        StringBuffer requestConstruction = new StringBuffer("select id from " + tableName);
+        if(StringUtils.isNotEmpty(findIdFields)){
+            requestConstruction.append(" where " + findIdFields);
+        }
+        requestConstruction.append(" order by id desc");
+        return requestConstruction;
     }
 
     /**

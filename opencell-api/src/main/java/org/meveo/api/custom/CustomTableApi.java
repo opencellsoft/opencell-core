@@ -259,7 +259,7 @@ public class CustomTableApi extends BaseApi {
 
      Map<String, Object> getEitherTableOrEntityValue(CustomFieldTemplate field, Long id) {
         CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
-        if (relatedEntity.isStoreAsTable()) {
+        if (relatedEntity != null && relatedEntity.isStoreAsTable()) {
             return customTableService.findRecordOfTableById(field, id);
         }
         return Optional.ofNullable(customEntityInstanceService.findById(id))

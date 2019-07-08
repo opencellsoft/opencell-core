@@ -2642,6 +2642,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return true if the invoice is prepaid report
      */
     public Boolean isPrepaidReport(Invoice invoice) {
+        invoice = refreshOrRetrieve(invoice);
         return ratedTransactionService.isPrepaidRatedTransactions(invoice.getRatedTransactions());
     }
 }

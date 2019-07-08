@@ -344,7 +344,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
     }
 
     public List<BusinessEntityDto> listBusinessEntityForCFVByCode(String code, String wildcode)
-            throws MeveoApiException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+            throws MeveoApiException, ClassNotFoundException {
         List<BusinessEntityDto> result = new ArrayList<>();
 
         if (StringUtils.isBlank(code)) {
