@@ -18,8 +18,6 @@
  */
 package org.meveo.model.payments;
 
-import org.meveo.model.dunning.DunningDocument;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +33,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.meveo.model.dunning.DunningDocument;
 
 @Entity
 @DiscriminatorValue(value = "I")
@@ -66,6 +66,11 @@ public class RecordedInvoice extends AccountOperation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dunning_document_id")
     private DunningDocument dunningDocument;
+    
+    /**
+     * Associated invoice type code
+     */
+    private String invoiceTypeCode;
 
     public Date getProductionDate() {
         return productionDate;
@@ -133,6 +138,22 @@ public class RecordedInvoice extends AccountOperation {
     public void setDunningDocument(DunningDocument dunningDocument) {
         this.dunningDocument = dunningDocument;
     }
+
+    
+    /**
+     * @return invoiceTypeCode
+     */
+	public String getInvoiceTypeCode() {
+		return invoiceTypeCode;
+	}
+	
+	/**
+    *
+    * @param invoiceTypeCode
+    */
+	public void setInvoiceTypeCode(String invoiceTypeCode) {
+		this.invoiceTypeCode = invoiceTypeCode;
+	}
 
 
 }

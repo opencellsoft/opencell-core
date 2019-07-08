@@ -80,7 +80,7 @@ public class PaymentDto extends BaseEntityDto {
     private Date transactionDate;
     
     /** The list OCC referencefor matching. */
-    private List<String> listOCCReferenceforMatching;
+    private List<List<String>> listOCCReferenceforMatching;
     
     /** The is to matching. */
     private boolean isToMatching;
@@ -340,7 +340,7 @@ public class PaymentDto extends BaseEntityDto {
      *
      * @return the list OCC referencefor matching
      */
-    public List<String> getListOCCReferenceforMatching() {
+    public List<List<String>> getListOCCReferenceforMatching() {
         return listOCCReferenceforMatching;
     }
 
@@ -349,7 +349,7 @@ public class PaymentDto extends BaseEntityDto {
      *
      * @param listOCCReferenceforMatching the new list OCC referencefor matching
      */
-    public void setListOCCReferenceforMatching(List<String> listOCCReferenceforMatching) {
+    public void setListOCCReferenceforMatching(List<List<String>> listOCCReferenceforMatching) {
         this.listOCCReferenceforMatching = listOCCReferenceforMatching;
     }
 
