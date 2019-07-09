@@ -366,7 +366,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Returns {@link InvoiceTypeSellerSequence} from the nearest parent.
-     * 
+     *
      * @param invoiceType {@link InvoiceType}
      * @param seller {@link Seller}
      * @return {@link InvoiceTypeSellerSequence}
@@ -483,7 +483,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get list of Draft invoice Ids that belong to the given Billing Run and not having PDF generated yet.
-     * 
+     *
      * @param billingRunId An optional billing run identifier for filtering
      * @return A list of invoice ids
      */
@@ -498,7 +498,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get list of Draft and validated invoice Ids that belong to the given Billing Run and not having PDF generated yet.
-     * 
+     *
      * @param billingRunId An optional billing run identifier for filtering
      * @return A list of invoice ids
      */
@@ -2302,8 +2302,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get list of Draft invoice Ids that belong to the given Billing Run and not having XML generated yet.
-     * 
-     * 
+     *
+     *
      * @param billingRunId Billing run id
      * @return A list of invoice identifiers
      */
@@ -2316,8 +2316,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Get list of Draft and validated invoice Ids that belong to the given Billing Run and not having XML generated yet.
-     * 
-     * 
+     *
+     *
      * @param billingRunId Billing run id
      * @return A list of invoice identifiers
      */
@@ -2642,6 +2642,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return true if the invoice is prepaid report
      */
     public Boolean isPrepaidReport(Invoice invoice) {
+        invoice = refreshOrRetrieve(invoice);
         return ratedTransactionService.isPrepaidRatedTransactions(invoice.getRatedTransactions());
     }
 }
