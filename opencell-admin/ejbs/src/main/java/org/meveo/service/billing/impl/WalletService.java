@@ -192,7 +192,7 @@ public class WalletService extends PersistenceService<WalletInstance> {
             try {
                 Object[] balances = (Object[]) getEntityManager().createNamedQuery("WalletOperation.getBalancesForWalletInstance").setParameter("walletId", walletInstanceId)
                     .getSingleResult();
-                return (BigDecimal) balances[1];
+                return balances[0] != null ? (BigDecimal) balances[0] : BigDecimal.ZERO;
 
             } catch (NoResultException e) {
                 return BigDecimal.ZERO;
