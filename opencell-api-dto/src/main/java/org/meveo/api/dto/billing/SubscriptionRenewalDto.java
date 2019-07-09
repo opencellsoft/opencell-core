@@ -5,9 +5,11 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.meveo.api.dto.CalendarDto;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
+import org.meveo.model.catalog.Calendar;
 
 /**
  * The Class SubscriptionRenewalDto.
@@ -20,11 +22,17 @@ public class SubscriptionRenewalDto implements Serializable {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4718234196806858689L;
 
+    private SubscriptionRenewal.InitialTermTypeEnum initialTermType;
+
+    private SubscriptionRenewal.RenewalTermTypeEnum renewalTermType;
+
     /** The initial period for which the subscription will be active - value. */
     private Integer initialyActiveFor;
 
     /** The initial period for which the subscription will be active - unit. */
     private RenewalPeriodUnitEnum initialyActiveForUnit;
+
+    private CalendarDto calendarInitialyActiveFor;
 
     /** Should subscription be renewed automatically. */
     private boolean autoRenew;
@@ -40,6 +48,8 @@ public class SubscriptionRenewalDto implements Serializable {
 
     /** The period to renew subscription for - value. */
     private Integer renewFor;
+
+    private CalendarDto calendarRenewFor;
 
     /** The period to renew subscription for - units. */
     private RenewalPeriodUnitEnum renewForUnit;
@@ -68,10 +78,13 @@ public class SubscriptionRenewalDto implements Serializable {
         daysNotifyRenewal = renewalInfo.getDaysNotifyRenewal();
         endOfTermAction = renewalInfo.getEndOfTermAction();
         extendAgreementPeriodToSubscribedTillDate = renewalInfo.isExtendAgreementPeriodToSubscribedTillDate();
+        initialTermType = renewalInfo.getInitialTermType();
         initialyActiveFor = renewalInfo.getInitialyActiveFor();
         initialyActiveForUnit = renewalInfo.getInitialyActiveForUnit();
+        calendarInitialyActiveFor = new CalendarDto(renewalInfo.getCalendarInitialyActiveFor());
         renewFor = renewalInfo.getRenewFor();
         renewForUnit = renewalInfo.getRenewForUnit();
+        calendarRenewFor = new CalendarDto(renewalInfo.getCalendarRenewFor());
         if (renewalInfo.getTerminationReason() != null) {
             terminationReasonCode = renewalInfo.getTerminationReason().getCode();
         }
@@ -237,5 +250,37 @@ public class SubscriptionRenewalDto implements Serializable {
      */
     public void setExtendAgreementPeriodToSubscribedTillDate(boolean extendAgreementPeriodToSubscribedTillDate) {
         this.extendAgreementPeriodToSubscribedTillDate = extendAgreementPeriodToSubscribedTillDate;
+    }
+
+    public CalendarDto getCalendarInitialyActiveFor() {
+        return calendarInitialyActiveFor;
+    }
+
+    public void setCalendarInitialyActiveFor(CalendarDto calendarInitialyActiveFor) {
+        this.calendarInitialyActiveFor = calendarInitialyActiveFor;
+    }
+
+    public SubscriptionRenewal.InitialTermTypeEnum getInitialTermType() {
+        return initialTermType;
+    }
+
+    public void setInitialTermType(SubscriptionRenewal.InitialTermTypeEnum initialTermType) {
+        this.initialTermType = initialTermType;
+    }
+
+    public SubscriptionRenewal.RenewalTermTypeEnum getRenewalTermType() {
+        return renewalTermType;
+    }
+
+    public void setRenewalTermType(SubscriptionRenewal.RenewalTermTypeEnum renewalTermType) {
+        this.renewalTermType = renewalTermType;
+    }
+
+    public CalendarDto getCalendarRenewFor() {
+        return calendarRenewFor;
+    }
+
+    public void setCalendarRenewFor(CalendarDto calendarRenewFor) {
+        this.calendarRenewFor = calendarRenewFor;
     }
 }
