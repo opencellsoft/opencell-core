@@ -73,7 +73,7 @@ public class RecordedInvoice extends AccountOperation {
      * if an invoice becomes unpaid then, it's associated with a dunning doc
      */
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recorded_invoice_id")
+    @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 
     public Date getProductionDate() {

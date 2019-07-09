@@ -135,7 +135,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      * @param invoiceType 
      * @return true if recored invoice exist
      */
-    public boolean isRecordedInvoiceExist(String reference, String invoiceType) {
+    public boolean isRecordedInvoiceExist(String reference, InvoiceType invoiceType) {
         RecordedInvoice recordedInvoice = getRecordedInvoice(reference,invoiceType);
         if(recordedInvoice==null) {
         	return false;
@@ -148,11 +148,11 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      * @param invoiceType invoice's type.
      * @return instance of RecoredInvoice.
      */
-    public RecordedInvoice getRecordedInvoice(String invoiceNumber, String invoiceTypeCode){
+    public RecordedInvoice getRecordedInvoice(String invoiceNumber, InvoiceType invoiceType){
         RecordedInvoice recordedInvoice = null;
         try {
-            String qlString = "from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference  and invoiceTypeCode=:invoiceTypeCode";
-			Query query = getEntityManager().createQuery(qlString).setParameter("reference", invoiceNumber).setParameter("invoiceTypeCode", invoiceTypeCode);
+            String qlString = "from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference  and invoice.invoiceType=:invoiceType";
+			Query query = getEntityManager().createQuery(qlString).setParameter("reference", invoiceNumber).setParameter("invoiceType", invoiceType);
 			recordedInvoice = (RecordedInvoice) query.getSingleResult();
         } catch (Exception e) {
         	log.warn("exception trying to get recordedInvoice for reference "+invoiceNumber+": "+e.getMessage());
@@ -371,9 +371,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     private <T extends RecordedInvoice> T createRecordedInvoice(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, BigDecimal netToPay, Invoice invoice,
             OCCTemplate occTemplate, boolean isRecordedIvoince) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
-        String invoiceType = invoice.getInvoiceType().getCode();
+        InvoiceType invoiceType = invoice.getInvoiceType();
 		if (isRecordedInvoiceExist((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber(), invoiceType)) {
-            throw new InvoiceExistException("Invoice number " + invoice.getInvoiceNumber() + " with type "+invoiceType+ " already exist");
+            throw new InvoiceExistException("Invoice number " + invoice.getInvoiceNumber() + " with type "+invoiceType.getCode()+ " already exist");
         }
 
         CustomerAccount customerAccount = null;
@@ -399,7 +399,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         }
 
         recordedInvoice.setReference((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber());
-        recordedInvoice.setInvoiceTypeCode(invoiceType);
+        recordedInvoice.setInvoice(invoice);
         try {
             customerAccount = billingAccount.getCustomerAccount();
             recordedInvoice.setCustomerAccount(customerAccount);
