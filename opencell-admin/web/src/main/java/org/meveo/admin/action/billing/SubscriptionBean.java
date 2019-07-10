@@ -73,6 +73,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -172,6 +173,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @Inject
     private CounterInstanceService counterInstanceService;
 
+    @Inject
+    private CalendarService calendarService;
+
     private ServiceInstance selectedServiceInstance;
 
     private ProductInstance productInstance;
@@ -197,7 +201,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private SubscriptionTerminationReason terminationReason;
 
     private ServiceInstance selectedTerminableService;
-
+    
     private LazyDataModel<OfferTemplate> activeOfferTemplateDataModel;
 
     private CounterInstance selectedCounterInstance;
@@ -332,6 +336,12 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         entity.setOffer(offerTemplateService.refreshOrRetrieve(entity.getOffer()));
         entity.setUserAccount(userAccountService.refreshOrRetrieve(entity.getUserAccount()));
+        SubscriptionRenewal subscriptionRenewal = entity.getSubscriptionRenewal();
+        org.meveo.model.catalog.Calendar calendarRenewFor = calendarService.refreshOrRetrieve(subscriptionRenewal.getCalendarRenewFor());
+        subscriptionRenewal.setCalendarRenewFor(calendarRenewFor);
+        org.meveo.model.catalog.Calendar calendarInitialyActiveFor = calendarService.refreshOrRetrieve(subscriptionRenewal.getCalendarInitialyActiveFor());
+        subscriptionRenewal.setCalendarInitialyActiveFor(calendarInitialyActiveFor);
+        entity.setSubscriptionRenewal(subscriptionRenewal);
 
         if (entity.getOffer().getValidity() != null && !entity.getOffer().getValidity().isCorrespondsToPeriod(entity.getSubscriptionDate())) {
 
