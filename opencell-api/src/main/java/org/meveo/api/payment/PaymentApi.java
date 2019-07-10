@@ -162,27 +162,8 @@ public class PaymentApi extends BaseApi {
 
         paymentService.create(payment);
 
-        int nbOccMatched = 0;
         if (paymentDto.isToMatching()) {
-            List<Long> listReferenceToMatch = new ArrayList<Long>();
-            if (paymentDto.getListOCCReferenceforMatching() != null) {
-                nbOccMatched = paymentDto.getListOCCReferenceforMatching().size();
-                for (int i = 0; i < nbOccMatched; i++) {
-                	List<String> References = paymentDto.getListOCCReferenceforMatching().get(i);
-					String invoiceNumber=References.get(0);
-					String invoiceType=References.size()>0? References.get(0):null;
-                    List<RecordedInvoice> accountOperationToMatch = recordedInvoiceService.getRecordedInvoice(invoiceNumber, invoiceType);
-                    if (accountOperationToMatch == null || accountOperationToMatch.isEmpty()) {
-                        throw new BusinessApiException("Cannot find account operation with reference:" + invoiceNumber + " and type "+invoiceType);
-                    } else if (accountOperationToMatch.size() > 1) {
-                        throw new BusinessApiException("More than one account operation with reference:" + invoiceNumber + " and type "+invoiceType+". Please check inputs");
-                    }
-                    listReferenceToMatch.add(accountOperationToMatch.get(0).getId());
-                }
-                listReferenceToMatch.add(payment.getId());
-                matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A);
-            }
-
+            matchPayment(paymentDto, customerAccount, payment);
         } else {
             log.info("no matching created ");
         }
@@ -191,6 +172,26 @@ public class PaymentApi extends BaseApi {
         return payment.getId();
 
     }
+
+	private void matchPayment(PaymentDto paymentDto, CustomerAccount customerAccount, Payment payment)
+			throws BusinessApiException, BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+		List<Long> listReferenceToMatch = new ArrayList<Long>();
+		if (paymentDto.getListAoIdsForMatching()!=null && !paymentDto.getListAoIdsForMatching().isEmpty() ) {
+			listReferenceToMatch.addAll(paymentDto.getListAoIdsForMatching());
+		} else if (paymentDto.getListOCCReferenceforMatching() != null) {
+		    for (String Reference: paymentDto.getListOCCReferenceforMatching()) {
+		        List<RecordedInvoice> accountOperationToMatch = recordedInvoiceService.getRecordedInvoice(Reference);
+		        if (accountOperationToMatch == null || accountOperationToMatch.isEmpty()) {
+		            throw new BusinessApiException("Cannot find account operation with reference:" + Reference );
+		        } else if (accountOperationToMatch.size() > 1) {
+		            throw new BusinessApiException("More than one account operation with reference:" + Reference +". Please use ListAoIdsForMatching instead of ListOCCReferenceforMatching");
+		        }
+		        listReferenceToMatch.add(accountOperationToMatch.get(0).getId());
+		    }
+		}
+		listReferenceToMatch.add(payment.getId());
+		matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A);
+	}
 
     /**
      * Get payment list by customer account code

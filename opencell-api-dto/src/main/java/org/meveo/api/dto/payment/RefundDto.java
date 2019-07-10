@@ -79,7 +79,11 @@ public class RefundDto extends BaseEntityDto {
     private Date transactionDate;
     
     /** The list OCC referencefor matching. */
-    private List<List<String>> listOCCReferenceforMatching;
+    @Deprecated
+    private List<String> listOCCReferenceforMatching;
+    
+    /** The list of AO ids for matching. */
+	private List<Long> listAoIdsForMatching;
     
     /** The is to matching. */
     private boolean isToMatching;
@@ -308,7 +312,7 @@ public class RefundDto extends BaseEntityDto {
      *
      * @return the list OCC referencefor matching
      */
-    public List<List<String>> getListOCCReferenceforMatching() {
+    public List<String> getListOCCReferenceforMatching() {
         return listOCCReferenceforMatching;
     }
 
@@ -317,7 +321,7 @@ public class RefundDto extends BaseEntityDto {
      *
      * @param listOCCReferenceforMatching the new list OCC referencefor matching
      */
-    public void setListOCCReferenceforMatching(List<List<String>> listOCCReferenceforMatching) {
+    public void setListOCCReferenceforMatching(List<String> listOCCReferenceforMatching) {
         this.listOCCReferenceforMatching = listOCCReferenceforMatching;
     }
 
@@ -356,6 +360,24 @@ public class RefundDto extends BaseEntityDto {
     public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+    
+    /**
+     * Gets the list of AO ids for matching.
+     *
+     * @return listOCCReferenceforMatching the list of AO ids for matching.
+     */
+	public List<Long> getListAoIdsForMatching() {
+		return listAoIdsForMatching;
+	}
+
+    /**
+     * Sets the list of AO ids for matching.
+     *
+     * @param listOCCReferenceforMatching the new list of AO ids for matching.
+     */
+	public void setListAoIdsForMatching(List<Long> listAoIdsForMatching) {
+		this.listAoIdsForMatching = listAoIdsForMatching;
+	}
 
     @Override
     public String toString() {
