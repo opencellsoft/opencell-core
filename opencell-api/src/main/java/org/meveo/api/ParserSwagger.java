@@ -16,8 +16,8 @@ public class ParserSwagger {
     private static ParserSwagger parsing = new ParserSwagger();
 
     public static void main(String[] args) throws Exception {
-
-        String[] allPathFiles = parsing.pathRetriever("src/main/java/org/meveo/api/rest", "Rs.java");
+        String parentpath=System.getProperty("user.dir");
+        String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
         System.out.println("Adding annotations to file: src/main/java/org/meveo/api/rest");
         parsing.getAllInfo(allPathFiles);
     }
@@ -320,7 +320,6 @@ public class ParserSwagger {
             // create new reader
             fr = new FileReader(filePath);
             lnr = new BufferedReader(fr);
-
             // read lines till the end of the stream
             while ((str = lnr.readLine()) != null) {
 
