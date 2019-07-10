@@ -1080,6 +1080,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
      * Update subscribedTillDate field in subscription
      */
     public void updateSubscribedTillDate() {
+        SubscriptionRenewal subscriptionRenewal = entity.getSubscriptionRenewal();
+        org.meveo.model.catalog.Calendar calendarInitialyActiveFor = calendarService.refreshOrRetrieve(subscriptionRenewal.getCalendarInitialyActiveFor());
+        subscriptionRenewal.setCalendarInitialyActiveFor(calendarInitialyActiveFor);
+        entity.setSubscriptionRenewal(subscriptionRenewal);
         entity.updateSubscribedTillAndRenewalNotifyDates();
     }
 
