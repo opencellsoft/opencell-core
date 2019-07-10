@@ -22,6 +22,7 @@ import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -160,6 +161,10 @@ public class OrderService extends BusinessService<Order> {
             remove(e);
         }
     }
+
+	public Quote getReference(Class<Quote> clazz, Long quoteId) {
+		return getEntityManager().getReference(clazz, quoteId);
+	}
 
     @SuppressWarnings("unchecked")
     public List<Order> findOrders(BillingCycle billingCycle, Date startdate, Date endDate) {

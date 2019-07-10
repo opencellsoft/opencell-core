@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -51,6 +50,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
+import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -76,6 +76,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
@@ -85,6 +86,7 @@ import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
@@ -104,7 +106,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * In mass RT update with invoice information, batch size
      */
-    private static int SPLIT_RT_UPDATE_BY_NR = 500;
+    private static int SPLIT_RT_UPDATE_BY_NR = 10000;
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
@@ -141,6 +143,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private FilterService filterService;
+
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
 
     /**
      * @param userAccount user account
@@ -1686,96 +1691,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         } else if (entityToInvoice instanceof Subscription) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class)
                 .setParameter("subscriptionId", entityToInvoice.getId()).setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).getResultList();
 
         } else if (entityToInvoice instanceof BillingAccount) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class)
                 .setParameter("billingAccountId", entityToInvoice.getId()).setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).getResultList();
 
         } else if (entityToInvoice instanceof Order) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
                 .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber()).setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).getResultList();
         }
 
         return new ArrayList<>();
-    }
-
-    /**
-     * Get a list of invoiceable Rated transactions for a given billable entity and date range or from a filter
-     * 
-     * @param entityToInvoice Entity to invoice (subscription, billing account or order)
-     * @param firstTransactionDate Usage date range - start date
-     * @param lastTransactionDate Usage date range - end date
-     * @param ratedTransactionFilter Filter returning a list of rated transactions
-     * @return A list of RT summary information: seller.id, userAccount.id, wallet.id, invoiceSubCategory.id, tax.id, id, amountWithoutTax, amountWithTax, orderNumber in BA and
-     *         subscription case or billingAccount.id in order case
-     * @throws BusinessException General exception
-     */
-    @SuppressWarnings("unchecked")
-    public List<Object[]> listRTSummaryToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTransactionFilter)
-            throws BusinessException {
-
-        if (ratedTransactionFilter != null) {
-            List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
-
-            return ratedTransactions.stream()
-                .map(rt -> new Object[] { rt.getSeller().getId(), rt.getUserAccount() != null ? rt.getUserAccount().getId() : null,
-                        rt.getWallet() != null ? rt.getWallet().getId() : null, rt.getInvoiceSubCategory().getId(), rt.getTax().getId(), rt.getAmountWithoutTax(),
-                        rt.getAmountWithTax(), entityToInvoice instanceof Order ? rt.getBillingAccount().getId() : rt.getOrderNumber() })
-                .collect(Collectors.toList());
-
-        } else if (entityToInvoice instanceof Order) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumberFlat").setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-
-        } else if (entityToInvoice instanceof Subscription) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscriptionFlat").setParameter("subscriptionId", entityToInvoice.getId())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-
-        } else if (entityToInvoice instanceof BillingAccount) {
-
-            // AKK This is a version of retrieving data with JPA query
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccountFlat").setParameter("billingAccountId", entityToInvoice.getId())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
-
-            /* AKK This is a version of retrieving data with plain db connection
-             * 
-            final List<Object[]> rtData = new ArrayList<>();
-
-            Session hibernateSession = getEntityManager().unwrap(Session.class);
-
-            hibernateSession.doWork(new org.hibernate.jdbc.Work() {
-
-                @Override
-                public void execute(Connection connection) throws SQLException {
-
-                    try (ResultSet rs = connection.createStatement().executeQuery(
-                        "select seller_id, user_account_id, wallet_id, invoice_sub_category_id, tax_id, id, amount_without_tax, amount_with_tax, order_number from billing_rated_transaction where status='OPEN' and billing_account__id="
-                                + entityToInvoice.getId() + " and to_date('" + DateUtils.formatDateWithPattern(firstTransactionDate, "yyyy-MM-dd")
-                                + "', 'YYYY-MM-DD')<usage_date and usage_date<to_date('" + DateUtils.formatDateWithPattern(lastTransactionDate, "yyyy-MM-dd")
-                                + "', 'YYYY-MM-DD')")) {
-
-                        while (rs.next()) {
-
-                            rtData.add(new Object[] { rs.getLong(1), rs.getObject(2, Long.class), rs.getObject(3, Long.class), rs.getLong(4), rs.getLong(5), rs.getLong(6),
-                                    rs.getBigDecimal(7), rs.getBigDecimal(8), rs.getString(9) });
-
-                        }
-
-                    } catch (SQLException e) {
-                        log.error("Failed to retrieve RT summary for BA", e);
-                        throw e;
-                    }
-                }
-            });
-
-            return rtData;
-            */
-        }
-
-        return new ArrayList<Object[]>();
     }
 
     /**
@@ -1851,111 +1780,320 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Update rated transactions with invoice information
+     * Gets All open rated transaction between two date.
      * 
-     * @param rtsUpdateSummary Information for rated transaction update with invoice information
+     * @param firstTransactionDate first Transaction Date
+     * @param lastTransactionDate last Transaction Date
+     * @return All open rated transaction between two date.
      */
-    public void updateRTsWithInvoiceInfo(List<RTUpdateSummary> rtsUpdateSummary) {
-
-        for (RTUpdateSummary rtUpdateSummary : rtsUpdateSummary) {
-            updateRTsWithInvoiceInfo(rtUpdateSummary);
-        }
+    public List<RatedTransaction> getOpenRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
+        return getEntityManager().createNamedQuery("RatedTransaction.listOpenBetweenTwoDates", RatedTransaction.class).setParameter("firstTransactionDate", firstTransactionDate)
+            .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
     }
 
     /**
-     * Update rated transactions with invoice information
+     * Remove All not open rated transaction between two date.
      * 
-     * @param rtUpdateSummary Information for rated transaction update with invoice information
+     * @param firstTransactionDate first operation date
+     * @param lastTransactionDate last operation date
+     * @return the number of deleted entities
      */
-    public void updateRTsWithInvoiceInfo(final RTUpdateSummary rtUpdateSummary) {
+    public long purge(Date firstTransactionDate, Date lastTransactionDate) {
+        return getEntityManager().createNamedQuery("RatedTransaction.deleteNotOpenBetweenTwoDates").setParameter("firstTransactionDate", firstTransactionDate)
+            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+    }
 
-        String massUpdateWithTaxChangeSql = appProvider.isEntreprise() ? "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2B"
-                : "RatedTransaction.massUpdateWithInvoiceInfoAndTaxChangeB2C";
+    public void importRatedTransaction(List<RatedTransactionDto> ratedTransactions) throws BusinessException {
+        for (RatedTransactionDto dto : ratedTransactions) {
+            RatedTransaction ratedTransaction = new RatedTransaction();
+            if (dto.getPriceplanCode() != null) {
+                PricePlanMatrix pricePlan = pricePlanMatrixService.findByCode(dto.getPriceplanCode());
+                ratedTransaction.setPriceplan(pricePlan);
+            }
+            if (dto.getTaxCode() != null) {
+                Tax tax = taxService.findByCode(dto.getTaxCode());
+                ratedTransaction.setTax(tax);
+            }
+            if (dto.getBillingAccountCode() != null) {
+                BillingAccount billingAccount = billingAccountService.findByCode(dto.getBillingAccountCode());
+                ratedTransaction.setBillingAccount(billingAccount);
+            }
+            if (dto.getSellerCode() != null) {
+                Seller seller = sellerService.findByCode(dto.getSellerCode());
+                ratedTransaction.setSeller(seller);
+            }
 
-        int rtRounding = appProvider.getRounding();
+            ratedTransaction.setUsageDate(dto.getUsageDate());
+            ratedTransaction.setUnitAmountWithoutTax(dto.getUnitAmountWithoutTax());
+            ratedTransaction.setUnitAmountWithTax(dto.getUnitAmountWithTax());
+            ratedTransaction.setUnitAmountTax(dto.getUnitAmountTax());
+            ratedTransaction.setQuantity(dto.getQuantity());
+            ratedTransaction.setAmountWithoutTax(dto.getAmountWithoutTax());
+            ratedTransaction.setAmountWithTax(dto.getAmountWithTax());
+            ratedTransaction.setAmountTax(dto.getAmountTax());
+            ratedTransaction.setCode(dto.getCode());
+            ratedTransaction.setDescription(dto.getDescription());
+            ratedTransaction.setUnityDescription(dto.getUnityDescription());
+            ratedTransaction.setDoNotTriggerInvoicing(dto.isDoNotTriggerInvoicing());
+            ratedTransaction.setStartDate(dto.getStartDate());
+            ratedTransaction.setEndDate(dto.getEndDate());
+            ratedTransaction.setTaxPercent(dto.getTaxPercent());
+            create(ratedTransaction);
+        }
+
+    }
+
+    /**
+     * Update rated transactions by deleting first and then inserting them again
+     * 
+     * @param rtsUpdate Rated transactions to update
+     */
+    public void updateViaDeleteAndInsert(List<RatedTransaction> rtsUpdate) {
 
         EntityManager em = getEntityManager();
 
-        BillingRun billingRun = rtUpdateSummary.getBillingRunId() != null ? em.getReference(BillingRun.class, rtUpdateSummary.getBillingRunId()) : null;
-        Invoice invoice = em.getReference(Invoice.class, rtUpdateSummary.getInvoiceId());
-        SubCategoryInvoiceAgregate scAggregate = em.getReference(SubCategoryInvoiceAgregate.class, rtUpdateSummary.getInvoiceSubcategoryAggregateId());
-        Tax tax = em.getReference(Tax.class, rtUpdateSummary.getTaxId());
+        long minSplitDelete = 1000000000000000L;
+        long maxSplitDelete = 0;
 
-        long startU = System.currentTimeMillis();
+        long minSplitInsert = 1000000000000000L;
+        long maxSplitInsert = 0;
 
-        List<Long> rtIds = rtUpdateSummary.getRatedTransactionIdsNoTaxChange();
-        if (rtIds != null && !rtIds.isEmpty()) {
+        long startAll = System.currentTimeMillis();
 
-            rtIds.sort(null);
-            SubListCreator<Long> listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, rtIds);
+        // Delete rated transactions first
+        List<Long> rtIds = rtsUpdate.stream().map(rt -> rt.getId()).collect(Collectors.toList());
 
-            /* AKK This is a version of update with plain DB connection
-            Session hibernateSession = getEntityManager().unwrap(Session.class);
+        SubListCreator<Long> subListCreator = new SubListCreator<Long>(10000, rtIds);
 
-            hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+        while (subListCreator.isHasNext()) {
+            long startDeleteSplit = System.currentTimeMillis();
 
-                @Override
-                public void execute(Connection connection) throws SQLException {
+            List<Long> subList = subListCreator.getNextWorkSet();
 
-                    try (PreparedStatement preparedStatement = connection
-                        .prepareStatement("update billing_rated_transaction set billing_run_id=?, invoice_id=?, aggregate_id_f=? where id = ANY(?)")) {
+            em.createNamedQuery("RatedTransaction.massDeleteForUpdate").setParameter("ids", subList).executeUpdate();
 
-                        while (listIterator.isHasNext()) {
+            long endDeleteSplit = System.currentTimeMillis();
 
-                            if (rtUpdateSummary.getBillingRunId() == null) {
-                                preparedStatement.setNull(1, Types.NULL);
+            long timeSplit = endDeleteSplit - startDeleteSplit;
+
+            minSplitDelete = minSplitDelete > timeSplit ? timeSplit : minSplitDelete;
+            maxSplitDelete = maxSplitDelete < timeSplit ? timeSplit : maxSplitDelete;
+
+            log.error("AKK RT delete {}/{} took {}", subList.size(), SPLIT_RT_UPDATE_BY_NR, timeSplit);
+        }
+
+        // Needed so changes are flushed before native query (insert) is performed
+        commit();
+
+        long endDeleteAll = System.currentTimeMillis();
+        long timeDeleteAll = endDeleteAll - startAll;
+
+        long startInsertAll = System.currentTimeMillis();
+
+        SubListCreator<RatedTransaction> rtDataIterator = new SubListCreator<RatedTransaction>(10000, rtsUpdate);
+
+        Session hibernateSession = em.unwrap(Session.class);
+
+        final long[] splitTimes = new long[] { minSplitInsert, maxSplitInsert };
+
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+            @Override
+            public void execute(Connection dbConnection) throws SQLException {
+                try (PreparedStatement preparedStatement = dbConnection.prepareStatement("INSERT INTO billing_rated_transaction("
+                        + " id, version, amount_tax, amount_with_tax, amount_without_tax,  code, description, do_not_trigger_invoicing, parameter_1, parameter_2, "
+                        + " parameter_3, quantity, status, unit_amount_tax, unit_amount_with_tax,  unit_amount_without_tax, unity_description, usage_date, billing_account__id, "
+                        + " billing_run_id, invoice_id, aggregate_id_f, aggregate_id_r, aggregate_id_t, invoice_sub_category_id, priceplan_id, wallet_id, edr_id, adjusted_rated_tx, "
+                        + " order_number, rating_unit_description, parameter_extra, start_date,  end_date, subscription_id, seller_id, charge_instance_id, tax_id, "
+                        + " tax_percent, user_account_id, offer_id, service_instance_id)    VALUES (?, ?, ?, ?, ?,  ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?,  ?, ?, ?, ?,  ?, ?, ?, ?, ?, "
+                        + " ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?,  ?, ?, ?, ?);")) {
+                    while (rtDataIterator.isHasNext()) {
+                        long startInsertSplit = System.currentTimeMillis();
+
+                        List<RatedTransaction> rtSplitDataSet = rtDataIterator.getNextWorkSet();
+                        for (RatedTransaction rt : rtSplitDataSet) {
+
+                            preparedStatement.setLong(1, rt.getId());
+                            preparedStatement.setLong(2, rt.getVersion() + 1);
+                            preparedStatement.setBigDecimal(3, rt.getAmountTax());
+                            preparedStatement.setBigDecimal(4, rt.getAmountWithTax());
+                            preparedStatement.setBigDecimal(5, rt.getAmountWithoutTax());
+                            preparedStatement.setString(6, rt.getCode());
+                            if (rt.getDescription() != null) {
+                                preparedStatement.setString(7, rt.getDescription());
                             } else {
-                                preparedStatement.setLong(1, rtUpdateSummary.getBillingRunId());
+                                preparedStatement.setNull(7, Types.NULL);
                             }
-                            preparedStatement.setLong(2, rtUpdateSummary.getInvoiceId());
-                            preparedStatement.setLong(3, rtUpdateSummary.getInvoiceSubcategoryAggregateId());
-                            preparedStatement.setArray(4, connection.createArrayOf("bigint", listIterator.getNextWorkSet().toArray(new Long[] {})));
+                            preparedStatement.setInt(8, rt.isDoNotTriggerInvoicing() ? 1 : 0);
+                            if (rt.getParameter1() != null) {
+                                preparedStatement.setString(9, rt.getParameter1());
+                            } else {
+                                preparedStatement.setNull(9, Types.NULL);
+                            }
+                            if (rt.getParameter2() != null) {
+                                preparedStatement.setString(10, rt.getParameter2());
+                            } else {
+                                preparedStatement.setNull(10, Types.NULL);
+                            }
+                            if (rt.getParameter3() != null) {
+                                preparedStatement.setString(11, rt.getParameter3());
+                            } else {
+                                preparedStatement.setNull(11, Types.NULL);
+                            }
+                            if (rt.getQuantity() != null) {
+                                preparedStatement.setBigDecimal(12, rt.getQuantity());
+                            } else {
+                                preparedStatement.setNull(12, Types.NULL);
+                            }
+                            preparedStatement.setString(13, rt.getStatus().name());
+                            preparedStatement.setBigDecimal(14, rt.getUnitAmountTax());
+                            preparedStatement.setBigDecimal(15, rt.getUnitAmountWithTax());
+                            preparedStatement.setBigDecimal(16, rt.getUnitAmountWithoutTax());
+                            if (rt.getUnityDescription() != null) {
+                                preparedStatement.setString(17, rt.getUnityDescription());
+                            } else {
+                                preparedStatement.setNull(17, Types.NULL);
+                            }
+                            preparedStatement.setDate(18, new java.sql.Date(rt.getUsageDate().getTime()));
+                            preparedStatement.setLong(19, rt.getBillingAccount().getId());
+                            if (rt.getBillingRun() != null) {
+                                preparedStatement.setLong(20, rt.getBillingRun().getId());
+                            } else {
+                                preparedStatement.setNull(20, Types.NULL);
+                            }
+                            if (rt.getInvoice() != null) {
+                                preparedStatement.setLong(21, rt.getInvoice().getId());
+                            } else {
+                                preparedStatement.setNull(21, Types.NULL);
+                            }
+                            if (rt.getInvoiceAgregateF() != null) {
+                                preparedStatement.setLong(22, rt.getInvoiceAgregateF().getId());
+                            } else {
+                                preparedStatement.setNull(22, Types.NULL);
+                            }
+                            if (rt.getInvoiceAgregateR() != null) {
+                                preparedStatement.setLong(23, rt.getInvoiceAgregateR().getId());
+                            } else {
+                                preparedStatement.setNull(23, Types.NULL);
+                            }
+                            if (rt.getInvoiceAgregateT() != null) {
+                                preparedStatement.setLong(24, rt.getInvoiceAgregateT().getId());
+                            } else {
+                                preparedStatement.setNull(24, Types.NULL);
+                            }
+                            if (rt.getInvoiceSubCategory() != null) {
+                                preparedStatement.setLong(25, rt.getInvoiceSubCategory().getId());
+                            } else {
+                                preparedStatement.setNull(25, Types.NULL);
+                            }
+                            if (rt.getPriceplan() != null) {
+                                preparedStatement.setLong(26, rt.getPriceplan().getId());
+                            } else {
+                                preparedStatement.setNull(26, Types.NULL);
+                            }
+                            if (rt.getWallet() != null) {
+                                preparedStatement.setLong(27, rt.getWallet().getId());
+                            } else {
+                                preparedStatement.setNull(27, Types.NULL);
+                            }
+                            if (rt.getEdr() != null) {
+                                preparedStatement.setLong(28, rt.getEdr().getId());
+                            } else {
+                                preparedStatement.setNull(28, Types.NULL);
+                            }
+                            if (rt.getAdjustedRatedTx() != null) {
+                                preparedStatement.setLong(29, rt.getAdjustedRatedTx().getId());
+                            } else {
+                                preparedStatement.setNull(29, Types.NULL);
+                            }
+                            if (rt.getOrderNumber() != null) {
+                                preparedStatement.setString(30, rt.getOrderNumber());
+                            } else {
+                                preparedStatement.setNull(30, Types.NULL);
+                            }
+                            if (rt.getRatingUnitDescription() != null) {
+                                preparedStatement.setString(31, rt.getRatingUnitDescription());
+                            } else {
+                                preparedStatement.setNull(31, Types.NULL);
+                            }
+                            if (rt.getParameterExtra() != null) {
+                                preparedStatement.setString(32, rt.getParameterExtra());
+                            } else {
+                                preparedStatement.setNull(32, Types.NULL);
+                            }
+                            if (rt.getStartDate() != null) {
+                                preparedStatement.setDate(33, new java.sql.Date(rt.getStartDate().getTime()));
+                            } else {
+                                preparedStatement.setNull(33, Types.NULL);
+                            }
+                            if (rt.getEndDate() != null) {
+                                preparedStatement.setDate(34, new java.sql.Date(rt.getEndDate().getTime()));
+                            } else {
+                                preparedStatement.setNull(34, Types.NULL);
+                            }
+                            if (rt.getSubscription() != null) {
+                                preparedStatement.setLong(35, rt.getSubscription().getId());
+                            } else {
+                                preparedStatement.setNull(35, Types.NULL);
+                            }
+                            preparedStatement.setLong(36, rt.getSeller().getId());
+                            if (rt.getChargeInstance() != null) {
+                                preparedStatement.setLong(37, rt.getChargeInstance().getId());
+                            } else {
+                                preparedStatement.setNull(37, Types.NULL);
+                            }
+                            preparedStatement.setLong(38, rt.getTax().getId());
+                            preparedStatement.setBigDecimal(39, rt.getTaxPercent());
+                            if (rt.getUserAccount() != null) {
+                                preparedStatement.setLong(40, rt.getUserAccount().getId());
+                            } else {
+                                preparedStatement.setNull(40, Types.NULL);
+                            }
+                            if (rt.getOfferTemplate() != null) {
+                                preparedStatement.setLong(41, rt.getOfferTemplate().getId());
+                            } else {
+                                preparedStatement.setNull(41, Types.NULL);
+                            }
+                            if (rt.getServiceInstance() != null) {
+                                preparedStatement.setLong(42, rt.getServiceInstance().getId());
+                            } else {
+                                preparedStatement.setNull(42, Types.NULL);
+                            }
+
                             preparedStatement.addBatch();
-
-                            preparedStatement.executeBatch();
                         }
+                        preparedStatement.executeBatch();
 
-                    } catch (SQLException e) {
-                        log.error("Failed to update RT with invoice data", e);
-                        throw e;
+                        long endInsertSplit = System.currentTimeMillis();
+
+                        long timeSplit = endInsertSplit - startInsertSplit;
+
+                        splitTimes[0] = splitTimes[0] > timeSplit ? timeSplit : splitTimes[0];
+                        splitTimes[1] = splitTimes[1] < timeSplit ? timeSplit : splitTimes[1];
+
+                        log.error("AKK RT insert {}/{} took {}", rtSplitDataSet.size(), SPLIT_RT_UPDATE_BY_NR, timeSplit);
+
                     }
+
+                } catch (SQLException e) {
+                    log.error("Failed to insert RT for update");
+                    throw e;
                 }
-            });
-            
-            */
 
-            // AKK This is a version of update with JPA
-            while (listIterator.isHasNext()) {
-                em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
-                    .setParameter("invoiceAgregateF", scAggregate).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
             }
-            
-            
-            /* AKK This is a version of update with a native query using JPA
-                 
-            while (listIterator.isHasNext()) {            
-                em.createNativeQuery("update billing_rated_transaction set billing_run_id=:billingRunId, invoice_id=:invoiceId, aggregate_id_f=:fAggregateId where id in :ids")
-                    .setParameter("billingRunId", rtUpdateSummary.getBillingRunId()).setParameter("invoiceId", rtUpdateSummary.getInvoiceId())
-                    .setParameter("fAggregateId", rtUpdateSummary.getInvoiceSubcategoryAggregateId()).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
-            }
-            
-            */
-            
-        }
+        });
 
-        rtIds = rtUpdateSummary.getRatedTransactionIdsTaxRecalculated();
-        if (rtIds != null && !rtIds.isEmpty()) {
+        minSplitInsert = splitTimes[0];
+        maxSplitInsert = splitTimes[1];
 
-            rtIds.sort(null);
-            SubListCreator<Long> listIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, rtIds);
-            while (listIterator.isHasNext()) {
-                em.createNamedQuery(massUpdateWithTaxChangeSql).setParameter("billingRun", billingRun).setParameter("invoice", invoice)
-                    .setParameter("invoiceAgregateF", scAggregate).setParameter("tax", tax).setParameter("taxPercent", rtUpdateSummary.getTaxPercent())
-                    .setParameter("taxPercentDecimal", BigDecimal.ONE.add(tax.getPercent().divide(NumberUtils.HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP)))
-                    .setParameter("round", rtRounding).setParameter("ids", listIterator.getNextWorkSet()).executeUpdate();
-            }
-        }
-        long endU = System.currentTimeMillis();
-        log.error("AKK update took {}", endU - startU);
+        long endInsertAll = System.currentTimeMillis();
+        long timeInsertAll = endInsertAll - startInsertAll;
+
+        long endAll = System.currentTimeMillis();
+        long timeAll = endAll - startAll;
+
+        log.error(" AKK update total {} delete total {} insert total {} split delete min/max {}/{} split insert min/max {}/{}", timeAll, timeDeleteAll, timeInsertAll,
+            minSplitDelete, maxSplitDelete, minSplitInsert, maxSplitInsert);
+
     }
 }

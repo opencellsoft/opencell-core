@@ -42,6 +42,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -375,6 +377,21 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     @Column(name = "initial_renewal", columnDefinition = "text")
     private String initialSubscriptionRenewal;
+
+    /**
+     * This method is called implicitly by hibernate, used to enable
+	 * encryption for custom fields of this entity
+     */
+    @PrePersist
+	@PreUpdate
+	public void preUpdate() {
+		if (cfValues != null) {
+			cfValues.setEncrypted(true);
+		}
+		if (cfAccumulatedValues != null) {
+			cfAccumulatedValues.setEncrypted(true);
+		}
+	}
 
     public Date getEndAgreementDate() {
         return endAgreementDate;

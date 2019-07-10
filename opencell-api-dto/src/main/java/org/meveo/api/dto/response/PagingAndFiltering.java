@@ -1,31 +1,30 @@
 package org.meveo.api.dto.response;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-
 /**
  * The Class PagingAndFiltering.
- * 
+ *
  * @author anasseh
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PagingAndFiltering implements Serializable {
-
+    
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4367485228070123385L;
-
+    
     /**
      * Full text search filter. Mutually exclusive with filters attribute. fullTextFilter has priority
      */
     private String fullTextFilter;
-
+    
     /**
      * Search filters (key = Filter key, value = search pattern or value).
-     * 
+     *
      * Filter key can be:
      * <ul>
      * <li>"$FILTER". Value is a filter name</li>
@@ -34,13 +33,13 @@ public class PagingAndFiltering implements Serializable {
      * <li>SQL. Additional sql to apply. Value is either a sql query or an array consisting of sql query and one or more parameters to apply</li>
      * <li>&lt;condition&gt; &lt;fieldname1&gt; &lt;fieldname2&gt; ... &lt;fieldnameN&gt;. Value is a value to apply in condition</li>
      * </ul>
-     * 
+     *
      * A union between different filter items is AND.
-     * 
-     * 
+     *
+     *
      * Condition is optional. Number of fieldnames depend on condition used. If no condition is specified an "equals ignoring case" operation is considered.
-     * 
-     * 
+     *
+     *
      * Following conditions are supported:
      * <ul>
      * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=field.value. Applies to date and number type fields.</li>
@@ -58,23 +57,23 @@ public class PagingAndFiltering implements Serializable {
      * String type fields.</li>
      * <li>ne. Not equal.
      * </ul>
-     * 
+     *
      * Following special meaning values are supported:
      * <ul>
      * <li>IS_NULL. Field value is null</li>
      * <li>IS_NOT_NULL. Field value is not null</li>
      * </ul>
-     * 
-     * 
+     *
+     *
      * To filter by a related entity's field you can either filter by related entity's field or by related entity itself specifying code as value. These two example will do the
      * same in case when quering a customer account: customer.code=aaa OR customer=aaa
-     * 
+     *
      * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList sellers=code1,code2
-     * 
+     *
      * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * Examples:
      * <ul>
      * <li>invoice number equals "1578AU": Filter key: invoiceNumber. Filter value: 1578AU</li>
@@ -89,60 +88,62 @@ public class PagingAndFiltering implements Serializable {
      * <li>any of param1, param2 or param3 fields start with "energy": Filter key: likeCriterias param1 param2 param3. Filter value: *energy</li>
      * <li>any of param1, param2 or param3 fields is "energy": Filter key: likeCriterias param1 param2 param3. Filter value: energy</li>
      * </ul>
-     * 
+     *
      * NOTE: Filters passed as string in Rest GET type method are in the following format: filterKey1:filterValue1|filterKey2:filterValue2
-     * 
+     *
      */
     private Map<String, Object> filters;
-
+    
     /**
      * Data retrieval options/fieldnames separated by a comma.
      */
     private String fields;
-
+    
     /**
      * Pagination - from record number.
      */
     private Integer offset;
-
+    
     /**
      * Pagination - number of items to retrieve.
      */
     private Integer limit = 100;
-
+    
     /**
      * Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      */
     private String sortBy;
-
+    
     /**
      * Sorting - sort order.
      */
     private SortOrder sortOrder;
-
+    
     /**
      * Total number of records. Note - filled on response only.
      */
     private Integer totalNumberOfRecords;
 
+    private int loadReferenceDepth;
+    
     /**
      * The Enum SortOrder.
      */
     public enum SortOrder {
-
+        
         /** The ascending. */
         ASCENDING,
         /** The descending. */
         DESCENDING;
     }
-
+    
     /**
      * Instantiates a new paging and filtering.
      */
     public PagingAndFiltering() {
-
+    
     }
-
+    
     /**
      * Paging and filtering criteria.
      *
@@ -162,10 +163,10 @@ public class PagingAndFiltering implements Serializable {
         this.sortBy = sortBy;
         this.sortOrder = sortOrder;
     }
-
+    
     /**
      * Paging and filtering criteria.
-     * 
+     *
      * @param fullTextFilter Full text filter query
      * @param filters Filtering criteria - a map of field names and values. See PersistenceService.getQuery for more details.
      * @param fields Fields to retrieve
@@ -184,7 +185,7 @@ public class PagingAndFiltering implements Serializable {
         this.sortBy = sortBy;
         this.sortOrder = sortOrder;
     }
-
+    
     /**
      * Sets the filters.
      *
@@ -193,16 +194,16 @@ public class PagingAndFiltering implements Serializable {
     public void setFilters(Map<String, Object> filters) {
         this.filters = filters;
     }
-
+    
     /**
      * Gets the filters.
      *
-     * @return the filters
+     * @return the filtersx
      */
     public Map<String, Object> getFilters() {
         return filters;
     }
-
+    
     /**
      * Gets the full text filter.
      *
@@ -211,7 +212,7 @@ public class PagingAndFiltering implements Serializable {
     public String getFullTextFilter() {
         return fullTextFilter;
     }
-
+    
     /**
      * Gets the fields.
      *
@@ -220,7 +221,7 @@ public class PagingAndFiltering implements Serializable {
     public String getFields() {
         return fields;
     }
-
+    
     /**
      * Sets the fields.
      *
@@ -229,7 +230,7 @@ public class PagingAndFiltering implements Serializable {
     public void setFields(String fields) {
         this.fields = fields;
     }
-
+    
     /**
      * Gets the offset.
      *
@@ -238,7 +239,7 @@ public class PagingAndFiltering implements Serializable {
     public Integer getOffset() {
         return offset;
     }
-
+    
     /**
      * Sets the offset.
      *
@@ -247,7 +248,7 @@ public class PagingAndFiltering implements Serializable {
     public void setOffset(Integer offset) {
         this.offset = offset;
     }
-
+    
     /**
      * Gets the limit.
      *
@@ -256,7 +257,7 @@ public class PagingAndFiltering implements Serializable {
     public Integer getLimit() {
         return limit;
     }
-
+    
     /**
      * Sets the limit.
      *
@@ -265,7 +266,7 @@ public class PagingAndFiltering implements Serializable {
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
-
+    
     /**
      * Gets the sort by.
      *
@@ -274,7 +275,7 @@ public class PagingAndFiltering implements Serializable {
     public String getSortBy() {
         return sortBy;
     }
-
+    
     /**
      * Sets the sort by.
      *
@@ -283,7 +284,7 @@ public class PagingAndFiltering implements Serializable {
     public void setSortBy(String sortBy) {
         this.sortBy = sortBy;
     }
-
+    
     /**
      * Gets the sort order.
      *
@@ -292,7 +293,7 @@ public class PagingAndFiltering implements Serializable {
     public SortOrder getSortOrder() {
         return sortOrder;
     }
-
+    
     /**
      * Sets the sort order.
      *
@@ -301,7 +302,7 @@ public class PagingAndFiltering implements Serializable {
     public void setSortOrder(SortOrder sortOrder) {
         this.sortOrder = sortOrder;
     }
-
+    
     /**
      * Gets the total number of records.
      *
@@ -310,7 +311,7 @@ public class PagingAndFiltering implements Serializable {
     public Integer getTotalNumberOfRecords() {
         return totalNumberOfRecords;
     }
-
+    
     /**
      * Sets the total number of records.
      *
@@ -319,21 +320,21 @@ public class PagingAndFiltering implements Serializable {
     public void setTotalNumberOfRecords(Integer count) {
         this.totalNumberOfRecords = count;
     }
-
+    
     /**
      * Decode string type query to a filter criteria map. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
-     * 
+     *
      * @param query Encoded filter criteria as a string.
      * @return A decoded filter criteria map
      */
     private Map<String, Object> decodeQuery(String query) {
-
+        
         if (query == null) {
             return null;
         }
-
+        
         Map<String, Object> filters = new HashMap<String, Object>();
-
+        
         String[] splitByItem = query.split("\\|");
         for (String filterItem : splitByItem) {
             String[] filterItems = filterItem.split(":");
@@ -341,13 +342,13 @@ public class PagingAndFiltering implements Serializable {
                 filters.put(filterItems[0], filterItems[1]);
             }
         }
-
+        
         return filters;
     }
-
+    
     /**
      * Check if a given field retrieval option is enabled.
-     * 
+     *
      * @param fieldOption field option
      * @return true/false.
      */
@@ -358,7 +359,7 @@ public class PagingAndFiltering implements Serializable {
             return fields.contains(fieldOption);
         }
     }
-
+    
     /**
      * Adds the filter.
      *
@@ -369,7 +370,15 @@ public class PagingAndFiltering implements Serializable {
         if (filters == null) {
             filters = new HashMap<>();
         }
-
+        
         filters.put(key, value);
+    }
+
+    public int getLoadReferenceDepth() {
+        return loadReferenceDepth;
+    }
+
+    public void setLoadReferenceDepth(int loadReferenceDepth) {
+        this.loadReferenceDepth = loadReferenceDepth;
     }
 }

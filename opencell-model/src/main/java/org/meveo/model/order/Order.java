@@ -35,9 +35,12 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
@@ -67,7 +70,7 @@ import org.meveo.model.shared.Address;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_order_seq"), })
 @NamedQueries({ @NamedQuery(name = "Order.listByBillingRun", query = "select o from Order o where o.billingRun.id=:billingRunId order by o.id") })
-public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntity {
+public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntity, ISearchable {
 
     private static final long serialVersionUID = -9060067698650286828L;
 
@@ -154,6 +157,7 @@ public class Order extends BusinessCFEntity implements IBillableEntity, IWFEntit
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20, nullable = false)
     @NotNull
+    @AuditTarget(type = AuditChangeTypeEnum.STATUS, history = true, notif = true)
     private OrderStatusEnum status = OrderStatusEnum.IN_CREATION;
 
     /**

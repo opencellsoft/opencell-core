@@ -275,7 +275,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (terminationReason == null) {
             throw new ValidationException("Termination reason not provided", "subscription.error.noTerminationReason");
 
-        } else if (DateUtils.setDateToEndOfDay(terminationDate).before(DateUtils.setDateToEndOfDay(subscription.getSubscriptionDate()))) {
+        } else if (terminationDate.before(subscription.getSubscriptionDate())) {
             throw new ValidationException("Termination date can not be before the subscription date", "subscription.error.terminationDateBeforeSubscriptionDate");
         }
 

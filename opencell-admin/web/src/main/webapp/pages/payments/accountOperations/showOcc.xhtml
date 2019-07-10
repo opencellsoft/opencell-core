@@ -23,9 +23,9 @@
 				<p:tab title="#{messages['customer.tab.information']}">
             <hftl:formField label="#{messages['accountOperation.type']}" field="type" edit="false"/>
   			<hftl:formField label="#{messages['accountOperation.customerAccount']}" field="customerAccount" valueLabelField="code" edit="false" />
-	       	<hftl:formField label="#{messages['accountOperation.occCode']}" field="occCode" edit="false" />
+	       	<hftl:formField label="#{messages['accountOperation.occCode']}" field="code" edit="false" />
 	      	<hftl:formField label="#{messages['accountOperation.accountCode']}" field="accountCode" edit="false" />			       
-	      	<hftl:formField label="#{messages['accountOperation.occDescription']}" field="occDescription" edit="false" useConverter="false" size="45" />         						      
+	      	<hftl:formField label="#{messages['accountOperation.occDescription']}" field="description" edit="false" useConverter="false" size="45" />         						      
   			<hftl:formField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" edit="false" />
   			<hftl:formField label="#{messages['accountOperation.reference']}" field="reference" edit="false" />
   			<hftl:formField label="#{messages['accountOperation.amount']}" field="amount" converter="bigDecimal4DigitsConverter" edit="false" />
@@ -36,6 +36,7 @@
    			<hftl:formField label="#{messages['accountOperation.excludedFromDunning']}" field="excludedFromDunning" edit="false" isMessage="true"/>
 			</p:tab>
 				<hftl:customFields backingBean="#{accountOperationBean}" messagesId=":showOccFormId:messages" />
+				<hftl:displayGenericWFsHistory backingBean="#{accountOperationBean}" />
 			</p:tabView>
 
 		</hftl:formPanel>  

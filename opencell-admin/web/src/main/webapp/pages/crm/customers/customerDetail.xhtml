@@ -52,8 +52,8 @@
 							<hftl:formField label="#{messages['customer.externalRef2']}"
 								field="externalRef2" />							
 
-							<hftl:formField newLine="true" label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" required="false"
-                                        listBean="#{titleBean}" listenerUpdate=":formCustomer:tabView:userNamePanel" styleClass="clearLeft"/>
+							<hftl:formField newLine="true" label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" valueLabelField2="descriptionNotNull"
+							 	required="false" listBean="#{titleBean}" listenerUpdate=":formCustomer:tabView:userNamePanel" styleClass="clearLeft"/>
 
 									<h:panelGroup id="userNamePanel" layout="block">
 											<hftl:formField label="#{messages[(customerBean.entity.name.title != null and customerBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"

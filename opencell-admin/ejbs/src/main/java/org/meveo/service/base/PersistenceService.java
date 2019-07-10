@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -29,12 +29,15 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 import javax.annotation.PostConstruct;
@@ -53,6 +56,7 @@ import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
@@ -79,6 +83,8 @@ import org.meveo.model.UniqueEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
@@ -89,15 +95,16 @@ import org.meveo.service.index.ElasticClient;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
- * 
+ *
  * @author Edward P. Legaspi
  * @author Andrius Karpavicius
  * @author Wassim Drira
  * @author Said Ramli
  * @lastModifiedVersion 5.1
- * 
+ *
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
+    private static final String CANNOT_REMOVE_ENTITY_CUSTOM_TABLE_REFERENCE_ERROR_MESSAGE = "Cannot remove entity: CustomTable reference is present";
     protected Class<E> entityClass;
 
     /**
@@ -208,7 +215,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     /**
      * Update entity in DB without firing any notification events nor publishing data to Elastic Search
-     * 
+     *
      * @param entity Entity to update in DB
      * @return Updated entity
      * @throws BusinessException General business exception
@@ -355,6 +362,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public void remove(E entity) throws BusinessException {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
+        checkEntityDoesNotcontainReferenceToCustomTable(entity);
         entity = retrieveIfNotManaged(entity);
         if (entity != null) {
             getEntityManager().remove(entity);
@@ -387,6 +395,28 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), entity.getId());
         }
     }
+
+    void checkEntityDoesNotcontainReferenceToCustomTable(E entity) {
+        if(entity instanceof ICustomFieldEntity) {
+            ICustomFieldEntity entityTockeck = (ICustomFieldEntity) entity;
+            Map<String, List<CustomFieldValue>> cfValues = Optional.ofNullable(entityTockeck.getCfValues()).map(CustomFieldValues::getValuesByCode).orElse(new HashMap<>());
+            boolean isCustomTable = !cfValues.isEmpty() && cfValues.entrySet().stream().flatMap(entry -> entry.getValue().stream().map(CustomFieldValue::getAllEntities).filter(l -> !l.isEmpty())).anyMatch(matchesCustomEntity());
+            if (isCustomTable) {
+                throw new MeveoApiException(CANNOT_REMOVE_ENTITY_CUSTOM_TABLE_REFERENCE_ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private Predicate<List<EntityReferenceWrapper>> matchesCustomEntity() {
+        return e ->  e.stream().anyMatch(c -> {
+            try {
+                return BusinessEntity.class.isAssignableFrom(Class.forName(c.getClassname()));
+            } catch (ClassNotFoundException ex) {
+                return false;
+            }
+        });
+    }
+
 
     /**
      * @see org.meveo.service.base.local.IPersistenceService#remove(java.lang.Long)
@@ -526,7 +556,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     /**
      * List entities, optionally filtering by its enable/disable status
-     * 
+     *
      * @param active True to retrieve enabled entities only, False to retrieve disabled entities only. Do not provide any value to retrieve all entities.
      * @return A list of entities
      */
@@ -548,7 +578,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     /**
      * Find entities by code - wild match.
-     * 
+     *
      * @param wildcode code to match
      * @return A list of entities matching code
      */
@@ -690,7 +720,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     /**
      * Retrieve an entity if it is not managed by EM
-     * 
+     *
      * @param entity Entity to retrieve
      * @return New instance of an entity
      */
@@ -745,9 +775,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     /**
      * Creates query to filter entities according data provided in pagination configuration.
-     * 
+     *
      * Search filters (key = Filter key, value = search pattern or value).
-     * 
+     *
      * Filter key can be:
      * <ul>
      * <li>"$FILTER". Value is a filter name</li>
@@ -756,13 +786,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>SQL. Additional sql to apply. Value is either a sql query or an array consisting of sql query and one or more parameters to apply</li>
      * <li>&lt;condition&gt; &lt;fieldname1&gt; &lt;fieldname2&gt; ... &lt;fieldnameN&gt;. Value is a value to apply in condition</li>
      * </ul>
-     * 
+     *
      * A union between different filter items is AND.
-     * 
-     * 
+     *
+     *
      * Condition is optional. Number of fieldnames depend on condition used. If no condition is specified an "equals ignoring case" operation is considered.
-     * 
-     * 
+     *
+     *
      * Following conditions are supported:
      * <ul>
      * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=fiel.value. Applies to date and number type fields.</li>
@@ -781,24 +811,24 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>wildcardOrIgnoreCase. Similar to wildcardOr but ignoring case String type fields.</li>
      * <li>ne. Not equal.
      * </ul>
-     * 
+     *
      * Following special meaning values are supported:
      * <ul>
      * <li>IS_NULL. Field value is null</li>
      * <li>IS_NOT_NULL. Field value is not null</li>
      * </ul>
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * To filter by a related entity's field you can either filter by related entity's field or by related entity itself specifying code as value. These two example will do the
      * same in case when quering a customer account: customer.code=aaa OR customer=aaa
-     * 
+     *
      * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList sellers=code1,code2
-     * 
-     * 
+     *
+     *
      * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists
-     * 
-     * 
+     *
+     *
      * Examples:
      * <ul>
      * <li>invoice number equals "1578AU": Filter key: invoiceNumber. Filter value: 1578AU</li>
@@ -813,8 +843,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>any of param1, param2 or param3 fields start with "energy": Filter key: likeCriterias param1 param2 param3. Filter value: *energy</li>
      * <li>any of param1, param2 or param3 fields is "energy": Filter key: likeCriterias param1 param2 param3. Filter value: energy</li>
      * </ul>
-     * 
-     * 
+     *
+     *
      * @param config Data filtering, sorting and pagination criteria
      * @return query to filter entities according pagination configuration data.
      */
@@ -1127,7 +1157,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     /**
      * add a creterion to check if all filterValue (Array) elements are elements of the fieldName (Array)
-     * 
+     *
      * @param queryBuilder
      * @param filterValue
      * @param fieldName
@@ -1143,7 +1173,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     /**
      * Update last modified information (created/updated date and username)
-     * 
+     *
      * @param entity Entity to update
      */
     public void updateAudit(E entity) {
@@ -1153,7 +1183,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
-     * 
+     *
      * @param query query to execute
      * @param params map of parameter
      * @return query result.
@@ -1175,7 +1205,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     /**
      * Execute a native select query
-     * 
+     *
      * @param query Sql query to execute
      * @param params Parameters to pass
      * @return A map of values retrieved
@@ -1275,7 +1305,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     /**
      * Find entities that reference a given class and ID. Used when deleting entities to determine what FK constraints are preventing to remove a given entity
-     * 
+     *
      * @param entityClass Entity class to reference
      * @param id Entity ID
      * @return A concatenated list of entities (humanized classnames and their codes) E.g. Customer Account: first ca, second ca, third ca; Customer: first customer, second
@@ -1331,7 +1361,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     /**
      * Get a list of entities from a named query
-     * 
+     *
      * @param queryName Named query name
      * @param parameters A list of parameters in a form or parameter name, value, parameter name, value,..
      * @return A list of entities

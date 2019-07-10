@@ -16,10 +16,10 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -123,35 +123,22 @@ public class InvoicingAsync {
                 log.error("Error for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
             }
         }
-        
-        
+
         // This is a version of doing invoicing with 50 entities at a time
         /*
-        int invoiceCreationBatchSize = ParamBean.getInstance().getPropertyAsInteger("invoicing.invoiceCreationBatchSize", 50);
-
-        SubListCreator<? extends IBillableEntity> listIterator = new SubListCreator<>(invoiceCreationBatchSize, entities);
-        while (listIterator.isHasNext()) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
-                break;
-            }
-            List<? extends IBillableEntity> entitiesInBatch = listIterator.getNextWorkSet();
-
-            try {
-                invoicingNewTransaction.createAgregatesAndInvoiceInBatch(entitiesInBatch, billingRun, jobInstanceId, instantiateMinRts);
-            } catch (Exception e) {
-
-                log.error("Failed to create invoices in batch. Will switch to invoicing to one by one", e);
-
-                for (IBillableEntity entityToInvoice : entitiesInBatch) {
-                    try {
-                        invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null, null, instantiateMinRts, false, false);
-                    } catch (Exception e1) {
-                        log.error("Error for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
-                    }
-                }
-            }
-        }
-        */
+         * int invoiceCreationBatchSize = ParamBean.getInstance().getPropertyAsInteger("invoicing.invoiceCreationBatchSize", 50);
+         * 
+         * SubListCreator<? extends IBillableEntity> listIterator = new SubListCreator<>(invoiceCreationBatchSize, entities); while (listIterator.isHasNext()) { if (jobInstanceId
+         * != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) { break; } List<? extends IBillableEntity> entitiesInBatch = listIterator.getNextWorkSet();
+         * 
+         * try { invoicingNewTransaction.createAgregatesAndInvoiceInBatch(entitiesInBatch, billingRun, jobInstanceId, instantiateMinRts); } catch (Exception e) {
+         * 
+         * log.error("Failed to create invoices in batch. Will switch to invoicing to one by one", e);
+         * 
+         * for (IBillableEntity entityToInvoice : entitiesInBatch) { try { invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null,
+         * null, instantiateMinRts, false, false); } catch (Exception e1) { log.error("Error for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(),
+         * e1); } } } }
+         */
 
         return new AsyncResult<String>("OK");
     }
@@ -170,26 +157,21 @@ public class InvoicingAsync {
     public void createAgregatesAndInvoiceInBatch(List<? extends IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, boolean instantiateMinRts)
             throws BusinessException {
 
-        List<RTUpdateSummary> rtsUpdateSummary = new ArrayList<>();
+        List<RatedTransaction> rtsUpdateInBatch = new ArrayList<>();
 //        int i = 0;
         for (IBillableEntity entity : entities) {
 //            i++;
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) { // && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0
                 break;
             }
-            invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, instantiateMinRts, false, false, rtsUpdateSummary);
+            invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, instantiateMinRts, false, false, rtsUpdateInBatch);
         }
 
         long start = System.currentTimeMillis();
         invoiceService.commit();
         log.error("AKK invoice commit took {}", System.currentTimeMillis() - start);
 
-        for (RTUpdateSummary rtUpdateSummary : rtsUpdateSummary) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
-                break;
-            }
-            ratedTransactionService.updateRTsWithInvoiceInfo(rtUpdateSummary);
-        }
+        ratedTransactionService.updateViaDeleteAndInsert(rtsUpdateInBatch);
     }
 
     /**

@@ -237,7 +237,7 @@ public class TimerEntity extends EnableBusinessEntity {
 
         TimerEntity other = (TimerEntity) obj;
 
-        if (this.getId() == other.getId()) {
+        if (id != null && id.equals(other.getId()) ) {
             return true;
         }
 

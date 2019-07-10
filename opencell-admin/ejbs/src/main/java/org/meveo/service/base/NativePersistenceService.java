@@ -50,6 +50,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IdentifiableEnum;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.util.MeveoParamBean;
@@ -952,6 +953,9 @@ public class NativePersistenceService extends BaseService {
                 } else {
                     return value.toString();
                 }
+
+            }else if(targetClass == EntityReferenceWrapper.class){
+                return Long.parseLong(value.toString());
 
             } else if (targetClass == Boolean.class || (targetClass.isPrimitive() && targetClass.getName().equals("boolean"))) {
                 if (booleanVal != null) {

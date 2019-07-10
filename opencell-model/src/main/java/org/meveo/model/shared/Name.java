@@ -21,11 +21,14 @@ package org.meveo.model.shared;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
+
+import org.meveo.commons.encryption.PersonnalDataEncryptor;
 
 /**
  * Name
@@ -48,15 +51,17 @@ public class Name implements Serializable, Cloneable {
     /**
      * First name or company name
      */
-    @Column(name = "firstname", length = 50)
-    @Size(max = 50)
+    @Convert(converter=PersonnalDataEncryptor.class)
+    @Column(name = "firstname", length = 100)
+    @Size(max = 100)
     protected String firstName;
 
     /**
      * Last name
      */
-    @Column(name = "lastname", length = 50)
-    @Size(max = 50)
+    @Convert(converter=PersonnalDataEncryptor.class)
+    @Column(name = "lastname", length = 100)
+    @Size(max = 100)
     protected String lastName;
 
     public Name() {

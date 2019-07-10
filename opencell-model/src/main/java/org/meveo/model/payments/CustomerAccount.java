@@ -22,9 +22,9 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,15 +35,16 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
@@ -63,7 +64,7 @@ import org.meveo.model.intcrm.AddressBook;
 
 /**
  * Customer Account
- * 
+ *
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -216,6 +217,21 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     @Transient
     private Map<String, List<PaymentMethod>> auditedMethodPayments;
+
+    /**
+     * This method is called implicitly by hibernate, used to enable
+	 * encryption for custom fields of this entity
+     */
+    @PrePersist
+	@PreUpdate
+	public void preUpdate() {
+		if (cfValues != null) {
+			cfValues.setEncrypted(true);
+		}
+		if (cfAccumulatedValues != null) {
+			cfAccumulatedValues.setEncrypted(true);
+		}
+	}
 
     public CustomerAccount() {
         accountType = ACCOUNT_TYPE;
@@ -409,7 +425,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     /**
      * Get a payment method marked as preferred
-     * 
+     *
      * @return Payment method marked as preferred
      */
     public PaymentMethod getPreferredPaymentMethod() {
@@ -439,7 +455,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     /**
      * Get a list of card type payment methods
-     * 
+     *
      * @param noTokenOnly Retrieve only those that don't have a token
      * @return A list of card type payment methods
      */
@@ -500,7 +516,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     /**
      * Mark currently valid card payment as preferred
-     * 
+     *
      * @return A currently valid card payment
      */
     public PaymentMethod markCurrentlyValidCardPaymentAsPreferred() {
@@ -531,7 +547,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
     /**
      * Ensure that one and only one payment method is marked as preferred. If currently preferred payment method is of type card, but expired, advance to a currently valid card
      * payment method if possible. If not possible - leave as it is. If no preferred payment method was found - mark the first payment method as preferred.
-     * 
+     *
      * @return A preferred payment method
      */
 
@@ -581,7 +597,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     /**
      * Check if no more valid Card paymentMethod.
-     * 
+     *
      * @return true if no more valid card.
      */
     public boolean isNoMoreValidCard() {

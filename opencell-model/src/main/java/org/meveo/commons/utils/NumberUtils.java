@@ -115,6 +115,15 @@ public class NumberUtils {
     }
 
     /**
+     * Get BigDecimal as a string
+     * @param bigDecimal
+     * @return A null-safe Plain String value of the bigDecimal
+     */
+    public static String toPlainString(BigDecimal bigDecimal) {
+        return bigDecimal != null ? bigDecimal.toPlainString() : BigDecimal.ZERO.toPlainString();
+    }
+
+    /**
      * Compute derived amounts amountWithoutTax/amountWithTax/amountTax. If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same (which
      * one, depending on isEnterprise value)
      * 

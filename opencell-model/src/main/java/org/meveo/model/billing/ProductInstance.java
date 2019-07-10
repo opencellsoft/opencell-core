@@ -157,9 +157,7 @@ public class ProductInstance extends BusinessCFEntity {
             this.userAccount = subscription.getUserAccount();
             this.seller = subscription.getSeller();
         }
-        if (subscription != null && subscription.getSeller() != null) {
-            this.seller = subscription.getSeller();
-        } else {
+        if(this.seller == null) {
             this.seller = this.userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         }
     }

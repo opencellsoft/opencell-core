@@ -47,7 +47,8 @@ import org.omnifaces.cdi.Param;
  * 
  * @author Edward P. Legaspi
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  * 
  */
 @Named
@@ -206,8 +207,8 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
         entity = new OtherCreditAndCharge();
         entity.setCustomerAccount(customerAccount);
         if (occ != null) {
-            entity.setOccCode(occ.getCode());
-            entity.setOccDescription(occ.getDescription());
+            entity.setCode(occ.getCode());
+            entity.setDescription(occ.getDescription());
             entity.setAccountingCode(occ.getAccountingCode());
             entity.setTransactionCategory(occ.getOccCategory());
             entity.setAccountCodeClientSide(occ.getAccountCodeClientSide());
