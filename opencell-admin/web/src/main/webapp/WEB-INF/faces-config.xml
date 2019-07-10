@@ -442,7 +442,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<to-view-id>/pages/admin/customEntities/customizedEntityDetail.xhtml
 		</to-view-id>
 		<redirect include-view-params="true" />
-	</navigation-case>    
+	</navigation-case>
     <navigation-case>
         <from-outcome>customTables</from-outcome>
         <to-view-id>/pages/admin/customEntities/customTables.xhtml
@@ -2137,13 +2137,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		</to-view-id>
 		<redirect include-view-params="true" />
 	</navigation-case>
-	<navigation-case>
-		<from-outcome>accountingWritingDetail</from-outcome>
-		<to-view-id>/pages/finance/accountingWriting/accountingWritingDetail.xhtml
-		</to-view-id>
-		<redirect include-view-params="true" />
-	</navigation-case>
-
 
 	<navigation-case>
 		<from-outcome>indexing</from-outcome>
@@ -2378,7 +2371,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<to-view-id>/pages/billing/accountingCodes/accountingCodeDetail.xhtml</to-view-id>
 		<redirect />
 	</navigation-case>
-	
+
 	<navigation-case>
 		<from-outcome>generalLedgers</from-outcome>
 		<to-view-id>/pages/billing/generalLedgers/generalLedgers.xhtml</to-view-id>
@@ -2389,7 +2382,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<to-view-id>/pages/billing/generalLedgers/generalLedgersDetail.xhtml</to-view-id>
 		<redirect />
 	</navigation-case>
-	
+
 	<!-- IntCRM -->
 	
 	<navigation-case>
