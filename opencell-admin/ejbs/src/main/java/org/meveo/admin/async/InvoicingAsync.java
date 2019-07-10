@@ -25,7 +25,6 @@ import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
-import org.meveo.service.billing.impl.RTUpdateSummary;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
