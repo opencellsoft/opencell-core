@@ -1214,6 +1214,7 @@
     <changeSet id="#4371_20190620_5" author="AbdellatifBARI" dbms="postgresql">
         <sql>CREATE INDEX flat_file_code_index ON ${db.schema.adapted} flat_file(lower(code))</sql>
     </changeSet>
+
     <changeSet id="#4160_20190105 - Accounting Writing" author="MounirBOUKAYOUA">
         <createTable tableName="ar_accounting_writing">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -1266,5 +1267,17 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}ar_accounting_writing_seq values(1)</sql>
     </changeSet>
-
+   
+    <changeSet id="#4337_20190710" author="MohammedELAZZOUZI">
+    	<addColumn tableName="ar_account_operation">
+        	<column name="invoice_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="ar_account_operation" constraintName="fk_billing_invoice" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+    	<sql>
+            UPDATE ${db.schema.adapted}ar_account_operation AO SET recorded_invoice_id=(SELECT id FROM ${db.schema.adapted}billing_invoice BI WHERE BI.invoice_number=AO.reference)
+            WHERE AO.transaction_type='I'
+        </sql>   
+    </changeSet>
+    
 </databaseChangeLog>

@@ -68,7 +68,6 @@ public class FlatFile extends BusinessEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_format_id")
-    @NotNull
     private FileFormat fileFormat;
 
     /**
