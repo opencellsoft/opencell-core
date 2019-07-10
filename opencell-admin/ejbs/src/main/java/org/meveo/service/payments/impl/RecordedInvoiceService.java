@@ -136,8 +136,8 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      * @return true if recored invoice exist
      */
     public boolean isRecordedInvoiceExist(String reference, String invoiceType) {
-        List<RecordedInvoice> recordedInvoice = getRecordedInvoice(reference,invoiceType);
-        if(recordedInvoice==null || recordedInvoice.isEmpty()) {
+        RecordedInvoice recordedInvoice = getRecordedInvoice(reference,invoiceType);
+        if(recordedInvoice==null) {
         	return false;
         }
         return true;
@@ -148,22 +148,32 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      * @param invoiceType invoice's type.
      * @return instance of RecoredInvoice.
      */
-    public List<RecordedInvoice> getRecordedInvoice(String invoiceNumber, String invoiceTypeCode){
-        List<RecordedInvoice> recordedInvoices = null;
+    public RecordedInvoice getRecordedInvoice(String invoiceNumber, String invoiceTypeCode){
+        RecordedInvoice recordedInvoice = null;
         try {
-        	boolean withType = invoiceTypeCode!=null&&!invoiceTypeCode.isEmpty();
-			String invoiceTypeQuery=withType?" and invoiceTypeCode=:invoiceTypeCode":"";
-            String qlString = "from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference " +invoiceTypeQuery;
-			Query query = getEntityManager().createQuery(qlString).setParameter("reference", invoiceNumber);
-			if(withType) {
-				query.setParameter("invoiceTypeQuery", invoiceTypeQuery);
-			}
-			recordedInvoices = (List<RecordedInvoice>) query.getResultList();
+            String qlString = "from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference  and invoiceTypeCode=:invoiceTypeCode";
+			Query query = getEntityManager().createQuery(qlString).setParameter("reference", invoiceNumber).setParameter("invoiceTypeCode", invoiceTypeCode);
+			recordedInvoice = (RecordedInvoice) query.getSingleResult();
+        } catch (Exception e) {
+        	log.warn("exception trying to get recordedInvoice for reference "+invoiceNumber+": "+e.getMessage());
+        }
+        return recordedInvoice;
+    }
+    
+    /**
+     * @param invoiceNumber invoice's reference.
+     * @return list of RecoredInvoice.
+     */
+	public List<RecordedInvoice> getRecordedInvoice(String invoiceNumber) {
+    	List<RecordedInvoice> recordedInvoices = null;
+        try {
+            String qlString = "from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference";
+            recordedInvoices = (List<RecordedInvoice>)getEntityManager().createQuery(qlString).setParameter("reference", invoiceNumber).getResultList();
         } catch (Exception e) {
         	log.warn("exception trying to get recordedInvoice for reference "+invoiceNumber+": "+e.getMessage());
         }
         return recordedInvoices;
-    }
+	}
 
     /**
      * @param customerAccount customer account

@@ -31,9 +31,11 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.dunning.DunningDocument;
 
 @Entity
@@ -68,9 +70,11 @@ public class RecordedInvoice extends AccountOperation {
     private DunningDocument dunningDocument;
     
     /**
-     * Associated invoice type code
+     * if an invoice becomes unpaid then, it's associated with a dunning doc
      */
-    private String invoiceTypeCode;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recorded_invoice_id")
+    private Invoice invoice;
 
     public Date getProductionDate() {
         return productionDate;
@@ -143,16 +147,16 @@ public class RecordedInvoice extends AccountOperation {
     /**
      * @return invoiceTypeCode
      */
-	public String getInvoiceTypeCode() {
-		return invoiceTypeCode;
+	public Invoice getInvoice() {
+		return invoice;
 	}
 	
 	/**
     *
     * @param invoiceTypeCode
     */
-	public void setInvoiceTypeCode(String invoiceTypeCode) {
-		this.invoiceTypeCode = invoiceTypeCode;
+	public void setInvoice(Invoice invoice) {
+		this.invoice = invoice;
 	}
 
 
