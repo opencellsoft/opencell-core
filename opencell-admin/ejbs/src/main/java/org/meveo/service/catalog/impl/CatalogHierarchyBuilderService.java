@@ -450,10 +450,26 @@ public class CatalogHierarchyBuilderService {
 
     }
     private void duplicateCharges(ServiceTemplate entity) {
-        entity.getServiceRecurringCharges().forEach(sctRecurring -> linkAnExistingChargeToNewServiceTemplate(entity, sctRecurring));
-        entity.getServiceSubscriptionCharges().forEach(sctSubscription -> linkAnExistingChargeToNewServiceTemplate(entity, sctSubscription));
-        entity.getServiceTerminationCharges().forEach(sctTermination -> linkAnExistingChargeToNewServiceTemplate(entity, sctTermination));
-        entity.getServiceUsageCharges().forEach(sctUsageCharge -> linkAnExistingChargeToNewServiceTemplate(entity, sctUsageCharge));
+        entity.setServiceRecurringCharges(new ArrayList<>(entity.getServiceRecurringCharges()));
+        entity.getServiceRecurringCharges().forEach(sctRecurring -> {
+            serviceChargeTemplateRecurringService.detach(sctRecurring);
+            linkAnExistingChargeToNewServiceTemplate(entity, sctRecurring);
+        });
+        entity.setServiceSubscriptionCharges(new ArrayList<>(entity.getServiceSubscriptionCharges()));
+        entity.getServiceSubscriptionCharges().forEach(sctSubscription -> {
+            serviceChargeTemplateSubscriptionService.detach(sctSubscription);
+            linkAnExistingChargeToNewServiceTemplate(entity, sctSubscription);
+        });
+        entity.setServiceTerminationCharges(new ArrayList<>(entity.getServiceTerminationCharges()));
+        entity.getServiceTerminationCharges().forEach(sctTermination -> {
+            serviceChargeTemplateTerminationService.detach(sctTermination);
+            linkAnExistingChargeToNewServiceTemplate(entity, sctTermination);
+        });
+        entity.setServiceUsageCharges(new ArrayList<>(entity.getServiceUsageCharges()));
+        entity.getServiceUsageCharges().forEach(sctUsageCharge -> {
+            serviceChargeTemplateUsageService.detach(sctUsageCharge);
+            linkAnExistingChargeToNewServiceTemplate(entity, sctUsageCharge);
+        });
     }
 
     private void linkAnExistingChargeToNewServiceTemplate(ServiceTemplate entity, ServiceChargeTemplate termination) {
@@ -533,18 +549,18 @@ public class CatalogHierarchyBuilderService {
         }
     }
 
-	private void duplicateAndSetImgPath(ServiceTemplate serviceTemplate, ServiceTemplate newServiceTemplate, String cfgImgPath) {
-		try {
-		    ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
-		     
+    private void duplicateAndSetImgPath(ServiceTemplate serviceTemplate, ServiceTemplate newServiceTemplate, String cfgImgPath) {
+        try {
+            ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
+             
             final String sourceImgPath = isNotBlank(cfgImgPath) ? cfgImgPath : serviceTemplate.getImagePath();
-		    String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, sourceImgPath);
-		    
-		    newServiceTemplate.setImagePath(newImagePath);
-		} catch (IOException e1) {
-		    log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());
-		}
-	}
+            String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, sourceImgPath);
+            
+            newServiceTemplate.setImagePath(newImagePath);
+        } catch (IOException e1) {
+            log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());
+        }
+    }
 
     private void duplicatePrices(ServiceTemplate serviceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory) throws BusinessException {
 

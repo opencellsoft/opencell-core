@@ -321,8 +321,6 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
                         stSource.getServiceSubscriptionCharges().size();
                         stSource.getServiceTerminationCharges().size();
                         stSource.getServiceUsageCharges().size();
-                        serviceTemplateService.detach(stSource);
-                        stSource.setId(null);
                         tempOfferServiceTemplate = new OfferServiceTemplate();
                         tempOfferServiceTemplate.setMandatory(serviceCodeDto.isMandatory());
                         tempOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
@@ -385,8 +383,11 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
                     log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
                 }
             }
-
-            serviceTemplate.setId(null);
+            serviceTemplate.getServiceRecurringCharges().size();
+            serviceTemplate.getServiceSubscriptionCharges().size();
+            serviceTemplate.getServiceTerminationCharges().size();
+            serviceTemplate.getServiceUsageCharges().size();
+            serviceTemplateService.detach(serviceTemplate);
             OfferServiceTemplate newOfferServiceTemplate = catalogHierarchyBuilderService.duplicateServiceWithoutDuplicatingChargeTemplates(offerServiceTemplate, serviceTemplate, serviceConfigurationDto, prefix);
             newOfferServiceTemplates.add(newOfferServiceTemplate);
 
@@ -439,7 +440,6 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
                     .filter(meveoModuleItem -> meveoModuleItem.getItemClass().equals(BusinessServiceModel.class.getName()))
                     .map(meveoModuleItem -> meveoModuleItem.getItemCode())
                     .collect(Collectors.toList()));
-            
             if(businessServiceModels == null){
                 businessServiceModels = new ArrayList<>();
             }
