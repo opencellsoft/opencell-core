@@ -70,7 +70,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
      * @return A list of entities matching code
      */
     public List<P> findByCodes(List<String> codes) {
-        if (codes == null && codes.isEmpty()) {
+        if (codes == null || codes.isEmpty()) {
             return null;
         }
         codes.forEach(s -> s.toUpperCase());
