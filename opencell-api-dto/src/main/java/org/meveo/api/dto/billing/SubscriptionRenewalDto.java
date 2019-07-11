@@ -9,7 +9,6 @@ import org.meveo.api.dto.CalendarDto;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
-import org.meveo.model.catalog.Calendar;
 
 /**
  * The Class SubscriptionRenewalDto.
@@ -81,10 +80,14 @@ public class SubscriptionRenewalDto implements Serializable {
         initialTermType = renewalInfo.getInitialTermType();
         initialyActiveFor = renewalInfo.getInitialyActiveFor();
         initialyActiveForUnit = renewalInfo.getInitialyActiveForUnit();
-        calendarInitialyActiveFor = new CalendarDto(renewalInfo.getCalendarInitialyActiveFor());
+        if(renewalInfo.getCalendarInitialyActiveFor() != null) {
+            calendarInitialyActiveFor = new CalendarDto(renewalInfo.getCalendarInitialyActiveFor());
+        }
         renewFor = renewalInfo.getRenewFor();
         renewForUnit = renewalInfo.getRenewForUnit();
-        calendarRenewFor = new CalendarDto(renewalInfo.getCalendarRenewFor());
+        if(renewalInfo.getCalendarRenewFor() != null) {
+            calendarRenewFor = new CalendarDto(renewalInfo.getCalendarRenewFor());
+        }
         if (renewalInfo.getTerminationReason() != null) {
             terminationReasonCode = renewalInfo.getTerminationReason().getCode();
         }
