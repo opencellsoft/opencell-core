@@ -1267,7 +1267,7 @@
         <sql>insert into ${db.schema.adapted}ar_accounting_writing_seq values(1)</sql>
     </changeSet>
 
-    <changeSet id="#4326_20190709" author="AndriusKarpavicius"> 
+    <changeSet id="#4326_20190709" author="AndriusKarpavicius" failOnError="false"> 
         <dropForeignKeyConstraint baseTableName="billing_wallet_operation" constraintName="fk_wallet_operation_rated_transaction"/>
     </changeSet>
 

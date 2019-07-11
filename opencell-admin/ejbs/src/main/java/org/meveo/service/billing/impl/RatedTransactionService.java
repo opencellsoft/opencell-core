@@ -69,7 +69,6 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionMinAmountTypeEnum;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
@@ -1852,6 +1851,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         EntityManager em = getEntityManager();
 
+        Session hibernateSession = em.unwrap(Session.class);
+
         long minSplitDelete = 1000000000000000L;
         long maxSplitDelete = 0;
 
@@ -1863,24 +1864,44 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         // Delete rated transactions first
         List<Long> rtIds = rtsUpdate.stream().map(rt -> rt.getId()).collect(Collectors.toList());
 
-        SubListCreator<Long> subListCreator = new SubListCreator<Long>(10000, rtIds);
+        SubListCreator<Long> rtIdIterator = new SubListCreator<Long>(SPLIT_RT_UPDATE_BY_NR, rtIds);
 
-        while (subListCreator.isHasNext()) {
-            long startDeleteSplit = System.currentTimeMillis();
+        final long[] splitTimes = new long[] { 0, 0 };
 
-            List<Long> subList = subListCreator.getNextWorkSet();
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
 
-            em.createNamedQuery("RatedTransaction.massDeleteForUpdate").setParameter("ids", subList).executeUpdate();
+            @Override
+            public void execute(Connection dbConnection) throws SQLException {
+                try (PreparedStatement preparedStatement = dbConnection.prepareStatement("delete from billing_rated_transaction where id = ANY(?)")) {
+                    while (rtIdIterator.isHasNext()) {
+                        long start = System.currentTimeMillis();
 
-            long endDeleteSplit = System.currentTimeMillis();
+                        Long[] rtSplitIds = rtIdIterator.getNextWorkSet().toArray(new Long[] {});
+                        preparedStatement.setArray(1, dbConnection.createArrayOf("bigint", rtSplitIds));
+                        preparedStatement.addBatch();
 
-            long timeSplit = endDeleteSplit - startDeleteSplit;
+                        preparedStatement.executeBatch();
 
-            minSplitDelete = minSplitDelete > timeSplit ? timeSplit : minSplitDelete;
-            maxSplitDelete = maxSplitDelete < timeSplit ? timeSplit : maxSplitDelete;
+                        long end = System.currentTimeMillis();
 
-            log.error("AKK RT delete {}/{} took {}", subList.size(), SPLIT_RT_UPDATE_BY_NR, timeSplit);
-        }
+                        long timeSplit = end - start;
+
+                        splitTimes[0] = splitTimes[0] > timeSplit ? timeSplit : splitTimes[0];
+                        splitTimes[1] = splitTimes[1] < timeSplit ? timeSplit : splitTimes[1];
+
+                        log.error("AKK RT delete {}/{} took {}", rtSplitIds.length, SPLIT_RT_UPDATE_BY_NR, timeSplit);
+                    }
+
+                } catch (SQLException e) {
+                    log.error("Failed to delete RT for update", e);
+                    throw e;
+                }
+
+            }
+        });
+
+        minSplitDelete = splitTimes[0];
+        maxSplitDelete = splitTimes[1];
 
         // Needed so changes are flushed before native query (insert) is performed
         commit();
@@ -1891,10 +1912,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         long startInsertAll = System.currentTimeMillis();
 
         SubListCreator<RatedTransaction> rtDataIterator = new SubListCreator<RatedTransaction>(10000, rtsUpdate);
-
-        Session hibernateSession = em.unwrap(Session.class);
-
-        final long[] splitTimes = new long[] { minSplitInsert, maxSplitInsert };
 
         hibernateSession.doWork(new org.hibernate.jdbc.Work() {
 
