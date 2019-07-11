@@ -44,6 +44,7 @@ import org.primefaces.model.SortOrder;
 @Stateless
 public class CustomTableApi extends BaseApi {
 
+    public static final String ONLY_DIGIT_REGEX = "^-{0,1}[0-9]*$";
     @Inject
     private CustomEntityTemplateService customEntityTemplateService;
 
@@ -249,12 +250,12 @@ public class CustomTableApi extends BaseApi {
     }
 
     void replaceIdValueByItsRepresentation(Map<String, CustomFieldTemplate> reference, Map.Entry<String, Object> entry, int currentDepth, int maxDepth) {
-        CustomFieldTemplate customFieldTemplate = reference.get(entry.getKey().toLowerCase());
-        Optional.ofNullable(customFieldTemplate)
-                .filter(field -> Objects.nonNull(field.getEntityClazz()))
-                .map(field -> getEitherTableOrEntityValue(field, Long.valueOf(entry.getValue().toString())))
-                .filter(values -> values.size() > 0)
-                .ifPresent(values -> replaceValue(entry, customFieldTemplate, values, currentDepth, maxDepth));
+        if (entry.getValue() != null && entry.getValue().toString().matches(ONLY_DIGIT_REGEX)) {
+            CustomFieldTemplate customFieldTemplate = reference.get(entry.getKey().toLowerCase());
+            Optional.ofNullable(customFieldTemplate).filter(field -> Objects.nonNull(field.getEntityClazz()))
+                    .map(field -> getEitherTableOrEntityValue(field, Long.valueOf(entry.getValue().toString()))).filter(values -> values.size() > 0)
+                    .ifPresent(values -> replaceValue(entry, customFieldTemplate, values, currentDepth, maxDepth));
+        }
     }
 
      Map<String, Object> getEitherTableOrEntityValue(CustomFieldTemplate field, Long id) {
