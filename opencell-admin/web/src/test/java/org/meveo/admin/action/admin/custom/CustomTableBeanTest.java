@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -97,10 +98,26 @@ public class CustomTableBeanTest {
         //Given
         BusinessEntity businessEntity = mock(BusinessEntity.class);
         //When
-        HashMap<String, Object> result = sut.mapToMap().apply(businessEntity);
+        HashMap<String, Object> result = sut.mapToMap(businessEntity);
         //Then
         assertThat(result).isNotNull();
         assertThat(result).hasSize(3);
         assertThat(result).containsKeys("id", "code", "description");
     }
+
+    @Test
+    public void should_return_export_identifier_when_entity_is_not_business_entity() {
+        //Given
+        User user = new User();
+        user.setId(15L);
+        user.setUserName("flirtikit");
+        //When
+        HashMap<String, Object> convertedValues = sut.mapToMap(user);
+        //Then
+        assertThat(convertedValues).isNotNull();
+        assertThat(convertedValues).hasSize(2);
+        assertThat(convertedValues.get("id")).isEqualTo(15L);
+        assertThat(convertedValues.get("userName")).isEqualTo("flirtikit");
+    }
+
 }

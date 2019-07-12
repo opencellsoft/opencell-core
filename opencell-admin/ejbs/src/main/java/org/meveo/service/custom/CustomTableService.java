@@ -208,13 +208,14 @@ public class CustomTableService extends NativePersistenceService {
     @Override
     public void remove(String tableName, Long id) throws BusinessException {
         super.remove(tableName, id);
-        customEntityInstanceService.remove(id);
+        customEntityInstanceService.remove(tableName, id);
         elasticClient.remove(CustomTableRecord.class, tableName, id, true);
     }
 
     @Override
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
         super.remove(tableName, ids);
+        customEntityInstanceService.remove(tableName, ids);
         elasticClient.remove(CustomTableRecord.class, tableName, ids, true);
     }
 
@@ -895,4 +896,10 @@ public class CustomTableService extends NativePersistenceService {
         }
     }
 
+    public boolean containsRecordOfTableByColumn(String tableName, String columnName, Long id) {
+        QueryBuilder queryBuilder = getQuery(tableName, null);
+        queryBuilder.addCriterion(columnName, "=", id, true);
+        Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
+        return !query.list().isEmpty();
+    }
 }

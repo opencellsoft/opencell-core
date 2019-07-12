@@ -1670,6 +1670,9 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     public List<EntityReferenceWrapper> getAllEntities(){
         List<EntityReferenceWrapper> entities = Optional.ofNullable(listEntityValue).orElse(new ArrayList<>());
+        Collection<EntityReferenceWrapper> mapEntities = Optional.ofNullable(mapEntityValue).map(Map::values).orElse(new ArrayList<>());
+        entities.addAll(mapEntities);
+
         if(entityReferenceValue != null){
             entities.add(entityReferenceValue);
         }

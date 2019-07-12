@@ -93,6 +93,9 @@ public class NativePersistenceService extends BaseService {
     @MeveoParamBean
     protected ParamBean paramBean;
 
+    @Inject
+    private DeletionService deletionService;
+
     /**
      * Find record by its identifier
      * 
@@ -470,7 +473,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void remove(String tableName, Long id) throws BusinessException {
-
+        this.deletionService.checkTablenotreferenced(tableName, id);
         getEntityManager().createNativeQuery("delete from " + tableName + " where id=" + id).executeUpdate();
     }
 
@@ -482,6 +485,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
+        ids.stream().forEach(id -> deletionService.checkTablenotreferenced(tableName, id));
         getEntityManager().createNativeQuery("delete from " + tableName + " where id in:ids").setParameter("ids", ids).executeUpdate();
 
     }
