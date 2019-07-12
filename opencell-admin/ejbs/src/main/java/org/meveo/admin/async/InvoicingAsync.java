@@ -16,6 +16,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
@@ -112,32 +113,42 @@ public class InvoicingAsync {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         // This is a version of doing invoicing with one entity at a time
-        for (IBillableEntity entityToInvoice : entities) {
+//        for (IBillableEntity entityToInvoice : entities) {
+//            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+//                break;
+//            }
+//            try {
+//                invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null, null, instantiateMinRts, false, false);
+//            } catch (Exception e1) {
+//                log.error("Error for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
+//            }
+//        }
+
+        // This is a version of doing invoicing with 50 entities at a time
+        int invoiceCreationBatchSize = ParamBean.getInstance().getPropertyAsInteger("invoicing.invoiceCreationBatchSize", 10);
+
+        SubListCreator<? extends IBillableEntity> listIterator = new SubListCreator<>(invoiceCreationBatchSize, entities);
+        while (listIterator.isHasNext()) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
+            List<? extends IBillableEntity> entitiesInBatch = listIterator.getNextWorkSet();
+
             try {
-                invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null, null, instantiateMinRts, false, false);
-            } catch (Exception e1) {
-                log.error("Error for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
+                invoicingNewTransaction.createAgregatesAndInvoiceInBatch(entitiesInBatch, billingRun, jobInstanceId, instantiateMinRts);
+            } catch (Exception e) {
+
+                log.error("Failed to create invoices in batch. Will switch to invoicing to one by one", e);
+
+                for (IBillableEntity entityToInvoice : entitiesInBatch) {
+                    try {
+                        invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null, null, instantiateMinRts, false, false);
+                    } catch (Exception e1) {
+                        log.error("Error for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
+                    }
+                }
             }
         }
-
-        // This is a version of doing invoicing with 50 entities at a time
-        /*
-         * int invoiceCreationBatchSize = ParamBean.getInstance().getPropertyAsInteger("invoicing.invoiceCreationBatchSize", 50);
-         * 
-         * SubListCreator<? extends IBillableEntity> listIterator = new SubListCreator<>(invoiceCreationBatchSize, entities); while (listIterator.isHasNext()) { if (jobInstanceId
-         * != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) { break; } List<? extends IBillableEntity> entitiesInBatch = listIterator.getNextWorkSet();
-         * 
-         * try { invoicingNewTransaction.createAgregatesAndInvoiceInBatch(entitiesInBatch, billingRun, jobInstanceId, instantiateMinRts); } catch (Exception e) {
-         * 
-         * log.error("Failed to create invoices in batch. Will switch to invoicing to one by one", e);
-         * 
-         * for (IBillableEntity entityToInvoice : entitiesInBatch) { try { invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null,
-         * null, instantiateMinRts, false, false); } catch (Exception e1) { log.error("Error for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(),
-         * e1); } } } }
-         */
 
         return new AsyncResult<String>("OK");
     }
@@ -167,7 +178,6 @@ public class InvoicingAsync {
         }
 
         long start = System.currentTimeMillis();
-        invoiceService.commit();
         log.error("AKK invoice commit took {}", System.currentTimeMillis() - start);
 
         ratedTransactionService.updateViaDeleteAndInsert(rtsUpdateInBatch);

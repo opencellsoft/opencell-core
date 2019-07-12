@@ -850,14 +850,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<Invoice> invoiceList = new ArrayList<>();
 
         boolean updateRtsLater = rtsToUpdate != null;
-        rtsToUpdate = new ArrayList<>();
+        if (rtsToUpdate == null) {
+            rtsToUpdate = new ArrayList<>();
+        }
 
         // Retrieve Rated transactions and split them into BA/seller combinations
         List<RatedTransactionGroup> ratedTransactionGroups = getRatedTransactionGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType,
             ratedTransactionFilter, firstTransactionDate, lastTransactionDate, isDraft);
 
         if (ratedTransactionGroups.isEmpty()) {
-            throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
+            log.warn("Account {}/{} has no billable transactions", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
+            return invoiceList;
+            // throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
         }
 
         PaymentMethod paymentMethod = defaultPaymentMethod;
