@@ -10,15 +10,15 @@ import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-
 public class ParserSwagger {
 
     private static ParserSwagger parsing = new ParserSwagger();
 
+ 
     public static void main(String[] args) throws Exception {
-        String parentpath=System.getProperty("user.dir");
+        String parentpath = System.getProperty("user.dir");
         String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
-        System.out.println("Adding annotations to file: src/main/java/org/meveo/api/rest");
+        System.out.println("Adding annotations to file: src/main/java/org/meveo/api/rest"+parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest");
         parsing.getAllInfo(allPathFiles);
     }
 
@@ -115,7 +115,7 @@ public class ParserSwagger {
             File FILE_PATH = new File(path);
             missingComment = checkLength(FILE_PATH);
             if (!missingComment) {
-                fileReader(FILE_PATH,path, FILE_PATH.getName());
+                fileReader(FILE_PATH, path, FILE_PATH.getName());
             } else if (missingComment) {
                 defaultReaderGeneration(path, FILE_PATH.getName());
                 String fileIndex = FILE_PATH.toString();
@@ -125,6 +125,7 @@ public class ParserSwagger {
         System.out.println("List of files with missing Comments:");
         missingCommentList.forEach(System.out::println);
     }
+
     //Function to check if missing comment by comparing the length of  the list of the declaration and the number of return type
     private boolean checkLength(File FILE_PATH) throws FileNotFoundException {
         String[] firtsList = javaDocCollector(FILE_PATH);
@@ -194,8 +195,8 @@ public class ParserSwagger {
 
     //Will create the String for operation for the specific method with a given entry
     private static String operationString(String description, String summary, String returnValue, String typeValue, boolean deprecatedtag) {
-        description = description.replace("\n", "").replace("\r", "").replaceAll("(\")", "").replaceAll("[\\*]","");
-        summary = summary.replace("\n", "").replace("\r", "").replaceAll("(\")", "").replaceAll("[\\*]","");
+        description = description.replace("\n", "").replace("\r", "").replaceAll("(\")", "").replaceAll("[\\*]", "");
+        summary = summary.replace("\n", "").replace("\r", "").replaceAll("(\")", "").replaceAll("[\\*]", "");
         returnValue = returnValue.replace("\n", "").replace("\r", "").replaceAll("(\")", "");
         String deprecated;
         if (typeValue.contains("<String>")) {
@@ -206,6 +207,9 @@ public class ParserSwagger {
             deprecated = "\n\t\t\tdeprecated=true,";
         } else {
             deprecated = "";
+        }
+        if (returnValue.contains(" ")){
+            returnValue=summary;
         }
         String operationString = "\t@Operation(\n\t\t\tsummary=\"" +
                 summary +
@@ -225,8 +229,9 @@ public class ParserSwagger {
                 "\t)";
         return operationString;
     }
+
     //Parse the file and will do stuff depending of the line. With considering the file having bloc of comment
-    private void fileReader(File FILE_PATH,String filePath, String className) throws IOException {
+    private void fileReader(File FILE_PATH, String filePath, String className) throws IOException {
         String filePathTemp = filePath.replaceAll("Rs.java", "Rs.txt");
         PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filePathTemp)));
         String[] infoOfMethod = javaDocCollector(FILE_PATH);
@@ -241,7 +246,7 @@ public class ParserSwagger {
         try {
             fr = new FileReader(filePath);
             lnr = new BufferedReader(fr);
-
+            System.out.println(className);
             while ((str = lnr.readLine()) != null) {
                 String tmp2 = "    " + returnTypeInfo[indexDeclaration].replaceAll("\\*", "").replaceAll(".class", "").replaceAll("@type", "").replaceAll(" ", "").replace("\n", "").replace("\r", "");
                 if (str.contains("/*")) {
@@ -285,8 +290,32 @@ public class ParserSwagger {
                             "import io.swagger.v3.oas.annotations.media.Schema;\n" +
                             "import io.swagger.v3.oas.annotations.parameters.RequestBody;\n" +
                             "import io.swagger.v3.oas.annotations.responses.ApiResponse;\n" +
-                            "import io.swagger.v3.oas.annotations.tags.Tag;\n"+
+                            "import io.swagger.v3.oas.annotations.tags.Tag;\n" +
                             "import io.swagger.v3.oas.annotations.Hidden;\n";
+                } else if ((str.contains(tmp2) && declarationflag) || deletedextraline) {
+                    //declarationTest(str,declarationDoc[indexDeclaration]);
+                    if (str.contains(";") && deletedextraline) {
+                        str = declarationTest(declarationDoc[occuration - 1], infoOfMethod[occuration - 1]);
+                        //System.out.println(indexDeclaration + "/" + declarationDoc.length);
+                        if (indexDeclaration == declarationDoc.length - 1) {
+                            declarationflag = false;
+                        } else {
+                            indexDeclaration++;
+                        }
+                        deletedextraline = false;
+                    } else if (str.contains(";")) {
+                        str = declarationTest(declarationDoc[occuration - 1], infoOfMethod[occuration - 1]);
+                        //System.out.println(indexDeclaration + "/" + declarationDoc.length);
+                        if (indexDeclaration == declarationDoc.length - 1) {
+                            declarationflag = false;
+                        } else {
+                            indexDeclaration++;
+                        }
+                        deletedextraline = false;
+                    } else {
+                        str = "";
+                        deletedextraline = true;
+                    }
                 }
                 writer.println(str);
             }
@@ -298,10 +327,11 @@ public class ParserSwagger {
         File realName = new File(filePath);
         if (realName.delete()) {
             //System.out.println("");
-        } 
+        }
         new File(filePathTemp).renameTo(realName);
 
     }
+
     //Parse and replace the line by other information. This is for the case of missing comment in file
     private void defaultReaderGeneration(String filePath, String classNameTag) throws IOException {
         String filePathTemp = filePath.replaceAll("Rs.java", "Rs.txt");
@@ -339,11 +369,9 @@ public class ParserSwagger {
                     if (indexDeclaration == declarationDoc.length - 1) {
                         declarationflag = false;
                     }
-                }
-                else if(str.contains("@Path(\"/user\")")){
-                    str=str+"\n@Hidden";
-                }
-                else if (str.contains("@Path(")) {
+                } else if (str.contains("@Path(\"/user\")")) {
+                    str = str + "\n@Hidden";
+                } else if (str.contains("@Path(")) {
 
                     String tmp = str.replaceAll("[ ]{3,}", "");
                     if (tmp.split(" ").length > 1) {
@@ -388,7 +416,7 @@ public class ParserSwagger {
                             "import io.swagger.v3.oas.annotations.media.Schema;\n" +
                             "import io.swagger.v3.oas.annotations.parameters.RequestBody;\n" +
                             "import io.swagger.v3.oas.annotations.responses.ApiResponse;\n" +
-                            "import io.swagger.v3.oas.annotations.tags.Tag;\n"+
+                            "import io.swagger.v3.oas.annotations.tags.Tag;\n" +
                             "import io.swagger.v3.oas.annotations.Hidden;\n";
                 }
                 writer.println(str);
@@ -402,7 +430,7 @@ public class ParserSwagger {
         File realName = new File(filePath);
         if (realName.delete()) {
             //System.out.print("");
-        } 
+        }
         new File(filePathTemp).renameTo(realName);
     }
 
@@ -420,5 +448,46 @@ public class ParserSwagger {
         }
         return goodpath;
     }
+
+    private String declarationTest(String change, String data) throws IOException {
+        String param = "";
+        boolean noParam = true;
+        //System.out.println(change + "/" + data);
+        data = data.replaceAll("[*]", "");
+        String[] arrayData = data.split("@");
+        List<String> database = new ArrayList<>();
+        for (String tmp : arrayData) {
+            tmp = tmp.replaceAll("[\"]", "");
+            if (tmp.contains("param")) {
+                database.add(tmp);
+                noParam = false;
+            }
+        }
+        if (!noParam) {
+            param = change.substring(0, change.indexOf("(")) + "(";
+            int i = change.indexOf("(") + 1;
+            change = change.substring(i, change.length());
+            if (change.contains(",")) {
+                String[] methodArray = change.split(",");
+                for (int j = 0; j < methodArray.length; j++) {
+                    String tmp = database.get(j).replace("param","").replace("\n", "").replace("\r", "");
+                    if (j < methodArray.length - 1) {
+                        param = param + "@Parameter(description=\"" + tmp + "\")" + methodArray[j] + ",";
+                    } else {
+                        param = param + "@Parameter(description=\"" + tmp + "\")" + methodArray[j];
+                    }
+                }
+            } else {
+                String tmp = database.get(0).replace("\n", "").replace("\r", "").replace("param","");
+                param = param + "@Parameter(description=\"" + tmp + "\")" + change;
+            }
+            param = param + ";";
+        } else if (noParam) {
+            param = change+";";
+        }
+        return param;
+    }
 }
+
+
 
