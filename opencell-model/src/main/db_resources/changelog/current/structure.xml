@@ -1258,16 +1258,16 @@
     <changeSet id="#3510_20190712_4" author="Mohammed_EL-AZZOUZI">
 
                                  
-        <sql>INSERT INTO public.cat_unit_of_measure(id, version, code, created, symbol, description)
+        <sql>INSERT INTO ${db.schema.adapted}cat_unit_of_measure(id, version, code, created, symbol, description)
 				(SELECT nextval( 'cat_unit_of_measure_seq'), 0, FR.rating_unit_description, current_date, FR.rating_unit_description, FR.rating_unit_description||' MIG-R ' FROM (SELECT DISTINCT rating_unit_description
-					FROM public.cat_charge_template CT where rating_unit_description is not null) FR);</sql>
-        <sql>INSERT INTO public.cat_unit_of_measure(id, version, code, created, symbol, description, multiplicator, parent_id)
+					FROM ${db.schema.adapted}cat_charge_template CT where rating_unit_description is not null) FR);</sql>
+        <sql>INSERT INTO ${db.schema.adapted}cat_unit_of_measure(id, version, code, created, symbol, description, multiplicator, parent_id)
 				(SELECT nextval( 'cat_unit_of_measure_seq'), 0, FR.input_unit_description, current_date, FR.input_unit_description, FR.input_unit_description||' MIG-I ', FR.unit_multiplicator,
-				 		(select id from public.cat_unit_of_measure UOM where UOM.code=FR.rating_unit_description AND UOM.description=UOM.code||' MIG-R ' ) 
-				 FROM (SELECT DISTINCT input_unit_description, rating_unit_description, unit_multiplicator FROM public.cat_charge_template CT where input_unit_description is not null and unit_multiplicator is not null) FR);</sql>
-		<sql>UPDATE public.cat_charge_template CT SET rating_unitofmeasure = (SELECT UOM.id FROM public.cat_unit_of_measure UOM 
+				 		(select id from ${db.schema.adapted}cat_unit_of_measure UOM where UOM.code=FR.rating_unit_description AND UOM.description=UOM.code||' MIG-R ' ) 
+				 FROM (SELECT DISTINCT input_unit_description, rating_unit_description, unit_multiplicator FROM ${db.schema.adapted}cat_charge_template CT where input_unit_description is not null and unit_multiplicator is not null) FR);</sql>
+		<sql>UPDATE ${db.schema.adapted}cat_charge_template CT SET rating_unitofmeasure = (SELECT UOM.id FROM ${db.schema.adapted}cat_unit_of_measure UOM 
 				WHERE UOM.code=CT.rating_unit_description AND UOM.description=UOM.code||' MIG-R ' ) WHERE rating_unitofmeasure IS null AND rating_unit_description IS NOT null;</sql>
-		<sql>UPDATE public.cat_charge_template CT SET input_unitofmeasure = (SELECT UOM.id FROM public.cat_unit_of_measure UOM 
+		<sql>UPDATE ${db.schema.adapted}cat_charge_template CT SET input_unitofmeasure = (SELECT UOM.id FROM ${db.schema.adapted}cat_unit_of_measure UOM 
 				WHERE UOM.code=CT.input_unit_description AND UOM.description=UOM.code||' MIG-I ' ) WHERE input_unitofmeasure IS null AND input_unit_description IS NOT null;</sql>
 
     </changeSet>
