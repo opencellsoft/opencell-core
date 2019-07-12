@@ -1,14 +1,11 @@
 package org.meveo.api.rest.account.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.account.CustomerAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -16,14 +13,17 @@ import org.meveo.api.rest.account.CustomerAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Edward P. Legaspi
  * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 8.0.0
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -135,6 +135,19 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
             if (StringUtils.isBlank(postData.getCode())) {
                 result.setEntityCode(customerAccount.getCode());
             }
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus transferAccount(TransferCustomerAccountDto transferCustomerAccountDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            customerAccountApi.transferAccount(transferCustomerAccountDto);
         } catch (Exception e) {
             processException(e, result);
         }

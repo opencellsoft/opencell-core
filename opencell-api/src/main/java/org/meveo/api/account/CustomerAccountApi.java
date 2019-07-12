@@ -1,20 +1,11 @@
 package org.meveo.api.account;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
+import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
@@ -48,13 +39,22 @@ import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 /**
  * CRUD API for {@link CustomerAccount}.
  *
  * @author Edward P. Legaspi
  * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 8.0.0
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -673,5 +673,27 @@ public class CustomerAccountApi extends AccountEntityApi {
 		
 		return result;
 	}
+
+    /**
+     * Transfer amount from a customer account to an other.
+     *
+     * @param transferCustomerAccountDto
+     */
+    public void transferAccount(TransferCustomerAccountDto transferCustomerAccountDto) {
+
+        if (StringUtils.isBlank(transferCustomerAccountDto.getFromCustomerAccountCode())) {
+            missingParameters.add("fromCustomerAccountCode");
+        }
+        if (StringUtils.isBlank(transferCustomerAccountDto.getToCustomerAccountCode())) {
+            missingParameters.add("toCustomerAccountCode");
+        }
+        if (StringUtils.isBlank(transferCustomerAccountDto.getAmount())) {
+            missingParameters.add("amount");
+        }
+        handleMissingParameters();
+
+        customerAccountService.transferAccount(transferCustomerAccountDto.getFromCustomerAccountCode(), transferCustomerAccountDto.getToCustomerAccountCode(),
+                transferCustomerAccountDto.getAmount());
+    }
 
 }
