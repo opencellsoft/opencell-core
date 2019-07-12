@@ -6238,7 +6238,7 @@
 									"var rep = pm.response.json();",
 									"",
 									"pm.test('check created and deleted UnitOfMeasure', function() {",
-									"    pm.expect(rep.listUnitOfMeasure.length).to.be.above(1);",
+									"    pm.expect(rep.listUnitOfMeasure.length).to.be.above(0);",
 									"    let matched1=\"false\"",
 									"    let matched2=\"false\"",
 									"    _.forEach(rep.listUnitOfMeasure, (uom, index) => {",

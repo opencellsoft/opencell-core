@@ -1256,51 +1256,18 @@
     </changeSet>
     
     <changeSet id="#3510_20190712_4" author="Mohammed_EL-AZZOUZI">
-        <createSequence sequenceName="cat_unit_of_measure_seq" startValue="1" />
-        <createTable tableName="cat_unit_of_measure">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_unit_of_measure_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)" />
-            <column name="description" type="varchar(255)" />
-            <column name="symbol" type="100" >
-                <constraints nullable="false" />
-            </column>
-            <column name="multiplicator" type="bigint" />
-			<column name="parent_id" type="bigint" />
-            <column name="description_i18n" type="text" />
-        </createTable>
-        
-        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="cat_unit_of_measure" constraintName="fk_unit_of_measure_parent" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
-
-        <addColumn tableName="cat_charge_template">
-            <column name="input_unitofmeasure" type="bigint"></column>
-            <column name="rating_unitofmeasure" type="bigint"></column>
-        </addColumn>
-        <addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="cat_charge_template" constraintName="fk_CT_input_unitofmeasure" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
-        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="cat_charge_template" constraintName="fk_CT_rating_unitofmeasure" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
 
                                  
-        <sql>INSERT INTO ${db.schema.adapted}cat_unit_of_measure(id, version, code, created, symbol, description)
-				(SELECT DISTINCT (currval('cat_unit_of_measure_seq')+RANK() OVER (ORDER BY rating_unit_description)), 0, rating_unit_description, current_date, rating_unit_description, rating_unit_description||' MIG-R ' 
-					FROM ${db.schema.adapted}cat_charge_template CT where rating_unit_description is not null);</sql>
-        <sql>INSERT INTO ${db.schema.adapted}cat_unit_of_measure(id, version, code, created, symbol, description, multiplicator, parent_id)
-				(select distinct (currval('cat_unit_of_measure_seq')+RANK() OVER (Order by input_unit_description)), 0, input_unit_description, current_date, input_unit_description, input_unit_description||' MIG-I ', unit_multiplicator,
-				 (select id from ${db.schema.adapted}cat_unit_of_measure uom where uom.code=rating_unit_description) 
-				 	FROM cat_charge_template CT where rating_unit_description is not null);</sql>
-		<sql>UPDATE ${db.schema.adapted}cat_charge_template CT SET rating_unitofmeasure = (SELECT UOM.id FROM ${db.schema.adapted}cat_unit_of_measure UOM 
+        <sql>INSERT INTO public.cat_unit_of_measure(id, version, code, created, symbol, description)
+				(SELECT nextval( 'cat_unit_of_measure_seq'), 0, FR.rating_unit_description, current_date, FR.rating_unit_description, FR.rating_unit_description||' MIG-R ' FROM (SELECT DISTINCT rating_unit_description
+					FROM public.cat_charge_template CT where rating_unit_description is not null) FR);</sql>
+        <sql>INSERT INTO public.cat_unit_of_measure(id, version, code, created, symbol, description, multiplicator, parent_id)
+				(SELECT nextval( 'cat_unit_of_measure_seq'), 0, FR.input_unit_description, current_date, FR.input_unit_description, FR.input_unit_description||' MIG-I ', FR.unit_multiplicator,
+				 		(select id from public.cat_unit_of_measure UOM where UOM.code=FR.rating_unit_description AND UOM.description=UOM.code||' MIG-R ' ) 
+				 FROM (SELECT DISTINCT input_unit_description, rating_unit_description, unit_multiplicator FROM public.cat_charge_template CT where input_unit_description is not null and unit_multiplicator is not null) FR);</sql>
+		<sql>UPDATE public.cat_charge_template CT SET rating_unitofmeasure = (SELECT UOM.id FROM public.cat_unit_of_measure UOM 
 				WHERE UOM.code=CT.rating_unit_description AND UOM.description=UOM.code||' MIG-R ' ) WHERE rating_unitofmeasure IS null AND rating_unit_description IS NOT null;</sql>
-		<sql>UPDATE ${db.schema.adapted}cat_charge_template CT SET input_unitofmeasure = (SELECT UOM.id FROM ${db.schema.adapted}cat_unit_of_measure UOM 
+		<sql>UPDATE public.cat_charge_template CT SET input_unitofmeasure = (SELECT UOM.id FROM public.cat_unit_of_measure UOM 
 				WHERE UOM.code=CT.input_unit_description AND UOM.description=UOM.code||' MIG-I ' ) WHERE input_unitofmeasure IS null AND input_unit_description IS NOT null;</sql>
 
     </changeSet>
