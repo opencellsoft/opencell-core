@@ -66,6 +66,7 @@ public interface OfferTemplateRs extends IBaseRs {
      * @param loadOfferProductTemplate if true loads the products
      * @param loadServiceChargeTemplate if true load the service charges
      * @param loadProductChargeTemplate if true load the product charges
+     * @param loadAllowedDiscountPlan if true load the allowed discount plan
      * @return Return offerTemplateDto containing offerTemplate
      */
     @Path("/")
