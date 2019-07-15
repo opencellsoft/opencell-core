@@ -65,6 +65,7 @@ public interface CurrencyIsoRs extends IBaseRs {
     @Path("/") ActionStatus update(CurrencyIsoDto currencyIsoDto);
 
     /**
+     * Creates or modify a tradingCurrency base on currency code. 
      * @param currencyIsoDto currency iso to create or update
      * @return action status.
      */
