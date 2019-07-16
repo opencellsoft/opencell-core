@@ -59,7 +59,8 @@ public interface MeasurableQuantityRs extends IBaseRs {
     GetMeasurableQuantityResponse find(@QueryParam("code") String code);
 
     /**
-     * 
+     * Find a Measurable value during a period of date and period
+     *
      * @param code code of mesurable value.
      * @param fromDate format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd
      * @param toDate format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd
