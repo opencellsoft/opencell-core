@@ -57,16 +57,17 @@ public interface CustomerAccountRs extends IBaseRs {
 
     /**
      * Search for a customer account with a given code.
-     * 
-     * @param customerAccountCode The customer account's code
-     * @param calculateBalances  true if needs  to calculate balances
-     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     *
+     * @param customerAccountCode   The customer account's code
+     * @param calculateBalances     true if needs  to calculate balances
+     * @param inheritCF             Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param withAccountOperations true if needs to get account operations
      * @return customer account
      */
     @GET
     @Path("/")
     GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") Boolean calculateBalances,
-            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF, @QueryParam("withAccountOperations") Boolean withAccountOperations);
 
     /**
      * Remove customerAccount with a given code.
