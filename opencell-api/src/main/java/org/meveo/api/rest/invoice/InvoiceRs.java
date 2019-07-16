@@ -192,8 +192,8 @@ public interface InvoiceRs extends IBaseRs {
      * @return List of invoices
      */
     @GET
-    @Path("/listPresentInAR")
     @Deprecated
+    @Path("/listPresentInAR")
     CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("includePdf") boolean includePdf);
     
     /**

@@ -95,10 +95,10 @@ public interface FilteredListRs extends IBaseRs {
      * @param sortField Pagination - field used to sort the results
      * @param sortOrder Pagination - ASC or DESC order of the results
      * @return Response object that contains JSON results in String format
-     */
-    @Path("/fullSearch")
+     */    
     @GET
     @Deprecated
+    @Path("/fullSearch")
     public Response fullSearch(@QueryParam("query") String query, @QueryParam("category") String category, @QueryParam("from") Integer from, @QueryParam("size") Integer size,
             @QueryParam("sortField") String sortField, @QueryParam("sortOrder") SortOrder sortOrder);
 }
