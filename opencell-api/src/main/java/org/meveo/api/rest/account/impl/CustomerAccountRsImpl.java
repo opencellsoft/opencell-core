@@ -62,11 +62,11 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
     }
 
     @Override
-    public GetCustomerAccountResponseDto find(String customerAccountCode, Boolean calculateBalances, CustomFieldInheritanceEnum inheritCF) {
+    public GetCustomerAccountResponseDto find(String customerAccountCode, Boolean calculateBalances, CustomFieldInheritanceEnum inheritCF, Boolean withAccountOperations) {
         GetCustomerAccountResponseDto result = new GetCustomerAccountResponseDto();
 
         try {
-            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, calculateBalances, inheritCF));
+            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, calculateBalances, inheritCF, withAccountOperations));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

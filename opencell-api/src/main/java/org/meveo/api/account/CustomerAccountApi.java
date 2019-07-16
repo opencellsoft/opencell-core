@@ -384,11 +384,11 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances) throws Exception {
-        return find(customerAccountCode, calculateBalances, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+        return find(customerAccountCode, calculateBalances, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false);
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
-    public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances, CustomFieldInheritanceEnum inheritCF) throws Exception {
+    public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances, CustomFieldInheritanceEnum inheritCF, Boolean withAccountOperations) {
 
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
@@ -425,6 +425,17 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccountDto.setTotalInvoiceBalance(totalInvoiceBalance);
             customerAccountDto.setCreditBalance(creditBalance);
             customerAccountDto.setAccountBalance(accountBalance);
+        }
+
+        if (withAccountOperations != null && withAccountOperations) {
+            List<AccountOperation> accountOperations = customerAccount.getAccountOperations();
+            if (accountOperations != null && !accountOperations.isEmpty()) {
+                List<AccountOperationDto> accountOperationsDto = new ArrayList<>();
+                for (AccountOperation accountOperation : accountOperations) {
+                    accountOperationsDto.add(new AccountOperationDto(accountOperation));
+                }
+                customerAccountDto.setAccountOperations(accountOperationsDto);
+            }
         }
 
         return customerAccountDto;

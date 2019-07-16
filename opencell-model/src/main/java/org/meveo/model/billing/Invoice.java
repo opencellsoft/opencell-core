@@ -51,6 +51,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
@@ -131,6 +133,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      * Invoice aggregates
      */
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotFound(action= NotFoundAction.IGNORE)
     private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
     /**
