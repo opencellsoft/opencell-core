@@ -52,7 +52,7 @@ public interface MeasurableQuantityRs extends IBaseRs {
      * Get Measurable quantity from a given code.
      * 
      * @param code Measureable quantity's code
-     * @return
+     * @return Measurable Quantity Response data
      */
     @GET
     @Path("/")

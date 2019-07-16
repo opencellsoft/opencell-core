@@ -74,7 +74,7 @@ public interface QuoteRs {
      * Delete a product quote.
      * 
      * @param info Http request context
-     * @return
+     * @return Response status
      */
     @DELETE
     @Path("/{quoteId}")
@@ -85,7 +85,7 @@ public interface QuoteRs {
      * 
      * @param id Product quote code
      * @param info Http request context
-     * @return
+     * @return Response status
      */
     @POST
     @Path("/placeOrder/{quoteId}")
