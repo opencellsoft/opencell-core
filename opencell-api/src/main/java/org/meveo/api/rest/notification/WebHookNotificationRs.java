@@ -49,7 +49,7 @@ public interface WebHookNotificationRs extends IBaseRs {
      * Find a web hook notification with a given code
      * 
      * @param notificationCode The web hook notification's code
-     * @return
+     * @return  WebHook Notification Response data
      */
     @GET
     @Path("/")

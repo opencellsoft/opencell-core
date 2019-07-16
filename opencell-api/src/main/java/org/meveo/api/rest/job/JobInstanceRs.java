@@ -60,7 +60,7 @@ public interface JobInstanceRs extends IBaseRs {
      * Find a job instance with a given code
      * 
      * @param jobInstanceCode The job instance's code
-     * @return
+     * @return Job Instance Response data
      */
     @Path("/")
     @GET
