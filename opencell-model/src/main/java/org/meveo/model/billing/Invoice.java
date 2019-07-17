@@ -133,7 +133,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      * Invoice aggregates
      */
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @NotFound(action= NotFoundAction.IGNORE)
     private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
     /**

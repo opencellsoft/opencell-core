@@ -64,6 +64,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.util.IOUtils;
+import org.hibernate.Hibernate;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
@@ -2642,7 +2643,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return true if the invoice is prepaid report
      */
     public Boolean isPrepaidReport(Invoice invoice) {
-        invoice = refreshOrRetrieve(invoice);
-        return ratedTransactionService.isPrepaidRatedTransactions(invoice.getRatedTransactions());
+        return ratedTransactionService.isPrepaidRatedTransactions(getRatedTransactions(invoice));
     }
+
+    List<RatedTransaction> getRatedTransactions(Invoice invoice){
+        return  findById(invoice.getId()).getRatedTransactions();
+    }
+
+
 }
