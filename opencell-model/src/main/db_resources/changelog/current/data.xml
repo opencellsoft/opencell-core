@@ -1397,5 +1397,41 @@ public class ValidateBRScript extends Script {
             <column name="uuid" value="ImportMediationEntityJob" />
         </insert>
     </changeSet>
+    <changeSet id="#4150_20190717 - Error while running SALES_JOURNAL report extracts" author="Mohammed_EL-AZZOUZI">
+		<update tableName="dwh_report_extract">
+			<column name="sql_query" >
+			                <![CDATA[SELECT
+				    TO_CHAR(ao.invoice_date,'MM') AS "Mois",
+				    TO_CHAR(ao.invoice_date,'DD/MM/YYYY') AS "Date facture",
+				    text('HG') AS "Code comptable",
+				    ae.code AS "Client facturé",
+				    text('MAI') AS "Type article",
+				    split_part(bac.code, ',', 6) AS "Famille statistique",
+				    split_part(bac.code, ',', 2) AS "Article",
+				    trim(TO_CHAR(ia.amount_without_tax,'9999990D00')) AS "Montant HT",
+				    trim(TO_CHAR(ia.quantity,'9999990')) AS "Qté facturée",
+				    ao.reference AS "No facture",
+				    ao.description AS "Catégorie facture",
+				    ao.code AS "Type de pièce",
+				    text('VEN') AS "Journal"
+				FROM
+				    account_entity ae
+				INNER JOIN ar_account_operation ao ON ao.customer_account_id = ae.id
+				INNER JOIN billing_invoice i ON i.invoice_number = ao.reference
+				INNER JOIN billing_invoice_agregate ia ON (ia.invoice_id = i.id AND type = 'F')
+				LEFT JOIN billing_accounting_code bac ON bac.id = ia.accounting_code_id
+				WHERE :START_DATE<>:END_DATE
+				AND ae.account_type = 'ACCT_CA'
+				AND ao.invoice_date >= to_date('01/' || TO_CHAR(CURRENT_DATE,'MM/YYYY'),'DD/MM/YYYY') + interval '-12 month'
+				AND ao.invoice_date <= to_date('01/' || TO_CHAR(CURRENT_DATE,'MM/YYYY'),'DD/MM/YYYY') + interval '0 month'
+				ORDER BY
+				    ae.code,
+				    ao.code,
+				    split_part(bac.code, ',', 6),
+				    split_part(bac.code, ',', 2)
+			    ]]></column>
+			    <where>code='SALES_JOURNAL'</where>
+		</update>
+	</changeSet>
     
 </databaseChangeLog>
