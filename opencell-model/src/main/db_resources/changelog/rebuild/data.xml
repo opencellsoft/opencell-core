@@ -11575,8 +11575,8 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 				    trim(TO_CHAR(ia.amount_without_tax,'9999990D00')) AS "Montant HT",
 				    trim(TO_CHAR(ia.quantity,'9999990')) AS "Qté facturée",
 				    ao.reference AS "No facture",
-				    ao.description AS "Catégorie facture",
-				    ao.code AS "Type de pièce",
+				    ao.occ_description AS "Catégorie facture",
+				    ao.occ_code AS "Type de pièce",
 				    text('VEN') AS "Journal"
 				FROM
 				    account_entity ae
@@ -11590,7 +11590,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 				AND ao.invoice_date <= to_date('01/' || TO_CHAR(CURRENT_DATE,'MM/YYYY'),'DD/MM/YYYY') + interval '0 month'
 				ORDER BY
 				    ae.code,
-				    ao.code,
+				    occ_code,
 				    split_part(bac.code, ',', 6),
 				    split_part(bac.code, ',', 2)
 			    ]]>
