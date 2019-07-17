@@ -486,8 +486,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                                 entity.addOfferServiceTemplate(ostGui);
                             }
                         }
-
-                        entity = offerTemplateService.update(entity);
+                        entity=offerTemplateService.refreshOrRetrieve(entity);
+                        offerTemplateService.update(entity);
                     } else {
                         // update the entity's OfferServiceTemplates in case of editing an offer :
                         this.updateEntityOfferServiceTemplates();
