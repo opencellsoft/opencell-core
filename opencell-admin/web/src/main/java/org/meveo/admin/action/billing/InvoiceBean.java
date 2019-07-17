@@ -74,7 +74,6 @@ import org.omnifaces.cdi.Param;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -486,6 +485,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public boolean isPdfInvoiceAlreadyGenerated() {
+
         if (!pdfGenerated.containsKey(entity.getId())) {
             pdfGenerated.put(entity.getId(), invoiceService.isInvoicePdfExist(entity));
         }
@@ -871,7 +871,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public LazyDataModelWSize<RatedTransaction> getRatedTransactions(InvoiceSubCategoryDTO invoiceSubCategoryDTO) {
         LazyDataModelWSize<RatedTransaction> lazyRatedTransactions = ratedTransactionsDM.get(invoiceSubCategoryDTO.getCode());
-        if (lazyRatedTransactions != null) {
+            if (lazyRatedTransactions != null) {
             return lazyRatedTransactions;
         }
 
@@ -916,5 +916,13 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public Invoice getEntity() {
+        if(this.entity == null){
+            this.entity = initEntity();
+        }
+        return getPersistenceService().findById(super.getEntity().getId());;
     }
 }
