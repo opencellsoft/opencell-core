@@ -920,9 +920,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     @Override
     public Invoice getEntity() {
-        if(this.entity != null){
-            return getPersistenceService().findById(super.getEntity().getId());
+        if(this.entity == null){
+            this.entity = initEntity();
         }
-        return null;
+        return getPersistenceService().findById(super.getEntity().getId());;
     }
 }
