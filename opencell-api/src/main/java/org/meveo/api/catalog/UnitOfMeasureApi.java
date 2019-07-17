@@ -30,17 +30,13 @@ public class UnitOfMeasureApi extends BaseCrudApi<UnitOfMeasure, UnitOfMeasureDt
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-
         handleMissingParametersAndValidate(postData);
 
         if (unitOfMeasureService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(UnitOfMeasure.class, postData.getCode());
         }
 
-        UnitOfMeasure unitOfMeasure = new UnitOfMeasure();
-        unitOfMeasure.setCode(postData.getCode());
-        unitOfMeasure.setDescription(postData.getDescription());
-        unitOfMeasure.setSymbol(postData.getSymbol());
+        UnitOfMeasure unitOfMeasure = dtoToBo(postData,null);
 
         unitOfMeasureService.create(unitOfMeasure);
 
@@ -54,18 +50,13 @@ public class UnitOfMeasureApi extends BaseCrudApi<UnitOfMeasure, UnitOfMeasureDt
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-
         handleMissingParametersAndValidate(postData);
-
+        
         UnitOfMeasure unitOfMeasure = unitOfMeasureService.findByCode(postData.getCode());
         if (unitOfMeasure == null) {
-            throw new EntityAlreadyExistsException(UnitOfMeasure.class, postData.getCode());
+            throw new EntityDoesNotExistsException(UnitOfMeasure.class, postData.getCode());
         }
-
-        unitOfMeasure.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        unitOfMeasure.setDescription(postData.getDescription());
-        unitOfMeasure.setSymbol(postData.getSymbol());
-
+        unitOfMeasure=dtoToBo(postData, unitOfMeasure);
         unitOfMeasure = unitOfMeasureService.update(unitOfMeasure);
         return unitOfMeasure;
     }
@@ -144,5 +135,30 @@ public class UnitOfMeasureApi extends BaseCrudApi<UnitOfMeasure, UnitOfMeasureDt
 
         return unitOfMeasureDto;
     }
+    
+	private UnitOfMeasure dtoToBo(UnitOfMeasureDto postData, UnitOfMeasure unitOfMeasure)
+			throws EntityDoesNotExistsException {
+		if (unitOfMeasure != null) {
+			unitOfMeasure.setCode(
+					StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+		} else {
+			unitOfMeasure = new UnitOfMeasure();
+			unitOfMeasure.setCode(postData.getCode());
+		}
+		if (postData.getParentUOMCode() != null) {
+			UnitOfMeasure parentUnitOfMeasure = unitOfMeasureService.findByCode(postData.getParentUOMCode());
+			if (parentUnitOfMeasure == null) {
+				throw new EntityDoesNotExistsException(UnitOfMeasure.class, postData.getParentUOMCode());
+			}
+			unitOfMeasure.setParentUnitOfMeasure(parentUnitOfMeasure);
+		}
+		if (postData.getMultiplicator() != null) {
+			unitOfMeasure.setMultiplicator(postData.getMultiplicator());
+		}
+		unitOfMeasure.setDescription(postData.getDescription());
+		unitOfMeasure.setSymbol(postData.getSymbol());
+		
+		return unitOfMeasure;
+	}
 
 }

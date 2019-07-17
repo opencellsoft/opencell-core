@@ -18,16 +18,45 @@
  */
 package org.meveo.service.catalog.impl;
 
-import org.meveo.model.catalog.UnitOfMeasure;
-import org.meveo.service.base.BusinessService;
+import java.util.List;
 
 import javax.ejb.Stateless;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.catalog.UnitOfMeasure;
+import org.meveo.service.base.BusinessService;
+
 /**
  * UnitOfMeasure service implementation.
+ * 
  * @author Mounir Bahije
  */
 @Stateless
 public class UnitOfMeasureService extends BusinessService<UnitOfMeasure> {
 
+	public List<UnitOfMeasure> listBaseUnits() {
+		return getEntityManager().createNamedQuery("unitOfMeasure.listBaseUnits", UnitOfMeasure.class).getResultList();
+	}
+
+	@Override
+	public void create(UnitOfMeasure entity) throws BusinessException {
+		validateEntity(entity);
+		super.create(entity);
+	}
+	
+	@Override
+	public UnitOfMeasure update(UnitOfMeasure entity) throws BusinessException {
+		validateEntity(entity);
+		return super.update(entity);
+	}
+
+	public void validateEntity(UnitOfMeasure entity) throws BusinessException {
+		Long multiplicator = entity.getMultiplicator();
+		if (multiplicator == null || multiplicator.compareTo(0l) <= 0) {
+			throw new BusinessException("multiplicator must be strict positif for a Unit of Measure, current value is "+multiplicator);
+		}
+		if (entity.getParentUnitOfMeasure() == null && !multiplicator.equals(1l)) {
+			throw new BusinessException("multiplicator must be 1 for a Base Unit of Measure, current value is "+multiplicator);
+		}
+	}
 }

@@ -18,16 +18,18 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.sql.BatchUpdateException;
+import java.util.List;
+
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.UnitOfMeasureService;
-
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.sql.BatchUpdateException;
 
 /**
  * @author Mounir Bahije
@@ -59,6 +61,11 @@ public class UnitOfMeasureBean extends BaseBean<UnitOfMeasure> {
     protected IPersistenceService<UnitOfMeasure> getPersistenceService() {
         return unitOfMeasureService;
     }
+    
+    public List<UnitOfMeasure> listAll() {
+		return unitOfMeasureService.listBaseUnits();
+
+	}
 
     public void test() throws BatchUpdateException {
         throw new BatchUpdateException();

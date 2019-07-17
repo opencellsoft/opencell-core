@@ -29,6 +29,7 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -246,4 +247,33 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
     public synchronized int removeServiceLinkChargeUsage(Long chargeId) throws BusinessException {
         return this.remove("cat_serv_usage_charge_template", chargeId);
     }
+    
+    
+    @Override
+    public void create(P entity) throws BusinessException {
+    	validateEntity(entity);
+    	super.create(entity);
+    }
+    
+    @Override
+    public P updateNoCheck(P entity) throws BusinessException {
+    	validateEntity(entity);
+    	return super.updateNoCheck(entity);
+    }
+    
+    @Override
+    public P update(P entity) throws BusinessException {
+    	validateEntity(entity);
+    	return super.update(entity);
+    }
+
+	private void validateEntity(P entity) throws BusinessException {
+		UnitOfMeasure ratingUnitOfMeasure = entity.getRatingUnitOfMeasure();
+		UnitOfMeasure inputUnitOfMeasure = entity.getInputUnitOfMeasure();
+		if (inputUnitOfMeasure != null && ratingUnitOfMeasure != null) {
+			if (!inputUnitOfMeasure.isCompatibleWith(ratingUnitOfMeasure)) {
+				throw new BusinessException("incompatible input/rating UnitOfMeasures: ");
+			}
+		}
+	}
 }

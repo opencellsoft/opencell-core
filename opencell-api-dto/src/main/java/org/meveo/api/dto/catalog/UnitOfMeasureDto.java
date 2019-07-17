@@ -25,6 +25,10 @@ public class UnitOfMeasureDto extends BusinessEntityDto {
     /** The symbol. */
     @XmlElement(required = true)
     private String symbol;
+    
+    private Long multiplicator;
+    
+    private String parentUOMCode;
 
     /** The language descriptions. */
     private List<LanguageDescriptionDto> languageDescriptions;
@@ -41,10 +45,13 @@ public class UnitOfMeasureDto extends BusinessEntityDto {
      *
      * @param unitOfMeasure the unitOfMeasure entity
      */
-    public UnitOfMeasureDto(UnitOfMeasure unitOfMeasure) {
-        super(unitOfMeasure);
-        symbol = unitOfMeasure.getSymbol();
-    }
+	public UnitOfMeasureDto(UnitOfMeasure unitOfMeasure) {
+		super(unitOfMeasure);
+		symbol = unitOfMeasure.getSymbol();
+		multiplicator = unitOfMeasure.getMultiplicator();
+		UnitOfMeasure parentUnitOfMeasure = unitOfMeasure.getParentUnitOfMeasure();
+		parentUOMCode = parentUnitOfMeasure != null ? parentUnitOfMeasure.getCode() : null;
+	}
 
     /**
      * Gets the language descriptions.
@@ -84,4 +91,32 @@ public class UnitOfMeasureDto extends BusinessEntityDto {
     public String toString() {
         return "UnitOfMeasureDto [code=" + getCode() + ", description=" + getDescription() + ", symbol=" + symbol + "]";
     }
+
+	/**
+	 * @return the multiplicator
+	 */
+	public Long getMultiplicator() {
+		return multiplicator;
+	}
+
+	/**
+	 * @param multiplicator the multiplicator to set
+	 */
+	public void setMultiplicator(Long multiplicator) {
+		this.multiplicator = multiplicator;
+	}
+
+	/**
+	 * @return the parentCode
+	 */
+	public String getParentUOMCode() {
+		return parentUOMCode;
+	}
+
+	/**
+	 * @param parentCode the parentCode to set
+	 */
+	public void setParentUOMCode(String parentCode) {
+		this.parentUOMCode = parentCode;
+	}
 }

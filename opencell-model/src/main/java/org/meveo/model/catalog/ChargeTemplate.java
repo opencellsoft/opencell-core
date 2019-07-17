@@ -142,7 +142,7 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
      * Unit multiplicator between input and rating unit
      */
     @Column(name = "unit_multiplicator", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
-    protected BigDecimal unitMultiplicator;
+    private BigDecimal unitMultiplicator;
 
     /**
      * EDR and WO quantity field value precision
@@ -229,11 +229,18 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
         this.ratingUnitDescription = ratingUnitDescription;
     }
 
-    public BigDecimal getUnitMultiplicator() {
-        return unitMultiplicator;
-    }
+	public BigDecimal getUnitMultiplicator() {
+		return calculateUnitMultiplicator();
+	}
 
-    public void setUnitMultiplicator(BigDecimal unitMultiplicator) {
+    private BigDecimal calculateUnitMultiplicator() {
+		if(inputUnitOfMeasure!=null && ratingUnitOfMeasure != null && inputUnitOfMeasure.isCompatibleWith(ratingUnitOfMeasure)){
+			return BigDecimal.valueOf(ratingUnitOfMeasure.getMultiplicator()).divide(BigDecimal.valueOf(inputUnitOfMeasure.getMultiplicator()));
+		}
+		return unitMultiplicator;
+	}
+
+	public void setUnitMultiplicator(BigDecimal unitMultiplicator) {
         this.unitMultiplicator = unitMultiplicator;
     }
 
@@ -332,6 +339,7 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
 
     public void setInputUnitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
         this.inputUnitOfMeasure = inputUnitOfMeasure;
+        setUnitMultiplicator(calculateUnitMultiplicator());
     }
 
     public UnitOfMeasure getRatingUnitOfMeasure() {
@@ -340,5 +348,7 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
 
     public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
         this.ratingUnitOfMeasure = ratingUnitOfMeasure;
+        setUnitMultiplicator(calculateUnitMultiplicator());
     }
+
 }
