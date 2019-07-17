@@ -17,9 +17,9 @@ public class ParserSwagger {
  
     public static void main(String[] args) throws Exception {
         String parentpath = System.getProperty("user.dir");
+        System.out.println("Adding annotations to file:"+parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest");
         String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
-        System.out.println("Adding annotations to file: src/main/java/org/meveo/api/rest"+parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest");
-        parsing.getAllInfo(allPathFiles);
+      parsing.getAllInfo(allPathFiles);
     }
 
     //Get the javadoc for the collector
@@ -208,9 +208,6 @@ public class ParserSwagger {
         } else {
             deprecated = "";
         }
-        if (returnValue.contains(" ")){
-            returnValue=summary;
-        }
         String operationString = "\t@Operation(\n\t\t\tsummary=\"" +
                 summary +
                 "\",\n\t\t\tdescription=\"" +
@@ -240,17 +237,19 @@ public class ParserSwagger {
         FileReader fr = null;
         BufferedReader lnr = null;
         String str, combinaison;
-        boolean swaggerAnnotationImport = false, deletedextraline = false, declarationflag = true, deprecatedtag = false, tagflag = false, importApparition = false, javadocstart = false, javadocend = false, publicinterfaceflag = false;
+        boolean annotationHere = false, swaggerAnnotationImport = false, deletedextraline = false, declarationflag = true, deprecatedtag = false, tagflag = false, importApparition = false, javadocstart = false, javadocend = false, publicinterfaceflag = false;
         int occuration = 0, indexDeclaration = 0;
         className = className.replaceAll("Rs.java", "");
         try {
             fr = new FileReader(filePath);
             lnr = new BufferedReader(fr);
             System.out.println(className);
-            while ((str = lnr.readLine()) != null) {
+            while ((str = lnr.readLine()) != null && !annotationHere) {
                 String tmp2 = "    " + returnTypeInfo[indexDeclaration].replaceAll("\\*", "").replaceAll(".class", "").replaceAll("@type", "").replaceAll(" ", "").replace("\n", "").replace("\r", "");
                 if (str.contains("/*")) {
                     javadocstart = true;
+                } else if (str.contains("import io.swagger.v3.oas.annotations")) {
+                    annotationHere=true;
                 } else if (str.contains("*/")) {
                     javadocend = true;
                 } else if (str.contains("@Deprecated") && javadocend && javadocstart) {
@@ -283,8 +282,7 @@ public class ParserSwagger {
                     importApparition = true;
                 } else if (importApparition && !swaggerAnnotationImport) {
                     swaggerAnnotationImport = true;
-                    str = "\n" +
-                            "import io.swagger.v3.oas.annotations.Operation;\n" +
+                    str = "import io.swagger.v3.oas.annotations.Operation;\n" +
                             "import io.swagger.v3.oas.annotations.Parameter;\n" +
                             "import io.swagger.v3.oas.annotations.media.Content;\n" +
                             "import io.swagger.v3.oas.annotations.media.Schema;\n" +
@@ -319,6 +317,11 @@ public class ParserSwagger {
                 }
                 writer.println(str);
             }
+            if(annotationHere){
+                while ((str = lnr.readLine()) != null ) {
+                    writer.println(str);
+                }
+            }
             writer.close();
             lnr.close();
         } catch (Exception e) {
@@ -344,17 +347,19 @@ public class ParserSwagger {
         BufferedReader lnr = null;
         String str, combinaison;
         int indexjavadoc = 0, indexreturntype = 0, indexDeclaration = 0;
-        boolean swaggerAnnotationImport = false, deletedextraline = false, declarationflag = true, deprecatedtag = false, tagflag = false, importApparition = false, javadocstart = false, javadocend = false, publicinterfaceflag = false;
+        boolean annotationHere=false,swaggerAnnotationImport = false, deletedextraline = false, declarationflag = true, deprecatedtag = false, tagflag = false, importApparition = false, javadocstart = false, javadocend = false, publicinterfaceflag = false;
         classNameTag = classNameTag.replaceAll("Rs.java", "");
         try {
             // create new reader
             fr = new FileReader(filePath);
             lnr = new BufferedReader(fr);
             // read lines till the end of the stream
-            while ((str = lnr.readLine()) != null) {
+            while ((str = lnr.readLine()) != null&&!annotationHere) {
 
                 if (str.contains("/*")) {
                     javadocstart = true;
+                } else if (str.contains("import io.swagger.v3.oas.annotations")) {
+                     annotationHere = true;
                 } else if (str.contains("*/")) {
                     javadocend = true;
                 } else if (str.length() < 4 && javadocend && javadocstart) {
@@ -409,8 +414,7 @@ public class ParserSwagger {
                     importApparition = true;
                 } else if (importApparition && !swaggerAnnotationImport) {
                     swaggerAnnotationImport = true;
-                    str = "\n" +
-                            "import io.swagger.v3.oas.annotations.Operation;\n" +
+                    str = "import io.swagger.v3.oas.annotations.Operation;\n" +
                             "import io.swagger.v3.oas.annotations.Parameter;\n" +
                             "import io.swagger.v3.oas.annotations.media.Content;\n" +
                             "import io.swagger.v3.oas.annotations.media.Schema;\n" +
@@ -422,11 +426,17 @@ public class ParserSwagger {
                 writer.println(str);
             }
 
+            if(annotationHere){
+                while ((str = lnr.readLine()) != null ) {
+                    writer.println(str);
+                }
+            }
+            writer.close();
+            lnr.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        writer.close();
-        lnr.close();
+
         File realName = new File(filePath);
         if (realName.delete()) {
             //System.out.print("");
@@ -470,7 +480,7 @@ public class ParserSwagger {
             if (change.contains(",")) {
                 String[] methodArray = change.split(",");
                 for (int j = 0; j < methodArray.length; j++) {
-                    String tmp = database.get(j).replace("param","").replace("\n", "").replace("\r", "");
+                    String tmp = database.get(j).replace("param", "").replace("\n", "").replace("\r", "");
                     if (j < methodArray.length - 1) {
                         param = param + "@Parameter(description=\"" + tmp + "\")" + methodArray[j] + ",";
                     } else {
@@ -478,16 +488,13 @@ public class ParserSwagger {
                     }
                 }
             } else {
-                String tmp = database.get(0).replace("\n", "").replace("\r", "").replace("param","");
+                String tmp = database.get(0).replace("\n", "").replace("\r", "").replace("param", "");
                 param = param + "@Parameter(description=\"" + tmp + "\")" + change;
             }
             param = param + ";";
         } else if (noParam) {
-            param = change+";";
+            param = change + ";";
         }
         return param;
     }
 }
-
-
-
