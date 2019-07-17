@@ -923,6 +923,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         if(this.entity == null){
             this.entity = initEntity();
         }
-        return getPersistenceService().findById(super.getEntity().getId());;
+        return getPersistenceService().findById(super.getEntity().getId());
     }
 }
