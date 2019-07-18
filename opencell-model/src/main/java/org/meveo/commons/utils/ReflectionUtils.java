@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -18,28 +18,6 @@
  */
 package org.meveo.commons.utils;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.model.BusinessEntity;
@@ -47,9 +25,19 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.util.*;
+
 /**
  * Utils class for java reflection api.
- * 
+ *
  * @author Ignas Lelys
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -58,6 +46,8 @@ public class ReflectionUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
 
+    public static final String SET_PREFIX = "set";
+    
     /**
      * Mapping between an entity class and entity classes containing a field that that class.
      */
@@ -66,7 +56,7 @@ public class ReflectionUtils {
 
     /**
      * Creates instance from class name.
-     * 
+     *
      * @param className Class name for which instance is created.
      * @return Instance of className.
      */
@@ -88,11 +78,11 @@ public class ReflectionUtils {
 
     /**
      * Get a list of classes from a given package
-     * 
+     *
      * @param packageName Package name
      * @return A list of classes
      * @throws ClassNotFoundException Class discovery issue
-     * @throws IOException Class discovery issue
+     * @throws IOException            Class discovery issue
      */
     @SuppressWarnings("rawtypes")
     public static List<Class> getClasses(String packageName) throws ClassNotFoundException, IOException {
@@ -110,7 +100,7 @@ public class ReflectionUtils {
 
             ArrayList<Class> classList = new ArrayList<Class>();
 
-            synchronized(classes) {
+            synchronized (classes) {
                 for (Object clazz : classes) {
                     if (((Class) clazz).getName().startsWith(packageName)) {
                         classList.add((Class) clazz);
@@ -124,14 +114,14 @@ public class ReflectionUtils {
             logger.error("Failed to get a list of classes", e);
         }
 
-        return new ArrayList<Class>();
+        return new ArrayList<>();
     }
 
     /**
      * Get fields of a given class and it's superclasses
-     * 
+     *
      * @param fields A list of fields to supplement to
-     * @param type Class
+     * @param type   Class
      * @return A list of field (same as fields parameter plus newly discovered fields
      */
     public static List<Field> getAllFields(List<Field> fields, Class<?> type) {
@@ -144,10 +134,14 @@ public class ReflectionUtils {
         return fields;
     }
 
+    public static List<Field> getAllFields(Class<?> type) {
+        return getAllFields(new ArrayList<>(), type);
+    }
+
     /**
      * Get enum object from string value for a given enum type
-     * 
-     * @param enumType Enum class
+     *
+     * @param enumType  Enum class
      * @param enumValue Enum value as string
      * @return Enum object
      */
@@ -164,7 +158,7 @@ public class ReflectionUtils {
     /**
      * Remove proxy suffix from a class name. Proxy classes contain a name in "..._$$_javassist.. format" If a proxy class object clasname was passed, strip the ending
      * "_$$_javassist.."to obtain real class name
-     * 
+     *
      * @param classname Class name
      * @return Class name without a proxy suffix
      */
@@ -186,7 +180,7 @@ public class ReflectionUtils {
 
     /**
      * Get a clean class from the proxy class
-     * 
+     *
      * @param clazz Class or a proxied class
      * @return Class that is not proxied
      */
@@ -208,7 +202,7 @@ public class ReflectionUtils {
 
     /**
      * Convert a java type classname to a fuman readable name. E.g. CustomerAccount to Customer Account
-     * 
+     *
      * @param classname Full or simple classname
      * @return A humanized class name
      */
@@ -223,8 +217,8 @@ public class ReflectionUtils {
 
     /**
      * Check if object has a field.
-     * 
-     * @param object Object to check
+     *
+     * @param object    Object to check
      * @param fieldName Name of a field to check
      * @return True if object has a field
      */
@@ -238,8 +232,8 @@ public class ReflectionUtils {
 
     /**
      * Check if class has a field.
-     * 
-     * @param clazz Object to check
+     *
+     * @param clazz     Object to check
      * @param fieldName Name of a field to check
      * @return True if object has a field
      */
@@ -252,7 +246,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * @param className class name
+     * @param className       class name
      * @param annotationClass annotation class
      * @return instance of Class.
      */
@@ -261,7 +255,7 @@ public class ReflectionUtils {
         if (!StringUtils.isBlank(className)) {
             Set<Class<?>> classesWithAnnottation = getClassesAnnotatedWith(annotationClass);
             for (Class<?> clazz : classesWithAnnottation) {
-                if (className.equals(clazz.getSimpleName())) {
+                if (className.toLowerCase().equals(clazz.getSimpleName().toLowerCase())) {
                     entityClass = clazz;
                     break;
                 }
@@ -280,7 +274,7 @@ public class ReflectionUtils {
 
     /**
      * @param annotationClass annotation class
-     * @param prefix prefix
+     * @param prefix          prefix
      * @return set of class.
      */
     public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass, String prefix) {
@@ -291,8 +285,8 @@ public class ReflectionUtils {
 
     /**
      * Find a class by its simple name that is a subclass of a certain class.
-     * 
-     * @param className Simple classname to match
+     *
+     * @param className   Simple classname to match
      * @param parentClass Parent or interface class
      * @return A class object
      */
@@ -317,7 +311,7 @@ public class ReflectionUtils {
 
     /**
      * Find subclasses of a certain class.
-     * 
+     *
      * @param parentClass Parent or interface class
      * @return A list of class objects
      */
@@ -329,10 +323,25 @@ public class ReflectionUtils {
 
         return classes;
     }
+    
+    public static Object getSubclassObjectByDiscriminatorValue(Class parentClass, String discriminatorValue) {
+        Set<Class<?>> subClasses = getSubclasses(parentClass);
+        Object result = null;
+        for (Class subClass : subClasses) {
+            Object subclassObject = createObject(subClass.getName());
+            DiscriminatorValue classDiscriminatorValue = subclassObject.getClass().getAnnotation(DiscriminatorValue.class);
+            if (classDiscriminatorValue != null && classDiscriminatorValue.value().equals(discriminatorValue)) {
+                result = subclassObject;
+                break;
+            }
+        }
+        
+        return result;
+    }
 
     /**
      * A check if class represents a DTO or entity class.
-     * 
+     *
      * @param clazz Class to check
      * @return True if class is annotated with @Entity, @Embeddable or @XmlRootElement
      */
@@ -342,8 +351,8 @@ public class ReflectionUtils {
 
     /**
      * Checks if a method is from a particular object.
-     * 
-     * @param obj entity to check
+     *
+     * @param obj  entity to check
      * @param name name of method.
      * @return true/false
      */
@@ -363,9 +372,9 @@ public class ReflectionUtils {
 
     /**
      * Checks if a method is from a particular class.
-     * 
-     * @param clazz instance of Class
-     * @param name name of method
+     *
+     * @param clazz          instance of Class
+     * @param name           name of method
      * @param parameterTypes parameter type list.
      * @return true/false
      */
@@ -379,7 +388,7 @@ public class ReflectionUtils {
 
     /**
      * Checks if a method is overriden from a parent class.
-     * 
+     *
      * @param myMethod method
      * @return true/false
      */
@@ -406,11 +415,11 @@ public class ReflectionUtils {
 
     /**
      * Get a field from a given class. Fieldname can refer to an immediate field of a class or traverse class relationship hierarchy e.g. customerAccount.customer.seller
-     * 
-     * @param c Class to start with
+     *
+     * @param c         Class to start with
      * @param fieldName Field name
      * @return A field definition
-     * @throws SecurityException security excetion
+     * @throws SecurityException    security excetion
      * @throws NoSuchFieldException no such field exception.
      */
     public static Field getFieldThrowException(Class<?> c, String fieldName) throws NoSuchFieldException {
@@ -470,7 +479,7 @@ public class ReflectionUtils {
 
     /**
      * Determine a generics type of a field.
-     * 
+     *
      * @param field instance of Field
      * @return A class
      */
@@ -491,10 +500,10 @@ public class ReflectionUtils {
 
     /**
      * This is a recursive function that aims to walk through the properties of an object until it gets the final value.
-     * 
+     * <p>
      * e.g. If we received an Object named obj and given a string property of "code.name", then the value of obj.code.name will be returned.
-     * 
-     * @param obj The object that contains the property value.
+     *
+     * @param obj      The object that contains the property value.
      * @param property The property of the object that contains the data.
      * @return The value of the data contained in obj.property
      * @throws IllegalAccessException illegal access exception.
@@ -533,9 +542,17 @@ public class ReflectionUtils {
         }
     }
 
+    public static Optional<Object> getPropertyValueOrNull(Object obj, String property) {
+        try {
+            return Optional.ofNullable(getPropertyValue(obj, property));
+        } catch (IllegalAccessException | IllegalArgumentException e) {
+            return Optional.empty();
+        }
+    }
+
     /**
      * Get classes containing a given type field - can be either a single value or a list of values.
-     * 
+     *
      * @param fieldClass Field class
      * @return A map of fields grouped by class
      */
@@ -565,8 +582,8 @@ public class ReflectionUtils {
                     continue;
                 }
 
-                if (field.getType() == fieldClass || (Collection.class.isAssignableFrom(field.getType()) && getFieldGenericsType(field) == fieldClass) || (superClass != null
-                        && (field.getType() == superClass || (Collection.class.isAssignableFrom(field.getType()) && getFieldGenericsType(field) == superClass)))) {
+                if (field.getType() == fieldClass || (Collection.class.isAssignableFrom(field.getType()) && getFieldGenericsType(field) == fieldClass) || (superClass != null && (
+                        field.getType() == superClass || (Collection.class.isAssignableFrom(field.getType()) && getFieldGenericsType(field) == superClass)))) {
 
                     if (!matchedFields.containsKey(clazz)) {
                         matchedFields.put(clazz, new ArrayList<>());
@@ -578,7 +595,26 @@ public class ReflectionUtils {
         classReferences.put(fieldClass, matchedFields);
         return matchedFields;
     }
+    
+    /**
+     * Find methods annotated with annotationClass
+     * @param clazz the class where to search methods
+     * @param annotationClass the annotation class
+     * @return a list of methods
 
+     */
+
+    public static List<Method> findAnnotatedMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+        Method[] methods = clazz.getMethods();
+        List<Method> annotatedMethods = new ArrayList<Method>(methods.length);
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(annotationClass)) {
+                annotatedMethods.add(method);
+            }
+        }
+
+        return annotatedMethods;
+    }
 
     private static Method getMethodFromInterface(Class<?> cls, Class<? extends Annotation> annotationClass, String methodName, Class... parameterTypes) {
         while (cls != null) {
@@ -604,11 +640,12 @@ public class ReflectionUtils {
     /**
      * Get parent method from interface having the annotation in parameter
      *
-     * @param method the class method
+     * @param method          the class method
      * @param annotationClass the annotation of the desired interface
      * @return the matching interface method
      */
     public static Method getMethodFromInterface(Method method, Class<? extends Annotation> annotationClass) {
         return getMethodFromInterface(method.getDeclaringClass(), annotationClass, method.getName(), method.getParameterTypes());
     }
+
 }

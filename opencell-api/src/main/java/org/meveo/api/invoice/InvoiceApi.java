@@ -85,7 +85,7 @@ import org.primefaces.model.SortOrder;
  * @author Said Ramli
  * @author Abdelmounaim Akadid
  * @author Khalid HORRI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 7.1
  */
 @Stateless
 public class InvoiceApi extends BaseApi {
@@ -237,7 +237,7 @@ public class InvoiceApi extends BaseApi {
                                 ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax,
                                 amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, userAccount, invoiceSubCategory, null, null,
                                 null, null, null, null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(),
-                                ratedTransactionDto.getDescription(), ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent());
+                                ratedTransactionDto.getDescription(), ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null);
 
                         meveoRatedTransaction.setInvoice(invoice);
                         meveoRatedTransaction.setWallet(userAccount.getWallet());
@@ -415,6 +415,8 @@ public class InvoiceApi extends BaseApi {
         invoice.setInvoiceDate(invoiceDTO.getInvoiceDate());
         invoice.setDueDate(invoiceDTO.getDueDate());
         invoice.setDraft(invoiceDTO.isDraft());
+        invoice.setAlreadySent(invoiceDTO.isCheckAlreadySent());
+        invoice.setDontSend(invoiceDTO.isSentByEmail());
         PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {
             invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
@@ -604,6 +606,10 @@ public class InvoiceApi extends BaseApi {
         List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
         if (invoices != null) {
             for (Invoice invoice : invoices) {
+                if (isDraft && invoiceService.isPrepaidReport(invoice)) {
+                    invoiceService.cancelInvoice(invoice);
+                    continue;
+                }
                 this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
                 invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
 
@@ -690,6 +696,9 @@ public class InvoiceApi extends BaseApi {
         Invoice invoice = find(invoiceId, invoiceNumber, invoiceTypeCode);
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
+        }
+        if (invoiceService.isPrepaidReport(invoice)) {
+            throw new BusinessException("Invoice PDF is disabled for prepaid invoice: " + invoice.getInvoiceNumber());
         }
         if (!invoiceService.isInvoicePdfExist(invoice)) {
             if (generatePdfIfNoExist) {
@@ -922,6 +931,11 @@ public class InvoiceApi extends BaseApi {
      * @param invoiceDto Invoice DTO to set the PDF value to
      */
     private void setInvoicePdf(Invoice invoice, boolean includePdf, InvoiceDto invoiceDto) {
+
+        if (invoiceService.isPrepaidReport(invoice)) {
+            invoiceDto.setPdfFilename(null);
+            return;
+        }
         boolean pdfFileExists = invoiceService.isInvoicePdfExist(invoice);
         // Generate PDF file if requested, but not available yet
         if (includePdf && !pdfFileExists) {
@@ -1052,6 +1066,9 @@ public class InvoiceApi extends BaseApi {
         }
         handleMissingParameters();
         Invoice invoice = invoiceService.findById(invoiceDto.getInvoiceId());
+        if (invoiceService.isPrepaidReport(invoice)) {
+            return false;
+        }
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceDto.getInvoiceId());
         }

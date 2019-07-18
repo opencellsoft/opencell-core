@@ -1,17 +1,5 @@
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.async.GenericWorkflowAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
@@ -19,15 +7,30 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.filter.Filter;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.filter.FilterService;
 import org.meveo.service.generic.wf.GenericWorkflowService;
 import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.slf4j.Logger;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @Stateless
 public class GenericWorkflowJobBean extends BaseJobBean {
@@ -43,6 +46,9 @@ public class GenericWorkflowJobBean extends BaseJobBean {
 
     @Inject
     private GenericWorkflowAsync genericWorkflowAsync;
+
+    @Inject
+    private FilterService filterService;
 
     @Inject
     @CurrentUser
@@ -86,6 +92,32 @@ public class GenericWorkflowJobBean extends BaseJobBean {
             }
 
             List<WorkflowInstance> wfInstances = genericWorkflowService.findByCode(genericWfCode, Arrays.asList("wfInstances")).getWfInstances();
+
+            if (genericWf.getId() != null) {
+                genericWf = genericWorkflowService.refreshOrRetrieve(genericWf);
+            }
+            Filter wfFilter = genericWf.getFilter();
+            if(wfFilter!=null) {
+			Filter filter = filterService.findById(wfFilter.getId());
+	            if (filter != null) {
+	                List<BusinessEntity> listFilteredEntities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
+	                Map<Long, BusinessEntity> mapFilteredEntities = new HashMap<Long, BusinessEntity>();
+	                for (BusinessEntity entity : listFilteredEntities) {
+	                    mapFilteredEntities.put(entity.getId(), entity);
+	                }
+	                List<WorkflowInstance> wfInstancesFiltered = new ArrayList<WorkflowInstance>();
+	                for (WorkflowInstance workflowInstance : wfInstances )
+	                {
+	                    if (workflowInstance.getEntityInstanceId() != null) {
+	                        if(mapFilteredEntities.get(workflowInstance.getEntityInstanceId()) != null) {
+	                            wfInstancesFiltered.add(workflowInstance);
+	                        }
+	                    }
+	                }
+	                wfInstances = wfInstancesFiltered;
+	            }
+            }
+
             log.debug("wfInstances:" + wfInstances.size());
             result.setNbItemsToProcess(wfInstances.size());
 

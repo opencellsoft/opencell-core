@@ -18,19 +18,6 @@
  */
 package org.meveo.admin.action.generic.wf;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -40,19 +27,39 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.Auditable;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.filter.Filter;
 import org.meveo.model.generic.wf.GWFTransition;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.service.filter.FilterService;
 import org.meveo.service.generic.wf.GWFTransitionService;
 import org.meveo.service.generic.wf.GenericWorkflowService;
+
+import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 
 /**
  * Standard backing bean for {@link GenericWorkflow} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components .
+ *
+ * @author Amine Ben Aicha
+ * @author Mounir Bahije
+ * @lastModifiedVersion 7.0
  */
+
 @Named
 @ViewScoped
 @ViewBean
@@ -80,6 +87,8 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
 
     private boolean showDetailPage = false;
 
+    private Filter selectedFilter;
+
     public GenericWorkflowBean() {
         super(GenericWorkflow.class);
     }
@@ -93,6 +102,9 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
     protected List<String> getFormFieldsToFetch() {
         return Arrays.asList("transitions");
     }
+
+    @Inject
+    private FilterService filterService;
 
     /**
      * Autocomplete method for class filter field - search entity type classes with @WorkflowedEntity annotation
@@ -110,6 +122,19 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
         }
         Collections.sort(classNames);
         return classNames;
+    }
+
+
+    /**
+     * list filters that are linked to targetEntityClass
+     * @return A list of filters
+     */
+    public List<Filter>  listFilterTargetEntity() {
+        if (StringUtils.isBlank(this.entity.getTargetEntityClass())) {
+            return null;
+        }
+        List<Filter> allWFFilterClass = filterService.findByPrimaryTargetClass(this.entity.getTargetEntityClass());
+        return allWFFilterClass;
     }
 
     /**
@@ -133,6 +158,9 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        if (entity.getId() == null) {
+            entity.setFilter(selectedFilter);
+        }
         super.saveOrUpdate(killConversation);
         return null;
     }
@@ -349,5 +377,13 @@ public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
 
     public void setShowDetailPage(boolean showDetailPage) {
         this.showDetailPage = showDetailPage;
+    }
+
+    public Filter getSelectedFilter() {
+        return selectedFilter;
+    }
+
+    public void setSelectedFilter(Filter selectedFilter) {
+        this.selectedFilter = selectedFilter;
     }
 }

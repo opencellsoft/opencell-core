@@ -117,6 +117,17 @@ public class CustomFieldDto {
     /** The formatted value. */
     @XmlElement()
     protected CustomFieldFormattedValueDto formattedValue;
+
+    /**
+     * Where field should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;fieldGroup:&lt;fieldgroup name&gt;:&lt;fieldgroup relative
+     * position&gt;;field:&lt;field relative position in fieldgroup/tab&gt;
+     *
+     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;
+     *
+     * e.g. tab:Tab default title|FRA=Title in french|ENG=Title in english:0;fieldGroup:Field group default label|FRA=Field group label in french|ENG=Field group label in
+     * english:0;field:0 OR tab:Second tab:1;field:1
+     */
+    protected String guiPosition;
     
     /**
      * Instantiates a new custom field dto.
@@ -576,9 +587,25 @@ public class CustomFieldDto {
         this.formattedValue = formattedValue;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
+    /**
+     * Gets the guiPosition
+     * @return the guiPosition
      */
+    public String getGuiPosition() {
+        return guiPosition;
+    }
+
+    /**
+     * Sets the guiPosition
+     * @param guiPosition the guiPosition
+     */
+    public void setGuiPosition(String guiPosition) {
+        this.guiPosition = guiPosition;
+    }
+
+    /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("CustomFieldDto{");

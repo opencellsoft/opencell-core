@@ -80,9 +80,6 @@ public class InvoiceTypeApi extends BaseApi {
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 		}
-		if (StringUtils.isBlank(postData.getOccTemplateCode())) {
-			missingParameters.add("occTemplateCode");
-		}
 		handleMissingParametersAndValidate(postData);
 	}
 
@@ -101,9 +98,13 @@ public class InvoiceTypeApi extends BaseApi {
 		if (invoiceTypeService.findByCode(postData.getCode()) != null) {
 			throw new EntityAlreadyExistsException(InvoiceType.class, postData.getCode());
 		}
-		OCCTemplate occTemplate = occTemplateService.findByCode(postData.getOccTemplateCode());
-		if (occTemplate == null) {
-			throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getOccTemplateCode());
+		
+		OCCTemplate occTemplate = null;
+		if(!StringUtils.isBlank(postData.getOccTemplateCode())) {
+        occTemplate = occTemplateService.findByCode(postData.getOccTemplateCode());
+	        if (occTemplate == null) {
+	            throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getOccTemplateCode());
+	        }
 		}
 
 		OCCTemplate occTemplateNegative = null;
@@ -143,8 +144,11 @@ public class InvoiceTypeApi extends BaseApi {
                 throw new EntityDoesNotExistsException(EmailTemplate.class, postData.getEmailTemplateCode());
             }
         }
+
 		InvoiceType invoiceType = new InvoiceType();
 		invoiceType.setCode(postData.getCode());
+		invoiceType.setMailingType(mailingType);
+		invoiceType.setEmailTemplate(emailTemplate);
 
 		if (postData.getSequenceDto() != null) {
 			if (StringUtils.isBlank(postData.getSequenceDto().getInvoiceSequenceCode())) {
@@ -175,7 +179,7 @@ public class InvoiceTypeApi extends BaseApi {
 		invoiceType.setOccTemplateNegativeCodeEl(postData.getOccTemplateNegativeCodeEl());
 		invoiceType.setAppliesTo(invoiceTypesToApplies);
 		invoiceType.setUseSelfSequence(postData.isUseSelfSequence());
-		
+
 		if (postData.getSellerSequences() != null) {
 			for (Entry<String, SequenceDto> entry : postData.getSellerSequences().entrySet()) {
 				Seller seller = sellerService.findByCode(entry.getKey());
@@ -198,12 +202,12 @@ public class InvoiceTypeApi extends BaseApi {
 				invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, invoiceSequenceInvoiceTypeSeller, value.getPrefixEL()));
 			}
 		}
-		
+
 		Boolean invoiceAccountable = postData.isInvoiceAccountable();
         if (invoiceAccountable != null) {
         	 invoiceType.setInvoiceAccountable(invoiceAccountable);
         } // else default value = true
-        
+
 		invoiceType.setMatchingAuto(postData.isMatchingAuto());
 		invoiceType.setBillingTemplateName(postData.getBillingTemplateName());
 		invoiceType.setBillingTemplateNameEL(postData.getBillingTemplateNameEL());
@@ -340,7 +344,7 @@ public class InvoiceTypeApi extends BaseApi {
 		if (!StringUtils.isBlank(invoiceTypeDto.getDescription())) {
 			invoiceType.setDescription(invoiceTypeDto.getDescription());
 		}
-		
+
 		Boolean invoiceAccountable = invoiceTypeDto.isInvoiceAccountable();
         if (invoiceAccountable != null) {
         	 invoiceType.setInvoiceAccountable(invoiceAccountable);

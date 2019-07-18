@@ -2,7 +2,6 @@ package org.meveo.admin.action.admin.custom;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +29,8 @@ import org.meveo.service.job.JobInstanceService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+
+import static java.util.Comparator.comparing;
 
 /**
  * A GUI backing bean class for CustomEntityTemplate entity for detail view
@@ -715,13 +716,8 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     public CustomFieldTypeEnum[] getFieldTypes() {
         if (isCustomTable()) {
             CustomFieldTypeEnum[] enums = new CustomFieldTypeEnum[] { CustomFieldTypeEnum.DATE, CustomFieldTypeEnum.DOUBLE, CustomFieldTypeEnum.LIST, CustomFieldTypeEnum.LONG,
-                    CustomFieldTypeEnum.STRING };
-            Arrays.sort(enums, new Comparator<Object>() {
-                @Override
-                public int compare(Object o1, Object o2) {
-                    return o1.toString().compareTo(o2.toString());
-                }
-            });
+                    CustomFieldTypeEnum.STRING, CustomFieldTypeEnum.BOOLEAN, CustomFieldTypeEnum.ENTITY };
+            Arrays.sort(enums, comparing(Object::toString));
 
             return enums;
         } else {

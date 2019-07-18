@@ -55,7 +55,7 @@ import org.meveo.model.payments.CustomerAccount;
 
 /**
  * Billing account
- * 
+ *
  * @author Edward P. Legaspi
  * @author Khalid HORRI
  * @author Abdellatif BARI
@@ -69,7 +69,7 @@ import org.meveo.model.payments.CustomerAccount;
 @DiscriminatorValue(value = "ACCT_BA")
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listIdsByBillingRunId", query = "SELECT b.id FROM BillingAccount b where b.billingRun.id=:billingRunId"),
         @NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId") })
-public class BillingAccount extends AccountEntity implements IBillableEntity, IWFEntity, IDiscountable {
+public class BillingAccount extends AccountEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) BillingAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
@@ -662,7 +662,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Gets Email Template.
-     * 
+     *
      * @return Email Template.
      */
     public EmailTemplate getEmailTemplate() {
@@ -671,7 +671,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Sets Email template.
-     * 
+     *
      * @param emailTemplate the Email template.
      */
     public void setEmailTemplate(EmailTemplate emailTemplate) {
@@ -680,7 +680,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Gets Mailing Type.
-     * 
+     *
      * @return Mailing Type.
      */
     public MailingTypeEnum getMailingType() {
@@ -689,7 +689,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Sets Mailing Type
-     * 
+     *
      * @param mailingType mailing type
      */
     public void setMailingType(MailingTypeEnum mailingType) {
@@ -698,7 +698,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Gets cc Emails
-     * 
+     *
      * @return CC emails
      */
     public String getCcedEmails() {
@@ -707,7 +707,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 
     /**
      * Sets cc Emails
-     * 
+     *
      * @param ccedEmails Cc Emails
      */
     public void setCcedEmails(String ccedEmails) {

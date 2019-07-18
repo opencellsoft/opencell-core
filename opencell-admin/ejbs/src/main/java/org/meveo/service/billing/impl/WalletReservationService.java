@@ -209,7 +209,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
     private Amounts getBalanceAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
             Date endDate, Long walletId, String walletCode, BalanceTypeEnum mode) {
 
-        Amounts result = new Amounts(BigDecimal.ZERO, BigDecimal.ZERO);
+        Amounts result = new Amounts();
 
         LevelEnum level = LevelEnum.PROVIDER;
 

@@ -14,6 +14,7 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.async.RatedTransactionAsync;
 import org.meveo.admin.async.SubListCreator;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -64,37 +65,22 @@ public class RatedTransactionsJobBean extends BaseJobBean {
 
         try {
             RatedTransactionsJobAggregationSetting aggregationSetting = new RatedTransactionsJobAggregationSetting();
-            try {
-                aggregationSetting.setEnable((boolean) this.getParamOrCFValue(jobInstance, "activateAggregation", false));
+
+            aggregationSetting.setEnable((boolean) this.getParamOrCFValue(jobInstance, "activateAggregation", false));
+            if (aggregationSetting.isEnable()) {
                 aggregationSetting.setAggregateGlobally((boolean) this.getParamOrCFValue(jobInstance, "globalAggregation"));
                 aggregationSetting.setAggregateByDay((boolean) this.getParamOrCFValue(jobInstance, "aggregateByDay"));
-                aggregationSetting.setAggregationLevel(AggregationLevelEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "aggregationLevel"))));
-                try {
-                    aggregationSetting.setAggregateByOrder((boolean) this.getParamOrCFValue(jobInstance, "aggregateByOrder"));
+                String aggregationLevel = ((String) this.getParamOrCFValue(jobInstance, "aggregationLevel"));
+                if (aggregationLevel == null) {
+                    throw new BusinessException("Rated transactions aggregation is enabled, but aggregation level is not specified");
+                }
+                aggregationSetting.setAggregationLevel(AggregationLevelEnum.valueOf(aggregationLevel));
+                aggregationSetting.setAggregateByOrder((boolean) this.getParamOrCFValue(jobInstance, "aggregateByOrder", false));
+                aggregationSetting.setAggregateByParam1((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam1", false));
+                aggregationSetting.setAggregateByParam2((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam2", false));
+                aggregationSetting.setAggregateByParam3((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam3", false));
+                aggregationSetting.setAggregateByExtraParam((boolean) this.getParamOrCFValue(jobInstance, "aggregateByExtraParam", false));
 
-                } catch (NullPointerException e) {
-                }
-                try {
-                    aggregationSetting.setAggregateByParam1((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam1"));
-                } catch (NullPointerException e) {
-                }
-                try {
-                    aggregationSetting.setAggregateByParam2((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam2"));
-                } catch (NullPointerException e) {
-                }
-                try {
-                    aggregationSetting.setAggregateByParam3((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam3"));
-                } catch (NullPointerException e) {
-                }
-                try {
-                    aggregationSetting.setAggregateByExtraParam((boolean) this.getParamOrCFValue(jobInstance, "aggregateByExtraParam"));
-                } catch (NullPointerException e) {
-                }
-            } catch (Exception e) {
-                log.warn("Cant get customFields for {} with message {}", jobInstance.getJobTemplate(), e.getMessage());
-            }
-
-            if (aggregationSetting.isEnable()) {
                 executeWithAggregation(result, nbRuns, waitingMillis, aggregationSetting);
 
             } else {

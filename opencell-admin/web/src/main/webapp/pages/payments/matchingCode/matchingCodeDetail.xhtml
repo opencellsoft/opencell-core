@@ -19,8 +19,8 @@
             </hftl:formPanel>
             <p:panel label="#{messages['customerAccount.operations']}">
                 <hftl:dataList backingBean="#{matchingCodeBean}" dataModel="#{matchingCodeBean.entity.matchingAmounts}" edit="#{false}" checkMany="#{false}">
-                    <hftl:column label="#{messages['accountOperation.occCode']}" field="accountOperation.occCode" />
-                    <hftl:column label="#{messages['accountOperation.occDescription']}" field="accountOperation.occDescription" />
+                    <hftl:column label="#{messages['accountOperation.occCode']}" field="accountOperation.code" />
+                    <hftl:column label="#{messages['accountOperation.occDescription']}" field="accountOperation.description" />
                     <hftl:column label="#{messages['accountOperation.transactionDate']}" field="accountOperation.transactionDate" isDate="true" />
                     <hftl:column label="#{messages['accountOperation.dueDate']}" field="accountOperation.dueDate" isDate="true" />
                     <hftl:column label="#{messages['accountOperation.credit']}" field="accountOperation.amount" show="#{entity.accountOperation.transactionCategory.toString() == 'CREDIT'}"

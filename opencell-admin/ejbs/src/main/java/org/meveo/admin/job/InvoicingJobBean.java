@@ -72,8 +72,6 @@ public class InvoicingJobBean extends BaseJobBean {
         } catch (Exception e) {
             log.error("Failed to run invoicing", e);
         }
-
-        log.info("end Execute");
     }
 
     /**

@@ -39,7 +39,8 @@ import org.meveo.service.payments.impl.RefundService;
 /**
  *  @author Edward P. Legaspi
  *  @author anasseh
- *  @lastModifiedVersion 5.0
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class RefundApi extends BaseApi {
@@ -106,8 +107,8 @@ public class RefundApi extends BaseApi {
         refund.setUnMatchingAmount(refundDto.getAmount());
         refund.setMatchingAmount(BigDecimal.ZERO);
         refund.setAccountingCode(occTemplate.getAccountingCode());
-        refund.setOccCode(occTemplate.getCode());
-        refund.setOccDescription(StringUtils.isBlank(refundDto.getDescription()) ? occTemplate.getDescription() : refundDto.getDescription());
+        refund.setCode(occTemplate.getCode());
+        refund.setDescription(StringUtils.isBlank(refundDto.getDescription()) ? occTemplate.getDescription() : refundDto.getDescription());
         refund.setTransactionCategory(occTemplate.getOccCategory());
         refund.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
         refund.setCustomerAccount(customerAccount);
@@ -129,22 +130,8 @@ public class RefundApi extends BaseApi {
 
         refundService.create(refund);
 
-        int nbOccMatched = 0;
         if (refundDto.isToMatching()) {
-            List<Long> listReferenceToMatch = new ArrayList<Long>();
-            if (refundDto.getListOCCReferenceforMatching() != null) {
-                nbOccMatched = refundDto.getListOCCReferenceforMatching().size();
-                for (int i = 0; i < nbOccMatched; i++) {
-                    RecordedInvoice accountOperationToMatch = recordedInvoiceService.getRecordedInvoice(refundDto.getListOCCReferenceforMatching().get(i));
-                    if (accountOperationToMatch == null) {
-                        throw new BusinessApiException("Cannot find account operation with reference:" + refundDto.getListOCCReferenceforMatching().get(i));
-                    }
-                    listReferenceToMatch.add(accountOperationToMatch.getId());
-                }
-                listReferenceToMatch.add(refund.getId());
-                matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A);
-            }
-
+            matchRefunds(refundDto, customerAccount, refund);
         } else {
             log.info("no matching created ");
         }
@@ -152,6 +139,26 @@ public class RefundApi extends BaseApi {
 
         return refund.getId();
     }
+
+	private void matchRefunds(RefundDto refundDto, CustomerAccount customerAccount, Refund refund)
+			throws BusinessApiException, BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+		List<Long> listReferenceToMatch = new ArrayList<Long>();
+		if (refundDto.getListAoIdsForMatching()!=null && !refundDto.getListAoIdsForMatching().isEmpty() ) {
+			listReferenceToMatch.addAll(refundDto.getListAoIdsForMatching());
+		} else if (refundDto.getListOCCReferenceforMatching() != null) {
+		    for (String Reference: refundDto.getListOCCReferenceforMatching()) {
+		        List<RecordedInvoice> accountOperationToMatch = recordedInvoiceService.getRecordedInvoice(Reference);
+		        if (accountOperationToMatch == null || accountOperationToMatch.isEmpty()) {
+		            throw new BusinessApiException("Cannot find account operation with reference:" + Reference );
+		        } else if (accountOperationToMatch.size() > 1) {
+		            throw new BusinessApiException("More than one account operation with reference:" + Reference +". Please use ListAoIdsForMatching instead of ListOCCReferenceforMatching");
+		        }
+		        listReferenceToMatch.add(accountOperationToMatch.get(0).getId());
+		    }
+		}
+		listReferenceToMatch.add(refund.getId());
+		matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A);
+	}
 
     public List<RefundDto> getRefundList(String customerAccountCode) throws Exception {
         List<RefundDto> result = new ArrayList<>();
@@ -162,8 +169,6 @@ public class RefundApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
         }
 
-        customerAccountService.getEntityManager().refresh(customerAccount);
-
         List<AccountOperation> ops = customerAccount.getAccountOperations();
         for (AccountOperation op : ops) {
             if (op instanceof Refund) {
@@ -172,7 +177,7 @@ public class RefundApi extends BaseApi {
                 refundDto.setType(refund.getType());
                 refundDto.setAmount(refund.getAmount());
                 refundDto.setDueDate(refund.getDueDate());
-                refundDto.setOccTemplateCode(refund.getOccCode());
+                refundDto.setOccTemplateCode(refund.getCode());
                 refundDto.setPaymentMethod(refund.getPaymentMethod());
                 refundDto.setReference(refund.getReference());
                 refundDto.setTransactionDate(refund.getTransactionDate());

@@ -44,7 +44,7 @@ public enum DDRequestFileFormatEnum {
     public static DDRequestFileFormatEnum getValue(Integer id) {
         if (id != null) {
             for (DDRequestFileFormatEnum value : values()) {
-                if (value.getId() == id) {
+            	if ( id.equals(value.getId()) ) {
                     return value;
                 }
             }

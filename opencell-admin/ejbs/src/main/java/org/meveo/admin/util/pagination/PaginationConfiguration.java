@@ -35,7 +35,7 @@ public class PaginationConfiguration implements Serializable {
     private Integer firstRow;
 
     private Integer numberOfRows;
-
+    
     /**
      * Full text search filter. Mutually exclusive with filters attribute. fullTextFilter has priority
      */
