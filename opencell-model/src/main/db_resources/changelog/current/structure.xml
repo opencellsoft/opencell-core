@@ -1022,4 +1022,10 @@
         <sql>update ${db.schema.adapted}billing_invoice_type set invoice_accountable = 0 where code in ('QUOTE','DRAFT','PREPAID')</sql>
     </changeSet>
     
+    <changeSet id="#4434_21082018" author="anasseh">
+        <addColumn tableName="ar_ddrequest_item">
+            <column name="rejected_file_name" type="varchar(1000)" />
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
