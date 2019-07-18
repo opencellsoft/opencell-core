@@ -52,6 +52,7 @@ import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -105,7 +106,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * In mass RT update with invoice information, batch size
      */
-    private static int SPLIT_RT_UPDATE_BY_NR = 10000;
+    private int SPLIT_RT_UPDATE_BY_NR = ParamBean.getInstance().getPropertyAsInteger("db.updateBatchSize", 10000);
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
@@ -1911,7 +1912,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         long startInsertAll = System.currentTimeMillis();
 
-        SubListCreator<RatedTransaction> rtDataIterator = new SubListCreator<RatedTransaction>(10000, rtsUpdate);
+        SubListCreator<RatedTransaction> rtDataIterator = new SubListCreator<RatedTransaction>(SPLIT_RT_UPDATE_BY_NR, rtsUpdate);
 
         hibernateSession.doWork(new org.hibernate.jdbc.Work() {
 

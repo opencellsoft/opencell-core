@@ -14,11 +14,6 @@ import java.util.List;
 public class SubListCreator<E> {
 
     /**
-     * Number of iterations
-     */
-    private int nbIterations = 1;
-
-    /**
      * List to iterate over
      */
     private List<E> theBigList;
@@ -44,6 +39,8 @@ public class SubListCreator<E> {
     /** Size of list. */
     private int listSize;
 
+    private boolean strictNbRun;
+
     /**
      * Create list iterator. Specifies a number of items per iteration.
      * 
@@ -52,7 +49,24 @@ public class SubListCreator<E> {
      */
     public SubListCreator(int itemsPerSplit, List<E> listToSplit) {
 
-        this(listToSplit, listToSplit != null ? (listToSplit.size() / itemsPerSplit) + 1 : 0);
+        if (itemsPerSplit < 1) {
+            itemsPerSplit = 1;
+        }
+
+        if (listToSplit == null || listToSplit.isEmpty()) {
+            hasNext = false;
+            return;
+        }
+
+        this.theBigList = listToSplit;
+
+        this.listSize = theBigList.size();
+        this.blocToRun = itemsPerSplit;
+        this.modulo = listToSplit.size() % itemsPerSplit;
+
+        this.from = 0;
+        this.to = this.listSize < this.blocToRun ? this.listSize : this.blocToRun;
+
     }
 
     /**
@@ -67,21 +81,21 @@ public class SubListCreator<E> {
             nbSplits = 1;
         }
 
-        if (listToSplit == null) {
+        if (listToSplit == null || listToSplit.isEmpty()) {
             hasNext = false;
             return;
         }
 
+        this.strictNbRun = true;
         this.theBigList = listToSplit;
-        this.nbIterations = nbSplits;
 
         listSize = theBigList.size();
-        if (nbIterations > listSize && listSize > 0) {
-            nbIterations = listSize;
+        if (nbSplits > listSize && listSize > 0) {
+            nbSplits = listSize;
         }
 
-        blocToRun = listSize / nbIterations;
-        modulo = listSize % nbIterations;
+        blocToRun = listSize / nbSplits;
+        modulo = listSize % nbSplits;
         from = 0;
         to = blocToRun;
         if (from == listSize) {
@@ -96,8 +110,10 @@ public class SubListCreator<E> {
         List<E> toRuns = theBigList.subList(from, to);
         from = to;
         to = from + blocToRun;
-        if (listSize - modulo == to) {
+        if (strictNbRun && listSize - modulo == to) {
             to += modulo;
+        } else if (to > listSize) {
+            to = listSize;
         }
         if (from == listSize) {
             hasNext = false;

@@ -1269,6 +1269,7 @@
 
     <changeSet id="#4326_20190709" author="AndriusKarpavicius" failOnError="false"> 
         <dropForeignKeyConstraint baseTableName="billing_wallet_operation" constraintName="fk_wallet_operation_rated_transaction"/>
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_rated_transaction"/>
     </changeSet>
 
 </databaseChangeLog>
