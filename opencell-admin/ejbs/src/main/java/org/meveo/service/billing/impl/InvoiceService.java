@@ -2643,11 +2643,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return true if the invoice is prepaid report
      */
     public Boolean isPrepaidReport(Invoice invoice) {
-        return ratedTransactionService.isPrepaidRatedTransactions(getRatedTransactions(invoice));
+        try {
+            return ratedTransactionService.isPrepaidRatedTransactions(getRatedTransactions(invoice));
+        }catch (Exception ex){
+            return false;
+        }
     }
 
     List<RatedTransaction> getRatedTransactions(Invoice invoice){
-        return  findById(invoice.getId()).getRatedTransactions();
+        return findById(invoice.getId()).getRatedTransactions();
     }
 
 
