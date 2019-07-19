@@ -494,6 +494,9 @@ public class ParserSwagger {
             e.printStackTrace();
         }
         File realName = new File(filePath);
+        if (realName.delete()) {
+            //System.out.println("");
+        }
         new File(filePathTemp).renameTo(realName);
     }
 
