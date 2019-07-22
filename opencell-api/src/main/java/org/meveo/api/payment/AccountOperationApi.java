@@ -54,7 +54,8 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
  * @author Edward P. Legaspi
  * @author anasseh
  * @author melyoussoufi
- * @lastModifiedVersion 7.3.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 @Stateless
 public class AccountOperationApi extends BaseApi {
@@ -109,28 +110,33 @@ public class AccountOperationApi extends BaseApi {
             throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment, W=writeOff.");
         }
 
-        if (aoSubclassObject instanceof OtherCreditAndCharge && postData.getOtherCreditAndCharge() != null) {
+        if (aoSubclassObject instanceof OtherCreditAndCharge) {
             // otherCreditAndCharge
             OtherCreditAndCharge otherCreditAndCharge = new OtherCreditAndCharge();
-            otherCreditAndCharge.setOperationDate(postData.getOtherCreditAndCharge().getOperationDate());
+            if (postData.getOtherCreditAndCharge() != null) {
+                otherCreditAndCharge.setOperationDate(postData.getOtherCreditAndCharge().getOperationDate());
+            }
             accountOperation = otherCreditAndCharge;
-        } else if (aoSubclassObject instanceof RejectedPayment && postData.getRejectedPayment() != null) {
+        } else if (aoSubclassObject instanceof RejectedPayment) {
             // rejectedPayment
             RejectedPayment rejectedPayment = new RejectedPayment();
 
-            rejectedPayment.setRejectedType(postData.getRejectedPayment().getRejectedType());
+            if (postData.getRejectedPayment() != null) {
+                rejectedPayment.setRejectedType(postData.getRejectedPayment().getRejectedType());
 
-            rejectedPayment.setBankLot(postData.getRejectedPayment().getBankLot());
-            rejectedPayment.setBankReference(postData.getRejectedPayment().getBankReference());
-            rejectedPayment.setRejectedDate(postData.getRejectedPayment().getRejectedDate());
-            rejectedPayment.setRejectedDescription(postData.getRejectedPayment().getRejectedDescription());
-            rejectedPayment.setRejectedCode(postData.getRejectedPayment().getRejectedCode());
-
+                rejectedPayment.setBankLot(postData.getRejectedPayment().getBankLot());
+                rejectedPayment.setBankReference(postData.getRejectedPayment().getBankReference());
+                rejectedPayment.setRejectedDate(postData.getRejectedPayment().getRejectedDate());
+                rejectedPayment.setRejectedDescription(postData.getRejectedPayment().getRejectedDescription());
+                rejectedPayment.setRejectedCode(postData.getRejectedPayment().getRejectedCode());
+            }
             accountOperation = rejectedPayment;
         } else if (aoSubclassObject instanceof WriteOff) {
             WriteOff writeOff = new WriteOff();
             transactionCategory = OperationCategoryEnum.CREDIT;
             accountOperation = writeOff;
+        } else {
+            throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment, W=writeOff.");
         }
 
         accountOperation.setDueDate(postData.getDueDate());
