@@ -249,6 +249,7 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
         if (cf.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && cf.getChildEntityFields() != null) {
             childEntityFieldsForSummary = Arrays.asList(cf.getChildEntityFieldsAsList());
         }
+        this.uniqueConstraint = cf.isUniqueConstraint();
 
     }
 
