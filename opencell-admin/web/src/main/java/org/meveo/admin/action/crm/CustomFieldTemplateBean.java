@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -120,7 +121,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         }
 
         if (entity.getFieldType() == CustomFieldTypeEnum.LIST) {
-            entity.setListValues(new TreeMap<String, String>());
+            entity.setListValues(new TreeMap<>());
             updateMapTypeFieldInEntity(entity.getListValues(), "listValues");
         }
 
@@ -201,7 +202,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
      * @return A list of matching values
      */
     public List<String> autocompleteClassNamesCEIOnly(String query) {
-        List<String> clazzNames = new ArrayList<String>();
+        List<String> clazzNames = new ArrayList<>();
 
         List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, true, false, false, null, null);
 
@@ -219,7 +220,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
      * @return list of class name suggestions
      */
     public List<String> autocompleteClassNamesHuman(String query) {
-        List<String> clazzNames = new ArrayList<String>();
+        List<String> clazzNames = new ArrayList<>();
 
         List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, true, null, null);
 
@@ -365,5 +366,10 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         customFieldTemplateService.copyCustomFieldTemplate(entity, copyCftTo);
 
         messages.info(new BundleKey("messages", "customFieldTemplate.copyCFT.ok"));
+    }
+
+    @ActionMethod
+    public void updateUniqueConstraint(ValueChangeEvent valueChangeEvent){
+        entity.setUniqueConstraint((Boolean) valueChangeEvent.getNewValue());
     }
 }

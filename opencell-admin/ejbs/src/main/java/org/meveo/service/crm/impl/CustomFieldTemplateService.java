@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -242,8 +244,65 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         if (reaccumulateCFValues) {
 
             clusterEventPublisher.publishEvent(cft, CrudActionEnum.create);
-            cfValueAccumulator.cftCreated(cft);
+             cfValueAccumulator.cftCreated(cft);
         }
+        this.checkAndUpdateUniqueConstraint(cft);
+    }
+
+    void checkAndUpdateUniqueConstraint(CustomFieldTemplate cft) {
+        Optional.ofNullable(cft).filter(c -> StringUtils.isNotBlank(cft.getAppliesTo()))
+                .ifPresent(c -> updateUniqueConstraint(cft, c));
+    }
+
+    private void updateUniqueConstraint(CustomFieldTemplate cft, CustomFieldTemplate c) {
+        CustomEntityTemplate customEntityTemplate = customEntityTemplateService.findByCode(removePrefixeFromTableName(cft.getAppliesTo()));
+        Optional.ofNullable(customEntityTemplate).filter(CustomEntityTemplate::isStoreAsTable).ifPresent(cus -> defineColumnsAndReplaceUniqueConstraint(c, cus));
+    }
+
+     String removePrefixeFromTableName(String tableName) {
+        return tableName.startsWith("CE_") ? tableName.substring("CE_".length()) : tableName;
+    }
+
+    private void defineColumnsAndReplaceUniqueConstraint(CustomFieldTemplate cft, CustomEntityTemplate customEntityTemplate) {
+        tryToRemoveAlreadyPresentConstraint(customEntityTemplate);
+        Set<CustomFieldTemplate> allReferences = findByTableAndUnique(customEntityTemplate.getDbTablename());
+
+        if(cft.isUniqueConstraint()){
+            allReferences.add(cft);
+        }
+
+        udateConstraintKey(customEntityTemplate, allReferences);
+    }
+
+    public void updateUniqueConstraintOnRemoving(CustomFieldTemplate cft){
+        CustomEntityTemplate customEntityTemplate = customEntityTemplateService.findByCode(removePrefixeFromTableName(cft.getAppliesTo()));
+        Optional.ofNullable(customEntityTemplate).filter(CustomEntityTemplate::isStoreAsTable).ifPresent(cus -> {
+            Set<CustomFieldTemplate> allReferences = findByTableAndUnique(customEntityTemplate.getDbTablename());
+            udateConstraintKey(customEntityTemplate, allReferences);
+        });
+    }
+
+    private void udateConstraintKey(CustomEntityTemplate customEntityTemplate, Set<CustomFieldTemplate> allReferences) {
+        if(!allReferences.isEmpty()) {
+            String columnNames = allReferences.stream().map(CustomFieldTemplate::getCode).distinct().sorted().collect(Collectors.joining(","));
+            String constraintName = columnNames.replaceAll(",", "_");
+
+            getEntityManager().createNativeQuery(String.format("ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s)", customEntityTemplate.getDbTablename(), constraintName, columnNames)).executeUpdate();
+            getEntityManager().flush();
+
+            customEntityTemplate.setUniqueContraintName(constraintName);
+            customEntityTemplateService.update(customEntityTemplate);
+        }
+    }
+
+    private void tryToRemoveAlreadyPresentConstraint(CustomEntityTemplate cus) {
+        if(StringUtils.isNotBlank(cus.getUniqueContraintName())){
+            getEntityManager().createNativeQuery(String.format("ALTER TABLE %s DROP CONSTRAINT %s;", cus.getDbTablename(), cus.getUniqueContraintName())).executeUpdate();
+        }
+    }
+
+    private Set<CustomFieldTemplate> findByTableAndUnique(String code) {
+        return new HashSet<>(getEntityManager().createNamedQuery("CustomFieldTemplate.getUniqueFromTable", CustomFieldTemplate.class).setParameter("appliesTo", ("CE_" + code).toLowerCase()).getResultList());
     }
 
     @Override
@@ -272,7 +331,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
         elasticClient.updateCFMapping(cftUpdated);
-
+        this.checkAndUpdateUniqueConstraint(cftUpdated);
         return cftUpdated;
     }
 
@@ -293,6 +352,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }
 
         cfValueAccumulator.refreshCfAccumulationRules(cft);
+        updateUniqueConstraintOnRemoving(cft);
     }
 
     @Override
