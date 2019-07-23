@@ -129,7 +129,7 @@
 
                         <p:remoteCommand id="remoteDeleteButton" actionListener="#{customFieldTemplateBean.delete}" action="#{customEntityTemplateBean.removeField(node)}" name="fieldsDoDelete"
                             update="@form" />
-                        <p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="fieldsDoDelete()" disabled="#{customFieldTemplateBean.entity.uniqueConstraint == true}">
+                        <p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="fieldsDoDelete()" disabled="#{entity.uniqueConstraint == true}">
                             <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
                             <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
                         </p:commandButton>
