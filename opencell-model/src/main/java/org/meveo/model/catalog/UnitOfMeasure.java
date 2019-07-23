@@ -52,7 +52,9 @@ import org.meveo.model.ExportIdentifier;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "cat_unit_of_measure_seq"), })
 @NamedQueries({
-		@NamedQuery(name = "unitOfMeasure.listBaseUnits", query = "from UnitOfMeasure UOM where UOM.parentUnitOfMeasure is null") })
+		@NamedQuery(name = "unitOfMeasure.listBaseUnits", query = "from UnitOfMeasure UOM where UOM.parentUnitOfMeasure is null"), 
+		@NamedQuery(name = "unitOfMeasure.listChildUnits", query = "from UnitOfMeasure UOM where UOM.parentUnitOfMeasure=:parentUnitOfMeasure")
+})
 public class UnitOfMeasure extends BusinessEntity {
 
 	private static final long serialVersionUID = 1278336655583944747L;

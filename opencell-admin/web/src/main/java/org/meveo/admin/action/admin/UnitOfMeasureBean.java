@@ -62,7 +62,7 @@ public class UnitOfMeasureBean extends BaseBean<UnitOfMeasure> {
         return unitOfMeasureService;
     }
     
-    public List<UnitOfMeasure> listAll() {
+    public List<UnitOfMeasure> listBaseUnits() {
 		return unitOfMeasureService.listBaseUnits();
 
 	}

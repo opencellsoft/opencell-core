@@ -37,6 +37,11 @@ public class UnitOfMeasureService extends BusinessService<UnitOfMeasure> {
 	public List<UnitOfMeasure> listBaseUnits() {
 		return getEntityManager().createNamedQuery("unitOfMeasure.listBaseUnits", UnitOfMeasure.class).getResultList();
 	}
+	
+	public List<UnitOfMeasure> listCompatibleChildUnits(UnitOfMeasure unitOfMeasure) {
+		UnitOfMeasure parent=unitOfMeasure.isBaseUnit()?unitOfMeasure:unitOfMeasure.getParentUnitOfMeasure();
+		return getEntityManager().createNamedQuery("unitOfMeasure.listChildUnits", UnitOfMeasure.class).setParameter("parentUnitOfMeasure", parent).getResultList();
+	}
 
 	@Override
 	public void create(UnitOfMeasure entity) throws BusinessException {
@@ -48,6 +53,17 @@ public class UnitOfMeasureService extends BusinessService<UnitOfMeasure> {
 	public UnitOfMeasure update(UnitOfMeasure entity) throws BusinessException {
 		validateEntity(entity);
 		return super.update(entity);
+	}
+	
+	@Override
+	public void remove(UnitOfMeasure entity) throws BusinessException {
+		if(entity.isBaseUnit() ) {
+			List<UnitOfMeasure> childs=listCompatibleChildUnits(entity);
+			if(childs!=null && !childs.isEmpty()) {
+				throw new BusinessException("you cannot delete this base unit as it's referenced by "+childs.size()+" other Units Of Measure.");
+			}
+		}
+		super.remove(entity);
 	}
 
 	public void validateEntity(UnitOfMeasure entity) throws BusinessException {

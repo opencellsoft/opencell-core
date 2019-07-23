@@ -51,6 +51,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -235,7 +236,7 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
 
     private BigDecimal calculateUnitMultiplicator() {
 		if(inputUnitOfMeasure!=null && ratingUnitOfMeasure != null && inputUnitOfMeasure.isCompatibleWith(ratingUnitOfMeasure)){
-			return BigDecimal.valueOf(ratingUnitOfMeasure.getMultiplicator()).divide(BigDecimal.valueOf(inputUnitOfMeasure.getMultiplicator()));
+			return BigDecimal.valueOf(inputUnitOfMeasure.getMultiplicator()).divide(BigDecimal.valueOf(ratingUnitOfMeasure.getMultiplicator()),BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP );
 		}
 		return unitMultiplicator;
 	}

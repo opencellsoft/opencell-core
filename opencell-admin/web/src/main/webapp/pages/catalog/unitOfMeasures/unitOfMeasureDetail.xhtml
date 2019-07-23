@@ -37,7 +37,7 @@
 							field="multiplicator" id="multiplicator" />
 			<hftl:formField id="parentUnitOfMeasureId"
 							label="#{messages['unitOfMeasure.parentUnitOfMeasure']}" field="parentUnitOfMeasure"
-							valueLabelField="code" listBean="#{unitOfMeasureBean}"/>
+							valueLabelField="code" fkToEntity="true" listElements="#{unitOfMeasureBean.listBaseUnits()}"/>
 
 		</hftl:formPanel>
 
