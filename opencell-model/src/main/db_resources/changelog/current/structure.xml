@@ -292,7 +292,7 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_wallet_operation" />
 
 
-        <addNotNullConstraint tableName="cat_unit_of_measure" columnName="multiplicator"/>
+        <addNotNullConstraint columnDataType="bigint" tableName="cat_unit_of_measure" columnName="multiplicator"/>
         <addDefaultValue tableName="cat_unit_of_measure" columnName="multiplicator" defaultValueNumeric="1"/>
 
     </changeSet>
