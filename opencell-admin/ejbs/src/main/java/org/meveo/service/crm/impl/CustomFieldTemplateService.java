@@ -294,7 +294,6 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             getEntityManager().createNativeQuery(String.format("ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s)", customEntityTemplate.getDbTablename(), constraintName, columnNames)).executeUpdate();
 
             customEntityTemplate.setUniqueContraintName(constraintName);
-            customEntityTemplateService.update(customEntityTemplate);
         }
     }
 
@@ -338,7 +337,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
         elasticClient.updateCFMapping(cftUpdated);
-        this.checkAndUpdateUniqueConstraint(cftUpdated);
+
         return cftUpdated;
     }
 
@@ -359,7 +358,6 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }
 
         cfValueAccumulator.refreshCfAccumulationRules(cft);
-        updateUniqueConstraintOnRemoving(cft);
     }
 
     @Override
