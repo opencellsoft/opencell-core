@@ -74,7 +74,6 @@ import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.util.PdfWaterMark;
-import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.NumberUtils;
@@ -199,10 +198,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /** The invoice type service. */
     @Inject
     private InvoiceTypeService invoiceTypeService;
-
-    /** The resource messages. */
-    @Inject
-    private ResourceBundle resourceMessages;
 
     /** The order service. */
     @Inject
@@ -684,7 +679,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Date firstTransactionDate, Date lastTransactionDate, boolean instantiateMinRts, boolean isDraft, boolean assignNumber) throws BusinessException {
 
         return createAgregatesAndInvoice(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate, instantiateMinRts, isDraft,
-            assignNumber, null);
+            assignNumber);
     }
 
     /**
@@ -699,14 +694,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param instantiateMinRts Should rated transactions to reach minimum invoicing amount be checked and instantiated
      * @param isDraft Is this a draft invoice
      * @param assignNumber Should a number be assigned to the invoice
-     * @param rtUpdateSummaries If passed, rated transactions will not be updated one invoice at a time, but rather this list will be supplemented with Rated transaction summary
-     *        for created invoices
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
     public List<Invoice> createAgregatesAndInvoice(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
-            Date firstTransactionDate, Date lastTransactionDate, boolean instantiateMinRts, boolean isDraft, boolean assignNumber, List<RatedTransaction> rtsToUpdateInBatch)
-            throws BusinessException {
+            Date firstTransactionDate, Date lastTransactionDate, boolean instantiateMinRts, boolean isDraft, boolean assignNumber) throws BusinessException {
 
         log.debug("Will create invoice and aggregates for {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
 
@@ -796,7 +788,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             return createAggregatesAndInvoiceFromRTs(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate, isDraft,
-                assignNumber, billingCycle, ba, paymentMethod, invoiceType, balanceDue, totalInvoiceBalance, rtsToUpdateInBatch);
+                assignNumber, billingCycle, ba, paymentMethod, invoiceType, balanceDue, totalInvoiceBalance);
 
         } catch (Exception e) {
             log.error("Error for entity {}", entityToInvoice.getCode(), e);
@@ -837,22 +829,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
      *        determined for each billing account occurrence.
      * @param totalInvoiceBalance Total invoice balance. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and
      *        therefore will be determined for each billing account occurrence.
-     * @param rtsToUpdate If passed, rated transactions will not be updated one invoice at a time, but rather this list will be supplemented with Rated transaction processed in
-     *        this method
      * @return A list of invoices
      * @throws BusinessException General business exception
      */
     private List<Invoice> createAggregatesAndInvoiceFromRTs(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
             Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, boolean assignNumber, BillingCycle defaultBillingCycle, BillingAccount billingAccount,
-            PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance, List<RatedTransaction> rtsToUpdate)
-            throws BusinessException {
+            PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance) throws BusinessException {
 
         List<Invoice> invoiceList = new ArrayList<>();
-
-        boolean updateRtsLater = rtsToUpdate != null;
-        if (rtsToUpdate == null) {
-            rtsToUpdate = new ArrayList<>();
-        }
 
         // Retrieve Rated transactions and split them into BA/seller combinations
         List<RatedTransactionGroup> ratedTransactionGroups = getRatedTransactionGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType,
@@ -865,6 +849,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         PaymentMethod paymentMethod = defaultPaymentMethod;
+
+        List<RatedTransaction> rtsToUpdate = new ArrayList<>();
 
         // Process each BA/seller/invoiceType combination separately, what corresponds to a separate invoice
         for (RatedTransactionGroup rtGroup : ratedTransactionGroups) {
@@ -893,7 +879,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (invAggregate instanceof SubCategoryInvoiceAgregate && !((SubCategoryInvoiceAgregate) invAggregate).isDiscountAggregate()
                         && ((SubCategoryInvoiceAgregate) invAggregate).getRatedtransactions() != null) {
                     SubCategoryInvoiceAgregate subAggregate = ((SubCategoryInvoiceAgregate) invAggregate);
-                    rtsToUpdate.addAll(subAggregate.getRatedtransactions());
+                    rtsToUpdate.addAll(subAggregate.getRatedtransactionsToAssociate());
                 }
             }
 
@@ -912,9 +898,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             this.create(invoice);
 
-            if (!updateRtsLater) {
-                ratedTransactionService.updateViaDeleteAndInsert(rtsToUpdate);
-            }
+            ratedTransactionService.updateViaDeleteAndInsert(rtsToUpdate);
 
             invoice.assignTemporaryInvoiceNumber();
 
@@ -1934,7 +1918,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Create missing rated transactions up to a last transaction date
         ratedTransactionService.createRatedTransaction(entity, lastTransactionDate);
 
-        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, true, isDraft, true, null);
+        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, true, isDraft, true);
 
         // TODO : delete this commit since generating PDF/XML and producing AOs are now outside this service !
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks

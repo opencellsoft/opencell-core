@@ -1862,6 +1862,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         long startAll = System.currentTimeMillis();
 
+        int rtSize = rtsUpdate.size();
+
         // Delete rated transactions first
         List<Long> rtIds = rtsUpdate.stream().map(rt -> rt.getId()).collect(Collectors.toList());
 
@@ -2110,7 +2112,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         long endAll = System.currentTimeMillis();
         long timeAll = endAll - startAll;
 
-        log.error(" AKK update total {} delete total {} insert total {} split delete min/max {}/{} split insert min/max {}/{}", timeAll, timeDeleteAll, timeInsertAll,
+        log.error(" AKK update {} total {} delete total {} insert total {} split delete min/max {}/{} split insert min/max {}/{}", rtSize, timeAll, timeDeleteAll, timeInsertAll,
             minSplitDelete, maxSplitDelete, minSplitInsert, maxSplitInsert);
 
     }

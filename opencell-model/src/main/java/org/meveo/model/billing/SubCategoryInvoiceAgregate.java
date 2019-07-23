@@ -133,10 +133,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     private BigDecimal oldAmountWithTax;
 
     @Transient
-    private List<Long> ratedTransactionIdsNoTaxChange;
-
-    @Transient
-    private List<Long> ratedTransactionIdsTaxRecalculated;
+    private List<RatedTransaction> ratedtransactionsToAssociate = new ArrayList<>();
 
     /**
      * Instantiates a new sub category invoice aggregate.
@@ -172,8 +169,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
             this.billingRun = invoice.getBillingRun();
         }
         this.accountingCode = accountingCode;
-        ratedTransactionIdsNoTaxChange = new ArrayList<>();
-        ratedTransactionIdsTaxRecalculated = new ArrayList<>();
     }
 
     /**
@@ -261,7 +256,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
             this.itemNumber = 0;
         }
         this.itemNumber++;
-        this.ratedtransactions.add(ratedTransaction);
+        this.ratedtransactionsToAssociate.add(ratedTransaction);
     }
 
     /**
@@ -570,19 +565,21 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         return isEnterprise ? getAmountWithoutTax() : getAmountWithTax();
     }
 
-    public List<Long> getRatedTransactionIdsNoTaxChange() {
-        return ratedTransactionIdsNoTaxChange;
+    /**
+     * A transient method.
+     * 
+     * @return A list of rated transactions to associate with an invoice subcategory aggregate.
+     */
+    public List<RatedTransaction> getRatedtransactionsToAssociate() {
+        return ratedtransactionsToAssociate;
     }
 
-    public void setRatedTransactionIdsNoTaxChange(List<Long> ratedTransactionIdsNoTaxChange) {
-        this.ratedTransactionIdsNoTaxChange = ratedTransactionIdsNoTaxChange;
-    }
-
-    public List<Long> getRatedTransactionIdsTaxRecalculated() {
-        return ratedTransactionIdsTaxRecalculated;
-    }
-
-    public void setRatedTransactionIdsTaxRecalculated(List<Long> ratedTransactionIdsTaxRecalculated) {
-        this.ratedTransactionIdsTaxRecalculated = ratedTransactionIdsTaxRecalculated;
+    /**
+     * A transient method.
+     * 
+     * @param ratedtransactionsToAssociate A list of rated transactions to associate with an invoice subcategory aggregate
+     */
+    public void setRatedtransactionsToAssociate(List<RatedTransaction> ratedtransactionsToAssociate) {
+        this.ratedtransactionsToAssociate = ratedtransactionsToAssociate;
     }
 }
