@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
@@ -40,6 +42,7 @@ import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -281,14 +284,14 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             udateConstraintKey(customEntityTemplate, allReferences);
         });
     }
-
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private void udateConstraintKey(CustomEntityTemplate customEntityTemplate, Set<CustomFieldTemplate> allReferences) {
         if(!allReferences.isEmpty()) {
             String columnNames = allReferences.stream().map(CustomFieldTemplate::getCode).distinct().sorted().collect(Collectors.joining(","));
             String constraintName = columnNames.replaceAll(",", "_");
 
             getEntityManager().createNativeQuery(String.format("ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s)", customEntityTemplate.getDbTablename(), constraintName, columnNames)).executeUpdate();
-            getEntityManager().flush();
 
             customEntityTemplate.setUniqueContraintName(constraintName);
             customEntityTemplateService.update(customEntityTemplate);
@@ -296,8 +299,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     private void tryToRemoveAlreadyPresentConstraint(CustomEntityTemplate cus) {
-        if(StringUtils.isNotBlank(cus.getUniqueContraintName())){
-            getEntityManager().createNativeQuery(String.format("ALTER TABLE %s DROP CONSTRAINT %s;", cus.getDbTablename(), cus.getUniqueContraintName())).executeUpdate();
+        try {
+            if (StringUtils.isNotBlank(cus.getUniqueContraintName())) {
+                getEntityManager().createNativeQuery(String.format("ALTER TABLE %s DROP CONSTRAINT %s;", cus.getDbTablename(), cus.getUniqueContraintName())).executeUpdate();
+            }
+        }catch (Exception ex){
+            cus.setUniqueContraintName(null);
         }
     }
 
