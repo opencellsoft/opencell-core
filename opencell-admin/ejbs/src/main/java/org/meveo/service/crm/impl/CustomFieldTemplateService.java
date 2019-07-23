@@ -337,7 +337,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
         elasticClient.updateCFMapping(cftUpdated);
-
+        checkAndUpdateUniqueConstraint(cftUpdated);
         return cftUpdated;
     }
 
