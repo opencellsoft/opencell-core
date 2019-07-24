@@ -37,10 +37,15 @@ public class UnitOfMeasureService extends BusinessService<UnitOfMeasure> {
 	public List<UnitOfMeasure> listBaseUnits() {
 		return getEntityManager().createNamedQuery("unitOfMeasure.listBaseUnits", UnitOfMeasure.class).getResultList();
 	}
-	
+
 	public List<UnitOfMeasure> listCompatibleChildUnits(UnitOfMeasure unitOfMeasure) {
-		UnitOfMeasure parent=unitOfMeasure.isBaseUnit()?unitOfMeasure:unitOfMeasure.getParentUnitOfMeasure();
-		return getEntityManager().createNamedQuery("unitOfMeasure.listChildUnits", UnitOfMeasure.class).setParameter("parentUnitOfMeasure", parent).getResultList();
+		UnitOfMeasure parent = unitOfMeasure.isBaseUnit() ? unitOfMeasure : unitOfMeasure.getParentUnitOfMeasure();
+		return listChildUnitsOfMeasures(parent);
+	}
+
+	public List<UnitOfMeasure> listChildUnitsOfMeasures(UnitOfMeasure parent) {
+		return getEntityManager().createNamedQuery("unitOfMeasure.listChildUnits", UnitOfMeasure.class)
+				.setParameter("parentUnitOfMeasure", parent).getResultList();
 	}
 
 	@Override
@@ -48,19 +53,20 @@ public class UnitOfMeasureService extends BusinessService<UnitOfMeasure> {
 		validateEntity(entity);
 		super.create(entity);
 	}
-	
+
 	@Override
 	public UnitOfMeasure update(UnitOfMeasure entity) throws BusinessException {
 		validateEntity(entity);
 		return super.update(entity);
 	}
-	
+
 	@Override
 	public void remove(UnitOfMeasure entity) throws BusinessException {
-		if(entity.isBaseUnit() ) {
-			List<UnitOfMeasure> childs=listCompatibleChildUnits(entity);
-			if(childs!=null && !childs.isEmpty()) {
-				throw new BusinessException("you cannot delete this base unit as it's referenced by "+childs.size()+" other Units Of Measure.");
+		if (entity.isBaseUnit()) {
+			List<UnitOfMeasure> childs = listCompatibleChildUnits(entity);
+			if (childs != null && !childs.isEmpty()) {
+				throw new BusinessException("you cannot delete this base unit as it's referenced by " + childs.size()
+						+ " other Units Of Measure.");
 			}
 		}
 		super.remove(entity);
@@ -69,10 +75,22 @@ public class UnitOfMeasureService extends BusinessService<UnitOfMeasure> {
 	public void validateEntity(UnitOfMeasure entity) throws BusinessException {
 		Long multiplicator = entity.getMultiplicator();
 		if (multiplicator == null || multiplicator.compareTo(0l) <= 0) {
-			throw new BusinessException("multiplicator must be strict positif for a Unit of Measure, current value is "+multiplicator);
+			throw new BusinessException(
+					"multiplicator must be strict positif for a Unit of Measure, current value is " + multiplicator);
 		}
-		if (entity.getParentUnitOfMeasure() == null && !multiplicator.equals(1l)) {
-			throw new BusinessException("multiplicator must be 1 for a Base Unit of Measure, current value is "+multiplicator);
+		if (entity.getParentUnitOfMeasure() == null) {
+			if (!multiplicator.equals(1l)) {
+				throw new BusinessException(
+						"multiplicator must be 1 for a Base Unit of Measure, current value is " + multiplicator);
+			}
+			if (entity.getId() != null) {
+				List<UnitOfMeasure> childs = listChildUnitsOfMeasures(entity);
+				if (childs != null && !childs.isEmpty()) {
+					throw new BusinessException("you cannot define a parent to this base unit as it's referenced by "
+							+ childs.size() + " other Units Of Measure as the Base Unit.");
+				}
+			}
 		}
+
 	}
 }
