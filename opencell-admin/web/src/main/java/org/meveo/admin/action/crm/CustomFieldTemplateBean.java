@@ -28,6 +28,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEnum;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -308,6 +309,8 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
             fc.addMessage(null, msg);
             valid = false;
         } else {
+        	boolean columnExist=false;
+        	boolean keyExist=false;
             for (CustomFieldMatrixColumn column : cft.getMatrixColumns()) {
                 if (StringUtils.isBlank(column.getCode()) || StringUtils.isBlank(column.getLabel()) || column.getKeyType() == null) {
                     FacesMessage msg = new FacesMessage(resourceMessages.getString("customFieldTemplate.matrixColumn.error.missingFields"));
@@ -316,8 +319,20 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
                     valid = false;
                     break;
                 }
+                if(!columnExist && CustomFieldColumnUseEnum.USE_KEY.equals(column.getColumnUse())){
+                	columnExist=true;
+                } else if(!keyExist && CustomFieldColumnUseEnum.USE_VALUE.equals(column.getColumnUse())){
+                	keyExist=true;
+                }
+            }
+            if(valid && !(columnExist && keyExist)) {
+            	FacesMessage msg = new FacesMessage(resourceMessages.getString("customFieldTemplate.matrixColumn.error.atLeastOneKeyValue"));
+                msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                fc.addMessage(null, msg);
+                valid = false;
             }
         }
+        
 
         if (!valid) {
 
